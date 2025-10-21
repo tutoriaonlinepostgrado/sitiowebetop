@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding ETOP - Postgrado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative; /* Needed for absolute positioning of the logo */
+        }
+        .section-title {
+            color: #facc15; /* yellow-400 */
+            border-bottom: 2px solid #facc15;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .link-button {
+            background-color: #334155; /* slate-700 */
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.3s ease-in-out;
+            transform: scale(1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .link-button:hover {
+            background-color: #facc15; /* yellow-500 */
+            color: #1e293b; /* slate-800 */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(to bottom right, #0d1a3e, #1e293b);">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl">
+            
+            <!-- Logo en la esquina superior derecha -->
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Onboarding Equipo Tutoria Online Postgrado</h1>
+                <p class="text-slate-300 mt-2">Recursos y plantillas de comunicación para la incorporación de nuevos tutores.</p>
+            </header>
+            <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold section-title">Correos de Bienvenida</h2>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EWK0FsYbWLNPu5oymYWKq1wB_tt90d-_cLF6kQFu9iu7VQ?e=sry7Ns" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <span>Tabla Envío (Equipo interno)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EUQ_z8Ewqb5IkHryg-RvX4wB0n74w0--kDr1Vq_lolsGSg?e=Ux5gZz" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>Tipo Bienvenida (Equipo Miguel)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EY4PhEUaDKhPndRhcJG7ipgBD2fiaGg9Act0mPsLg4WI4w?e=tsivUL" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>Tipo Bienvenida (Equipo Daniela)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EY4PhEUaDKhPndRhcJG7ipgBD2fiaGg9Act0mPsLg4WI4w?e=tsivUL" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>Tipo Bienvenida (Equipo Hector)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EV-vXKGXqgFCsV8ULxigqpYBBMYowFsAqEfOm-t6aYoBCQ?e=fv4s3C" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>Tipo Bienvenida (Hector-Enfermería)</span></a>
+                </div>
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold section-title">Invitaciones Sincrónicas</h2>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/ETPgK6E2TB5NiNDFrDTdbU0BfN_AI1SZPutzFqGBMbkM7g?e=04Je3C" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <span>Tabla Envío (Equipo Daniela)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/EYQTEyv0JTNBisTMVagGhh8BGMu1aPNXIWTybaR_s5tpNg?e=ZBRlsV" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <span>Tabla Envío (Equipo Miguel)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/ESKFfpMzTLtCvTomH9QlFeUB9bQJRL5-a0MogSnfjrO4Cw?e=oSJ5Zn" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <span>Tabla Envío (Equipo Interno)</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:x:/s/actasynrc/ETPgK6E2TB5NiNDFrDTdbU0BfN_AI1SZPutzFqGBMbkM7g?e=0hRz07" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <span>Tabla Envío (Equipo Hector)</span></a>
+                </div>
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold section-title">Plantillas de Correo Tipo</h2>
+                    <a href="https://unabportal365.sharepoint.com/:i:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/CORREOS%20Y%20ANUNCIOS%20TIPO_OFICIAL/Preparaci%C3%B3n%20-%20Semana%20de%20inducci%C3%B3n/Etapa_preparacion_menos_01/correos/ETOP%20(2).PNG?csf=1&web=1&e=oQJueP" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        <span>Bienvenida a Intake</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:w:/s/actasynrc/Eb405fAFm6RKjV9pXDi27EoBgwt5NkqUZKe8MGyaWgOAeA?e=rMgE0g" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        <span>Invitación Sincrónica</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:b:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/CORREOS%20Y%20ANUNCIOS%20TIPO_OFICIAL/Preparaci%C3%B3n%20-%20Semana%20de%20inducci%C3%B3n/Etapa_preparacion_menos_01/correos/correpresentaciontutorial.pdf?csf=1&web=1&e=F2TbWq" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        <span>Presentación Tutorial a Docente</span></a>
+                    <a href="https://unabportal365.sharepoint.com/:b:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/CORREOS%20Y%20ANUNCIOS%20TIPO_OFICIAL/Preparaci%C3%B3n%20-%20Semana%20de%20inducci%C3%B3n/Etapa_preparacion_menos_01/correos/cierredecurso.pdf?csf=1&web=1&e=XHom81" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        <span>Finalización de Curso</span></a>
+                </div>
+            </main>
+
+            <div class="text-center mt-10">
+                <a href="index.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver al Portal Principal</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

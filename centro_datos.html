@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Datos - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative; /* Needed for absolute positioning of the logo */
+        }
+        .link-button {
+            background-color: #334155; /* slate-700 */
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.3s ease-in-out;
+            transform: scale(1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem; 
+        }
+        .link-button:hover {
+            background-color: #facc15; /* yellow-500 */
+            color: #1e293b; /* slate-800 */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(to bottom right, #0d1a3e, #1e293b);">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl">
+            
+            <!-- Logo en la esquina superior derecha -->
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Centro de Datos</h1>
+                <p class="text-slate-300 mt-2">Bases consolidadas, seguimiento y fichas de tutores.</p>
+            </header>
+            <main>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/AllItems.aspx" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <span>Base Consolidado de Calendarios</span>
+                    </a>
+
+                    <a href="https://app.powerbi.com/groups/me/rdlreports/a05b6a35-fb3a-4b71-b6e8-c9da205dfb6e?ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&pbi_source=linkShare" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <span>Calendarios descargables (Power BI)</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASE_ESTUDIANTES_SEGUIMIENTO21/activos.aspx" target="_blank" class="link-button">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <span>Base Seguimiento Estudiantes/semáforo</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/AllItems.aspx" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <span>Base Consolidado gestión de QA2/FI</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/Lists/LISTA_TUTORES/AllItems.aspx" target="_blank" class="link-button md:col-span-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Fichas tutores/as</span>
+                    </a>
+                </div>
+            </main>
+
+            <div class="text-center mt-10">
+                <a href="index.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver al Portal Principal</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

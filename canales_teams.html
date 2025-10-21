@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canales Teams - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative; /* Needed for absolute positioning of the logo */
+        }
+        .link-button {
+            background-color: #334155; /* slate-700 */
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.3s ease-in-out;
+            transform: scale(1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem; 
+        }
+        .link-button:hover {
+            background-color: #facc15; /* yellow-500 */
+            color: #1e2b3b; /* slate-800 */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(to bottom right, #0d1a3e, #1e293b);">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl">
+            
+            <!-- Logo en la esquina superior derecha -->
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Canales Teams</h1>
+                <p class="text-slate-300 mt-2">Enlaces directos a los canales de comunicación del equipo.</p>
+            </header>
+            <main>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    
+                    <a href="https://teams.microsoft.com/l/channel/19%3Adfd8e3b9b41b44ec8ffcbcbac5d56281%40thread.tacv2/COORDINACION?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Coordinación</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3A34bf85febac548b0a58f2079c4b337ca%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Educación y CS. Sociales Innovado</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3A3995b44ce61e48fe9bc86e5776d054b0%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Educación y CS. Sociales</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3Abd6c00f4456e4ed8a3b19a669dfe613e%40thread.tacv2/MED_ISPAB_MBAES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - MED_ISPAB</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3Ac07604d2347a41109ca2c41e52a4318e%40thread.tacv2/CIENCIAS%20_DE_LA%20_REHABILITACI%C3%93N?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Ciencias de la Rehabilitación</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Enfermería Innovado</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Economía Innovado</span>
+                    </a>
+                    <a href="https://teams.microsoft.com/l/channel/19%3A6974c03c6cdf4529a145589c7154764d%40thread.tacv2/INGENIERIA?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>Canal - Ingeniería</span>
+                    </a>
+                     <a href="https://teams.microsoft.com/l/channel/19%3A5a497d05671d40809375af71d434a6a6%40thread.tacv2/SEMI_PRESENCIAL%20(FULLSIN)?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button md:col-span-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <span>SEMI_PRESENCIAL (FULLSIN)</span>
+                    </a>
+                </div>
+            </main>
+
+            <div class="text-center mt-10">
+                <a href="index.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver al Portal Principal</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
