@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Alertas y Notificaciones - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #19202E; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative;
+        }
+        .content-section h2 {
+            color: #facc15; /* yellow-400 */
+            border-bottom: 2px solid #facc15;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            margin-top: 2.5rem;
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+         .content-section h3 {
+            color: #fde047; /* yellow-300 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .info-table th, .info-table td {
+            border: 1px solid #475569; /* slate-600 */
+            padding: 1rem;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .info-table th {
+            background-color: #334155; /* slate-700 */
+            font-weight: bold;
+        }
+        ul { list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom: 1rem;}
+         li {
+             margin-bottom: 0.75rem;
+             display: flex;
+             align-items: flex-start;
+             gap: 0.75rem;
+             line-height: 1.6;
+             text-align: justify; /* Justificar texto en listas */
+         }
+         .list-icon {
+             width: 1.1rem;
+             height: 1.1rem;
+             flex-shrink: 0;
+             margin-top: 5px;
+             color: #facc15;
+         }
+         .icon-svg {
+             width: 1.5rem;
+             height: 1.5rem;
+             flex-shrink: 0;
+             margin-top: 3px;
+         }
+         .content-block {
+             background-color: rgba(51, 65, 85, 0.3);
+             padding: 1.5rem;
+             border-radius: 0.5rem;
+             border: 1px solid #475569;
+         }
+         .objective-section {
+             display: grid;
+             grid-template-columns: 1fr; /* Default to single column */
+             gap: 2rem;
+             /* align-items: center; Remove center alignment for better flow */
+             margin-bottom: 2.5rem; /* Space between objective sections */
+         }
+         @media (min-width: 1024px) { /* Large screens and up */
+             .objective-section {
+                 grid-template-columns: 2fr 1fr; /* Text takes more space */
+             }
+             .objective-section.image-left {
+                 grid-template-columns: 1fr 2fr; /* Image takes less space on left */
+             }
+         }
+         /* Video Container Styles */
+         .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            width: 100%; /* Make container take full width of its grid cell */
+            background: #000;
+            border-radius: 0.5rem;
+            border: 2px solid #facc15;
+            align-self: start; /* Align container to the top */
+         }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .objective-image {
+             width: 100%;
+             max-width: 300px; /* Limit image size */
+             height: auto;
+             border-radius: 0.5rem;
+             border: 2px solid #facc15;
+             margin: 0 auto; /* Center image horizontally */
+             display: block;
+             align-self: start; /* Align image to the top */
+         }
+
+    </style>
+</head>
+<body class="text-white">
+    <div class="min-h-screen flex flex-col items-center p-4">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl my-8">
+            
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Sistema de Alertas y Notificaciones ETOP</h1>
+                <p class="text-slate-300 mt-2">Objetivos, tipos de alertas y automatizaciones clave.</p>
+            </header>
+            
+            <main class="content-section text-slate-200">
+                
+                <section class="objective-section">
+                    <div class="content-block">
+                        <h2>
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.311a14.996 14.996 0 01-4.5 0m1.346-3.097A14.91 14.91 0 0112 15.75c-1.01.002-2.005-.104-2.964-.307M15 6.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            1. Objetivos Centrales
+                        </h2>
+                        <p class="text-justify">Mantenernos informados y ofrecer retroalimentación inmediata sobre las tareas principales.</p>
+                         <ul>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 01.208 1.04l-5 7.5a.75.75 0 01-1.154.114l-3-3a.75.75 0 011.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 011.04-.207z" clip-rule="evenodd" /></svg>Confirmación de Ejecución: Asegurar que cada acción fue correctamente ejecutada.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1.5 1.5 0 00-1.5 1.5v9A1.5 1.5 0 004 14h8a1.5 1.5 0 001.5-1.5V6.621a1.5 1.5 0 00-.44-1.06L9.94 2.439A1.5 1.5 0 008.878 2H4zm4.5 4.75a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z" clip-rule="evenodd" /></svg>Visión Ordenada y Oportuna: Ayudar a tener una visión clara de nuestros procesos.</li>
+                         </ul>
+                    </div>
+                     <!-- Reemplazo de imagen por video -->
+                     <div class="video-container">
+                         <iframe src="https://unabportal365-my.sharepoint.com/personal/patricio_collao_unab_cl/_layouts/15/embed.aspx?UniqueId=dd5b0d0d-8d44-4a78-a1f3-1985d12aef23&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Notificaciones_y_Automatización.mp4"></iframe>
+                     </div>
+                </section>
+
+                <section class="objective-section image-left">
+                     <div>
+                         <img src="https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=300&auto=format&fit=crop" alt="Planificación y estrategia" class="objective-image">
+                     </div>
+                     <div class="content-block">
+                        <h2>
+                             <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg>
+                             2. Objetivos Funcionales
+                        </h2>
+                        <p class="text-justify">Mejorar la planificación y reducir olvidos operacionales.</p>
+                         <ul>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 01.208 1.04l-5 7.5a.75.75 0 01-1.154.114l-3-3a.75.75 0 011.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 011.04-.207z" clip-rule="evenodd" /></svg>Anticipación y Preparación: Recordatorios para QA2 y planificación de NRC.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1.5 1.5 0 00-1.5 1.5v9A1.5 1.5 0 004 14h8a1.5 1.5 0 001.5-1.5V6.621a1.5 1.5 0 00-.44-1.06L9.94 2.439A1.5 1.5 0 008.878 2H4zm4.5 4.75a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z" clip-rule="evenodd" /></svg>Gestión de Alertas Críticas: Diseño mejorado para alertas de estudiante en rojo e incidencia corregida.</li>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 003 3.5v9A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5v-9A1.5 1.5 0 0011.5 2h-7zM8 5.75a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 018 5.75zm-1.5.75a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" clip-rule="evenodd" /></svg>Consolidación de Datos: Reporte semanal de estudiantes en rojo.</li>
+                         </ul>
+                    </div>
+                </section>
+
+                 <section class="objective-section">
+                     <div class="content-block">
+                        <h2>
+                             <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.517l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>
+                             3. Objetivos Estratégicos
+                        </h2>
+                        <p class="text-justify">Afectan la posición del área y su dedicación al estudiante.</p>
+                         <ul>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 01.208 1.04l-5 7.5a.75.75 0 01-1.154.114l-3-3a.75.75 0 011.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 011.04-.207z" clip-rule="evenodd" /></svg>Innovación y Alineación Digital: Posicionar al área como líder en la universidad.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1.5 1.5 0 00-1.5 1.5v9A1.5 1.5 0 004 14h8a1.5 1.5 0 001.5-1.5V6.621a1.5 1.5 0 00-.44-1.06L9.94 2.439A1.5 1.5 0 008.878 2H4zm4.5 4.75a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z" clip-rule="evenodd" /></svg>Excelencia en la Gestión: Avance con visión, eficiencia y coherencia.</li>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 003 3.5v9A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5v-9A1.5 1.5 0 0011.5 2h-7zM8 5.75a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 018 5.75zm-1.5.75a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" clip-rule="evenodd" /></svg>Enfoque en el Estudiante: Liberar tiempo para acompañamiento de mayor valor.</li>
+                         </ul>
+                    </div>
+                     <div>
+                         <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=300&auto=format&fit=crop" alt="Personas colaborando" class="objective-image">
+                     </div>
+                </section>
+
+                <h2>
+                    <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                    Tipos de Alerta/Notificación
+                </h2>
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full info-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Alerta/Notificación</th>
+                                <th>Descripción y Frecuencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Aviso de Preparación de QA2</td>
+                                <td>Recordatorio automático para confección de QA2 (cursos inician en 21-25 días). Frecuencia: Martes y Viernes.</td>
+                            </tr>
+                            <tr>
+                                <td>Confirmación de Recepción de QA2</td>
+                                <td>Alerta inmediata que confirma la recepción del formulario QA2 enviado.</td>
+                            </tr>
+                            <tr>
+                                <td>Notificación Semanal de Inicio de Cursos</td>
+                                <td>Alerta automática cada Lunes informando cursos que inician esa semana.</td>
+                            </tr>
+                             <tr>
+                                <td>Alerta de Estudiante en Color Rojo (Mejorada)</td>
+                                <td>Correo con diseño mejorado al pasar un estudiante a rojo.</td>
+                            </tr>
+                             <tr>
+                                <td>Reporte Semanal Consolidado (Estudiantes en Rojo)</td>
+                                <td>Reporte enviado a correos con estudiantes en rojo en cursos activos.</td>
+                            </tr>
+                             <tr>
+                                <td>Notificación de Incidencia Corregida (Mejorada)</td>
+                                <td>Correo con estética mejorada informando corrección de incidencia.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="mt-8">
+                    <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                    Automatizaciones y Sistemas Preexistentes
+                </h2>
+                 <p class="mb-4">Estas herramientas complementan el sistema de notificaciones, posicionando al área como innovadora:</p>
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full info-table">
+                        <thead>
+                            <tr>
+                                <th>Sistema o Automatización</th>
+                                <th>Objetivo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Envío de Bienvenida</td>
+                                <td>Automatización para estudiantes de nuevo intake.</td>
+                            </tr>
+                            <tr>
+                                <td>Envío de Invitaciones Sincrónicas</td>
+                                <td>Envío automático de invitaciones a sesiones de bienvenida.</td>
+                            </tr>
+                            <tr>
+                                <td>Sistema de Reportes Descargables</td>
+                                <td>Sistema de reportes ya en funcionamiento.</td>
+                            </tr>
+                             <tr>
+                                <td>Tableros de Gestión</td>
+                                <td>Herramientas para visualizar, planificar y decidir con claridad.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <div class="text-center mt-12"> 
+                <a href="recursos_aprendizaje.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver a Recursos de Aprendizaje</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

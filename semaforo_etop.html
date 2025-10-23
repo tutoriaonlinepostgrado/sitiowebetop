@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semáforo de Seguimiento - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #19202E; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative;
+        }
+        .content-section h2 {
+            color: #facc15; /* yellow-400 */
+            border-bottom: 2px solid #facc15;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem; 
+            margin-top: 2.5rem; 
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            display: flex; 
+            align-items: center;
+            gap: 0.75rem; 
+        }
+         .content-section h3 {
+            color: #fde047; /* yellow-300 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem; 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; 
+        }
+        .color-table th, .color-table td {
+            border: 1px solid #475569; /* slate-600 */
+            padding: 1rem; 
+            text-align: left;
+            vertical-align: middle; 
+        }
+        .color-table th {
+            background-color: #334155; /* slate-700 */
+            font-weight: bold;
+        }
+        .color-table td:first-child { 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap; 
+        }
+        .semaforo-icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+        .icon-verde { color: #84cc16; } 
+        .icon-amarillo { color: #eab308; } 
+        .icon-rojo { color: #ef4444; } 
+        .icon-morado { color: #a855f7; } 
+        .icon-naranjo { color: #f97316; } 
+        .icon-calipso { color: #22d3ee; } 
+         
+         ul { list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom: 1rem;}
+         li { 
+             margin-bottom: 0.75rem; 
+             display: flex; 
+             align-items: flex-start; 
+             gap: 0.75rem; 
+             line-height: 1.6; 
+             text-align: justify; /* Justificar texto en listas */
+         }
+         .list-icon { 
+             width: 1.1rem; 
+             height: 1.1rem; 
+             flex-shrink: 0; 
+             margin-top: 5px; 
+             color: #facc15; 
+         }
+         .icon-svg { 
+             width: 1.5rem; 
+             height: 1.5rem; 
+             flex-shrink: 0; 
+             margin-top: 3px;
+         } 
+         .content-block { 
+             background-color: rgba(51, 65, 85, 0.3); 
+             padding: 1.5rem;
+             border-radius: 0.5rem;
+             border: 1px solid #475569; 
+             height: 100%; 
+         }
+         .content-block p {
+             text-align: justify; 
+         }
+    </style>
+</head>
+<body class="text-white">
+    <div class="min-h-screen flex flex-col items-center p-4">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl my-8">
+            
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Semáforo de Seguimiento ETOP</h1>
+                <p class="text-slate-300 mt-2">Herramienta para la gestión proactiva del riesgo académico.</p>
+            </header>
+            
+            <main class="content-section text-slate-200">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center mb-8">
+                    <div class="lg:col-span-2">
+                        <h2>
+                           1. Definición y Propósito General
+                        </h2>
+                        <p class="text-justify">El Semáforo de seguimiento es una herramienta de gestión interna empleada por las áreas de Impartición de Posgrado para monitorear el estado académico de los estudiantes activos. Su diseño permite una visualización rápida y clara del comportamiento y la actividad de los estudiantes mediante un sistema de codificación por colores.</p>
+                        <p class="mt-4 text-justify">El objetivo principal es permitir una gestión proactiva y un seguimiento efectivo, abordando los desafíos específicos del aprendizaje en línea. Esto posiciona al área como innovadora y alineada con la dirección digital de la institución.</p>
+                        <p class="mt-4 text-justify">La herramienta es un componente esencial del sistema de seguimiento y contactabilidad, donde el rol del tutor es fundamental para crear un vínculo socioafectivo y asegurar una experiencia educativa de alta calidad.</p>
+                    </div>
+                     <div class="flex justify-center">
+                         <svg class="w-56 h-56 text-gray-700" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="3" stroke="currentColor"> 
+                           <rect x="16" y="4" width="32" height="56" rx="4" fill="#334155" stroke="#facc15" stroke-width="2"/>
+                           <circle cx="32" cy="18" r="8" fill="#ef4444"/> 
+                           <circle cx="32" cy="34" r="8" fill="#eab308"/> 
+                           <circle cx="32" cy="50" r="8" fill="#84cc16"/> 
+                         </svg>
+                    </div>
+                </div>
+
+                <h2>
+                    2. Tipos de Entrega y Codificación por Colores
+                </h2>
+                <div class="overflow-x-auto mt-4 max-w-5xl mx-auto"> 
+                    <table class="w-full color-table">
+                         <thead>
+                            <tr>
+                                <th class="w-1/6">Color</th> 
+                                <th class="w-1/4">Significado</th> 
+                                <th>Criterios de Aplicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><svg class="semaforo-icon icon-verde" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg> Verde</td>
+                                <td>Cumplimiento / Sin inconvenientes</td>
+                                <td>Asignado por defecto. Se aplica cuando un estudiante en riesgo resuelve su situación. Sirve como referencia.</td>
+                            </tr>
+                            <tr>
+                                <td><svg class="semaforo-icon icon-amarillo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg> Amarillo</td>
+                                <td>Problemas moderados / Requiere seguimiento</td>
+                                <td>Llamadas no contestadas, falta de ingreso, no responder a contactabilidad (excl. bienvenidas), sin actividad o envío de tareas.</td>
+                            </tr>
+                            <tr>
+                                <td><svg class="semaforo-icon icon-rojo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg> Rojo</td>
+                                <td>Riesgo crítico / Atención inmediata</td>
+                                <td>Sin ingreso en curso UNI (hasta lunes siguiente), estudiante con reclamo (caso CRM), sin ingreso hasta 3ª semana en cursos de continuidad.</td>
+                            </tr>
+                            <tr>
+                                <td><svg class="semaforo-icon icon-morado" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg> Morado</td>
+                                <td>No responde / Elevado a área académica</td>
+                                <td>Al finalizar curso (+14 días), sin ingreso y "No respuesta" a acciones tutoriales en CRM. Asignado tras elevación formal de Jefatura de Impartición. Mantiene estado "Activo".</td>
+                            </tr>
+                            <tr>
+                                <td><svg class="semaforo-icon icon-naranjo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z"/></svg> Naranjo</td>
+                                <td>Retiro confirmado (definitivo o temporal)</td>
+                                <td>Detiene el seguimiento tutorial. Antes es "en trámite".</td>
+                            </tr>
+                             <tr>
+                                <td><svg class="semaforo-icon icon-calipso" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg> Calipso</td>
+                                <td>Casos solucionados</td>
+                                <td>Asignado por equipo tutorial tras comunicación de coordinación sobre resolución del caso.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                     <div class="content-block">
+                        <h2>
+                            3. Beneficios Clave
+                        </h2>
+                        <ul>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><strong>Detección Temprana:</strong> Identificación rápida de riesgos para intervenciones oportunas.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg><strong>Intervenciones Personalizadas:</strong> Facilita planes de acción específicos para un trabajo proactivo.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.517l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg><strong>Mejora Rendimiento y Retención:</strong> Aumenta la probabilidad de mejora y reduce la deserción.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg><strong>Optimización de Recursos:</strong> Permite enfocar el apoyo académico donde es más necesario.</li>
+                            <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg><strong>Planificación Estratégica:</strong> Facilita la toma de decisiones basada en datos claros.</li>
+                        </ul>
+                     </div>
+
+                     <div class="content-block">
+                         <h2>
+                            4. Situaciones Comunes
+                        </h2>
+                         <ul>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg><strong>Inasistencia/Participación:</strong> No entrar, no entregar tareas.</li>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg><strong>Acceso/Comunicación:</strong> Problemas con Canvas, no responde.</li>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg><strong>Gestiones Admin.:</strong> Retiros, pausas, matrícula.</li>
+                             <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg><strong>Factores Personales:</strong> Salud, burnout, familia.</li>
+                         </ul>
+                     </div>
+                 </div>
+
+                 <div class="mt-8">
+                     <h2>
+                         5. Funcionamiento
+                     </h2>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                         <div class="content-block">
+                             <h3>
+                                 <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>
+                                 A. Contexto Tecnológico
+                             </h3>
+                             <p>La asignación se basa en actividad registrada (ej. Canvas). Se usa un Cotejo Inicial Banner / Canvas / Base Semáforo para detectar problemas de acceso tempranamente (primeros 3 días del NRC). Se integra con la gestión de datos, simplificando registros en bases como NRC_TUTOR.</p>
+                         </div>
+                         <div class="content-block">
+                            <h3>
+                                <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                                B. Escalamiento (Rojo/Morado)
+                            </h3>
+                            <p>Requiere documentación:</p>
+                            <ul>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Registro de actividades de seguimiento en CRM.</li>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Escalamiento a Coordinador/a.</li>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Comunicación formal de Jefa de Impartición al área académica.</li>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Coordinador indica asignar color morado.</li>
+                            </ul>
+                         </div>
+                          <div class="content-block">
+                             <h3>
+                                 <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+                                 C. Automatizaciones
+                             </h3>
+                             <ul>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Alerta inmediata por correo al pasar a rojo.</li>
+                                <li><svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm-.9-9.75a.75.75 0 011.8 0V8.5h.75a.75.75 0 010 1.5H8.75V12a.75.75 0 01-1.5 0V9.5H6.5a.75.75 0 010-1.5h.75V5.25z" clip-rule="evenodd" /></svg>Reporte semanal consolidado de estudiantes en rojo.</li>
+                             </ul>
+                         </div>
+                     </div>
+                 </div>
+
+            </main>
+
+            <div class="text-center mt-12"> 
+                <a href="recursos_aprendizaje.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver a Recursos de Aprendizaje</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

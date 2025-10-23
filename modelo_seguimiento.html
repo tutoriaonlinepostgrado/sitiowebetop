@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Seguimiento Tutorial - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #19202E; }
+        .main-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            position: relative;
+        }
+        .timeline { position: relative; max-width: 1200px; margin: 0 auto; }
+        .timeline::after { content: ''; position: absolute; width: 6px; background-color: #facc15; top: 0; bottom: 0; left: 50%; margin-left: -3px; }
+        .timeline-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; }
+        .timeline-container.left { left: 0; }
+        .timeline-container.right { left: 50%; }
+        .timeline-container::after { content: ''; position: absolute; width: 25px; height: 25px; right: -17px; background-color: #334155; border: 4px solid #facc15; top: 15px; border-radius: 50%; z-index: 1; }
+        .timeline-container.right::after { left: -16px; }
+        .timeline-content { padding: 20px 30px; background-color: #334155; position: relative; border-radius: 6px; border: 1px solid #475569; }
+         .timeline-content h2 { color: #facc15; margin-bottom: 0.5rem; font-size: 1.25rem; font-weight: bold;}
+         .timeline-content ul { list-style-type: disc; margin-left: 1.5rem; margin-top: 0.5rem;}
+         .color-table th, .color-table td { border: 1px solid #475569; padding: 0.5rem; text-align: left; font-size: 0.875rem;}
+         .color-table th { background-color: #475569; }
+         .color-verde { color: #84cc16; } .color-amarillo { color: #eab308; } .color-rojo { color: #ef4444; } .color-morado { color: #a855f7; } .color-naranjo { color: #f97316; } .color-calipso { color: #22d3ee; }
+
+        @media screen and (max-width: 768px) {
+          .timeline::after { left: 31px; }
+          .timeline-container { width: 100%; padding-left: 70px; padding-right: 25px; }
+          .timeline-container.left::after, .timeline-container.right::after { left: 15px; }
+          .timeline-container.right { left: 0%; }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="min-h-screen flex flex-col items-center p-4">
+        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl my-8">
+            
+            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+            </a>
+
+            <header class="text-center mb-8 md:mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Guía Esencial del Modelo de Seguimiento Tutorial</h1>
+                <p class="text-slate-300 mt-2">Para Posgrado Online</p>
+            </header>
+            
+            <main class="text-slate-200">
+                <section class="mb-12 max-w-4xl mx-auto text-center">
+                     <h2 class="text-2xl font-semibold text-yellow-400 mb-4">1. Nuestra Misión: Acompañar para el Éxito</h2>
+                     <p>Este documento explica el modelo de seguimiento tutorial de la Unidad de Impartición de Posgrado. El objetivo es que comprendas los conceptos, herramientas y etapas que estructuran nuestro acompañamiento para asegurar una experiencia de alta calidad.</p>
+                     <blockquote class="mt-4 border-l-4 border-yellow-500 pl-4 italic text-lg text-slate-300">
+                         "Nuestra misión es constituirnos en una red de apoyo al estudiantado, acompañándolo en todo su proceso de formación, para asegurar que su experiencia educativa online se caracterice por el más alto estándar de calidad..."
+                     </blockquote>
+                </section>
+
+                 <section class="mb-12 max-w-4xl mx-auto">
+                     <h2 class="text-2xl font-semibold text-yellow-400 mb-4 text-center">2. La Herramienta Clave: El Semáforo de Seguimiento</h2>
+                     <p class="text-center mb-6">Es una herramienta de monitoreo interno para visualizar rápidamente el estado académico y de participación del estudiante mediante colores, permitiendo identificar riesgos y personalizar intervenciones.</p>
+                     <div class="overflow-x-auto">
+                         <table class="w-full color-table">
+                             <thead>
+                                 <tr><th>Color</th><th>Significado y Acción Principal</th></tr>
+                             </thead>
+                             <tbody>
+                                 <tr><td class="color-verde">Verde</td><td>Sin Inconvenientes: Cumplen objetivos. Estado por defecto.</td></tr>
+                                 <tr><td class="color-amarillo">Amarillo</td><td>Alerta Moderada: Requiere seguimiento cercano (sin actividad, sin envío tareas, no responde).</td></tr>
+                                 <tr><td class="color-rojo">Rojo</td><td>Riesgo Crítico: Atención inmediata (sin ingreso, reclamos formales).</td></tr>
+                                 <tr><td class="color-morado">Morado</td><td>Caso Elevado: No responde tras múltiples intentos. Elevado al área académica.</td></tr>
+                                 <tr><td class="color-calipso">Calipso</td><td>Situación Solucionada: Caso resuelto y comunicado por coordinación.</td></tr>
+                                 <tr><td class="color-naranjo">Naranjo</td><td>Retiro Confirmado: Detiene el seguimiento.</td></tr>
+                             </tbody>
+                         </table>
+                     </div>
+                 </section>
+
+                 <section class="mb-8">
+                     <h2 class="text-2xl font-semibold text-yellow-400 mb-8 text-center">3. El Proceso: Las 4 Etapas del Acompañamiento</h2>
+                     <div class="timeline">
+                         
+                         <div class="timeline-container left">
+                             <div class="timeline-content">
+                                 <h2>Etapa 1: Preparación (-1)</h2>
+                                 <p>Asegurar sistemas y accesos listos; establecer primer contacto y vínculo de confianza.</p>
+                                 <ul>
+                                     <li>Verificar accesos (Banner/Canvas).</li>
+                                     <li>Enviar correo de bienvenida.</li>
+                                     <li>Contactar al docente del primer curso.</li>
+                                 </ul>
+                             </div>
+                         </div>
+                         <div class="timeline-container right">
+                             <div class="timeline-content">
+                                 <h2>Etapa 2: Semana de Inducción (0)</h2>
+                                 <p>Garantizar comodidad y seguridad en Canvas; fortalecer relación socio-afectiva.</p>
+                                  <ul>
+                                     <li>Confirmar anuncio de bienvenida.</li>
+                                     <li>Contactar activamente a estudiantes sin acceso.</li>
+                                     <li>Realizar videoconferencia de presentación.</li>
+                                 </ul>
+                             </div>
+                         </div>
+                          <div class="timeline-container left">
+                             <div class="timeline-content">
+                                 <h2>Etapa 3: Impartición del Curso Malla (S1-S4)</h2>
+                                 <p>Comunicación proactiva y constante; uso activo del Semáforo para guiar intervenciones.</p>
+                                 <ul>
+                                     <li>Monitoreo proactivo (foros, notas, accesos).</li>
+                                     <li>Comunicación constante (correos, mensajes, anuncios).</li>
+                                     <li>Acompañamiento socio-afectivo (escucha activa).</li>
+                                 </ul>
+                             </div>
+                         </div>
+                         <div class="timeline-container right">
+                             <div class="timeline-content">
+                                 <h2>Etapa 4: Cierre del Curso Malla (+7/+14)</h2>
+                                 <p>Acompañar cierre administrativo y académico; asegurar traspaso de notas.</p>
+                                  <ul>
+                                     <li>Seguimiento de entregas pendientes.</li>
+                                     <li>Coordinar con docente.</li>
+                                     <li>Enviar correo recordatorio al docente (+7 días).</li>
+                                 </ul>
+                             </div>
+                         </div>
+
+                     </div>
+                 </section>
+
+                 <section class="mt-12 max-w-4xl mx-auto text-center">
+                      <h2 class="text-2xl font-semibold text-yellow-400 mb-4">4. Conclusión: Tu Rol es Impulsar el Éxito</h2>
+                      <p>Este modelo es nuestra estrategia proactiva para reducir la deserción, fortalecer la permanencia y mejorar la experiencia del estudiante. Tu rol como tutor es el pilar fundamental, transformando una experiencia online en un camino de éxito.</p>
+                 </section>
+            </main>
+
+            <div class="text-center mt-12">
+                <a href="recursos_aprendizaje.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver a Recursos de Aprendizaje</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
