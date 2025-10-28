@@ -68,7 +68,7 @@
              align-items: flex-start; 
              gap: 0.75rem; 
              line-height: 1.6; 
-             text-align: justify; /* Justificar texto en listas */
+             text-align: justify; 
          }
          .list-icon { 
              width: 1.1rem; 
@@ -93,6 +93,26 @@
          .content-block p {
              text-align: justify; 
          }
+         /* Video Container Styles */
+         .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            width: 100%; 
+            background: #000;
+            border-radius: 0.5rem;
+            border: 2px solid #facc15;
+            align-self: start; 
+            margin-top: 2.5rem; 
+         }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body class="text-white">
@@ -110,26 +130,23 @@
             
             <main class="content-section text-slate-200">
                 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center mb-8">
-                    <div class="lg:col-span-2">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-8"> 
+                    <div>
                         <h2>
+                           <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.311a14.996 14.996 0 01-4.5 0m1.346-3.097A14.91 14.91 0 0112 15.75c-1.01.002-2.005-.104-2.964-.307M15 6.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                            1. Definición y Propósito General
                         </h2>
                         <p class="text-justify">El Semáforo de seguimiento es una herramienta de gestión interna empleada por las áreas de Impartición de Posgrado para monitorear el estado académico de los estudiantes activos. Su diseño permite una visualización rápida y clara del comportamiento y la actividad de los estudiantes mediante un sistema de codificación por colores.</p>
                         <p class="mt-4 text-justify">El objetivo principal es permitir una gestión proactiva y un seguimiento efectivo, abordando los desafíos específicos del aprendizaje en línea. Esto posiciona al área como innovadora y alineada con la dirección digital de la institución.</p>
                         <p class="mt-4 text-justify">La herramienta es un componente esencial del sistema de seguimiento y contactabilidad, donde el rol del tutor es fundamental para crear un vínculo socioafectivo y asegurar una experiencia educativa de alta calidad.</p>
                     </div>
-                     <div class="flex justify-center">
-                         <svg class="w-56 h-56 text-gray-700" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="3" stroke="currentColor"> 
-                           <rect x="16" y="4" width="32" height="56" rx="4" fill="#334155" stroke="#facc15" stroke-width="2"/>
-                           <circle cx="32" cy="18" r="8" fill="#ef4444"/> 
-                           <circle cx="32" cy="34" r="8" fill="#eab308"/> 
-                           <circle cx="32" cy="50" r="8" fill="#84cc16"/> 
-                         </svg>
+                     <div class="video-container">
+                         <iframe src="https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/embed.aspx?UniqueId=6c0b9bfd-efe9-4a20-b198-d96326e134b4&embed=%7B%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="Sistema_Semáforo__Apoyo_Proactivo.mp4"></iframe>
                     </div>
                 </div>
 
                 <h2>
+                    <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
                     2. Tipos de Entrega y Codificación por Colores
                 </h2>
                 <div class="overflow-x-auto mt-4 max-w-5xl mx-auto"> 
@@ -153,7 +170,7 @@
                                 <td>Llamadas no contestadas, falta de ingreso, no responder a contactabilidad (excl. bienvenidas), sin actividad o envío de tareas.</td>
                             </tr>
                             <tr>
-                                <td><svg class="semaforo-icon icon-rojo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg> Rojo</td>
+                                <td><svg class="semaforo-icon icon-rojo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 00-.708-.708L8 7.293 5.354 4.646z"/></svg> Rojo</td>
                                 <td>Riesgo crítico / Atención inmediata</td>
                                 <td>Sin ingreso en curso UNI (hasta lunes siguiente), estudiante con reclamo (caso CRM), sin ingreso hasta 3ª semana en cursos de continuidad.</td>
                             </tr>
@@ -179,6 +196,7 @@
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                      <div class="content-block">
                         <h2>
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-4.5A3 3 0 0012 9.75h0A3 3 0 007.5 14.25v4.5m9 0h-9" /></svg>
                             3. Beneficios Clave
                         </h2>
                         <ul>
@@ -192,6 +210,7 @@
 
                      <div class="content-block">
                          <h2>
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
                             4. Situaciones Comunes
                         </h2>
                          <ul>
@@ -205,6 +224,7 @@
 
                  <div class="mt-8">
                      <h2>
+                         <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                          5. Funcionamiento
                      </h2>
                      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
@@ -250,5 +270,4 @@
     </div>
 </body>
 </html>
-
 
