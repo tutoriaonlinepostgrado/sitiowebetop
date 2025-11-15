@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero Resumen Casos ETOP por Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .back-button {
+            background-color: #334155;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .back-button:hover {
+            background-color: ##fac115;
+            color: #1e293b;
+            transform: scale(1.05);
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+
+    <!-- Botón de regreso -->
+    <a href="centro_reportes.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Volver al Centro de Reportes
+    </a>
+
+    <!-- Iframe con el tablero de Power BI -->
+    <iframe 
+        src="https://app.powerbi.com/links/Zy3WgbSUC5?ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&pbi_source=linkShare"
+        allowfullscreen>
+    </iframe>
+
+</body>
+</html>
