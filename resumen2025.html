@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Seguimiento Tutorial 2025 - ETOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Cargando Plotly para la interactividad de los gráficos -->
+    <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.2.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #19202E; /* Fondo azul oscuro del portal */
+            color: #e2e8f0;
+        }
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #facc15;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .chart-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .chart-title {
+            color: #facc15;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.75rem;
+        }
+        /* Botón flotante para regresar */
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 4rem;
+            height: 4rem;
+            background: #1e293b;
+            border-radius: 50%;
+            border: 2px solid #facc15;
+            padding: 0.25rem;
+            z-index: 50;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón para volver al Centro de Reportes -->
+    <a href="centro_reportes.html" class="back-button" title="Volver al Centro de Reportes">
+        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="w-full h-full object-contain">
+    </a>
+
+    <div class="main-container">
+        <header class="header-card">
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-4">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="h-20 w-20 object-contain">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-wide uppercase">Resumen Seguimiento Tutorial 2025</h1>
+                    <p class="text-yellow-400 text-lg mt-1 font-medium">Análisis de Gestión y Observaciones del Equipo ETOP</p>
+                </div>
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="Logo Unab" class="h-20 w-auto object-contain">
+            </div>
+        </header>
+
+        <!-- Gráfico 1: Porcentaje de Observaciones por Tutor -->
+        <section class="chart-card">
+            <h2 class="chart-title">Porcentaje de Filas con Observaciones por Tutor</h2>
+            <div id="grafico1"></div>
+        </section>
+
+        <!-- Gráfico 2: Comparativo Total vs Observaciones -->
+        <section class="chart-card">
+            <h2 class="chart-title">Comparativo Total Filas vs Observaciones</h2>
+            <div id="grafico2"></div>
+        </section>
+
+        <!-- Gráfico 3: SI vs NO Ingreso -->
+        <section class="chart-card">
+            <h2 class="chart-title">Análisis de Estudiantes SI vs NO Ingreso</h2>
+            <div id="grafico3"></div>
+        </section>
+
+        <!-- Gráfico 4: Vista General -->
+        <section class="chart-card">
+            <h2 class="chart-title">Vista General de Desempeño (Scatter Plot)</h2>
+            <div id="grafico4"></div>
+        </section>
+
+        <footer class="text-center text-slate-400 mt-8 pb-12">
+            <p><strong>Dashboard Interactivo</strong> – Datos consolidados del archivo de origen 2025</p>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+        // Estilo visual del gráfico adaptado al modo oscuro del portal
+        const darkStyle = {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {color: '#cbd5e1', family: 'Inter, sans-serif'},
+            xaxis: {
+                gridcolor: '#334155',
+                linecolor: '#475569',
+                zerolinecolor: '#475569',
+                tickangle: -45,
+                automargin: true
+            },
+            yaxis: {
+                gridcolor: '#334155',
+                linecolor: '#475569',
+                zerolinecolor: '#475569',
+                automargin: true
+            },
+            legend: {font: {color: '#cbd5e1'}},
+            margin: {t: 50, b: 200, l: 80, r: 40}
+        };
+
+        const tutores = ["MARTA GONZALEZ","HANS NOVAKOVIC","KIMBERLY JORQUERA","CONSTANZA CONTRERAS","FRANCISCA INDA","BARBARA ROJAS","NOEMI PAZ","JAVIERA ROJAS","MARIA FERNANDA GONZALEZ","PAULA PARDO","CONSUELO PARGA","ALYSON HERNANDEZ","ALVARO ORELLANA","DANITZA JANSEN","SYLVIA VALENZUELA","CATALINA FIERRO","CARLA PEÑA","MARCEL MEDINA","JAVIER SANCHEZ","SEBASTIAN TAPIA"];
+        const porcentajes = [6.4516,15.2174,14.2857,12.5,9.6774,12.5,7.5,8.3333,0,5.4054,21.6216,17.3913,30.7692,30.7692,12.3596,10.9091,30.2326,34.2857,2.2727,0];
+        const totalFilas = [155,92,98,96,62,80,80,84,90,74,74,46,65,65,89,110,86,70,132,92];
+        const filasConObs = [10,14,14,12,6,10,6,7,0,4,16,8,20,20,11,12,26,24,3,0];
+        const estSI = [57,61,62,77,46,60,51,50,63,59,45,37,30,34,58,78,49,47,96,72];
+        const estNO = [98,31,36,19,16,20,29,34,27,15,29,9,35,31,31,32,37,23,36,20];
+
+        // Gráfico 1: Barras de Porcentaje
+        const data1 = [{
+            x: tutores,
+            y: porcentajes,
+            type: 'bar',
+            marker: {color: '#facc15'},
+            text: porcentajes.map(v => v.toFixed(2) + '%'),
+            textposition: 'outside'
+        }];
+        const layout1 = {
+            ...darkStyle,
+            title: {text: 'Porcentaje de Observaciones', font: {color: '#facc15'}},
+            height: 650
+        };
+        Plotly.newPlot('grafico1', data1, layout1, {responsive: true});
+
+        // Gráfico 2: Total vs Observaciones
+        const data2 = [
+            {name: 'Total Filas', x: tutores, y: totalFilas, type: 'bar', marker: {color: '#636efa'}},
+            {name: 'Filas Con Observaciones', x: tutores, y: filasConObs, type: 'bar', marker: {color: '#EF553B'}}
+        ];
+        const layout2 = {
+            ...darkStyle,
+            barmode: 'group',
+            title: {text: 'Carga de Trabajo vs Gestión', font: {color: '#facc15'}},
+            height: 650
+        };
+        Plotly.newPlot('grafico2', data2, layout2, {responsive: true});
+
+        // Gráfico 3: SI vs NO Ingreso
+        const data3 = [
+            {name: 'Estudiantes SI', x: tutores, y: estSI, type: 'bar', marker: {color: '#00cc96'}},
+            {name: 'Estudiantes NO', x: tutores, y: estNO, type: 'bar', marker: {color: '#ab63fa'}}
+        ];
+        const layout3 = {
+            ...darkStyle,
+            barmode: 'group',
+            title: {text: 'Efectividad de Ingresos', font: {color: '#facc15'}},
+            height: 650
+        };
+        Plotly.newPlot('grafico3', data3, layout3, {responsive: true});
+
+        // Gráfico 4: Scatter Plot Vista General
+        const data4 = [{
+            x: tutores,
+            y: totalFilas,
+            mode: 'markers',
+            marker: {
+                size: porcentajes.map(v => v * 2),
+                color: '#facc15',
+                sizemode: 'area',
+                sizeref: 0.5
+            },
+            text: tutores.map((t, i) => `${t}<br>Total: ${totalFilas[i]}<br>% Obs: ${porcentajes[i].toFixed(2)}%<br>SI: ${estSI[i]} | NO: ${estNO[i]}`),
+            hovertemplate: '%{text}<extra></extra>'
+        }];
+        const layout4 = {
+            ...darkStyle,
+            title: {text: 'Mapa General de Desempeño', font: {color: '#facc15'}},
+            height: 750
+        };
+        Plotly.newPlot('grafico4', data4, layout4, {responsive: true});
+    </script>
+</body>
+</html>
