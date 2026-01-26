@@ -3,173 +3,626 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resumen Seguimiento Tutorial 2025 - ETOP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dashboard Seguimiento 2025 - ETOP (V4)</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Cargando Plotly para la interactividad de los gráficos -->
-    <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.2.0.min.js"></script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #19202E; /* Fondo azul oscuro del portal */
-            color: #e2e8f0;
-        }
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .header-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid #facc15;
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .chart-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid #475569;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .chart-title {
-            color: #facc15;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 0.75rem;
-        }
-        /* Botón flotante para regresar */
-        .back-button {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 4rem;
-            height: 4rem;
-            background: #1e293b;
-            border-radius: 50%;
-            border: 2px solid #facc15;
-            padding: 0.25rem;
-            z-index: 50;
-            transition: transform 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-        .back-button:hover { transform: scale(1.1); }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; font-size: 0.9rem; padding-bottom: 60px; }
+        .navbar { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .navbar-brand span { font-weight: 700; color: #2563eb; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); background: #fff; margin-bottom: 24px; }
+        .card-header { background: transparent; border-bottom: 1px solid #f1f5f9; padding: 16px 24px; font-weight: 600; color: #0f172a; }
+        .card-body { padding: 20px 24px; }
+        .compact-upload-bar { background: #fff; border-radius: 12px; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border: 1px dashed #cbd5e1; }
+        .compact-upload-bar:hover { border-color: #2563eb; background: #eff6ff; }
+        .kpi-value { font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1; }
+        .kpi-label { color: #64748b; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .kpi-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 500; margin-top: 6px; }
+        .metric-badge { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-bottom: 8px; background: #f1f5f9; color: #475569; }
+        .metric-badge.primary { background: #eff6ff; color: #2563eb; }
+        .semaforo-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center; color: white; }
+        .sem-box { padding: 8px; border-radius: 8px; }
+        .bg-verde { background: #10b981; } .bg-amarillo { background: #f59e0b; } .bg-rojo { background: #ef4444; }
+        .sem-val { font-weight: 700; font-size: 1.1rem; } .sem-lbl { font-size: 0.6rem; font-weight: 700; }
+        .narrative-box { background: #fff; border-radius: 12px; border-left: 5px solid #2563eb; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; }
+        .narrative-title { font-weight: 800; color: #1e3a8a; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .narrative-text { font-size: 1rem; line-height: 1.7; color: #334155; }
+        .highlight { font-weight: 700; color: #1e40af; background: rgba(37,99,235,0.1); padding: 2px 6px; border-radius: 4px; }
+        .bad-trend { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; padding: 0 4px; border-radius: 4px; }
+        .good-trend { color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0 4px; border-radius: 4px; }
+        .query-box { background: linear-gradient(to right, #ffffff, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+        .query-result { margin-top: 15px; padding: 15px; background: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6; color: #1e3a8a; font-weight: 500; display: none; }
+        .chart-container { position: relative; margin: auto; height: 280px; width: 100%; }
+        .chart-container-large { position: relative; margin: auto; height: 380px; width: 100%; }
+        .info-note { font-size: 0.75rem; color: #64748b; background-color: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; line-height: 1.4; border-left: 3px solid #94a3b8; }
     </style>
 </head>
 <body>
 
-    <!-- Botón para volver al Centro de Reportes -->
-    <a href="centro_reportes.html" class="back-button" title="Volver al Centro de Reportes">
-        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="w-full h-full object-contain">
-    </a>
+    <nav class="navbar navbar-expand-lg border-bottom py-3 mb-4">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                📊 Dashboard Seguimiento <span class="ms-2">ETOP 2025</span>
+            </a>
+        </div>
+    </nav>
 
-    <div class="main-container">
+    <div class="container-fluid px-4">
         
-        <header class="header-card">
-             <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-4">
-                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="h-20 w-20 object-contain">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-wide uppercase">Resumen Seguimiento Tutorial 2025</h1>
-                    <p class="text-yellow-400 text-lg mt-1 font-medium">Análisis de Gestión y Observaciones del Equipo ETOP</p>
+        <div class="row">
+            <div class="col-12">
+                <div class="compact-upload-bar" id="dropZone">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="font-size: 1.5rem;">📂</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Cargar Datos (Excel)</h6>
+                            <small class="text-muted" id="fileInfo">Arrastra tu archivo aquí</small>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
+                        <button class="btn btn-primary px-4 fw-semibold" id="btnSeleccionar">Subir Archivo</button>
+                    </div>
                 </div>
-                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="Logo Unab" class="h-20 w-auto object-contain">
             </div>
-        </header>
+        </div>
+        
+        <div class="row mb-4">
+             <div class="col-md-6">
+                 <label class="small fw-bold text-muted text-uppercase mb-2">Filtrar Facultad</label>
+                 <select id="filtroFacultad" class="form-select border-0 shadow-sm"><option value="Todos">Todas las Facultades</option></select>
+             </div>
+             <div class="col-md-6">
+                 <label class="small fw-bold text-muted text-uppercase mb-2">Filtrar Tutor</label>
+                 <select id="filtroTutor" class="form-select border-0 shadow-sm"><option value="Todos">Todos los Tutores</option></select>
+             </div>
+        </div>
 
-        <!-- Contenedores para los gráficos Plotly -->
-        <section class="chart-card">
-            <h2 class="chart-title">Porcentaje de Filas con Observaciones por Tutor</h2>
-            <div id="05da2dd6-bc15-460d-9a2b-805c9cd51499" style="height:650px; width:100%;"></div>
-        </section>
+        <div class="row mb-4 g-3 row-cols-1 row-cols-md-2 row-cols-xl-6">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="metric-badge">VOLUMEN</span>
+                        <div class="kpi-label">Atenciones Totales</div>
+                        <div class="kpi-value" id="kpiTotalFilas">0</div>
+                        <div class="kpi-sub">Registros procesados</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-start border-4 border-primary">
+                    <div class="card-body">
+                        <span class="metric-badge primary">ALCANCE</span>
+                        <div class="kpi-label text-primary">Estudiantes Únicos</div>
+                        <div class="kpi-value text-primary" id="kpiTotalUnicos">0</div>
+                        <div class="kpi-sub">RUTs distintos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2"><span class="metric-badge mb-0">RIESGO</span></div>
+                        <div class="semaforo-grid">
+                            <div class="sem-box bg-verde"><div class="sem-val" id="semVerde">0</div><div class="sem-lbl">VERDE</div></div>
+                            <div class="sem-box bg-amarillo"><div class="sem-val" id="semAmarillo">0</div><div class="sem-lbl">AMARILLO</div></div>
+                            <div class="sem-box bg-rojo"><div class="sem-val" id="semRojo">0</div><div class="sem-lbl">ROJO</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="col">
+                <div class="card h-100">
+                     <div class="card-body">
+                        <span class="metric-badge">ESTADO</span>
+                        <div class="kpi-label">Activos</div>
+                        <div class="kpi-value text-success" id="kpiActivos">0</div>
+                         <div class="kpi-sub" id="kpiActivosSub">0% del padrón</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                     <div class="card-body">
+                        <span class="metric-badge" style="background:#fef2f2; color:#b91c1c;">BAJA ACADÉMICA</span>
+                        <div class="kpi-label">Deserción</div>
+                        <div class="kpi-value text-danger" id="kpiDesercion">0</div>
+                         <div class="kpi-sub" id="kpiDesercionSub">0% tasa de baja</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="metric-badge">GESTIÓN</span>
+                        <div class="kpi-label">Con Observación</div>
+                        <div class="kpi-value text-info" id="kpiObservaciones">0</div>
+                        <div class="kpi-sub" id="kpiObsPorcentaje">0% documentado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <section class="chart-card">
-            <h2 class="chart-title">Comparativo: Total Filas vs Observaciones</h2>
-            <div id="2611773f-70cd-47d3-8707-54f2d1a27e67" style="height:650px; width:100%;"></div>
-        </section>
+        <div class="row">
+            <div class="col-12">
+                <div class="narrative-box" id="narrativeContainer" style="display: none;">
+                    <div class="narrative-title">💡 Análisis Ejecutivo de Desempeño</div>
+                    <div class="narrative-text" id="narrativeText"></div>
+                </div>
+            </div>
+        </div>
 
-        <section class="chart-card">
-            <h2 class="chart-title">Análisis de Estudiantes: SI vs NO Ingreso</h2>
-            <div id="75215f8a-9aa3-4740-8d8d-e0fc4159cdbb" style="height:650px; width:100%;"></div>
-        </section>
+        <div class="row">
+            <div class="col-12">
+                <div class="query-box">
+                    <div class="d-flex align-items-center mb-3">
+                        <span style="font-size: 1.5rem; margin-right: 10px;">🔎</span>
+                        <h6 class="mb-0 fw-bold text-dark">Asistente de Consultas</h6>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <select id="querySelect" class="form-select">
+                                <option value="" selected disabled>Selecciona una pregunta...</option>
+                                <option value="q_facultad_obs">1. ¿Qué Facultad tiene más registros con Observaciones?</option>
+                                <option value="q_estudiante_riesgo">2. ¿Qué estudiantes tienen mayor riesgo (Rojo + Sin Ingreso)?</option>
+                                <option value="q_tutor_rojo">3. ¿Qué Tutor tiene la mayor tasa de estudiantes en Rojo?</option>
+                                <option value="q_top_problema">4. ¿Cuál es la categoría de problema más común?</option>
+                                <option value="q_sin_ingreso">5. ¿Cuántos estudiantes aparecen explícitamente como "NO" Ingresa?</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100" onclick="runQuery()">Consultar</button>
+                        </div>
+                    </div>
+                    <div id="queryResult" class="query-result"></div>
+                </div>
+            </div>
+        </div>
 
-        <section class="chart-card">
-            <h2 class="chart-title">Vista General de Desempeño (Scatter Plot)</h2>
-            <div id="95ebecce-139d-465c-85c2-4255d3802b71" style="height:750px; width:100%;"></div>
-        </section>
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <div>Distribución de Estados</div>
+                        <span class="metric-badge primary">POR ESTUDIANTE ÚNICO</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="chartEstados"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <div>Carga Operativa por Estado</div>
+                        <span class="metric-badge" style="background:#e2e8f0; color:#475569;">POR TOTAL FILAS</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="chartEstadosFilas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <footer class="text-center text-slate-400 mt-8 pb-12">
-            <p><strong>Dashboard Interactivo</strong> | Datos consolidados del archivo de origen 2025</p>
-        </footer>
+        <div class="row mb-4">
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Clasificación de Observaciones
+                        <span class="metric-badge ms-2" style="background:#f1f5f9; cursor:help;" title="Pasa el mouse por las barras para ver la descripción">ℹ️ Info</span>
+                    </div>
+                    <div class="card-body"><div class="chart-container"><canvas id="chartTemas"></canvas></div></div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>Detalle "Sin Seguimiento"</div>
+                        <span class="metric-badge primary">FILAS</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-note">
+                            <b>Fuente de datos:</b> Esta información proviene de los cursos que son final de programa como Proyectos de grados, tesis, tesinas y otros que no tienen seguimiento tutorial, y de los cursos SEMIPRESENCIALES registrados.
+                        </div>
+                        <div class="chart-container" style="height: 220px;">
+                            <canvas id="chartSinSeguimiento"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">Riesgo por Facultad</div>
+                    <div class="card-body"><div class="chart-container"><canvas id="chartFacultad"></canvas></div></div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">Efectividad: Banner vs. Ingreso Real</div>
+                    <div class="card-body"><div class="chart-container"><canvas id="chartComparativo"></canvas></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-header">Ranking de Gestión: Carga vs. Detalle</div>
+                    <div class="card-body"><div class="chart-container-large"><canvas id="chartTutorObs"></canvas></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+             <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-header">Cobertura Banner vs Canvas</div>
+                    <div class="card-body"><div class="chart-container-large"><canvas id="chartPlataformas"></canvas></div></div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-    <script type="text/javascript">
-        window.PLOTLYENV = window.PLOTLYENV || {};
+    <script>
+        // CONFIGURACIÓN GLOBAL
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.scale.grid.color = '#f1f5f9';
         
-        // Estilo visual del gráfico adaptado al modo oscuro del portal
-        // Aumentamos el margen inferior (b: 200) y activamos automargin
-        const darkStyle = {
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            font: { color: '#cbd5e1', family: 'Inter, sans-serif' },
-            xaxis: { 
-                gridcolor: '#334155', 
-                linecolor: '#475569', 
-                zerolinecolor: '#475569', 
-                tickangle: -45,
-                automargin: true 
-            },
-            yaxis: { 
-                gridcolor: '#334155', 
-                linecolor: '#475569', 
-                zerolinecolor: '#475569',
-                automargin: true
-            },
-            legend: { font: { color: '#cbd5e1' } },
-            margin: { t: 50, b: 200, l: 80, r: 40 }
+        let charts = {};
+        let rawData = [];
+        let globalFilteredData = [];
+        let globalMetrics = { totalRows: 0, avgRowsPerTutor: 0, avgRiskRate: 0 };
+
+        const categoryDescriptions = {
+            "Solicitudes y Retiros (Crítico)": "Estudiantes que formalizan su salida, cambios de programa o solicitudes administrativas graves.",
+            "Pendientes Académicos": "Alumnos con evaluaciones no entregadas, deudas de notas o tareas pendientes.",
+            "Seguimiento: No Participación/Ingreso": "Acciones tutoriales de seguimiento por no participación o no ingreso a la plataforma.",
+            "Soporte Técnico/Acceso": "Problemas reportados de claves, ingreso a Canvas/Banner o errores de plataforma.",
+            "Contacto Fallido": "Intentos de comunicación sin respuesta (teléfono, buzón de voz, mail rebotado).",
+            "Gestión Rutinaria (Correo/Bienvenida)": "Envío de correos masivos, bienvenidas estándar o recordatorios genéricos.",
+            "Otros Temas": "Observaciones que no clasifican en los patrones anteriores."
         };
 
-        const tutores = ["MARTA GONZALEZ","HANS NOVAKOVIC","KIMBERLY JORQUERA","CONSTANZA CONTRERAS","FRANCISCA INDA","BARBARA ROJAS","NOEMI PAZ","JAVIERA ROJAS","MARIA FERNANDA GONZALEZ","PAULA PARDO","CONSUELO PARGA","ALYSON HERNANDEZ","ALVARO ORELLANA","DANITZA JANSEN","SYLVIA VALENZUELA","CATALINA FIERRO","CARLA PEÑA","MARCEL MEDINA","JAVIER SANCHEZ","SEBASTIAN TAPIA"];
-        
-        // Gráfico 1: Barras de Porcentaje
-        if (document.getElementById("05da2dd6-bc15-460d-9a2b-805c9cd51499")) {
-            const data1 = [{"hovertemplate":"Tutor\u002fa=%{x}\u003cbr\u003e% Observaciones=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"Q7U5s7ELBkBpD+eJFDQlQA3SIA3SIBlAA9kH86YBJEDsXrpiAdQxQIpDJ+2DZDZA1T9m\u002fk6nMUChpIh2EHQTQAfF2ihkUBxAlA6B2N7xGkBKw\u002f8drXQYQDxbvR5TzjVAUx1iA58x\u002fD+14H4lDEwgQJl4P3KarxtA0V\u002fLvsrlGEAUCaKf1iQiQKqqqqqqqiBAcRzHcRzHAUAAAAAAAAAAAA=="},"coloraxis":"coloraxis"},"name":"","orientation":"v","showlegend":false,"text":{"dtype":"f8","bdata":"Q7U5s7ELBkBpD+eJFDQlQA3SIA3SIBlAA9kH86YBJEDsXrpiAdQxQIpDJ+2DZDZA1T9m\u002fk6nMUChpIh2EHQTQAfF2ihkUBxAlA6B2N7xGkBKw\u002f8drXQYQDxbvR5TzjVAUx1iA58x\u002fD+14H4lDEwgQJl4P3KarxtA0V\u002fLvsrlGEAUCaKf1iQiQKqqqqqqqiBAcRzHcRzHAUAAAAAAAAAAAA=="},"textposition":"outside","x":tutores,"y":{"dtype":"f8","bdata":"Q7U5s7ELBkBpD+eJFDQlQA3SIA3SIBlAA9kH86YBJEDsXrpiAdQxQIpDJ+2DZDZA1T9m\u002fk6nMUChpIh2EHQTQAfF2ihkUBxAlA6B2N7xGkBKw\u002f8drXQYQDxbvR5TzjVAUx1iA58x\u002fD+14H4lDEwgQJl4P3KarxtA0V\u002fLvsrlGEAUCaKf1iQiQKqqqqqqqiBAcRzHcRzHAUAAAAAAAAAAAA=="},"type":"bar","texttemplate":"%{text:.2f}%"}];
-            const layout1 = {...darkStyle, title: { text: "Porcentaje de Observaciones", font: { color: '#facc15' } }, coloraxis: { colorbar: { title: { text: "%" } }, colorscale: [[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]] } };
-            Plotly.newPlot("05da2dd6-bc15-460d-9a2b-805c9cd51499", data1, layout1, {responsive: true});
+        function categorizeObservation(text) {
+            if (!text || typeof text !== 'string') return "Sin Información";
+            const t = text.toLowerCase();
+            if (t.includes("retiro") || t.includes("baja") || t.includes("reintegro") || t.includes("cambio de programa") || t.includes("no cursará") || t.includes("solicitud") || (t.includes("caso") && t.includes("ingresa"))) return "Solicitudes y Retiros (Crítico)";
+            if (t.includes("pendiente") || t.includes("entrega") || t.includes("sumativa") || t.includes("deuda") || t.includes("evaluacion") || t.includes("desafio") || t.includes("nota")) return "Pendientes Académicos";
+            if (t.includes("sesión") || t.includes("sesion") || t.includes("sincrónica") || t.includes("asistencia") || t.includes("participación")) return "Seguimiento: No Participación/Ingreso";
+            if (t.includes("acceso") || t.includes("clave") || t.includes("contraseña") || t.includes("plataforma") || t.includes("canvas") || t.includes("banner") || t.includes("ingresa") || t.includes("ingreso")) return "Soporte Técnico/Acceso";
+            if (t.includes("no contesta") || t.includes("sin respuesta") || t.includes("intenta contactar") || t.includes("buzón") || t.includes("buzon")) return "Contacto Fallido";
+            if (t.includes("correo") || t.includes("envía") || t.includes("envio") || t.includes("bienvenida") || t.includes("invitación") || t.includes("recordatorio") || t.includes("inducción") || t.includes("inicio")) return "Gestión Rutinaria (Correo/Bienvenida)";
+            return "Otros Temas";
         }
 
-        // Gráfico 2: Total vs Observaciones
-        if (document.getElementById("2611773f-70cd-47d3-8707-54f2d1a27e67")) {
-            const data2 = [
-                {"name":"Total_Filas","x":tutores,"y":{"dtype":"i2","bdata":"vA9FDDAMGwyMC3YLnwq4CRsJ\u002fQhvCCII+weTB5AHxQS\u002fA0gALQASAA=="},"type":"bar","marker":{"color":"#636efa"}},
-                {"name":"Filas_Con_Observaciones","x":tutores,"y":{"dtype":"i2","bdata":"bwBNAcQANgEPApEC4AF5AKUAmwCEAMYBJACeAIYATABXAAYAAQAAAA=="},"type":"bar","marker":{"color":"#EF553B"}}
-            ];
-            const layout2 = {...darkStyle, barmode: "group", title: { text: "Carga de Trabajo vs Gestión", font: { color: '#facc15' } } };
-            Plotly.newPlot("2611773f-70cd-47d3-8707-54f2d1a27e67", data2, layout2, {responsive: true});
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const btnSeleccionar = document.getElementById('btnSeleccionar');
+
+        btnSeleccionar.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#2563eb'; dropZone.style.backgroundColor = '#eff6ff'; });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = '#cbd5e1'; dropZone.style.backgroundColor = '#fff'; });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]); });
+        function handleFileSelect(e) { if (e.target.files.length) processFile(e.target.files[0]); }
+
+        function processFile(file) {
+            document.getElementById('fileInfo').innerText = "Analizando...";
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                rawData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
+                calculateGlobalBenchmarks(rawData);
+                populateFilters(rawData);
+                analyzeData(rawData);
+                document.getElementById('fileInfo').innerText = `✅ ${file.name} (${rawData.length.toLocaleString()} filas)`;
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        // Gráfico 3: SI vs NO Ingreso
-        if (document.getElementById("75215f8a-9aa3-4740-8d8d-e0fc4159cdbb")) {
-            const data3 = [
-                {"name":"Estudiantes_SI","x":tutores,"y":{"dtype":"i2","bdata":"4A09CmYJ6QnlCPIJ1AcVCYMHdgh7B7EG\u002fAXrBScGIgSAAz8AKAAAAA=="},"type":"bar","marker":{"color":"#00cc96"}},
-                {"name":"Estudiantes_NO","x":tutores,"y":{"dtype":"i2","bdata":"igDHAJoAPgCsAJMABwFCAGQAOAChAKUAvgCOAIoANQAtAAkABQAAAA=="},"type":"bar","marker":{"color":"#ab63fa"}}
-            ];
-            const layout3 = {...darkStyle, barmode: "group", title: { text: "Efectividad de Ingresos", font: { color: '#facc15' } } };
-            Plotly.newPlot("75215f8a-9aa3-4740-8d8d-e0fc4159cdbb", data3, layout3, {responsive: true});
+        function parseDate(val) {
+            if (!val) return null;
+            if (typeof val === 'number') return new Date((val - (25567 + 2)) * 86400 * 1000);
+            if (typeof val === 'string' && val.includes('/')) { const parts = val.split('/'); return new Date(parts[2], parts[1]-1, parts[0]); }
+            return new Date(val);
         }
 
-        // Gráfico 4: Scatter Plot (Vista General)
-        if (document.getElementById("95ebecce-139d-465c-85c2-4255d3802b71")) {
-            const data4 = [{"customdata":{"dtype":"f8","bdata":"AAAAAADAW0AAAAAAAMCrQAAAAAAAQGFAQ7U5s7ELBkAAAAAAANB0QAAAAAAAeqRAAAAAAADgaEBpD+eJFDQlQAAAAAAAgGhAAAAAAADMokAAAAAAAEBjQA3SIA3SIBlAAAAAAABgc0AAAAAAANKjQAAAAAAAAE9AA9kH86YBJEAAAAAAAHiAQAAAAAAAyqFAAAAAAACAZUDsXrpiAdQxQAAAAAAAiIRAAAAAAADko0AAAAAAAGBiQIpDJ+2DZDZAAAAAAAAAfkAAAAAAAFCfQAAAAAAAcHBA1T9m\u002fk6nMUAAAAAAAEBeQAAAAAAAKqJAAAAAAACAUEChpIh2EHQTQAAAAAAAoGRAAAAAAAAMnkAAAAAAAABZQAfF2ihkUBxAAAAAAABgY0AAAAAAAOygQAAAAAAAAExAlA6B2N7xGkAAAAAAAIBgQAAAAAAA7J1AAAAAAAAgZEBKw\u002f8drXQYQAAAAAAAYHxAAAAAAADEmkAAAAAAAKBkQDxbvR5TzjVAAAAAAAAAQkAAAAAAAPCXQAAAAAAAwGdAUx1iA58x\u002fD8AAAAAAMBjQAAAAAAArJdAAAAAAADAYUC14H4lDEwgQAAAAAAAwGBAAAAAAACcmEAAAAAAAEBhQJl4P3KarxtAAAAAAAAAU0AAAAAAAIiQQAAAAAAAgEpA0V\u002fLvsrlGEAAAAAAAMBVQAAAAAAAAIxAAAAAAACARkAUCaKf1iQiQAAAAAAAABhAAAAAAACAT0AAAAAAAAAiQKqqqqqqqiBAAAAAAAAA8D8AAAAAAABEQAAAAAAAABRAcRzHcRzHAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==","shape":"20, 4"},"hovertemplate":"NOMBRE TUTOR=%{x}\u003cbr\u003eTotal_Filas=%{y}\u003cbr\u003ePorcentaje_Observaciones=%{customdata[3]}\u003cbr\u003eFilas_Con_Observaciones=%{customdata[0]}\u003cbr\u003eEstudiantes_SI=%{customdata[1]}\u003cbr\u003eEstudiantes_NO=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#facc15","size":{"dtype":"f8","bdata":"Q7U5s7ELBkBpD+eJFDQlQA3SIA3SIBlAA9kH86YBJEDsXrpiAdQxQIpDJ+2DZDZA1T9m\u002fk6nMUChpIh2EHQTQAfF2ihkUBxAlA6B2N7xGkBKw\u002f8drXQYQDxbvR5TzjVAUx1iA58x\u002fD+14H4lDEwgQJl4P3KarxtA0V\u002fLvsrlGEAUCaKf1iQiQKqqqqqqqiBAcRzHcRzHAUAAAAAAAAAAAA=="},"sizemode":"area","sizeref":0.05598},"mode":"markers","x":tutores,"y":{"dtype":"i2","bdata":"vA9FDDAMGwyMC3YLnwq4CRsJ\u002fQhvCCII+weTB5AHxQS\u002fA0gALQASAA=="},"type":"scatter"}];
-            const layout4 = {...darkStyle, title: { text: "Mapa General de Desempeño", font: { color: '#facc15' } } };
-            Plotly.newPlot("95ebecce-139d-465c-85c2-4255d3802b71", data4, layout4, {responsive: true});
+        function calculateGlobalBenchmarks(data) {
+            const tutorLoad = {}; let totalRed = 0;
+            data.forEach(row => {
+                const tutor = row['NOMBRE TUTOR'] || "Sin Asignar";
+                if (!tutorLoad[tutor]) tutorLoad[tutor] = 0;
+                tutorLoad[tutor]++;
+                if ((row['SEMAFORO'] || "").toUpperCase() === 'ROJO') totalRed++;
+            });
+            const tutors = Object.keys(tutorLoad).filter(t => t !== "Sin Asignar");
+            globalMetrics.totalRows = data.length;
+            globalMetrics.avgRowsPerTutor = data.length / (tutors.length || 1);
+            globalMetrics.avgRiskRate = (totalRed / data.length) * 100;
+        }
+
+        function populateFilters(data) {
+             const facs = new Set(), tuts = new Set();
+             data.forEach(row => { if(row['FACULTAD']) facs.add(row['FACULTAD']); if(row['NOMBRE TUTOR']) tuts.add(row['NOMBRE TUTOR']); });
+             const selFac = document.getElementById('filtroFacultad');
+             const selTut = document.getElementById('filtroTutor');
+             selFac.innerHTML = '<option value="Todos">Todas las Facultades</option>';
+             selTut.innerHTML = '<option value="Todos">Todos los Tutores</option>';
+             Array.from(facs).sort().forEach(f => selFac.add(new Option(f, f)));
+             Array.from(tuts).sort().forEach(t => selTut.add(new Option(t, t)));
+        }
+
+        function applyFilters() {
+            const fac = document.getElementById('filtroFacultad').value;
+            const tut = document.getElementById('filtroTutor').value;
+            const filtered = rawData.filter(row => (fac === 'Todos' || row['FACULTAD'] === fac) && (tut === 'Todos' || row['NOMBRE TUTOR'] === tut));
+            analyzeData(filtered, tut);
+        }
+
+        document.getElementById('filtroFacultad').addEventListener('change', applyFilters);
+        document.getElementById('filtroTutor').addEventListener('change', applyFilters);
+
+        function runQuery() {
+            if(globalFilteredData.length === 0) { if (rawData.length > 0) analyzeData(rawData); else { alert("Primero carga un archivo."); return; } }
+            const dataToQuery = globalFilteredData;
+            const query = document.getElementById('querySelect').value;
+            const resultBox = document.getElementById('queryResult');
+            let resultText = "";
+
+            if (query === "q_facultad_obs") {
+                const counts = {};
+                dataToQuery.forEach(r => { if(r['Observaciones']) { const fac = r['FACULTAD'] || "Sin Facultad"; counts[fac] = (counts[fac] || 0) + 1; } });
+                const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+                resultText = `La Facultad con más observaciones es <b>${sorted[0][0]}</b> con ${sorted[0][1]} anotaciones.`;
+            } 
+            else if (query === "q_estudiante_riesgo") {
+                const students = {};
+                dataToQuery.forEach(r => {
+                    const rut = r['RUT']; if (!rut) return;
+                    if (!students[rut]) students[rut] = { name: r['NOMBRE ALUMNO'] || rut, risk: 0 };
+                    if ((r['SEMAFORO']||"").toUpperCase() === 'ROJO') students[rut].risk += 2;
+                    if ((r['INGRESA_CURSO']||"").toUpperCase() === 'NO') students[rut].risk += 1;
+                });
+                const topRisk = Object.values(students).sort((a,b) => b.risk - a.risk).slice(0, 3);
+                resultText = `Top 3 Estudiantes en Riesgo (Rojo + NO Ingreso): <br> 1. ${topRisk[0]?.name || "N/A"} <br> 2. ${topRisk[1]?.name || "N/A"} <br> 3. ${topRisk[2]?.name || "N/A"}`;
+            }
+            else if (query === "q_tutor_rojo") {
+                const counts = {};
+                dataToQuery.forEach(r => { if ((r['SEMAFORO']||"").toUpperCase() === 'ROJO') { const t = r['NOMBRE TUTOR'] || "Sin Asignar"; counts[t] = (counts[t] || 0) + 1; } });
+                const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+                resultText = `El tutor con mayor cantidad de estudiantes en semáforo ROJO es <b>${sorted[0][0]}</b> (${sorted[0][1]} casos).`;
+            }
+            else if (query === "q_top_problema") {
+                const counts = {};
+                dataToQuery.forEach(r => { if(r['Observaciones']) { const cat = categorizeObservation(String(r['Observaciones'])); counts[cat] = (counts[cat] || 0) + 1; } });
+                const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+                resultText = `El tipo de problema más reportado es: <b>${sorted[0][0]}</b> (${sorted[0][1]} registros).`;
+            }
+            else if (query === "q_sin_ingreso") {
+                let count = 0;
+                dataToQuery.forEach(r => { if ((r['INGRESA_CURSO']||"").toUpperCase() === 'NO') count++; });
+                resultText = `Total de estudiantes que aparecen explícitamente como "NO" Ingresa: <b>${count}</b>.`;
+            }
+            resultBox.style.display = 'block'; resultBox.innerHTML = resultText;
+        }
+
+        function generateNarrative(data, tutorName, metrics, topCategory) {
+            const container = document.getElementById('narrativeContainer');
+            const textBox = document.getElementById('narrativeText');
+            if (!tutorName || tutorName === "Todos") { container.style.display = 'none'; return; }
+            container.style.display = 'block';
+
+            const diffVol = metrics.totalFilas - globalMetrics.avgRowsPerTutor;
+            const pctVol = Math.abs((diffVol / globalMetrics.avgRowsPerTutor) * 100).toFixed(0);
+            const volText = diffVol > 0 ? `un volumen <span class="highlight">${pctVol}% superior</span> al promedio` : `una carga <span class="highlight">${pctVol}% menor</span> al promedio`;
+            const myRiskRate = (metrics.semRojo / metrics.totalFilas) * 100;
+            const riskText = myRiskRate < globalMetrics.avgRiskRate 
+                ? `tasa de riesgo controlada del <b>${myRiskRate.toFixed(1)}%</b> (Bajo promedio)` 
+                : `tasa de riesgo del <span class="bad-trend">${myRiskRate.toFixed(1)}%</span> (Sobre promedio)`;
+
+            let catText = "";
+            if (topCategory.includes("Rutina")) catText = "La gestión se concentra en <b>Bienvenida y Difusión</b>";
+            else if (topCategory.includes("Solicitudes")) catText = "⚠️ Atención: El foco principal han sido <b>Solicitudes Administrativas y Retiros</b>";
+            else if (topCategory.includes("Pendientes")) catText = "⚠️ El tutor se ha enfocado en regularizar <b>Pendientes Académicos</b>";
+            else catText = `El foco principal de gestión ha sido: <b>${topCategory}</b>`;
+
+            textBox.innerHTML = `
+                <div style="margin-bottom: 12px;">El tutor <b>${tutorName}</b> gestionó ${volText} (${metrics.totalUnicos} estudiantes). ${riskText}.</div>
+                <div style="margin-bottom: 12px; border-left: 4px solid #3b82f6; padding-left: 12px;">📊 <b>Enfoque de Gestión:</b> ${catText}.</div>
+                <div>💻 <b>Digital:</b> ${metrics.ingresaNO} estudiantes matriculados aparecen como "NO" Ingreso.</div>
+            `;
+        }
+
+        function analyzeData(data, selectedTutor = "Todos") {
+            const startDate = new Date(2025, 0, 1);
+            const endDate = new Date(2025, 11, 22);
+            
+            const filtered = data.filter(row => {
+                const f = parseDate(row['FECHA_INICIO'] || row['FECHA_INICIO**'] || row['Fecha Inicio']);
+                return f && f >= startDate && f <= endDate;
+            });
+            globalFilteredData = filtered; 
+
+            let metrics = { totalFilas: filtered.length, totalUnicos: 0, semVerde:0, semAmarillo:0, semRojo:0, obsCount:0, bannerSI:0, canvasSI:0, ingresaNO:0 };
+            const uniqueRuts = new Set(), temasCount = {}, facStats = {}, tutStats = {}, estadoPorRut = {};
+
+            let ssRows = 0, ssSemiRows = 0;
+
+            filtered.forEach(row => {
+                const rut = String(row['RUT']||"").trim();
+                if(rut) uniqueRuts.add(rut);
+                const sem = (row['SEMAFORO'] || "").toUpperCase();
+                if(sem==='VERDE') metrics.semVerde++; else if(sem==='AMARILLO') metrics.semAmarillo++; else if(sem==='ROJO') metrics.semRojo++;
+                
+                if((row['BANNER']||"").toUpperCase()==='SI') metrics.bannerSI++;
+                if((row['CANVAS']||"").toUpperCase()==='SI') metrics.canvasSI++;
+                if((row['INGRESA_CURSO']||"").toUpperCase()==='NO') metrics.ingresaNO++;
+
+                const ingresa = (row['INGRESA_CURSO']||"").trim().toUpperCase();
+                if(ingresa === "SIN SEGUIMIENTO") ssRows++;
+                if(ingresa.includes("SEMIPRES") || ingresa.includes("SEMI PRES")) ssSemiRows++;
+
+                const obs = row['Observaciones'];
+                const hasObs = (obs && String(obs).trim().length > 0);
+                if(hasObs) {
+                    metrics.obsCount++;
+                    const cat = categorizeObservation(String(obs));
+                    temasCount[cat] = (temasCount[cat] || 0) + 1;
+                }
+                
+                const tutor = row['NOMBRE TUTOR'] || "Sin Asignar";
+                if(!tutStats[tutor]) tutStats[tutor] = { total:0, withObs:0 };
+                tutStats[tutor].total++;
+                if(hasObs) tutStats[tutor].withObs++;
+
+                const fac = row['FACULTAD'] || "Sin Facultad";
+                const est = (row['ESTADO_EST.']||"").toUpperCase();
+                if(!facStats[fac]) facStats[fac] = { total:0, desercion:0 };
+                facStats[fac].total++;
+                if(est !== 'ACTIVO') facStats[fac].desercion++;
+
+                if(rut && !estadoPorRut[rut]) estadoPorRut[rut] = est;
+            });
+
+            metrics.totalUnicos = uniqueRuts.size;
+            const topCat = Object.entries(temasCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || "Sin Datos";
+
+            // DOM Updates
+            document.getElementById('kpiTotalFilas').innerText = metrics.totalFilas.toLocaleString();
+            document.getElementById('kpiTotalUnicos').innerText = metrics.totalUnicos.toLocaleString();
+            document.getElementById('semVerde').innerText = metrics.semVerde.toLocaleString();
+            document.getElementById('semAmarillo').innerText = metrics.semAmarillo.toLocaleString();
+            document.getElementById('semRojo').innerText = metrics.semRojo.toLocaleString();
+            document.getElementById('kpiObservaciones').innerText = metrics.obsCount.toLocaleString();
+            document.getElementById('kpiObsPorcentaje').innerText = metrics.totalFilas > 0 ? ((metrics.obsCount/metrics.totalFilas)*100).toFixed(0)+"%" : "0%";
+            
+            // --- KPI ACTIVOS VS DESERCIÓN CON PORCENTAJES ---
+            let actCount = 0; 
+            let desercionCount = 0;
+            Object.values(estadoPorRut).forEach(e => {
+                if (e === 'ACTIVO') actCount++; 
+                else desercionCount++;
+            });
+
+            // Cálculo de porcentajes sobre Estudiantes Únicos
+            let pctActivos = metrics.totalUnicos > 0 ? ((actCount / metrics.totalUnicos) * 100).toFixed(1) + "%" : "0%";
+            let pctDesercion = metrics.totalUnicos > 0 ? ((desercionCount / metrics.totalUnicos) * 100).toFixed(1) + "%" : "0%";
+
+            document.getElementById('kpiActivos').innerText = actCount.toLocaleString();
+            document.getElementById('kpiActivosSub').innerText = `${pctActivos} del total único`;
+
+            document.getElementById('kpiDesercion').innerText = desercionCount.toLocaleString();
+            document.getElementById('kpiDesercionSub').innerText = `${pctDesercion} tasa de baja`;
+
+            generateNarrative(filtered, selectedTutor, metrics, topCat);
+
+            // --- GRÁFICOS ---
+            
+            // 1. ESTADOS ÚNICOS
+            const estCountUnique = {}; 
+            Object.values(estadoPorRut).forEach(e => estCountUnique[e] = (estCountUnique[e]||0)+1);
+            renderChart('chartEstados', 'bar', Object.keys(estCountUnique), Object.values(estCountUnique), ['#6366f1'], null, true);
+
+            // 2. ESTADOS FILAS
+            const estCountRows = {};
+            filtered.forEach(row => {
+                const est = (row['ESTADO_EST.'] || "SIN ESTADO").toUpperCase();
+                estCountRows[est] = (estCountRows[est] || 0) + 1;
+            });
+            const sortedRowKeys = Object.keys(estCountRows).sort();
+            renderChart('chartEstadosFilas', 'bar', sortedRowKeys, sortedRowKeys.map(k=>estCountRows[k]), ['#64748b'], null, true);
+
+            // Resto de Gráficos
+            const sortedTemas = Object.entries(temasCount).sort((a,b)=>b[1]-a[1]);
+            renderChart('chartTemas', 'bar', sortedTemas.map(t=>t[0]), sortedTemas.map(t=>t[1]), ['#f59e0b'], null, true);
+
+            const ingSI = metrics.totalFilas - metrics.ingresaNO;
+            renderChart('chartComparativo', 'bar', ['En Banner', 'Ingresó (SI)', 'No Ingresó (NO)'], [metrics.bannerSI, ingSI, metrics.ingresaNO], ['#10b981', '#3b82f6', '#ef4444']);
+
+            const sortedFac = Object.keys(facStats).sort((a,b)=>facStats[b].total-facStats[a].total);
+            renderChart('chartFacultad', 'bar', sortedFac, sortedFac.map(f=>facStats[f].total), ['#3b82f6'], sortedFac.map(f=>facStats[f].desercion));
+
+            renderChart('chartSinSeguimiento', 'bar', 
+                ['Total General 2025', 'Sin Seguimiento', 'Sin Seg. Semipresencial'], 
+                [metrics.totalFilas, ssRows, ssSemiRows], 
+                ['#94a3b8', '#3b82f6', '#8b5cf6'],
+                null 
+            );
+
+            const sortedTut = Object.keys(tutStats).sort((a,b)=>tutStats[b].total-tutStats[a].total);
+            renderChart('chartTutorObs', 'bar', sortedTut, sortedTut.map(t=>tutStats[t].total), ['#94a3b8'], sortedTut.map(t=>tutStats[t].withObs), false);
+            renderChart('chartPlataformas', 'bar', ['Banner', 'Canvas'], [metrics.bannerSI, metrics.canvasSI], ['#3b82f6', '#8b5cf6'], [metrics.totalFilas-metrics.bannerSI, metrics.totalFilas-metrics.canvasSI]);
+        }
+
+        function renderChart(id, type, labels, d1, c1, d2, horiz) {
+            const ctx = document.getElementById(id).getContext('2d');
+            if(charts[id]) charts[id].destroy();
+            
+            const datasets = [{ label: 'Cantidad', data: d1, backgroundColor: c1, borderRadius: 4 }];
+            
+            if(d2) {
+                let label2 = 'Deserción/Riesgo'; 
+                let color2 = '#ef4444';
+                if (id === 'chartPlataformas') { label2 = 'NoCANVAS/Inactivos'; color2 = '#cbd5e1'; }
+                if (id === 'chartTutorObs') { label2 = 'Con Observaciones'; color2 = '#2563eb'; }
+                
+                datasets.push({ label: label2, data: d2, backgroundColor: color2, borderRadius: 4 });
+            }
+
+            const opts = {
+                indexAxis: horiz?'y':'x', responsive:true, maintainAspectRatio:false,
+                plugins: { 
+                    legend: { display: !!d2, position:'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                if (id === 'chartTemas') {
+                                    const label = context[0].label;
+                                    return categoryDescriptions[label] ? '\n' + categoryDescriptions[label] : '';
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: { x: { grid:{display:false} }, y: { beginAtZero:true } },
+                layout: { padding: { right: (id.includes('chartEstados') || id === 'chartTemas') ? 40 : 0 } }
+            };
+
+            const dataLabels = {
+                id: 'lbls',
+                afterDatasetsDraw(chart) {
+                    if(!id.includes('chartEstados') && id!=='chartTemas' && id!=='chartSinSeguimiento') return;
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    chart.data.datasets.forEach((ds, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        meta.data.forEach((bar, index) => {
+                            if(ds.data[index]>0) {
+                                ctx.font='bold 10px Inter'; ctx.fillStyle='#334155';
+                                ctx.fillText(ds.data[index], bar.x+5, bar.y+4);
+                            }
+                        });
+                    });
+                    ctx.restore();
+                }
+            };
+            charts[id] = new Chart(ctx, { type, data: { labels, datasets }, options: opts, plugins: [dataLabels] });
         }
     </script>
 </body>
