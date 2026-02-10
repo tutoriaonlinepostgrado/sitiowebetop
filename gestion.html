@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centro de Gestión Tutorial - ETOP</title>
     <style>
-        /* --- ESTILOS VISUALES BASADOS EN TU PORTAL --- */
         :root {
-            --azul-fondo: #141b2d;      /* El azul oscuro de tu fondo */
-            --azul-sidebar: #1f2940;    /* Un tono un poco más claro para el menú */
-            --amarillo-top: #ffd700;    /* El amarillo de tus bordes */
+            --azul-fondo: #141b2d;
+            --azul-sidebar: #1f2940;
+            --amarillo-top: #ffd700;
             --texto-blanco: #ffffff;
             --texto-gris: #a3a3a3;
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
         
-        .app-container { display: flex; height: 100vh; width: 100vw; }
+        .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
 
         /* --- BARRA LATERAL (MENU) --- */
         .sidebar {
@@ -25,22 +24,31 @@
             color: var(--texto-blanco);
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255, 215, 0, 0.1); /* Sutil borde amarillo */
+            border-right: 1px solid rgba(255, 215, 0, 0.1);
             z-index: 10;
-            overflow-y: auto; /* Scroll si hay muchos reportes */
+            overflow-y: auto;
+            transition: margin-left 0.3s ease; /* Animación suave */
+            flex-shrink: 0; /* Evita que se aplaste */
         }
 
-        /* Cabecera del Menú */
+        /* Clase para esconder el menú */
+        .sidebar.closed {
+            margin-left: -300px; /* Lo mueve fuera de la pantalla */
+        }
+
         .sidebar-header {
             padding: 25px 20px;
             border-bottom: 2px solid var(--amarillo-top);
             margin-bottom: 10px;
             background-color: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
-        .sidebar-header span { font-size: 12px; color: var(--texto-gris); }
+        .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
 
-        /* Categorías (Títulos pequeños en el menú) */
+        /* Categorías */
         .menu-category {
             padding: 15px 20px 5px 20px;
             font-size: 11px;
@@ -64,14 +72,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            width: 100%;
         }
 
-        .menu-btn:hover {
-            background-color: rgba(255, 215, 0, 0.1); /* Amarillo muy suave */
-            color: var(--amarillo-top);
-        }
+        .menu-btn:hover { background-color: rgba(255, 215, 0, 0.1); color: var(--amarillo-top); }
         
-        /* Botón Activo */
         .menu-btn.active {
             background-color: rgba(255, 215, 0, 0.15);
             color: var(--amarillo-top);
@@ -79,7 +84,6 @@
             font-weight: 600;
         }
 
-        /* Botón Volver */
         .btn-volver {
             margin-top: auto;
             padding: 20px;
@@ -94,24 +98,53 @@
         }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
 
-        /* --- VISOR DEL REPORTE --- */
+        /* --- ÁREA DE CONTENIDO --- */
         .content-area { 
             flex-grow: 1; 
-            background-color: #F3F2F1; /* Gris neutro para que contraste el reporte */
+            background-color: #F3F2F1; 
             position: relative; 
+            display: flex;
+            flex-direction: column;
         }
+
+        /* BARRA SUPERIOR DEL CONTENIDO (Para el botón de abrir) */
+        .top-bar {
+            background-color: var(--azul-sidebar); /* Mismo color del menú */
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* Botón Toggle (Hamburguesa) */
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--amarillo-top);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+        .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         
-        iframe { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>⚙️ Gestión Tutorial</h2>
-            <span>Centro de Operaciones</span>
+            <div>
+                <h2>⚙️ Gestión Tutorial</h2>
+                <span>Centro de Operaciones</span>
+            </div>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
         </div>
 
         <div class="menu-category">Operación Diaria</div>
@@ -162,46 +195,46 @@
     </div>
 
     <div class="content-area">
+        <div class="top-bar">
+            <button class="toggle-btn" onclick="toggleSidebar()" title="Abrir/Cerrar Menú">☰</button>
+            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Vista de Reporte</span>
+        </div>
+
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
 
 </div>
 
 <script>
+    // --- FUNCIÓN PARA ESCONDER/MOSTRAR MENÚ ---
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('closed');
+    }
+
     // --- TUS ENLACES CONFIGURADOS ---
     const misReportes = {
-        // Dashboard Principal (Con limpieza de interfaz)
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&filterPaneEnabled=false",
-        
-        // Reportes Paginados
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-
         'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'CURSOS_INICIAR': "https://app.powerbi.com/rdlEmbed?reportId=2d95ad06-3811-4fba-a187-7e1e8f2ea61c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'REPORTE_NRC': "https://app.powerbi.com/rdlEmbed?reportId=a0026236-1552-4a2d-bdc8-ee487be7de93&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'INCIDENCIAS_MASTER': "https://app.powerbi.com/rdlEmbed?reportId=42ddd2bd-2af5-4354-9c11-4f9f20c0805c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'INCIDENCIAS_NRC': "https://app.powerbi.com/rdlEmbed?reportId=eda17000-5679-49f5-bc46-41cfff1bcb95&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        
         'BASE_SEGUIMIENTO': "https://app.powerbi.com/rdlEmbed?reportId=72cf6f52-dfa3-4cba-92f4-6a8c5c8ccf8e&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
     };
 
-    // Función de cambio de reporte
     function cargar(clave, btn) {
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
-
-        // Estilos
         document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        
+        // OPCIONAL: Si estás en móvil, descomenta esto para que el menú se cierre al elegir:
+        // if(window.innerWidth < 800) toggleSidebar();
     }
 
-    // Inicializar
     document.addEventListener('DOMContentLoaded', () => {
         const primerBoton = document.querySelector('.menu-btn');
         if(primerBoton) primerBoton.click();
