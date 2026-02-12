@@ -153,6 +153,10 @@
             📊 Tablero de Gestión (App)
         </button>
 
+        <button class="menu-btn" onclick="cargar('MONITOR_CURSOS', this)">
+            👨‍🏫 Monitor de Cursos
+        </button>
+
         <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">
             👤 Ficha del Estudiante
         </button>
@@ -215,6 +219,10 @@
     // --- TUS ENLACES CONFIGURADOS ---
     const misReportes = {
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&filterPaneEnabled=false",
+        
+        // ✅ AQUÍ ESTÁ TU NUEVO ENLACE INSERTADO
+        'MONITOR_CURSOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false", 
+
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
@@ -228,11 +236,12 @@
     function cargar(clave, btn) {
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
+        
         document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // OPCIONAL: Si estás en móvil, descomenta esto para que el menú se cierre al elegir:
-        // if(window.innerWidth < 800) toggleSidebar();
+        // OPCIONAL: Cerrar menú al hacer clic en móviles
+        if(window.innerWidth < 800) toggleSidebar();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
