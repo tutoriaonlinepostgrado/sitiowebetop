@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación de Trabajo: Canvas a SharePoint - ETOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #19202E;
+        }
+        
+        .top-bar {
+            height: 50px;
+            background-color: #0f172a;
+            color: #facc15;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            z-index: 10;
+            position: relative;
+        }
+        
+        .top-bar-title { font-weight: 700; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .btn-back {
+            background-color: #facc15; color: #0f172a; text-decoration: none;
+            padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; transition: all 0.2s;
+        }
+        .btn-back:hover { background-color: #eab308; transform: translateY(-1px); }
+
+        .split-container { display: flex; height: calc(100% - 50px); width: 100%; }
+        .pane { height: 100%; position: relative; }
+        
+        /* Proporción Inicial: 70% Canvas / 30% Asistente */
+        #leftPane { flex: 0 0 70%; }
+        #rightPane { flex: 1; background-color: #f8fafc; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        .canvas-iframe { width: 100%; height: 100%; border: none; background-color: #ffffff; }
+
+        .divider {
+            width: 8px; background-color: #facc15; cursor: col-resize; display: flex; 
+            align-items: center; justify-content: center; z-index: 5; box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+            transition: background-color 0.2s;
+        }
+        .divider:hover, .divider:active { background-color: #eab308; }
+        .divider::after { content: "⋮"; color: #0f172a; font-weight: bold; font-size: 1.2rem; }
+        
+        /* Capa para evitar bloqueos al arrastrar */
+        .glass-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+
+        /* Estilos del Panel Derecho (Asistente optimizado para poco espacio) */
+        .assistant-container { 
+            padding: 15px; 
+            color: #334155; 
+            width: 100%; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            height: 100%; 
+        }
+        
+        .card-section {
+            background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;
+            padding: 15px; box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column;
+        }
+        
+        .card-section.grow { flex: 1; }
+
+        .card-title { 
+            color: #1e40af; margin-top: 0; margin-bottom: 10px; font-size: 0.95rem; 
+            border-bottom: 2px solid #eff6ff; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
+        
+        .input-group { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+        .input-group input { 
+            flex: 1; min-width: 150px; padding: 8px; border: 1px solid #cbd5e1; 
+            border-radius: 6px; font-family: 'Inter'; font-size: 0.85rem;
+        }
+        
+        .btn-blue { 
+            background-color: #3b82f6; color: white; border: none; padding: 8px 12px; 
+            border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap; font-size: 0.85rem;
+        }
+        .btn-blue:hover { background-color: #2563eb; }
+
+        .report-iframe {
+            width: 100%; 
+            flex: 1; 
+            min-height: 200px;
+            border: 1px solid #e2e8f0; 
+            border-radius: 6px; 
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-title">🗂️ Asistente de Carga - Canvas a SharePoint</div>
+        <a href="resumen2025.html" class="btn-back">Volver al Reporte</a>
+    </div>
+
+    <div class="split-container" id="splitContainer">
+        <!-- Panel Izquierdo: Canvas (70% del espacio) -->
+        <div class="pane" id="leftPane">
+            <div class="glass-panel" id="leftGlass"></div>
+            <iframe src="https://lms.unab.cl/int-canvas/" title="Canvas LMS" class="canvas-iframe"></iframe>
+        </div>
+
+        <!-- Divisor -->
+        <div class="divider" id="divider" title="Arrastra para ajustar el tamaño"></div>
+
+        <!-- Panel Derecho: Asistente Operativo (30% del espacio) -->
+        <div class="pane" id="rightPane">
+            <div class="glass-panel" id="rightGlass"></div>
+            
+            <div class="assistant-container">
+                
+                <!-- SECCIÓN 1: REPORTE PAGINADO EN VIVO -->
+                <div class="card-section grow">
+                    <h3 class="card-title">📅 1. NRCs a Procesar Hoy</h3>
+                    <!-- Reporte incrustado automáticamente usando tu URL -->
+                    <iframe id="reportIframe" class="report-iframe" title="Visor de Reporte" src="https://app.powerbi.com/rdlEmbed?reportId=f62fa4dd-abf0-46bc-a30a-d4130a1a14e3&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"></iframe>
+                </div>
+
+                <!-- SECCIÓN 2: AUTOMATIZACIÓN A SHAREPOINT (Diseño Ultracompacto) -->
+                <div class="card-section" style="margin-bottom: 0;">
+                    <h3 class="card-title" style="margin-bottom: 5px;">🚀 2. Enviar a SharePoint</h3>
+                    <div class="input-group">
+                        <input type="text" id="excelUrl" placeholder="Link de tu Plantilla Excel...">
+                        <button class="btn-blue" onclick="abrirPopup()">Abrir Plantilla 🪟</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === AL CARGAR LA PÁGINA: RECUPERAR PLANTILLA DE EXCEL ===
+        window.onload = function() {
+            const savedExcel = localStorage.getItem('etop_excelTemplateUrl');
+            if(savedExcel) {
+                document.getElementById('excelUrl').value = savedExcel;
+            }
+        };
+
+        // === LÓGICA DE LA PLANTILLA EXCEL EN VENTANA FLOTANTE ===
+        function abrirPopup() {
+            let url = document.getElementById('excelUrl').value.trim();
+            if(url !== '') {
+                localStorage.setItem('etop_excelTemplateUrl', url);
+
+                if(url.includes('<iframe') && url.includes('src=')) {
+                    const match = url.match(/src="([^"]+)"/);
+                    if(match) url = match[1];
+                }
+                
+                // Abrimos en la mitad derecha exacta de la pantalla
+                let screenWidth = window.screen.availWidth;
+                let screenHeight = window.screen.availHeight;
+                let popupWidth = Math.floor(screenWidth / 2);
+                let popupLeft = screenWidth - popupWidth; 
+                
+                window.open(url, "ExcelPopup", `width=${popupWidth},height=${screenHeight},top=0,left=${popupLeft},menubar=yes,toolbar=yes,location=yes,status=yes`);
+            } else {
+                alert("Por favor, pega el enlace de tu Plantilla de Excel primero.");
+            }
+        }
+
+        // === LÓGICA DEL DIVISOR ARRASTRABLE (IZQ/DER) ===
+        const divider = document.getElementById('divider');
+        const leftPane = document.getElementById('leftPane');
+        const splitContainer = document.getElementById('splitContainer');
+        const leftGlass = document.getElementById('leftGlass');
+        const rightGlass = document.getElementById('rightGlass');
+        let isDragging = false;
+
+        divider.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            leftGlass.style.display = 'block';
+            rightGlass.style.display = 'block';
+            document.body.style.cursor = 'col-resize';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            let newLeftWidth = (e.clientX / splitContainer.offsetWidth) * 100;
+            // Límites: mínimo 30% Canvas, máximo 85% Canvas
+            if (newLeftWidth > 30 && newLeftWidth < 85) {
+                leftPane.style.flex = `0 0 ${newLeftWidth}%`;
+            }
+        });
+
+        // Función robusta para detener el arrastre incluso si el ratón sale de la pantalla
+        function stopDragging() {
+            if (isDragging) {
+                isDragging = false;
+                leftGlass.style.display = 'none';
+                rightGlass.style.display = 'none';
+                document.body.style.cursor = 'default';
+            }
+        }
+
+        document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('mouseleave', stopDragging); // Por si el ratón sale de la ventana de Chrome
+        window.addEventListener('blur', stopDragging); // Por si se cambia de ventana mientras se arrastra
+    </script>
+</body>
+</html>
