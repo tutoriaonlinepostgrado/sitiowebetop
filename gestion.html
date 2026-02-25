@@ -73,6 +73,8 @@
             align-items: center;
             gap: 10px;
             width: 100%;
+            text-decoration: none; /* Para los enlaces <a> */
+            box-sizing: border-box;
         }
 
         .menu-btn:hover { background-color: rgba(255, 215, 0, 0.1); color: var(--amarillo-top); }
@@ -147,14 +149,23 @@
             <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
         </div>
 
+        <!-- SECCIÓN 1: OPERACIÓN DIARIA -->
         <div class="menu-category">Operación Diaria</div>
         
         <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">
             📊 Tablero de Gestión (App)
         </button>
 
-        <button class="menu-btn" onclick="cargar('MONITOR_CURSOS', this)">
-            👨‍🏫 Monitor de Cursos
+        <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS', this)">
+            🟢 Cursos Activos
+        </button>
+
+        <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION', this)">
+            ⏳ Cursos en Preparación
+        </button>
+
+        <button class="menu-btn" onclick="cargar('CURSOS_CIERRE', this)">
+            🏁 Cursos en Cierre
         </button>
 
         <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">
@@ -165,6 +176,25 @@
             🚦 Reporte Semáforo
         </button>
 
+
+        <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
+        <div class="menu-category">Espacio Coordinación</div>
+
+        <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">
+            ⚖️ Carga Tutorial
+        </button>
+
+        <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">
+            📈 Resumen Semáforo
+        </button>
+
+        <!-- ENLACE EXTERNO A LA PANTALLA DIVIDIDA CORREGIDO PARA GITHUB -->
+        <a href="pantalladividida.html" target="_blank" class="menu-btn">
+            🗂️ Asistente de Carga (Pop-up) ↗️
+        </a>
+
+
+        <!-- SECCIÓN 3: REPORTES DETALLADOS -->
         <div class="menu-category">Reportes Detallados</div>
 
         <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">
@@ -179,6 +209,7 @@
             💾 Estado Base Seguimiento
         </button>
 
+        <!-- SECCIÓN 4: CALIDAD -->
         <div class="menu-category">Calidad</div>
 
         <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">
@@ -216,13 +247,20 @@
         sidebar.classList.toggle('closed');
     }
 
-    // --- TUS ENLACES CONFIGURADOS ---
+    // --- ENLACES TRANSFORMADOS Y CORREGIDOS DEFINITIVOS ---
     const misReportes = {
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&filterPaneEnabled=false",
         
-        // ✅ AQUÍ ESTÁ EL ENLACE CORRECTO CON EL CÓDIGO 'pageName' QUE EXTRAJIMOS
-        'MONITOR_CURSOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&pageName=8d0285c7e012e2f3f906", 
+        // --- ESTADOS DE CURSOS (Usando reportEmbed + el ID exacto de la hoja sin "ReportSection") ---
+        'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
 
+        // --- ESPACIO COORDINACIÓN (Usando reportEmbed + el ID exacto de la hoja sin "ReportSection") ---
+        'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
+
+        // --- REPORTES PAGINADOS (RDL) ---
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
@@ -237,7 +275,8 @@
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
         
-        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        // Quitar la clase "active" solo de los botones normales
+        document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
         // OPCIONAL: Cerrar menú al hacer clic en móviles
@@ -245,7 +284,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const primerBoton = document.querySelector('.menu-btn');
+        const primerBoton = document.querySelector('button.menu-btn');
         if(primerBoton) primerBoton.click();
     });
 </script>
