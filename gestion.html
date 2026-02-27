@@ -86,6 +86,11 @@
             font-weight: 600;
         }
 
+        .btn-config {
+            background: none; border: none; color: #64748b; padding: 12px; cursor: pointer; transition: 0.2s; font-size: 14px;
+        }
+        .btn-config:hover { color: var(--amarillo-top); }
+
         .btn-volver {
             margin-top: auto;
             padding: 20px;
@@ -134,6 +139,32 @@
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
+
+        /* --- MODAL SELECTOR DE COORDINADOR --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
+        }
+        .modal-box {
+            background: #1f2940; padding: 30px; border-radius: 12px; border-top: 4px solid #ffd700;
+            width: 320px; text-align: center; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif;
+        }
+        .modal-box h3 { margin-top: 0; color: #ffd700; }
+        .modal-box p { font-size: 13px; color: #cbd5e1; margin-bottom: 20px; }
+        .modal-box select {
+            width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 6px;
+            background: #0f172a; color: white; border: 1px solid #334155; font-size: 14px;
+        }
+        .modal-btn {
+            background: #ffd700; color: #141b2d; border: none; padding: 12px 20px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; transition: 0.2s;
+        }
+        .modal-btn:hover { background: #eab308; }
+        .modal-close {
+            background: none; border: none; color: #64748b; margin-top: 15px; cursor: pointer; text-decoration: underline; font-size: 12px;
+        }
+        .modal-close:hover { color: white; }
     </style>
 </head>
 <body>
@@ -188,6 +219,14 @@
             📈 Resumen Semáforo
         </button>
 
+        <!-- NUEVO BOTÓN: EXCEL DE NÓMINAS CON ENGRANAJE DE CONFIGURACIÓN -->
+        <div style="display: flex; align-items: center; width: 100%;">
+            <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
+                📗 Mi Excel de Nóminas ↗️
+            </button>
+            <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
+        </div>
+
         <!-- ENLACE EXTERNO A LA PANTALLA DIVIDIDA CORREGIDO PARA GITHUB -->
         <a href="pantalladividida.html" target="_blank" class="menu-btn">
             🗂️ Asistente de Carga (Pop-up) ↗️
@@ -240,6 +279,26 @@
 
 </div>
 
+<!-- VENTANA FLOTANTE (MODAL) PARA SELECCIONAR COORDINADOR -->
+<div class="modal-overlay" id="modalCoordinador">
+    <div class="modal-box">
+        <h3>👋 ¡Hola Coordinador!</h3>
+        <p>Selecciona tu nombre para que el sistema recuerde y abra siempre tu Excel personal.</p>
+        
+        <select id="selectCoordinador">
+            <option value="" disabled selected>-- Elige tu nombre --</option>
+            <option value="Carolina">Carolina</option>
+            <option value="Daniela">Daniela</option>
+            <option value="Miguel">Miguel</option>
+            <option value="Pablo">Pablo</option>
+            <option value="Querida Rita">Querida Rita</option>
+        </select>
+
+        <button class="modal-btn" onclick="guardarYabrirExcel()">Guardar y Abrir Excel</button>
+        <button class="modal-close" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+
 <script>
     // --- FUNCIÓN PARA ESCONDER/MOSTRAR MENÚ ---
     function toggleSidebar() {
@@ -275,19 +334,62 @@
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
         
-        // Quitar la clase "active" solo de los botones normales
         document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // OPCIONAL: Cerrar menú al hacer clic en móviles
         if(window.innerWidth < 800) toggleSidebar();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const primerBoton = document.querySelector('button.menu-btn');
-        if(primerBoton) primerBoton.click();
-    });
-</script>
+    // ==========================================
+    // LÓGICA DEL SELECTOR DE EXCEL PARA COORDINADORES
+    // ==========================================
 
+    // Mapeo exacto de los archivos con sus URLs completas de SharePoint
+    const archivosCoordinadores = {
+        "Carolina": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Carola.xlsx?d=wcc26880a121e4d94a29cd573e6f69da8&csf=1&web=1&e=nlvce6",
+        "Daniela": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Daniela.xlsx?d=w43ebd8f7a27646e8a147cfa598572643&csf=1&web=1&e=XhS63X",
+        "Miguel": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_miguel.xlsx?d=we8ec845160e8418a96d22fde9492238c&csf=1&web=1&e=98C2Dp",
+        "Pablo": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Pablo.xlsx?d=w31ef4ad8a0d94d0a8c1cb6179ef2a714&csf=1&web=1&e=nh5Yyo",
+        "Querida Rita": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Rita.xlsx?d=w3016b6bb82ed4834bb6781bfe65022ff&csf=1&web=1&e=4rkMqq"
+    };
+
+    function abrirMiExcel() {
+        const nombreGuardado = localStorage.getItem('etop_nombreCoordinador');
+        
+        if (nombreGuardado && archivosCoordinadores[nombreGuardado]) {
+            // Ya sabemos quién es, abrimos su URL exacta guardada en el sistema
+            window.open(archivosCoordinadores[nombreGuardado], '_blank');
+        } else {
+            // No sabemos quién es, mostramos el modal
+            mostrarModalCoordinador();
+        }
+    }
+
+    function mostrarModalCoordinador() {
+        document.getElementById('modalCoordinador').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalCoordinador').style.display = 'none';
+    }
+
+    function guardarYabrirExcel() {
+        const select = document.getElementById('selectCoordinador');
+        const nombreSeleccionado = select.value;
+        
+        if (nombreSeleccionado) {
+            // Guardar en la memoria del navegador
+            localStorage.setItem('etop_nombreCoordinador', nombreSeleccionado);
+            
+            // Cerrar el modal
+            cerrarModal();
+            
+            // Abrir el Excel directamente
+            window.open(archivosCoordinadores[nombreSeleccionado], '_blank');
+        } else {
+            alert("Por favor, selecciona tu nombre de la lista antes de continuar.");
+        }
+    }
+</script>
 </body>
 </html>
