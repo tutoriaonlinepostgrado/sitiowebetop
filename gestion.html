@@ -210,6 +210,11 @@
 
         <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
         <div class="menu-category">Espacio Coordinación</div>
+        
+        <!-- BOTÓN: RESUMEN DE EQUIPO -->
+        <button class="menu-btn" onclick="cargarResumenEquipo(this)">
+            👥 Resumen de Mi Equipo
+        </button>
 
         <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">
             ⚖️ Carga Tutorial
@@ -219,7 +224,7 @@
             📈 Resumen Semáforo
         </button>
 
-        <!-- NUEVO BOTÓN: EXCEL DE NÓMINAS CON ENGRANAJE DE CONFIGURACIÓN -->
+        <!-- BOTÓN: EXCEL DE NÓMINAS CON ENGRANAJE DE CONFIGURACIÓN -->
         <div style="display: flex; align-items: center; width: 100%;">
             <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
                 📗 Mi Excel de Nóminas ↗️
@@ -227,7 +232,7 @@
             <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
         </div>
 
-        <!-- ENLACE EXTERNO A LA PANTALLA DIVIDIDA CORREGIDO PARA GITHUB -->
+        <!-- ENLACE EXTERNO A LA PANTALLA DIVIDIDA -->
         <a href="pantalladividida.html" target="_blank" class="menu-btn">
             🗂️ Asistente de Carga (Pop-up) ↗️
         </a>
@@ -291,6 +296,7 @@
             <option value="Daniela">Daniela</option>
             <option value="Miguel">Miguel</option>
             <option value="Pablo">Pablo</option>
+            <option value="Patricio">Patricio</option>
             <option value="Querida Rita">Querida Rita</option>
         </select>
 
@@ -310,12 +316,15 @@
     const misReportes = {
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&filterPaneEnabled=false",
         
-        // --- ESTADOS DE CURSOS (Usando reportEmbed + el ID exacto de la hoja sin "ReportSection") ---
+        // --- AQUÍ ESTÁ LA URL EXACTA DEL RESUMEN DE EQUIPO ---
+        'RESUMEN_EQUIPO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=010e9b0e2d796c0cc8bd&navContentPaneEnabled=false&filterPaneEnabled=false",
+
+        // --- ESTADOS DE CURSOS ---
         'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
 
-        // --- ESPACIO COORDINACIÓN (Usando reportEmbed + el ID exacto de la hoja sin "ReportSection") ---
+        // --- ESPACIO COORDINACIÓN ---
         'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
         'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
 
@@ -341,26 +350,69 @@
     }
 
     // ==========================================
-    // LÓGICA DEL SELECTOR DE EXCEL PARA COORDINADORES
+    // NUEVA LÓGICA: CARGAR RESUMEN DE EQUIPO FILTRADO POR CORREO
     // ==========================================
+    function cargarResumenEquipo(btn) {
+        const nombreCoordinador = localStorage.getItem('etop_nombreCoordinador');
+        let urlBase = misReportes['RESUMEN_EQUIPO'];
 
-    // Mapeo exacto de los archivos con sus URLs completas de SharePoint
+        if (!urlBase || urlBase === "AQUI_PEGA_LA_URL_DE_TU_NUEVA_PAGINA") {
+            alert("Aún falta pegar la URL de Power BI para el Resumen de Equipo en el código del portal.");
+            return;
+        }
+
+        // 1. DICCIONARIO DE CORREOS REALES
+        const correosCoordinadores = {
+            "Carolina": "carolina.monsalve.g@unab.cl",
+            "Daniela": "tutoriaonline36@unab.cl",
+            "Miguel": "tutoriaonline16@unab.cl",
+            "Pablo": "tutoriaonline47@unab.cl",
+            "Patricio": "patricio.collao@unab.cl",
+            "Querida Rita": "rita.galvez@unab.cl"
+        };
+
+        if (nombreCoordinador && correosCoordinadores[nombreCoordinador]) {
+            // 2. Obtenemos el correo del diccionario y lo preparamos para la URL
+            const correoExacto = correosCoordinadores[nombreCoordinador];
+            const correoCodificado = encodeURIComponent(correoExacto);
+            
+            // 3. SE USA LA COLUMNA DE TEXTO Y LA FUNCIÓN CONTAINS
+            const filtro = `&filter=NRC_TUTOR_ACTUAL/Coordinadores_Emails_Texto contains '${correoCodificado}'`;
+            
+            document.getElementById('visor').src = urlBase + filtro;
+        } else {
+            // Si no ha seleccionado a nadie, mostramos todo
+            document.getElementById('visor').src = urlBase;
+            alert("Mostrando todos los equipos. Si quieres ver solo tus tutores, configura tu nombre haciendo clic en el engranaje ⚙️ debajo.");
+        }
+
+        document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if(window.innerWidth < 800) toggleSidebar();
+    }
+
+    // ==========================================
+    // LÓGICA DEL SELECTOR DE EXCEL
+    // ==========================================
     const archivosCoordinadores = {
         "Carolina": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Carola.xlsx?d=wcc26880a121e4d94a29cd573e6f69da8&csf=1&web=1&e=nlvce6",
         "Daniela": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Daniela.xlsx?d=w43ebd8f7a27646e8a147cfa598572643&csf=1&web=1&e=XhS63X",
         "Miguel": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_miguel.xlsx?d=we8ec845160e8418a96d22fde9492238c&csf=1&web=1&e=98C2Dp",
         "Pablo": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Pablo.xlsx?d=w31ef4ad8a0d94d0a8c1cb6179ef2a714&csf=1&web=1&e=nh5Yyo",
+        "Patricio": "", // Puedes añadir aquí su enlace de Excel si lo necesitas en el futuro
         "Querida Rita": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Rita.xlsx?d=w3016b6bb82ed4834bb6781bfe65022ff&csf=1&web=1&e=4rkMqq"
     };
 
     function abrirMiExcel() {
         const nombreGuardado = localStorage.getItem('etop_nombreCoordinador');
-        
         if (nombreGuardado && archivosCoordinadores[nombreGuardado]) {
-            // Ya sabemos quién es, abrimos su URL exacta guardada en el sistema
-            window.open(archivosCoordinadores[nombreGuardado], '_blank');
+            // Si hay enlace lo abre, de lo contrario pide configurarlo (caso Patricio sin enlace aún)
+            if(archivosCoordinadores[nombreGuardado] !== "") {
+                window.open(archivosCoordinadores[nombreGuardado], '_blank');
+            } else {
+                alert("Aún no tienes configurado un enlace de Excel para tu perfil.");
+            }
         } else {
-            // No sabemos quién es, mostramos el modal
             mostrarModalCoordinador();
         }
     }
@@ -378,14 +430,15 @@
         const nombreSeleccionado = select.value;
         
         if (nombreSeleccionado) {
-            // Guardar en la memoria del navegador
             localStorage.setItem('etop_nombreCoordinador', nombreSeleccionado);
-            
-            // Cerrar el modal
             cerrarModal();
             
-            // Abrir el Excel directamente
-            window.open(archivosCoordinadores[nombreSeleccionado], '_blank');
+            // Si el coordinador seleccionado tiene una URL asignada, lo abrimos
+            if (archivosCoordinadores[nombreSeleccionado] !== "") {
+                window.open(archivosCoordinadores[nombreSeleccionado], '_blank');
+            } else {
+                alert(`¡Listo! Hemos guardado tu perfil como ${nombreSeleccionado}.`);
+            }
         } else {
             alert("Por favor, selecciona tu nombre de la lista antes de continuar.");
         }
