@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursos Activos · Portal ETOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body, html {
+    height: 100%;
+    font-family: 'Sora', sans-serif;
+    background: #0f1520;
+    color: #f1f5f9;
+    overflow: hidden;
+  }
+  .topbar {
+    height: 52px;
+    background: #0f1520;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: relative;
+  }
+  .topbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #facc15, #f97316, #facc15);
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .topbar-logo-icon {
+    width: 28px;
+    height: 28px;
+    background: #facc15;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .topbar-logo-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .topbar-sep {
+    color: rgba(255,255,255,0.2);
+    font-size: 18px;
+  }
+  .topbar-section {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+  .topbar-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #facc15;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tutor-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(250,204,21,0.1);
+    border: 1px solid rgba(250,204,21,0.25);
+    border-radius: 100px;
+    padding: 5px 14px;
+  }
+  .tutor-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .tutor-badge-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .tutor-badge-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #facc15;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+  }
+  .btn-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #f1f5f9;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+    font-family: 'Sora', sans-serif;
+    cursor: pointer;
+  }
+  .btn-back:hover {
+    background: rgba(255,255,255,0.1);
+  }
+  .content {
+    height: calc(100vh - 52px);
+    position: relative;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  /* Loading overlay */
+  .loader {
+    position: absolute;
+    inset: 0;
+    background: #0f1520;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 10;
+    transition: opacity 0.4s;
+  }
+  .loader-ring {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(250,204,21,0.15);
+    border-top-color: #facc15;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Mono', monospace;
+  }
+  .loader-tutor {
+    font-size: 15px;
+    font-weight: 700;
+    color: #facc15;
+    letter-spacing: 0.05em;
+  }
+  /* Sin tutor */
+  .no-tutor {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    padding: 40px;
+  }
+  .no-tutor-icon { font-size: 48px; }
+  .no-tutor-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+  .no-tutor-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    max-width: 360px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="topbar-logo">
+      <div class="topbar-logo-icon">⚙️</div>
+      <div class="topbar-logo-text">ETOP</div>
+    </a>
+    <span class="topbar-sep">›</span>
+    <span class="topbar-section">Coordinación</span>
+    <span class="topbar-sep">›</span>
+    <span class="topbar-title">Cursos Activos</span>
+  </div>
+  <div class="topbar-right">
+    <div class="tutor-badge">
+      <div class="tutor-badge-dot"></div>
+      <span class="tutor-badge-label">Tutor</span>
+      <span class="tutor-badge-name" id="tutorNameBadge">—</span>
+    </div>
+    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-back">
+      ← Volver al Portal
+    </a>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-tutor" id="loaderTutorName">Cargando...</div>
+    <div class="loader-text">Aplicando filtro y cargando reporte...</div>
+  </div>
+
+  <!-- Sin tutor -->
+  <div class="no-tutor" id="noTutor" style="display:none;">
+    <div class="no-tutor-icon">⚠️</div>
+    <div class="no-tutor-title">Sin tutor seleccionado</div>
+    <div class="no-tutor-sub">Esta página debe abrirse desde la tarjeta de un tutor en el Portal de Coordinación. Vuelve al portal y selecciona un tutor.</div>
+    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-back" style="margin-top:8px;">← Volver al Portal</a>
+  </div>
+
+  <!-- iframe Power BI -->
+  <iframe id="reportFrame" style="display:none;" allowfullscreen
+    onload="hideLoader()">
+  </iframe>
+
+</div>
+
+<script>
+  // Leer parámetro ?tutor= de la URL
+  const params = new URLSearchParams(window.location.search);
+  const tutorRaw = params.get('tutor');
+
+  if (!tutorRaw) {
+    // Sin parámetro → mostrar mensaje
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('noTutor').style.display = 'flex';
+  } else {
+    // Decodificar nombre del tutor
+    const tutorName = decodeURIComponent(tutorRaw);
+
+    // Mostrar nombre en badge y loader
+    document.getElementById('tutorNameBadge').textContent = tutorName;
+    document.getElementById('loaderTutorName').textContent = tutorName;
+
+    // Construir URL de Power BI con filtro
+    // Sintaxis correcta para columnas con espacios: TABLA/COLUMNA_x0020_CON_x0020_ESPACIO eq 'valor'
+    const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
+    const filtro = `?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '${encodeURIComponent(tutorName)}'&experience=power-bi&navContentPaneEnabled=false&filterPaneEnabled=false`;
+    const urlFinal = baseUrl + filtro;
+
+    // Cargar iframe
+    const iframe = document.getElementById('reportFrame');
+    iframe.src = urlFinal;
+    iframe.style.display = 'block';
+  }
+
+  function hideLoader() {
+    const loader = document.getElementById('loader');
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 400);
+  }
+</script>
+
+</body>
+</html>
