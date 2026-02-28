@@ -268,7 +268,7 @@
 
     // Construir URL de Power BI con filtro
     // Sintaxis correcta para columnas con espacios: TABLA/COLUMNA_x0020_CON_x0020_ESPACIO eq 'valor'
-    const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
+    const baseUrl = "<iframe title="Dashboard_Gestion_Riesgo" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2" frameborder="0" allowFullScreen="true"></iframe>";
     const filtro = `?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '${encodeURIComponent(tutorName)}'&experience=power-bi&navContentPaneEnabled=false&filterPaneEnabled=false`;
     const urlFinal = baseUrl + filtro;
 
