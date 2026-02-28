@@ -12,7 +12,8 @@
     font-family: 'Sora', sans-serif;
     background: #0f1520;
     color: #f1f5f9;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .topbar {
     height: 52px;
@@ -23,6 +24,7 @@
     justify-content: space-between;
     padding: 0 24px;
     position: relative;
+    flex-shrink: 0;
   }
   .topbar::after {
     content: '';
@@ -31,171 +33,86 @@
     height: 2px;
     background: linear-gradient(90deg, #facc15, #f97316, #facc15);
   }
-  .topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .topbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-  }
-  .topbar-logo-icon {
-    width: 28px;
-    height: 28px;
-    background: #facc15;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-  }
-  .topbar-logo-text {
-    font-size: 12px;
-    font-weight: 700;
-    color: #f1f5f9;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .topbar-sep {
-    color: rgba(255,255,255,0.2);
-    font-size: 18px;
-  }
-  .topbar-section {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-  }
-  .topbar-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #facc15;
-  }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .tutor-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(250,204,21,0.1);
-    border: 1px solid rgba(250,204,21,0.25);
-    border-radius: 100px;
-    padding: 5px 14px;
-  }
-  .tutor-badge-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #22c55e;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .tutor-badge-label {
-    font-size: 10px;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-  }
-  .tutor-badge-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: #facc15;
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-  }
-  .btn-back {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #f1f5f9;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: all 0.15s;
-    font-family: 'Sora', sans-serif;
-    cursor: pointer;
-  }
-  .btn-back:hover {
-    background: rgba(255,255,255,0.1);
-  }
-  .content {
-    height: calc(100vh - 52px);
-    position: relative;
-  }
-  iframe {
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .topbar-logo-icon { width: 28px; height: 28px; background: #facc15; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .topbar-logo-text { font-size: 12px; font-weight: 700; color: #f1f5f9; letter-spacing: 0.08em; text-transform: uppercase; }
+  .topbar-sep { color: rgba(255,255,255,0.2); font-size: 18px; }
+  .topbar-section { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .topbar-title { font-size: 13px; font-weight: 700; color: #facc15; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tutor-badge { display: flex; align-items: center; gap: 8px; background: rgba(250,204,21,0.1); border: 1px solid rgba(250,204,21,0.25); border-radius: 100px; padding: 5px 14px; }
+  .tutor-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .tutor-badge-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .tutor-badge-name { font-size: 12px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; text-transform: uppercase; }
+  .btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #f1f5f9; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: all 0.15s; font-family: 'Sora', sans-serif; cursor: pointer; }
+  .btn:hover { background: rgba(255,255,255,0.1); }
+  .btn-accent { background: #facc15; color: #0f1520; border-color: #facc15; font-size: 13px; padding: 12px 28px; border-radius: 8px; font-weight: 700; }
+  .btn-accent:hover { background: #eab308; }
+
+  .content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+
+  .card {
+    background: #19202E;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 48px 56px;
+    text-align: center;
+    max-width: 540px;
     width: 100%;
-    height: 100%;
-    border: none;
+    position: relative;
+    overflow: hidden;
   }
-  /* Loading overlay */
-  .loader {
+  .card::before {
+    content: '';
     position: absolute;
-    inset: 0;
-    background: #0f1520;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    z-index: 10;
-    transition: opacity 0.4s;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #facc15, #f97316);
   }
-  .loader-ring {
-    width: 48px;
-    height: 48px;
-    border: 3px solid rgba(250,204,21,0.15);
-    border-top-color: #facc15;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text {
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
+
+  .card-icon { font-size: 52px; margin-bottom: 24px; }
+  .card-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+  .card-title { font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 20px; }
+  .card-tutor {
+    display: inline-block;
+    font-size: 15px; font-weight: 700; color: #facc15;
     font-family: 'DM Mono', monospace;
-  }
-  .loader-tutor {
-    font-size: 15px;
-    font-weight: 700;
-    color: #facc15;
+    background: rgba(250,204,21,0.08);
+    border: 1px solid rgba(250,204,21,0.2);
+    padding: 10px 24px; border-radius: 8px;
+    margin-bottom: 24px;
     letter-spacing: 0.05em;
   }
-  /* Sin tutor */
-  .no-tutor {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    text-align: center;
-    padding: 40px;
+  .card-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.8; margin-bottom: 32px; font-weight: 300; }
+
+  .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+
+  .countdown {
+    font-size: 11px; color: rgba(255,255,255,0.25);
+    font-family: 'DM Mono', monospace;
   }
-  .no-tutor-icon { font-size: 48px; }
-  .no-tutor-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #f1f5f9;
+  .countdown span { color: #facc15; font-weight: 700; }
+
+  /* Barra de progreso countdown */
+  .progress-bar {
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    margin-bottom: 16px;
+    overflow: hidden;
   }
-  .no-tutor-sub {
-    font-size: 14px;
-    color: rgba(255,255,255,0.4);
-    max-width: 360px;
-    line-height: 1.6;
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #facc15, #f97316);
+    border-radius: 2px;
+    width: 100%;
+    animation: shrink 5s linear forwards;
   }
+  @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+
+  .no-tutor-card::before { background: linear-gradient(90deg, #ef4444, #f97316); }
 </style>
 </head>
 <body>
@@ -218,70 +135,74 @@
       <span class="tutor-badge-label">Tutor</span>
       <span class="tutor-badge-name" id="tutorNameBadge">—</span>
     </div>
-    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-back">
-      ← Volver al Portal
-    </a>
+    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn">← Volver al Portal</a>
   </div>
 </div>
 
-<!-- CONTENT -->
-<div class="content" id="content">
+<!-- CONTENIDO -->
+<div class="content">
 
-  <!-- Loader -->
-  <div class="loader" id="loader">
-    <div class="loader-ring"></div>
-    <div class="loader-tutor" id="loaderTutorName">Cargando...</div>
-    <div class="loader-text">Aplicando filtro y cargando reporte...</div>
+  <!-- CARD CON TUTOR -->
+  <div class="card" id="cardTutor" style="display:none;">
+    <div class="card-icon">📊</div>
+    <div class="card-label">Reporte filtrado</div>
+    <div class="card-title">Cursos Activos</div>
+    <div class="card-tutor" id="tutorNameCard">—</div>
+    <div class="card-desc">
+      Se abrirá el reporte de Power BI filtrado exclusivamente<br>para los cursos activos de este tutor.
+    </div>
+    <div class="btn-group">
+      <a id="btnAbrir" href="#" class="btn btn-accent">🚀 Abrir Reporte →</a>
+      <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn">← Volver al Portal</a>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="countdown">Redirigiendo automáticamente en <span id="segundos">5</span> segundos...</div>
   </div>
 
-  <!-- Sin tutor -->
-  <div class="no-tutor" id="noTutor" style="display:none;">
-    <div class="no-tutor-icon">⚠️</div>
-    <div class="no-tutor-title">Sin tutor seleccionado</div>
-    <div class="no-tutor-sub">Esta página debe abrirse desde la tarjeta de un tutor en el Portal de Coordinación. Vuelve al portal y selecciona un tutor.</div>
-    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-back" style="margin-top:8px;">← Volver al Portal</a>
+  <!-- CARD SIN TUTOR -->
+  <div class="card no-tutor-card" id="cardNoTutor" style="display:none;">
+    <div class="card-icon">⚠️</div>
+    <div class="card-label">Error de navegación</div>
+    <div class="card-title">Sin tutor seleccionado</div>
+    <div class="card-desc">
+      Esta página debe abrirse desde la tarjeta de un tutor<br>en el Portal de Coordinación.
+    </div>
+    <div class="btn-group">
+      <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn btn-accent">← Volver al Portal</a>
+    </div>
   </div>
-
-  <!-- iframe Power BI -->
-  <iframe id="reportFrame" style="display:none;" allowfullscreen
-    onload="hideLoader()">
-  </iframe>
 
 </div>
 
 <script>
-  // Leer parámetro ?tutor= de la URL
   const params = new URLSearchParams(window.location.search);
   const tutorRaw = params.get('tutor');
 
   if (!tutorRaw) {
-    // Sin parámetro → mostrar mensaje
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('noTutor').style.display = 'flex';
+    document.getElementById('cardNoTutor').style.display = 'block';
   } else {
-    // Decodificar nombre del tutor
     const tutorName = decodeURIComponent(tutorRaw);
 
-    // Mostrar nombre en badge y loader
     document.getElementById('tutorNameBadge').textContent = tutorName;
-    document.getElementById('loaderTutorName').textContent = tutorName;
+    document.getElementById('tutorNameCard').textContent = tutorName;
+    document.getElementById('cardTutor').style.display = 'block';
 
-    // Construir URL de Power BI con filtro
-    // Sintaxis correcta para columnas con espacios: TABLA/COLUMNA_x0020_CON_x0020_ESPACIO eq 'valor'
-    const baseUrl = "<iframe title="Dashboard_Gestion_Riesgo" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2" frameborder="0" allowFullScreen="true"></iframe>";
-    const filtro = `?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '${encodeURIComponent(tutorName)}'&experience=power-bi&navContentPaneEnabled=false&filterPaneEnabled=false`;
-    const urlFinal = baseUrl + filtro;
+    // URL Power BI con filtro por tutor
+    const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
+    const urlFinal = baseUrl + "?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '" + tutorName + "'&experience=power-bi";
 
-    // Cargar iframe
-    const iframe = document.getElementById('reportFrame');
-    iframe.src = urlFinal;
-    iframe.style.display = 'block';
-  }
+    document.getElementById('btnAbrir').href = urlFinal;
 
-  function hideLoader() {
-    const loader = document.getElementById('loader');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.style.display = 'none', 400);
+    // Countdown 5 segundos → redirección automática
+    let seg = 5;
+    const intervalo = setInterval(() => {
+      seg--;
+      document.getElementById('segundos').textContent = seg;
+      if (seg <= 0) {
+        clearInterval(intervalo);
+        window.location.href = urlFinal;
+      }
+    }, 1000);
   }
 </script>
 
