@@ -189,7 +189,7 @@
 
     // URL Power BI con filtro por tutor
     const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
-    const urlFinal = baseUrl + "?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '" + tutorName + "'&experience=power-bi";
+    const urlFinal = baseUrl + "?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '" + tutorName + "'&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=1";
 
     document.getElementById('btnAbrir').href = urlFinal;
 
