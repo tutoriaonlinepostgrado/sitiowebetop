@@ -14,6 +14,7 @@
     color: #f1f5f9;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
   .topbar {
     height: 52px;
@@ -25,6 +26,7 @@
     padding: 0 24px;
     position: relative;
     flex-shrink: 0;
+    z-index: 10;
   }
   .topbar::after {
     content: '';
@@ -48,71 +50,71 @@
   .tutor-badge-name { font-size: 12px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; text-transform: uppercase; }
   .btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #f1f5f9; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: all 0.15s; font-family: 'Sora', sans-serif; cursor: pointer; }
   .btn:hover { background: rgba(255,255,255,0.1); }
-  .btn-accent { background: #facc15; color: #0f1520; border-color: #facc15; font-size: 13px; padding: 12px 28px; border-radius: 8px; font-weight: 700; }
-  .btn-accent:hover { background: #eab308; }
 
-  .content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
-
-  .card {
-    background: #19202E;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 48px 56px;
-    text-align: center;
-    max-width: 540px;
-    width: 100%;
+  /* Contenedor del iframe con recorte de barra inferior */
+  .iframe-wrapper {
+    flex: 1;
     position: relative;
     overflow: hidden;
+    background: #ffffff;
   }
-  .card::before {
-    content: '';
+
+  /* El iframe es más alto que el contenedor para que la barra quede fuera */
+  .iframe-wrapper iframe {
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #facc15, #f97316);
-  }
-
-  .card-icon { font-size: 52px; margin-bottom: 24px; }
-  .card-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
-  .card-title { font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 20px; }
-  .card-tutor {
-    display: inline-block;
-    font-size: 15px; font-weight: 700; color: #facc15;
-    font-family: 'DM Mono', monospace;
-    background: rgba(250,204,21,0.08);
-    border: 1px solid rgba(250,204,21,0.2);
-    padding: 10px 24px; border-radius: 8px;
-    margin-bottom: 24px;
-    letter-spacing: 0.05em;
-  }
-  .card-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.8; margin-bottom: 32px; font-weight: 300; }
-
-  .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
-
-  .countdown {
-    font-size: 11px; color: rgba(255,255,255,0.25);
-    font-family: 'DM Mono', monospace;
-  }
-  .countdown span { color: #facc15; font-weight: 700; }
-
-  /* Barra de progreso countdown */
-  .progress-bar {
-    height: 2px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #facc15, #f97316);
-    border-radius: 2px;
+    top: 0;
+    left: 0;
     width: 100%;
-    animation: shrink 5s linear forwards;
+    /* Más alto que 100% para empujar la barra de Power BI fuera del área visible */
+    height: calc(100% + 48px);
+    border: none;
   }
-  @keyframes shrink { from { width: 100%; } to { width: 0%; } }
 
-  .no-tutor-card::before { background: linear-gradient(90deg, #ef4444, #f97316); }
+  /* Barra bloqueadora — cubre la parte inferior donde aparece la barra de Power BI */
+  .iframe-blocker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: #ffffff;
+    z-index: 5;
+  }
+
+  /* Loader */
+  .loader {
+    position: absolute;
+    inset: 0;
+    background: #0f1520;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 20;
+    transition: opacity 0.4s;
+  }
+  .loader-ring { width: 44px; height: 44px; border: 3px solid rgba(250,204,21,0.15); border-top-color: #facc15; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-name { font-size: 15px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; }
+  .loader-text { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+  /* Sin tutor */
+  .no-tutor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    padding: 40px;
+  }
+  .no-tutor-icon { font-size: 48px; }
+  .no-tutor-title { font-size: 20px; font-weight: 700; }
+  .no-tutor-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.7; }
+  .btn-accent { background: #facc15; color: #0f1520; border-color: #facc15; padding: 10px 24px; font-size: 12px; border-radius: 8px; font-weight: 700; }
+  .btn-accent:hover { background: #eab308; }
 </style>
 </head>
 <body>
@@ -139,39 +141,24 @@
   </div>
 </div>
 
-<!-- CONTENIDO -->
-<div class="content">
-
-  <!-- CARD CON TUTOR -->
-  <div class="card" id="cardTutor" style="display:none;">
-    <div class="card-icon">📊</div>
-    <div class="card-label">Reporte filtrado</div>
-    <div class="card-title">Cursos Activos</div>
-    <div class="card-tutor" id="tutorNameCard">—</div>
-    <div class="card-desc">
-      Se abrirá el reporte de Power BI filtrado exclusivamente<br>para los cursos activos de este tutor.
-    </div>
-    <div class="btn-group">
-      <a id="btnAbrir" href="#" class="btn btn-accent">🚀 Abrir Reporte →</a>
-      <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn">← Volver al Portal</a>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="countdown">Redirigiendo automáticamente en <span id="segundos">5</span> segundos...</div>
+<!-- IFRAME WRAPPER -->
+<div class="iframe-wrapper" id="iframeWrapper" style="display:none;">
+  <div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-name" id="loaderName">—</div>
+    <div class="loader-text">Cargando cursos del tutor...</div>
   </div>
+  <iframe id="reportFrame" allowfullscreen onload="hideLoader()"></iframe>
+  <!-- Tapa la barra inferior de Power BI -->
+  <div class="iframe-blocker"></div>
+</div>
 
-  <!-- CARD SIN TUTOR -->
-  <div class="card no-tutor-card" id="cardNoTutor" style="display:none;">
-    <div class="card-icon">⚠️</div>
-    <div class="card-label">Error de navegación</div>
-    <div class="card-title">Sin tutor seleccionado</div>
-    <div class="card-desc">
-      Esta página debe abrirse desde la tarjeta de un tutor<br>en el Portal de Coordinación.
-    </div>
-    <div class="btn-group">
-      <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn btn-accent">← Volver al Portal</a>
-    </div>
-  </div>
-
+<!-- SIN TUTOR -->
+<div class="no-tutor" id="noTutor" style="display:none;">
+  <div class="no-tutor-icon">⚠️</div>
+  <div class="no-tutor-title">Sin tutor seleccionado</div>
+  <div class="no-tutor-desc">Esta página debe abrirse desde la tarjeta de un tutor en el Portal de Coordinación.</div>
+  <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn btn-accent">← Volver al Portal</a>
 </div>
 
 <script>
@@ -179,30 +166,25 @@
   const tutorRaw = params.get('tutor');
 
   if (!tutorRaw) {
-    document.getElementById('cardNoTutor').style.display = 'block';
+    document.getElementById('noTutor').style.display = 'flex';
   } else {
     const tutorName = decodeURIComponent(tutorRaw);
 
     document.getElementById('tutorNameBadge').textContent = tutorName;
-    document.getElementById('tutorNameCard').textContent = tutorName;
-    document.getElementById('cardTutor').style.display = 'block';
+    document.getElementById('loaderName').textContent = tutorName;
+    document.getElementById('iframeWrapper').style.display = 'block';
 
-    // URL Power BI con filtro por tutor
+    // URL con filtro + chromeless para ocultar interfaz Power BI
     const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
     const urlFinal = baseUrl + "?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '" + tutorName + "'&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=1";
 
-    document.getElementById('btnAbrir').href = urlFinal;
+    document.getElementById('reportFrame').src = urlFinal;
+  }
 
-    // Countdown 5 segundos → redirección automática
-    let seg = 5;
-    const intervalo = setInterval(() => {
-      seg--;
-      document.getElementById('segundos').textContent = seg;
-      if (seg <= 0) {
-        clearInterval(intervalo);
-        window.location.href = urlFinal;
-      }
-    }, 1000);
+  function hideLoader() {
+    const loader = document.getElementById('loader');
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 400);
   }
 </script>
 
