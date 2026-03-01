@@ -27,14 +27,11 @@
             border-right: 1px solid rgba(255, 215, 0, 0.1);
             z-index: 10;
             overflow-y: auto;
-            transition: margin-left 0.3s ease; /* Animación suave */
-            flex-shrink: 0; /* Evita que se aplaste */
+            transition: margin-left 0.3s ease;
+            flex-shrink: 0;
         }
 
-        /* Clase para esconder el menú */
-        .sidebar.closed {
-            margin-left: -300px; /* Lo mueve fuera de la pantalla */
-        }
+        .sidebar.closed { margin-left: -300px; }
 
         .sidebar-header {
             padding: 25px 20px;
@@ -48,7 +45,6 @@
         .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
 
-        /* Categorías */
         .menu-category {
             padding: 15px 20px 5px 20px;
             font-size: 11px;
@@ -58,7 +54,6 @@
             letter-spacing: 1px;
         }
 
-        /* Botones del Menú */
         .menu-btn {
             background: none;
             border: none;
@@ -73,7 +68,7 @@
             align-items: center;
             gap: 10px;
             width: 100%;
-            text-decoration: none; /* Para los enlaces <a> */
+            text-decoration: none;
             box-sizing: border-box;
         }
 
@@ -105,6 +100,69 @@
         }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
 
+        /* --- MENÚ DESPLEGABLE --- */
+        .collapsible-header {
+            padding: 13px 20px;
+            font-size: 14px;
+            color: #e0e0e0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .collapsible-header:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+            color: var(--amarillo-top);
+        }
+        .collapsible-header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .collapsible-header .arrow {
+            font-size: 10px;
+            color: var(--texto-gris);
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .collapsible-header.open .arrow {
+            transform: rotate(180deg);
+            color: var(--amarillo-top);
+        }
+        .collapsible-header.open {
+            color: var(--amarillo-top);
+            background-color: rgba(255, 215, 0, 0.06);
+            border-left: 4px solid rgba(255,215,0,0.3);
+        }
+
+        .collapsible-body {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+        .collapsible-body.open {
+            max-height: 500px;
+        }
+
+        /* Items dentro del desplegable con sangría */
+        .collapsible-body .menu-btn {
+            padding-left: 36px;
+            font-size: 13px;
+            color: #c0c0c0;
+            border-left: 4px solid transparent;
+        }
+        .collapsible-body .menu-btn::before {
+            content: '›';
+            color: rgba(255,215,0,0.4);
+            font-size: 16px;
+            margin-right: -4px;
+        }
+        .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
+        .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
+
         /* --- ÁREA DE CONTENIDO --- */
         .content-area { 
             flex-grow: 1; 
@@ -114,9 +172,8 @@
             flex-direction: column;
         }
 
-        /* BARRA SUPERIOR DEL CONTENIDO (Para el botón de abrir) */
         .top-bar {
-            background-color: var(--azul-sidebar); /* Mismo color del menú */
+            background-color: var(--azul-sidebar);
             height: 50px;
             display: flex;
             align-items: center;
@@ -125,7 +182,6 @@
             color: white;
         }
 
-        /* Botón Toggle (Hamburguesa) */
         .toggle-btn {
             background: none;
             border: none;
@@ -140,7 +196,7 @@
         
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
 
-        /* --- MODAL SELECTOR DE COORDINADOR --- */
+        /* --- MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 1000;
@@ -207,11 +263,9 @@
             🚦 Reporte Semáforo
         </button>
 
-
         <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
         <div class="menu-category">Espacio Coordinación</div>
         
-        <!-- BOTÓN: RESUMEN DE EQUIPO -->
         <button class="menu-btn" onclick="cargarResumenEquipo(this)">
             👥 Resumen de Mi Equipo
         </button>
@@ -224,7 +278,6 @@
             📈 Resumen Semáforo
         </button>
 
-        <!-- BOTÓN: EXCEL DE NÓMINAS CON ENGRANAJE DE CONFIGURACIÓN -->
         <div style="display: flex; align-items: center; width: 100%;">
             <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
                 📗 Mi Excel de Nóminas ↗️
@@ -232,41 +285,53 @@
             <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
         </div>
 
-        <!-- ENLACE EXTERNO A LA PANTALLA DIVIDIDA -->
         <a href="pantalladividida.html" target="_blank" class="menu-btn">
             🗂️ Asistente de Carga (Pop-up) ↗️
         </a>
 
-
-        <!-- SECCIÓN 3: REPORTES DETALLADOS -->
+        <!-- SECCIÓN 3: REPORTES DETALLADOS — DESPLEGABLE -->
         <div class="menu-category">Reportes Detallados</div>
 
-        <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">
-            🚀 Cursos Por Iniciar
-        </button>
-        
-        <button class="menu-btn" onclick="cargar('REPORTE_NRC', this)">
-            📑 Reporte por NRC
-        </button>
+        <div class="collapsible-header" id="header-reportes" onclick="toggleCollapsible('reportes')">
+            <div class="header-left">
+                <span>📑</span>
+                <span>Reportes Detallados</span>
+            </div>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="collapsible-body" id="body-reportes">
+            <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">
+                🚀 Cursos Por Iniciar
+            </button>
+            <button class="menu-btn" onclick="cargar('REPORTE_NRC', this)">
+                📑 Reporte por NRC
+            </button>
+            <button class="menu-btn" onclick="cargar('BASE_SEGUIMIENTO', this)">
+                💾 Estado Base Seguimiento
+            </button>
+        </div>
 
-        <button class="menu-btn" onclick="cargar('BASE_SEGUIMIENTO', this)">
-            💾 Estado Base Seguimiento
-        </button>
-
-        <!-- SECCIÓN 4: CALIDAD -->
+        <!-- SECCIÓN 4: CALIDAD — DESPLEGABLE -->
         <div class="menu-category">Calidad</div>
 
-        <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">
-            📅 Calendarios
-        </button>
-
-        <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER', this)">
-            ⚠️ Incidencias por Master
-        </button>
-
-        <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC', this)">
-            ⚠️ Incidencias por NRC
-        </button>
+        <div class="collapsible-header" id="header-calidad" onclick="toggleCollapsible('calidad')">
+            <div class="header-left">
+                <span>✅</span>
+                <span>Calidad</span>
+            </div>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="collapsible-body" id="body-calidad">
+            <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">
+                📅 Calendarios
+            </button>
+            <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER', this)">
+                ⚠️ Incidencias por Master
+            </button>
+            <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC', this)">
+                ⚠️ Incidencias por NRC
+            </button>
+        </div>
 
         <a href="index.html" class="btn-volver">
             ⬅️ Volver al Portal Principal
@@ -278,18 +343,16 @@
             <button class="toggle-btn" onclick="toggleSidebar()" title="Abrir/Cerrar Menú">☰</button>
             <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Vista de Reporte</span>
         </div>
-
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
 
 </div>
 
-<!-- VENTANA FLOTANTE (MODAL) PARA SELECCIONAR COORDINADOR -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalCoordinador">
     <div class="modal-box">
         <h3>👋 ¡Hola Coordinador!</h3>
         <p>Selecciona tu nombre para que el sistema recuerde y abra siempre tu Excel personal.</p>
-        
         <select id="selectCoordinador">
             <option value="" disabled selected>-- Elige tu nombre --</option>
             <option value="Carolina">Carolina</option>
@@ -299,36 +362,34 @@
             <option value="Patricio">Patricio</option>
             <option value="Querida Rita">Querida Rita</option>
         </select>
-
         <button class="modal-btn" onclick="guardarYabrirExcel()">Guardar y Abrir Excel</button>
         <button class="modal-close" onclick="cerrarModal()">Cancelar</button>
     </div>
 </div>
 
 <script>
-    // --- FUNCIÓN PARA ESCONDER/MOSTRAR MENÚ ---
+    // --- TOGGLE SIDEBAR ---
     function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('closed');
+        document.getElementById('sidebar').classList.toggle('closed');
     }
 
-    // --- ENLACES TRANSFORMADOS Y CORREGIDOS DEFINITIVOS ---
+    // --- TOGGLE DESPLEGABLE ---
+    function toggleCollapsible(nombre) {
+        const header = document.getElementById('header-' + nombre);
+        const body = document.getElementById('body-' + nombre);
+        header.classList.toggle('open');
+        body.classList.toggle('open');
+    }
+
+    // --- REPORTES ---
     const misReportes = {
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&navContentPaneEnabled=false&filterPaneEnabled=false",
-        
-        // --- AQUÍ ESTÁ LA URL EXACTA DEL RESUMEN DE EQUIPO ---
         'RESUMEN_EQUIPO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=010e9b0e2d796c0cc8bd&navContentPaneEnabled=false&filterPaneEnabled=false",
-
-        // --- ESTADOS DE CURSOS ---
         'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
-
-        // --- ESPACIO COORDINACIÓN ---
         'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
         'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
-
-        // --- REPORTES PAGINADOS (RDL) ---
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
@@ -342,26 +403,15 @@
     function cargar(clave, btn) {
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
-        
         document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
         if(window.innerWidth < 800) toggleSidebar();
     }
 
-    // ==========================================
-    // NUEVA LÓGICA: CARGAR RESUMEN DE EQUIPO FILTRADO POR CORREO
-    // ==========================================
     function cargarResumenEquipo(btn) {
         const nombreCoordinador = localStorage.getItem('etop_nombreCoordinador');
         let urlBase = misReportes['RESUMEN_EQUIPO'];
-
-        if (!urlBase || urlBase === "AQUI_PEGA_LA_URL_DE_TU_NUEVA_PAGINA") {
-            alert("Aún falta pegar la URL de Power BI para el Resumen de Equipo en el código del portal.");
-            return;
-        }
-
-        // 1. DICCIONARIO DE CORREOS REALES
+        if (!urlBase) { alert("Falta la URL del Resumen de Equipo."); return; }
         const correosCoordinadores = {
             "Carolina": "carolina.monsalve.g@unab.cl",
             "Daniela": "tutoriaonline36@unab.cl",
@@ -370,43 +420,32 @@
             "Patricio": "patricio.collao@unab.cl",
             "Querida Rita": "rita.galvez@unab.cl"
         };
-
         if (nombreCoordinador && correosCoordinadores[nombreCoordinador]) {
-            // 2. Obtenemos el correo del diccionario y lo preparamos para la URL
             const correoExacto = correosCoordinadores[nombreCoordinador];
             const correoCodificado = encodeURIComponent(correoExacto);
-            
-            // 3. SE USA LA COLUMNA DE TEXTO Y LA FUNCIÓN CONTAINS
             const filtro = `&filter=NRC_TUTOR_ACTUAL/Coordinadores_Emails_Texto contains '${correoCodificado}'`;
-            
             document.getElementById('visor').src = urlBase + filtro;
         } else {
-            // Si no ha seleccionado a nadie, mostramos todo
             document.getElementById('visor').src = urlBase;
             alert("Mostrando todos los equipos. Si quieres ver solo tus tutores, configura tu nombre haciendo clic en el engranaje ⚙️ debajo.");
         }
-
         document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if(window.innerWidth < 800) toggleSidebar();
     }
 
-    // ==========================================
-    // LÓGICA DEL SELECTOR DE EXCEL
-    // ==========================================
     const archivosCoordinadores = {
         "Carolina": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Carola.xlsx?d=wcc26880a121e4d94a29cd573e6f69da8&csf=1&web=1&e=nlvce6",
         "Daniela": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Daniela.xlsx?d=w43ebd8f7a27646e8a147cfa598572643&csf=1&web=1&e=XhS63X",
         "Miguel": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_miguel.xlsx?d=we8ec845160e8418a96d22fde9492238c&csf=1&web=1&e=98C2Dp",
         "Pablo": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Pablo.xlsx?d=w31ef4ad8a0d94d0a8c1cb6179ef2a714&csf=1&web=1&e=nh5Yyo",
-        "Patricio": "", // Puedes añadir aquí su enlace de Excel si lo necesitas en el futuro
+        "Patricio": "",
         "Querida Rita": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Rita.xlsx?d=w3016b6bb82ed4834bb6781bfe65022ff&csf=1&web=1&e=4rkMqq"
     };
 
     function abrirMiExcel() {
         const nombreGuardado = localStorage.getItem('etop_nombreCoordinador');
         if (nombreGuardado && archivosCoordinadores[nombreGuardado]) {
-            // Si hay enlace lo abre, de lo contrario pide configurarlo (caso Patricio sin enlace aún)
             if(archivosCoordinadores[nombreGuardado] !== "") {
                 window.open(archivosCoordinadores[nombreGuardado], '_blank');
             } else {
@@ -417,23 +456,15 @@
         }
     }
 
-    function mostrarModalCoordinador() {
-        document.getElementById('modalCoordinador').style.display = 'flex';
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalCoordinador').style.display = 'none';
-    }
+    function mostrarModalCoordinador() { document.getElementById('modalCoordinador').style.display = 'flex'; }
+    function cerrarModal() { document.getElementById('modalCoordinador').style.display = 'none'; }
 
     function guardarYabrirExcel() {
         const select = document.getElementById('selectCoordinador');
         const nombreSeleccionado = select.value;
-        
         if (nombreSeleccionado) {
             localStorage.setItem('etop_nombreCoordinador', nombreSeleccionado);
             cerrarModal();
-            
-            // Si el coordinador seleccionado tiene una URL asignada, lo abrimos
             if (archivosCoordinadores[nombreSeleccionado] !== "") {
                 window.open(archivosCoordinadores[nombreSeleccionado], '_blank');
             } else {
