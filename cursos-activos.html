@@ -8,25 +8,22 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body, html {
-    height: 100%;
+    min-height: 100%;
     font-family: 'Sora', sans-serif;
     background: #0f1520;
     color: #f1f5f9;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
   }
+
+  /* ── TOPBAR ── */
   .topbar {
     height: 52px;
-    background: #0f1520;
+    background: #0a0f1a;
     border-bottom: 1px solid rgba(255,255,255,0.07);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
     position: relative;
-    flex-shrink: 0;
-    z-index: 10;
   }
   .topbar::after {
     content: '';
@@ -39,82 +36,160 @@
   .topbar-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
   .topbar-logo-icon { width: 28px; height: 28px; background: #facc15; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
   .topbar-logo-text { font-size: 12px; font-weight: 700; color: #f1f5f9; letter-spacing: 0.08em; text-transform: uppercase; }
-  .topbar-sep { color: rgba(255,255,255,0.2); font-size: 18px; }
-  .topbar-section { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .topbar-sep { color: rgba(255,255,255,0.15); }
+  .topbar-section { font-size: 12px; color: rgba(255,255,255,0.35); }
   .topbar-title { font-size: 13px; font-weight: 700; color: #facc15; }
   .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .tutor-badge { display: flex; align-items: center; gap: 8px; background: rgba(250,204,21,0.1); border: 1px solid rgba(250,204,21,0.25); border-radius: 100px; padding: 5px 14px; }
-  .tutor-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .tutor-badge-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
-  .tutor-badge-name { font-size: 12px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; text-transform: uppercase; }
-  .btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #f1f5f9; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: all 0.15s; font-family: 'Sora', sans-serif; cursor: pointer; }
-  .btn:hover { background: rgba(255,255,255,0.1); }
+  .tutor-badge { display: flex; align-items: center; gap: 8px; background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.2); border-radius: 100px; padding: 5px 14px; }
+  .tutor-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .tutor-label { font-size: 9px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+  .tutor-name { font-size: 12px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; text-transform: uppercase; }
+  .btn-back { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; transition: all 0.15s; }
+  .btn-back:hover { background: rgba(255,255,255,0.09); color: #fff; }
 
-  /* Contenedor del iframe con recorte de barra inferior */
-  .iframe-wrapper {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #ffffff;
-  }
-
-  /* El iframe es más alto que el contenedor para que la barra quede fuera */
-  .iframe-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* Más alto que 100% para empujar la barra de Power BI fuera del área visible */
-    height: calc(100% + 48px);
-    border: none;
-  }
-
-  /* Barra bloqueadora — cubre la parte inferior donde aparece la barra de Power BI */
-  .iframe-blocker {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 48px;
-    background: #ffffff;
-    z-index: 5;
-  }
-
-  /* Loader */
-  .loader {
-    position: absolute;
-    inset: 0;
-    background: #0f1520;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    z-index: 20;
-    transition: opacity 0.4s;
-  }
-  .loader-ring { width: 44px; height: 44px; border: 3px solid rgba(250,204,21,0.15); border-top-color: #facc15; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-name { font-size: 15px; font-weight: 700; color: #facc15; font-family: 'DM Mono', monospace; }
-  .loader-text { font-size: 12px; color: rgba(255,255,255,0.35); }
-
-  /* Sin tutor */
-  .no-tutor {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
+  /* ── HERO ── */
+  .hero {
+    padding: 56px 24px 32px;
     text-align: center;
-    padding: 40px;
   }
-  .no-tutor-icon { font-size: 48px; }
-  .no-tutor-title { font-size: 20px; font-weight: 700; }
-  .no-tutor-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.7; }
-  .btn-accent { background: #facc15; color: #0f1520; border-color: #facc15; padding: 10px 24px; font-size: 12px; border-radius: 8px; font-weight: 700; }
-  .btn-accent:hover { background: #eab308; }
+  .hero-eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255,255,255,0.25);
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: 28px; font-weight: 800; color: #fff;
+    margin-bottom: 10px; line-height: 1.2;
+  }
+  .hero-tutor {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(250,204,21,0.07);
+    border: 1px solid rgba(250,204,21,0.18);
+    border-radius: 10px;
+    padding: 10px 24px;
+    margin-bottom: 32px;
+  }
+  .hero-tutor-icon { font-size: 20px; }
+  .hero-tutor-name {
+    font-size: 16px; font-weight: 700; color: #facc15;
+    font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    max-width: 560px;
+    margin: 0 auto 32px;
+    background: #19202E;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .main-card-header {
+    background: linear-gradient(135deg, #1e2d4a, #19202E);
+    padding: 28px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .main-card-icon {
+    width: 52px; height: 52px;
+    background: rgba(250,204,21,0.1);
+    border: 1px solid rgba(250,204,21,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .main-card-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+  .main-card-title { font-size: 18px; font-weight: 700; color: #fff; }
+  .main-card-body { padding: 24px 32px; }
+  .main-card-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.75; margin-bottom: 24px; font-weight: 300; }
+
+  /* CTA Button */
+  .cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #facc15;
+    color: #0a0f1a;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 16px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+  }
+  .cta-btn:hover { background: #eab308; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(250,204,21,0.25); }
+  .cta-btn-icon { font-size: 18px; }
+
+  .cta-note {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    height: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #facc15, #f97316);
+    border-radius: 4px;
+    width: 100%;
+    animation: shrink 5s linear forwards;
+  }
+  @keyframes shrink { from { width:100% } to { width:0% } }
+
+  .countdown-text {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 20px;
+  }
+  .countdown-text span { color: #facc15; font-weight: 700; }
+
+  /* ── FEATURES ── */
+  .features {
+    max-width: 560px;
+    margin: 0 auto 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 24px;
+  }
+  .feature-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .feature-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .feature-text { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+  .feature-text strong { color: rgba(255,255,255,0.7); display: block; margin-bottom: 2px; font-size: 12px; }
+
+  /* ── NO TUTOR ── */
+  .no-tutor {
+    max-width: 440px; margin: 80px auto; text-align: center; padding: 0 24px;
+  }
+  .no-tutor-icon { font-size: 48px; margin-bottom: 20px; }
+  .no-tutor-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .no-tutor-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.7; margin-bottom: 24px; }
+  .btn-accent { background: #facc15; color: #0a0f1a; font-size: 13px; font-weight: 700; padding: 12px 28px; border-radius: 8px; text-decoration: none; display: inline-block; }
 </style>
 </head>
 <body>
@@ -133,32 +208,77 @@
   </div>
   <div class="topbar-right">
     <div class="tutor-badge">
-      <div class="tutor-badge-dot"></div>
-      <span class="tutor-badge-label">Tutor</span>
-      <span class="tutor-badge-name" id="tutorNameBadge">—</span>
+      <div class="tutor-dot"></div>
+      <span class="tutor-label">Tutor</span>
+      <span class="tutor-name" id="tutorNameBadge">—</span>
     </div>
-    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn">← Volver al Portal</a>
+    <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-back">← Volver al Portal</a>
   </div>
 </div>
 
-<!-- IFRAME WRAPPER -->
-<div class="iframe-wrapper" id="iframeWrapper" style="display:none;">
-  <div class="loader" id="loader">
-    <div class="loader-ring"></div>
-    <div class="loader-name" id="loaderName">—</div>
-    <div class="loader-text">Cargando cursos del tutor...</div>
+<!-- CON TUTOR -->
+<div id="withTutor" style="display:none;">
+  <div class="hero">
+    <div class="hero-eyebrow">Reporte filtrado · Coordinación ETOP</div>
+    <div class="hero-title">Cursos Activos</div>
+    <div class="hero-tutor">
+      <div class="hero-tutor-icon">👨‍🏫</div>
+      <div class="hero-tutor-name" id="tutorNameHero">—</div>
+    </div>
   </div>
-  <iframe id="reportFrame" allowfullscreen onload="hideLoader()"></iframe>
-  <!-- Tapa la barra inferior de Power BI -->
-  <div class="iframe-blocker"></div>
+
+  <div class="main-card" style="padding:0 24px;max-width:608px;">
+    <div style="max-width:560px;margin:0 auto;">
+      <div class="main-card" style="margin-bottom:0;">
+        <div class="main-card-header">
+          <div class="main-card-icon">📊</div>
+          <div>
+            <div class="main-card-label">Power BI · Vista filtrada</div>
+            <div class="main-card-title">Monitor de Cursos Activos</div>
+          </div>
+        </div>
+        <div class="main-card-body">
+          <div class="main-card-desc">
+            El reporte se abrirá en Power BI mostrando únicamente los cursos activos asignados a este tutor — con todos los accesos directos a Canvas, base de seguimiento y web de integración disponibles.
+          </div>
+          <div class="progress-wrap"><div class="progress-fill"></div></div>
+          <div class="countdown-text">Abriendo automáticamente en <span id="segundos">5</span> seg...</div>
+          <a id="btnAbrir" href="#" class="cta-btn">
+            <span class="cta-btn-icon">🚀</span>
+            Abrir Reporte Filtrado
+          </a>
+          <div class="cta-note">Se abrirá en esta misma pestaña · Power BI Service</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-item">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-text"><strong>Acceso directo NRC</strong>Base de seguimiento filtrada por curso</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🎓</div>
+      <div class="feature-text"><strong>Botón Canvas</strong>Abre el curso directo sin buscarlo</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🌐</div>
+      <div class="feature-text"><strong>Web integración</strong>Filtrada por Intake y Versión</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📋</div>
+      <div class="feature-text"><strong>Estado de incidencias</strong>QA2 pendientes y resumen</div>
+    </div>
+  </div>
 </div>
 
 <!-- SIN TUTOR -->
 <div class="no-tutor" id="noTutor" style="display:none;">
   <div class="no-tutor-icon">⚠️</div>
   <div class="no-tutor-title">Sin tutor seleccionado</div>
-  <div class="no-tutor-desc">Esta página debe abrirse desde la tarjeta de un tutor en el Portal de Coordinación.</div>
-  <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn btn-accent">← Volver al Portal</a>
+  <div class="no-tutor-desc">Esta página debe abrirse desde la tarjeta de un tutor en el Portal de Coordinación. Vuelve al portal y selecciona un tutor.</div>
+  <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/" class="btn-accent">← Volver al Portal</a>
 </div>
 
 <script>
@@ -166,25 +286,29 @@
   const tutorRaw = params.get('tutor');
 
   if (!tutorRaw) {
-    document.getElementById('noTutor').style.display = 'flex';
+    document.getElementById('noTutor').style.display = 'block';
   } else {
     const tutorName = decodeURIComponent(tutorRaw);
 
     document.getElementById('tutorNameBadge').textContent = tutorName;
-    document.getElementById('loaderName').textContent = tutorName;
-    document.getElementById('iframeWrapper').style.display = 'block';
+    document.getElementById('tutorNameHero').textContent = tutorName;
+    document.getElementById('withTutor').style.display = 'block';
 
-    // URL con filtro + chromeless para ocultar interfaz Power BI
     const baseUrl = "https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/9df5f2db687d901b71b9";
     const urlFinal = baseUrl + "?filter=NRC_TUTOR_ACTUAL/NOMBRE_x0020_TUTOR eq '" + tutorName + "'&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=1";
 
-    document.getElementById('reportFrame').src = urlFinal;
-  }
+    document.getElementById('btnAbrir').href = urlFinal;
 
-  function hideLoader() {
-    const loader = document.getElementById('loader');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.style.display = 'none', 400);
+    // Countdown → redirección automática en 5 segundos
+    let seg = 5;
+    const intervalo = setInterval(() => {
+      seg--;
+      document.getElementById('segundos').textContent = seg;
+      if (seg <= 0) {
+        clearInterval(intervalo);
+        window.location.href = urlFinal;
+      }
+    }, 1000);
   }
 </script>
 
