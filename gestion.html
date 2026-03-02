@@ -423,7 +423,7 @@
         if (nombreCoordinador && correosCoordinadores[nombreCoordinador]) {
             const correoExacto = correosCoordinadores[nombreCoordinador];
             const correoCodificado = encodeURIComponent(correoExacto);
-            const filtro = `&filter=NRC_TUTOR_ACTUAL/Coordinadores_Emails_Texto contains '${correoCodificado}'`;
+           const filtro = `&filter=NRC_TUTOR_ACTUAL/Nombre_Coordinador eq '${encodeURIComponent(nombreCoordinador)}'`;
             document.getElementById('visor').src = urlBase + filtro;
         } else {
             document.getElementById('visor').src = urlBase;
