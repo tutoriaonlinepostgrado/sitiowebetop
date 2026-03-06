@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparando correo...</title>
+    <style>
+        body {
+            background-color: #141b2d;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loader {
+            border: 4px solid rgba(255, 215, 0, 0.1);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <h2>✉️ Abriendo Outlook...</h2>
+    <p style="color: #94a3b8; font-size: 14px;">Si tu navegador te pide permiso, haz clic en "Permitir" o "Abrir".</p>
+    
+    <script>
+        window.onload = function() {
+            // 1. Obtener los datos exactos que nos mandó Power BI
+            const urlParams = new URLSearchParams(window.location.search);
+            let subject = urlParams.get('subject') || '';
+            let body = urlParams.get('body') || '';
+
+            // 2. Codificar el texto para que Outlook lo lea perfectamente
+            subject = encodeURIComponent(subject);
+            body = encodeURIComponent(body);
+
+            // 3. Crear y ejecutar el comando mailto nativo de Windows
+            const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+            window.location.href = mailtoLink;
+
+            // 4. Intentar cerrar esta pestaña sola después de unos segundos
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
