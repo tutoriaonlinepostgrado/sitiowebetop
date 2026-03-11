@@ -26,9 +26,9 @@
             flex-direction: column;
             border-right: 1px solid rgba(255, 215, 0, 0.1);
             z-index: 10;
-            overflow-y: auto;
             transition: margin-left 0.3s ease;
             flex-shrink: 0;
+            overflow: hidden; /* Ocultamos el scroll general */
         }
 
         .sidebar.closed { margin-left: -300px; }
@@ -36,14 +36,27 @@
         .sidebar-header {
             padding: 25px 20px;
             border-bottom: 2px solid var(--amarillo-top);
-            margin-bottom: 10px;
             background-color: rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0; /* Evita que la cabecera se achique */
         }
         .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
+
+        /* --- ZONA DESLIZABLE DEL MENÚ (LA SOLUCIÓN RESPONSIVE) --- */
+        .sidebar-menu {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 15px;
+        }
+
+        /* Scrollbar personalizado para que se vea elegante */
+        .sidebar-menu::-webkit-scrollbar { width: 5px; }
+        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255, 215, 0, 0.6); }
 
         .menu-category {
             padding: 15px 20px 5px 20px;
@@ -97,6 +110,8 @@
             align-items: center;
             gap: 10px;
             transition: 0.3s;
+            flex-shrink: 0; /* Mantiene el botón fijo abajo */
+            background-color: var(--azul-sidebar);
         }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
 
@@ -228,6 +243,7 @@
 <div class="app-container">
     
     <div class="sidebar" id="sidebar">
+        <!-- CABECERA FIJA -->
         <div class="sidebar-header">
             <div>
                 <h2>⚙️ Gestión Tutorial</h2>
@@ -236,107 +252,116 @@
             <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
         </div>
 
-        <!-- SECCIÓN 1: OPERACIÓN DIARIA -->
-        <div class="menu-category">Operación Diaria</div>
-        
-        <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">
-            📊 Tablero de Gestión (App)
-        </button>
-
-        <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES', this)">
-            📋 Nómina Estudiantes
-        </button>
-
-        <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS', this)">
-            🟢 Cursos Activos
-        </button>
-
-        <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION', this)">
-            ⏳ Cursos en Preparación
-        </button>
-
-        <button class="menu-btn" onclick="cargar('CURSOS_CIERRE', this)">
-            🏁 Cursos en Cierre
-        </button>
-
-        <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">
-            👤 Ficha del Estudiante
-        </button>
-
-        <button class="menu-btn" onclick="cargar('SEMAFORO', this)">
-            🚦 Reporte Semáforo
-        </button>
-
-        <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
-        <div class="menu-category">Espacio Coordinación</div>
-        
-        <button class="menu-btn" onclick="cargarResumenEquipo(this)">
-            👥 Resumen de Mi Equipo
-        </button>
-
-        <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">
-            ⚖️ Carga Tutorial
-        </button>
-
-        <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">
-            📈 Resumen Semáforo
-        </button>
-
-        <div style="display: flex; align-items: center; width: 100%;">
-            <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
-                📗 Mi Excel de Nóminas ↗️
+        <!-- ZONA DE BOTONES DESLIZABLE -->
+        <div class="sidebar-menu">
+            <!-- SECCIÓN 1: OPERACIÓN DIARIA -->
+            <div class="menu-category">Operación Diaria</div>
+            
+            <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">
+                📊 Tablero de Gestión (App)
             </button>
-            <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
-        </div>
 
-        <a href="pantalladividida.html" target="_blank" class="menu-btn">
-            🗂️ Asistente de Carga (Pop-up) ↗️
-        </a>
+            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES', this)">
+                📋 Nómina Estudiantes
+            </button>
 
-        <!-- SECCIÓN 3: REPORTES DETALLADOS — DESPLEGABLE -->
-        <div class="menu-category">Reportes Detallados</div>
+            <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS', this)">
+                🟢 Cursos Activos
+            </button>
 
-        <div class="collapsible-header" id="header-reportes" onclick="toggleCollapsible('reportes')">
-            <div class="header-left">
-                <span>📑</span>
-                <span>Reportes Detallados</span>
+            <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION', this)">
+                ⏳ Cursos en Preparación
+            </button>
+
+            <button class="menu-btn" onclick="cargar('CURSOS_CIERRE', this)">
+                🏁 Cursos en Cierre
+            </button>
+
+            <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">
+                👤 Ficha del Estudiante
+            </button>
+
+            <button class="menu-btn" onclick="cargar('SEMAFORO', this)">
+                🚦 Reporte Semáforo
+            </button>
+
+            <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
+            <div class="menu-category">Espacio Coordinación</div>
+            
+            <button class="menu-btn" onclick="cargarResumenEquipo(this)">
+                👥 Resumen de Mi Equipo
+            </button>
+
+            <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">
+                ⚖️ Carga Tutorial
+            </button>
+
+            <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">
+                📈 Resumen Semáforo
+            </button>
+
+            <div style="display: flex; align-items: center; width: 100%;">
+                <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
+                    📗 Mi Excel de Nóminas ↗️
+                </button>
+                <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
             </div>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="collapsible-body" id="body-reportes">
-            <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">
-                🚀 Cursos Por Iniciar
-            </button>
-            <button class="menu-btn" onclick="cargar('REPORTE_NRC', this)">
-                📑 Reporte por NRC
-            </button>
-            <button class="menu-btn" onclick="cargar('BASE_SEGUIMIENTO', this)">
-                💾 Estado Base Seguimiento
-            </button>
-        </div>
 
-        <!-- SECCIÓN 4: CALIDAD — DESPLEGABLE -->
-        <div class="menu-category">Calidad</div>
+            <!-- NUEVO BOTÓN: APP STREAMLIT -->
+            <a href="https://etop-estudiantes-unab.streamlit.app/" target="_blank" class="menu-btn" title="Abrir App de Streamlit para subir Nóminas">
+                ☁️ Cargar Nóminas (App) ↗️
+            </a>
 
-        <div class="collapsible-header" id="header-calidad" onclick="toggleCollapsible('calidad')">
-            <div class="header-left">
-                <span>✅</span>
-                <span>Calidad</span>
+            <a href="pantalladividida.html" target="_blank" class="menu-btn">
+                🗂️ Asistente de Carga (Pop-up) ↗️
+            </a>
+
+            <!-- SECCIÓN 3: REPORTES DETALLADOS — DESPLEGABLE -->
+            <div class="menu-category">Reportes Detallados</div>
+
+            <div class="collapsible-header" id="header-reportes" onclick="toggleCollapsible('reportes')">
+                <div class="header-left">
+                    <span>📑</span>
+                    <span>Reportes Detallados</span>
+                </div>
+                <span class="arrow">▼</span>
             </div>
-            <span class="arrow">▼</span>
-        </div>
-        <div class="collapsible-body" id="body-calidad">
-            <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">
-                📅 Calendarios
-            </button>
-            <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER', this)">
-                ⚠️ Incidencias por Master
-            </button>
-            <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC', this)">
-                ⚠️ Incidencias por NRC
-            </button>
-        </div>
+            <div class="collapsible-body" id="body-reportes">
+                <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">
+                    🚀 Cursos Por Iniciar
+                </button>
+                <button class="menu-btn" onclick="cargar('REPORTE_NRC', this)">
+                    📑 Reporte por NRC
+                </button>
+                <button class="menu-btn" onclick="cargar('BASE_SEGUIMIENTO', this)">
+                    💾 Estado Base Seguimiento
+                </button>
+            </div>
 
+            <!-- SECCIÓN 4: CALIDAD — DESPLEGABLE -->
+            <div class="menu-category">Calidad</div>
+
+            <div class="collapsible-header" id="header-calidad" onclick="toggleCollapsible('calidad')">
+                <div class="header-left">
+                    <span>✅</span>
+                    <span>Calidad</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-body" id="body-calidad">
+                <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">
+                    📅 Calendarios
+                </button>
+                <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER', this)">
+                    ⚠️ Incidencias por Master
+                </button>
+                <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC', this)">
+                    ⚠️ Incidencias por NRC
+                </button>
+            </div>
+        </div> <!-- FIN ZONA DESLIZABLE -->
+
+        <!-- BOTÓN DE VOLVER FIJO AL FONDO -->
         <a href="index.html" class="btn-volver">
             ⬅️ Volver al Portal Principal
         </a>
@@ -408,7 +433,7 @@
     function cargar(clave, btn) {
         const url = misReportes[clave];
         if(url) document.getElementById('visor').src = url;
-        document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if(window.innerWidth < 800) toggleSidebar();
     }
@@ -434,7 +459,7 @@
             document.getElementById('visor').src = urlBase;
             alert("Mostrando todos los equipos. Si quieres ver solo tus tutores, configura tu nombre haciendo clic en el engranaje ⚙️ debajo.");
         }
-        document.querySelectorAll('button.menu-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if(window.innerWidth < 800) toggleSidebar();
     }
@@ -479,6 +504,12 @@
             alert("Por favor, selecciona tu nombre de la lista antes de continuar.");
         }
     }
+
+    // Cargar reporte inicial
+    window.onload = function() {
+        const btnInicio = document.querySelector('.menu-btn.active');
+        if(btnInicio) cargar('DASHBOARD', btnInicio);
+    };
 </script>
 </body>
 </html>
