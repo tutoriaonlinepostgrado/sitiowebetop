@@ -546,6 +546,20 @@
 
   <div id="t3-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab3()">📥 Descargar Excel Invitación</button>
+    <button class="btn primary" onclick="sendToSharePointSync()">📨 Enviar a SharePoint</button>
+  </div>
+  <div id="t3-sp-result"></div>
+
+  <!-- PASO 3 -->
+  <div id="t3-paso3" style="display:none; margin-top:1.2rem;">
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
+      <div style="font-weight:700; font-size:1rem;">Enviar invitaciones sincónicas</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
+      📅 Abrir app — Enviar invitaciones sincónicas
+    </button>
   </div>
 </div>
 
@@ -572,8 +586,9 @@ function clearAll() {
   Object.assign(state, { t1Files:[], t1mFiles:[], t2File:null, t3File:null, t2Data:null, t3Data:null, t1Mode:'diario' });
   document.querySelectorAll('input[type=text], input[type=date], input[type=time], textarea').forEach(el => el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
-  ['t1-result','t2-result','t3-result','t2-sp-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
-  ['t2-actions','t3-actions','t2-paso3'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  // innerHTML cleared above
+  ['t2-actions','t3-actions','t2-paso3','t3-paso3'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
   // reset radio
   selectRadio(document.querySelector('#tab1-radio .radio-option'), 'tab1-mode', 'diario');
   switchTab(0, document.querySelectorAll('.tab-btn')[0]);
@@ -1181,6 +1196,30 @@ async function processTab3() {
 function downloadTab3() {
   if(!state.t3Data) return;
   exportXLSX(state.t3Data, 'Envio_invitacion_sesion_sincronica.xlsx');
+}
+
+async function sendToSharePointSync() {
+  if(!state.t3Data) return;
+  const spResult = document.getElementById('t3-sp-result');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/911641e897164b58afde2903d140469b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bCmCw-jpQFCyzSAmKB_zgB6ekd13ogiiWfZbpsNHdG4";
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.t3Data)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
+      document.getElementById('t3-paso3').style.display = 'block';
+    } else {
+      spResult.innerHTML = `<div class="alert error">Error \${res.status}: \${res.statusText}</div>`;
+    }
+  } catch(err) {
+    spResult.innerHTML = `<div class="alert error">Error de red: \${err.message}<br><small>Si el error es de CORS, verifica la configuración del trigger en Power Automate.</small></div>`;
+  }
 }
 
 // ─── INIT DATES ───────────────────────────────────────────────────────────────
