@@ -1082,10 +1082,10 @@ async function sendToSharePoint() {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('t2-paso3').style.display = 'block';
     } else {
-      spResult.innerHTML = `<div class="alert error">Error ${res.status}: ${res.statusText}</div>`;
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
     }
   } catch(err) {
-    spResult.innerHTML = `<div class="alert error">Error de red: ${err.message}<br><small>Si el error es de CORS, verifica la configuración del trigger en Power Automate.</small></div>`;
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
   }
 }
 
@@ -1215,10 +1215,10 @@ async function sendToSharePointSync() {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('t3-paso3').style.display = 'block';
     } else {
-      spResult.innerHTML = `<div class="alert error">Error \${res.status}: \${res.statusText}</div>`;
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
     }
   } catch(err) {
-    spResult.innerHTML = `<div class="alert error">Error de red: \${err.message}<br><small>Si el error es de CORS, verifica la configuración del trigger en Power Automate.</small></div>`;
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
   }
 }
 
