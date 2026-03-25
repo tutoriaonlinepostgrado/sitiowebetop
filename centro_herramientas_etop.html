@@ -719,24 +719,131 @@ function exportXLSX(rows, filename) {
   XLSX.writeFile(wb, filename);
 }
 
-// Exporta con tabla nombrada "TablaEstudiantes" (requerida por el flujo Power Automate)
+// Exporta con tabla nombrada "TablaEstudiantes" usando XML directo
 function exportXLSXConTabla(rows, filename) {
   if(!rows || !rows.length) return;
-  const ws = XLSX.utils.json_to_sheet(rows);
   const cols = Object.keys(rows[0]);
-  // Define named table
-  ws['!tables'] = [{
-    name: 'TablaEstudiantes',
-    ref: XLSX.utils.encode_range({
-      s: { r: 0, c: 0 },
-      e: { r: rows.length, c: cols.length - 1 }
-    }),
-    headerRow: true,
-    columns: cols.map(c => ({ name: c }))
-  }];
+  const numRows = rows.length;
+  const numCols = cols.length;
+
+  // Build worksheet with SheetJS
+  const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Estudiantes');
-  XLSX.writeFile(wb, filename);
+
+  // Define the table range e.g. A1:H501
+  function colLetter(n) {
+    let s = '';
+    n++;
+    while(n > 0) { n--; s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26); }
+    return s;
+  }
+  const lastCol = colLetter(numCols - 1);
+  const lastRow = numRows + 1; // +1 for header
+  const tableRef = 'A1:' + lastCol + lastRow;
+
+  // Inject table XML into the workbook
+  wb.Sheets['Estudiantes']['!tables'] = undefined; // clear any previous
+  
+  // Use SheetJS worksheet rel and override with table XML
+  const tableXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+    'id="1" name="TablaEstudiantes" displayName="TablaEstudiantes" ref="' + tableRef + '" ' +
+    'totalsRowShown="0">' +
+    '<autoFilter ref="' + tableRef + '"/>' +
+    '<tableColumns>' +
+    cols.map((c, i) => '<tableColumn id="' + (i+1) + '" name="' + c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') + '"/>').join('') +
+    '</tableColumns>' +
+    '<tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/>' +
+    '</table>';
+
+  if(!wb.Sheets['Estudiantes']['!rels']) wb.Sheets['Estudiantes']['!rels'] = [];
+
+  // Attach table via workbook's sheet relationships
+  const wsName = 'Estudiantes';
+  if(!wb.Sheets[wsName]['!fullref']) {
+    wb.Sheets[wsName]['!fullref'] = tableRef;
+  }
+
+  // Override with raw ZIP injection via SheetJS book_set_sheet_visibility workaround
+  // We use the xl/tables/table1.xml + sheet rel approach
+  wb.Custprops = wb.Custprops || {};
+  wb._tableXml = tableXml;
+  wb._tableSheet = wsName;
+  wb._tableRef = tableRef;
+  wb._tableCols = cols;
+  wb._tableLastRow = lastRow;
+  wb._tableLastCol = lastCol;
+
+  // Write using writeXLSX with manual ZIP injection
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary', compression: true });
+
+  // Inject table into the ZIP
+  injectTableIntoXlsx(wbout, tableXml, wsName, tableRef).then(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+async function injectTableIntoXlsx(wboutBinary, tableXml, sheetName, tableRef) {
+  // Load JSZip dynamically if not present
+  if(typeof JSZip === 'undefined') {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  // Convert binary string to ArrayBuffer
+  const buf = new ArrayBuffer(wboutBinary.length);
+  const view = new Uint8Array(buf);
+  for(let i=0; i<wboutBinary.length; i++) view[i] = wboutBinary.charCodeAt(i) & 0xFF;
+
+  const zip = await JSZip.loadAsync(buf);
+
+  // 1. Add table XML
+  zip.file('xl/tables/table1.xml', tableXml);
+
+  // 2. Find sheet1 file (usually xl/worksheets/sheet1.xml)
+  const sheetFile = 'xl/worksheets/sheet1.xml';
+  let sheetXml = await zip.file(sheetFile).async('string');
+
+  // 3. Add tablePart reference before </worksheet>
+  if(!sheetXml.includes('tableParts')) {
+    sheetXml = sheetXml.replace('</worksheet>', '<tableParts count="1"><tablePart r:id="rId99"/></tableParts></worksheet>');
+    zip.file(sheetFile, sheetXml);
+  }
+
+  // 4. Add relationship in sheet1.xml.rels
+  const relsPath = 'xl/worksheets/_rels/sheet1.xml.rels';
+  let relsXml = '';
+  const relsFile = zip.file(relsPath);
+  if(relsFile) {
+    relsXml = await relsFile.async('string');
+    relsXml = relsXml.replace('</Relationships>', 
+      '<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/></Relationships>');
+  } else {
+    relsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/>' +
+      '</Relationships>';
+  }
+  zip.file(relsPath, relsXml);
+
+  // 5. Register table in [Content_Types].xml
+  let contentTypes = await zip.file('[Content_Types].xml').async('string');
+  if(!contentTypes.includes('table1.xml')) {
+    contentTypes = contentTypes.replace('</Types>',
+      '<Override PartName="/xl/tables/table1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/></Types>');
+    zip.file('[Content_Types].xml', contentTypes);
+  }
+
+  return await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 }
 
 // ─── NORMALIZE COLUMN NAMES ───────────────────────────────────────────────────
