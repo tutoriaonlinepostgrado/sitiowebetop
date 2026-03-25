@@ -719,6 +719,26 @@ function exportXLSX(rows, filename) {
   XLSX.writeFile(wb, filename);
 }
 
+// Exporta con tabla nombrada "TablaEstudiantes" (requerida por el flujo Power Automate)
+function exportXLSXConTabla(rows, filename) {
+  if(!rows || !rows.length) return;
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const cols = Object.keys(rows[0]);
+  // Define named table
+  ws['!tables'] = [{
+    name: 'TablaEstudiantes',
+    ref: XLSX.utils.encode_range({
+      s: { r: 0, c: 0 },
+      e: { r: rows.length, c: cols.length - 1 }
+    }),
+    headerRow: true,
+    columns: cols.map(c => ({ name: c }))
+  }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Estudiantes');
+  XLSX.writeFile(wb, filename);
+}
+
 // ─── NORMALIZE COLUMN NAMES ───────────────────────────────────────────────────
 function normCols(rows) {
   return rows.map(r => {
@@ -938,8 +958,9 @@ async function processTab1() {
     const btnRow = document.createElement('div');
     btnRow.className = 'btn-row';
     const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-    const fname = (mode==='manual') ? 'Nomina.xlsx' : `Estudiantes_Formateados_${ts}.xlsx`;
-    btnRow.innerHTML = `<button class="btn" onclick="exportXLSX(state.t1Data, '${fname}')">✅ Descargar Excel</button>`;
+    const fname = (mode==='manual') ? 'Nomina.xlsx' : 'Estudiantes_Formateados_' + ts + '.xlsx';
+    const exportFn = (mode==='manual') ? 'exportXLSX' : 'exportXLSXConTabla';
+    btnRow.innerHTML = '<button class="btn" onclick="' + exportFn + '(state.t1Data, \'' + fname + '\')">✅ Descargar Excel</button>';
     resultEl.appendChild(btnRow);
 
   } catch(err) {
