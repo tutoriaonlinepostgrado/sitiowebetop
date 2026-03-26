@@ -989,7 +989,7 @@ async function processTab1() {
         const colNomCurso = findCol(cols, 'NOMBRE_CURSO', 'NOMBRE CURSO');
         const colPeriodo  = findCol(cols, 'PERIODO');
         const colRut      = findCol(cols, 'RUT');
-        const colNombre   = findCol(cols, 'NOMBRE');
+        const colNombre   = cols.find(c => c.toUpperCase().includes('NOMBRE') && !c.toUpperCase().includes('CURSO') && !c.toUpperCase().includes('TUTOR') && !c.toUpperCase().includes('PROGRAMA'));
         const colCorreoU  = findCol(cols, 'CORREO_UNAB', 'CORREO UNAB', 'CORREO');
         const colCorreoP  = findCol(cols, 'CORREO_PERSONAL', 'CORREO PERSONAL', 'EMAIL_PERSONAL', 'EMAIL PERSONAL');
 
