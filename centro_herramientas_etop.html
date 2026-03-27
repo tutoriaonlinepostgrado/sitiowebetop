@@ -572,7 +572,8 @@ const state = {
   t3File: null,
   t2Data: null,
   t3Data: null,
-  t1Mode: 'diario'
+  t1Mode: 'diario',
+  t4Data: null
 };
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -1349,6 +1350,228 @@ async function sendToSharePointSync() {
     spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
   }
 }
+
+
+// ═══════════════════════════════ TAB 4 LOGIC — FORMATEADOR CALENDARIOS ════════
+
+function calDetectarHeader(cols) {
+  const cu = cols.map(c => (c||'').trim().toLowerCase());
+  const hits = {};
+  const KEYS = {
+    nrc:      ['nrc'],
+    codigo:   ['código asignatura','codigo asignatura'],
+    nombre:   ['nombre asignatura','nombre del curso','nombre curso','asignatura'],
+    inicio:   ['fecha de inicio','fecha inicio','inicio'],
+    termino:  ['fecha de término','fecha de termino','fecha término','término','termino'],
+    periodo:  ['período','periodo'],
+    profesor: ['nombre profesor','profesor'],
+    facultad: ['facultad'],
+  };
+  for(const [campo, kws] of Object.entries(KEYS)) {
+    for(let i=0; i<cu.length; i++) {
+      if(kws.some(kw => cu[i]===kw || cu[i].startsWith(kw))) {
+        if(!(campo in hits)) hits[campo]=i;
+      }
+    }
+  }
+  return Object.keys(hits).length >= 2 ? hits : null;
+}
+
+function calFmtFecha(v) {
+  if(!v) return '';
+  const s = String(v).trim();
+  if(!s) return '';
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
+  return s;
+}
+
+function parsearTextoCalendario(texto) {
+  const NRC_PAT = /^\d{4,5}$/;
+  const lineas = texto.split('\n');
+  const resultados = [];
+  let headerMap = null;
+  let metaFacultad = '', metaPrograma = '', metaPeriodo = '';
+
+  for(const linea of lineas) {
+    const cols = linea.split('\t');
+    const cs = cols.map(c => c.trim());
+    const nonempty = cs.filter(Boolean);
+    if(!nonempty.length) continue;
+    const c0 = cs[0].toLowerCase();
+
+    if(c0 === 'facultad') { const v = cs.slice(1).find(Boolean)||''; if(v) metaFacultad=v; }
+    if(c0.includes('nombre de programa')||c0.includes('nombre del programa')) {
+      const v = cs.slice(1).find(Boolean)||''; if(v) metaPrograma=v;
+    }
+    if(c0.startsWith('período')||c0.startsWith('periodo')) {
+      const v = cs.slice(1).find(c=>/^\d{6}$/.test(c))||''; if(v) metaPeriodo=v;
+    }
+    if(nonempty.length===1 && nonempty[0].length>30 &&
+       /magíster|master|mba|diplomado|ingeniería|educación|salud/i.test(nonempty[0]) &&
+       !/\d{2}[\/\-]\d{2}[\/\-]\d{4}/.test(nonempty[0])) {
+      metaPrograma = nonempty[0];
+    }
+
+    const hmap = calDetectarHeader(cs);
+    if(hmap) { headerMap = hmap; continue; }
+    if(!headerMap) continue;
+
+    const nrcIdx = headerMap.nrc;
+    if(nrcIdx === undefined || nrcIdx >= cs.length) continue;
+    const nrcVal = cs[nrcIdx];
+    if(!NRC_PAT.test(nrcVal)) continue;
+
+    const get = (campo, def) => {
+      const idx = headerMap[campo];
+      return (idx !== undefined && idx < cs.length) ? cs[idx] : (def||'');
+    };
+
+    let codigo = get('codigo').replace(/\s+/g,'').toUpperCase();
+    let nombre = get('nombre');
+    const inicio   = calFmtFecha(get('inicio'));
+    const termino  = calFmtFecha(get('termino'));
+    const periodo  = get('periodo') || metaPeriodo;
+    let profesor   = get('profesor').trim();
+    const facultad = get('facultad') || metaFacultad;
+
+    if(!codigo && nombre) {
+      const mm = nombre.match(/^([A-Z]{2,6}\d{3,4}[A-Z]?\d?)\s+(.+)$/i);
+      if(mm) { codigo = mm[1].replace(/\s+/g,'').toUpperCase(); nombre = mm[2].trim(); }
+    }
+    if(!codigo && /INDUCC/i.test(nombre)) codigo = 'INDUCCION';
+    if(!profesor || /^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor)) profesor = 'POR DEFINIR';
+    if(!nombre && !inicio) continue;
+
+    resultados.push({
+      NRC: nrcVal, PERIODO: periodo, FACULTAD: facultad,
+      'CODIGO CURSO': codigo, 'NOMBRE CURSO': nombre,
+      'FECHA DE INICIO': inicio, 'FECHA FIN': termino,
+      PROFESOR: profesor, _programa: metaPrograma
+    });
+  }
+  return resultados;
+}
+
+async function processTab4() {
+  const resultEl = document.getElementById('t4-result');
+  const actionsEl = document.getElementById('t4-actions');
+  actionsEl.style.display = 'none';
+  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
+
+  const texto = document.getElementById('t4-texto').value;
+  if(!texto.trim()) { resultEl.innerHTML='<div class="alert error">Pega el bloque del calendario primero.</div>'; return; }
+
+  try {
+    const filas = parsearTextoCalendario(texto);
+    if(!filas.length) {
+      resultEl.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya la fila de encabezados (NRC, Fecha de Inicio, Nombre Asignatura, etc.).</div>';
+      return;
+    }
+
+    const materia     = document.getElementById('t4-materia').value.trim();
+    const intake      = document.getElementById('t4-intake').value.trim();
+    const programa    = document.getElementById('t4-programa').value.trim();
+    const facultad    = document.getElementById('t4-facultad').value.trim();
+    const tutor       = document.getElementById('t4-tutor').value.trim();
+    const correoTutor = document.getElementById('t4-correotutor').value.trim();
+
+    const salida = filas.map(f => ({
+      'NRC':              f.NRC,
+      'PERIODO':          f.PERIODO,
+      'FACULTAD':         facultad || f.FACULTAD,
+      'MATERIA':          materia,
+      'CODIGO CURSO':     f['CODIGO CURSO'],
+      'NOMBRE CURSO':     f['NOMBRE CURSO'],
+      'FECHA DE INICIO':  f['FECHA DE INICIO'],
+      'FECHA FIN':        f['FECHA FIN'],
+      'INTAKE O VERSION': intake,
+      'NOMBRE TUTOR':     tutor,
+      'CORREO TUTOR':     correoTutor,
+      'PROFESOR':         f.PROFESOR,
+      'NOMBRE_PROGRAMA':  programa || f._programa
+    }));
+
+    state.t4Data = salida;
+    resultEl.innerHTML = '<div class="alert success">🎉 ' + salida.length + ' cursos procesados.</div>';
+    const tableDiv = document.createElement('div');
+    resultEl.appendChild(tableDiv);
+    renderTable(salida, tableDiv);
+    actionsEl.style.display = 'flex';
+
+  } catch(err) {
+    resultEl.innerHTML = '<div class="alert error">Error al procesar: ' + err.message + '</div>';
+    console.error(err);
+  }
+}
+
+function downloadTab4() {
+  if(!state.t4Data) return;
+  const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+  const fname = 'Calendarios_a_base_' + ts + '.xlsx';
+  exportXLSXConTablaNombre(state.t4Data, fname, 'Calendarios_a_base');
+}
+
+function exportXLSXConTablaNombre(rows, filename, tableName) {
+  if(!rows || !rows.length) return;
+  const cols = Object.keys(rows[0]);
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Calendarios');
+
+  function colLetter(n) {
+    let s = ''; n++;
+    while(n > 0) { n--; s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26); }
+    return s;
+  }
+  const lastCol = colLetter(cols.length - 1);
+  const lastRow = rows.length + 1;
+  const tableRef = 'A1:' + lastCol + lastRow;
+
+  const tableXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+    'id="1" name="' + tableName + '" displayName="' + tableName + '" ref="' + tableRef + '" totalsRowShown="0">' +
+    '<autoFilter ref="' + tableRef + '"/>' +
+    '<tableColumns>' +
+    cols.map((c,i) => '<tableColumn id="' + (i+1) + '" name="' + c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') + '"/>').join('') +
+    '</tableColumns>' +
+    '<tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/>' +
+    '</table>';
+
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary', compression: true });
+  injectTableIntoXlsx(wbout, tableXml, 'Calendarios', tableRef).then(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+async function sendToSharePointCal() {
+  if(!state.t4Data) return;
+  const spResult = document.getElementById('t4-sp-result');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0c6b8c2435624545bb76f5137f3f9f7c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dz1BzpFg1R-ku-OF2KCpRJ0uyeAX9Uot-aQ70f_0QNI";
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.t4Data)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Calendario enviado a SharePoint.</div>';
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
 
 // ─── INIT DATES ───────────────────────────────────────────────────────────────
 (function initDates() {
