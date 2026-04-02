@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automatización de Correos — ETOP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1623;
+    --surface: #161f2e;
+    --surface-2: #1c2840;
+    --gold: #f6c128;
+    --gold-dim: rgba(246,193,40,0.15);
+    --gold-border: rgba(246,193,40,0.25);
+    --text: #f0f4ff;
+    --muted: #8a9ab8;
+    --soft: #4a5a78;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --radius: 14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 3rem 2rem 2.5rem;
+    border-bottom: 1px solid var(--gold-border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 0.8rem;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: none;
+  }
+  .btn-gold { background: var(--gold); color: #0f1623; }
+  .btn-gold:hover { background: #ffd84a; }
+  .btn-outline { background: transparent; border: 1px solid var(--gold-border); color: var(--text); }
+  .btn-outline:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+  /* ── SECTION TITLE ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-number {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    color: #0f1623;
+    font-weight: 800;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header h2 { font-size: 1.25rem; font-weight: 700; }
+  .section-header p { color: var(--muted); font-size: 0.88rem; margin-top: 0.1rem; }
+
+  /* ── GUIDE STEPS ── */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+  @media (max-width: 800px) { .guide-grid { grid-template-columns: 1fr; } }
+
+  .guide-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .guide-card:hover { border-color: var(--gold-border); }
+  .guide-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .guide-card.bienvenida::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .guide-card.sincronica::before { background: linear-gradient(90deg, #f6c128, #fbbf24); }
+
+  .guide-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+  .guide-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .guide-icon.blue { background: rgba(59,130,246,0.15); }
+  .guide-icon.gold { background: rgba(246,193,40,0.15); }
+  .guide-card-header h3 { font-size: 1rem; font-weight: 700; }
+  .guide-card-header p { color: var(--muted); font-size: 0.8rem; margin-top: 0.1rem; }
+
+  .steps { display: flex; flex-direction: column; gap: 0.6rem; }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step strong { color: var(--text); }
+  .step-note {
+    margin-top: 0.85rem;
+    padding: 0.6rem 0.85rem;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #86efac;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 2.5rem 0;
+  }
+
+  /* ── EMAIL PREVIEW ── */
+  .preview-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .preview-tab {
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--gold-border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .preview-tab.active {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--text);
+  }
+  .preview-tab:hover:not(.active) { background: var(--surface-2); color: var(--text); }
+
+  .preview-wrapper {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .preview-topbar {
+    background: var(--surface-2);
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.red { background: #ef4444; }
+  .dot.yellow { background: #f59e0b; }
+  .dot.green { background: #22c55e; }
+  .preview-topbar span {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .preview-meta {
+    padding: 0.75rem 1.25rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.82rem;
+    color: #475569;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .preview-meta div { margin-bottom: 0.2rem; }
+  .preview-meta strong { color: #1e293b; }
+
+  .preview-body {
+    background: #f3f4f6;
+    padding: 1.5rem;
+    display: none;
+  }
+  .preview-body.active { display: block; }
+
+  .preview-body iframe {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    display: block;
+    min-height: 600px;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--soft);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .page-footer a { color: var(--gold); text-decoration: none; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .guide-card, .preview-wrapper {
+    animation: fadeUp 0.4s ease both;
+  }
+  .guide-card:nth-child(2) { animation-delay: 0.08s; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-badge">⚡ ETOP — Automatización</div>
+    <h1>Envío Automatizado<br>de <span>Correos ETOP</span></h1>
+    <p>El proceso de envío de correos de bienvenida e invitaciones sincrónicas ya no requiere trabajo manual. Esta página explica cómo usar el flujo automatizado y muestra cómo quedan los correos que reciben los estudiantes.</p>
+    <div class="hero-actions">
+      <a href="centro_herramientas_etop.html" target="_blank" class="btn btn-gold">⚡ Abrir Centro de Herramientas</a>
+      <a href="gestion.html" class="btn btn-outline">← Volver a Gestión</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SECCIÓN 1: GUÍA DE USO -->
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div>
+      <h2>¿Cómo enviar los correos?</h2>
+      <p>Sigue estos pasos desde el Centro de Herramientas ETOP</p>
+    </div>
+  </div>
+
+  <div class="guide-grid">
+
+    <!-- BIENVENIDA -->
+    <div class="guide-card bienvenida">
+      <div class="guide-card-header">
+        <div class="guide-icon blue">📧</div>
+        <div>
+          <h3>Correos de Bienvenida</h3>
+          <p>Para nuevos estudiantes de inducción</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>Ve a <strong>Centro de Herramientas</strong> → pestaña <strong>Generador Correos Bienvenida</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>Sube la <strong>nómina del curso</strong> (el Excel que ya usabas)</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>Completa los datos: <strong>tu nombre, correo, programa, fechas de inducción</strong> y nombre del curso</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>Clic en <strong>Construir Plantilla</strong> — verifica la tabla con los estudiantes</div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div>Clic en <strong>Enviar a SharePoint</strong> — los datos se cargan automáticamente</div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div>Aparece el <strong>Paso 3</strong> → clic en <strong>Abrir app</strong> → en la app clic en <strong>Enviar correos de bienvenida</strong></div>
+        </div>
+        <div class="step-note">✅ El correo sale con <strong>tu remitente</strong>, no con el de Patricio</div>
+      </div>
+    </div>
+
+    <!-- SINCRÓNICA -->
+    <div class="guide-card sincronica">
+      <div class="guide-card-header">
+        <div class="guide-icon gold">📨</div>
+        <div>
+          <h3>Invitaciones Sesión Sincrónica</h3>
+          <p>Para la semana de inducción vía Zoom</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>Ve a <strong>Centro de Herramientas</strong> → pestaña <strong>Envío Invitación Sesión Sincrónica</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>Sube la <strong>nómina del curso</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>Completa: <strong>nombre del curso, fecha de inicio, fecha y hora de la sesión, link Zoom, tu correo y nombre</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>Clic en <strong>Construir Invitaciones</strong> — verifica la tabla generada</div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div>Clic en <strong>Enviar a SharePoint</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div>Aparece el <strong>Paso 3</strong> → clic en <strong>Abrir app</strong> → en la app clic en <strong>Enviar invitaciones sincrónicas</strong></div>
+        </div>
+        <div class="step-note">✅ El correo incluye el <strong>link Zoom clickeable</strong> y sale con tu remitente</div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECCIÓN 2: PREVISUALIZACIÓN -->
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div>
+      <h2>¿Cómo quedan los correos?</h2>
+      <p>Previsualización de las plantillas que reciben los estudiantes</p>
+    </div>
+  </div>
+
+  <div class="preview-tabs">
+    <button class="preview-tab active" onclick="switchPreview('bienvenida', this)">📧 Correo de Bienvenida</button>
+    <button class="preview-tab" onclick="switchPreview('sincronica', this)">📨 Invitación Sincrónica</button>
+  </div>
+
+  <div class="preview-wrapper">
+    <div class="preview-topbar">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+      <span id="preview-label">Correo de Bienvenida — Vista previa</span>
+    </div>
+
+    <div class="preview-meta">
+      <div><strong>De:</strong> Nombre Tutor/a &lt;tutor@unab.cl&gt;</div>
+      <div id="preview-asunto"><strong>Asunto:</strong> Bienvenido(a) al Programa de Postgrado UNAB Online</div>
+      <div><strong>Para:</strong> estudiante@correo.cl</div>
+    </div>
+
+    <!-- BIENVENIDA -->
+    <div id="preview-bienvenida" class="preview-body active">
+      <iframe id="frame-bienvenida" srcdoc="" scrolling="auto"></iframe>
+    </div>
+
+    <!-- SINCRÓNICA -->
+    <div id="preview-sincronica" class="preview-body">
+      <iframe id="frame-sincronica" srcdoc="" scrolling="auto"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  ETOP — Unidad de Impartición de Postgrado · <a href="gestion.html">Volver a Gestión Tutorial</a>
+</div>
+
+<script>
+// ── EMAIL TEMPLATES ──────────────────────────────────────────────────────────
+
+const correoData = {
+  nombre: "María González Pérez",
+  rut: "12.345.678-9",
+  tutor: "Patricio Collao",
+  correoTutor: "patricio.collao@unab.cl",
+  programa: "Magíster en Gestión Educacional",
+  cursoInduccion: "Inducción Postgrado Online",
+  primerCurso: "Fundamentos de la Investigación",
+  fechaInicio: "07 de abril de 2026",
+  fechaFin: "13 de abril de 2026",
+  fechaSesion: "Miércoles 09 DE ABRIL 19:00 HRS",
+  linkZoom: "https://unab-cl.zoom.us/j/ejemplo"
+};
+
+const htmlBienvenida = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f3f4f6">
+<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05)">
+<tbody>
+<tr><td style="padding:40px 60px 20px 60px">
+  <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0">
+</td></tr>
+<tr><td style="padding:0px 60px 30px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify">
+  <p style="font-size:18px">Estimado(a) <strong>${correoData.nombre}</strong>,</p>
+  <p>Junto con saludar y esperando que se encuentre bien, le escribo para presentarme. Mi nombre es <strong>${correoData.tutor}</strong>, soy parte de la Unidad de Impartición de Postgrado de UNAB Online y seré su tutor(a) de acompañamiento en el Programa <strong>${correoData.programa}</strong>.</p>
+  <p>Mi función es acompañar y asistir todo su proceso de aprendizaje en temas relacionados con la usabilidad de la plataforma, además de ser un nexo con los docentes. En esta etapa de aprendizaje le invitamos a participar en el curso de inducción que tiene por objetivo conocer el funcionamiento de la plataforma Canvas y sus herramientas de aprendizaje. El curso lo podrá encontrar en la sección "Cursos" y lleva por nombre <strong>${correoData.cursoInduccion}</strong>, el cual estará disponible desde el <strong>${correoData.fechaInicio}</strong> hasta el <strong>${correoData.fechaFin}</strong>. A partir del lunes posterior al término de su curso de inducción, encontrará la primera asignatura de su malla curricular, llamada <strong>${correoData.primerCurso}</strong>.</p>
+  <hr style="border:0;border-top:1px solid #eeeeee;margin:25px 0">
+  <div style="border-left:5px solid #0056b3;background-color:#f9f9f9;padding:20px;margin:25px 0;text-align:left">
+    <h3 style="color:#0056b3;margin-top:0;font-size:19px">IMPORTANTE</h3>
+    <ul style="padding-left:20px;margin:0">
+      <li style="margin-bottom:8px">Para acceder a la Plataforma Canvas, le recomendamos hacerlo mediante la Intranet de alumnos: <a href="https://portal.unab.cl/" style="color:#0056b3;text-decoration:underline">https://portal.unab.cl/</a>.</li>
+      <li style="margin-bottom:8px">Ingrese con los datos de usuario y password que le fueron entregados al momento de matricularse.</li>
+      <li>Una vez ingresando al Portal, diríjase a la opción "Canvas" (parte inferior de la página).</li>
+    </ul>
+  </div>
+  <div style="text-align:center;margin:30px 0">
+    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771959260/Gemini_Generated_Image_e3tnj1e3tnj1e3tn_cwim2f.png" alt="Pasos para ingresar a Canvas" width="100%" style="max-width:800px;height:auto;border-radius:8px">
+  </div>
+  <div style="background-color:#fcfcfc;border:2px dashed #0056b3;border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <p style="margin:0 0 15px 0;color:#333333;font-size:16px"><strong>Por favor, verifica que tus datos registrados sean correctos:</strong></p>
+    <div style="background-color:#ffffff;border:1px solid #dddddd;border-radius:6px;padding:15px;margin:0 auto 20px auto;max-width:400px;text-align:left">
+      <p style="margin:0 0 8px 0;font-size:15px;color:#333333"><strong>Nombre:</strong> ${correoData.nombre}</p>
+      <p style="margin:0;font-size:15px;color:#333333"><strong>RUT o ID:</strong> ${correoData.rut}</p>
+    </div>
+    <p style="margin:0 0 15px 0;color:#333333;font-size:15px">Si están correctos, confirma la recepción haciendo clic aquí:</p>
+    <table border="0" cellpadding="0" cellspacing="0" style="margin:0 auto"><tbody><tr>
+      <td style="border-radius:6px">
+        <a href="#" style="padding:12px 25px;background-color:#28a745;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;display:inline-block;border-radius:6px">✅ Confirmar Recepción</a>
+      </td>
+    </tr></tbody></table>
+  </div>
+</td></tr>
+<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px">
+  <p style="margin:0">Saludos cordiales,</p>
+  <p style="margin-top:10px;margin-bottom:15px">
+    <strong style="color:#0056b3;font-size:18px">${correoData.tutor}</strong><br>
+    <strong>${correoData.correoTutor}</strong><br>
+    <a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none">www.unabonline.cl</a>
+  </p>
+  <p style="margin:0;padding-top:15px;border-top:1px solid #eeeeee;font-size:13px;color:#666666">
+    <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO
+  </p>
+</td></tr>
+</tbody></table>
+</body></html>`;
+
+const htmlSincronica = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f3f4f6">
+<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05)">
+<tbody>
+<tr><td style="padding:45px 60px 25px 60px">
+  <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0">
+</td></tr>
+<tr><td style="padding:0px 60px 40px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify">
+  <p style="font-size:18px">Estimado(a) <strong>${correoData.nombre}</strong>,</p>
+  <p>Como parte de tu semana de Inducción <strong>${correoData.cursoInduccion}</strong>, te invito a nuestra sesión sincrónica el día <strong>${correoData.fechaSesion}</strong> vía Zoom.</p>
+  <p>El objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta instancia también te permitirá conocer a tus compañeros y compañeras.</p>
+  <div style="background-color:#f0f7ff;border:1px solid #0056b3;border-radius:8px;padding:30px;margin:30px 0;text-align:center">
+    <p style="margin:0 0 20px 0;font-weight:bold;color:#333333">Accede a tu sesión sincrónica aquí:</p>
+    <a href="${correoData.linkZoom}" style="background-color:#0056b3;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px">👉 Unirse a la sesión</a>
+  </div>
+  <p>Te recomendamos conectarte unos minutos antes del inicio.</p>
+  <p>Si tienes dudas, contáctame respondiendo a este correo.</p>
+</td></tr>
+<tr><td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px">
+  <p style="margin:0">Saludos cordiales,</p>
+  <p style="margin-top:15px">
+    <strong style="color:#0056b3">${correoData.tutor}</strong><br>
+    ${correoData.correoTutor}
+  </p>
+</td></tr>
+</tbody></table>
+</body></html>`;
+
+// ── INIT IFRAMES ──────────────────────────────────────────────────────────────
+document.getElementById('frame-bienvenida').srcdoc = htmlBienvenida;
+document.getElementById('frame-sincronica').srcdoc = htmlSincronica;
+
+// ── TAB SWITCH ────────────────────────────────────────────────────────────────
+function switchPreview(type, btn) {
+  document.querySelectorAll('.preview-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.preview-body').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('preview-' + type).classList.add('active');
+
+  const labels = {
+    bienvenida: { label: 'Correo de Bienvenida — Vista previa', asunto: 'Bienvenido(a) al Programa de Postgrado UNAB Online' },
+    sincronica: { label: 'Invitación Sesión Sincrónica — Vista previa', asunto: 'Invitación Sesión Sincrónica — Inducción Postgrado Online' }
+  };
+  document.getElementById('preview-label').textContent = labels[type].label;
+  document.getElementById('preview-asunto').innerHTML = '<strong>Asunto:</strong> ' + labels[type].asunto;
+}
+
+// ── AUTO-RESIZE IFRAMES ───────────────────────────────────────────────────────
+function resizeIframe(id) {
+  const frame = document.getElementById(id);
+  if(!frame) return;
+  try {
+    const h = frame.contentDocument.documentElement.scrollHeight;
+    if(h > 100) frame.style.minHeight = h + 'px';
+  } catch(e) {}
+}
+document.getElementById('frame-bienvenida').onload = () => resizeIframe('frame-bienvenida');
+document.getElementById('frame-sincronica').onload = () => resizeIframe('frame-sincronica');
+</script>
+</body>
+</html>
