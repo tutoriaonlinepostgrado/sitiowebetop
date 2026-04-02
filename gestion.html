@@ -28,7 +28,7 @@
             z-index: 10;
             transition: margin-left 0.3s ease;
             flex-shrink: 0;
-            overflow: hidden; /* Ocultamos el scroll general */
+            overflow: hidden;
         }
 
         .sidebar.closed { margin-left: -300px; }
@@ -40,12 +40,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; /* Evita que la cabecera se achique */
+            flex-shrink: 0; 
         }
         .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
 
-        /* --- ZONA DESLIZABLE DEL MENÚ (LA SOLUCIÓN RESPONSIVE) --- */
+        /* --- ZONA DESLIZABLE DEL MENÚ --- */
         .sidebar-menu {
             flex-grow: 1;
             overflow-y: auto;
@@ -94,11 +94,6 @@
             font-weight: 600;
         }
 
-        .btn-config {
-            background: none; border: none; color: #64748b; padding: 12px; cursor: pointer; transition: 0.2s; font-size: 14px;
-        }
-        .btn-config:hover { color: var(--amarillo-top); }
-
         .btn-volver {
             margin-top: auto;
             padding: 20px;
@@ -110,7 +105,7 @@
             align-items: center;
             gap: 10px;
             transition: 0.3s;
-            flex-shrink: 0; /* Mantiene el botón fijo abajo */
+            flex-shrink: 0;
             background-color: var(--azul-sidebar);
         }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
@@ -210,32 +205,6 @@
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
-
-        /* --- MODAL --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 1000;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
-        }
-        .modal-box {
-            background: #1f2940; padding: 30px; border-radius: 12px; border-top: 4px solid #ffd700;
-            width: 320px; text-align: center; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif;
-        }
-        .modal-box h3 { margin-top: 0; color: #ffd700; }
-        .modal-box p { font-size: 13px; color: #cbd5e1; margin-bottom: 20px; }
-        .modal-box select {
-            width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 6px;
-            background: #0f172a; color: white; border: 1px solid #334155; font-size: 14px;
-        }
-        .modal-btn {
-            background: #ffd700; color: #141b2d; border: none; padding: 12px 20px;
-            border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; transition: 0.2s;
-        }
-        .modal-btn:hover { background: #eab308; }
-        .modal-close {
-            background: none; border: none; color: #64748b; margin-top: 15px; cursor: pointer; text-decoration: underline; font-size: 12px;
-        }
-        .modal-close:hover { color: white; }
     </style>
 </head>
 <body>
@@ -243,7 +212,6 @@
 <div class="app-container">
     
     <div class="sidebar" id="sidebar">
-        <!-- CABECERA FIJA -->
         <div class="sidebar-header">
             <div>
                 <h2>⚙️ Gestión Tutorial</h2>
@@ -252,9 +220,7 @@
             <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
         </div>
 
-        <!-- ZONA DE BOTONES DESLIZABLE -->
         <div class="sidebar-menu">
-            <!-- SECCIÓN 1: OPERACIÓN DIARIA -->
             <div class="menu-category">Operación Diaria</div>
             
             <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">
@@ -285,11 +251,10 @@
                 🚦 Reporte Semáforo
             </button>
 
-            <!-- SECCIÓN 2: ESPACIO COORDINACIÓN -->
             <div class="menu-category">Espacio Coordinación</div>
             
-            <button class="menu-btn" onclick="cargarResumenEquipo(this)">
-                👥 Resumen de Mi Equipo
+            <button class="menu-btn" onclick="cargar('DASHBOARD_MACRO', this)">
+                🏛️ Dashboard Macro Facultades
             </button>
 
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">
@@ -300,23 +265,14 @@
                 📈 Resumen Semáforo
             </button>
 
-            <div style="display: flex; align-items: center; width: 100%;">
-                <button class="menu-btn" onclick="abrirMiExcel()" style="flex-grow: 1; padding-right: 0;">
-                    📗 Mi Excel de Nóminas ↗️
-                </button>
-                <button class="btn-config" onclick="mostrarModalCoordinador()" title="Configurar / Cambiar de Coordinador">⚙️</button>
-            </div>
-
-        <!-- HERRAMIENTAS ETOP -->
-<a href="centro_herramientas_etop.html" target="_blank" class="menu-btn" title="Abrir Centro de Herramientas ETOP">
-    ⚡ Centro de Herramientas ETOP ↗️
-</a>
+            <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn" title="Abrir Centro de Herramientas ETOP">
+                ⚡ Centro de Herramientas ETOP ↗️
+            </a>
 
             <a href="pantalladividida.html" target="_blank" class="menu-btn">
                 🗂️ Asistente de Carga (Pop-up) ↗️
             </a>
 
-            <!-- SECCIÓN 3: REPORTES DETALLADOS — DESPLEGABLE -->
             <div class="menu-category">Reportes Detallados</div>
 
             <div class="collapsible-header" id="header-reportes" onclick="toggleCollapsible('reportes')">
@@ -338,7 +294,6 @@
                 </button>
             </div>
 
-            <!-- SECCIÓN 4: CALIDAD — DESPLEGABLE -->
             <div class="menu-category">Calidad</div>
 
             <div class="collapsible-header" id="header-calidad" onclick="toggleCollapsible('calidad')">
@@ -359,10 +314,7 @@
                     ⚠️ Incidencias por NRC
                 </button>
             </div>
-        </div> <!-- FIN ZONA DESLIZABLE -->
-
-        <!-- BOTÓN DE VOLVER FIJO AL FONDO -->
-        <a href="index.html" class="btn-volver">
+        </div> <a href="index.html" class="btn-volver">
             ⬅️ Volver al Portal Principal
         </a>
     </div>
@@ -375,25 +327,6 @@
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
 
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalCoordinador">
-    <div class="modal-box">
-        <h3>👋 ¡Hola Coordinador!</h3>
-        <p>Selecciona tu nombre para que el sistema recuerde y abra siempre tu Excel personal.</p>
-        <select id="selectCoordinador">
-            <option value="" disabled selected>-- Elige tu nombre --</option>
-            <option value="Carolina">Carolina</option>
-            <option value="Daniela">Daniela</option>
-            <option value="Miguel">Miguel</option>
-            <option value="Pablo">Pablo</option>
-            <option value="Patricio">Patricio</option>
-            <option value="Querida Rita">Querida Rita</option>
-        </select>
-        <button class="modal-btn" onclick="guardarYabrirExcel()">Guardar y Abrir Excel</button>
-        <button class="modal-close" onclick="cerrarModal()">Cancelar</button>
-    </div>
 </div>
 
 <script>
@@ -412,9 +345,9 @@
 
     // --- REPORTES ---
     const misReportes = {
+        'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
         'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'RESUMEN_EQUIPO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=010e9b0e2d796c0cc8bd&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
@@ -436,73 +369,6 @@
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if(window.innerWidth < 800) toggleSidebar();
-    }
-
-    function cargarResumenEquipo(btn) {
-        const nombreCoordinador = localStorage.getItem('etop_nombreCoordinador');
-        let urlBase = misReportes['RESUMEN_EQUIPO'];
-        if (!urlBase) { alert("Falta la URL del Resumen de Equipo."); return; }
-        const correosCoordinadores = {
-            "Carolina": "carolina.monsalve.g@unab.cl",
-            "Daniela": "tutoriaonline36@unab.cl",
-            "Miguel": "tutoriaonline16@unab.cl",
-            "Pablo": "tutoriaonline47@unab.cl",
-            "Patricio": "patricio.collao@unab.cl",
-            "Querida Rita": "rita.galvez@unab.cl"
-        };
-        if (nombreCoordinador && correosCoordinadores[nombreCoordinador]) {
-            const correoExacto = correosCoordinadores[nombreCoordinador];
-            const correoCodificado = encodeURIComponent(correoExacto);
-           const filtro = `&filter=Puente_Coordinadores/Nombre_Coordinador eq '${encodeURIComponent(nombreCoordinador)}'`;
-            document.getElementById('visor').src = urlBase + filtro;
-        } else {
-            document.getElementById('visor').src = urlBase;
-            alert("Mostrando todos los equipos. Si quieres ver solo tus tutores, configura tu nombre haciendo clic en el engranaje ⚙️ debajo.");
-        }
-        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if(window.innerWidth < 800) toggleSidebar();
-    }
-
-    const archivosCoordinadores = {
-        "Carolina": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Carola.xlsx?d=wcc26880a121e4d94a29cd573e6f69da8&csf=1&web=1&e=nlvce6",
-        "Daniela": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Daniela.xlsx?d=w43ebd8f7a27646e8a147cfa598572643&csf=1&web=1&e=XhS63X",
-        "Miguel": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_miguel.xlsx?d=we8ec845160e8418a96d22fde9492238c&csf=1&web=1&e=98C2Dp",
-        "Pablo": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Pablo.xlsx?d=w31ef4ad8a0d94d0a8c1cb6179ef2a714&csf=1&web=1&e=nh5Yyo",
-        "Patricio": "https://unabportal365-my.sharepoint.com/:x:/g/personal/patricio_collao_unab_cl/IQASflgeWRKcT6U68tLrQJMoAevoWZu3YJkIHgjA6VnoA88?e=fH4Dyv",
-        "Querida Rita": "https://unabportal365.sharepoint.com/:x:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/FLUJOS/Estudiantes%20a%20base/subir_estudiantes_desdeweb_Rita.xlsx?d=w3016b6bb82ed4834bb6781bfe65022ff&csf=1&web=1&e=4rkMqq"
-    };
-
-    function abrirMiExcel() {
-        const nombreGuardado = localStorage.getItem('etop_nombreCoordinador');
-        if (nombreGuardado && archivosCoordinadores[nombreGuardado]) {
-            if(archivosCoordinadores[nombreGuardado] !== "") {
-                window.open(archivosCoordinadores[nombreGuardado], '_blank');
-            } else {
-                alert("Aún no tienes configurado un enlace de Excel para tu perfil.");
-            }
-        } else {
-            mostrarModalCoordinador();
-        }
-    }
-
-    function mostrarModalCoordinador() { document.getElementById('modalCoordinador').style.display = 'flex'; }
-    function cerrarModal() { document.getElementById('modalCoordinador').style.display = 'none'; }
-
-    function guardarYabrirExcel() {
-        const select = document.getElementById('selectCoordinador');
-        const nombreSeleccionado = select.value;
-        if (nombreSeleccionado) {
-            localStorage.setItem('etop_nombreCoordinador', nombreSeleccionado);
-            cerrarModal();
-            if (archivosCoordinadores[nombreSeleccionado] !== "") {
-                window.open(archivosCoordinadores[nombreSeleccionado], '_blank');
-            } else {
-                alert(`¡Listo! Hemos guardado tu perfil como ${nombreSeleccionado}.`);
-            }
-        } else {
-            alert("Por favor, selecciona tu nombre de la lista antes de continuar.");
-        }
     }
 
     // Cargar reporte inicial
