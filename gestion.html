@@ -206,6 +206,7 @@
         
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -314,7 +315,15 @@
                     ⚠️ Incidencias por NRC
                 </button>
             </div>
-        </div> <a href="index.html" class="btn-volver">
+
+            <div style="padding: 15px 20px; border-top: 1px solid rgba(255,215,0,0.2);">
+                <button onclick="descargarExcelRiesgo()" style="width: 100%; background-color: #10b981; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s;" onmouseover="this.style.backgroundColor='#059669'" onmouseout="this.style.backgroundColor='#10b981'">
+                    📥 Descargar Riesgo FEDU
+                </button>
+            </div>
+
+        </div> 
+        <a href="index.html" class="btn-volver">
             ⬅️ Volver al Portal Principal
         </a>
     </div>
@@ -369,6 +378,39 @@
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if(window.innerWidth < 800) toggleSidebar();
+    }
+
+    // FUNCION DESCARGA POWER AUTOMATE
+    async function descargarExcelRiesgo() {
+        const urlFlujo = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d54c71cb103b4490b5f6a26820e7cf0b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=GjxP8pUCh1zM7rlll4iAIw6aw3zNqulFM5d7XFfz0pc";
+
+        alert("Iniciando descarga masiva de FEDU... Esto puede tardar unos segundos.");
+
+        try {
+            const respuesta = await fetch(urlFlujo, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "facultad": "FEDU_INNOVADO" })
+            });
+
+            if (!respuesta.ok) throw new Error("Error en el servidor");
+
+            const datos = await respuesta.json();
+
+            if (datos.length === 0) {
+                alert("No se encontraron estudiantes en riesgo.");
+                return;
+            }
+
+            const hoja = XLSX.utils.json_to_sheet(datos);
+            const libro = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(libro, hoja, "Riesgo_FEDU");
+            XLSX.writeFile(libro, "Reporte_Riesgo_FEDU.xlsx");
+
+        } catch (error) {
+            console.error(error);
+            alert("Error al conectar con Power Automate. Revisa la consola.");
+        }
     }
 
     // Cargar reporte inicial
