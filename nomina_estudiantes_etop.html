@@ -1,88 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión Tutorial - Editor Pro ETOP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --dark-bg: #19202e; --header-bg: #242d3f; --row-border: #E2E8F0; --accent: #1d4ed8; --gold: #facc15; --text-main: #1e293b; --bg-modified: #fffbeb; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: var(--text-main); padding-bottom: 50px; }
-        .top-nav { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
-        .top-nav h1 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .filter-zone { background: white; padding: 15px 20px; display: flex; gap: 15px; align-items: flex-end; border-bottom: 1px solid var(--row-border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .f-group { display: flex; flex-direction: column; gap: 4px; }
-        .f-group label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
-        .f-group input { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; min-width: 150px; }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; text-decoration: none; display: inline-block; }
-        .btn-main:hover { background: #1e40af; }
-        .btn-save { background: #16a34a; display: none; margin-left: 10px; }
-        .btn-save:hover { background: #15803d; }
-        .kpi-container { display: flex; gap: 10px; padding: 10px 20px; background: #fff; align-items: center; flex-wrap: wrap;}
-        .kpi-box { padding: 5px 12px; border: 1px solid var(--row-border); border-radius: 4px; font-size: 11px; font-weight: 700; background: #f8fafc; }
-        .table-container { padding: 10px 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1300px; }
-        thead th { background: #f8fafc; padding: 10px 5px; text-align: left; border-bottom: 2px solid var(--accent); color: #19202E; font-size: 9px; text-transform: uppercase; position: sticky; top: 0; }
-        td { padding: 5px; border-bottom: 1px solid var(--row-border); }
-        tr:hover { background-color: #f1f5f9; }
-        .cell-edit { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: 11px; padding: 4px; width: 100%; cursor: pointer; border-radius: 3px; }
-        .cell-edit:focus { outline: none; border: 1px solid var(--gold); background: white; }
-        .modified { background-color: var(--bg-modified) !important; }
-        .btn-copy { font-size: 10px; cursor: pointer; color: var(--accent); font-weight: bold; margin-left: 5px; background: #dbeafe; padding: 2px 4px; border-radius: 3px; border: none; }
-        .btn-copy:hover { background: var(--accent); color: white; }
-        .status-footer { position: fixed; bottom: 0; width: 100%; background: var(--header-bg); color: white; padding: 6px 20px; font-size: 10px; z-index: 100; }
-        .icon-link { text-decoration: none; font-size: 14px; }
-    </style>
-</head>
-<body>
-
-<div class="top-nav">
-    <h1>Gestión Tutorial - Editor de Estudiantes</h1>
-    <div><button class="btn-main btn-save" id="btnSaveAll" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button></div>
-</div>
-
-<div class="filter-zone">
-    <div class="f-group"><label>NRC (Base)</label><input type="text" id="inNRC" placeholder="Ej: 2077_UNI118"></div>
-    <div class="f-group"><label>Periodo</label><input type="text" id="inPer" placeholder="Ej: 202681"></div>
-    <button class="btn-main" id="btnLoad" onclick="buscar()">🔍 Cargar Nómina</button>
-</div>
-
-<div class="kpi-container" id="kpiArea" style="display:none">
-    <div class="kpi-box">TOTAL: <span id="kpTotal">0</span></div>
-    <div class="kpi-box" style="color:#16a34a">🟢 <span id="kpV">0</span></div>
-    <div class="kpi-box" style="color:#ca8a04">🟡 <span id="kpA">0</span></div>
-    <div class="kpi-box" style="color:#dc2626">🔴 <span id="kpR">0</span></div>
-    <div style="width:1px; height:20px; background:var(--row-border); margin:0 10px;"></div>
-    <div id="infoExtra" style="display:flex; gap:10px; align-items:center;"></div>
-</div>
-
-<div class="table-container">
-    <table id="mainTable" style="display:none">
-        <thead>
-            <tr>
-                <th>NRC</th>
-                <th>Nombre Estudiante</th>
-                <th>RUT</th>
-                <th>Semáforo <button class="btn-copy" onclick="replicar('SEMAFORO')">▼</button></th>
-                <th>Estado Est. <button class="btn-copy" onclick="replicar('field_15')">▼</button></th>
-                <th>BAN <button class="btn-copy" onclick="replicar('field_17')">▼</button></th>
-                <th>CAN <button class="btn-copy" onclick="replicar('field_18')">▼</button></th>
-                <th>INGR <button class="btn-copy" onclick="replicar('field_16')">▼</button></th>
-                <th>Observaciones</th>
-                <th style="text-align:center">CRM</th>
-                <th style="text-align:center">Web</th>
-                <th style="text-align:center">Acción</th>
-            </tr>
-        </thead>
-        <tbody id="tBody"></tbody>
-    </table>
-</div>
-
-<div class="status-footer" id="footer">Listo. Ingrese datos y cargue nómina.</div>
-
-<script>
-    const URL_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
+const URL_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
     const URL_UPDT = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
     
     const BASE_URL_FICHA = "https://app.powerbi.com/groups/me/apps/845e839c-5c8f-4b4c-b142-ee178b9f16f3/rdlreports/8d398d46-ce63-49bf-9f24-55f1e195bdb5?rp:Param_consolidado_5f_esudiantes_RUT=";
@@ -90,6 +6,7 @@
 
     let db = [];
     let cambios = {};
+    let infoCurso = {}; // Guardamos los datos del curso globalmente para el correo
 
     // Función auxiliar para extraer el valor real de campos Choice de SharePoint
     const getVal = (field) => (typeof field === 'object' && field !== null) ? field.Value : (field || '');
@@ -107,8 +24,13 @@
             const respuesta = await r.json();
             
             db = respuesta.estudiantes || [];
-            const infoCurso = respuesta.datosCurso || {};
-            const urlFinalCurso = respuesta.linkCurso || "#";
+            infoCurso = respuesta.datosCurso || {};
+            
+            // SOLUCIÓN 1: Extracción segura de la URL del curso (SharePoint Hyperlink object)
+            let urlFinalCurso = "#";
+            if (respuesta.linkCurso) {
+                urlFinalCurso = typeof respuesta.linkCurso === 'object' ? respuesta.linkCurso.Url : respuesta.linkCurso;
+            }
             
             if(db.length === 0) {
                 alert("No se encontraron estudiantes.");
@@ -121,7 +43,7 @@
                 `;
                 render();
             }
-        } catch(e) { alert("Error al conectar con Automate."); }
+        } catch(e) { alert("Error al conectar con Automate."); console.error(e); }
         finally { document.getElementById('btnLoad').innerText = "🔍 Cargar Nómina"; }
     }
 
@@ -133,16 +55,29 @@
             const rutLimpio = (item.Title || "").trim();
             const nombreLimpio = item.field_11 || "";
             
-            // Extracción segura de valores para evitar [object Object]
+            // Valores limpios de los menús desplegables
             const semaforoVal = getVal(item.SEMAFORO);
             const estadoEstVal = getVal(item.field_15);
             const banVal = getVal(item.field_17);
             const canVal = getVal(item.field_18);
             const ingrVal = getVal(item.field_16);
+            const obsVal = item.Observaciones || '';
 
+            // SOLUCIÓN 2: URL de CRM usando el RUT en lugar del nombre
             const urlFicha = `${BASE_URL_FICHA}${rutLimpio}`;
-            const urlCRM = `${BASE_URL_CRM}${encodeURIComponent(nombreLimpio)}`;
+            const urlCRM = `${BASE_URL_CRM}${encodeURIComponent(rutLimpio)}`;
             const urlCanvas = `https://lms.unab.cl/int-canvas/users?rut=${rutLimpio.replace(/\s/g,'')}`;
+
+            // SOLUCIÓN 3: Lógica del botón de correo (Traducción de tu DAX a JavaScript)
+            const nrcVal = item.NRC_COD || "N/A";
+            const estCalVal = infoCurso.ESTADO_CAL || "N/A";
+            const motivoRiesgo = item.MOTIVO_RIESGO || "N/A";
+            const urlAcceso = window.location.href; // El link actual de la página
+            
+            const asunto = `Revisión de caso: ${nombreLimpio} - NRC: ${nrcVal}`;
+            const cuerpo = `Hola,\n\nJunto con saludar, solicito revisar el estado del siguiente estudiante según nuestro reporte de Gestión Tutorial:\n\n📌 DATOS DEL CURSO:\n - NRC: ${nrcVal}\n - Estado Curso: ${estCalVal}\n\n👤 DATOS DEL ESTUDIANTE:\n - Nombre: ${nombreLimpio}\n - RUT: ${rutLimpio}\n - Estado Est.: ${estadoEstVal}\n - Semáforo: ${semaforoVal}\n - Motivo Riesgo: ${motivoRiesgo}\n - Ingresa a curso: ${ingrVal}\n - Cotejo Banner: ${banVal}\n - Cotejo Canvas: ${canVal}\n\n📝 OBSERVACIONES ACTUALES:\n${obsVal || 'Sin observaciones'}\n\n⚙️ ACTUALIZAR REGISTRO:\nPara gestionar este caso o agregar nuevas observaciones, ingresa directamente al formulario en el siguiente enlace:\n<${urlAcceso}>\n\nQuedo atento/a a tus comentarios.\nSaludos.`;
+            
+            const mailtoHref = `mailto:?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
 
             const fila = document.createElement('tr');
             fila.id = `row-${id}`;
@@ -193,10 +128,13 @@
                         <option value="NO" ${ingrVal=='NO'?'selected':''}>NO</option>
                     </select>
                 </td>
-                <td><input type="text" class="cell-edit" value="${item.Observaciones || ''}" onchange="marcar(${id}, 'Observaciones', this.value, this)"></td>
+                <td><input type="text" class="cell-edit" value="${obsVal}" onchange="marcar(${id}, 'Observaciones', this.value, this)"></td>
                 <td align="center"><a href="${urlCRM}" target="_blank" class="icon-link" title="Ir a CRM">🔗</a></td>
                 <td align="center"><a href="${urlCanvas}" target="_blank" class="icon-link" title="Ir a Web Canvas">🌐</a></td>
-                <td align="center"><button class="btn-main" style="padding:2px 5px; font-size:9px" onclick="guardarFila(${id})">💾</button></td>
+                <td align="center" style="display:flex; justify-content:center; gap:5px;">
+                    <a href="${mailtoHref}" class="btn-main" style="background:#0ea5e9; padding:2px 5px; font-size:10px" title="Enviar Notificación">📧</a>
+                    <button class="btn-main" style="padding:2px 5px; font-size:10px" onclick="guardarFila(${id})" title="Guardar cambios">💾</button>
+                </td>
             `;
             tbody.appendChild(fila);
         });
@@ -231,7 +169,7 @@
 
     async function guardarFila(id) {
         const row = document.getElementById(`row-${id}`);
-        const btn = row.querySelector('button');
+        const btn = row.querySelectorAll('button')[1]; // El botón de guardar es el segundo elemento interactivo ahora
         btn.innerText = "⏳";
         try {
             await fetch(URL_UPDT, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(cambios[id] || {id: id}) });
@@ -267,6 +205,3 @@
             buscar();
         }
     };
-</script>
-</body>
-</html>
