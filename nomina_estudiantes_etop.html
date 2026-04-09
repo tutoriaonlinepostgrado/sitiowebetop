@@ -249,7 +249,10 @@ async function initTutores() {
       body: '{}'
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
+    const text = await r.text();
+    if (!text || text.trim() === '') throw new Error('Respuesta vacía del flow');
+    let data;
+    try { data = JSON.parse(text); } catch(e) { throw new Error('JSON inválido: ' + text.substring(0,100)); }
     const raw = Array.isArray(data) ? data : (data.value || []);
     const nombres = [...new Set(
       raw.map(d => (d.field_9 || d['NOMBRE TUTOR'] || '')).filter(n => n && n !== 'NO TIENE TUTORIA')
@@ -300,14 +303,16 @@ async function cargarNRCs() {
 function renderCursos(cursos) {
   const grid = document.getElementById('cursosGrid');
   grid.innerHTML = cursos.map(c => {
-    const estado = c.ESTADO_CAL || '';
-    const nrc    = c.NRC_COD_CAL || c.Title || '';
-    const prog   = c.NOMBRE_PROGRAMA || c.NOMBRE_CURSO || '';
-    const tutor  = c['NOMBRE TUTOR'] || c.field_9 || '';
-    const fini   = c.FECHA_INICIO ? new Date(c.FECHA_INICIO).toLocaleDateString('es-CL') : '—';
-    const ffin   = c.FECHA_FIN    ? new Date(c.FECHA_FIN).toLocaleDateString('es-CL')    : '—';
-    const nrcCod = c.Title || '';
-    const periodo= c.field_2 || '';
+    const estado = c.estado || c.ESTADO_CAL || '';
+    const nrc    = c.nrc    || c.NRC_COD_CAL || c.Title || '';
+    const prog   = c.prog   || c.NOMBRE_PROGRAMA || '';
+    const tutor  = c.tutor  || c.field_9 || '';
+    const fini   = c.fini   || c.FECHA_INICIO || '';
+    const ffin   = c.ffin   || c.FECHA_FIN    || '';
+    const finiStr = fini ? new Date(fini).toLocaleDateString('es-CL') : '—';
+    const ffinStr = ffin ? new Date(ffin).toLocaleDateString('es-CL') : '—';
+    const nrcCod = c.nrc_cod || c.Title || '';
+    const periodo= c.periodo || c.field_2 || '';
     const cls    = estado==='ACTIVO'?'activo':estado==='EN CIERRE'?'cierre':'prep';
     const estCls = estado==='ACTIVO'?'est-activo':estado==='EN CIERRE'?'est-cierre':'est-prep';
     return `
