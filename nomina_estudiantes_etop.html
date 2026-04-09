@@ -6,40 +6,29 @@
     <title>Gestión Tutorial - Editor Pro ETOP</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --dark-bg: #19202e; --header-bg: #242d3f; --row-border: #E2E8F0;
-            --accent: #1d4ed8; --gold: #facc15; --text-main: #1e293b;
-            --bg-modified: #fffbeb;
-        }
+        :root { --dark-bg: #19202e; --header-bg: #242d3f; --row-border: #E2E8F0; --accent: #1d4ed8; --gold: #facc15; --text-main: #1e293b; --bg-modified: #fffbeb; }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: var(--text-main); padding-bottom: 50px; }
-        
         .top-nav { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .top-nav h1 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        
         .filter-zone { background: white; padding: 15px 20px; display: flex; gap: 15px; align-items: flex-end; border-bottom: 1px solid var(--row-border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .f-group { display: flex; flex-direction: column; gap: 4px; }
         .f-group label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
         .f-group input { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; min-width: 150px; }
-        
         .btn-main { background: var(--accent); color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; text-decoration: none; display: inline-block; }
         .btn-main:hover { background: #1e40af; }
         .btn-save { background: #16a34a; display: none; margin-left: 10px; }
         .btn-save:hover { background: #15803d; }
-
         .kpi-container { display: flex; gap: 10px; padding: 10px 20px; background: #fff; align-items: center; flex-wrap: wrap;}
         .kpi-box { padding: 5px 12px; border: 1px solid var(--row-border); border-radius: 4px; font-size: 11px; font-weight: 700; background: #f8fafc; }
-
         .table-container { padding: 10px 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1200px; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1300px; }
         thead th { background: #f8fafc; padding: 10px 5px; text-align: left; border-bottom: 2px solid var(--accent); color: #19202E; font-size: 9px; text-transform: uppercase; position: sticky; top: 0; }
         td { padding: 5px; border-bottom: 1px solid var(--row-border); }
         tr:hover { background-color: #f1f5f9; }
-
         .cell-edit { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: 11px; padding: 4px; width: 100%; cursor: pointer; border-radius: 3px; }
         .cell-edit:focus { outline: none; border: 1px solid var(--gold); background: white; }
         .modified { background-color: var(--bg-modified) !important; }
-        
         .btn-copy { font-size: 10px; cursor: pointer; color: var(--accent); font-weight: bold; margin-left: 5px; background: #dbeafe; padding: 2px 4px; border-radius: 3px; border: none; }
         .btn-copy:hover { background: var(--accent); color: white; }
         .status-footer { position: fixed; bottom: 0; width: 100%; background: var(--header-bg); color: white; padding: 6px 20px; font-size: 10px; z-index: 100; }
@@ -50,9 +39,7 @@
 
 <div class="top-nav">
     <h1>Gestión Tutorial - Editor de Estudiantes</h1>
-    <div>
-        <button class="btn-main btn-save" id="btnSaveAll" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button>
-    </div>
+    <div><button class="btn-main btn-save" id="btnSaveAll" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button></div>
 </div>
 
 <div class="filter-zone">
@@ -79,7 +66,7 @@
                 <th>RUT</th>
                 <th>Semáforo <button class="btn-copy" onclick="replicar('SEMAFORO')">▼</button></th>
                 <th>Estado Est. <button class="btn-copy" onclick="replicar('field_15')">▼</button></th>
-                <th>BAN</th>
+                <th>BAN <button class="btn-copy" onclick="replicar('field_17')">▼</button></th>
                 <th>CAN <button class="btn-copy" onclick="replicar('field_18')">▼</button></th>
                 <th>INGR <button class="btn-copy" onclick="replicar('field_16')">▼</button></th>
                 <th>Observaciones</th>
@@ -98,12 +85,14 @@
     const URL_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
     const URL_UPDT = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
     
-    // ENLACES BASE
     const BASE_URL_FICHA = "https://app.powerbi.com/groups/me/apps/845e839c-5c8f-4b4c-b142-ee178b9f16f3/rdlreports/8d398d46-ce63-49bf-9f24-55f1e195bdb5?rp:Param_consolidado_5f_esudiantes_RUT=";
     const BASE_URL_CRM = "https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&pagetype=entitylist&etn=contact&viewid=00000000-0000-0000-00AA-000010001003&viewType=1039&searchTerm=";
 
     let db = [];
     let cambios = {};
+
+    // Función auxiliar para extraer el valor real de campos Choice de SharePoint
+    const getVal = (field) => (typeof field === 'object' && field !== null) ? field.Value : (field || '');
 
     async function buscar() {
         const nrc = document.getElementById('inNRC').value.trim();
@@ -111,17 +100,12 @@
         if(!nrc || !per) return alert("Ingrese NRC y Periodo");
 
         document.getElementById('btnLoad').innerText = "⏳...";
-        document.getElementById('footer').innerText = "⏳ Consultando SharePoint...";
+        document.getElementById('footer').innerText = "⏳ Consultando Automate...";
         
         try {
-            const r = await fetch(URL_LEER, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ nrc_cod: nrc, periodo: per })
-            });
+            const r = await fetch(URL_LEER, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nrc_cod: nrc, periodo: per }) });
             const respuesta = await r.json();
             
-            // Mapeamos los datos con la nueva estructura de Power Automate
             db = respuesta.estudiantes || [];
             const infoCurso = respuesta.datosCurso || {};
             const urlFinalCurso = respuesta.linkCurso || "#";
@@ -130,7 +114,6 @@
                 alert("No se encontraron estudiantes.");
                 document.getElementById('footer').innerText = "❌ Sin resultados.";
             } else {
-                // Actualizamos los datos cruzados del curso en la interfaz
                 document.getElementById('infoExtra').innerHTML = `
                     <div class="kpi-box" style="color:#64748b">📅 INICIO: ${infoCurso.field_6 || '—'}</div>
                     <div class="kpi-box" style="color:#64748b">📊 ESTADO: ${infoCurso.ESTADO_CAL || '—'}</div>
@@ -138,10 +121,7 @@
                 `;
                 render();
             }
-        } catch(e) { 
-            console.error(e);
-            alert("Error al conectar con Automate."); 
-        }
+        } catch(e) { alert("Error al conectar con Automate."); }
         finally { document.getElementById('btnLoad').innerText = "🔍 Cargar Nómina"; }
     }
 
@@ -151,44 +131,66 @@
         db.forEach(item => {
             const id = item.Id || item.ID;
             const rutLimpio = (item.Title || "").trim();
-            const nombreLimpio = encodeURIComponent(item.field_11 || "");
+            const nombreLimpio = item.field_11 || "";
+            
+            // Extracción segura de valores para evitar [object Object]
+            const semaforoVal = getVal(item.SEMAFORO);
+            const estadoEstVal = getVal(item.field_15);
+            const banVal = getVal(item.field_17);
+            const canVal = getVal(item.field_18);
+            const ingrVal = getVal(item.field_16);
 
-            // Construcción Dinámica de Links
             const urlFicha = `${BASE_URL_FICHA}${rutLimpio}`;
-            const urlCRM = `${BASE_URL_CRM}${nombreLimpio}`;
+            const urlCRM = `${BASE_URL_CRM}${encodeURIComponent(nombreLimpio)}`;
             const urlCanvas = `https://lms.unab.cl/int-canvas/users?rut=${rutLimpio.replace(/\s/g,'')}`;
 
             const fila = document.createElement('tr');
             fila.id = `row-${id}`;
             fila.innerHTML = `
                 <td style="color:var(--accent); font-weight:700">${item.NRC_COD || ''}</td>
-                <td style="font-weight:600">${item.field_11 || ''}</td>
-                <td><a href="${urlFicha}" target="_blank" style="color:var(--accent); font-weight:700; text-decoration:none; font-family:monospace;">${rutLimpio} 📄</a></td>
+                <td style="font-weight:600">${nombreLimpio}</td>
+                <td><a href="${urlFicha}" target="_blank" style="color:var(--accent); font-weight:700; text-decoration:none;">${rutLimpio} 📄</a></td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'SEMAFORO', this.value, this)">
-                        <option value="VERDE" ${item.SEMAFORO=='VERDE'?'selected':''}>🟢 VERDE</option>
-                        <option value="AMARILLO" ${item.SEMAFORO=='AMARILLO'?'selected':''}>🟡 AMARILLO</option>
-                        <option value="ROJO" ${item.SEMAFORO=='ROJO'?'selected':''}>🔴 ROJO</option>
-                        <option value="NARANJO" ${item.SEMAFORO=='NARANJO'?'selected':''}>🟠 NARANJO</option>
+                        <option value="VERDE" ${semaforoVal=='VERDE'?'selected':''}>🟢 VERDE</option>
+                        <option value="AMARILLO" ${semaforoVal=='AMARILLO'?'selected':''}>🟡 AMARILLO</option>
+                        <option value="ROJO" ${semaforoVal=='ROJO'?'selected':''}>🔴 ROJO</option>
+                        <option value="NARANJO" ${semaforoVal=='NARANJO'?'selected':''}>🟠 NARANJO</option>
+                        <option value="MORADO" ${semaforoVal=='MORADO'?'selected':''}>🟣 MORADO</option>
                     </select>
                 </td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_15', this.value, this)">
-                        <option value="ACTIVO" ${item.field_15=='ACTIVO'?'selected':''}>ACTIVO</option>
-                        <option value="RETIRO DEF" ${item.field_15=='RETIRO DEF'?'selected':''}>RETIRO DEF</option>
+                        <option value="ACTIVO" ${estadoEstVal=='ACTIVO'?'selected':''}>ACTIVO</option>
+                        <option value="BLOQUEO ACADEMICO" ${estadoEstVal=='BLOQUEO ACADEMICO'?'selected':''}>BLOQUEO ACADEMICO</option>
+                        <option value="EGRESO" ${estadoEstVal=='EGRESO'?'selected':''}>EGRESO</option>
+                        <option value="FINALIZADO" ${estadoEstVal=='FINALIZADO'?'selected':''}>FINALIZADO</option>
+                        <option value="RENUNCIA VACANTE" ${estadoEstVal=='RENUNCIA VACANTE'?'selected':''}>RENUNCIA VACANTE</option>
+                        <option value="RESCILIACION" ${estadoEstVal=='RESCILIACION'?'selected':''}>RESCILIACION</option>
+                        <option value="RETIRO DEF" ${estadoEstVal=='RETIRO DEF'?'selected':''}>RETIRO DEF</option>
+                        <option value="RETIRO TEMP." ${estadoEstVal=='RETIRO TEMP.'?'selected':''}>RETIRO TEMP.</option>
+                        <option value="DESERTOR" ${estadoEstVal=='DESERTOR'?'selected':''}>DESERTOR</option>
+                        <option value="EN TRAMITE" ${estadoEstVal=='EN TRAMITE'?'selected':''}>EN TRAMITE</option>
+                        <option value="ELIMINADO ACADEMICAMENTE" ${estadoEstVal=='ELIMINADO ACADEMICAMENTE'?'selected':''}>ELIMINADO ACADEMICAMENTE</option>
                     </select>
                 </td>
-                <td align="center">${item.field_17 || '—'}</td>
+                <td>
+                    <select class="cell-edit" onchange="marcar(${id}, 'field_17', this.value, this)">
+                        <option value="SI" ${banVal=='SI'?'selected':''}>SI</option>
+                        <option value="NO" ${banVal=='NO'?'selected':''}>NO</option>
+                    </select>
+                </td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_18', this.value, this)">
-                        <option value="SI" ${item.field_18=='SI'?'selected':''}>SI</option>
-                        <option value="NO" ${item.field_18=='NO'?'selected':''}>NO</option>
+                        <option value="SI" ${canVal=='SI'?'selected':''}>SI</option>
+                        <option value="NO" ${canVal=='NO'?'selected':''}>NO</option>
+                        <option value="INACTIVO" ${canVal=='INACTIVO'?'selected':''}>INACTIVO</option>
                     </select>
                 </td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_16', this.value, this)">
-                        <option value="SI" ${item.field_16=='SI'?'selected':''}>SI</option>
-                        <option value="NO" ${item.field_16=='NO'?'selected':''}>NO</option>
+                        <option value="SI" ${ingrVal=='SI'?'selected':''}>SI</option>
+                        <option value="NO" ${ingrVal=='NO'?'selected':''}>NO</option>
                     </select>
                 </td>
                 <td><input type="text" class="cell-edit" value="${item.Observaciones || ''}" onchange="marcar(${id}, 'Observaciones', this.value, this)"></td>
@@ -205,17 +207,7 @@
     }
 
     function marcar(id, campo, valor, el) {
-        if (!cambios[id]) {
-            const item = db.find(x => (x.Id || x.ID) == id);
-            cambios[id] = { 
-                id: id, 
-                SEMAFORO: item.SEMAFORO, 
-                field_15: item.field_15, 
-                field_16: item.field_16, 
-                field_18: item.field_18, 
-                Observaciones: item.Observaciones 
-            };
-        }
+        if (!cambios[id]) cambios[id] = { id: id };
         cambios[id][campo] = valor;
         el.closest('tr').classList.add('modified');
         document.getElementById('btnSaveAll').style.display = 'block';
@@ -225,7 +217,7 @@
         const selector = document.querySelector(`#tBody tr:first-child [onchange*="${campo}"]`);
         if(!selector) return;
         const valor = selector.value;
-        if(!confirm(`¿Copiar "${valor}" a todos los estudiantes?`)) return;
+        if(!confirm(`¿Copiar al resto de los estudiantes?`)) return;
         
         document.querySelectorAll(`#tBody tr`).forEach(row => {
             const input = row.querySelector(`[onchange*="${campo}"]`);
@@ -242,11 +234,7 @@
         const btn = row.querySelector('button');
         btn.innerText = "⏳";
         try {
-            await fetch(URL_UPDT, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(cambios[id] || {id: id})
-            });
+            await fetch(URL_UPDT, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(cambios[id] || {id: id}) });
             row.classList.remove('modified');
             btn.innerText = "✅";
             delete cambios[id];
@@ -259,16 +247,16 @@
         document.getElementById('footer').innerText = "💾 Guardando masivo...";
         document.getElementById('btnSaveAll').innerText = "⏳ GUARDANDO...";
         for (const id of ids) { await guardarFila(id); }
-        document.getElementById('btnSaveAll').innerText = "💾 GUARDAR CAMBIOS EN SHAREPOINT";
+        document.getElementById('btnSaveAll').innerText = "💾 GUARDAR CAMBIOS";
         document.getElementById('footer').innerText = "✅ Sincronizado correctamente.";
         updateKpis();
     }
 
     function updateKpis() {
         document.getElementById('kpTotal').innerText = db.length;
-        document.getElementById('kpV').innerText = db.filter(x => x.SEMAFORO === 'VERDE').length;
-        document.getElementById('kpA').innerText = db.filter(x => x.SEMAFORO === 'AMARILLO').length;
-        document.getElementById('kpR').innerText = db.filter(x => x.SEMAFORO === 'ROJO').length;
+        document.getElementById('kpV').innerText = db.filter(x => getVal(x.SEMAFORO) === 'VERDE').length;
+        document.getElementById('kpA').innerText = db.filter(x => getVal(x.SEMAFORO) === 'AMARILLO').length;
+        document.getElementById('kpR').innerText = db.filter(x => getVal(x.SEMAFORO) === 'ROJO').length;
     }
 
     window.onload = () => {
