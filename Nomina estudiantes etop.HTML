@@ -6,7 +6,7 @@
 <title>Nómina Estudiantes — ETOP</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --dark:#19202e;--dark2:#242d3f;--dark3:#2e3a50;
   --gold:#facc15;--gold2:#f59e0b;
   --text:#e2e8f0;--muted:#94a3b8;
@@ -16,30 +16,69 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--dark);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;min-height:100vh;}
+
+/* HEADER */
 .header{background:var(--dark2);border-bottom:3px solid var(--gold);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
 .header img{height:40px;width:auto;}
 .header-title{font-size:15px;font-weight:700;color:#fff;}
 .header-sub{font-size:9px;color:var(--gold);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+
+/* FILTROS */
 .filtros-wrap{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
 .fg{display:flex;flex-direction:column;gap:3px;}
 .fg label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
-.fg select,.fg input{background:var(--dark3);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:6px 10px;font-family:inherit;font-size:11px;min-width:130px;transition:border-color .2s;cursor:pointer;}
+.fg select,.fg input{background:var(--dark3);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:6px 10px;font-family:inherit;font-size:11px;min-width:140px;transition:border-color .2s;cursor:pointer;}
 .fg select:focus,.fg input:focus{outline:none;border-color:var(--gold);}
-.btn-cargar{background:var(--gold);color:var(--dark);border:none;padding:7px 16px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;align-self:flex-end;}
-.btn-cargar:hover{background:var(--gold2);}
-.btn-cargar:disabled{opacity:.5;cursor:not-allowed;}
+.btn-gold{background:var(--gold);color:var(--dark);border:none;padding:7px 16px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;align-self:flex-end;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;}
+
+/* VISTA CURSOS */
+#vistaCursos{padding:16px 20px;}
+.cursos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px;}
+.curso-card{background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;border-left:4px solid var(--border);}
+.curso-card:hover{border-color:var(--gold);transform:translateY(-1px);}
+.curso-card.activo{border-left-color:var(--green);}
+.curso-card.cierre{border-left-color:var(--orange);}
+.curso-card.prep{border-left-color:var(--blue);}
+.curso-card-header{padding:12px 14px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.curso-nrc{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--gold);}
+.curso-estado{font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.est-activo{background:rgba(34,197,94,.2);color:#4ade80;}
+.est-cierre{background:rgba(249,115,22,.2);color:#fb923c;}
+.est-prep{background:rgba(59,130,246,.2);color:#93c5fd;}
+.curso-prog{font-size:11px;font-weight:600;color:#fff;padding:0 14px 6px;line-height:1.3;}
+.curso-meta{padding:6px 14px 12px;display:flex;gap:12px;flex-wrap:wrap;}
+.curso-meta-item{font-size:9px;color:var(--muted);}
+.curso-meta-item span{color:var(--text);font-weight:600;}
+.curso-footer{background:var(--dark3);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;}
+.curso-footer-lbl{font-size:9px;color:var(--muted);}
+.btn-ver-est{background:var(--gold);color:var(--dark);border:none;padding:4px 12px;border-radius:4px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;}
+
+/* VISTA ESTUDIANTES */
+#vistaEstudiantes{display:none;}
+.back-bar{background:var(--dark2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:12px;}
+.btn-back{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:5px;font-family:inherit;font-size:11px;cursor:pointer;transition:all .2s;}
+.btn-back:hover{border-color:var(--gold);color:var(--gold);}
+.curso-info-bar{font-size:11px;color:var(--text);font-weight:600;}
+.curso-info-nrc{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;}
+
+/* NRC LINK BAR */
+.nrc-link-bar{background:var(--dark3);border-bottom:1px solid var(--border);padding:6px 20px;display:flex;align-items:center;gap:12px;}
+.btn-link-curso{display:inline-flex;align-items:center;gap:6px;background:var(--dark2);border:1px solid var(--gold);color:var(--gold);font-size:10px;font-weight:700;padding:4px 12px;border-radius:5px;text-decoration:none;transition:all .2s;}
+.btn-link-curso:hover{background:var(--gold);color:var(--dark);}
+
+/* KPIS */
 .kpis-wrap{padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--dark);border-bottom:1px solid var(--border);}
-.kpi{background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:8px 14px;display:flex;flex-direction:column;gap:1px;min-width:80px;}
-.kpi-val{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1;}
+.kpi{background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:8px 14px;display:flex;flex-direction:column;gap:1px;min-width:75px;}
+.kpi-val{font-size:17px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1;}
 .kpi-lbl{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;}
-.kpi.kt .kpi-val{color:var(--blue);}
-.kpi.kg .kpi-val{color:var(--green);}
-.kpi.ky .kpi-val{color:var(--yellow);}
-.kpi.kr .kpi-val{color:var(--red);}
-.kpi.km .kpi-val{color:var(--purple);}
-.kpi.ko .kpi-val{color:var(--orange);}
-.kpi.kni .kpi-val{color:var(--red);}
+.kpi.kt .kpi-val{color:var(--blue);}.kpi.kg .kpi-val{color:var(--green);}
+.kpi.ky .kpi-val{color:var(--yellow);}.kpi.kr .kpi-val{color:var(--red);}
+.kpi.km .kpi-val{color:var(--purple);}.kpi.kni .kpi-val{color:var(--red);}
 .kpi.knc .kpi-val{color:var(--red);}
+
+/* TOOLBAR */
 .toolbar{padding:8px 20px;display:flex;gap:8px;align-items:center;background:var(--dark);border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .btn-save-all{background:var(--green);color:#fff;border:none;padding:6px 16px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
 .btn-save-all:hover{background:#16a34a;}
@@ -48,13 +87,20 @@ body{background:var(--dark);color:var(--text);font-family:'IBM Plex Sans',sans-s
 .search-q{background:var(--dark3);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:6px 10px;font-family:inherit;font-size:11px;width:200px;}
 .search-q:focus{outline:none;border-color:var(--gold);}
 .count-badge{margin-left:auto;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
-.table-container{overflow-x:auto;height:calc(100vh - 290px);overflow-y:auto;}
-table{width:100%;border-collapse:collapse;min-width:1500px;}
+
+/* FILTROS TABLA */
+.tabla-filtros{padding:8px 20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--dark2);border-bottom:1px solid var(--border);}
+.tf select{background:var(--dark3);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px 8px;font-family:inherit;font-size:10px;cursor:pointer;}
+.tf select:focus{outline:none;border-color:var(--gold);}
+.tf label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:2px;}
+
+/* TABLE */
+.table-container{overflow-x:auto;height:calc(100vh - 340px);overflow-y:auto;}
+table{width:100%;border-collapse:collapse;min-width:1400px;}
 thead{position:sticky;top:0;z-index:10;}
 th{background:var(--dark);color:var(--gold);font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:8px 6px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--gold);cursor:pointer;user-select:none;}
 th:hover{color:#fff;}
-th.sort-asc::after{content:' ↑';}
-th.sort-desc::after{content:' ↓';}
+th.sort-asc::after{content:' ↑';}th.sort-desc::after{content:' ↓';}
 td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:11px;}
 tr:hover td{background:rgba(255,255,255,0.02);}
 tr.modified td{background:rgba(250,204,21,0.04);}
@@ -69,16 +115,17 @@ tr.saved-ok td{background:rgba(34,197,94,0.08);}
 .cell-obs.changed{border-color:var(--gold);background:rgba(250,204,21,0.1);}
 .icon-btn{font-size:13px;text-decoration:none;cursor:pointer;opacity:.7;transition:opacity .2s;display:inline-block;}
 .icon-btn:hover{opacity:1;}
-.icon-loading{font-size:10px;color:var(--muted);}
 .btn-row{background:var(--dark3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;font-size:9px;font-family:inherit;transition:all .2s;white-space:nowrap;}
 .btn-row:hover{border-color:var(--green);color:var(--green);}
 .drag-handle{cursor:grab;color:var(--muted);font-size:12px;padding:0 4px;user-select:none;}
 .drag-handle:active{cursor:grabbing;}
+
+/* STATUS */
 .statusbar{padding:6px 20px;font-size:10px;border-top:1px solid var(--border);min-height:30px;display:flex;align-items:center;gap:8px;background:var(--dark2);position:sticky;bottom:0;}
 .s-ok{color:var(--green);}.s-err{color:var(--red);}.s-load{color:var(--gold);}
 .spinner{width:10px;height:10px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.empty{padding:60px;text-align:center;color:var(--muted);}
+.empty{padding:40px;text-align:center;color:var(--muted);}
 .empty .big{font-size:36px;margin-bottom:10px;}
 </style>
 </head>
@@ -99,99 +146,83 @@ tr.saved-ok td{background:rgba(34,197,94,0.08);}
       <option value="">⏳ Cargando tutores...</option>
     </select>
   </div>
-  <div class="fg">
-    <label>NRC</label>
-    <select id="fNRC"><option value="">Todas</option></select>
-  </div>
-  <div class="fg">
-    <label>Semáforo</label>
-    <select id="fSem">
-      <option value="">Todas</option>
-      <option>VERDE</option><option>AMARILLO</option><option>ROJO</option>
-      <option>MORADO</option><option>NARANJO</option>
-    </select>
-  </div>
-  <div class="fg">
-    <label>Estado Est.</label>
-    <select id="fEst">
-      <option value="">Todas</option>
-      <option>ACTIVO</option><option>EN TRAMITE</option><option>RESCILIACION</option>
-      <option>RETIRO DEF</option><option>RETIR TEMP.</option>
-    </select>
-  </div>
-  <div class="fg">
-    <label>Canvas</label>
-    <select id="fCanvas"><option value="">Todas</option><option>SI</option><option>NO</option></select>
-  </div>
-  <div class="fg">
-    <label>Ingresa Curso</label>
-    <select id="fIngresa"><option value="">Todas</option><option>SI</option><option>NO</option></select>
-  </div>
-  <div class="fg">
-    <label>Buscar nombre / RUT</label>
-    <input type="text" class="search-q" id="fTexto" placeholder="🔍 Nombre o RUT...">
-  </div>
-  <button class="btn-cargar" id="btnCargar" onclick="cargarTutor()">🔍 Cargar estudiantes</button>
+  <button class="btn-gold" id="btnCargar" onclick="cargarNRCs()">🔍 Cargar cursos</button>
 </div>
 
-<div class="kpis-wrap" id="kpisWrap" style="display:none">
-  <div class="kpi kt"><div class="kpi-val" id="kTotal">0</div><div class="kpi-lbl">Total</div></div>
-  <div class="kpi kg"><div class="kpi-val" id="kVerde">0</div><div class="kpi-lbl">🟢 Verde</div></div>
-  <div class="kpi ky"><div class="kpi-val" id="kAmarillo">0</div><div class="kpi-lbl">🟡 Amarillo</div></div>
-  <div class="kpi kr"><div class="kpi-val" id="kRojo">0</div><div class="kpi-lbl">🔴 Rojo</div></div>
-  <div class="kpi km"><div class="kpi-val" id="kMorado">0</div><div class="kpi-lbl">🟣 Morado</div></div>
-  <div class="kpi ko"><div class="kpi-val" id="kNaranjo">0</div><div class="kpi-lbl">🟠 Naranjo</div></div>
-  <div class="kpi kni"><div class="kpi-val" id="kNoIng">0</div><div class="kpi-lbl">✗ No Ingresó</div></div>
-  <div class="kpi knc"><div class="kpi-val" id="kNoCanvas">0</div><div class="kpi-lbl">✗ Sin Canvas</div></div>
-</div>
-
-<div class="toolbar" id="toolbarWrap" style="display:none">
-  <button class="btn-save-all" id="btnSaveAll" onclick="guardarTodos()" disabled>💾 Guardar cambios</button>
-  <span class="changes-badge" id="badge"></span>
-  <span class="count-badge" id="countBadge"></span>
-</div>
-
-<div id="nrcLinkBar" style="display:none;padding:8px 20px;background:var(--dark2);border-bottom:1px solid var(--border);align-items:center;gap:12px;">
-  <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Link del Curso</span>
-  <a id="nrcLinkBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--dark3);border:1px solid var(--gold);color:var(--gold);font-size:11px;font-weight:700;padding:5px 14px;border-radius:5px;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='var(--gold)';this.style.color='var(--dark)'" onmouseout="this.style.background='var(--dark3)';this.style.color='var(--gold)'">
-    🎓 Abrir curso
-  </a>
-  <span id="nrcLinkNombre" style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;"></span>
-</div>
-<div class="table-container" id="tableContainer">
-  <div class="empty" id="emptyState">
-    <div class="big">👥</div>
-    <p>Selecciona un tutor y haz clic en "Cargar estudiantes"</p>
+<!-- VISTA 1: CURSOS -->
+<div id="vistaCursos">
+  <div class="empty" id="emptyCursos">
+    <div class="big">📚</div>
+    <p>Selecciona un tutor y haz clic en "Cargar cursos"</p>
   </div>
-  <table id="tabla" style="display:none">
-    <thead>
-      <tr>
-        <th style="width:20px"></th>
-        <th onclick="sortBy('NRC_COD_CAL')">NRC</th>
-        <th onclick="sortBy('field_11')">Nombre</th>
-        <th onclick="sortBy('Title')">RUT</th>
-        <th onclick="sortBy('SEMAFORO')">Semáforo</th>
-        <th onclick="sortBy('field_15')">Estado Est.</th>
-        <th>Banner</th>
-        <th>Canvas</th>
-        <th>Ingresa</th>
-        <th style="min-width:220px">Observaciones</th>
-        <th style="text-align:center" title="CRM Dynamics">CRM</th>
-        <th style="text-align:center" title="Web Integración Canvas">Web</th>
-        <th style="text-align:center" title="Notificar">✉️</th>
-        <th>Guardar</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
+  <div class="cursos-grid" id="cursosGrid"></div>
+</div>
+
+<!-- VISTA 2: ESTUDIANTES -->
+<div id="vistaEstudiantes">
+  <div class="back-bar">
+    <button class="btn-back" onclick="volverCursos()">← Volver a cursos</button>
+    <div class="curso-info-bar">
+      <span class="curso-info-nrc" id="infoNRC"></span>
+      <span id="infoProg" style="color:var(--muted);margin-left:8px;font-size:11px;"></span>
+    </div>
+  </div>
+
+  <div class="nrc-link-bar" id="nrcLinkBar">
+    <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Link del Curso</span>
+    <a id="nrcLinkBtn" href="#" target="_blank" class="btn-link-curso">🎓 Abrir curso</a>
+    <span id="nrcLinkStatus" style="font-size:10px;color:var(--muted);"></span>
+  </div>
+
+  <div class="kpis-wrap" id="kpisWrap"></div>
+
+  <div class="tabla-filtros">
+    <div class="tf"><label>Semáforo</label><select id="fSem" onchange="aplicarFiltros()"><option value="">Todas</option><option>VERDE</option><option>AMARILLO</option><option>ROJO</option><option>MORADO</option><option>NARANJO</option></select></div>
+    <div class="tf"><label>Estado Est.</label><select id="fEst" onchange="aplicarFiltros()"><option value="">Todas</option><option>ACTIVO</option><option>EN TRAMITE</option><option>RESCILIACION</option><option>RETIRO DEF</option><option>RETIR TEMP.</option></select></div>
+    <div class="tf"><label>Canvas</label><select id="fCanvas" onchange="aplicarFiltros()"><option value="">Todas</option><option>SI</option><option>NO</option></select></div>
+    <div class="tf"><label>Ingresa</label><select id="fIngresa" onchange="aplicarFiltros()"><option value="">Todas</option><option>SI</option><option>NO</option></select></div>
+    <div class="tf"><label>Buscar</label><input type="text" class="search-q" id="fTexto" placeholder="Nombre o RUT..." oninput="aplicarFiltros()" style="min-width:160px;padding:4px 8px;font-size:10px;"></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-save-all" id="btnSaveAll" onclick="guardarTodos()" disabled>💾 Guardar cambios</button>
+    <span class="changes-badge" id="badge"></span>
+    <span class="count-badge" id="countBadge"></span>
+  </div>
+
+  <div class="table-container">
+    <div class="empty" id="emptyEst" style="display:none">
+      <div class="big">🔍</div><p>No hay estudiantes con esos filtros</p>
+    </div>
+    <table id="tabla" style="display:none">
+      <thead>
+        <tr>
+          <th style="width:20px"></th>
+          <th onclick="sortBy('field_11')">Nombre</th>
+          <th onclick="sortBy('Title')">RUT</th>
+          <th onclick="sortBy('SEMAFORO')">Semáforo</th>
+          <th onclick="sortBy('field_15')">Estado Est.</th>
+          <th>Banner</th>
+          <th>Canvas</th>
+          <th>Ingresa</th>
+          <th style="min-width:220px">Observaciones</th>
+          <th style="text-align:center">CRM</th>
+          <th style="text-align:center">Web</th>
+          <th style="text-align:center">✉️</th>
+          <th>Guardar</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
 </div>
 
 <div class="statusbar" id="statusbar"><span class="s-ok">✓ Listo</span></div>
 
 <script>
-// ── URLS FLOWS ───────────────────────────────────────────────
 const F_TUTORES  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1580bbeeddf24bf0b860e97c0e3da8ca/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=PdBX7xWobE0G6VEQbWB04K9nhjylfOiWcx44MWY_vn8';
-const F_TUTOR    = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4094ffd773884d80b914fd1f6e23788e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i3_kQUBltP4GFLthTKUMczUJ9sVliFxfk1S1TIysprQ';
+const F_NRCS     = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/71d8f01bee344938a4e051a464d0d6ea/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9o6fD1XedUHWHzCS-w-ZfzPP06wXWwDww7oLWD-Pbuk';
+const F_EST      = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
 const F_UPDATE   = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
 const F_LINK_NRC = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9df0aee724a2480dbd54fd256a637d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3oZH9Cvlu21jo55ff6aMFO4ARTvnEdjbWCggXeDKVN0';
 const URL_FICHA  = 'https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi&rp:Param_consolidado_5f_esudiantes_RUT=';
@@ -204,219 +235,222 @@ let filteredData = [];
 let pendingChanges = {};
 let sortField = '';
 let sortDir = 1;
-let linkCache = {};  // Cache de links por NRC_COD
 let dragSrcId = null;
+let cursoActual = null;
 
-// ── INIT — cargar lista de tutores ───────────────────────────
+// ── INIT ─────────────────────────────────────────────────────
 async function initTutores() {
   try {
-    const r = await fetch(F_TUTORES, { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+    const r = await fetch(F_TUTORES, {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
     if (!r.ok) throw new Error();
     const data = await r.json();
-    const raw = Array.isArray(data) ? data : (data.value || []);
-    // Extraer nombres únicos no vacíos y ordenar
-    const nombres = [...new Set(
-      raw.map(d => d.tutor || d.field_9 || '').filter(Boolean)
-    )].sort();
+    const raw = Array.isArray(data) ? data : (data.value||[]);
+    const nombres = [...new Set(raw.map(d=>d.tutor||d.field_9||'').filter(Boolean))].sort();
     const sel = document.getElementById('fTutor');
     sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' +
-      nombres.map(n => `<option value="${n}">${n}</option>`).join('');
-    // Autoselect si viene por URL
-    const params = new URLSearchParams(window.location.search);
-    const tp = params.get('tutor');
-    if (tp) { sel.value = tp; cargarTutor(); }
+      nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
+    const p = new URLSearchParams(window.location.search).get('tutor');
+    if (p) { sel.value = p; cargarNRCs(); }
   } catch(e) {
     document.getElementById('fTutor').innerHTML = '<option value="">Error al cargar tutores</option>';
   }
 }
 
-// ── CARGAR ESTUDIANTES DEL TUTOR ─────────────────────────────
-async function cargarTutor() {
+// ── CARGAR NRCs DEL TUTOR ────────────────────────────────────
+async function cargarNRCs() {
   const tutor = document.getElementById('fTutor').value;
-  if (!tutor) { setStatus('⚠️ Selecciona un tutor', 'err'); return; }
+  if (!tutor) { setStatus('⚠️ Selecciona un tutor','err'); return; }
   const btn = document.getElementById('btnCargar');
-  btn.disabled = true; btn.textContent = '⏳ Cargando...';
-  setStatus('<span class="spinner"></span> Consultando SharePoint...', 'load');
+  btn.disabled=true; btn.textContent='⏳ Cargando...';
+  setStatus('<span class="spinner"></span> Cargando cursos...','load');
+  document.getElementById('cursosGrid').innerHTML = '';
+  document.getElementById('emptyCursos').style.display = 'none';
   try {
-    const r = await fetch(F_TUTOR, {
+    const r = await fetch(F_NRCS, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ tutor })
+      body: JSON.stringify({tutor})
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const raw = await r.json();
-    // Flow devuelve array de arrays (uno por NRC) — aplanar
-    if (Array.isArray(raw) && Array.isArray(raw[0])) {
-      allData = raw.flat();
-    } else if (Array.isArray(raw)) {
-      allData = raw;
-    } else {
-      allData = raw.value || [];
-    }
-    linkCache = {};
-    if (!allData.length) {
-      setStatus('Sin resultados para ese tutor', 'err');
-      document.getElementById('emptyState').style.display = 'block';
-      document.getElementById('tabla').style.display = 'none';
-      document.getElementById('kpisWrap').style.display = 'none';
-      document.getElementById('toolbarWrap').style.display = 'none';
+    const data = await r.json();
+    const cursos = Array.isArray(data) ? data : (data.value||[]);
+    if (!cursos.length) {
+      document.getElementById('emptyCursos').style.display='block';
+      setStatus('Sin cursos para ese tutor','err');
       return;
     }
-    poblarFiltroNRC();
-    aplicarFiltros();
-    document.getElementById('kpisWrap').style.display = 'flex';
-    document.getElementById('toolbarWrap').style.display = 'flex';
-    setStatus(`✓ ${allData.length} estudiantes cargados`, 'ok');
-    // Precargar links de curso en background
-    precargarLinks();
+    renderCursos(cursos);
+    setStatus(`✓ ${cursos.length} cursos cargados`,'ok');
   } catch(e) {
-    setStatus(`✗ Error: ${e.message}`, 'err');
+    setStatus(`✗ Error: ${e.message}`,'err');
+    document.getElementById('emptyCursos').style.display='block';
   } finally {
-    btn.disabled = false; btn.textContent = '🔍 Cargar estudiantes';
+    btn.disabled=false; btn.textContent='🔍 Cargar cursos';
   }
 }
 
-// ── PRECARGAR LINKS DE CURSO (background) ────────────────────
-async function precargarLinks() {
-  const nrcs = [...new Set(allData.map(d => {
-    // NRC_COD_CAL = NRC_COD + "_" + CODIGO_CURSO + "_" + PERIODO
-    // Necesitamos NRC_COD que es la primera parte
-    const cal = d.NRC_COD_CAL || '';
-    const partes = cal.split('_');
-    return partes.length >= 2 ? partes[0] + '_' + partes[1] : partes[0];
-  }).filter(Boolean))];
+// ── RENDER TARJETAS DE CURSOS ────────────────────────────────
+function renderCursos(cursos) {
+  const grid = document.getElementById('cursosGrid');
+  grid.innerHTML = cursos.map(c => {
+    const estado = c.ESTADO_CAL || '';
+    const nrc    = c.NRC_COD_CAL || c.Title || '';
+    const prog   = c.NOMBRE_PROGRAMA || c.NOMBRE_CURSO || '';
+    const tutor  = c['NOMBRE TUTOR'] || c.field_9 || '';
+    const fini   = c.FECHA_INICIO ? new Date(c.FECHA_INICIO).toLocaleDateString('es-CL') : '—';
+    const ffin   = c.FECHA_FIN    ? new Date(c.FECHA_FIN).toLocaleDateString('es-CL')    : '—';
+    const nrcCod = c.Title || '';
+    const periodo= c.field_2 || '';
+    const cls    = estado==='ACTIVO'?'activo':estado==='EN CIERRE'?'cierre':'prep';
+    const estCls = estado==='ACTIVO'?'est-activo':estado==='EN CIERRE'?'est-cierre':'est-prep';
+    return `
+    <div class="curso-card ${cls}" onclick="abrirCurso('${nrcCod}','${periodo}','${nrc}','${prog.replace(/'/g,"\\'")}')">
+      <div class="curso-card-header">
+        <div class="curso-nrc">${nrc}</div>
+        <span class="curso-estado ${estCls}">${estado}</span>
+      </div>
+      <div class="curso-prog">${prog||'—'}</div>
+      <div class="curso-meta">
+        <div class="curso-meta-item">Inicio: <span>${fini}</span></div>
+        <div class="curso-meta-item">Término: <span>${ffin}</span></div>
+      </div>
+      <div class="curso-footer">
+        <span class="curso-footer-lbl">👆 Clic para ver estudiantes</span>
+        <button class="btn-ver-est">Ver estudiantes →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-  for (const nrc of nrcs) {
-    if (linkCache[nrc]) continue;
-    try {
-      const r = await fetch(F_LINK_NRC, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ nrc_cod: nrc })
-      });
-      if (!r.ok) continue;
-      const data = await r.json();
-      const items = Array.isArray(data) ? data : (data.value || []);
-      if (items.length > 0) {
-        const link = items[0]['URL_QA2_x002f_F_x002e_I_x002e_'] ||
-                     items[0].URL_QA2_x002f_F_x002e_I_x002e_ || '';
-        linkCache[nrc] = link;
-        // Actualizar botones ya renderizados
-        document.querySelectorAll(`[data-nrc-link="${nrc}"]`).forEach(el => {
-          if (link) {
-            el.href = link;
-            el.textContent = '🎓';
-            el.style.opacity = '0.7';
-          }
-        });
-      }
-    } catch(e) { /* silencioso */ }
+// ── ABRIR CURSO ──────────────────────────────────────────────
+async function abrirCurso(nrcCod, periodo, nrcCal, prog) {
+  cursoActual = {nrcCod, periodo, nrcCal, prog};
+  document.getElementById('vistaCursos').style.display = 'none';
+  document.getElementById('vistaEstudiantes').style.display = 'block';
+  document.getElementById('infoNRC').textContent = nrcCal;
+  document.getElementById('infoProg').textContent = prog;
+  allData = [];
+  filteredData = [];
+  pendingChanges = {};
+  resetFiltros();
+  document.getElementById('tabla').style.display = 'none';
+  document.getElementById('emptyEst').style.display = 'none';
+  document.getElementById('kpisWrap').innerHTML = '';
+  setStatus('<span class="spinner"></span> Cargando estudiantes...','load');
+  // Cargar link del curso en paralelo
+  cargarLinkCurso(nrcCod);
+  try {
+    const r = await fetch(F_EST, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({nrc_cod: nrcCod, periodo: periodo})
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    allData = Array.isArray(data) ? data : (data.value||[]);
+    if (!allData.length) {
+      document.getElementById('emptyEst').style.display='block';
+      setStatus('Sin estudiantes para este curso','err');
+      return;
+    }
+    aplicarFiltros();
+    setStatus(`✓ ${allData.length} estudiantes cargados`,'ok');
+  } catch(e) {
+    setStatus(`✗ Error: ${e.message}`,'err');
   }
 }
 
-function getNrcCod(nrcCal) {
-  if (!nrcCal) return '';
-  const partes = nrcCal.split('_');
-  return partes.length >= 2 ? partes[0] + '_' + partes[1] : partes[0];
+async function cargarLinkCurso(nrcCod) {
+  const btn = document.getElementById('nrcLinkBtn');
+  const lbl = document.getElementById('nrcLinkStatus');
+  btn.style.opacity = '0.4';
+  btn.href = '#';
+  btn.onclick = e => e.preventDefault();
+  lbl.textContent = '⏳ Cargando link...';
+  try {
+    const r = await fetch(F_LINK_NRC, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({nrc_cod: nrcCod})
+    });
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    const items = Array.isArray(data)?data:(data.value||[]);
+    if (items.length > 0) {
+      const link = items[0]['URL_QA2_x002f_F_x002e_I_x002e_'] || '';
+      if (link) {
+        btn.href = link; btn.style.opacity='1'; btn.onclick=null;
+        lbl.textContent = '';
+      } else { lbl.textContent = 'Sin link disponible'; }
+    } else { lbl.textContent = 'Sin link disponible'; }
+  } catch(e) { lbl.textContent = 'Error al cargar link'; }
 }
 
-// ── FILTROS ───────────────────────────────────────────────────
-function poblarFiltroNRC() {
-  const sel = document.getElementById('fNRC');
-  const nrcs = [...new Set(allData.map(d=>d.NRC_COD_CAL).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">Todas</option>' + nrcs.map(n=>`<option>${n}</option>`).join('');
+// ── VOLVER ───────────────────────────────────────────────────
+function volverCursos() {
+  document.getElementById('vistaEstudiantes').style.display='none';
+  document.getElementById('vistaCursos').style.display='block';
+  setStatus('✓ Listo','ok');
+}
+
+// ── FILTROS TABLA ────────────────────────────────────────────
+function resetFiltros() {
+  ['fSem','fEst','fCanvas','fIngresa'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fTexto').value='';
 }
 
 function aplicarFiltros() {
-  const fNRC     = document.getElementById('fNRC').value;
   const fSem     = document.getElementById('fSem').value;
   const fEst     = document.getElementById('fEst').value;
   const fCanvas  = document.getElementById('fCanvas').value;
   const fIngresa = document.getElementById('fIngresa').value;
   const fTexto   = document.getElementById('fTexto').value.toLowerCase();
-
   filteredData = allData.filter(d => {
-    if (fNRC     && d.NRC_COD_CAL !== fNRC) return false;
     if (fSem     && d.SEMAFORO !== fSem) return false;
     if (fEst     && d.field_15 !== fEst) return false;
     if (fCanvas  && d.field_18 !== fCanvas) return false;
     if (fIngresa && d.field_16 !== fIngresa) return false;
     if (fTexto) {
-      const nom = (d.field_11||'').toLowerCase();
-      const rut = (d.Title||'').toLowerCase();
-      if (!nom.includes(fTexto) && !rut.includes(fTexto)) return false;
+      const nom=(d.field_11||'').toLowerCase();
+      const rut=(d.Title||'').toLowerCase();
+      if (!nom.includes(fTexto)&&!rut.includes(fTexto)) return false;
     }
     return true;
   });
   if (sortField) {
-    filteredData.sort((a,b) => (a[sortField]||'').toString().localeCompare((b[sortField]||'').toString()) * sortDir);
+    filteredData.sort((a,b)=>(a[sortField]||'').toString().localeCompare((b[sortField]||'').toString())*sortDir);
   }
   renderKpis();
   renderTabla();
-  actualizarLinkCurso();
-}
-
-function actualizarLinkCurso() {
-  const fNRC = document.getElementById('fNRC').value;
-  const bar  = document.getElementById('nrcLinkBar');
-  const btn  = document.getElementById('nrcLinkBtn');
-  const lbl  = document.getElementById('nrcLinkNombre');
-  if (!fNRC) { bar.style.display = 'none'; return; }
-  const nrcCod = getNrcCod(fNRC);
-  const link   = linkCache[nrcCod] || '';
-  bar.style.display = 'flex';
-  lbl.textContent   = fNRC;
-  if (link) {
-    btn.href = link;
-    btn.style.opacity = '1';
-    btn.onclick = null;
-  } else {
-    btn.href = '#';
-    btn.style.opacity = '0.4';
-    btn.onclick = (e) => { e.preventDefault(); };
-    // Intentar cargar el link si no está en cache
-    fetch(F_LINK_NRC, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ nrc_cod: nrcCod })
-    }).then(r=>r.json()).then(data=>{
-      const items = Array.isArray(data)?data:(data.value||[]);
-      if (items.length>0) {
-        const l = items[0]['URL_QA2_x002f_F_x002e_I_x002e_']||'';
-        if (l) { linkCache[nrcCod]=l; btn.href=l; btn.style.opacity='1'; btn.onclick=null; }
-      }
-    }).catch(()=>{});
-  }
 }
 
 function sortBy(field) {
-  if (sortField===field) sortDir*=-1; else { sortField=field; sortDir=1; }
+  if (sortField===field) sortDir*=-1; else {sortField=field;sortDir=1;}
   document.querySelectorAll('th').forEach(th=>th.classList.remove('sort-asc','sort-desc'));
   event.target.classList.add(sortDir===1?'sort-asc':'sort-desc');
   aplicarFiltros();
 }
 
-// ── KPIS ──────────────────────────────────────────────────────
+// ── KPIS ─────────────────────────────────────────────────────
 function renderKpis() {
   const d = filteredData;
-  document.getElementById('kTotal').textContent    = d.length;
-  document.getElementById('kVerde').textContent    = d.filter(x=>x.SEMAFORO==='VERDE').length;
-  document.getElementById('kAmarillo').textContent = d.filter(x=>x.SEMAFORO==='AMARILLO').length;
-  document.getElementById('kRojo').textContent     = d.filter(x=>x.SEMAFORO==='ROJO').length;
-  document.getElementById('kMorado').textContent   = d.filter(x=>x.SEMAFORO==='MORADO').length;
-  document.getElementById('kNaranjo').textContent  = d.filter(x=>x.field_15==='EN TRAMITE'||x.field_15==='RETIRO DEF'||x.field_15==='RESCILIACION'||x.field_15==='RETIR TEMP.').length;
-  document.getElementById('kNoIng').textContent    = d.filter(x=>x.field_16==='NO').length;
-  document.getElementById('kNoCanvas').textContent = d.filter(x=>!x.field_18||x.field_18==='').length;
+  document.getElementById('kpisWrap').innerHTML = `
+    <div class="kpi kt"><div class="kpi-val">${d.length}</div><div class="kpi-lbl">Total</div></div>
+    <div class="kpi kg"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='VERDE').length}</div><div class="kpi-lbl">🟢 Verde</div></div>
+    <div class="kpi ky"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='AMARILLO').length}</div><div class="kpi-lbl">🟡 Amarillo</div></div>
+    <div class="kpi kr"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='ROJO').length}</div><div class="kpi-lbl">🔴 Rojo</div></div>
+    <div class="kpi km"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='MORADO').length}</div><div class="kpi-lbl">🟣 Morado</div></div>
+    <div class="kpi kni"><div class="kpi-val">${d.filter(x=>x.field_16==='NO').length}</div><div class="kpi-lbl">✗ No Ingresó</div></div>
+    <div class="kpi knc"><div class="kpi-val">${d.filter(x=>!x.field_18||x.field_18==='').length}</div><div class="kpi-lbl">✗ Sin Canvas</div></div>`;
   document.getElementById('countBadge').textContent = `Mostrando ${d.length} de ${allData.length}`;
 }
 
-// ── RENDER TABLA ──────────────────────────────────────────────
+// ── RENDER TABLA ─────────────────────────────────────────────
 function renderTabla() {
-  pendingChanges = {};
-  updateBadge();
-  const tbody = document.getElementById('tbody');
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('tabla').style.display = filteredData.length ? 'table' : 'none';
-  if (!filteredData.length) { document.getElementById('emptyState').style.display='block'; return; }
-
-  tbody.innerHTML = filteredData.map(item => {
+  pendingChanges={};updateBadge();
+  const tbody=document.getElementById('tbody');
+  const tabla=document.getElementById('tabla');
+  const empty=document.getElementById('emptyEst');
+  if (!filteredData.length){tabla.style.display='none';empty.style.display='block';return;}
+  empty.style.display='none';tabla.style.display='table';
+  tbody.innerHTML = filteredData.map(item=>{
     const id  = item.ID||item.Id;
     const rut = item.Title||'';
     const nom = item.field_11||'';
@@ -426,193 +460,119 @@ function renderTabla() {
     const can = item.field_18||'';
     const ing = item.field_16||'';
     const obs = (item.Observaciones||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const nrc = item.NRC_COD_CAL||'';
-    const nrcCod = getNrcCod(nrc);
-    const cachedLink = linkCache[nrcCod] || '';
-
     const urlFicha  = URL_FICHA + encodeURIComponent(rut);
     const urlWebInt = URL_WEBINT + rut.replace(/\s/g,'') + '&RUT=' + rut.replace(/\s/g,'') + '&usuario=' + rut.replace(/\s/g,'');
     const urlCRM    = URL_CRM + encodeURIComponent(nom);
-    const asunto    = encodeURIComponent(`Revisión de caso: ${nom} - NRC: ${nrc}`);
-    const cuerpo    = encodeURIComponent(`Hola,\n\nJunto con saludar, solicito revisar el estado del siguiente estudiante:\n\nNRC: ${nrc}\nNombre: ${nom}\nRUT: ${rut}\nSemáforo: ${sem}\nIngresa: ${ing}\nCanvas: ${can}\n\nQuedo atento/a.\nSaludos.`);
+    const asunto    = encodeURIComponent(`Revisión de caso: ${nom} - NRC: ${cursoActual?.nrcCal||''}`);
+    const cuerpo    = encodeURIComponent(`Hola,\n\nJunto con saludar, solicito revisar el estado del siguiente estudiante:\n\nNRC: ${cursoActual?.nrcCal||''}\nNombre: ${nom}\nRUT: ${rut}\nSemáforo: ${sem}\nIngresa: ${ing}\nCanvas: ${can}\n\nQuedo atento/a.\nSaludos.`);
     const urlNotif  = `${URL_NOTIF}?subject=${asunto}&body=${cuerpo}`;
-
     return `<tr id="row-${id}" data-id="${id}" data-nom="${nom.toLowerCase()}" data-rut="${rut.toLowerCase()}"
       draggable="true" ondragstart="dragStart(event,${id})" ondragover="dragOver(event)" ondrop="dropOn(event,${id})">
       <td><span class="drag-handle" title="Arrastra para copiar a otra fila">⋮⋮</span></td>
-      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap">${nrc}</td>
       <td style="font-weight:600;color:#fff;min-width:160px">${nom}</td>
       <td><a href="${urlFicha}" target="_blank" class="rut-link" title="Ver ficha en Power BI">${rut}</a></td>
-      <td>
-        <select class="cell-sel" onchange="mark(${id},'SEMAFORO',this.value,this)">
-          ${opts(['VERDE','AMARILLO','ROJO','MORADO','NARANJO'],sem)}
-        </select>
-      </td>
-      <td>
-        <select class="cell-sel" onchange="mark(${id},'field_15',this.value,this)">
-          ${opts(['ACTIVO','EN TRAMITE','RESCILIACION','RETIRO DEF','RETIR TEMP.','EGRESADO'],est)}
-        </select>
-      </td>
-      <td>
-        <select class="cell-sel" onchange="mark(${id},'field_17',this.value,this)">
-          ${opts(['SI','NO'],ban)}
-        </select>
-      </td>
-      <td>
-        <select class="cell-sel" onchange="mark(${id},'field_18',this.value,this)">
-          ${opts(['SI','NO'],can)}
-        </select>
-      </td>
-      <td>
-        <select class="cell-sel" onchange="mark(${id},'field_16',this.value,this)">
-          ${opts(['SI','NO',''],ing,{'':'Sin dato'})}
-        </select>
-      </td>
-      <td style="min-width:220px">
-        <textarea class="cell-obs" rows="1"
-          oninput="autoH(this);mark(${id},'Observaciones',this.value,this)">${obs}</textarea>
-      </td>
-      <td style="text-align:center">
-        <a href="${urlCRM}" target="_blank" class="icon-btn" title="Buscar en CRM Dynamics">🔗</a>
-      </td>
-      <td style="text-align:center">
-        <a href="${urlWebInt}" target="_blank" class="icon-btn" title="Web Integración Canvas">🌐</a>
-      </td>
-      <td style="text-align:center">
-        <a href="${urlNotif}" target="_blank" class="icon-btn" title="Enviar correo prefabricado">✉️</a>
-      </td>
+      <td><select class="cell-sel" onchange="mark(${id},'SEMAFORO',this.value,this)">${opts(['VERDE','AMARILLO','ROJO','MORADO','NARANJO'],sem)}</select></td>
+      <td><select class="cell-sel" onchange="mark(${id},'field_15',this.value,this)">${opts(['ACTIVO','EN TRAMITE','RESCILIACION','RETIRO DEF','RETIR TEMP.','EGRESADO'],est)}</select></td>
+      <td><select class="cell-sel" onchange="mark(${id},'field_17',this.value,this)">${opts(['SI','NO'],ban)}</select></td>
+      <td><select class="cell-sel" onchange="mark(${id},'field_18',this.value,this)">${opts(['SI','NO'],can)}</select></td>
+      <td><select class="cell-sel" onchange="mark(${id},'field_16',this.value,this)">${opts(['SI','NO',''],ing,{'':'Sin dato'})}</select></td>
+      <td style="min-width:220px"><textarea class="cell-obs" rows="1" oninput="autoH(this);mark(${id},'Observaciones',this.value,this)">${obs}</textarea></td>
+      <td style="text-align:center"><a href="${urlCRM}" target="_blank" class="icon-btn" title="CRM Dynamics">🔗</a></td>
+      <td style="text-align:center"><a href="${urlWebInt}" target="_blank" class="icon-btn" title="Web Integración Canvas">🌐</a></td>
+      <td style="text-align:center"><a href="${urlNotif}" target="_blank" class="icon-btn" title="Enviar correo">✉️</a></td>
       <td><button class="btn-row" id="btn-${id}" onclick="guardarFila(${id})">💾</button></td>
     </tr>`;
   }).join('');
 }
 
-function opts(arr, sel, labels={}) {
-  return arr.map(v=>`<option value="${v}" ${v===sel?'selected':''}>${labels[v]||v||'Sin dato'}</option>`).join('');
-}
-function autoH(el) { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+function opts(arr,sel,labels={}){return arr.map(v=>`<option value="${v}" ${v===sel?'selected':''}>${labels[v]||v||'Sin dato'}</option>`).join('');}
+function autoH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 
-// ── DRAG & DROP — copiar fila hacia abajo ─────────────────────
-function dragStart(e, id) {
-  dragSrcId = id;
-  document.getElementById(`row-${id}`).classList.add('drag-source');
-  e.dataTransfer.effectAllowed = 'copy';
-}
-function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect='copy'; }
-function dropOn(e, targetId) {
+// ── DRAG & DROP ──────────────────────────────────────────────
+function dragStart(e,id){dragSrcId=id;document.getElementById(`row-${id}`).classList.add('drag-source');e.dataTransfer.effectAllowed='copy';}
+function dragOver(e){e.preventDefault();e.dataTransfer.dropEffect='copy';}
+function dropOn(e,targetId){
   e.preventDefault();
   document.querySelectorAll('tr.drag-source').forEach(r=>r.classList.remove('drag-source'));
-  if (!dragSrcId || dragSrcId===targetId) { dragSrcId=null; return; }
-  const srcRow = document.getElementById(`row-${dragSrcId}`);
-  const dstRow = document.getElementById(`row-${targetId}`);
-  if (!srcRow||!dstRow) return;
-  const fields = ['SEMAFORO','field_15','field_17','field_18','field_16'];
-  const srcSels = srcRow.querySelectorAll('.cell-sel');
-  const dstSels = dstRow.querySelectorAll('.cell-sel');
-  srcSels.forEach((sel,i) => { if(dstSels[i]){ dstSels[i].value=sel.value; mark(targetId,fields[i],sel.value,dstSels[i]); }});
-  const srcObs = srcRow.querySelector('.cell-obs');
-  const dstObs = dstRow.querySelector('.cell-obs');
-  if (srcObs&&dstObs) { dstObs.value=srcObs.value; mark(targetId,'Observaciones',srcObs.value,dstObs); }
-  dragSrcId = null;
+  if(!dragSrcId||dragSrcId===targetId){dragSrcId=null;return;}
+  const srcRow=document.getElementById(`row-${dragSrcId}`);
+  const dstRow=document.getElementById(`row-${targetId}`);
+  if(!srcRow||!dstRow)return;
+  const fields=['SEMAFORO','field_15','field_17','field_18','field_16'];
+  const srcSels=srcRow.querySelectorAll('.cell-sel');
+  const dstSels=dstRow.querySelectorAll('.cell-sel');
+  srcSels.forEach((sel,i)=>{if(dstSels[i]){dstSels[i].value=sel.value;mark(targetId,fields[i],sel.value,dstSels[i]);}});
+  const srcObs=srcRow.querySelector('.cell-obs');
+  const dstObs=dstRow.querySelector('.cell-obs');
+  if(srcObs&&dstObs){dstObs.value=srcObs.value;mark(targetId,'Observaciones',srcObs.value,dstObs);}
+  dragSrcId=null;
 }
 
-// ── MARCAR CAMBIO ─────────────────────────────────────────────
-function mark(id, field, value, el) {
-  if (!pendingChanges[id]) {
-    const item = allData.find(d=>(d.ID||d.Id)==id);
-    pendingChanges[id] = {
-      id,
-      SEMAFORO:item.SEMAFORO||'', field_15:item.field_15||'',
-      field_16:item.field_16||'', field_17:item.field_17||'',
-      field_18:item.field_18||'', Observaciones:item.Observaciones||''
-    };
+// ── CAMBIOS ──────────────────────────────────────────────────
+function mark(id,field,value,el){
+  if(!pendingChanges[id]){
+    const item=allData.find(d=>(d.ID||d.Id)==id);
+    pendingChanges[id]={id,SEMAFORO:item.SEMAFORO||'',field_15:item.field_15||'',field_16:item.field_16||'',field_17:item.field_17||'',field_18:item.field_18||'',Observaciones:item.Observaciones||''};
     document.getElementById(`row-${id}`).classList.add('modified');
   }
-  pendingChanges[id][field] = value;
-  if (el) el.classList.add('changed');
+  pendingChanges[id][field]=value;
+  if(el)el.classList.add('changed');
   updateBadge();
 }
-
-function updateBadge() {
-  const n = Object.keys(pendingChanges).length;
-  const badge = document.getElementById('badge');
-  badge.style.display = n>0?'inline':'none';
-  badge.textContent = `${n} cambio${n!==1?'s':''}`;
-  document.getElementById('btnSaveAll').disabled = n===0;
+function updateBadge(){
+  const n=Object.keys(pendingChanges).length;
+  const badge=document.getElementById('badge');
+  badge.style.display=n>0?'inline':'none';
+  badge.textContent=`${n} cambio${n!==1?'s':''}`;
+  document.getElementById('btnSaveAll').disabled=n===0;
 }
 
-// ── GUARDAR FILA ──────────────────────────────────────────────
-async function guardarFila(id) {
-  const item = allData.find(d=>(d.ID||d.Id)==id);
-  const payload = pendingChanges[id] || {
-    id, SEMAFORO:item.SEMAFORO||'', field_15:item.field_15||'',
-    field_16:item.field_16||'', field_17:item.field_17||'',
-    field_18:item.field_18||'', Observaciones:item.Observaciones||''
-  };
-  const row = document.getElementById(`row-${id}`);
-  const btn = document.getElementById(`btn-${id}`);
-  row.classList.add('saving'); btn.textContent='⏳'; btn.disabled=true;
-  try {
-    const r = await fetch(F_UPDATE, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    Object.assign(item, payload);
-    delete pendingChanges[id];
-    row.classList.remove('modified','saving');
-    row.classList.add('saved-ok');
+// ── GUARDAR FILA ─────────────────────────────────────────────
+async function guardarFila(id){
+  const item=allData.find(d=>(d.ID||d.Id)==id);
+  const payload=pendingChanges[id]||{id,SEMAFORO:item.SEMAFORO||'',field_15:item.field_15||'',field_16:item.field_16||'',field_17:item.field_17||'',field_18:item.field_18||'',Observaciones:item.Observaciones||''};
+  const row=document.getElementById(`row-${id}`);
+  const btn=document.getElementById(`btn-${id}`);
+  row.classList.add('saving');btn.textContent='⏳';btn.disabled=true;
+  try{
+    const r=await fetch(F_UPDATE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    Object.assign(item,payload);delete pendingChanges[id];
+    row.classList.remove('modified','saving');row.classList.add('saved-ok');
     setTimeout(()=>row.classList.remove('saved-ok'),2500);
-    btn.textContent='✓'; setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
-    updateBadge();
-    setStatus('✓ Guardado correctamente','ok');
-  } catch(e) {
-    row.classList.remove('saving');
-    btn.textContent='✗'; setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
+    btn.textContent='✓';setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
+    updateBadge();setStatus('✓ Guardado correctamente','ok');
+  }catch(e){
+    row.classList.remove('saving');btn.textContent='✗';
+    setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
     setStatus(`✗ Error: ${e.message}`,'err');
   }
 }
 
-// ── GUARDAR TODOS ─────────────────────────────────────────────
-async function guardarTodos() {
-  const ids = Object.keys(pendingChanges);
-  if (!ids.length) return;
-  const btn = document.getElementById('btnSaveAll');
-  btn.disabled=true; btn.textContent='⏳ Guardando...';
+// ── GUARDAR TODOS ────────────────────────────────────────────
+async function guardarTodos(){
+  const ids=Object.keys(pendingChanges);if(!ids.length)return;
+  const btn=document.getElementById('btnSaveAll');
+  btn.disabled=true;btn.textContent='⏳ Guardando...';
   setStatus(`<span class="spinner"></span> Guardando ${ids.length} registros...`,'load');
   let ok=0,err=0;
-  for (const id of ids) {
-    try {
-      const r = await fetch(F_UPDATE, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(pendingChanges[id])
-      });
-      if (!r.ok) throw new Error();
-      const item = allData.find(d=>(d.ID||d.Id)==id);
-      Object.assign(item, pendingChanges[id]);
-      delete pendingChanges[id];
-      const row = document.getElementById(`row-${id}`);
-      row.classList.remove('modified');
-      row.classList.add('saved-ok');
-      setTimeout(()=>row.classList.remove('saved-ok'),2500);
-      ok++;
-    } catch(e) { err++; }
+  for(const id of ids){
+    try{
+      const r=await fetch(F_UPDATE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pendingChanges[id])});
+      if(!r.ok)throw new Error();
+      const item=allData.find(d=>(d.ID||d.Id)==id);
+      Object.assign(item,pendingChanges[id]);delete pendingChanges[id];
+      const row=document.getElementById(`row-${id}`);
+      row.classList.remove('modified');row.classList.add('saved-ok');
+      setTimeout(()=>row.classList.remove('saved-ok'),2500);ok++;
+    }catch(e){err++;}
   }
-  updateBadge();
-  btn.textContent='💾 Guardar cambios';
+  updateBadge();btn.textContent='💾 Guardar cambios';
   setStatus(err===0?`✓ ${ok} registros guardados`:`⚠️ ${ok} guardados, ${err} con error`,err===0?'ok':'err');
 }
 
-function setStatus(msg,type) {
-  document.getElementById('statusbar').innerHTML=`<span class="s-${type}">${msg}</span>`;
-}
+function setStatus(msg,type){document.getElementById('statusbar').innerHTML=`<span class="s-${type}">${msg}</span>`;}
 
-// ── EVENTOS ───────────────────────────────────────────────────
-['fNRC','fSem','fEst','fCanvas','fIngresa','fTexto'].forEach(id=>{
-  document.getElementById(id).addEventListener('change', aplicarFiltros);
-  document.getElementById(id).addEventListener('input', aplicarFiltros);
-});
-
-// ── INIT ──────────────────────────────────────────────────────
 initTutores();
 </script>
 </body>
