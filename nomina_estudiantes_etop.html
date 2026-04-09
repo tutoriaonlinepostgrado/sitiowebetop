@@ -239,24 +239,17 @@ let todosLosCursos=[];
 
 // ── INIT TUTORES ─────────────────────────────────────────────
 async function initTutores() {
+  const sel = document.getElementById('fTutor');
   try {
-    const r = await fetch(F_TUTORES,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const text = await r.text();
-    if(!text||text.trim()==='') throw new Error('Respuesta vacía');
-    const data = JSON.parse(text);
-    const raw = Array.isArray(data)?data:(data.value||[]);
-    todosLosCursos = raw;
+    const resp = await fetch(F_TUTORES, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const arr = await resp.json();
     const excluir = ['NO TIENE TUTORIA','POR DEFINIR',''];
-    const nombres = [...new Set(raw.map(d=>d.field_9||'').filter(n=>!excluir.includes(n)))].sort();
-    const sel = document.getElementById('fTutor');
-    sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' +
-      nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
+    const nombres = [...new Set(arr.map(d=>d.tutor).filter(n=>n&&!excluir.includes(n)))].sort();
+    sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' + nombres.map(n=>`<option>${n}</option>`).join('');
     const p = new URLSearchParams(window.location.search).get('tutor');
-    if(p){sel.value=p;cargarNRCs();}
+    if(p){sel.value=p; cargarNRCs();}
   } catch(e) {
-    document.getElementById('fTutor').innerHTML='<option value="">Error al cargar</option>';
-    console.error(e);
+    sel.innerHTML = '<option value="">Error: '+e.message+'</option>';
   }
 }
 
