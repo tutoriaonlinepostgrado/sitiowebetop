@@ -1,568 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nómina Estudiantes — ETOP</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --dark:#19202e;--dark2:#242d3f;--dark3:#2e3a50;
-  --gold:#facc15;--gold2:#f59e0b;
-  --text:#e2e8f0;--muted:#94a3b8;
-  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;
-  --purple:#a855f7;--orange:#f97316;--blue:#3b82f6;
-  --border:rgba(255,255,255,0.08);--radius:8px;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--dark);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;min-height:100vh;}
-.header{background:var(--dark2);border-bottom:3px solid var(--gold);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
-.header img{height:40px;width:auto;}
-.header-title{font-size:15px;font-weight:700;color:#fff;}
-.header-sub{font-size:9px;color:var(--gold);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Tutorial - Editor Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #19202e;
+            --header-bg: #242d3f;
+            --row-border: #E2E8F0;
+            --accent: #1d4ed8;
+            --gold: #facc15;
+            --text-main: #1e293b;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: var(--text-main); }
+        
+        /* HEADER ESTILO POWER BI */
+        .top-nav { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); }
+        .top-nav h1 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* BARRA DE FILTROS */
+        .filter-zone { background: white; padding: 15px 20px; display: flex; gap: 15px; align-items: flex-end; border-bottom: 1px solid var(--row-border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .f-group { display: flex; flex-direction: column; gap: 4px; }
+        .f-group label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .f-group input { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        .btn-main:hover { background: #1e40af; }
 
-/* FILTROS */
-.filtros-wrap{background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
-.fg{display:flex;flex-direction:column;gap:3px;}
-.fg label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
-.fg select,.fg input{background:var(--dark3);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:6px 10px;font-family:inherit;font-size:11px;min-width:160px;transition:border-color .2s;cursor:pointer;}
-.fg select:focus,.fg input:focus{outline:none;border-color:var(--gold);}
-.btn-gold{background:var(--gold);color:var(--dark);border:none;padding:7px 16px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;align-self:flex-end;}
-.btn-gold:hover{background:var(--gold2);}
-.btn-gold:disabled{opacity:.5;cursor:not-allowed;}
+        /* KPIS COMPACTOS (Como en tu foto) */
+        .kpi-container { display: flex; gap: 10px; padding: 10px 20px; background: #fff; }
+        .kpi-box { padding: 5px 12px; border: 1px solid var(--row-border); border-radius: 4px; font-size: 11px; font-weight: 700; background: #f8fafc; }
 
-/* VISTA CURSOS */
-#vistaCursos{padding:16px 20px;}
-.cursos-table-wrap{overflow-x:auto;margin-top:12px;}
-.cursos-table{width:100%;border-collapse:collapse;}
-.cursos-table th{background:var(--dark);color:var(--gold);font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:8px 10px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--gold);}
-.cursos-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:11px;vertical-align:middle;}
-.cursos-table tr:hover td{background:rgba(255,255,255,0.03);cursor:pointer;}
-.estado-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;white-space:nowrap;}
-.est-ACTIVO{background:rgba(34,197,94,.2);color:#4ade80;}
-.est-EN\ CIERRE{background:rgba(249,115,22,.2);color:#fb923c;}
-.est-EN\ PREPARACION{background:rgba(59,130,246,.2);color:#93c5fd;}
-.nrc-cod{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);font-weight:700;}
-.btn-ver{background:var(--gold);color:var(--dark);border:none;padding:3px 10px;border-radius:4px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;}
+        /* TABLA ULTRA COMPACTA */
+        .table-container { padding: 10px 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1100px; }
+        thead th { background: #f8fafc; padding: 8px 5px; text-align: left; border-bottom: 2px solid var(--accent); color: #19202E; font-size: 9px; text-transform: uppercase; }
+        td { padding: 4px 5px; border-bottom: 1px solid var(--row-border); }
+        tr:hover { background-color: #f1f5f9; }
 
-/* VISTA ESTUDIANTES */
-#vistaEstudiantes{display:none;}
-.back-bar{background:var(--dark2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.btn-back{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:5px;font-family:inherit;font-size:11px;cursor:pointer;transition:all .2s;}
-.btn-back:hover{border-color:var(--gold);color:var(--gold);}
-.curso-info{font-size:11px;color:var(--text);}
-.curso-info strong{font-family:'IBM Plex Mono',monospace;color:var(--gold);}
-.btn-link-curso{display:inline-flex;align-items:center;gap:5px;background:var(--dark3);border:1px solid var(--gold);color:var(--gold);font-size:10px;font-weight:700;padding:4px 12px;border-radius:5px;text-decoration:none;transition:all .2s;margin-left:auto;}
-.btn-link-curso:hover{background:var(--gold);color:var(--dark);}
-
-/* KPIS */
-.kpis-wrap{padding:8px 20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--dark);border-bottom:1px solid var(--border);}
-.kpi{background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;display:flex;flex-direction:column;gap:1px;min-width:70px;}
-.kpi-val{font-size:16px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1;}
-.kpi-lbl{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;}
-.kpi.kt .kpi-val{color:var(--blue);}.kpi.kg .kpi-val{color:var(--green);}
-.kpi.ky .kpi-val{color:var(--yellow);}.kpi.kr .kpi-val{color:var(--red);}
-.kpi.km .kpi-val{color:var(--purple);}.kpi.kni .kpi-val{color:var(--red);}
-.kpi.knc .kpi-val{color:var(--red);}
-
-/* TOOLBAR */
-.toolbar{padding:7px 20px;display:flex;gap:8px;align-items:center;background:var(--dark);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.btn-save-all{background:var(--green);color:#fff;border:none;padding:5px 14px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;}
-.btn-save-all:hover{background:#16a34a;}
-.btn-save-all:disabled{opacity:.5;cursor:not-allowed;}
-.changes-badge{background:var(--gold);color:var(--dark);font-size:9px;font-weight:800;padding:2px 8px;border-radius:100px;display:none;}
-.search-q{background:var(--dark3);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:5px 10px;font-family:inherit;font-size:11px;width:180px;}
-.search-q:focus{outline:none;border-color:var(--gold);}
-.count-badge{margin-left:auto;font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
-
-/* FILTROS TABLA EST */
-.tabla-filtros{padding:7px 20px;display:flex;gap:8px;flex-wrap:wrap;background:var(--dark2);border-bottom:1px solid var(--border);align-items:flex-end;}
-.tf{display:flex;flex-direction:column;gap:2px;}
-.tf label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
-.tf select,.tf input{background:var(--dark3);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px 8px;font-family:inherit;font-size:10px;cursor:pointer;}
-.tf select:focus,.tf input:focus{outline:none;border-color:var(--gold);}
-
-/* TABLE */
-.table-container{overflow-x:auto;height:calc(100vh - 320px);overflow-y:auto;}
-table{width:100%;border-collapse:collapse;min-width:1300px;}
-thead{position:sticky;top:0;z-index:10;}
-th{background:var(--dark);color:var(--gold);font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:7px 6px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--gold);cursor:pointer;user-select:none;}
-th:hover{color:#fff;}
-th.sort-asc::after{content:' ↑';}th.sort-desc::after{content:' ↓';}
-td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:11px;}
-tr:hover td{background:rgba(255,255,255,0.02);}
-tr.modified td{background:rgba(250,204,21,0.04);}
-tr.saved-ok td{background:rgba(34,197,94,0.08);}
-.rut-link{color:var(--blue);font-weight:700;text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;}
-.rut-link:hover{text-decoration:underline;}
-.cell-sel{background:var(--dark3);border:1px solid transparent;border-radius:3px;color:var(--text);padding:3px 5px;font-family:inherit;font-size:10px;cursor:pointer;width:100%;transition:border-color .15s;}
-.cell-sel:focus{outline:none;border-color:var(--gold);}
-.cell-sel.changed{border-color:var(--gold);background:rgba(250,204,21,0.1);}
-.cell-obs{background:var(--dark3);border:1px solid transparent;border-radius:3px;color:var(--text);padding:3px 5px;font-family:inherit;font-size:10px;width:100%;resize:none;min-height:28px;line-height:1.3;transition:border-color .15s;}
-.cell-obs:focus{outline:none;border-color:var(--gold);}
-.cell-obs.changed{border-color:var(--gold);background:rgba(250,204,21,0.1);}
-.icon-btn{font-size:13px;text-decoration:none;cursor:pointer;opacity:.7;transition:opacity .2s;display:inline-block;}
-.icon-btn:hover{opacity:1;}
-.btn-row{background:var(--dark3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:3px;cursor:pointer;font-size:9px;font-family:inherit;transition:all .2s;white-space:nowrap;}
-.btn-row:hover{border-color:var(--green);color:var(--green);}
-.drag-handle{cursor:grab;color:var(--muted);font-size:12px;padding:0 4px;user-select:none;}
-
-/* STATUS */
-.statusbar{padding:6px 20px;font-size:10px;border-top:1px solid var(--border);min-height:30px;display:flex;align-items:center;gap:8px;background:var(--dark2);position:sticky;bottom:0;}
-.s-ok{color:var(--green);}.s-err{color:var(--red);}.s-load{color:var(--gold);}
-.spinner{width:10px;height:10px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.empty{padding:40px;text-align:center;color:var(--muted);}
-.empty .big{font-size:36px;margin-bottom:10px;}
-</style>
+        /* INPUTS INVISIBLES */
+        .cell-edit { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: 11px; padding: 2px; width: 100%; cursor: pointer; }
+        .cell-edit:focus { outline: none; border: 1px solid var(--gold); background: white; }
+        .modified { background-color: #fffbeb !important; }
+        
+        /* BOTÓN REPLICAR (ARRASAR) */
+        .btn-copy { font-size: 9px; cursor: pointer; color: var(--accent); font-weight: bold; margin-left: 3px; }
+        
+        .status-footer { position: fixed; bottom: 0; width: 100%; background: var(--header-bg); color: white; padding: 5px 20px; font-size: 10px; }
+    </style>
 </head>
 <body>
 
-<div class="header">
-  <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP">
-  <div>
-    <div class="header-title">Nómina de Estudiantes</div>
-    <div class="header-sub">Portal de Gestión Tutorial · ETOP</div>
-  </div>
-</div>
-
-<div class="filtros-wrap">
-  <div class="fg">
-    <label>Tutor/a</label>
-    <select id="fTutor" style="min-width:200px">
-      <option value="">⏳ Cargando tutores...</option>
-    </select>
-  </div>
-  <div class="fg">
-    <label>Estado Curso</label>
-    <select id="fEstadoCurso">
-      <option value="">Todos</option>
-      <option value="ACTIVO">Activo</option>
-      <option value="EN CIERRE">En Cierre</option>
-      <option value="EN PREPARACION">En Preparación</option>
-    </select>
-  </div>
-  <button class="btn-gold" id="btnCargar" onclick="cargarNRCs()">🔍 Cargar cursos</button>
-</div>
-
-<!-- VISTA 1: CURSOS -->
-<div id="vistaCursos">
-  <div class="empty" id="emptyCursos">
-    <div class="big">📚</div>
-    <p>Selecciona un tutor y haz clic en "Cargar cursos"</p>
-  </div>
-  <div class="cursos-table-wrap" id="cursosTableWrap" style="display:none">
-    <table class="cursos-table">
-      <thead>
-        <tr>
-          <th>NRC</th>
-          <th>Programa</th>
-          <th>Estado</th>
-          <th>Inicio</th>
-          <th>Término</th>
-          <th style="text-align:center">Ver Estudiantes</th>
-        </tr>
-      </thead>
-      <tbody id="cursosBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- VISTA 2: ESTUDIANTES -->
-<div id="vistaEstudiantes">
-  <div class="back-bar">
-    <button class="btn-back" onclick="volverCursos()">← Volver a cursos</button>
-    <div class="curso-info">
-      <strong id="infoNRC"></strong>
-      <span id="infoProg" style="color:var(--muted);margin-left:8px;"></span>
+<div class="top-nav">
+    <h1>Gestión Tutorial - Nómina Estudiantes</h1>
+    <div id="saveZone" style="display:none">
+        <button class="btn-main" style="background: #16a34a;" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button>
     </div>
-    <a id="nrcLinkBtn" href="#" target="_blank" class="btn-link-curso" style="opacity:0.4">🎓 Link Curso</a>
-  </div>
-
-  <div class="kpis-wrap" id="kpisWrap"></div>
-
-  <div class="tabla-filtros">
-    <div class="tf"><label>Semáforo</label><select id="fSem" onchange="aplicarFiltros()"><option value="">Todas</option><option>VERDE</option><option>AMARILLO</option><option>ROJO</option><option>MORADO</option><option>NARANJO</option></select></div>
-    <div class="tf"><label>Estado Est.</label><select id="fEst" onchange="aplicarFiltros()"><option value="">Todas</option><option>ACTIVO</option><option>EN TRAMITE</option><option>RESCILIACION</option><option>RETIRO DEF</option><option>RETIR TEMP.</option></select></div>
-    <div class="tf"><label>Canvas</label><select id="fCanvas" onchange="aplicarFiltros()"><option value="">Todas</option><option>SI</option><option>NO</option></select></div>
-    <div class="tf"><label>Ingresa</label><select id="fIngresa" onchange="aplicarFiltros()"><option value="">Todas</option><option>SI</option><option>NO</option></select></div>
-    <div class="tf"><label>Buscar</label><input type="text" id="fTexto" placeholder="Nombre o RUT..." oninput="aplicarFiltros()"></div>
-  </div>
-
-  <div class="toolbar">
-    <button class="btn-save-all" id="btnSaveAll" onclick="guardarTodos()" disabled>💾 Guardar cambios</button>
-    <span class="changes-badge" id="badge"></span>
-    <span class="count-badge" id="countBadge"></span>
-  </div>
-
-  <div class="table-container">
-    <div class="empty" id="emptyEst" style="display:none"><div class="big">🔍</div><p>Sin resultados</p></div>
-    <table id="tabla" style="display:none">
-      <thead>
-        <tr>
-          <th style="width:20px"></th>
-          <th onclick="sortBy('field_11')">Nombre</th>
-          <th onclick="sortBy('Title')">RUT</th>
-          <th onclick="sortBy('SEMAFORO')">Semáforo</th>
-          <th onclick="sortBy('field_15')">Estado Est.</th>
-          <th>Banner</th>
-          <th>Canvas</th>
-          <th>Ingresa</th>
-          <th style="min-width:220px">Observaciones</th>
-          <th style="text-align:center">CRM</th>
-          <th style="text-align:center">Web</th>
-          <th style="text-align:center">✉️</th>
-          <th>Guardar</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
 </div>
 
-<div class="statusbar" id="statusbar"><span class="s-ok">✓ Listo</span></div>
+<div class="filter-zone">
+    <div class="f-group"><label>NRC</label><input type="text" id="inNRC" placeholder="2077_UNI118"></div>
+    <div class="f-group"><label>Periodo</label><input type="text" id="inPer" placeholder="202681"></div>
+    <button class="btn-main" onclick="buscar()">🔍 Cargar Datos</button>
+</div>
+
+<div class="kpi-container" id="kpiArea" style="display:none">
+    <div class="kpi-box">TOTAL: <span id="kpTotal">0</span></div>
+    <div class="kpi-box" style="color:#16a34a">🟢 <span id="kpV">0</span></div>
+    <div class="kpi-box" style="color:#ca8a04">🟡 <span id="kpA">0</span></div>
+    <div class="kpi-box" style="color:#dc2626">🔴 <span id="kpR">0</span></div>
+</div>
+
+<div class="table-container">
+    <table id="mainTable" style="display:none">
+        <thead>
+            <tr>
+                <th>NRC</th>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Semáforo <span class="btn-copy" onclick="replicar('SEMAFORO')">▼ Todo</span></th>
+                <th>Estado Est. <span class="btn-copy" onclick="replicar('field_15')">▼ Todo</span></th>
+                <th>BAN</th>
+                <th>CAN <span class="btn-copy" onclick="replicar('field_18')">▼ Todo</span></th>
+                <th>INGR <span class="btn-copy" onclick="replicar('field_16')">▼ Todo</span></th>
+                <th>Observaciones</th>
+                <th>CRM</th>
+                <th>Web</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+    </table>
+</div>
+
+<div class="status-footer" id="footer">Listo para trabajar</div>
 
 <script>
-const F_TUTORES  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d900cc6150e845a7bf5c19a2870626f4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cBkVXAGhxX6wYL1rh-u-Ce1rB35tJJ_mfmvyfFWoPXQ';
-const F_NRCS     = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/71d8f01bee344938a4e051a464d0d6ea/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9o6fD1XedUHWHzCS-w-ZfzPP06wXWwDww7oLWD-Pbuk';
-const F_EST      = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
-const F_UPDATE   = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
-const F_LINK_NRC = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9df0aee724a2480dbd54fd256a637d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3oZH9Cvlu21jo55ff6aMFO4ARTvnEdjbWCggXeDKVN0';
-const URL_FICHA  = 'https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi&rp:Param_consolidado_5f_esudiantes_RUT=';
-const URL_WEBINT = 'https://lms.unab.cl/int-canvas/users?rut=';
-const URL_CRM    = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=contact&viewid=00000000-0000-0000-00AA-000010001003&viewType=1039&searchTerm=';
-const URL_NOTIF  = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/enviar_correo.html';
+    const URL_LEER = 'TU_URL_DE_POWER_AUTOMATE_LEER';
+    const URL_UPDT = 'TU_URL_DE_POWER_AUTOMATE_ACTUALIZAR';
+    
+    let db = [];
+    let cambios = {};
 
-let allData=[], filteredData=[], pendingChanges={};
-let sortField='', sortDir=1, dragSrcId=null, cursoActual=null;
-let todosLosCursos=[];
+    async function buscar() {
+        const nrc = document.getElementById('inNRC').value;
+        const per = document.getElementById('inPer').value;
+        if(!nrc) return alert("Ingresa NRC");
 
-// ── INIT TUTORES ─────────────────────────────────────────────
-async function initTutores() {
-  const sel = document.getElementById('fTutor');
-  try {
-    const resp = await fetch(F_TUTORES, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
-    const arr = await resp.json();
-    const excluir = ['NO TIENE TUTORIA','POR DEFINIR',''];
-    const nombres = [...new Set(arr.map(d=>d.tutor).filter(n=>n&&!excluir.includes(n)))].sort();
-    sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' + nombres.map(n=>`<option>${n}</option>`).join('');
-    const p = new URLSearchParams(window.location.search).get('tutor');
-    if(p){sel.value=p; cargarNRCs();}
-  } catch(e) {
-    sel.innerHTML = '<option value="">Error: '+e.message+'</option>';
-  }
-}
-
-// ── CARGAR NRCs ──────────────────────────────────────────────
-async function cargarNRCs() {
-  const tutor = document.getElementById('fTutor').value;
-  const fEstado = document.getElementById('fEstadoCurso').value;
-  if(!tutor){setStatus('⚠️ Selecciona un tutor','err');return;}
-  const btn = document.getElementById('btnCargar');
-  btn.disabled=true; btn.textContent='⏳ Cargando...';
-  setStatus('<span class="spinner"></span> Cargando cursos...','load');
-  try {
-    const r = await fetch(F_NRCS,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({tutor})
-    });
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const text = await r.text();
-    if(!text||text.trim()==='') throw new Error('Respuesta vacía');
-    const data = JSON.parse(text);
-    let cursos = Array.isArray(data)?data:(data.value||[]);
-    // Filtrar por estado en JS
-    const estadosValidos = ['ACTIVO','EN CIERRE','EN PREPARACION'];
-    cursos = cursos.filter(c=>{
-      const est = c.estado||c.ESTADO_CAL||'';
-      if(fEstado) return est===fEstado;
-      return estadosValidos.includes(est);
-    });
-    if(!cursos.length){
-      document.getElementById('emptyCursos').style.display='block';
-      document.getElementById('cursosTableWrap').style.display='none';
-      setStatus('Sin cursos para ese tutor','err');
-      return;
+        document.getElementById('footer').innerText = "⏳ Cargando desde SharePoint...";
+        
+        try {
+            const r = await fetch(URL_LEER, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ nrc_cod: nrc, periodo: per })
+            });
+            const data = await r.json();
+            db = Array.isArray(data) ? data : (data.value || []);
+            render();
+        } catch(e) { alert("Error al cargar datos"); }
     }
-    renderCursos(cursos);
-    setStatus(`✓ ${cursos.length} cursos cargados`,'ok');
-  } catch(e) {
-    setStatus(`✗ Error: ${e.message}`,'err');
-    document.getElementById('emptyCursos').style.display='block';
-  } finally {
-    btn.disabled=false; btn.textContent='🔍 Cargar cursos';
-  }
-}
 
-// ── RENDER CURSOS ────────────────────────────────────────────
-function renderCursos(cursos) {
-  document.getElementById('emptyCursos').style.display='none';
-  document.getElementById('cursosTableWrap').style.display='block';
-  const tbody = document.getElementById('cursosBody');
-  tbody.innerHTML = cursos.map(c=>{
-    const estado  = c.estado||c.ESTADO_CAL||'';
-    const nrc     = c.nrc||c.NRC_COD_CAL||'';
-    const prog    = c.prog||c.NOMBRE_PROGRAMA||'—';
-    const fini    = c.fini||c.FECHA_INICIO||'';
-    const ffin    = c.ffin||c.FECHA_FIN||'';
-    const nrcCod  = c.nrc_cod||c.Title||'';
-    const periodo = c.periodo||c.field_2||'';
-    const finiStr = fini?new Date(fini).toLocaleDateString('es-CL'):'—';
-    const ffinStr = ffin?new Date(ffin).toLocaleDateString('es-CL'):'—';
-    const estCls  = `est-${estado.replace(/ /g,'\\ ')}`;
-    return `<tr onclick="abrirCurso('${nrcCod}','${periodo}','${nrc}','${prog.replace(/'/g,"\\'")}')">
-      <td class="nrc-cod">${nrc}</td>
-      <td style="font-weight:600;color:#fff">${prog}</td>
-      <td><span class="estado-badge ${estCls}">${estado}</span></td>
-      <td style="color:var(--muted)">${finiStr}</td>
-      <td style="color:var(--muted)">${ffinStr}</td>
-      <td style="text-align:center"><button class="btn-ver" onclick="event.stopPropagation();abrirCurso('${nrcCod}','${periodo}','${nrc}','${prog.replace(/'/g,"\\'")}')">Ver →</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// ── ABRIR CURSO ──────────────────────────────────────────────
-async function abrirCurso(nrcCod, periodo, nrcCal, prog) {
-  cursoActual={nrcCod,periodo,nrcCal,prog};
-  document.getElementById('vistaCursos').style.display='none';
-  document.getElementById('vistaEstudiantes').style.display='block';
-  document.getElementById('infoNRC').textContent=nrcCal;
-  document.getElementById('infoProg').textContent=prog;
-  allData=[];filteredData=[];pendingChanges={};
-  resetFiltros();
-  document.getElementById('tabla').style.display='none';
-  document.getElementById('emptyEst').style.display='none';
-  document.getElementById('kpisWrap').innerHTML='';
-  const linkBtn = document.getElementById('nrcLinkBtn');
-  linkBtn.href='#'; linkBtn.style.opacity='0.4';
-  linkBtn.onclick=e=>e.preventDefault();
-  setStatus('<span class="spinner"></span> Cargando estudiantes...','load');
-  cargarLinkCurso(nrcCod);
-  try {
-    const r = await fetch(F_EST,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({nrc_cod:nrcCod,periodo:periodo})
-    });
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const text = await r.text();
-    if(!text||text.trim()==='') throw new Error('Respuesta vacía');
-    const data = JSON.parse(text);
-    allData = Array.isArray(data)?data:(data.value||[]);
-    if(!allData.length){
-      document.getElementById('emptyEst').style.display='block';
-      setStatus('Sin estudiantes','err'); return;
+    function render() {
+        const tbody = document.getElementById('tBody');
+        tbody.innerHTML = '';
+        db.forEach(item => {
+            const id = item.Id || item.ID;
+            const fila = document.createElement('tr');
+            fila.id = `row-${id}`;
+            fila.innerHTML = `
+                <td style="color:var(--accent); font-weight:700">${item.field_2 || ''}</td>
+                <td>${item.field_11 || ''}</td>
+                <td>${item.Title || ''}</td>
+                <td>
+                    <select class="cell-edit" onchange="marcar(${id}, 'SEMAFORO', this.value, this)">
+                        <option value="VERDE" ${item.SEMAFORO=='VERDE'?'selected':''}>🟢 VERDE</option>
+                        <option value="AMARILLO" ${item.SEMAFORO=='AMARILLO'?'selected':''}>🟡 AMARILLO</option>
+                        <option value="ROJO" ${item.SEMAFORO=='ROJO'?'selected':''}>🔴 ROJO</option>
+                        <option value="NARANJO" ${item.SEMAFORO=='NARANJO'?'selected':''}>🟠 NARANJO</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="cell-edit" onchange="marcar(${id}, 'field_15', this.value, this)">
+                        <option value="ACTIVO" ${item.field_15=='ACTIVO'?'selected':''}>ACTIVO</option>
+                        <option value="RETIRO DEF" ${item.field_15=='RETIRO DEF'?'selected':''}>RETIRO DEF</option>
+                    </select>
+                </td>
+                <td>${item.field_17 || ''}</td>
+                <td>
+                    <select class="cell-edit" onchange="marcar(${id}, 'field_18', this.value, this)">
+                        <option value="SI" ${item.field_18=='SI'?'selected':''}>SI</option>
+                        <option value="NO" ${item.field_18=='NO'?'selected':''}>NO</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="cell-edit" onchange="marcar(${id}, 'field_16', this.value, this)">
+                        <option value="SI" ${item.field_16=='SI'?'selected':''}>SI</option>
+                        <option value="NO" ${item.field_16=='NO'?'selected':''}>NO</option>
+                    </select>
+                </td>
+                <td><input type="text" class="cell-edit" value="${item.Observaciones || ''}" onchange="marcar(${id}, 'Observaciones', this.value, this)"></td>
+                <td align="center"><a href="https://saeunab.crm2.dynamics.com/..." target="_blank">🔗</a></td>
+                <td align="center"><a href="https://lms.unab.cl/int-canvas/users?rut=${item.Title}" target="_blank">🌐</a></td>
+                <td><button class="btn-main" style="padding:2px 5px; font-size:9px" onclick="guardarFila(${id})">💾</button></td>
+            `;
+            tbody.appendChild(fila);
+        });
+        document.getElementById('mainTable').style.display = 'table';
+        document.getElementById('kpiArea').style.display = 'flex';
+        document.getElementById('footer').innerText = `Cargados ${db.length} estudiantes.`;
+        updateKpis();
     }
-    aplicarFiltros();
-    setStatus(`✓ ${allData.length} estudiantes cargados`,'ok');
-  } catch(e) {setStatus(`✗ Error: ${e.message}`,'err');}
-}
 
-async function cargarLinkCurso(nrcCod) {
-  try {
-    const r = await fetch(F_LINK_NRC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nrc_cod:nrcCod})});
-    if(!r.ok) return;
-    const text = await r.text();
-    if(!text||text.trim()==='') return;
-    const data = JSON.parse(text);
-    const items = Array.isArray(data)?data:(data.value||[]);
-    if(items.length>0){
-      const link = items[0]['URL_QA2_x002f_F_x002e_I_x002e_']||'';
-      if(link){
-        const btn=document.getElementById('nrcLinkBtn');
-        btn.href=link; btn.style.opacity='1'; btn.onclick=null;
-      }
+    function marcar(id, campo, valor, el) {
+        if (!cambios[id]) cambios[id] = { id: id };
+        cambios[id][campo] = valor;
+        el.closest('tr').classList.add('modified');
+        document.getElementById('saveZone').style.display = 'block';
     }
-  } catch(e){}
-}
 
-function volverCursos(){
-  document.getElementById('vistaEstudiantes').style.display='none';
-  document.getElementById('vistaCursos').style.display='block';
-  setStatus('✓ Listo','ok');
-}
-
-function resetFiltros(){
-  ['fSem','fEst','fCanvas','fIngresa'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fTexto').value='';
-}
-
-// ── FILTROS ──────────────────────────────────────────────────
-function aplicarFiltros(){
-  const fSem=document.getElementById('fSem').value;
-  const fEst=document.getElementById('fEst').value;
-  const fCanvas=document.getElementById('fCanvas').value;
-  const fIngresa=document.getElementById('fIngresa').value;
-  const fTexto=document.getElementById('fTexto').value.toLowerCase();
-  filteredData=allData.filter(d=>{
-    if(fSem&&d.SEMAFORO!==fSem) return false;
-    if(fEst&&d.field_15!==fEst) return false;
-    if(fCanvas&&d.field_18!==fCanvas) return false;
-    if(fIngresa&&d.field_16!==fIngresa) return false;
-    if(fTexto){
-      const nom=(d.field_11||'').toLowerCase();
-      const rut=(d.Title||'').toLowerCase();
-      if(!nom.includes(fTexto)&&!rut.includes(fTexto)) return false;
+    function replicar(campo) {
+        const primerValor = document.querySelector(`#tBody tr:first-child [onchange*="${campo}"]`).value;
+        if(!confirm(`¿Copiar "${primerValor}" a todos?`)) return;
+        
+        document.querySelectorAll(`#tBody [onchange*="${campo}"]`).forEach(input => {
+            const id = input.closest('tr').id.split('-')[1];
+            input.value = primerValor;
+            marcar(id, campo, primerValor, input);
+        });
     }
-    return true;
-  });
-  if(sortField) filteredData.sort((a,b)=>(a[sortField]||'').toString().localeCompare((b[sortField]||'').toString())*sortDir);
-  renderKpis();
-  renderTabla();
-}
 
-function sortBy(field){
-  if(sortField===field) sortDir*=-1; else{sortField=field;sortDir=1;}
-  document.querySelectorAll('th').forEach(th=>th.classList.remove('sort-asc','sort-desc'));
-  event.target.classList.add(sortDir===1?'sort-asc':'sort-desc');
-  aplicarFiltros();
-}
+    async function guardarTodos() {
+        const ids = Object.keys(cambios);
+        document.getElementById('footer').innerText = `💾 Guardando ${ids.length} cambios...`;
+        for (const id of ids) {
+            await fetch(URL_UPDT, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cambios[id]) });
+        }
+        cambios = {};
+        document.getElementById('saveZone').style.display = 'none';
+        document.querySelectorAll('.modified').forEach(r => r.classList.remove('modified'));
+        document.getElementById('footer').innerText = "✅ Todo guardado en SharePoint.";
+    }
 
-// ── KPIS ─────────────────────────────────────────────────────
-function renderKpis(){
-  const d=filteredData;
-  document.getElementById('kpisWrap').innerHTML=`
-    <div class="kpi kt"><div class="kpi-val">${d.length}</div><div class="kpi-lbl">Total</div></div>
-    <div class="kpi kg"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='VERDE').length}</div><div class="kpi-lbl">🟢 Verde</div></div>
-    <div class="kpi ky"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='AMARILLO').length}</div><div class="kpi-lbl">🟡 Amarillo</div></div>
-    <div class="kpi kr"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='ROJO').length}</div><div class="kpi-lbl">🔴 Rojo</div></div>
-    <div class="kpi km"><div class="kpi-val">${d.filter(x=>x.SEMAFORO==='MORADO').length}</div><div class="kpi-lbl">🟣 Morado</div></div>
-    <div class="kpi kni"><div class="kpi-val">${d.filter(x=>x.field_16==='NO').length}</div><div class="kpi-lbl">✗ No Ingresó</div></div>
-    <div class="kpi knc"><div class="kpi-val">${d.filter(x=>!x.field_18||x.field_18==='').length}</div><div class="kpi-lbl">✗ Sin Canvas</div></div>`;
-  document.getElementById('countBadge').textContent=`Mostrando ${d.length} de ${allData.length}`;
-}
-
-// ── RENDER TABLA ─────────────────────────────────────────────
-function renderTabla(){
-  pendingChanges={};updateBadge();
-  const tbody=document.getElementById('tbody');
-  const tabla=document.getElementById('tabla');
-  const empty=document.getElementById('emptyEst');
-  if(!filteredData.length){tabla.style.display='none';empty.style.display='block';return;}
-  empty.style.display='none';tabla.style.display='table';
-  tbody.innerHTML=filteredData.map(item=>{
-    const id=item.ID||item.Id;
-    const rut=item.Title||'';
-    const nom=item.field_11||'';
-    const sem=item.SEMAFORO||'';
-    const est=item.field_15||'';
-    const ban=item.field_17||'';
-    const can=item.field_18||'';
-    const ing=item.field_16||'';
-    const obs=(item.Observaciones||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const urlFicha=URL_FICHA+encodeURIComponent(rut);
-    const urlWebInt=URL_WEBINT+rut.replace(/\s/g,'')+'&RUT='+rut.replace(/\s/g,'')+'&usuario='+rut.replace(/\s/g,'');
-    const urlCRM=URL_CRM+encodeURIComponent(nom);
-    const asunto=encodeURIComponent(`Revisión de caso: ${nom} - NRC: ${cursoActual?.nrcCal||''}`);
-    const cuerpo=encodeURIComponent(`Hola,\n\nNRC: ${cursoActual?.nrcCal||''}\nNombre: ${nom}\nRUT: ${rut}\nSemáforo: ${sem}\nIngresa: ${ing}\nCanvas: ${can}\n\nSaludos.`);
-    const urlNotif=`${URL_NOTIF}?subject=${asunto}&body=${cuerpo}`;
-    return `<tr id="row-${id}" data-id="${id}" data-nom="${nom.toLowerCase()}" data-rut="${rut.toLowerCase()}"
-      draggable="true" ondragstart="dragStart(event,${id})" ondragover="dragOver(event)" ondrop="dropOn(event,${id})">
-      <td><span class="drag-handle" title="Arrastra para copiar">⋮⋮</span></td>
-      <td style="font-weight:600;color:#fff;min-width:160px">${nom}</td>
-      <td><a href="${urlFicha}" target="_blank" class="rut-link">${rut}</a></td>
-      <td><select class="cell-sel" onchange="mark(${id},'SEMAFORO',this.value,this)">${opts(['VERDE','AMARILLO','ROJO','MORADO','NARANJO'],sem)}</select></td>
-      <td><select class="cell-sel" onchange="mark(${id},'field_15',this.value,this)">${opts(['ACTIVO','EN TRAMITE','RESCILIACION','RETIRO DEF','RETIR TEMP.','EGRESADO'],est)}</select></td>
-      <td><select class="cell-sel" onchange="mark(${id},'field_17',this.value,this)">${opts(['SI','NO'],ban)}</select></td>
-      <td><select class="cell-sel" onchange="mark(${id},'field_18',this.value,this)">${opts(['SI','NO'],can)}</select></td>
-      <td><select class="cell-sel" onchange="mark(${id},'field_16',this.value,this)">${opts(['SI','NO',''],ing,{'':'Sin dato'})}</select></td>
-      <td style="min-width:220px"><textarea class="cell-obs" rows="1" oninput="autoH(this);mark(${id},'Observaciones',this.value,this)">${obs}</textarea></td>
-      <td style="text-align:center"><a href="${urlCRM}" target="_blank" class="icon-btn" title="CRM">🔗</a></td>
-      <td style="text-align:center"><a href="${urlWebInt}" target="_blank" class="icon-btn" title="Web Canvas">🌐</a></td>
-      <td style="text-align:center"><a href="${urlNotif}" target="_blank" class="icon-btn" title="Notificar">✉️</a></td>
-      <td><button class="btn-row" id="btn-${id}" onclick="guardarFila(${id})">💾</button></td>
-    </tr>`;
-  }).join('');
-}
-
-function opts(arr,sel,labels={}){return arr.map(v=>`<option value="${v}" ${v===sel?'selected':''}>${labels[v]||v||'Sin dato'}</option>`).join('');}
-function autoH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
-
-// ── DRAG & DROP ──────────────────────────────────────────────
-function dragStart(e,id){dragSrcId=id;document.getElementById(`row-${id}`).classList.add('drag-source');e.dataTransfer.effectAllowed='copy';}
-function dragOver(e){e.preventDefault();}
-function dropOn(e,targetId){
-  e.preventDefault();
-  if(!dragSrcId||dragSrcId===targetId){dragSrcId=null;return;}
-  const srcRow=document.getElementById(`row-${dragSrcId}`);
-  const dstRow=document.getElementById(`row-${targetId}`);
-  if(!srcRow||!dstRow)return;
-  const fields=['SEMAFORO','field_15','field_17','field_18','field_16'];
-  const srcSels=srcRow.querySelectorAll('.cell-sel');
-  const dstSels=dstRow.querySelectorAll('.cell-sel');
-  srcSels.forEach((sel,i)=>{if(dstSels[i]){dstSels[i].value=sel.value;mark(targetId,fields[i],sel.value,dstSels[i]);}});
-  const srcObs=srcRow.querySelector('.cell-obs');
-  const dstObs=dstRow.querySelector('.cell-obs');
-  if(srcObs&&dstObs){dstObs.value=srcObs.value;mark(targetId,'Observaciones',srcObs.value,dstObs);}
-  document.querySelectorAll('tr.drag-source').forEach(r=>r.classList.remove('drag-source'));
-  dragSrcId=null;
-}
-
-// ── CAMBIOS ──────────────────────────────────────────────────
-function mark(id,field,value,el){
-  if(!pendingChanges[id]){
-    const item=allData.find(d=>(d.ID||d.Id)==id);
-    pendingChanges[id]={id,SEMAFORO:item.SEMAFORO||'',field_15:item.field_15||'',field_16:item.field_16||'',field_17:item.field_17||'',field_18:item.field_18||'',Observaciones:item.Observaciones||''};
-    document.getElementById(`row-${id}`).classList.add('modified');
-  }
-  pendingChanges[id][field]=value;
-  if(el)el.classList.add('changed');
-  updateBadge();
-}
-function updateBadge(){
-  const n=Object.keys(pendingChanges).length;
-  const badge=document.getElementById('badge');
-  badge.style.display=n>0?'inline':'none';
-  badge.textContent=`${n} cambio${n!==1?'s':''}`;
-  document.getElementById('btnSaveAll').disabled=n===0;
-}
-
-// ── GUARDAR FILA ─────────────────────────────────────────────
-async function guardarFila(id){
-  const item=allData.find(d=>(d.ID||d.Id)==id);
-  const payload=pendingChanges[id]||{id,SEMAFORO:item.SEMAFORO||'',field_15:item.field_15||'',field_16:item.field_16||'',field_17:item.field_17||'',field_18:item.field_18||'',Observaciones:item.Observaciones||''};
-  const row=document.getElementById(`row-${id}`);
-  const btn=document.getElementById(`btn-${id}`);
-  row.classList.add('saving');btn.textContent='⏳';btn.disabled=true;
-  try{
-    const r=await fetch(F_UPDATE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(!r.ok)throw new Error(`HTTP ${r.status}`);
-    Object.assign(item,payload);delete pendingChanges[id];
-    row.classList.remove('modified','saving');row.classList.add('saved-ok');
-    setTimeout(()=>row.classList.remove('saved-ok'),2500);
-    btn.textContent='✓';setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
-    updateBadge();setStatus('✓ Guardado','ok');
-  }catch(e){
-    row.classList.remove('saving');btn.textContent='✗';
-    setTimeout(()=>{btn.textContent='💾';btn.disabled=false;},2500);
-    setStatus(`✗ ${e.message}`,'err');
-  }
-}
-
-// ── GUARDAR TODOS ────────────────────────────────────────────
-async function guardarTodos(){
-  const ids=Object.keys(pendingChanges);if(!ids.length)return;
-  const btn=document.getElementById('btnSaveAll');
-  btn.disabled=true;btn.textContent='⏳ Guardando...';
-  setStatus(`<span class="spinner"></span> Guardando ${ids.length} registros...`,'load');
-  let ok=0,err=0;
-  for(const id of ids){
-    try{
-      const r=await fetch(F_UPDATE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pendingChanges[id])});
-      if(!r.ok)throw new Error();
-      const item=allData.find(d=>(d.ID||d.Id)==id);
-      Object.assign(item,pendingChanges[id]);delete pendingChanges[id];
-      const row=document.getElementById(`row-${id}`);
-      row.classList.remove('modified');row.classList.add('saved-ok');
-      setTimeout(()=>row.classList.remove('saved-ok'),2500);ok++;
-    }catch(e){err++;}
-  }
-  updateBadge();btn.textContent='💾 Guardar cambios';
-  setStatus(err===0?`✓ ${ok} guardados`:`⚠️ ${ok} ok, ${err} error`,err===0?'ok':'err');
-}
-
-function setStatus(msg,type){document.getElementById('statusbar').innerHTML=`<span class="s-${type}">${msg}</span>`;}
-
-initTutores();
+    function updateKpis() {
+        document.getElementById('kpTotal').innerText = db.length;
+        document.getElementById('kpV').innerText = db.filter(x => x.SEMAFORO === 'VERDE').length;
+        document.getElementById('kpR').innerText = db.filter(x => x.SEMAFORO === 'ROJO').length;
+    }
 </script>
 </body>
 </html>
