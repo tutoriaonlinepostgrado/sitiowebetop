@@ -220,7 +220,7 @@ tr.saved-ok td{background:rgba(34,197,94,0.08);}
 <div class="statusbar" id="statusbar"><span class="s-ok">✓ Listo</span></div>
 
 <script>
-const F_TUTORES  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1580bbeeddf24bf0b860e97c0e3da8ca/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=PdBX7xWobE0G6VEQbWB04K9nhjylfOiWcx44MWY_vn8';
+const F_TUTORES  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d900cc6150e845a7bf5c19a2870626f4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cBkVXAGhxX6wYL1rh-u-Ce1rB35tJJ_mfmvyfFWoPXQ';
 const F_NRCS     = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/71d8f01bee344938a4e051a464d0d6ea/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9o6fD1XedUHWHzCS-w-ZfzPP06wXWwDww7oLWD-Pbuk';
 const F_EST      = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
 const F_UPDATE   = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
@@ -242,21 +242,27 @@ let cursoActual = null;
 async function initTutores() {
   try {
     const r = await fetch(F_TUTORES, {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    if (!r.ok) throw new Error();
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    // El flow Seleccionar devuelve array directo o wrapped en value
-    let raw = [];
-    if (Array.isArray(data)) raw = data;
-    else if (data.value && Array.isArray(data.value)) raw = data.value;
-    else if (typeof data === 'string') raw = JSON.parse(data);
-    const nombres = [...new Set(raw.map(d=>d.tutor||d.field_9||'').filter(Boolean))].sort();
+    // Extraer array de items de SharePoint
+    const raw = Array.isArray(data) ? data : (data.value || []);
+    // Filtrar solo cursos activos, en cierre o en preparacion
+    const estadosValidos = ['ACTIVO','EN CIERRE','EN PREPARACION'];
+    const filtrados = raw.filter(d => {
+      const estado = d.ESTADO_CAL || '';
+      return estadosValidos.includes(estado);
+    });
+    // Extraer nombres unicos de tutores
+    const nombres = [...new Set(
+      filtrados.map(d => d.field_9 || '').filter(n => n && n !== 'NO TIENE TUTORIA')
+    )].sort();
     const sel = document.getElementById('fTutor');
     sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' +
       nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
     const p = new URLSearchParams(window.location.search).get('tutor');
     if (p) { sel.value = p; cargarNRCs(); }
   } catch(e) {
-    document.getElementById('fTutor').innerHTML = '<option value="">Error al cargar tutores</option>';
+    document.getElementById('fTutor').innerHTML = `<option value="">Error: ${e.message}</option>`;
   }
 }
 
