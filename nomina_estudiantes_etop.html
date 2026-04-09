@@ -241,28 +241,26 @@ let cursoActual = null;
 // ── INIT ─────────────────────────────────────────────────────
 async function initTutores() {
   try {
-    const r = await fetch(F_TUTORES, {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const sel = document.getElementById('fTutor');
+    sel.innerHTML = '<option value="">⏳ Cargando...</option>';
+    const r = await fetch(F_NRCS, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({tutor:'__ALL__'})
+    });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    // Extraer array de items de SharePoint
     const raw = Array.isArray(data) ? data : (data.value || []);
-    // Filtrar solo cursos activos, en cierre o en preparacion
-    const estadosValidos = ['ACTIVO','EN CIERRE','EN PREPARACION'];
-    const filtrados = raw.filter(d => {
-      const estado = d.ESTADO_CAL || '';
-      return estadosValidos.includes(estado);
-    });
-    // Extraer nombres unicos de tutores
     const nombres = [...new Set(
-      filtrados.map(d => d.field_9 || '').filter(n => n && n !== 'NO TIENE TUTORIA')
+      raw.map(d => (d.field_9 || d['NOMBRE TUTOR'] || '')).filter(n => n && n !== 'NO TIENE TUTORIA')
     )].sort();
-    const sel = document.getElementById('fTutor');
     sel.innerHTML = '<option value="">— Selecciona tutor/a —</option>' +
       nombres.map(n=>`<option value="${n}">${n}</option>`).join('');
     const p = new URLSearchParams(window.location.search).get('tutor');
     if (p) { sel.value = p; cargarNRCs(); }
   } catch(e) {
-    document.getElementById('fTutor').innerHTML = `<option value="">Error: ${e.message}</option>`;
+    document.getElementById('fTutor').innerHTML = '<option value="">Error al cargar</option>';
+    console.error('initTutores error:', e);
   }
 }
 
