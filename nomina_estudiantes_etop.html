@@ -15,70 +15,71 @@
             --text-main: #1e293b;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: var(--text-main); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: var(--text-main); padding-bottom: 40px; }
         
-        /* HEADER ESTILO POWER BI */
-        .top-nav { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); }
+        .top-nav { background: var(--header-bg); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .top-nav h1 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* BARRA DE FILTROS */
         .filter-zone { background: white; padding: 15px 20px; display: flex; gap: 15px; align-items: flex-end; border-bottom: 1px solid var(--row-border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .f-group { display: flex; flex-direction: column; gap: 4px; }
         .f-group label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
-        .f-group input { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        .f-group input { padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; min-width: 150px; }
+        
+        .btn-main { background: var(--accent); color: white; border: none; padding: 7px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
         .btn-main:hover { background: #1e40af; }
+        .btn-save { background: #16a34a; display: none; }
+        .btn-save:hover { background: #15803d; }
 
-        /* KPIS COMPACTOS (Como en tu foto) */
         .kpi-container { display: flex; gap: 10px; padding: 10px 20px; background: #fff; }
         .kpi-box { padding: 5px 12px; border: 1px solid var(--row-border); border-radius: 4px; font-size: 11px; font-weight: 700; background: #f8fafc; }
 
-        /* TABLA ULTRA COMPACTA */
         .table-container { padding: 10px 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1100px; }
-        thead th { background: #f8fafc; padding: 8px 5px; text-align: left; border-bottom: 2px solid var(--accent); color: #19202E; font-size: 9px; text-transform: uppercase; }
-        td { padding: 4px 5px; border-bottom: 1px solid var(--row-border); }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 11px; min-width: 1200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        thead th { background: #f8fafc; padding: 10px 5px; text-align: left; border-bottom: 2px solid var(--accent); color: #19202E; font-size: 9px; text-transform: uppercase; position: sticky; top: 0; }
+        td { padding: 6px 5px; border-bottom: 1px solid var(--row-border); }
         tr:hover { background-color: #f1f5f9; }
 
-        /* INPUTS INVISIBLES */
-        .cell-edit { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: 11px; padding: 2px; width: 100%; cursor: pointer; }
+        .cell-edit { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: 11px; padding: 4px; width: 100%; cursor: pointer; border-radius: 3px; }
+        .cell-edit:hover { background: #f8fafc; border-color: #cbd5e1; }
         .cell-edit:focus { outline: none; border: 1px solid var(--gold); background: white; }
+        
         .modified { background-color: #fffbeb !important; }
+        .modified td { border-bottom: 1px solid #fef08a; }
+
+        .btn-copy { font-size: 10px; cursor: pointer; color: var(--accent); font-weight: bold; margin-left: 5px; background: #dbeafe; padding: 2px 4px; border-radius: 3px; }
+        .btn-copy:hover { background: var(--accent); color: white; }
         
-        /* BOTÓN REPLICAR (ARRASAR) */
-        .btn-copy { font-size: 9px; cursor: pointer; color: var(--accent); font-weight: bold; margin-left: 3px; }
+        .status-footer { position: fixed; bottom: 0; width: 100%; background: var(--header-bg); color: white; padding: 6px 20px; font-size: 10px; z-index: 100; }
         
-        .status-footer { position: fixed; bottom: 0; width: 100%; background: var(--header-bg); color: white; padding: 5px 20px; font-size: 10px; }
+        .icon-link { text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="top-nav">
-    <h1>Gestión Tutorial - Nómina Estudiantes</h1>
-    <div id="saveZone" style="display:none">
-        <button class="btn-main" style="background: #16a34a;" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button>
-    </div>
+    <h1>Gestión Tutorial - Editor de Estudiantes</h1>
+    <button class="btn-main btn-save" id="btnSaveAll" onclick="guardarTodos()">💾 GUARDAR CAMBIOS EN SHAREPOINT</button>
 </div>
 
 <div class="filter-zone">
-    <div class="f-group"><label>NRC</label><input type="text" id="inNRC" placeholder="2077_UNI118"></div>
-    <div class="f-group"><label>Periodo</label><input type="text" id="inPer" placeholder="202681"></div>
-    <button class="btn-main" onclick="buscar()">🔍 Cargar Datos</button>
+    <div class="f-group"><label>NRC Código</label><input type="text" id="inNRC" placeholder="Ej: 2077_UNI118"></div>
+    <div class="f-group"><label>Periodo</label><input type="text" id="inPer" placeholder="Ej: 202681"></div>
+    <button class="btn-main" id="btnLoad" onclick="buscar()">🔍 Cargar Nómina</button>
 </div>
 
 <div class="kpi-container" id="kpiArea" style="display:none">
-    <div class="kpi-box">TOTAL: <span id="kpTotal">0</span></div>
-    <div class="kpi-box" style="color:#16a34a">🟢 <span id="kpV">0</span></div>
-    <div class="kpi-box" style="color:#ca8a04">🟡 <span id="kpA">0</span></div>
-    <div class="kpi-box" style="color:#dc2626">🔴 <span id="kpR">0</span></div>
+    <div class="kpi-box">TOTAL FILTRADOS: <span id="kpTotal">0</span></div>
+    <div class="kpi-box" style="color:#16a34a">🟢 VERDE: <span id="kpV">0</span></div>
+    <div class="kpi-box" style="color:#ca8a04">🟡 AMARILLO: <span id="kpA">0</span></div>
+    <div class="kpi-box" style="color:#dc2626">🔴 ROJO: <span id="kpR">0</span></div>
 </div>
 
 <div class="table-container">
     <table id="mainTable" style="display:none">
         <thead>
             <tr>
-                <th>NRC</th>
-                <th>Nombre</th>
+                <th>NRC_COD_CAL</th>
+                <th>Nombre Estudiante</th>
                 <th>RUT</th>
                 <th>Semáforo <span class="btn-copy" onclick="replicar('SEMAFORO')">▼ Todo</span></th>
                 <th>Estado Est. <span class="btn-copy" onclick="replicar('field_15')">▼ Todo</span></th>
@@ -86,30 +87,34 @@
                 <th>CAN <span class="btn-copy" onclick="replicar('field_18')">▼ Todo</span></th>
                 <th>INGR <span class="btn-copy" onclick="replicar('field_16')">▼ Todo</span></th>
                 <th>Observaciones</th>
-                <th>CRM</th>
-                <th>Web</th>
-                <th>Acción</th>
+                <th style="text-align:center">CRM</th>
+                <th style="text-align:center">Web</th>
+                <th style="text-align:center">Save</th>
             </tr>
         </thead>
         <tbody id="tBody"></tbody>
     </table>
 </div>
 
-<div class="status-footer" id="footer">Listo para trabajar</div>
+<div class="status-footer" id="footer">Sistema listo. Ingrese NRC y Periodo para comenzar.</div>
 
 <script>
-    const URL_LEER = 'TU_URL_DE_POWER_AUTOMATE_LEER';
-    const URL_UPDT = 'TU_URL_DE_POWER_AUTOMATE_ACTUALIZAR';
+    // URLs de Power Automate proporcionadas por el usuario
+    const URL_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/4a36ccd81fae415a81fa65952e8b737f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v0j6Rr_6d-VXyELTV7IBX3kvm79lD-4WfUn4cGaBxDg';
+    const URL_UPDT = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9cfe77e8e8e9410da2eac53fc990e5fe/triggers/manual/paths/invoke?api-version=1';
     
     let db = [];
     let cambios = {};
 
     async function buscar() {
-        const nrc = document.getElementById('inNRC').value;
-        const per = document.getElementById('inPer').value;
-        if(!nrc) return alert("Ingresa NRC");
+        const nrc = document.getElementById('inNRC').value.trim();
+        const per = document.getElementById('inPer').value.trim();
+        if(!nrc || !per) return alert("Por favor, ingrese NRC y Periodo");
 
-        document.getElementById('footer').innerText = "⏳ Cargando desde SharePoint...";
+        const btn = document.getElementById('btnLoad');
+        btn.disabled = true;
+        btn.innerText = "⏳ Cargando...";
+        document.getElementById('footer').innerText = "⏳ Conectando con SharePoint...";
         
         try {
             const r = await fetch(URL_LEER, {
@@ -119,8 +124,20 @@
             });
             const data = await r.json();
             db = Array.isArray(data) ? data : (data.value || []);
-            render();
-        } catch(e) { alert("Error al cargar datos"); }
+            
+            if(db.length === 0) {
+                alert("No se encontraron registros.");
+                document.getElementById('footer').innerText = "❌ Sin resultados.";
+            } else {
+                render();
+            }
+        } catch(e) { 
+            alert("Error de conexión. Verifique que el flujo de Automate esté activo."); 
+            document.getElementById('footer').innerText = "❌ Error de conexión.";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "🔍 Cargar Nómina";
+        }
     }
 
     function render() {
@@ -132,83 +149,142 @@
             fila.id = `row-${id}`;
             fila.innerHTML = `
                 <td style="color:var(--accent); font-weight:700">${item.field_2 || ''}</td>
-                <td>${item.field_11 || ''}</td>
-                <td>${item.Title || ''}</td>
+                <td style="font-weight:600">${item.field_11 || ''}</td>
+                <td style="font-family:monospace; color:#64748b">${item.Title || ''}</td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'SEMAFORO', this.value, this)">
                         <option value="VERDE" ${item.SEMAFORO=='VERDE'?'selected':''}>🟢 VERDE</option>
                         <option value="AMARILLO" ${item.SEMAFORO=='AMARILLO'?'selected':''}>🟡 AMARILLO</option>
                         <option value="ROJO" ${item.SEMAFORO=='ROJO'?'selected':''}>🔴 ROJO</option>
                         <option value="NARANJO" ${item.SEMAFORO=='NARANJO'?'selected':''}>🟠 NARANJO</option>
+                        <option value="MORADO" ${item.SEMAFORO=='MORADO'?'selected':''}>🟣 MORADO</option>
                     </select>
                 </td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_15', this.value, this)">
                         <option value="ACTIVO" ${item.field_15=='ACTIVO'?'selected':''}>ACTIVO</option>
+                        <option value="EN TRAMITE" ${item.field_15=='EN TRAMITE'?'selected':''}>EN TRAMITE</option>
                         <option value="RETIRO DEF" ${item.field_15=='RETIRO DEF'?'selected':''}>RETIRO DEF</option>
-                    </select>
+                        <option value="RETIR TEMP." ${item.field_15=='RETIR TEMP.'?'selected':''}>RETIR TEMP.</option>
+                    </option>
                 </td>
-                <td>${item.field_17 || ''}</td>
+                <td align="center">${item.field_17 || '—'}</td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_18', this.value, this)">
                         <option value="SI" ${item.field_18=='SI'?'selected':''}>SI</option>
                         <option value="NO" ${item.field_18=='NO'?'selected':''}>NO</option>
+                        <option value="" ${!item.field_18?'selected':''}>—</option>
                     </select>
                 </td>
                 <td>
                     <select class="cell-edit" onchange="marcar(${id}, 'field_16', this.value, this)">
                         <option value="SI" ${item.field_16=='SI'?'selected':''}>SI</option>
                         <option value="NO" ${item.field_16=='NO'?'selected':''}>NO</option>
+                        <option value="" ${!item.field_16?'selected':''}>—</option>
                     </select>
                 </td>
-                <td><input type="text" class="cell-edit" value="${item.Observaciones || ''}" onchange="marcar(${id}, 'Observaciones', this.value, this)"></td>
-                <td align="center"><a href="https://saeunab.crm2.dynamics.com/..." target="_blank">🔗</a></td>
-                <td align="center"><a href="https://lms.unab.cl/int-canvas/users?rut=${item.Title}" target="_blank">🌐</a></td>
-                <td><button class="btn-main" style="padding:2px 5px; font-size:9px" onclick="guardarFila(${id})">💾</button></td>
+                <td><textarea class="cell-edit" rows="1" style="min-width:150px" onchange="marcar(${id}, 'Observaciones', this.value, this)">${item.Observaciones || ''}</textarea></td>
+                <td align="center"><a href="https://saeunab.crm2.dynamics.com/main.aspx?pagetype=entitylist&etn=contact&searchTerm=${encodeURIComponent(item.field_11)}" target="_blank" class="icon-link">🔗</a></td>
+                <td align="center"><a href="https://lms.unab.cl/int-canvas/users?rut=${item.Title}" target="_blank" class="icon-link">🌐</a></td>
+                <td align="center"><button class="btn-main" style="padding:4px 8px; font-size:10px" onclick="guardarFila(${id})">💾</button></td>
             `;
             tbody.appendChild(fila);
         });
         document.getElementById('mainTable').style.display = 'table';
         document.getElementById('kpiArea').style.display = 'flex';
-        document.getElementById('footer').innerText = `Cargados ${db.length} estudiantes.`;
+        document.getElementById('footer').innerText = `✅ Nómina cargada: ${db.length} estudiantes encontrados.`;
         updateKpis();
     }
 
     function marcar(id, campo, valor, el) {
-        if (!cambios[id]) cambios[id] = { id: id };
+        if (!cambios[id]) {
+            const original = db.find(x => (x.Id || x.ID) == id);
+            cambios[id] = { 
+                id: id,
+                SEMAFORO: original.SEMAFORO || '',
+                field_15: original.field_15 || '',
+                field_16: original.field_16 || '',
+                field_17: original.field_17 || '',
+                field_18: original.field_18 || '',
+                Observaciones: original.Observaciones || ''
+            };
+        }
         cambios[id][campo] = valor;
         el.closest('tr').classList.add('modified');
-        document.getElementById('saveZone').style.display = 'block';
+        document.getElementById('btnSaveAll').style.display = 'block';
     }
 
     function replicar(campo) {
-        const primerValor = document.querySelector(`#tBody tr:first-child [onchange*="${campo}"]`).value;
-        if(!confirm(`¿Copiar "${primerValor}" a todos?`)) return;
+        const primerFila = document.querySelector(`#tBody tr:first-child`);
+        if(!primerFila) return;
+        const selector = primerFila.querySelector(`[onchange*="${campo}"]`);
+        const valorADuplicar = selector.value;
         
-        document.querySelectorAll(`#tBody [onchange*="${campo}"]`).forEach(input => {
-            const id = input.closest('tr').id.split('-')[1];
-            input.value = primerValor;
-            marcar(id, campo, primerValor, input);
+        if(!confirm(`¿Deseas copiar el valor "${valorADuplicar}" a todos los estudiantes visibles en la columna ${campo}?`)) return;
+        
+        document.querySelectorAll(`#tBody tr`).forEach(row => {
+            const input = row.querySelector(`[onchange*="${campo}"]`);
+            const id = row.id.split('-')[1];
+            if(input.value !== valorADuplicar) {
+                input.value = valorADuplicar;
+                marcar(id, campo, valorADuplicar, input);
+            }
         });
+    }
+
+    async function guardarFila(id) {
+        const btn = document.querySelector(`#row-${id} button`);
+        btn.innerText = "⏳";
+        btn.disabled = true;
+        
+        const dataParaEnviar = cambios[id] || { id: id }; // Si no hay cambios registrados, enviamos solo el ID (o puedes manejarlo como gustes)
+
+        try {
+            const r = await fetch(URL_UPDT, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(dataParaEnviar)
+            });
+            if(r.ok) {
+                btn.innerText = "✅";
+                document.getElementById(`row-${id}`).classList.remove('modified');
+                delete cambios[id];
+                if(Object.keys(cambios).length === 0) document.getElementById('btnSaveAll').style.display = 'none';
+            }
+        } catch(e) { btn.innerText = "❌"; btn.disabled = false; }
     }
 
     async function guardarTodos() {
         const ids = Object.keys(cambios);
-        document.getElementById('footer').innerText = `💾 Guardando ${ids.length} cambios...`;
+        const btnTotal = document.getElementById('btnSaveAll');
+        btnTotal.disabled = true;
+        btnTotal.innerText = "⏳ GUARDANDO EN SHAREPOINT...";
+        
         for (const id of ids) {
-            await fetch(URL_UPDT, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cambios[id]) });
+            await guardarFila(id);
         }
-        cambios = {};
-        document.getElementById('saveZone').style.display = 'none';
-        document.querySelectorAll('.modified').forEach(r => r.classList.remove('modified'));
-        document.getElementById('footer').innerText = "✅ Todo guardado en SharePoint.";
+        
+        btnTotal.innerText = "💾 GUARDAR CAMBIOS EN SHAREPOINT";
+        document.getElementById('footer').innerText = "✅ Sincronización masiva completada.";
+        updateKpis();
     }
 
     function updateKpis() {
         document.getElementById('kpTotal').innerText = db.length;
         document.getElementById('kpV').innerText = db.filter(x => x.SEMAFORO === 'VERDE').length;
+        document.getElementById('kpA').innerText = db.filter(x => x.SEMAFORO === 'AMARILLO').length;
         document.getElementById('kpR').innerText = db.filter(x => x.SEMAFORO === 'ROJO').length;
     }
+
+    // Auto-búsqueda si vienen parámetros en la URL
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('nrc')) {
+            document.getElementById('inNRC').value = params.get('nrc');
+            document.getElementById('inPer').value = params.get('periodo') || '';
+            buscar();
+        }
+    };
 </script>
 </body>
 </html>
