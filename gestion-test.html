@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Gestión Tutorial - ETOP</title>
+    <style>
+        :root {
+            --azul-fondo: #141b2d;
+            --azul-sidebar: #1f2940;
+            --amarillo-top: #ffd700;
+            --texto-blanco: #ffffff;
+            --texto-gris: #a3a3a3;
+            --azul-ia: #3b82f6;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
+        
+        .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
+
+        /* --- BARRA LATERAL (MENU) --- */
+        .sidebar {
+            width: 300px;
+            background-color: var(--azul-sidebar);
+            color: var(--texto-blanco);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 215, 0, 0.1);
+            z-index: 10;
+            transition: margin-left 0.3s ease;
+            flex-shrink: 0; 
+            overflow: hidden;
+        }
+
+        .sidebar.closed { margin-left: -300px; }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 2px solid var(--amarillo-top);
+            background-color: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; 
+        }
+        .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
+
+        .sidebar-menu {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 15px;
+        }
+
+        /* Scrollbar personalizado */
+        .sidebar-menu::-webkit-scrollbar { width: 5px; }
+        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+
+        .menu-category {
+            padding: 15px 20px 5px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--texto-gris);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 14px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .menu-btn:hover { background-color: rgba(255, 215, 0, 0.1); color: var(--amarillo-top); }
+        .menu-btn.active {
+            background-color: rgba(255, 215, 0, 0.15);
+            color: var(--amarillo-top);
+            border-left: 4px solid var(--amarillo-top);
+            font-weight: 600;
+        }
+
+        /* --- COMPONENTE ASISTENTE IA --- */
+        .ia-assistant {
+            margin: 15px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .ia-header {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--azul-ia);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #chat-window {
+            height: 120px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #d1d5db;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .chat-input-group {
+            display: flex;
+            gap: 5px;
+        }
+        .chat-input {
+            flex-grow: 1;
+            background: #141b2d;
+            border: 1px solid #374151;
+            color: white;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .chat-send {
+            background: var(--azul-ia);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-volver {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--texto-gris);
+            text-decoration: none;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--azul-sidebar);
+        }
+
+        /* --- ÁREA DE CONTENIDO --- */
+        .content-area { flex-grow: 1; background-color: #F3F2F1; display: flex; flex-direction: column; }
+        .top-bar {
+            background-color: var(--azul-sidebar);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: white;
+        }
+        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; }
+        iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
+
+        /* Colores dinámicos chat */
+        .msg-ia { color: #60a5fa; margin-bottom: 8px; }
+        .msg-user { color: var(--amarillo-top); margin-bottom: 8px; text-align: right; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <h2>⚙️ Gestión Tutorial</h2>
+                <span>Centro de Operaciones</span>
+            </div>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-category">Operación Diaria</div>
+            <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">📊 Tablero de Gestión (App)</button>
+            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES', this)">📋 Nómina Estudiantes</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS', this)">🟢 Cursos Activos</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION', this)">⏳ Cursos en Preparación</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_CIERRE', this)">🏁 Cursos en Cierre</button>
+            <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">👤 Ficha del Estudiante</button>
+            <button class="menu-btn" onclick="cargar('SEMAFORO', this)">🚦 Reporte Semáforo</button>
+
+            <div class="menu-category">Espacio Coordinación</div>
+            <button class="menu-btn" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
+            <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
+            <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
+            <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">📈 Resumen Semáforo</button>
+
+            <div class="ia-assistant">
+                <div class="ia-header">🤖 Asistente Gemma 3</div>
+                <div id="chat-window">
+                    <div class="msg-ia">¡Hola! Consultame sobre protocolos de semáforo o histórico de alumnos.</div>
+                </div>
+                <div class="chat-input-group">
+                    <input type="text" id="user-input" class="chat-input" placeholder="Preguntar...">
+                    <button onclick="preguntarIA()" class="chat-send">➤</button>
+                </div>
+            </div>
+        </div> 
+
+        <a href="index.html" class="btn-volver">⬅️ Volver al Portal Principal</a>
+    </div>
+
+    <div class="content-area">
+        <div class="top-bar">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Vista de Reporte</span>
+        </div>
+        <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+
+    const misReportes = {
+        'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'REPORTE_INDUCCION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
+    };
+
+    function cargar(clave, btn) {
+        const url = misReportes[clave];
+        if(url) document.getElementById('visor').src = url;
+        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // --- LÓGICA DE ASISTENTE IA ---
+    async function preguntarIA() {
+        const input = document.getElementById('user-input');
+        const chatWindow = document.getElementById('chat-window');
+        const pregunta = input.value;
+        if(!pregunta) return;
+
+        chatWindow.innerHTML += `<div class="msg-user">${pregunta}</div>`;
+        input.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // Aquí conectarás con tu flujo de Power Automate
+        try {
+            const response = await fetch("TU_URL_DE_POWER_AUTOMATE_AQUÍ", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ "pregunta": pregunta })
+            });
+            const data = await response.json();
+            chatWindow.innerHTML += `<div class="msg-ia">${data.respuesta}</div>`;
+        } catch (error) {
+            chatWindow.innerHTML += `<div class="msg-ia">Lo siento, hubo un error al conectar con el cerebro de Gemma.</div>`;
+        }
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    window.onload = function() {
+        const btnInicio = document.querySelector('.menu-btn.active');
+        if(btnInicio) cargar('DASHBOARD', btnInicio);
+    };
+</script>
+</body>
+</html>
