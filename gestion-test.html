@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro de Gestión Tutorial - ETOP</title>
+    <title>TEST - Asistente IA ETOP</title>
     <style>
         :root {
             --azul-fondo: #141b2d;
@@ -15,7 +15,6 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
-        
         .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
 
         /* --- BARRA LATERAL (MENU) --- */
@@ -28,7 +27,7 @@
             border-right: 1px solid rgba(255, 215, 0, 0.1);
             z-index: 10;
             transition: margin-left 0.3s ease;
-            flex-shrink: 0; 
+            flex-shrink: 0;
             overflow: hidden;
         }
 
@@ -92,55 +91,65 @@
             font-weight: 600;
         }
 
-        /* --- COMPONENTE ASISTENTE IA --- */
-        .ia-assistant {
-            margin: 15px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+        /* --- ESTILOS DEL ASISTENTE IA --- */
+        .ia-container {
+            margin: 10px 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 12px;
         }
-        .ia-header {
+        .ia-title {
             font-size: 11px;
-            font-weight: bold;
-            color: var(--azul-ia);
+            font-weight: 800;
+            color: #60a5fa;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
-        #chat-window {
-            height: 120px;
+        #chat-box {
+            height: 140px;
             overflow-y: auto;
             font-size: 12px;
-            color: #d1d5db;
             margin-bottom: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 8px;
-            border-radius: 5px;
+            padding-right: 5px;
+            line-height: 1.4;
         }
-        .chat-input-group {
+        #chat-box::-webkit-scrollbar { width: 3px; }
+        #chat-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .msg-bot { color: #e0e0e0; margin-bottom: 10px; border-left: 2px solid #3b82f6; padding-left: 8px; }
+        .msg-user { color: var(--amarillo-top); margin-bottom: 10px; text-align: right; font-style: italic; }
+
+        .ia-input-group {
             display: flex;
-            gap: 5px;
+            background: var(--azul-fondo);
+            border-radius: 6px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .chat-input {
-            flex-grow: 1;
-            background: #141b2d;
-            border: 1px solid #374151;
-            color: white;
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        .chat-send {
-            background: var(--azul-ia);
+        .ia-input {
+            flex: 1;
+            background: transparent;
             border: none;
             color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
+            font-size: 12px;
+            padding: 5px;
+            outline: none;
         }
+        .ia-send {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .ia-send:hover { background: #2563eb; }
 
         .btn-volver {
             padding: 20px;
@@ -152,6 +161,7 @@
             align-items: center;
             gap: 10px;
             background-color: var(--azul-sidebar);
+            flex-shrink: 0;
         }
 
         /* --- ÁREA DE CONTENIDO --- */
@@ -166,10 +176,6 @@
         }
         .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; }
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
-
-        /* Colores dinámicos chat */
-        .msg-ia { color: #60a5fa; margin-bottom: 8px; }
-        .msg-user { color: var(--amarillo-top); margin-bottom: 8px; text-align: right; }
     </style>
 </head>
 <body>
@@ -179,7 +185,7 @@
         <div class="sidebar-header">
             <div>
                 <h2>⚙️ Gestión Tutorial</h2>
-                <span>Centro de Operaciones</span>
+                <span>Centro de Operaciones (TEST IA)</span>
             </div>
             <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
         </div>
@@ -194,20 +200,14 @@
             <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">👤 Ficha del Estudiante</button>
             <button class="menu-btn" onclick="cargar('SEMAFORO', this)">🚦 Reporte Semáforo</button>
 
-            <div class="menu-category">Espacio Coordinación</div>
-            <button class="menu-btn" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
-            <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
-            <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
-            <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">📈 Resumen Semáforo</button>
-
-            <div class="ia-assistant">
-                <div class="ia-header">🤖 Asistente Gemma 3</div>
-                <div id="chat-window">
-                    <div class="msg-ia">¡Hola! Consultame sobre protocolos de semáforo o histórico de alumnos.</div>
+            <div class="ia-container">
+                <div class="ia-title"><span>🤖</span> Asistente Estratégico ETOP</div>
+                <div id="chat-box">
+                    <div class="msg-bot">Hola Patricio, soy Gemma. Puedo resumir observaciones de alumnos o explicarte los protocolos del Semáforo 2026. ¿Qué necesitas?</div>
                 </div>
-                <div class="chat-input-group">
-                    <input type="text" id="user-input" class="chat-input" placeholder="Preguntar...">
-                    <button onclick="preguntarIA()" class="chat-send">➤</button>
+                <div class="ia-input-group">
+                    <input type="text" id="ia-input" class="ia-input" placeholder="Escribe un RUT o consulta..." onkeypress="if(event.key === 'Enter') enviarACerebro()">
+                    <button onclick="enviarACerebro()" class="ia-send">➤</button>
                 </div>
             </div>
         </div> 
@@ -218,7 +218,7 @@
     <div class="content-area">
         <div class="top-bar">
             <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Vista de Reporte</span>
+            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Entorno de Pruebas IA</span>
         </div>
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
@@ -228,15 +228,11 @@
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
     const misReportes = {
-        'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
         'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'REPORTE_INDUCCION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
     };
@@ -249,29 +245,27 @@
     }
 
     // --- LÓGICA DE ASISTENTE IA ---
-    async function preguntarIA() {
-        const input = document.getElementById('user-input');
-        const chatWindow = document.getElementById('chat-window');
-        const pregunta = input.value;
+    async function enviarACerebro() {
+        const input = document.getElementById('ia-input');
+        const chatBox = document.getElementById('chat-box');
+        const pregunta = input.value.trim();
+        
         if(!pregunta) return;
 
-        chatWindow.innerHTML += `<div class="msg-user">${pregunta}</div>`;
+        // Mostrar mensaje del usuario
+        chatBox.innerHTML += `<div class="msg-user">${pregunta}</div>`;
         input.value = '';
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatBox.scrollTop = chatBox.scrollHeight;
 
-        // Aquí conectarás con tu flujo de Power Automate
-        try {
-            const response = await fetch("TU_URL_DE_POWER_AUTOMATE_AQUÍ", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ "pregunta": pregunta })
-            });
-            const data = await response.json();
-            chatWindow.innerHTML += `<div class="msg-ia">${data.respuesta}</div>`;
-        } catch (error) {
-            chatWindow.innerHTML += `<div class="msg-ia">Lo siento, hubo un error al conectar con el cerebro de Gemma.</div>`;
-        }
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        // Simulación de espera (Aquí irá el fetch a Power Automate)
+        const loadingId = Date.now();
+        chatBox.innerHTML += `<div class="msg-bot" id="${loadingId}">... Pensando ...</div>`;
+        
+        setTimeout(() => {
+            const botMsg = document.getElementById(loadingId);
+            botMsg.innerText = "Simulación: Recibí tu pregunta. Cuando conectemos el flujo de Power Automate, aquí verás el resumen estratégico basado en tus manuales.";
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 1500);
     }
 
     window.onload = function() {
