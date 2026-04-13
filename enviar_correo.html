@@ -35,20 +35,17 @@
     
     <script>
         window.onload = function() {
-            // 1. Obtener los datos exactos que nos mandó Power BI
             const urlParams = new URLSearchParams(window.location.search);
+            let to      = urlParams.get('destinatario') || '';  // ← LÍNEA AGREGADA
             let subject = urlParams.get('subject') || '';
-            let body = urlParams.get('body') || '';
+            let body    = urlParams.get('body') || '';
 
-            // 2. Codificar el texto para que Outlook lo lea perfectamente
             subject = encodeURIComponent(subject);
-            body = encodeURIComponent(body);
+            body    = encodeURIComponent(body);
 
-            // 3. Crear y ejecutar el comando mailto nativo de Windows
-            const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+            const mailtoLink = `mailto:${to}?subject=${subject}&body=${body}`;  // ← to agregado
             window.location.href = mailtoLink;
 
-            // 4. Intentar cerrar esta pestaña sola después de unos segundos
             setTimeout(() => {
                 window.close();
             }, 3000);
