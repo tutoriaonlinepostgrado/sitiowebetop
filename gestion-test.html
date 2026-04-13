@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEST - Asistente IA ETOP</title>
+    <title>Centro de Gestión Tutorial - ETOP (TEST IA)</title>
     <style>
         :root {
             --azul-fondo: #141b2d;
@@ -15,9 +15,9 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
-        .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
+        .app-container { display: flex; height: 100vh; width: 100vw; }
 
-        /* --- BARRA LATERAL (MENU) --- */
+        /* SIDEBAR */
         .sidebar {
             width: 300px;
             background-color: var(--azul-sidebar);
@@ -30,7 +30,6 @@
             flex-shrink: 0;
             overflow: hidden;
         }
-
         .sidebar.closed { margin-left: -300px; }
 
         .sidebar-header {
@@ -40,21 +39,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; 
+            flex-shrink: 0;
         }
         .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
 
-        .sidebar-menu {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-bottom: 15px;
-        }
-
-        /* Scrollbar personalizado */
+        .sidebar-menu { flex-grow: 1; overflow-y: auto; padding-bottom: 10px; }
         .sidebar-menu::-webkit-scrollbar { width: 5px; }
-        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
-        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 10px; }
 
         .menu-category {
             padding: 15px 20px 5px 20px;
@@ -66,93 +58,143 @@
         }
 
         .menu-btn {
-            background: none;
-            border: none;
-            color: #e0e0e0;
-            padding: 12px 20px;
-            text-align: left;
-            font-size: 14px;
-            cursor: pointer;
-            border-left: 4px solid transparent;
-            transition: all 0.2s;
+            background: none; border: none; color: #e0e0e0;
+            padding: 12px 20px; text-align: left; font-size: 14px;
+            cursor: pointer; border-left: 4px solid transparent;
+            transition: all 0.2s; display: flex; align-items: center;
+            gap: 10px; width: 100%; text-decoration: none; box-sizing: border-box;
+        }
+        .menu-btn:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
+        .menu-btn.active { background-color: rgba(255,215,0,0.15); color: var(--amarillo-top); border-left: 4px solid var(--amarillo-top); font-weight: 600; }
+
+        .collapsible-header {
+            padding: 13px 20px; font-size: 14px; color: #e0e0e0;
+            cursor: pointer; display: flex; align-items: center;
+            justify-content: space-between; border-left: 4px solid transparent; transition: all 0.2s; user-select: none;
+        }
+        .collapsible-header:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
+        .collapsible-header .header-left { display: flex; align-items: center; gap: 10px; }
+        .collapsible-header .arrow { font-size: 10px; color: var(--texto-gris); transition: transform 0.25s ease; }
+        .collapsible-header.open .arrow { transform: rotate(180deg); color: var(--amarillo-top); }
+        .collapsible-header.open { color: var(--amarillo-top); background-color: rgba(255,215,0,0.06); border-left: 4px solid rgba(255,215,0,0.3); }
+        .collapsible-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+        .collapsible-body.open { max-height: 500px; }
+        .collapsible-body .menu-btn { padding-left: 36px; font-size: 13px; color: #c0c0c0; }
+        .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
+        .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
+        .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
+
+        /* ASISTENTE IA */
+        .ia-container {
+            margin: 10px 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(59,130,246,0.35);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .ia-header {
+            background: rgba(59,130,246,0.15);
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            width: 100%;
-            text-decoration: none;
-            box-sizing: border-box;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(59,130,246,0.2);
         }
-
-        .menu-btn:hover { background-color: rgba(255, 215, 0, 0.1); color: var(--amarillo-top); }
-        .menu-btn.active {
-            background-color: rgba(255, 215, 0, 0.15);
-            color: var(--amarillo-top);
-            border-left: 4px solid var(--amarillo-top);
-            font-weight: 600;
-        }
-
-        /* --- ESTILOS DEL ASISTENTE IA --- */
-        .ia-container {
-            margin: 10px 15px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 12px;
-        }
-        .ia-title {
-            font-size: 11px;
+        .ia-header-title {
+            font-size: 10px;
             font-weight: 800;
             color: #60a5fa;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
+        .ia-toggle {
+            background: none;
+            border: none;
+            color: var(--texto-gris);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            transition: 0.2s;
+        }
+        .ia-toggle:hover { color: var(--amarillo-top); }
+        .ia-body { padding: 10px; }
         #chat-box {
-            height: 140px;
+            height: 160px;
             overflow-y: auto;
-            font-size: 12px;
-            margin-bottom: 10px;
-            padding-right: 5px;
-            line-height: 1.4;
+            font-size: 11px;
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
         #chat-box::-webkit-scrollbar { width: 3px; }
         #chat-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        .msg-bot { color: #e0e0e0; margin-bottom: 10px; border-left: 2px solid #3b82f6; padding-left: 8px; }
-        .msg-user { color: var(--amarillo-top); margin-bottom: 10px; text-align: right; font-style: italic; }
-
+        .msg-bot {
+            color: #d1d5db;
+            margin-bottom: 8px;
+            border-left: 2px solid #3b82f6;
+            padding-left: 7px;
+        }
+        .msg-bot strong { color: #60a5fa; }
+        .msg-user {
+            color: var(--amarillo-top);
+            margin-bottom: 8px;
+            text-align: right;
+            font-style: italic;
+            opacity: 0.85;
+        }
+        .msg-thinking {
+            color: var(--texto-gris);
+            margin-bottom: 8px;
+            border-left: 2px solid rgba(59,130,246,0.3);
+            padding-left: 7px;
+            font-style: italic;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
         .ia-input-group {
             display: flex;
             background: var(--azul-fondo);
             border-radius: 6px;
-            padding: 4px;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3px;
+            border: 1px solid rgba(255,255,255,0.08);
+            gap: 3px;
         }
         .ia-input {
             flex: 1;
             background: transparent;
             border: none;
             color: white;
-            font-size: 12px;
-            padding: 5px;
+            font-size: 11px;
+            padding: 5px 6px;
             outline: none;
         }
+        .ia-input::placeholder { color: var(--texto-gris); }
         .ia-send {
             background: #3b82f6;
             border: none;
             color: white;
             border-radius: 4px;
-            padding: 4px 8px;
+            padding: 4px 9px;
             cursor: pointer;
+            font-size: 12px;
             transition: 0.2s;
+            flex-shrink: 0;
         }
         .ia-send:hover { background: #2563eb; }
+        .ia-send:disabled { background: #374151; cursor: not-allowed; }
+        .ia-disclaimer {
+            font-size: 9px;
+            color: var(--texto-gris);
+            text-align: center;
+            margin-top: 6px;
+            opacity: 0.6;
+        }
 
         .btn-volver {
-            padding: 20px;
+            padding: 16px 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
             color: var(--texto-gris);
             text-decoration: none;
@@ -162,116 +204,317 @@
             gap: 10px;
             background-color: var(--azul-sidebar);
             flex-shrink: 0;
+            transition: 0.3s;
         }
+        .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
 
-        /* --- ÁREA DE CONTENIDO --- */
+        /* CONTENIDO */
         .content-area { flex-grow: 1; background-color: #F3F2F1; display: flex; flex-direction: column; }
         .top-bar {
             background-color: var(--azul-sidebar);
-            height: 50px;
-            display: flex;
-            align-items: center;
-            padding-left: 15px;
-            color: white;
+            height: 50px; display: flex; align-items: center;
+            padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white;
         }
-        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; }
+        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+        .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div>
                 <h2>⚙️ Gestión Tutorial</h2>
-                <span>Centro de Operaciones (TEST IA)</span>
+                <span>Centro de Operaciones</span>
             </div>
-            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size: 18px;">✕</button>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size:18px;">✕</button>
         </div>
 
         <div class="sidebar-menu">
             <div class="menu-category">Operación Diaria</div>
-            <button class="menu-btn active" onclick="cargar('DASHBOARD', this)">📊 Tablero de Gestión (App)</button>
-            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES', this)">📋 Nómina Estudiantes</button>
-            <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS', this)">🟢 Cursos Activos</button>
-            <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION', this)">⏳ Cursos en Preparación</button>
-            <button class="menu-btn" onclick="cargar('CURSOS_CIERRE', this)">🏁 Cursos en Cierre</button>
-            <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE', this)">👤 Ficha del Estudiante</button>
-            <button class="menu-btn" onclick="cargar('SEMAFORO', this)">🚦 Reporte Semáforo</button>
+            <button class="menu-btn active" onclick="cargar('DASHBOARD',this)">📊 Tablero de Gestión (App)</button>
+            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES',this)">📋 Nómina Estudiantes</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS',this)">🟢 Cursos Activos</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION',this)">⏳ Cursos en Preparación</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
+            <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
+            <button class="menu-btn" onclick="cargar('SEMAFORO',this)">🚦 Reporte Semáforo</button>
 
+            <div class="menu-category">Espacio Coordinación</div>
+            <button class="menu-btn" onclick="cargar('DASHBOARD_MACRO',this)">🏛️ Dashboard Macro Facultades</button>
+            <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION',this)">📝 Reporte Inducción</button>
+            <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL',this)">⚖️ Carga Tutorial</button>
+            <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO',this)">📈 Resumen Semáforo</button>
+            <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn">⚡ Centro de Herramientas ETOP ↗️</a>
+            <a href="pantalladividida.html" target="_blank" class="menu-btn">🗂️ Asistente de Carga (Pop-up) ↗️</a>
+
+            <div class="menu-category">Reportes Detallados</div>
+            <div class="collapsible-header" id="header-reportes" onclick="toggleCollapsible('reportes')">
+                <div class="header-left"><span>📑</span><span>Reportes Detallados</span></div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-body" id="body-reportes">
+                <button class="menu-btn" onclick="cargar('CURSOS_INICIAR',this)">🚀 Cursos Por Iniciar</button>
+                <button class="menu-btn" onclick="cargar('REPORTE_NRC',this)">📑 Reporte por NRC</button>
+                <button class="menu-btn" onclick="cargar('BASE_SEGUIMIENTO',this)">💾 Estado Base Seguimiento</button>
+            </div>
+
+            <div class="menu-category">Calidad</div>
+            <div class="collapsible-header" id="header-calidad" onclick="toggleCollapsible('calidad')">
+                <div class="header-left"><span>✅</span><span>Calidad</span></div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-body" id="body-calidad">
+                <button class="menu-btn" onclick="cargar('CALENDARIOS',this)">📅 Calendarios</button>
+                <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER',this)">⚠️ Incidencias por Master</button>
+                <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC',this)">⚠️ Incidencias por NRC</button>
+            </div>
+
+            <!-- ASISTENTE IA GEMMA -->
+            <div class="menu-category">Asistente IA</div>
             <div class="ia-container">
-                <div class="ia-title"><span>🤖</span> Asistente Estratégico ETOP</div>
-                <div id="chat-box">
-                    <div class="msg-bot">Hola Patricio, soy Gemma. Puedo resumir observaciones de alumnos o explicarte los protocolos del Semáforo 2026. ¿Qué necesitas?</div>
+                <div class="ia-header">
+                    <div class="ia-header-title">🤖 Asistente ETOP</div>
+                    <button class="ia-toggle" onclick="toggleIA()" id="ia-toggle-btn" title="Minimizar">▲</button>
                 </div>
-                <div class="ia-input-group">
-                    <input type="text" id="ia-input" class="ia-input" placeholder="Escribe un RUT o consulta..." onkeypress="if(event.key === 'Enter') enviarACerebro()">
-                    <button onclick="enviarACerebro()" class="ia-send">➤</button>
+                <div class="ia-body" id="ia-body">
+                    <div id="chat-box">
+                        <div class="msg-bot"><strong>Asistente ETOP:</strong> Hola, soy tu asistente con conocimiento del equipo. Puedo ayudarte con protocolos, redactar correos o analizar situaciones de estudiantes que me describas. ¿En qué te ayudo?</div>
+                    </div>
+                    <div class="ia-input-group">
+                        <input type="text" id="ia-input" class="ia-input"
+                            placeholder="Escribe tu consulta..."
+                            onkeypress="if(event.key==='Enter') enviarAGemma()">
+                        <button onclick="enviarAGemma()" class="ia-send" id="ia-send-btn">➤</button>
+                    </div>
+                    <div class="ia-disclaimer">Powered by Gemma 4 · Conocimiento ETOP integrado</div>
                 </div>
             </div>
-        </div> 
+
+        </div>
 
         <a href="index.html" class="btn-volver">⬅️ Volver al Portal Principal</a>
     </div>
 
     <div class="content-area">
         <div class="top-bar">
-            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;">Entorno de Pruebas IA</span>
+            <button class="toggle-btn" onclick="toggleSidebar()" title="Abrir/Cerrar Menú">☰</button>
+            <span style="margin-left:15px;font-size:14px;font-weight:600;">Vista de Reporte</span>
         </div>
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
 </div>
 
 <script>
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+// ── CONFIGURACIÓN GEMMA 4 ─────────────────────────────────────
+const GEMMA_KEY = 'AIzaSyAhubMcq4z5v01Z5f5FxWz9EVfxEK_WnMw';
+const GEMMA_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent?key=${GEMMA_KEY}`;
 
-    const misReportes = {
-        'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
-    };
+// ── PROMPT MAESTRO ETOP ───────────────────────────────────────
+const PROMPT_ETOP = `Eres el Asistente Estratégico del Equipo de Tutoría Online de Postgrado (ETOP) de la Universidad Andrés Bello (UNAB), Chile. Tu misión es apoyar a los tutores y coordinadores con conocimiento experto del modelo de gestión tutorial.
 
-    function cargar(clave, btn) {
-        const url = misReportes[clave];
-        if(url) document.getElementById('visor').src = url;
-        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
+## IDENTIDAD Y MISIÓN DE ETOP
+ETOP es el equipo que acompaña a estudiantes de posgrado online para asegurar su permanencia y éxito académico. El "Sello ETOP" combina el rigor del dato con el acompañamiento humano y socio-afectivo.
 
-    // --- LÓGICA DE ASISTENTE IA ---
-    async function enviarACerebro() {
-        const input = document.getElementById('ia-input');
-        const chatBox = document.getElementById('chat-box');
-        const pregunta = input.value.trim();
-        
-        if(!pregunta) return;
+## SISTEMA DE SEMÁFORO (Estados de Riesgo Académico)
+- **VERDE**: Estudiante con buen lineamiento. Acceso regular a Canvas y acuso de recibo registrado. Acción: monitoreo asincrónico estándar.
+- **AMARILLO**: Riesgo latente. Tiene acceso pero sin participación activa o sin acuso de recibo. Acción: correo de seguimiento personalizado + invitación a sesión Zoom.
+- **ROJO**: Riesgo crítico. Sin acceso a Canvas al martes de inducción o sin acuso de recibo. Prioridad 1. Acción inmediata: llamada telefónica + registro en CRM + actualización de observaciones.
+- **MORADO**: Sin respuesta tras agotar todos los medios de contacto. Se escala el caso a jefatura o coordinación académica.
+- **NARANJO**: Estudiante con retiro temporal, retiro definitivo, resciliación o bloqueo académico. Se suspende el seguimiento activo. NO se cambia a verde. Se actualiza la base y se informa a coordinación.
 
-        // Mostrar mensaje del usuario
-        chatBox.innerHTML += `<div class="msg-user">${pregunta}</div>`;
-        input.value = '';
+## CONCEPTO Es_Riesgo_Accionable
+Solo si Es_Riesgo_Accionable = SÍ el tutor debe intervenir activamente. Si es NO, puede ser un riesgo administrativo o ya gestionado. Los estados NARANJO generalmente tienen Es_Riesgo_Accionable = NO.
+
+## TERMINOLOGÍA CLAVE
+- **NRC**: Código único que identifica un curso específico en un período académico (ej: 1234_MAP506_202510).
+- **NRC_COD_CAL**: Versión calculada del NRC = NRC + Código Curso + Período.
+- **Intake / Cohorte**: Grupo de estudiantes que inician el programa en el mismo período.
+- **PIDM**: Identificador único del estudiante en Banner (sistema académico).
+- **RUT**: Número de identidad chileno. Se usa para buscar estudiantes.
+- **Canvas**: Plataforma LMS (Learning Management System) donde se imparten los cursos.
+- **Banner**: Sistema académico oficial de UNAB. Fuente de verdad de matrículas y notas.
+- **CRM Dynamics**: Sistema de gestión de relación con el estudiante. Aquí se registran todas las interacciones.
+- **QA2**: Formulario de calidad que el tutor completa en la semana -4 del inicio del curso. Incluye revisión de ligas y marcas.
+- **ID_MADRE**: Clave que relaciona las tablas de cursos con los estudiantes en el modelo de datos.
+- **SEMAFORO_2.0**: Lista principal de SharePoint con el seguimiento de todos los estudiantes.
+- **NRC_TUTOR_ACTUAL**: Lista de SharePoint con todos los cursos y sus tutores asignados.
+- **PERIODO**: Formato numérico del período académico (ej: 202510 = año 2025, semestre 1).
+
+## ETAPAS DEL CICLO DE IMPARTICIÓN
+1. **Preparación (Semanas -2 y -1)**: Validación de nómina, correo de bienvenida a cuentas personales, auditoría Banner vs Canvas, alineación con el docente.
+2. **Inducción**: Anuncio automático lunes 00:00, identificación de estudiantes sin ingreso al martes, sesión Zoom de presentación, informe de contactabilidad el martes posterior a las 13:00 hrs.
+3. **Impartición NRC (Malla)**: Formulario QA2 el viernes de semana -4, anuncio de inicio lunes 08:00, gestión de grupos.
+4. **Cierre**: Registro del estado final, traspaso de incidencias a coordinación.
+
+## HITOS SEMANALES DEL TUTOR
+- Viernes semana -4: Entrega QA2
+- Lunes 00:00: Verificar anuncio de inducción
+- Lunes 08:00: Verificar anuncio de malla
+- Martes 13:00: Informe final de contactabilidad post-inducción
+- Miércoles: Segundo contacto a docentes sin respuesta
+- Jueves 11:00: Reporte a coordinación sobre docentes no contactados
+- Viernes: Anuncio de cierre de semana
+
+## PROTOCOLOS DE INTERVENCIÓN
+- Estudiante ROJO → Llamar primero, luego registrar en CRM, luego actualizar observaciones en la base.
+- Estudiante AMARILLO → Correo personalizado + invitación Zoom.
+- Estudiante MORADO → Escalar a coordinación. No más contactos directos.
+- Estudiante NARANJO → Actualizar estado, no cambiar a verde, informar a coordinación.
+
+## PILARES DEL SELLO ETOP
+1. Acompañamiento Socio-Afectivo con Inteligencia Emocional
+2. Dominio de la Infraestructura Tecnológica (Canvas, Teams, CRM, Banner)
+3. Gestión Proactiva de Datos para Mitigación de Riesgos
+
+## CÓMO DEBES RESPONDER
+- Habla siempre en español, con tono profesional y empático.
+- Usa el vocabulario de ETOP (NRC, semáforo, intake, etc.).
+- Cuando te describan la situación de un estudiante, responde con la acción concreta que el protocolo indica.
+- Cuando te pidan redactar un correo, hazlo en el tono institucional de UNAB: formal pero cercano.
+- Si no tienes datos suficientes para responder con precisión, pide al tutor que te proporcione más contexto.
+- Sé conciso: los tutores tienen poco tiempo. Prioriza la acción concreta.`;
+
+// ── HISTORIAL DE CONVERSACIÓN ─────────────────────────────────
+let historial = [];
+
+// ── FUNCIÓN PRINCIPAL GEMMA ───────────────────────────────────
+async function enviarAGemma() {
+    const input = document.getElementById('ia-input');
+    const chatBox = document.getElementById('chat-box');
+    const sendBtn = document.getElementById('ia-send-btn');
+    const pregunta = input.value.trim();
+    if (!pregunta) return;
+
+    // Mostrar mensaje del usuario
+    chatBox.innerHTML += `<div class="msg-user">${escHtml(pregunta)}</div>`;
+    input.value = '';
+    sendBtn.disabled = true;
+    sendBtn.textContent = '⏳';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Indicador de escritura
+    const thinkId = 'think-' + Date.now();
+    chatBox.innerHTML += `<div class="msg-thinking" id="${thinkId}">✦ Pensando...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Agregar al historial
+    historial.push({ role: 'user', parts: [{ text: pregunta }] });
+
+    // Construir contenidos con historial
+    const contents = [
+        { role: 'user', parts: [{ text: PROMPT_ETOP + '\n\n---\nComienza la conversación.' }] },
+        { role: 'model', parts: [{ text: 'Entendido. Estoy listo para asistirte como experto del equipo ETOP. ¿En qué te puedo ayudar?' }] },
+        ...historial
+    ];
+
+    try {
+        const r = await fetch(GEMMA_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents,
+                generationConfig: {
+                    maxOutputTokens: 600,
+                    temperature: 0.7
+                }
+            })
+        });
+
+        if (!r.ok) {
+            const err = await r.json();
+            throw new Error(err.error?.message || `HTTP ${r.status}`);
+        }
+
+        const data = await r.json();
+        const respuesta = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+        if (!respuesta) throw new Error('Sin respuesta de Gemma');
+
+        // Agregar respuesta al historial
+        historial.push({ role: 'model', parts: [{ text: respuesta }] });
+
+        // Mantener historial corto (últimas 10 interacciones)
+        if (historial.length > 20) historial = historial.slice(-20);
+
+        // Mostrar respuesta
+        const thinking = document.getElementById(thinkId);
+        if (thinking) thinking.remove();
+        chatBox.innerHTML += `<div class="msg-bot"><strong>Asistente ETOP:</strong> ${formatRespuesta(respuesta)}</div>`;
+
+    } catch(e) {
+        const thinking = document.getElementById(thinkId);
+        if (thinking) thinking.remove();
+        chatBox.innerHTML += `<div class="msg-bot" style="border-left-color:#ef4444;color:#f87171;">⚠️ Error: ${escHtml(e.message)}</div>`;
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = '➤';
         chatBox.scrollTop = chatBox.scrollHeight;
-
-        // Simulación de espera (Aquí irá el fetch a Power Automate)
-        const loadingId = Date.now();
-        chatBox.innerHTML += `<div class="msg-bot" id="${loadingId}">... Pensando ...</div>`;
-        
-        setTimeout(() => {
-            const botMsg = document.getElementById(loadingId);
-            botMsg.innerText = "Simulación: Recibí tu pregunta. Cuando conectemos el flujo de Power Automate, aquí verás el resumen estratégico basado en tus manuales.";
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }, 1500);
     }
+}
 
-    window.onload = function() {
-        const btnInicio = document.querySelector('.menu-btn.active');
-        if(btnInicio) cargar('DASHBOARD', btnInicio);
-    };
+function escHtml(t) {
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatRespuesta(t) {
+    return escHtml(t)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+// ── MINIMIZAR CHAT ────────────────────────────────────────────
+function toggleIA() {
+    const body = document.getElementById('ia-body');
+    const btn = document.getElementById('ia-toggle-btn');
+    const visible = body.style.display !== 'none';
+    body.style.display = visible ? 'none' : 'block';
+    btn.textContent = visible ? '▼' : '▲';
+    btn.title = visible ? 'Expandir' : 'Minimizar';
+}
+
+// ── SIDEBAR Y MENÚ ────────────────────────────────────────────
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+
+function toggleCollapsible(nombre) {
+    document.getElementById('header-' + nombre).classList.toggle('open');
+    document.getElementById('body-' + nombre).classList.toggle('open');
+}
+
+const misReportes = {
+    'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'REPORTE_INDUCCION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
+    'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'CURSOS_INICIAR': "https://app.powerbi.com/rdlEmbed?reportId=2d95ad06-3811-4fba-a187-7e1e8f2ea61c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'REPORTE_NRC': "https://app.powerbi.com/rdlEmbed?reportId=a0026236-1552-4a2d-bdc8-ee487be7de93&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'INCIDENCIAS_MASTER': "https://app.powerbi.com/rdlEmbed?reportId=42ddd2bd-2af5-4354-9c11-4f9f20c0805c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'INCIDENCIAS_NRC': "https://app.powerbi.com/rdlEmbed?reportId=eda17000-5679-49f5-bc46-41cfff1bcb95&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+    'BASE_SEGUIMIENTO': "https://app.powerbi.com/rdlEmbed?reportId=72cf6f52-dfa3-4cba-92f4-6a8c5c8ccf8e&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
+};
+
+function cargar(clave, btn) {
+    const url = misReportes[clave];
+    if (url) document.getElementById('visor').src = url;
+    document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (window.innerWidth < 800) toggleSidebar();
+}
+
+window.onload = function() {
+    const btnInicio = document.querySelector('.menu-btn.active');
+    if (btnInicio) cargar('DASHBOARD', btnInicio);
+};
 </script>
 </body>
 </html>
