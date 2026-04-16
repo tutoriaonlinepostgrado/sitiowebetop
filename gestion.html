@@ -98,6 +98,18 @@
         }
         .canal-abrir:hover { background: #651fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,77,255,0.4); }
         .canal-nota { font-size: 11px; color: #999; }
+        .canal-card {
+            display: flex; align-items: center; gap: 12px;
+            background: white; border: 1px solid #e5e7eb;
+            border-radius: 8px; padding: 14px 16px;
+            text-decoration: none; color: #1f2940;
+            transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .canal-card:hover { border-color: #6264a7; box-shadow: 0 4px 12px rgba(98,100,167,0.15); transform: translateY(-1px); }
+        .canal-card-info { flex: 1; }
+        .canal-card-nombre { font-size: 13px; font-weight: 700; color: #1f2940; }
+        .canal-card-sub { font-size: 11px; color: #999; margin-top: 2px; }
+        .canal-card-arrow { font-size: 16px; color: #6264a7; font-weight: 700; flex-shrink: 0; }
 
         .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
         .top-bar { background-color: var(--azul-sidebar); height: 50px; display: flex; align-items: center; padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
@@ -135,11 +147,9 @@
                 <span class="arrow">▼</span>
             </div>
             <div class="collapsible-body" id="body-canales">
-                <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK"
-                   target="_blank" class="canal-btn"
-                   onclick="mostrarCanal('CANAL_MEDICINA', this)">
-                    🟣 Canal de Medicina
-                </a>
+                <button class="canal-btn" onclick="mostrarCanales(this)">
+                    🟣 Ver todos los canales
+                </button>
             </div>
 
             <div class="menu-category">Herramientas</div>
@@ -163,25 +173,88 @@
         </div>
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
         <div class="canal-splash" id="canal-splash">
-            <div class="canal-icon">🟣</div>
-            <div class="canal-titulo" id="canal-nombre">Canal SharePoint</div>
-            <div class="canal-desc">Este canal vive en SharePoint de UNAB. Haz clic para abrirlo — se abrirá en una nueva pestaña con tu sesión activa.</div>
-            <a id="canal-link" href="#" target="_blank" class="canal-abrir">
-                📂 Abrir Canal en SharePoint
-            </a>
-            <div class="canal-nota">Requiere sesión activa en tu cuenta UNAB</div>
+            <div style="max-width:700px;width:100%;padding:20px;">
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="36" height="36" alt="Teams">
+                    <div>
+                        <div style="font-size:20px;font-weight:700;color:#1f2940;">Canales del Equipo ETOP</div>
+                        <div style="font-size:13px;color:#888;margin-top:2px;">Acceso directo a los canales de SharePoint por facultad</div>
+                    </div>
+                </div>
+                <div style="height:2px;background:linear-gradient(90deg,#6264a7,transparent);margin-bottom:20px;border-radius:2px;"></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Medicina</div>
+                            <div class="canal-card-sub">actasynrc-ISPAB</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Educación y Cs. Sociales Innovado</div>
+                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/ECONOM%C3%8DA_INNOVADO?csf=1&web=1&e=tBMSF9" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Economía Innovado</div>
+                            <div class="canal-card-sub">actasynrc-ECONOMA_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-INGENIERIA/Documentos%20compartidos/INGENIERIA?csf=1&web=1&e=Jobu49" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Ingeniería</div>
+                            <div class="canal-card-sub">actasynrc-INGENIERIA</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/ENFERMERIA_INNOVADO?csf=1&web=1&e=2zYXgS" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Enfermería Innovado</div>
+                            <div class="canal-card-sub">actasynrc-ENFERMERIA_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Educación y Cs. Sociales</div>
+                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/CIENCIAS%20_DE_LA%20_REHABILITACI%C3%93N?csf=1&web=1&e=ubsBcK" target="_blank" class="canal-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Ciencias de la Rehabilitación</div>
+                            <div class="canal-card-sub">actasynrc-CIENCIAS_DE_LA_REHABILITACIN</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+
+                </div>
+                <div style="margin-top:18px;font-size:11px;color:#aaa;text-align:center;">Requiere sesión activa en tu cuenta UNAB · Los canales se abren en una nueva pestaña</div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const canales = {
-        'CANAL_MEDICINA': {
-            nombre: 'Canal de Medicina',
-            url: 'https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK'
-        }
-    };
-
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
     function toggleCollapsible(nombre) {
@@ -217,16 +290,12 @@
         if (window.innerWidth < 800) toggleSidebar();
     }
 
-    function mostrarCanal(clave, btn) {
-        const canal = canales[clave];
-        if (!canal) return;
+    function mostrarCanales(btn) {
         document.getElementById('visor').style.display = 'none';
         document.getElementById('canal-splash').classList.add('visible');
-        document.getElementById('canal-nombre').textContent = canal.nombre;
-        document.getElementById('canal-link').href = canal.url;
         document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('titulo-vista').textContent = '🟣 ' + canal.nombre;
+        document.getElementById('titulo-vista').textContent = '🟣 Canales del Equipo';
         if (window.innerWidth < 800) toggleSidebar();
     }
 
