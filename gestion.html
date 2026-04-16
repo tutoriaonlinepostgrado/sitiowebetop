@@ -3,417 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal ETOP - Postgrado</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Espacio Tutoría - ETOP</title>
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            --azul-fondo: #141b2d;
+            --azul-sidebar: #1f2940;
+            --amarillo-top: #ffd700;
+            --texto-blanco: #ffffff;
+            --texto-gris: #a3a3a3;
+        }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
+        .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
+        .sidebar { width: 300px; background-color: var(--azul-sidebar); color: var(--texto-blanco); display: flex; flex-direction: column; border-right: 1px solid rgba(255,215,0,0.1); z-index: 10; transition: margin-left 0.3s ease; flex-shrink: 0; overflow: hidden; }
+        .sidebar.closed { margin-left: -300px; }
+        .sidebar-header { padding: 25px 20px; border-bottom: 2px solid var(--amarillo-top); background-color: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
+        .sidebar-menu { flex-grow: 1; overflow-y: auto; padding-bottom: 15px; }
+        .sidebar-menu::-webkit-scrollbar { width: 5px; }
+        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 10px; }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255,215,0,0.6); }
+        .menu-category { padding: 15px 20px 5px 20px; font-size: 11px; text-transform: uppercase; color: var(--texto-gris); font-weight: 700; letter-spacing: 1px; }
+        .menu-btn { background: none; border: none; color: #e0e0e0; padding: 12px 20px; text-align: left; font-size: 14px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; text-decoration: none; box-sizing: border-box; }
+        .menu-btn:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
+        .menu-btn.active { background-color: rgba(255,215,0,0.15); color: var(--amarillo-top); border-left: 4px solid var(--amarillo-top); font-weight: 600; }
+        .collapsible-header { padding: 13px 20px; font-size: 14px; color: #e0e0e0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid transparent; transition: all 0.2s; user-select: none; }
+        .collapsible-header:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
+        .collapsible-header .header-left { display: flex; align-items: center; gap: 10px; }
+        .collapsible-header .arrow { font-size: 10px; color: var(--texto-gris); transition: transform 0.25s ease; flex-shrink: 0; }
+        .collapsible-header.open .arrow { transform: rotate(180deg); color: var(--amarillo-top); }
+        .collapsible-header.open { color: var(--amarillo-top); background-color: rgba(255,215,0,0.06); border-left: 4px solid rgba(255,215,0,0.3); }
+        .collapsible-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+        .collapsible-body.open { max-height: 500px; }
+        .collapsible-body .menu-btn { padding-left: 36px; font-size: 13px; color: #c0c0c0; border-left: 4px solid transparent; }
+        .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
+        .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
+        .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #19202E;
-            overflow-x: hidden;
-        }
-
-        /* === C: FONDO ANIMADO === */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .portal-wrapper {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* === PANEL PRINCIPAL === */
-        .main-panel {
-            background: rgba(22, 30, 46, 0.82);
-            backdrop-filter: blur(14px);
-            border: 1.5px solid rgba(250, 204, 21, 0.45);
-            box-shadow: 0 0 60px rgba(250, 204, 21, 0.04), 0 32px 64px rgba(0,0,0,0.4);
-        }
-
-        /* === A: ANIMACIONES DE ENTRADA ESCALONADAS === */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(22px);
-            animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .d0  { animation-delay: 0.04s; }
-        .d1  { animation-delay: 0.10s; }
-        .d2  { animation-delay: 0.18s; }
-        .d3  { animation-delay: 0.26s; }
-        .d4  { animation-delay: 0.34s; }
-        .d5  { animation-delay: 0.42s; }
-        .d6  { animation-delay: 0.50s; }
-        .d7  { animation-delay: 0.58s; }
-        .d8  { animation-delay: 0.64s; }
-        .d9  { animation-delay: 0.70s; }
-
-        /* === B: CARDS CON HOVER BRILLO + ICONO BOUNCE === */
-        .section-card {
-            background: rgba(30, 41, 59, 0.65);
-            border: 1.5px solid rgba(250, 204, 21, 0.3);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                        border-color 0.3s ease,
-                        box-shadow 0.3s ease;
-        }
-        .section-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%; height: 100%;
-            background: linear-gradient(105deg, transparent 20%, rgba(250,204,21,0.08) 50%, transparent 80%);
-            transition: left 0.5s ease;
-            pointer-events: none;
-        }
-        .section-card:hover::before { left: 160%; }
-        .section-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(250, 204, 21, 0.85);
-            box-shadow: 0 0 0 1px rgba(250,204,21,0.12), 0 14px 32px rgba(250,204,21,0.12), 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .card-svg {
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .section-card:hover .card-svg {
-            transform: scale(1.13) rotate(-4deg);
-        }
-
-        /* === BOTTOM CARDS === */
-        .bottom-card {
-            background: rgba(30, 41, 59, 0.65);
-            border: 1.5px solid rgba(250, 204, 21, 0.3);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .bottom-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%; height: 100%;
-            background: linear-gradient(105deg, transparent 20%, rgba(250,204,21,0.06) 50%, transparent 80%);
-            transition: left 0.5s ease;
-            pointer-events: none;
-        }
-        .bottom-card:hover::before { left: 160%; }
-        .bottom-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(250, 204, 21, 0.8);
-            box-shadow: 0 8px 24px rgba(250,204,21,0.1);
-        }
-
-        /* === SEPARADOR HEADER === */
-        .header-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(250,204,21,0.4), transparent);
-            margin: 0 0 1.75rem;
-        }
-
-        /* === BADGE SISTEMA ACTIVO === */
-        .badge-online {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(250,204,21,0.09);
-            border: 1px solid rgba(250,204,21,0.22);
-            border-radius: 999px;
-            padding: 3px 12px;
-            font-size: 11px;
-            color: #facc15;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        .badge-dot {
-            width: 6px; height: 6px;
-            background: #4ade80;
-            border-radius: 50%;
-            animation: pulse-dot 2s infinite;
-        }
-        @keyframes pulse-dot {
-            0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
-            50%      { opacity:.8; box-shadow: 0 0 0 4px rgba(74,222,128,0); }
-        }
-
-        /* === COLORES === */
-        .accent-text   { color: #facc15; }
-        .accent-button { background-color: #facc15; color: #1e293b; }
-        .accent-button:hover { background-color: #eab308; }
-        .accent-link   { color: #facc15; }
-
-        .index-btn {
-            background: rgba(250,204,21,0.12);
-            border: 1px solid rgba(250,204,21,0.35);
-            color: #facc15;
+        /* BOTÓN IR A COORDINACIÓN — diferenciado */
+        .btn-coordinacion {
+            margin: 12px 15px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+            border: 1px solid rgba(255,215,0,0.4);
             border-radius: 8px;
-            padding: 6px 8px;
-            transition: background 0.2s, transform 0.2s;
+            color: var(--amarillo-top);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .index-btn:hover { background: rgba(250,204,21,0.22); transform: scale(1.08); }
+        .btn-coordinacion:hover { background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1)); border-color: var(--amarillo-top); }
 
-        /* === GRID === */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 1.25rem;
+        /* CANALES SHAREPOINT */
+        .canal-btn {
+            background: none; border: none; color: #e0e0e0;
+            padding: 10px 20px 10px 36px;
+            text-align: left; font-size: 13px; cursor: pointer;
+            border-left: 4px solid transparent; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
+            width: 100%; text-decoration: none; box-sizing: border-box;
+            color: #c0c0c0;
         }
-        @media (min-width: 768px)  { .grid-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; } }
-        @media (min-width: 1024px) { .grid-container { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .canal-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
+        .canal-btn:hover { background-color: rgba(100,65,165,0.15); color: #b39ddb; border-left-color: #7c4dff; }
+
+        /* PANTALLA CANAL SHAREPOINT */
+        .canal-splash {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: #F3F2F1;
+            gap: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        .canal-splash.visible { display: flex; }
+        .canal-icon { font-size: 64px; }
+        .canal-titulo { font-size: 22px; font-weight: 700; color: #1f2940; }
+        .canal-desc { font-size: 14px; color: #666; max-width: 420px; line-height: 1.6; }
+        .canal-abrir {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: #7c4dff; color: white;
+            padding: 14px 28px; border-radius: 8px;
+            text-decoration: none; font-size: 15px; font-weight: 700;
+            transition: all 0.2s; box-shadow: 0 4px 15px rgba(124,77,255,0.3);
+        }
+        .canal-abrir:hover { background: #651fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,77,255,0.4); }
+        .canal-nota { font-size: 11px; color: #999; }
+        .canal-card {
+            display: flex; align-items: center; gap: 12px;
+            background: white; border: 1px solid #e5e7eb;
+            border-radius: 8px; padding: 14px 16px;
+            text-decoration: none; color: #1f2940;
+            transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .canal-card:hover { border-color: #6264a7; box-shadow: 0 4px 12px rgba(98,100,167,0.15); transform: translateY(-1px); }
+        .canal-card-info { flex: 1; }
+        .canal-card-nombre { font-size: 13px; font-weight: 700; color: #1f2940; }
+        .canal-card-sub { font-size: 11px; color: #999; margin-top: 2px; }
+        .canal-card-arrow { font-size: 16px; color: #6264a7; font-weight: 700; flex-shrink: 0; }
+        .teams-icon-sm {
+            width: 28px; height: 28px; background: #6264a7; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .teams-icon-sm span { color: white; font-weight: 900; font-size: 15px; font-family: 'Segoe UI', sans-serif; }
+        .teams-icon-lg {
+            width: 44px; height: 44px; background: #6264a7; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .teams-icon-lg span { color: white; font-weight: 900; font-size: 26px; font-family: 'Segoe UI', sans-serif; }
+
+        .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
+        .top-bar { background-color: var(--azul-sidebar); height: 50px; display: flex; align-items: center; padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
+        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+        .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
+        iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
+        .btn-volver { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--texto-gris); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.3s; flex-shrink: 0; background-color: var(--azul-sidebar); }
+        .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
     </style>
 </head>
-<body class="text-white">
+<body>
+<div class="app-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <h2>📋 Espacio Tutoría</h2>
+                <span>Operación Diaria</span>
+            </div>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size:18px;">✕</button>
+        </div>
 
-    <canvas id="bg-canvas"></canvas>
+        <div class="sidebar-menu">
+            <div class="menu-category">Operación Diaria</div>
+            <button class="menu-btn active" onclick="cargar('DASHBOARD',this)">📊 Tablero de Gestión (App)</button>
+            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES',this)">📋 Nómina Estudiantes</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS',this)">🟢 Cursos Activos</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION',this)">⏳ Cursos en Preparación</button>
+            <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
+            <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
+            <button class="menu-btn" onclick="cargar('SEMAFORO',this)">🚦 Reporte Semáforo</button>
 
-    <div class="portal-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel">
-
-            <!-- HEADER -->
-            <header class="text-center mb-6 md:mb-8 fade-in d0">
-                <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png"
-                         alt="Logo ETOP" class="h-24 w-24 object-contain">
-                    <div>
-                        <div class="flex justify-center mb-2">
-                            <span class="badge-online"><span class="badge-dot"></span>Sistema activo</span>
-                        </div>
-                        <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-white leading-tight">
-                            Portal de Herramientas y Recursos
-                        </h1>
-                        <div class="flex items-center justify-center gap-3 mt-2">
-                            <p class="text-base accent-text font-medium tracking-wide">
-                                Equipo de Tutoría Online de Postgrado
-                            </p>
-                            <a href="reporte_completo.html" title="Ver Índice Completo del Sitio" class="index-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                    <path d="M11.25 4.533A9.707 9.707 0 006 3.75a9.707 9.707 0 00-5.25.783v13.5a9.707 9.707 0 015.25-.783c1.94 0 3.73.525 5.25 1.433.845-.506 1.775-.858 2.75-1.025V4.18c-.975.167-1.905.519-2.75 1.025v-.672z"/>
-                                    <path d="M12.75 18.667v-13.84c.975-.506 1.905-.858 2.75-1.025v13.5c-.845.167-1.775.519-2.75 1.025zM16.5 4.18c.975.167 1.905.519 2.75 1.025v13.5c-.845-.506-1.775-.858-2.75-1.025V4.18z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png"
-                         alt="Logo Unab Online" class="h-24 w-24 object-contain">
-                </div>
-            </header>
-
-            <div class="header-divider"></div>
-
-            <!-- CARDS PRINCIPALES -->
-            <main class="grid-container">
-
-                <a href="gestion.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d1">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Gestión Tutorial</h2>
-                    <p class="text-neutral-400 text-sm">Monitor de estudiantes, riesgos, fichas académicas y Power Apps.</p>
-                </a>
-
-                <a href="onboarding.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d2">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Onboarding y Comunicaciones</h2>
-                    <p class="text-neutral-400 text-sm">Etapas y recursos para la impartición de cursos.</p>
-                </a>
-
-                <a href="control_calidad.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d3">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Control de calidad</h2>
-                    <p class="text-neutral-400 text-sm">Formularios, incidencias y reportes de gestión de calidad.</p>
-                </a>
-
-                <a href="aplicaciones.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d4">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Aplicaciones y Sitio</h2>
-                    <p class="text-neutral-400 text-sm">Acceso a plataformas y herramientas de trabajo diario.</p>
-                </a>
-
-                <a href="recursos_aprendizaje.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d5">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Recursos Aprendizaje</h2>
-                    <p class="text-neutral-400 text-sm">Tutoriales, videos y material de capacitación.</p>
-                </a>
-
-                <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D"
-                   target="_blank"
-                   class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d6">
-                    <div class="mb-4 h-16 w-16 flex items-center justify-center">
-                        <svg class="w-14 h-14 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a.562.562 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-bold accent-text mb-1">Chat de Equipo</h2>
-                    <p class="text-neutral-400 text-sm">Acceso principal a la comunicación del equipo.</p>
-                </a>
-
-            </main>
-
-            <!-- FILA INFERIOR -->
-            <div class="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-
-                <a href="https://unabportal365.sharepoint.com/:u:/s/actasynrc/ESgqRzafDl1Hh1pgLXAnInEBcP1-PYT6znnd8MC_crXKiA?e=D4GMsq"
-                   target="_blank"
-                   class="bottom-card rounded-2xl p-6 md:p-7 fade-in d7">
-                    <h2 class="text-xl font-bold accent-text text-center mb-5">Calendario y eventos</h2>
-                    <div class="space-y-3">
-                        <div class="text-center bg-slate-800/60 p-3 rounded-lg text-sm text-neutral-300">Calendarios y eventos</div>
-                        <div class="text-center bg-slate-800/60 p-3 rounded-lg text-sm text-neutral-300">Últimas Noticias</div>
-                    </div>
-                </a>
-
-                <div class="bottom-card rounded-2xl p-6 md:p-7 fade-in d8">
-                    <h2 class="text-xl font-bold accent-text text-center mb-5">Mi espacio personal</h2>
-                    <div class="space-y-3">
-                        <a href="https://outlook.office.com/mail/" target="_blank"
-                           class="block text-center bg-slate-800/60 p-3 rounded-lg hover:bg-slate-700/60 transition-colors">
-                            <span class="text-yellow-400 font-medium text-sm">Ir a mi Outlook</span>
-                        </a>
-                        <a href="https://outlook.office.com/calendar/" target="_blank"
-                           class="block text-center bg-slate-800/60 p-3 rounded-lg hover:bg-slate-700/60 transition-colors">
-                            <span class="text-yellow-400 font-medium text-sm">Ir a mi Calendario</span>
-                        </a>
-                        <a href="https://m365.cloud.microsoft/chat" target="_blank"
-                           class="block text-center bg-slate-800/60 p-3 rounded-lg hover:bg-slate-700/60 transition-colors">
-                            <span class="text-yellow-400 font-medium text-sm">Ir a Copilot</span>
-                        </a>
-                    </div>
-                </div>
-
-                <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx?csf=1&web=1&share=EanVT7Rn6MRCsBmeUWd5OoQBqwBra8NLdt04I9TOdnPDAQ&e=KWcs8J&CID=6062b0e1-d934-47a9-af7b-b7f58e08a4a7"
-                   target="_blank"
-                   class="bottom-card rounded-2xl p-6 md:p-7 fade-in d9">
-                    <h2 class="text-xl font-bold accent-text text-center mb-5">Conozca al equipo ETOP</h2>
-                    <div class="flex flex-wrap gap-3 justify-center">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/FICHA_DANITZA_sxlcav.jpg"        alt="Miembro" class="h-14 w-14 object-cover rounded-full border-2 border-yellow-500/70">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/carolamonsalve_foto_ci5ekp.png" alt="Miembro" class="h-14 w-14 object-cover rounded-full border-2 border-yellow-500/70">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/Beige_Modern_Greeting_Happy_Birthday_Card_en4aot.png" alt="Miembro" class="h-14 w-14 object-cover rounded-full border-2 border-yellow-500/70">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752618/image_3_b8y9lw.png"             alt="Miembro" class="h-14 w-14 object-cover rounded-full border-2 border-yellow-500/70">
-                    </div>
-                    <div class="text-center mt-5">
-                        <span class="inline-block accent-button font-bold py-2 px-5 rounded-lg text-sm transition-all duration-200 hover:scale-105">
-                            Ver equipo completo &rarr;
-                        </span>
-                    </div>
-                </a>
-
+            <div class="menu-category">Canales del Equipo</div>
+            <div class="collapsible-header" id="header-canales" onclick="toggleCollapsible('canales')">
+                <div class="header-left"><span>🟣</span><span>Canales SharePoint</span></div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-body" id="body-canales">
+                <button class="canal-btn" onclick="mostrarCanales(this)">
+                    🟣 Ver todos los canales
+                </button>
             </div>
 
-            <footer class="text-center text-xs text-neutral-500 mt-8 pt-5 border-t border-slate-700/50">
-                <p>Ante dudas comuníquese con el coordinador Patricio Collao —
-                   <a href="mailto:patricio.collao@unab.cl" class="accent-link hover:underline">patricio.collao@unab.cl</a>
-                </p>
-            </footer>
+            <div class="menu-category">Herramientas</div>
+            <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn">
+                ⚡ Centro de Herramientas ETOP ↗️
+            </a>
 
+            <div class="menu-category"> </div>
+            <a href="gestion_coordinacion.html" class="btn-coordinacion">
+                🏛️ Ir a Espacio Coordinación →
+            </a>
         </div>
+
+        <a href="index.html" class="btn-volver">⬅️ Volver al Portal Principal</a>
     </div>
 
-    <!-- C: SCRIPT FONDO ANIMADO CON PARTÍCULAS Y LÍNEAS -->
-    <script>
-    (function () {
-        const canvas = document.getElementById('bg-canvas');
-        const ctx    = canvas.getContext('2d');
-        let W, H, particles = [];
-        const COUNT = 70;
+    <div class="content-area">
+        <div class="top-bar">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <span style="margin-left:15px;font-size:14px;font-weight:600;" id="titulo-vista">Vista de Reporte</span>
+        </div>
+        <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
+        <div class="canal-splash" id="canal-splash">
+            <div style="max-width:720px;width:100%;padding:20px;">
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+                    <div class="teams-icon-lg"><span>T</span></div>
+                    <div>
+                        <div style="font-size:20px;font-weight:700;color:#1f2940;">Canales del Equipo ETOP</div>
+                        <div style="font-size:13px;color:#888;margin-top:2px;">Acceso directo a los canales de SharePoint por facultad</div>
+                    </div>
+                </div>
+                <div style="height:2px;background:linear-gradient(90deg,#6264a7,transparent);margin-bottom:20px;border-radius:2px;"></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+                    <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Medicina</div>
+                            <div class="canal-card-sub">actasynrc-ISPAB</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Educación y Cs. Sociales Innovado</div>
+                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=tBMSF9&id=%2Fsites%2Factasynrc%2DECONOMA%5FINNOVADO%2FDocumentos%20compartidos%2FECONOM%C3%8DA%5FINNOVADO" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Economía Innovado</div>
+                            <div class="canal-card-sub">actasynrc-ECONOMA_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=Jobu49&id=%2Fsites%2Factasynrc%2DINGENIERIA%2FDocumentos%20compartidos%2FINGENIERIA" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Ingeniería</div>
+                            <div class="canal-card-sub">actasynrc-INGENIERIA</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=2zYXgS&id=%2Fsites%2Factasynrc%2DENFERMERIA%5FINNOVADO%2FDocumentos%20compartidos%2FENFERMERIA%5FINNOVADO" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Enfermería Innovado</div>
+                            <div class="canal-card-sub">actasynrc-ENFERMERIA_INNOVADO</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Educación y Cs. Sociales</div>
+                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=ubsBcK&id=%2Fsites%2Factasynrc%2DCIENCIAS%5FDE%5FLA%5FREHABILITACIN%2FDocumentos%20compartidos%2FCIENCIAS%20%5FDE%5FLA%20%5FREHABILITACI%C3%93N" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
+                        <div class="canal-card-info">
+                            <div class="canal-card-nombre">Ciencias de la Rehabilitación</div>
+                            <div class="canal-card-sub">actasynrc-CIENCIAS_DE_LA_REHABILITACIN</div>
+                        </div>
+                        <span class="canal-card-arrow">↗</span>
+                    </a>
+                </div>
+                <div style="margin-top:18px;font-size:11px;color:#aaa;text-align:center;">Requiere sesión activa en tu cuenta UNAB · Los canales se abren en una nueva pestaña</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        function rand(a, b) { return a + Math.random() * (b - a); }
+<script>
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
-        function resize() {
-            W = canvas.width  = window.innerWidth;
-            H = canvas.height = window.innerHeight;
-        }
+    function toggleCollapsible(nombre) {
+        document.getElementById('header-'+nombre).classList.toggle('open');
+        document.getElementById('body-'+nombre).classList.toggle('open');
+    }
 
-        function makeParticle() {
-            return {
-                x: rand(0, W),
-                y: rand(0, H),
-                r: rand(1, 2.2),
-                vx: rand(-0.18, 0.18),
-                vy: rand(-0.14, 0.14),
-                alpha: rand(0.15, 0.45),
-                isYellow: Math.random() > 0.62
-            };
-        }
+    const misReportes = {
+        'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=f3645002c9a950410ee2&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
+    };
 
-        function init() {
-            particles = [];
-            for (let i = 0; i < COUNT; i++) particles.push(makeParticle());
-        }
+    const titulos = {
+        'DASHBOARD':'Tablero de Gestión','NOMINA_ESTUDIANTES':'Nómina Estudiantes',
+        'CURSOS_ACTIVOS':'Cursos Activos','CURSOS_PREPARACION':'Cursos en Preparación',
+        'CURSOS_CIERRE':'Cursos en Cierre','FICHA_ESTUDIANTE':'Ficha del Estudiante',
+        'SEMAFORO':'Reporte Semáforo'
+    };
 
-        function drawLines() {
-            const DIST = 125;
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const d  = Math.sqrt(dx * dx + dy * dy);
-                    if (d < DIST) {
-                        const a = (1 - d / DIST) * 0.11;
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(250,204,21,${a})`;
-                        ctx.lineWidth   = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
+    function cargar(clave, btn) {
+        document.getElementById('canal-splash').classList.remove('visible');
+        document.getElementById('visor').style.display = 'block';
+        const url = misReportes[clave];
+        if (url) document.getElementById('visor').src = url;
+        document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
+        if (window.innerWidth < 800) toggleSidebar();
+    }
 
-        function frame() {
-            ctx.clearRect(0, 0, W, H);
-            drawLines();
-            for (const p of particles) {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < -10) p.x = W + 10;
-                if (p.x > W + 10) p.x = -10;
-                if (p.y < -10) p.y = H + 10;
-                if (p.y > H + 10) p.y = -10;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.isYellow
-                    ? `rgba(250,204,21,${p.alpha})`
-                    : `rgba(99,132,190,${p.alpha})`;
-                ctx.fill();
-            }
-            requestAnimationFrame(frame);
-        }
+    function mostrarCanales(btn) {
+        document.getElementById('visor').style.display = 'none';
+        document.getElementById('canal-splash').classList.add('visible');
+        document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('titulo-vista').textContent = '🟣 Canales del Equipo';
+        if (window.innerWidth < 800) toggleSidebar();
+    }
 
-        resize();
-        init();
-        frame();
-        window.addEventListener('resize', () => { resize(); init(); });
-    })();
-    </script>
-
+    window.onload = function() {
+        const btn = document.querySelector('.menu-btn.active');
+        if (btn) cargar('DASHBOARD', btn);
+    };
+</script>
 </body>
 </html>
