@@ -110,6 +110,16 @@
         .canal-card-nombre { font-size: 13px; font-weight: 700; color: #1f2940; }
         .canal-card-sub { font-size: 11px; color: #999; margin-top: 2px; }
         .canal-card-arrow { font-size: 16px; color: #6264a7; font-weight: 700; flex-shrink: 0; }
+        .teams-icon-sm {
+            width: 28px; height: 28px; background: #6264a7; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .teams-icon-sm span { color: white; font-weight: 900; font-size: 15px; font-family: 'Segoe UI', sans-serif; }
+        .teams-icon-lg {
+            width: 44px; height: 44px; background: #6264a7; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .teams-icon-lg span { color: white; font-weight: 900; font-size: 26px; font-family: 'Segoe UI', sans-serif; }
 
         .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
         .top-bar { background-color: var(--azul-sidebar); height: 50px; display: flex; align-items: center; padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
@@ -173,9 +183,9 @@
         </div>
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
         <div class="canal-splash" id="canal-splash">
-            <div style="max-width:700px;width:100%;padding:20px;">
+            <div style="max-width:720px;width:100%;padding:20px;">
                 <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="36" height="36" alt="Teams">
+                    <div class="teams-icon-lg"><span>T</span></div>
                     <div>
                         <div style="font-size:20px;font-weight:700;color:#1f2940;">Canales del Equipo ETOP</div>
                         <div style="font-size:13px;color:#888;margin-top:2px;">Acceso directo a los canales de SharePoint por facultad</div>
@@ -183,70 +193,62 @@
                 </div>
                 <div style="height:2px;background:linear-gradient(90deg,#6264a7,transparent);margin-bottom:20px;border-radius:2px;"></div>
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
-
                     <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Medicina</div>
                             <div class="canal-card-sub">actasynrc-ISPAB</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
                     <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Educación y Cs. Sociales Innovado</div>
                             <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES_INNOVADO</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
-                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/ECONOM%C3%8DA_INNOVADO?csf=1&web=1&e=tBMSF9" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=tBMSF9&id=%2Fsites%2Factasynrc%2DECONOMA%5FINNOVADO%2FDocumentos%20compartidos%2FECONOM%C3%8DA%5FINNOVADO" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Economía Innovado</div>
                             <div class="canal-card-sub">actasynrc-ECONOMA_INNOVADO</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
-                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-INGENIERIA/Documentos%20compartidos/INGENIERIA?csf=1&web=1&e=Jobu49" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=Jobu49&id=%2Fsites%2Factasynrc%2DINGENIERIA%2FDocumentos%20compartidos%2FINGENIERIA" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Ingeniería</div>
                             <div class="canal-card-sub">actasynrc-INGENIERIA</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
-                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/ENFERMERIA_INNOVADO?csf=1&web=1&e=2zYXgS" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=2zYXgS&id=%2Fsites%2Factasynrc%2DENFERMERIA%5FINNOVADO%2FDocumentos%20compartidos%2FENFERMERIA%5FINNOVADO" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Enfermería Innovado</div>
                             <div class="canal-card-sub">actasynrc-ENFERMERIA_INNOVADO</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
                     <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Educación y Cs. Sociales</div>
                             <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
-                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/CIENCIAS%20_DE_LA%20_REHABILITACI%C3%93N?csf=1&web=1&e=ubsBcK" target="_blank" class="canal-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="22" height="22" alt="Teams">
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=ubsBcK&id=%2Fsites%2Factasynrc%2DCIENCIAS%5FDE%5FLA%5FREHABILITACIN%2FDocumentos%20compartidos%2FCIENCIAS%20%5FDE%5FLA%20%5FREHABILITACI%C3%93N" target="_blank" class="canal-card">
+                        <div class="teams-icon-sm"><span>T</span></div>
                         <div class="canal-card-info">
                             <div class="canal-card-nombre">Ciencias de la Rehabilitación</div>
                             <div class="canal-card-sub">actasynrc-CIENCIAS_DE_LA_REHABILITACIN</div>
                         </div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
-
                 </div>
                 <div style="margin-top:18px;font-size:11px;color:#aaa;text-align:center;">Requiere sesión activa en tu cuenta UNAB · Los canales se abren en una nueva pestaña</div>
             </div>
