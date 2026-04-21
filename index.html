@@ -325,11 +325,14 @@ function marcarLeido(id) {
 async function cargarAnuncios() {
     const grid = document.getElementById('ann-grid');
     try {
+        grid.innerHTML = '<div class="ann-loading">⏳ Conectando con SharePoint...</div>';
         const r = await fetch(FLOW_LEER, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-        if (!r.ok) throw new Error('Error ' + r.status);
-        const data = await r.json();
-
-        const items = data.value || data || [];
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' — ' + r.statusText);
+        const texto = await r.text();
+        grid.innerHTML = '<div class="ann-loading" style="color:#60a5fa;font-size:10px;word-break:break-all;">RAW: ' + texto.substring(0, 300) + '</div>';
+        let data;
+        try { data = JSON.parse(texto); } catch(e) { throw new Error('JSON inválido: ' + texto.substring(0, 100)); }
+        const items = Array.isArray(data) ? data : (data.value || []);
         const leidos = getLeidosIds();
         let hayNuevos = false;
 
@@ -341,13 +344,17 @@ async function cargarAnuncios() {
         grid.innerHTML = '';
         items.slice(0, 4).forEach(item => {
             const id    = String(item.ID || item.Id || item.id || '');
-            const tipo  = (item.TipoAnuncio || 'aviso').toLowerCase();
+            // TipoAnuncio viene como objeto {Value: 'aviso'} desde SharePoint
+            const tipoRaw = item.TipoAnuncio?.Value || item.TipoAnuncio || 'aviso';
+            const tipo  = tipoRaw.toLowerCase();
             const esNuevo = !leidos.includes(id);
             if (esNuevo) hayNuevos = true;
 
             const tipoLabel = { aviso:'📋 Aviso', info:'ℹ️ Info', logro:'🏆 Logro', urgente:'🚨 Urgente' }[tipo] || '📋 Aviso';
             const fecha = item.FechaPublicacion ? new Date(item.FechaPublicacion).toLocaleDateString('es-CL', { day:'numeric', month:'short' }) : '';
             const imgHTML = item.ImagenURL ? `<img src="${item.ImagenURL}" style="max-width:100%;border-radius:6px;margin-top:8px;" onerror="this.style.display='none'">` : '';
+            // Limpiar HTML de SharePoint — eliminar clases ExternalClass y estilos inline
+            const cuerpoLimpio = (item.Cuerpo || '').replace(/class="ExternalClass[^"]*"/g, '').replace(/style="[^"]*font-family[^"]*"/g, '');
 
             const card = document.createElement('div');
             card.className = `ann-card ${tipo}`;
@@ -355,10 +362,10 @@ async function cargarAnuncios() {
                 ${esNuevo ? '<span class="ann-new-badge">Nuevo</span>' : ''}
                 <span class="ann-badge ${tipo}">${tipoLabel}</span>
                 <div class="ann-title">${item.Titulo || 'Sin título'}</div>
-                <div class="ann-body">${item.Cuerpo || ''}${imgHTML}</div>
+                <div class="ann-body">${cuerpoLimpio}${imgHTML}</div>
                 <div class="ann-footer">
                     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" class="ann-avatar" alt="">
-                    <span class="ann-author">${item.Autor || 'ETOP'}</span>
+                    <span class="ann-author">${item.Autor || item.Author?.DisplayName || 'ETOP'}</span>
                     <span class="ann-date">${fecha}</span>
                 </div>`;
 
