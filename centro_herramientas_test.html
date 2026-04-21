@@ -1244,11 +1244,14 @@ function calDetectarHeader(cols) {
   const cu = cols.map(c => (c||'').trim().toLowerCase());
   const hits = {};
   const KEYS = {
-    nrc:['nrc'], codigo:['código asignatura','codigo asignatura'],
-    nombre:['nombre asignatura','nombre del curso','nombre curso','asignatura'],
-    inicio:['fecha de inicio','fecha inicio','inicio'],
-    termino:['fecha de término','fecha de termino','fecha término','término','termino'],
-    periodo:['período','periodo'], profesor:['nombre profesor','profesor'], facultad:['facultad'],
+    nrc:      ['nrc'],
+    codigo:   ['código asignatura','codigo asignatura','codigo curso','código curso'],
+    nombre:   ['nombre asignatura','nombre del curso','nombre curso','asignatura'],
+    inicio:   ['fecha de inicio','fecha inicio','inicio'],
+    termino:  ['fecha de término','fecha de termino','fecha término','término','termino','fecha_fin','fecha fin'],
+    periodo:  ['período','periodo'],
+    profesor: ['nombre profesor','profesor'],
+    facultad: ['facultad'],
   };
   for(const [campo, kws] of Object.entries(KEYS)) {
     for(let i=0; i<cu.length; i++) {
