@@ -325,13 +325,11 @@ function marcarLeido(id) {
 async function cargarAnuncios() {
     const grid = document.getElementById('ann-grid');
     try {
-        grid.innerHTML = '<div class="ann-loading">⏳ Conectando con SharePoint...</div>';
         const r = await fetch(FLOW_LEER, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-        if (!r.ok) throw new Error('HTTP ' + r.status + ' — ' + r.statusText);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
         const texto = await r.text();
-        grid.innerHTML = '<div class="ann-loading" style="color:#60a5fa;font-size:10px;word-break:break-all;">RAW: ' + texto.substring(0, 300) + '</div>';
         let data;
-        try { data = JSON.parse(texto); } catch(e) { throw new Error('JSON inválido: ' + texto.substring(0, 100)); }
+        try { data = JSON.parse(texto); } catch(e) { throw new Error('Respuesta inválida del servidor'); }
         const items = Array.isArray(data) ? data : (data.value || []);
         const leidos = getLeidosIds();
         let hayNuevos = false;
