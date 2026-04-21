@@ -8,457 +8,480 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #19202E;
-            overflow-x: hidden;
-        }
-
-        /* === FONDO ANIMADO (C) === */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #19202E; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .portal-wrapper { position: relative; z-index: 1; }
 
-        /* === HERO SECTION === */
-        .hero {
-            position: relative;
-            width: 100%;
-            padding: 56px 32px 48px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(250, 204, 21, 0.2);
-            margin-bottom: 40px;
-        }
-
-        /* Marca de agua — logo difuminado centrado */
-        .hero-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 340px;
-            height: 340px;
-            object-fit: contain;
-            opacity: 0.04;
-            pointer-events: none;
-            filter: blur(2px) grayscale(1);
-        }
-
-        /* Línea decorativa bajo el título */
-        .hero-line {
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #facc15, transparent);
-            border-radius: 2px;
-            margin: 14px auto 18px;
-        }
-
-        /* Badge "Sistema activo" */
-        .badge-online {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            background: rgba(250, 204, 21, 0.08);
-            border: 1px solid rgba(250, 204, 21, 0.25);
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: 11px;
-            color: #facc15;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-        .badge-dot {
-            width: 6px; height: 6px;
-            background: #4ade80;
-            border-radius: 50%;
-            animation: pulse-dot 2s infinite;
-        }
-        @keyframes pulse-dot {
-            0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
-            50%      { opacity:.7; box-shadow: 0 0 0 5px rgba(74,222,128,0); }
-        }
-
-        /* Frase institucional */
-        .hero-tagline {
-            font-size: 13px;
-            color: rgba(255,255,255,0.45);
-            letter-spacing: 0.04em;
-            max-width: 480px;
-            line-height: 1.7;
-            margin: 0 auto;
-        }
-
-        /* Logos en el hero */
-        .hero-logos {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 28px;
-            margin-top: 28px;
-        }
-        .hero-logo-img {
-            height: 68px;
-            width: 68px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 12px rgba(250,204,21,0.15));
-            transition: filter 0.3s ease, transform 0.3s ease;
-        }
-        .hero-logo-img:hover {
-            filter: drop-shadow(0 0 20px rgba(250,204,21,0.35));
-            transform: scale(1.06);
-        }
-        .hero-logo-divider {
-            width: 1px;
-            height: 50px;
-            background: linear-gradient(180deg, transparent, rgba(250,204,21,0.3), transparent);
-        }
-
-        /* Botón índice */
-        .index-btn {
-            background: rgba(250,204,21,0.12);
-            border: 1px solid rgba(250,204,21,0.35);
-            color: #facc15;
-            border-radius: 8px;
-            padding: 6px 10px;
-            transition: background 0.2s, transform 0.2s;
-            display: inline-flex;
-            align-items: center;
-        }
+        /* === HERO === */
+        .hero { position: relative; width: 100%; padding: 28px 32px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; border-bottom: 1px solid rgba(250,204,21,0.2); margin-bottom: 24px; }
+        .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 340px; height: 340px; object-fit: contain; opacity: 0.04; pointer-events: none; filter: blur(2px) grayscale(1); }
+        .hero-line { width: 80px; height: 3px; background: linear-gradient(90deg,transparent,#facc15,transparent); border-radius: 2px; margin: 8px auto 10px; }
+        .badge-online { display: inline-flex; align-items: center; gap: 7px; background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.25); border-radius: 999px; padding: 4px 14px; font-size: 11px; color: #facc15; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+        .badge-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(74,222,128,0.5);}50%{opacity:.7;box-shadow:0 0 0 5px rgba(74,222,128,0);} }
+        .hero-tagline { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; max-width: 480px; line-height: 1.7; margin: 0 auto; }
+        .hero-logos { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 16px; }
+        .hero-logo-img { height: 68px; width: 68px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(250,204,21,0.15)); transition: filter 0.3s ease, transform 0.3s ease; }
+        .hero-logo-img:hover { filter: drop-shadow(0 0 20px rgba(250,204,21,0.35)); transform: scale(1.06); }
+        .hero-logo-divider { width: 1px; height: 50px; background: linear-gradient(180deg,transparent,rgba(250,204,21,0.3),transparent); }
+        .index-btn { background: rgba(250,204,21,0.12); border: 1px solid rgba(250,204,21,0.35); color: #facc15; border-radius: 8px; padding: 6px 10px; transition: background 0.2s,transform 0.2s; display: inline-flex; align-items: center; }
         .index-btn:hover { background: rgba(250,204,21,0.22); transform: scale(1.08); }
 
         /* === PANEL === */
-        .main-panel {
-            background: rgba(22, 30, 46, 0.85);
-            backdrop-filter: blur(14px);
-            border: 1.5px solid rgba(250, 204, 21, 0.4);
-            box-shadow: 0 0 80px rgba(250,204,21,0.03), 0 32px 64px rgba(0,0,0,0.45);
-        }
+        .main-panel { background: rgba(22,30,46,0.85); backdrop-filter: blur(14px); border: 1.5px solid rgba(250,204,21,0.4); box-shadow: 0 0 80px rgba(250,204,21,0.03),0 32px 64px rgba(0,0,0,0.45); }
 
-        /* === CARDS (B) === */
-        .section-card {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1.5px solid rgba(250, 204, 21, 0.35);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
-                        box-shadow 0.3s ease,
-                        border-color 0.3s ease;
-        }
-        .section-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%; height: 100%;
-            background: linear-gradient(105deg, transparent 20%, rgba(250,204,21,0.09) 50%, transparent 80%);
-            transition: left 0.5s ease;
-            pointer-events: none;
-        }
-        .section-card:hover::before { left: 160%; }
-        .section-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(250,204,21,0.9);
-            box-shadow: 0 0 0 1px rgba(250,204,21,0.12),
-                        0 14px 32px rgba(250,204,21,0.13),
-                        0 4px 8px rgba(0,0,0,0.3);
-        }
-        .card-svg {
-            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        .section-card:hover .card-svg {
-            transform: scale(1.13) rotate(-4deg);
-        }
-
+        /* === CARDS === */
+        .section-card { background: rgba(30,41,59,0.7); border: 1.5px solid rgba(250,204,21,0.35); position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s ease,border-color 0.3s ease; }
+        .section-card::before { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background: linear-gradient(105deg,transparent 20%,rgba(250,204,21,0.09) 50%,transparent 80%); transition: left 0.5s ease; pointer-events:none; }
+        .section-card:hover::before { left:160%; }
+        .section-card:hover { transform: translateY(-6px); border-color: rgba(250,204,21,0.9); box-shadow: 0 0 0 1px rgba(250,204,21,0.12),0 14px 32px rgba(250,204,21,0.13),0 4px 8px rgba(0,0,0,0.3); }
+        .card-svg { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+        .section-card:hover .card-svg { transform: scale(1.13) rotate(-4deg); }
         .card-icon { width: 80px; height: 80px; }
-        .accent-text   { color: #facc15; }
+        .accent-text { color: #facc15; }
         .accent-button { background-color: #facc15; color: #1e293b; }
         .accent-button:hover { background-color: #eab308; }
-        .accent-link   { color: #facc15; }
+        .accent-link { color: #facc15; }
 
-        /* === ANIMACIONES DE ENTRADA (A) === */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(22px);
-            animation: fadeInUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
-        }
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .d0  { animation-delay: 0.04s; }
-        .d1  { animation-delay: 0.12s; }
-        .d2  { animation-delay: 0.20s; }
-        .d3  { animation-delay: 0.28s; }
-        .d4  { animation-delay: 0.36s; }
-        .d5  { animation-delay: 0.44s; }
-        .d6  { animation-delay: 0.52s; }
-        .d7  { animation-delay: 0.60s; }
-        .d8  { animation-delay: 0.66s; }
-        .d9  { animation-delay: 0.72s; }
+        /* === ANIMACIONES === */
+        .fade-in { opacity:0; transform:translateY(22px); animation: fadeInUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+        @keyframes fadeInUp { to{opacity:1;transform:translateY(0);} }
+        .d0{animation-delay:0.04s}.d1{animation-delay:0.10s}.d2{animation-delay:0.16s}.d3{animation-delay:0.22s}
+        .d4{animation-delay:0.28s}.d5{animation-delay:0.34s}.d6{animation-delay:0.40s}.d7{animation-delay:0.46s}
+        .d8{animation-delay:0.52s}.d9{animation-delay:0.58s}
 
         /* === GRID === */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .grid-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
-        }
-        @media (min-width: 1024px) {
-            .grid-container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
+        .grid-container { display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1.5rem; }
+        @media(min-width:768px){.grid-container{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem;}}
+        @media(min-width:1024px){.grid-container{grid-template-columns:repeat(3,minmax(0,1fr));}}
 
-        /* === SEPARADOR SECCIÓN === */
-        .section-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(250,204,21,0.5);
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(250,204,21,0.2), transparent);
-        }
+        /* === SECTION LABEL === */
+        .section-label { font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(250,204,21,0.5); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+        .section-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(250,204,21,0.2),transparent); }
+
+        /* === ANUNCIOS === */
+        .ann-grid { display:flex; flex-direction:column; gap:12px; }
+        @media(min-width:768px){ .ann-grid { flex-direction:row; } }
+        .ann-card { flex:1; background:rgba(30,41,59,0.7); border:1px solid rgba(250,204,21,0.12); border-radius:12px; padding:16px 18px; border-left:4px solid rgba(250,204,21,0.5); transition: border-color 0.2s, transform 0.2s; position:relative; }
+        .ann-card:hover { transform: translateY(-2px); }
+        .ann-card.urgente { border-left-color:#ef4444; }
+        .ann-card.info    { border-left-color:#3b82f6; }
+        .ann-card.logro   { border-left-color:#22c55e; }
+        .ann-card.aviso   { border-left-color:#facc15; }
+        .ann-badge { display:inline-flex; align-items:center; gap:4px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:2px 8px; border-radius:999px; margin-bottom:6px; }
+        .ann-badge.urgente { background:rgba(239,68,68,0.15); color:#f87171; }
+        .ann-badge.info    { background:rgba(59,130,246,0.15); color:#60a5fa; }
+        .ann-badge.logro   { background:rgba(34,197,94,0.15); color:#4ade80; }
+        .ann-badge.aviso   { background:rgba(250,204,21,0.12); color:#facc15; }
+        .ann-new-badge { position:absolute; top:10px; right:10px; background:#ef4444; color:white; font-size:9px; font-weight:700; padding:2px 7px; border-radius:999px; text-transform:uppercase; animation: pulse-new 2s infinite; }
+        @keyframes pulse-new { 0%,100%{opacity:1;}50%{opacity:0.6;} }
+        .ann-title { font-size:13px; font-weight:700; color:#f1f5f9; margin-bottom:5px; line-height:1.3; }
+        .ann-body  { font-size:11.5px; color:#94a3b8; line-height:1.55; }
+        .ann-body img { max-width:100%; border-radius:6px; margin-top:8px; }
+        .ann-footer { display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); }
+        .ann-avatar { width:20px; height:20px; border-radius:50%; object-fit:cover; border:1px solid rgba(250,204,21,0.25); }
+        .ann-author { font-size:10px; color:#475569; font-weight:600; }
+        .ann-date   { font-size:10px; color:#334155; margin-left:auto; }
+        .ann-loading { text-align:center; padding:20px; color:#475569; font-size:12px; }
+
+        /* === PANEL ADMIN === */
+        .admin-trigger { position:fixed; bottom:20px; right:20px; z-index:100; background:rgba(250,204,21,0.15); border:1px solid rgba(250,204,21,0.3); color:#facc15; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; transition:all 0.2s; }
+        .admin-trigger:hover { background:rgba(250,204,21,0.25); transform:scale(1.1); }
+
+        .admin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; }
+        .admin-overlay.open { display:flex; }
+        .admin-panel { background:#1e293b; border:1.5px solid rgba(250,204,21,0.3); border-radius:16px; padding:28px; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; margin:16px; }
+        .admin-panel h3 { color:#facc15; font-size:16px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+
+        .admin-input { width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:#f1f5f9; border-radius:8px; padding:10px 12px; font-size:13px; font-family:'Inter',sans-serif; margin-bottom:12px; outline:none; transition:border-color 0.2s; }
+        .admin-input:focus { border-color:rgba(250,204,21,0.4); }
+        select.admin-input { cursor:pointer; }
+
+        /* Editor con formato */
+        .editor-toolbar { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px; }
+        .editor-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; border-radius:5px; padding:4px 9px; font-size:12px; cursor:pointer; transition:all 0.15s; }
+        .editor-btn:hover { background:rgba(250,204,21,0.15); color:#facc15; border-color:rgba(250,204,21,0.3); }
+        .editor-area { width:100%; min-height:120px; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:#f1f5f9; border-radius:8px; padding:12px; font-size:13px; font-family:'Inter',sans-serif; margin-bottom:12px; outline:none; transition:border-color 0.2s; }
+        .editor-area:focus { border-color:rgba(250,204,21,0.4); }
+
+        .admin-row { display:flex; gap:10px; }
+        .admin-row .admin-input { flex:1; }
+
+        .btn-publicar { width:100%; background:#facc15; color:#1e293b; font-weight:700; font-size:14px; border:none; border-radius:8px; padding:12px; cursor:pointer; transition:all 0.2s; margin-top:4px; }
+        .btn-publicar:hover { background:#eab308; transform:translateY(-1px); }
+        .btn-publicar:disabled { background:#334155; color:#64748b; cursor:not-allowed; transform:none; }
+        .btn-cancelar { width:100%; background:transparent; color:#64748b; font-size:13px; border:none; padding:8px; cursor:pointer; margin-top:6px; }
+        .btn-cancelar:hover { color:#94a3b8; }
+
+        /* Login admin */
+        .admin-login { text-align:center; }
+        .admin-login p { color:#94a3b8; font-size:13px; margin-bottom:16px; }
+        .status-msg { font-size:12px; padding:8px 12px; border-radius:6px; margin-top:10px; display:none; }
+        .status-msg.ok  { background:rgba(34,197,94,0.15); color:#4ade80; display:block; }
+        .status-msg.err { background:rgba(239,68,68,0.15); color:#f87171; display:block; }
+        .status-msg.loading { background:rgba(59,130,246,0.15); color:#60a5fa; display:block; }
+
+        /* Badge nuevo en header */
+        .ann-header-badge { background:#ef4444; color:white; font-size:10px; font-weight:700; padding:1px 7px; border-radius:999px; margin-left:8px; display:none; }
     </style>
 </head>
 <body class="text-white">
 
-    <canvas id="bg-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
 
-    <div class="portal-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-7xl mx-auto rounded-2xl main-panel shadow-2xl overflow-hidden">
+<div class="portal-wrapper min-h-screen w-full flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-7xl mx-auto rounded-2xl main-panel shadow-2xl overflow-hidden">
 
-            <!-- ===== HERO SECTION ===== -->
-            <div class="hero fade-in d0">
-
-                <!-- Marca de agua -->
-                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png"
-                     alt="" class="hero-watermark" aria-hidden="true">
-
-                <!-- Badge -->
-                <div class="badge-online">
-                    <span class="badge-dot"></span>
-                    Sistema activo
-                </div>
-
-                <!-- Título principal -->
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                    Portal de Herramientas
-                    <span class="accent-text"> y Recursos</span>
-                </h1>
-
-                <!-- Línea decorativa -->
-                <div class="hero-line"></div>
-
-                <!-- Frase institucional -->
-                <p class="hero-tagline">
-                    Espacio centralizado de gestión, seguimiento y comunicación para el
-                    <strong style="color:rgba(255,255,255,0.7);">Equipo de Tutoría Online de Postgrado</strong>
-                </p>
-
-                <!-- Logos + botón índice -->
-                <div class="hero-logos">
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png"
-                         alt="Logo ETOP" class="hero-logo-img">
-                    <div class="hero-logo-divider"></div>
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png"
-                         alt="Logo Unab Online" class="hero-logo-img">
-                    <div class="hero-logo-divider"></div>
-                    <a href="reporte_completo.html" title="Ver Índice Completo del Sitio" class="index-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;">
-                          <path d="M11.25 4.533A9.707 9.707 0 006 3.75a9.707 9.707 0 00-5.25.783v13.5a9.707 9.707 0 015.25-.783c1.94 0 3.73.525 5.25 1.433.845-.506 1.775-.858 2.75-1.025V4.18c-.975.167-1.905.519-2.75 1.025v-.672z"/>
-                          <path d="M12.75 18.667v-13.84c.975-.506 1.905-.858 2.75-1.025v13.5c-.845.167-1.775.519-2.75 1.025zM16.5 4.18c.975.167 1.905.519 2.75 1.025v13.5c-.845-.506-1.775-.858-2.75-1.025V4.18z"/>
-                        </svg>
-                        <span style="font-size:12px;margin-left:6px;font-weight:600;">Índice</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ===== CONTENIDO ===== -->
-            <div class="p-6 md:p-8 pt-0">
-
-                <!-- Label sección -->
-                <div class="section-label fade-in d1">Herramientas principales</div>
-
-                <!-- GRID CARDS -->
-                <main class="grid-container">
-
-                    <a href="gestion.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d2">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                            <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Gestión Tutorial</h2>
-                        <p class="text-neutral-300">Monitor de estudiantes, riesgos, fichas académicas y Power Apps.</p>
-                    </a>
-
-                    <a href="onboarding.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d3">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                           <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Onboarding y Comunicaciones</h2>
-                        <p class="text-neutral-300">Etapas y recursos para la impartición de cursos.</p>
-                    </a>
-
-                    <a href="control_calidad.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d4">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                            <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z"/></svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Control de calidad</h2>
-                        <p class="text-neutral-300">Formularios, incidencias y reportes de gestión de calidad.</p>
-                    </a>
-
-                    <a href="aplicaciones.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d2">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                            <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Aplicaciones y Sitio</h2>
-                        <p class="text-neutral-300">Acceso a plataformas y herramientas de trabajo diario.</p>
-                    </a>
-
-                    <a href="recursos_aprendizaje.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d3">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                            <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Recursos Aprendizaje</h2>
-                        <p class="text-neutral-300">Tutoriales, videos y material de capacitación.</p>
-                    </a>
-
-                    <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D" target="_blank" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d4">
-                        <div class="card-icon mb-4 flex items-center justify-center">
-                           <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a.562.562 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
-                        </div>
-                        <h2 class="text-xl font-bold accent-text mb-2">Chat de Equipo</h2>
-                        <p class="text-neutral-300">Acceso principal a la comunicación del equipo.</p>
-                    </a>
-
-                </main>
-
-                <!-- FILA INFERIOR -->
-                <div class="mt-10 mb-2">
-                    <div class="section-label fade-in d5">Accesos rápidos</div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-
-                    <a href="https://unabportal365.sharepoint.com/:u:/s/actasynrc/ESgqRzafDl1Hh1pgLXAnInEBcP1-PYT6znnd8MC_crXKiA?e=D4GMsq" target="_blank" class="block section-card rounded-2xl p-6 md:p-8 fade-in d6">
-                        <h2 class="text-2xl font-bold accent-text text-center mb-6">Calendario y eventos</h2>
-                        <div class="space-y-4">
-                            <div class="text-center bg-gray-700/50 p-3 rounded-lg">Calendarios y eventos</div>
-                            <div class="text-center bg-gray-700/50 p-3 rounded-lg">Ultimas Noticias</div>
-                        </div>
-                    </a>
-
-                    <div class="block section-card rounded-2xl p-6 md:p-8 fade-in d7">
-                        <h2 class="text-2xl font-bold accent-text text-center mb-6">Mi espacio personal</h2>
-                        <div class="space-y-4">
-                            <a href="https://outlook.office.com/mail/" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors">
-                                <span class="text-yellow-400 font-medium">Ir a mi Outlook</span>
-                            </a>
-                            <a href="https://outlook.office.com/calendar/" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors">
-                                <span class="text-yellow-400 font-medium">Ir a mi Calendario</span>
-                            </a>
-                            <a href="https://m365.cloud.microsoft/chat" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors">
-                                <span class="text-yellow-400 font-medium">Ir a Copilot</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx?csf=1&web=1&share=EanVT7Rn6MRCsBmeUWd5OoQBqwBra8NLdt04I9TOdnPDAQ&e=KWcs8J&CID=6062b0e1-d934-47a9-af7b-b7f58e08a4a7" target="_blank" class="block section-card rounded-2xl p-6 md:p-8 fade-in d8">
-                        <h2 class="text-2xl font-bold accent-text text-center mb-6">Conozca al equipo ETOP</h2>
-                        <div class="flex flex-wrap gap-4 justify-center">
-                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/FICHA_DANITZA_sxlcav.jpg" alt="Miembro del equipo" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
-                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/carolamonsalve_foto_ci5ekp.png" alt="Miembro del equipo" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
-                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/Beige_Modern_Greeting_Happy_Birthday_Card_en4aot.png" alt="Miembro del equipo" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
-                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752618/image_3_b8y9lw.png" alt="Miembro del equipo" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
-                        </div>
-                        <div class="text-center mt-6">
-                            <span class="inline-block accent-button font-bold py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105">
-                                Ver equipo completo &rarr;
-                            </span>
-                        </div>
-                    </a>
-
-                </div>
-
-                <footer class="text-center text-sm text-neutral-500 mt-8 pt-6 border-t border-slate-700/50 fade-in d9">
-                    <p>Ante dudas por favor comunicarse con el coordinador Patricio Collao al correo
-                       <a href="mailto:patricio.collao@unab.cl" class="accent-link hover:underline">patricio.collao@unab.cl</a>
-                    </p>
-                </footer>
-
+        <!-- HERO -->
+        <div class="hero fade-in d0">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="" class="hero-watermark" aria-hidden="true">
+            <div class="badge-online"><span class="badge-dot"></span>Sistema activo</div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                Portal de Herramientas<span class="accent-text"> y Recursos</span>
+            </h1>
+            <div class="hero-line"></div>
+            <p class="hero-tagline">Espacio centralizado de gestión, seguimiento y comunicación para el <strong style="color:rgba(255,255,255,0.7);">Equipo de Tutoría Online de Postgrado</strong></p>
+            <div class="hero-logos">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="hero-logo-img">
+                <div class="hero-logo-divider"></div>
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="Logo Unab Online" class="hero-logo-img">
+                <div class="hero-logo-divider"></div>
+                <a href="reporte_completo.html" title="Ver Índice Completo del Sitio" class="index-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M11.25 4.533A9.707 9.707 0 006 3.75a9.707 9.707 0 00-5.25.783v13.5a9.707 9.707 0 015.25-.783c1.94 0 3.73.525 5.25 1.433.845-.506 1.775-.858 2.75-1.025V4.18c-.975.167-1.905.519-2.75 1.025v-.672z"/><path d="M12.75 18.667v-13.84c.975-.506 1.905-.858 2.75-1.025v13.5c-.845.167-1.775.519-2.75 1.025zM16.5 4.18c.975.167 1.905.519 2.75 1.025v13.5c-.845-.506-1.775-.858-2.75-1.025V4.18z"/></svg>
+                    <span style="font-size:12px;margin-left:6px;font-weight:600;">Índice</span>
+                </a>
             </div>
         </div>
+
+        <!-- CONTENIDO -->
+        <div class="p-6 md:p-8 pt-0">
+
+            <!-- ANUNCIOS -->
+            <div class="fade-in d1" style="margin-bottom:24px;">
+                <div class="section-label">
+                    📢 Publicaciones del equipo
+                    <span class="ann-header-badge" id="ann-header-badge">Nuevo</span>
+                </div>
+                <div class="ann-grid" id="ann-grid">
+                    <div class="ann-loading">⏳ Cargando publicaciones...</div>
+                </div>
+            </div>
+
+            <!-- HERRAMIENTAS -->
+            <div class="section-label fade-in d2">Herramientas principales</div>
+            <main class="grid-container">
+                <a href="gestion.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d3">
+                    <div class="card-icon mb-4 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/></svg>
+                    </div>
+                    <h2 class="text-xl font-bold accent-text mb-2">Gestión Tutorial</h2>
+                    <p class="text-neutral-300">Monitor de estudiantes, riesgos, fichas académicas y Power Apps.</p>
+                </a>
+                <a href="onboarding.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d4">
+                    <div class="card-icon mb-4 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    </div>
+                    <h2 class="text-xl font-bold accent-text mb-2">Onboarding y Comunicaciones</h2>
+                    <p class="text-neutral-300">Etapas y recursos para la impartición de cursos.</p>
+                </a>
+                <a href="aplicaciones.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d5">
+                    <div class="card-icon mb-4 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    </div>
+                    <h2 class="text-xl font-bold accent-text mb-2">Aplicaciones y Sitio</h2>
+                    <p class="text-neutral-300">Acceso a plataformas y herramientas de trabajo diario.</p>
+                </a>
+                <a href="recursos_aprendizaje.html" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d3">
+                    <div class="card-icon mb-4 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    </div>
+                    <h2 class="text-xl font-bold accent-text mb-2">Recursos Aprendizaje</h2>
+                    <p class="text-neutral-300">Tutoriales, videos y material de capacitación.</p>
+                </a>
+                <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D" target="_blank" class="section-card rounded-xl p-6 text-center flex flex-col items-center justify-center fade-in d4">
+                    <div class="card-icon mb-4 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-yellow-400 card-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-2.138a.562.562 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+                    </div>
+                    <h2 class="text-xl font-bold accent-text mb-2">Chat de Equipo</h2>
+                    <p class="text-neutral-300">Acceso principal a la comunicación del equipo.</p>
+                </a>
+            </main>
+
+            <!-- ACCESOS RÁPIDOS -->
+            <div class="mt-8 mb-2"><div class="section-label fade-in d6">Accesos rápidos</div></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <a href="https://unabportal365.sharepoint.com/:u:/s/actasynrc/ESgqRzafDl1Hh1pgLXAnInEBcP1-PYT6znnd8MC_crXKiA?e=D4GMsq" target="_blank" class="block section-card rounded-2xl p-6 md:p-8 fade-in d7">
+                    <h2 class="text-2xl font-bold accent-text text-center mb-6">Calendario y eventos</h2>
+                    <div class="space-y-4">
+                        <div class="text-center bg-gray-700/50 p-3 rounded-lg">Calendarios y eventos</div>
+                        <div class="text-center bg-gray-700/50 p-3 rounded-lg">Ultimas Noticias</div>
+                    </div>
+                </a>
+                <div class="block section-card rounded-2xl p-6 md:p-8 fade-in d8">
+                    <h2 class="text-2xl font-bold accent-text text-center mb-6">Mi espacio personal</h2>
+                    <div class="space-y-4">
+                        <a href="https://outlook.office.com/mail/" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors"><span class="text-yellow-400 font-medium">Ir a mi Outlook</span></a>
+                        <a href="https://outlook.office.com/calendar/" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors"><span class="text-yellow-400 font-medium">Ir a mi Calendario</span></a>
+                        <a href="https://m365.cloud.microsoft/chat" target="_blank" class="block text-center bg-gray-700/50 p-3 rounded-lg hover:bg-gray-600/50 transition-colors"><span class="text-yellow-400 font-medium">Ir a Copilot</span></a>
+                    </div>
+                </div>
+                <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx?csf=1&web=1&share=EanVT7Rn6MRCsBmeUWd5OoQBqwBra8NLdt04I9TOdnPDAQ&e=KWcs8J" target="_blank" class="block section-card rounded-2xl p-6 md:p-8 fade-in d9">
+                    <h2 class="text-2xl font-bold accent-text text-center mb-6">Conozca al equipo ETOP</h2>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/FICHA_DANITZA_sxlcav.jpg" alt="" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
+                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/carolamonsalve_foto_ci5ekp.png" alt="" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
+                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/Beige_Modern_Greeting_Happy_Birthday_Card_en4aot.png" alt="" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
+                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752618/image_3_b8y9lw.png" alt="" class="h-16 w-16 object-cover rounded-full border-2 border-yellow-500">
+                    </div>
+                    <div class="text-center mt-6">
+                        <span class="inline-block accent-button font-bold py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105">Ver equipo completo &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <footer class="text-center text-sm text-neutral-500 mt-8 pt-6 border-t border-slate-700/50 fade-in d9">
+                <p>Ante dudas comunicarse con el coordinador Patricio Collao —
+                   <a href="mailto:patricio.collao@unab.cl" class="accent-link hover:underline">patricio.collao@unab.cl</a>
+                </p>
+            </footer>
+        </div>
     </div>
+</div>
 
-    <!-- FONDO ANIMADO -->
-    <script>
-    (function () {
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let W, H, particles = [];
-        const COUNT = 70;
-        function rand(a, b) { return a + Math.random() * (b - a); }
-        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-        function makeParticle() {
-            return { x: rand(0,W), y: rand(0,H), r: rand(1,2.2),
-                     vx: rand(-0.18,0.18), vy: rand(-0.14,0.14),
-                     alpha: rand(0.15,0.45), isYellow: Math.random() > 0.62 };
-        }
-        function init() { particles = []; for (let i=0;i<COUNT;i++) particles.push(makeParticle()); }
-        function drawLines() {
-            const DIST = 125;
-            for (let i=0;i<particles.length;i++) {
-                for (let j=i+1;j<particles.length;j++) {
-                    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-                    const d=Math.sqrt(dx*dx+dy*dy);
-                    if (d<DIST) {
-                        ctx.beginPath();
-                        ctx.strokeStyle=`rgba(250,204,21,${(1-d/DIST)*0.11})`;
-                        ctx.lineWidth=0.5;
-                        ctx.moveTo(particles[i].x,particles[i].y);
-                        ctx.lineTo(particles[j].x,particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-        function frame() {
-            ctx.clearRect(0,0,W,H);
-            drawLines();
-            for (const p of particles) {
-                p.x+=p.vx; p.y+=p.vy;
-                if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
-                if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
-                ctx.beginPath();
-                ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-                ctx.fillStyle=p.isYellow?`rgba(250,204,21,${p.alpha})`:`rgba(99,132,190,${p.alpha})`;
-                ctx.fill();
-            }
-            requestAnimationFrame(frame);
-        }
-        resize(); init(); frame();
-        window.addEventListener('resize',()=>{resize();init();});
-    })();
-    </script>
+<!-- BOTÓN ADMIN FLOTANTE -->
+<button class="admin-trigger" onclick="abrirAdmin()" title="Panel de administración">⚙️</button>
 
+<!-- OVERLAY ADMIN -->
+<div class="admin-overlay" id="admin-overlay">
+    <div class="admin-panel">
+
+        <!-- LOGIN -->
+        <div id="admin-login-section">
+            <h3>⚙️ Administración del Portal</h3>
+            <div class="admin-login">
+                <p>Ingresa la clave de coordinador para acceder</p>
+                <input type="password" id="admin-pass" class="admin-input" placeholder="Clave de acceso" onkeypress="if(event.key==='Enter')verificarClave()">
+                <button class="btn-publicar" onclick="verificarClave()">Ingresar</button>
+                <button class="btn-cancelar" onclick="cerrarAdmin()">Cancelar</button>
+                <div id="login-status" class="status-msg"></div>
+            </div>
+        </div>
+
+        <!-- EDITOR -->
+        <div id="admin-editor-section" style="display:none;">
+            <h3>📢 Nueva Publicación</h3>
+
+            <input type="text" id="ann-titulo" class="admin-input" placeholder="Título del anuncio *">
+
+            <div class="admin-row">
+                <select id="ann-tipo" class="admin-input">
+                    <option value="aviso">📋 Aviso</option>
+                    <option value="info">ℹ️ Info</option>
+                    <option value="logro">🏆 Logro</option>
+                    <option value="urgente">🚨 Urgente</option>
+                </select>
+                <input type="text" id="ann-autor" class="admin-input" placeholder="Tu nombre *">
+            </div>
+
+            <div class="editor-toolbar">
+                <button class="editor-btn" onclick="fmt('bold')" title="Negrita"><b>N</b></button>
+                <button class="editor-btn" onclick="fmt('italic')" title="Cursiva"><i>K</i></button>
+                <button class="editor-btn" onclick="fmt('underline')" title="Subrayado"><u>S</u></button>
+                <button class="editor-btn" onclick="fmtBlock('h3')" title="Título">T</button>
+                <button class="editor-btn" onclick="fmt('insertUnorderedList')" title="Lista">• Lista</button>
+                <button class="editor-btn" onclick="fmt('insertOrderedList')" title="Lista numerada">1. Lista</button>
+                <button class="editor-btn" onclick="insertLink()" title="Enlace">🔗</button>
+                <button class="editor-btn" onclick="insertImagen()" title="Imagen">🖼️</button>
+            </div>
+            <div id="ann-cuerpo" class="editor-area" contenteditable="true" placeholder="Escribe el contenido del anuncio aquí..."></div>
+
+            <input type="text" id="ann-imagen" class="admin-input" placeholder="URL de imagen (opcional) — pega el link de la imagen">
+
+            <div id="publish-status" class="status-msg"></div>
+            <button class="btn-publicar" id="btn-pub" onclick="publicarAnuncio()">📢 Publicar anuncio</button>
+            <button class="btn-cancelar" onclick="cerrarAdmin()">Cancelar</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ─────────────────────────────────────────────
+const FLOW_LEER    = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/033d4b3364af4f0394cabafbbf59c300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LEoBoI-3mLGoahjIBsuu7r32jhnFp1RlrgVtDTjB9V0';
+const FLOW_CREAR   = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/879689098af34bea90d8edcc323c335d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xKKyWbfkMX0sYeZo3wE-IsDDhTqsZc_v1Q1EuByaU4k';
+const ADMIN_PASS   = 'etop2025';
+const STORAGE_KEY  = 'etop_anuncios_leidos';
+
+// ── BADGE NO LEÍDOS ───────────────────────────────────────────
+function getLeidosIds() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function marcarLeido(id) {
+    const leidos = getLeidosIds();
+    if (!leidos.includes(id)) { leidos.push(id); localStorage.setItem(STORAGE_KEY, JSON.stringify(leidos)); }
+}
+
+// ── CARGAR ANUNCIOS ───────────────────────────────────────────
+async function cargarAnuncios() {
+    const grid = document.getElementById('ann-grid');
+    try {
+        const r = await fetch(FLOW_LEER, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+        if (!r.ok) throw new Error('Error ' + r.status);
+        const data = await r.json();
+
+        const items = data.value || data || [];
+        const leidos = getLeidosIds();
+        let hayNuevos = false;
+
+        if (!items.length) {
+            grid.innerHTML = '<div class="ann-loading" style="color:#475569;">No hay publicaciones aún.</div>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        items.slice(0, 4).forEach(item => {
+            const id    = String(item.ID || item.Id || item.id || '');
+            const tipo  = (item.TipoAnuncio || 'aviso').toLowerCase();
+            const esNuevo = !leidos.includes(id);
+            if (esNuevo) hayNuevos = true;
+
+            const tipoLabel = { aviso:'📋 Aviso', info:'ℹ️ Info', logro:'🏆 Logro', urgente:'🚨 Urgente' }[tipo] || '📋 Aviso';
+            const fecha = item.FechaPublicacion ? new Date(item.FechaPublicacion).toLocaleDateString('es-CL', { day:'numeric', month:'short' }) : '';
+            const imgHTML = item.ImagenURL ? `<img src="${item.ImagenURL}" style="max-width:100%;border-radius:6px;margin-top:8px;" onerror="this.style.display='none'">` : '';
+
+            const card = document.createElement('div');
+            card.className = `ann-card ${tipo}`;
+            card.innerHTML = `
+                ${esNuevo ? '<span class="ann-new-badge">Nuevo</span>' : ''}
+                <span class="ann-badge ${tipo}">${tipoLabel}</span>
+                <div class="ann-title">${item.Titulo || 'Sin título'}</div>
+                <div class="ann-body">${item.Cuerpo || ''}${imgHTML}</div>
+                <div class="ann-footer">
+                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" class="ann-avatar" alt="">
+                    <span class="ann-author">${item.Autor || 'ETOP'}</span>
+                    <span class="ann-date">${fecha}</span>
+                </div>`;
+
+            card.addEventListener('click', () => {
+                marcarLeido(id);
+                card.querySelector('.ann-new-badge')?.remove();
+                actualizarBadgeHeader();
+            });
+
+            grid.appendChild(card);
+        });
+
+        actualizarBadgeHeader();
+
+    } catch(e) {
+        grid.innerHTML = `<div class="ann-loading" style="color:#475569;">No se pudieron cargar las publicaciones.</div>`;
+    }
+}
+
+function actualizarBadgeHeader() {
+    const badge = document.getElementById('ann-header-badge');
+    const nuevos = document.querySelectorAll('.ann-new-badge').length;
+    if (nuevos > 0) { badge.textContent = `${nuevos} nuevo${nuevos>1?'s':''}`; badge.style.display='inline-block'; }
+    else { badge.style.display='none'; }
+}
+
+// ── PANEL ADMIN ───────────────────────────────────────────────
+function abrirAdmin() { document.getElementById('admin-overlay').classList.add('open'); }
+function cerrarAdmin() {
+    document.getElementById('admin-overlay').classList.remove('open');
+    document.getElementById('admin-login-section').style.display = 'block';
+    document.getElementById('admin-editor-section').style.display = 'none';
+    document.getElementById('admin-pass').value = '';
+    setStatus('login-status', '', '');
+}
+
+function verificarClave() {
+    const pass = document.getElementById('admin-pass').value;
+    if (pass === ADMIN_PASS) {
+        document.getElementById('admin-login-section').style.display = 'none';
+        document.getElementById('admin-editor-section').style.display = 'block';
+    } else {
+        setStatus('login-status', 'Clave incorrecta', 'err');
+    }
+}
+
+// ── EDITOR ────────────────────────────────────────────────────
+function fmt(cmd) { document.getElementById('ann-cuerpo').focus(); document.execCommand(cmd, false, null); }
+function fmtBlock(tag) { document.getElementById('ann-cuerpo').focus(); document.execCommand('formatBlock', false, tag); }
+function insertLink() {
+    const url = prompt('URL del enlace:');
+    if (url) { document.getElementById('ann-cuerpo').focus(); document.execCommand('createLink', false, url); }
+}
+function insertImagen() {
+    const url = prompt('URL de la imagen:');
+    if (url) { document.getElementById('ann-cuerpo').focus(); document.execCommand('insertImage', false, url); }
+}
+
+// ── PUBLICAR ──────────────────────────────────────────────────
+async function publicarAnuncio() {
+    const titulo  = document.getElementById('ann-titulo').value.trim();
+    const cuerpo  = document.getElementById('ann-cuerpo').innerHTML.trim();
+    const tipo    = document.getElementById('ann-tipo').value;
+    const autor   = document.getElementById('ann-autor').value.trim();
+    const imagen  = document.getElementById('ann-imagen').value.trim();
+
+    if (!titulo || !autor) { setStatus('publish-status', 'El título y el autor son obligatorios', 'err'); return; }
+    if (!cuerpo || cuerpo === '<br>') { setStatus('publish-status', 'El contenido no puede estar vacío', 'err'); return; }
+
+    const btn = document.getElementById('btn-pub');
+    btn.disabled = true;
+    setStatus('publish-status', '⏳ Publicando...', 'loading');
+
+    try {
+        const r = await fetch(FLOW_CREAR, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                Titulo: titulo,
+                Cuerpo: cuerpo,
+                TipoAnuncio: tipo,
+                Autor: autor,
+                ImagenURL: imagen,
+                FechaPublicacion: new Date().toISOString()
+            })
+        });
+        if (!r.ok) throw new Error('Error ' + r.status);
+        setStatus('publish-status', '✅ ¡Publicado correctamente! El equipo recibirá notificación.', 'ok');
+        document.getElementById('ann-titulo').value = '';
+        document.getElementById('ann-cuerpo').innerHTML = '';
+        document.getElementById('ann-imagen').value = '';
+        setTimeout(() => { cerrarAdmin(); cargarAnuncios(); }, 2000);
+    } catch(e) {
+        setStatus('publish-status', '❌ Error al publicar. Intenta nuevamente.', 'err');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+function setStatus(id, msg, tipo) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status-msg ' + tipo;
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+cargarAnuncios();
+
+// ── FONDO ANIMADO ─────────────────────────────────────────────
+(function(){
+    const canvas=document.getElementById('bg-canvas');
+    const ctx=canvas.getContext('2d');
+    let W,H,particles=[];
+    const COUNT=70;
+    function rand(a,b){return a+Math.random()*(b-a);}
+    function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+    function makeParticle(){return{x:rand(0,W),y:rand(0,H),r:rand(1,2.2),vx:rand(-0.18,0.18),vy:rand(-0.14,0.14),alpha:rand(0.15,0.45),isYellow:Math.random()>0.62};}
+    function init(){particles=[];for(let i=0;i<COUNT;i++)particles.push(makeParticle());}
+    function drawLines(){const DIST=125;for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;const d=Math.sqrt(dx*dx+dy*dy);if(d<DIST){ctx.beginPath();ctx.strokeStyle=`rgba(250,204,21,${(1-d/DIST)*0.11})`;ctx.lineWidth=0.5;ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();}}}}
+    function frame(){ctx.clearRect(0,0,W,H);drawLines();for(const p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.isYellow?`rgba(250,204,21,${p.alpha})`:`rgba(99,132,190,${p.alpha})`;ctx.fill();}requestAnimationFrame(frame);}
+    resize();init();frame();
+    window.addEventListener('resize',()=>{resize();init();});
+})();
+</script>
 </body>
 </html>
