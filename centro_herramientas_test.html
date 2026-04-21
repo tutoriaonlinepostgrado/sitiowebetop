@@ -937,8 +937,6 @@ function procesarAlumnoPotencial(rawRows, params) {
   const idxRut    = findIdx('RUT (Alumno Potencial)');
   const idxDv     = findIdx('DV (Alumno Potencial)');
   const idxNombre = findIdx('Nombre (Alumno Potencial)');
-  const idxApPat  = findIdx('Apellido Paterno (Alumno Potencial)');
-  const idxApMat  = findIdx('Apellido Materno (Alumno Potencial)');
   const idxCorreo = findIdx('Correo Electrónico', 'Correo Electronico', 'correo electrónico');
 
   const salida = [];
@@ -957,13 +955,9 @@ function procesarAlumnoPotencial(rawRows, params) {
     const dvVal   = idxDv  !== -1 ? String(row[idxDv] ||'').replace('.0','').trim().toUpperCase() : '';
     const rut = (rutBase && dvVal) ? `${rutBase}-${dvVal}` : rutBase;
 
-    // Nombre completo: Nombre + Apellido Paterno + Apellido Materno
-    const partesNombre = [
-      idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '',
-      idxApPat  !== -1 ? String(row[idxApPat] ||'').trim() : '',
-      idxApMat  !== -1 ? String(row[idxApMat] ||'').trim() : ''
-    ].filter(p => p && p.toLowerCase() !== 'nan');
-    const nombre = partesNombre.join(' ').trim().toUpperCase();
+    // Nombre completo: la columna "Nombre (Alumno Potencial)" ya trae nombre + apellidos completos
+    const nombreRaw = idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '';
+    const nombre = (nombreRaw && nombreRaw.toLowerCase() !== 'nan') ? nombreRaw.toUpperCase() : '';
 
     const fila = {
       'Columna1':                     salida.length + 1,
