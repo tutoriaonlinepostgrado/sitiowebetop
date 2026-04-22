@@ -66,6 +66,15 @@
     .status-msg.ok  { background:rgba(34,197,94,0.15); color:#4ade80; display:block; }
     .status-msg.err { background:rgba(239,68,68,0.15); color:#f87171; display:block; }
     .status-msg.loading { background:rgba(59,130,246,0.15); color:#60a5fa; display:block; }
+
+    /* CANAL ACCESO RÁPIDO */
+    .canal-quick { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:6px; background:rgba(124,77,255,0.06); border:1px solid transparent; text-decoration:none; transition:all 0.18s; margin-bottom:4px; }
+    .canal-quick:hover { background:rgba(124,77,255,0.15); border-color:rgba(124,77,255,0.3); }
+    .canal-quick .canal-left { display:flex; align-items:center; gap:8px; }
+    .canal-badge { width:20px; height:20px; background:#6264a7; border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .canal-badge span { color:white; font-weight:900; font-size:11px; font-family:'Segoe UI',sans-serif; }
+    .canal-nombre { font-size:11px; font-weight:500; color:#c4b5fd; }
+    .canal-arrow { font-size:10px; color:#6264a7; }
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
@@ -109,6 +118,10 @@
         <nav class="flex-1 space-y-0.5 overflow-y-auto">
             <a href="gestion.html" class="flex items-center gap-4 px-6 py-3 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
                 <span class="material-symbols-outlined">dashboard</span>Gestión Tutorial
+            </a>
+            <!-- CAMBIO 3: Enlace a Espacio Coordinación -->
+            <a href="gestion_coordinacion.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+                <span class="material-symbols-outlined">account_balance</span>Coordinación
             </a>
             <a href="onboarding.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">person_add</span>Onboarding
@@ -179,107 +192,138 @@
         <!-- ZONA HERRAMIENTAS (derecha 35%) -->
         <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
 
-            <!-- Lanzador herramientas -->
+            <!-- CAMBIO 4: Lanzador herramientas — solo los marcados en rojo + Correo + Recursos -->
             <div class="glass-panel rounded-xl p-5 flex-shrink-0">
                 <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Lanzador de Herramientas</h4>
                 <div class="grid grid-cols-3 gap-3">
-                    <a href="gestion.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                    <!-- Mesa de Servicios UNAB (marcado) -->
+                    <a href="https://unab.service-now.com/" target="_blank" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
-                            <span class="material-symbols-outlined text-xl">dashboard</span>
+                            <span class="material-symbols-outlined text-xl">headset_mic</span>
                         </div>
-                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Gestión</span>
+                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">Mesa UNAB</span>
                     </a>
-                    <a href="onboarding.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                    <!-- Teams (marcado) -->
+                    <a href="https://teams.microsoft.com" target="_blank" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
-                            <span class="material-symbols-outlined text-xl">person_add</span>
+                            <span class="material-symbols-outlined text-xl">groups</span>
                         </div>
-                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Onboarding</span>
+                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Teams</span>
                     </a>
-                    <a href="aplicaciones.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                    <!-- UNAB Online (marcado) -->
+                    <a href="https://online.unab.cl" target="_blank" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
-                            <span class="material-symbols-outlined text-xl">apps</span>
+                            <span class="material-symbols-outlined text-xl">language</span>
                         </div>
-                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Apps</span>
+                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">UNAB Online</span>
                     </a>
-                    <a href="recursos_aprendizaje.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                    <!-- Plataforma Canvas (marcado) -->
+                    <a href="https://canvas.unab.cl" target="_blank" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
-                            <span class="material-symbols-outlined text-xl">school</span>
+                            <span class="material-symbols-outlined text-xl">edit_note</span>
                         </div>
-                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Recursos</span>
+                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Canvas</span>
                     </a>
+                    <!-- Correo (mantenido) -->
                     <a href="https://outlook.office.com/mail/" target="_blank" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-xl">mail</span>
                         </div>
                         <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Correo</span>
                     </a>
-                    <a href="gestion_coordinacion.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
+                    <!-- Recursos (mantenido) -->
+                    <a href="recursos_aprendizaje.html" class="flex flex-col items-center gap-1.5 group cursor-pointer">
                         <div class="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
-                            <span class="material-symbols-outlined text-xl">analytics</span>
+                            <span class="material-symbols-outlined text-xl">school</span>
                         </div>
-                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Coordinación</span>
+                        <span class="text-[10px] font-medium text-slate-400 group-hover:text-white text-center">Recursos</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Accesos rápidos -->
+            <!-- CAMBIO 1: Accesos Rápidos → Canales de Teams -->
             <div class="glass-panel rounded-xl p-5 flex-1 flex flex-col overflow-hidden">
-                <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Accesos Rápidos</h4>
-                <div class="space-y-2 overflow-y-auto custom-scrollbar flex-1">
-                    <a href="https://unabportal365.sharepoint.com/:u:/s/actasynrc/ESgqRzafDl1Hh1pgLXAnInEBcP1-PYT6znnd8MC_crXKiA?e=D4GMsq" target="_blank" class="flex items-center justify-between p-2.5 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm text-slate-400">calendar_month</span>
-                            <span class="text-xs font-medium text-slate-200">Calendario y eventos</span>
+                <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Canales del Equipo</h4>
+                <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
+                    <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Medicina</span>
                         </div>
-                        <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
+                        <span class="canal-arrow">↗</span>
                     </a>
-                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx" target="_blank" class="flex items-center justify-between p-2.5 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm text-slate-400">group</span>
-                            <span class="text-xs font-medium text-slate-200">Equipo ETOP</span>
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Ed. y Cs. Sociales Innovado</span>
                         </div>
-                        <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
+                        <span class="canal-arrow">↗</span>
                     </a>
-                    <a href="https://m365.cloud.microsoft/chat" target="_blank" class="flex items-center justify-between p-2.5 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm text-slate-400">smart_toy</span>
-                            <span class="text-xs font-medium text-slate-200">Copilot M365</span>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=tBMSF9&id=%2Fsites%2Factasynrc%2DECONOMA%5FINNOVADO%2FDocumentos%20compartidos%2FECONOM%C3%8DA%5FINNOVADO" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Economía Innovado</span>
                         </div>
-                        <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
+                        <span class="canal-arrow">↗</span>
                     </a>
-                    <a href="https://outlook.office.com/calendar/" target="_blank" class="flex items-center justify-between p-2.5 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm text-slate-400">event</span>
-                            <span class="text-xs font-medium text-slate-200">Mi Calendario</span>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=Jobu49&id=%2Fsites%2Factasynrc%2DINGENIERIA%2FDocumentos%20compartidos%2FINGENIERIA" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Ingeniería</span>
                         </div>
-                        <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
+                        <span class="canal-arrow">↗</span>
                     </a>
-                    <a href="reporte_completo.html" class="flex items-center justify-between p-2.5 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm text-slate-400">menu_book</span>
-                            <span class="text-xs font-medium text-slate-200">Índice del sitio</span>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=2zYXgS&id=%2Fsites%2Factasynrc%2DENFERMERIA%5FINNOVADO%2FDocumentos%20compartidos%2FENFERMERIA%5FINNOVADO" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Enfermería Innovado</span>
                         </div>
-                        <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
+                        <span class="canal-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Ed. y Cs. Sociales</span>
+                        </div>
+                        <span class="canal-arrow">↗</span>
+                    </a>
+                    <a href="https://unabportal365.sharepoint.com/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=ubsBcK&id=%2Fsites%2Factasynrc%2DCIENCIAS%5FDE%5FLA%5FREHABILITACIN%2FDocumentos%20compartidos%2FCIENCIAS%20%5FDE%5FLA%20%5FREHABILITACI%C3%93N" target="_blank" class="canal-quick">
+                        <div class="canal-left">
+                            <div class="canal-badge"><span>T</span></div>
+                            <span class="canal-nombre">Cs. de la Rehabilitación</span>
+                        </div>
+                        <span class="canal-arrow">↗</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Equipo -->
-            <div class="glass-panel rounded-xl p-4 flex items-center justify-between flex-shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="flex -space-x-2">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/FICHA_DANITZA_sxlcav.jpg" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/carolamonsalve_foto_ci5ekp.png" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
-                        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752618/image_3_b8y9lw.png" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
-                        <div class="w-8 h-8 rounded-full border-2 border-[#1f2940] bg-[#facc15]/20 flex items-center justify-center text-[#facc15] text-[9px] font-bold">+</div>
+            <!-- CAMBIO 2: Widget Equipo — ahora con botón Equipo ETOP integrado + acciones -->
+            <div class="glass-panel rounded-xl p-4 flex-shrink-0">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/FICHA_DANITZA_sxlcav.jpg" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
+                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752587/carolamonsalve_foto_ci5ekp.png" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
+                            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760752618/image_3_b8y9lw.png" class="w-8 h-8 rounded-full border-2 border-[#1f2940] object-cover" alt="">
+                            <div class="w-8 h-8 rounded-full border-2 border-[#1f2940] bg-[#facc15]/20 flex items-center justify-center text-[#facc15] text-[9px] font-bold">+</div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-white">Equipo ETOP</p>
+                            <p class="text-[10px] text-[#facc15] font-medium">Ver perfil completo →</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold text-white">Equipo ETOP</p>
-                        <p class="text-[10px] text-[#facc15] font-medium">Ver perfil completo →</p>
-                    </div>
+                    <a href="mailto:patricio.collao@unab.cl" class="p-2 hover:bg-white/10 rounded-full text-slate-400 transition-colors">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                    </a>
                 </div>
-                <a href="mailto:patricio.collao@unab.cl" class="p-2 hover:bg-white/10 rounded-full text-slate-400 transition-colors">
-                    <span class="material-symbols-outlined text-lg">mail</span>
+                <!-- Botón Equipo ETOP movido desde Accesos Rápidos -->
+                <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx" target="_blank"
+                   class="flex items-center justify-between p-2 rounded bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all w-full">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-slate-400">group</span>
+                        <span class="text-[11px] font-medium text-slate-300">Ver página del Equipo ETOP</span>
+                    </div>
+                    <span class="material-symbols-outlined text-xs text-slate-600">open_in_new</span>
                 </a>
             </div>
         </div>
@@ -396,7 +440,6 @@ async function cargarAnuncios() {
             return;
         }
         const leidos = getLeidosIds();
-        // Destacado — primer item
         const feat = items[0];
         const featTipo = (feat.TipoAnuncio?.Value||feat.TipoAnuncio||'aviso').toLowerCase();
         const featCfg = TIPO_CONFIG[featTipo] || TIPO_CONFIG.aviso;
@@ -408,7 +451,6 @@ async function cargarAnuncios() {
         document.getElementById('feat-autor').textContent = (feat.Autor||'ETOP') + (feat.FechaPublicacion ? ' · ' + new Date(feat.FechaPublicacion).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '');
         document.getElementById('ann-featured').style.borderLeftColor = featCfg.color;
 
-        // Grid — resto de items
         const grid = document.getElementById('ann-grid');
         grid.innerHTML = '';
         items.slice(1, 7).forEach(item => {
