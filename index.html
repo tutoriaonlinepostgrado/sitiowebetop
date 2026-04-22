@@ -552,9 +552,13 @@ async function cargarAnuncios() {
             const cfg = TIPO_CONFIG[tipoRaw] || TIPO_CONFIG.aviso;
             const esNuevo = !leidos.includes(id);
             const fecha = item.FechaPublicacion ? new Date(item.FechaPublicacion).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '';
-            const cuerpoTexto = (item.Cuerpo||'').replace(/<[^>]*>/g,'').trim().substring(0,120);
+            // FIX: SharePoint devuelve Title (inglés) o Titulo (español) — soportar ambos
+            const tituloItem = item.Title || item.Titulo || 'Sin título';
+            // Cuerpo completo sin truncar — el card se expande
+            const cuerpoTexto = (item.Cuerpo||'').replace(/<[^>]*>/g,'').trim();
             const card = document.createElement('div');
-            card.className = 'glass-panel rounded-lg p-4 border-l-4 transition-transform hover:-translate-y-1 cursor-pointer relative';
+            // Sin altura fija — se expande según contenido
+            card.className = 'glass-panel rounded-lg p-4 border-l-4 cursor-pointer relative flex-shrink-0';
             card.style.borderLeftColor = cfg.color;
             card.innerHTML = `
                 ${esNuevo ? `<span class="ann-new-badge absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full">Nuevo</span>` : ''}
@@ -562,8 +566,8 @@ async function cargarAnuncios() {
                     <span class="text-[9px] font-bold uppercase tracking-widest" style="color:${cfg.color}">${cfg.label}</span>
                     <span class="text-[9px] text-slate-500">${fecha}</span>
                 </div>
-                <h3 class="font-bold text-white text-xs mb-1.5 leading-snug">${item.Titulo||'Sin título'}</h3>
-                <p class="text-slate-400 text-[11px] leading-relaxed">${cuerpoTexto}${cuerpoTexto.length>=120?'...':''}</p>
+                <h3 class="font-bold text-white text-xs mb-1.5 leading-snug">${tituloItem}</h3>
+                <p class="text-slate-400 text-[11px] leading-relaxed">${cuerpoTexto}</p>
                 <div class="mt-2 pt-2 border-t border-white/5">
                     <span class="text-[9px] text-slate-600">${item.Autor||'ETOP'}</span>
                 </div>`;
