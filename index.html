@@ -222,7 +222,7 @@
         <!-- ZONA IZQUIERDA (col-span-8) -->
         <div class="col-span-8 flex flex-col gap-4 overflow-hidden">
 
-            <!-- BANNER HERO con imagen + título Portal ETOP -->
+            <!-- BANNER HERO -->
             <div class="banner-hero h-48 flex-shrink-0">
                 <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png"
                      alt="Portal ETOP Banner"
@@ -235,9 +235,46 @@
                 </div>
             </div>
 
-            <!-- Grid anuncios -->
-            <div id="ann-grid" class="grid grid-cols-2 gap-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
-                <div class="glass-panel rounded-lg p-5 col-span-2 text-center text-slate-500 text-sm">⏳ Cargando publicaciones...</div>
+            <!-- Grid anuncios + video + gráfico -->
+            <div class="grid grid-cols-2 gap-4 flex-1 overflow-y-auto custom-scrollbar pr-1" id="ann-grid-wrapper">
+
+                <!-- Anuncios dinámicos (se insertan aquí por JS) -->
+                <div id="ann-grid" class="contents">
+                    <div class="glass-panel rounded-lg p-5 col-span-2 text-center text-slate-500 text-sm">⏳ Cargando publicaciones...</div>
+                </div>
+
+                <!-- VIDEO Manual de Apoyo Estudiantil -->
+                <div class="glass-panel rounded-xl overflow-hidden flex-shrink-0" style="min-height:200px;">
+                    <div class="px-3 pt-3 pb-1 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-[#facc15]">play_circle</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Manual de Apoyo Estudiantil</span>
+                    </div>
+                    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+                        <iframe
+                            src="https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/embed.aspx?UniqueId=a92a8c30-61cc-4cce-bfc0-4cc9adf79103&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+                            allowfullscreen
+                            title="Manual de Apoyo Estudiantil">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO Power BI — Estudiantes por Facultad -->
+                <div class="glass-panel rounded-xl overflow-hidden flex-shrink-0" style="min-height:200px;">
+                    <div class="px-3 pt-3 pb-1 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-[#facc15]">donut_large</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Estudiantes por Facultad</span>
+                    </div>
+                    <div style="position:relative;padding-bottom:calc(56.25% - 28px);height:0;overflow:hidden;">
+                        <iframe
+                            src="https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=118422f7b080b505c14b&navContentPaneEnabled=false&filterPaneEnabled=false"
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+                            allowfullscreen
+                            title="Estudiantes por Facultad">
+                        </iframe>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -506,7 +543,8 @@ async function cargarAnuncios() {
         if (!items.length) { grid.innerHTML = ''; return; }
         const leidos = getLeidosIds();
         grid.innerHTML = '';
-        items.slice(0, 6).forEach(item => {
+        // Solo 2 anuncios — video y gráfico ocupan las otras 2 celdas del grid 2x2
+        items.slice(0, 2).forEach(item => {
             const id = String(item.ID||item.Id||'');
             const tipoRaw = (item.TipoAnuncio?.Value||item.TipoAnuncio||'aviso').toLowerCase();
             const cfg = TIPO_CONFIG[tipoRaw] || TIPO_CONFIG.aviso;
