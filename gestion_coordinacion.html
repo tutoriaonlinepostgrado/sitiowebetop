@@ -79,6 +79,7 @@
 
         <div class="sidebar-menu">
             <div class="menu-category">Espacio Coordinación</div>
+            <button class="menu-btn" onclick="cargar('BASE_COORDINACION', this)">📊 Base Madre Coordinación</button>
             <button class="menu-btn active" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
             <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
@@ -141,6 +142,7 @@
     }
 
     const misReportes = {
+        'BASE_COORDINACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9740492cd2050949826e&navContentPaneEnabled=false&filterPaneEnabled=false",
         'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
         'REPORTE_INDUCCION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
@@ -154,6 +156,7 @@
     };
 
     const titulosVista = {
+        'BASE_COORDINACION': 'Base Madre Coordinación',
         'DASHBOARD_MACRO': 'Dashboard Macro Facultades',
         'REPORTE_INDUCCION': 'Reporte Inducción',
         'CARGA_TUTORIAL': 'Carga Tutorial',
