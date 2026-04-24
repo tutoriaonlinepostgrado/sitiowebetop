@@ -1,720 +1,723 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestión QA2 — ETOP</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
-<style>
-  :root {
-    --bg:#f0f2f5;--surface:#fff;--surface2:#f8f9fb;--border:#e2e5ea;
-    --navy:#19202E;--navy-light:#2a3447;--accent:#3B7DD8;--accent-light:#EBF2FF;
-    --pendiente:#E8A020;--pendiente-bg:#FFF8EC;
-    --con-incidencia:#C0392B;--con-incidencia-bg:#FDECEA;
-    --corregida:#1E8C45;--corregida-bg:#EAF7EF;
-    --no-aplica:#6B7280;--no-aplica-bg:#F3F4F6;
-    --text-primary:#19202E;--text-secondary:#5a6478;--text-muted:#9ca3af;
-    --shadow-sm:0 1px 3px rgba(0,0,0,0.08);--shadow-md:0 4px 16px rgba(0,0,0,0.10);
-    --shadow-lg:0 8px 32px rgba(0,0,0,0.13);--radius:10px;--radius-sm:6px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Incidencias QA2 - ETOP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-authentication-library-for-js/2.38.4/msal.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        .login-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1000;
+        }
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .qa-badge {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+        }
+        .login-card h1 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .login-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+        .btn-login:active { transform: translateY(0); }
+        .helper-text {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+        .error-box {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #dc2626;
+            font-size: 13px;
+            display: none;
+        }
+        .error-box.show { display: block; }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* LOGIN */
-  .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);}
-  .login-card{background:white;border-radius:16px;padding:48px 40px;text-align:center;max-width:400px;width:90%;box-shadow:var(--shadow-lg);}
-  .login-logo{width:64px;height:64px;background:var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:white;margin:0 auto 20px;}
-  .login-title{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px;}
-  .login-sub{font-size:14px;color:var(--text-secondary);margin-bottom:32px;line-height:1.5;}
-  .login-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
-  .login-btn:hover{background:var(--navy);}
-  .login-btn:disabled{opacity:0.6;cursor:not-allowed;}
-  .login-note{font-size:11px;color:var(--text-muted);margin-top:16px;}
-  .login-error{background:#FDECEA;border:1px solid #e8a0a0;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--con-incidencia);margin-top:16px;display:none;text-align:left;}
-  .login-error.show{display:block;}
+        /* APP LAYOUT */
+        .app-container {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+        }
+        .app-container.active { display: flex; }
+        .topbar {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .topbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .topbar-stats {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #dc2626; }
 
-  /* TOPBAR */
-  .topbar{background:var(--navy);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
-  .topbar-left{display:flex;align-items:center;gap:12px;}
-  .topbar-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;}
-  .topbar-title{font-size:15px;font-weight:600;color:white;}
-  .topbar-sub{font-size:11px;color:#8a96a8;margin-top:1px;}
-  .topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .topbar-badge{background:rgba(255,255,255,0.1);color:#c8d0dc;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);}
-  .topbar-user{font-size:11px;color:#7a8599;}
-  .logout-btn{font-size:11px;color:#7a8599;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
-  .logout-btn:hover{color:white;border-color:rgba(255,255,255,0.3);}
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 280px;
+            background: #0f172a;
+            border-right: 1px solid #334155;
+            overflow-y: auto;
+            padding: 12px;
+            flex-shrink: 0;
+        }
+        .nrc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .nrc-item {
+            padding: 10px 12px;
+            background: #1e293b;
+            border-left: 3px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        .nrc-item:hover { background: #334155; }
+        .nrc-item.active {
+            background: #3b82f6;
+            border-left-color: #1e40af;
+            color: white;
+            font-weight: 600;
+        }
+        .nrc-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
 
-  /* LAYOUT */
-  .layout{display:flex;height:calc(100vh - 56px);}
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        .filters {
+            padding: 16px;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .filter-row:last-child { margin-bottom: 0; }
+        input[type="text"], input[type="date"] {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        input[type="text"]:focus, input[type="date"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .btn-clear {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-clear:hover { background: #dc2626; }
 
-  /* SIDEBAR */
-  .sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-  .sidebar-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);}
-  .sidebar-header h3{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-  .search-box{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;}
-  .search-box input{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-primary);outline:none;width:100%;}
-  .date-filter-row{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:5px;}
-  .date-filter-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
-  .date-filter-controls{display:flex;align-items:center;gap:6px;}
-  .date-input{flex:1;font-family:'DM Sans',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;background:var(--surface2);color:var(--text-primary);outline:none;}
-  .date-input:focus{border-color:var(--accent);}
-  .date-sep{font-size:11px;color:var(--text-muted);flex-shrink:0;}
-  .date-clear-btn{font-size:11px;color:var(--text-muted);background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-  .date-clear-btn:hover{color:var(--con-incidencia);border-color:var(--con-incidencia);}
-  .filter-row{display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-  .filter-chip{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);transition:all 0.15s;}
-  .filter-chip.active{background:var(--navy);color:white;border-color:var(--navy);}
-  .filter-chip.con-inc.active{background:var(--con-incidencia);border-color:var(--con-incidencia);}
-  .filter-chip.pendiente.active{background:var(--pendiente);border-color:var(--pendiente);}
-  .filter-chip.corregida.active{background:var(--corregida);border-color:var(--corregida);}
-  .sidebar-list{overflow-y:auto;flex:1;padding:8px 0;}
-  .nrc-item{padding:12px 20px;cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;display:flex;flex-direction:column;gap:4px;}
-  .nrc-item:hover{background:var(--surface2);}
-  .nrc-item.active{background:var(--accent-light);border-left-color:var(--accent);}
-  .nrc-item-code{font-size:12px;font-family:'DM Mono',monospace;font-weight:500;}
-  .nrc-item-name{font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .nrc-item-meta{display:flex;align-items:center;gap:6px;margin-top:2px;}
-  .count-dot{width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .dot-red{background:var(--con-incidencia-bg);color:var(--con-incidencia);}
-  .dot-yellow{background:var(--pendiente-bg);color:var(--pendiente);}
-  .dot-green{background:var(--corregida-bg);color:var(--corregida);}
+        .incidents-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .incident-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .incident-card:hover { border-color: #3b82f6; background: #1e293b; }
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        .incident-title {
+            font-weight: 700;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+        .incident-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-corrected { background: #d1fae5; color: #065f46; }
+        .incident-body {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .incident-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+        }
+        select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            flex: 1;
+        }
+        .btn-save {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-save:hover { background: #16a34a; }
+        .btn-save:disabled { background: #6b7280; cursor: not-allowed; opacity: 0.6; }
 
-  /* MAIN */
-  .main{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;}
-  .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);gap:12px;}
-  .empty-icon{font-size:48px;opacity:0.4;}
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 2000;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
 
-  /* COURSE CARD */
-  .course-card{background:var(--navy);border-radius:var(--radius);padding:24px;color:white;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;box-shadow:var(--shadow-md);animation:fadeIn 0.3s ease;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-  .course-col-main{grid-column:1/3;}
-  .course-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#7a8599;margin-bottom:4px;}
-  .course-value{font-size:14px;font-weight:500;color:#e2e8f0;}
-  .course-name{font-size:20px;font-weight:700;color:white;margin-bottom:16px;line-height:1.3;}
-  .course-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .stats-col{display:flex;flex-direction:column;gap:10px;border-left:1px solid rgba(255,255,255,0.1);padding-left:20px;}
-  .stat-box{background:rgba(255,255,255,0.07);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;}
-  .stat-num{font-size:22px;font-weight:700;color:white;}
-  .stat-label{font-size:11px;color:#8a96a8;}
-  .stat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-  .section-title{font-size:13px;font-weight:600;color:var(--text-secondary);letter-spacing:0.5px;text-transform:uppercase;}
-  .section-count{font-size:12px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:2px 8px;border-radius:20px;}
-
-  /* INCIDENCIA CARDS */
-  .incidencias-list{display:flex;flex-direction:column;gap:12px;}
-  .inc-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s;animation:fadeIn 0.3s ease;}
-  .inc-card:hover{box-shadow:var(--shadow-md);}
-  .inc-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);gap:12px;}
-  .inc-header-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
-  .inc-id{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;background:var(--navy);color:white;padding:3px 8px;border-radius:4px;flex-shrink:0;}
-  .inc-category{font-size:12px;color:var(--text-secondary);font-weight:500;}
-  .inc-semana{font-size:11px;color:var(--text-muted);background:var(--surface2);padding:2px 8px;border-radius:20px;border:1px solid var(--border);}
-  .badge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
-  .badge-pendiente{background:var(--pendiente-bg);color:var(--pendiente);border:1px solid #f0c060;}
-  .badge-con-incidencia{background:var(--con-incidencia-bg);color:var(--con-incidencia);border:1px solid #e8a0a0;}
-  .badge-corregida{background:var(--corregida-bg);color:var(--corregida);border:1px solid #80c898;}
-  .badge-no-aplica{background:var(--no-aplica-bg);color:var(--no-aplica);border:1px solid var(--border);}
-  .inc-card-body{padding:14px 18px;display:flex;flex-direction:column;gap:10px;}
-  .inc-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;}
-  .edit-panel{border-top:2px dashed var(--border);padding:14px 18px;background:var(--surface2);display:none;flex-direction:column;gap:12px;}
-  .edit-panel.open{display:flex;}
-  .edit-panel-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
-  .edit-row{display:flex;gap:12px;align-items:flex-end;}
-  .edit-field{flex:1;display:flex;flex-direction:column;gap:5px;}
-  .edit-label{font-size:11px;font-weight:600;color:var(--text-secondary);}
-  .edit-select,.edit-textarea{font-family:'DM Sans',sans-serif;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;background:var(--surface);color:var(--text-primary);outline:none;}
-  .edit-select:focus,.edit-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,125,216,0.1);}
-  .edit-textarea{resize:vertical;min-height:72px;}
-  .btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
-  .btn:disabled{opacity:0.5;cursor:not-allowed;}
-  .btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border);}
-  .btn-ghost:hover:not(:disabled){background:var(--surface2);}
-  .btn-success{background:var(--corregida);color:white;}
-  .btn-success:hover:not(:disabled){opacity:0.9;}
-  .inc-card-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);}
-  .inc-footer-meta{font-size:11px;color:var(--text-muted);}
-  .inc-footer-actions{display:flex;gap:8px;}
-
-  /* OVERLAYS */
-  .saving-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:500;}
-  .saving-overlay.show{display:flex;}
-  .saving-box{background:white;border-radius:var(--radius);padding:24px 32px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-lg);}
-  .saving-text{font-size:14px;font-weight:600;}
-  .saving-sub{font-size:12px;color:var(--text-secondary);margin-top:2px;}
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:white;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:none;align-items:center;gap:8px;z-index:999;}
-  .toast.show{display:flex;}
-  .toast-success{border-left:4px solid var(--corregida);}
-  .toast-error{border-left:4px solid var(--con-incidencia);}
-  ::-webkit-scrollbar{width:5px;}
-  ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:10px;}
-</style>
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
+            color: #64748b;
+        }
+        .empty-state p {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="login-logo">QA</div>
-    <div class="login-title">Gestión de Incidencias QA2</div>
-    <div class="login-sub">Equipo de Tutoría Online de Postgrado — ETOP<br>Inicia sesión con tu cuenta institucional UNAB.</div>
-    <button class="login-btn" id="loginBtn" onclick="signIn()">
-      <span>🔐</span> Iniciar sesión con cuenta UNAB
-    </button>
-    <div class="login-note">Se abrirá una ventana de Microsoft para autenticarte</div>
-    <div class="login-error" id="loginError"></div>
-  </div>
+<div class="login-container" id="loginContainer">
+    <div class="login-card">
+        <div class="qa-badge">QA</div>
+        <h1>Gestión de Incidencias QA2</h1>
+        <p>Equipo de Tutoría Online de Postgrado — ETOP<br>Inicia sesión con tu cuenta institucional UNAB.</p>
+        <div class="error-box" id="errorBox"></div>
+        <button class="btn-login" id="loginBtn" onclick="login()">
+            <span id="loginBtnText">🔐 Iniciar sesión con cuenta UNAB</span>
+        </button>
+        <p class="helper-text">Se abrirá una ventana de Microsoft para autenticarte</p>
+    </div>
 </div>
 
 <!-- APP -->
-<div id="appScreen" style="display:none;">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-logo">QA</div>
-      <div>
-        <div class="topbar-title">Gestión de Incidencias QA2</div>
-        <div class="topbar-sub">ETOP — Universidad Andrés Bello</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <span class="topbar-user" id="topbarUser"></span>
-      <span class="topbar-badge" id="topbarStats">Cargando...</span>
-      <button class="logout-btn" onclick="signOut()">Cerrar sesión</button>
-    </div>
-  </div>
-  <div class="layout">
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <h3>Cursos con incidencias</h3>
-        <div class="search-box">
-          <span>🔍</span>
-          <input type="text" placeholder="Buscar NRC o tutor..." id="searchInput" oninput="applyFilters()">
+<div class="app-container" id="appContainer">
+    <div class="topbar">
+        <div class="topbar-title">
+            <span style="color: #3b82f6; font-size: 24px;">QA</span>
+            Gestión de Incidencias QA2
         </div>
-      </div>
-      <div class="date-filter-row">
-        <div class="date-filter-label">📅 Fecha Inicio del curso</div>
-        <div class="date-filter-controls">
-          <input type="date" class="date-input" id="dateDesde" onchange="applyFilters()">
-          <span class="date-sep">→</span>
-          <input type="date" class="date-input" id="dateHasta" onchange="applyFilters()">
-          <button class="date-clear-btn" onclick="clearDates()">✕</button>
+        <div class="topbar-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statNrc">0</div>
+                <div class="stat-label">NRCs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statIncidents">0</div>
+                <div class="stat-label">Incidencias</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-label">Pendientes</div>
+            </div>
         </div>
-      </div>
-      <div class="filter-row">
-        <span class="filter-chip active" onclick="setFilter('todos',this)">Todos</span>
-        <span class="filter-chip con-inc" onclick="setFilter('CON INCIDENCIA',this)">Con incidencia</span>
-        <span class="filter-chip pendiente" onclick="setFilter('PENDIENTE',this)">Pendiente</span>
-        <span class="filter-chip corregida" onclick="setFilter('CORREGIDA',this)">Corregida</span>
-      </div>
-      <div class="sidebar-list" id="nrcList">
-        <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px;">
-          <div class="spinner" style="margin:0 auto 10px;"></div>
-          Cargando...
-        </div>
-      </div>
+        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
     </div>
-    <div class="main" id="mainContent">
-      <div class="empty-state">
-        <div class="empty-icon">📂</div>
-        <div style="font-size:15px;font-weight:500;">Selecciona un curso</div>
-        <div style="font-size:13px;">Elige un NRC del panel izquierdo para ver sus incidencias</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- OVERLAYS -->
-<div class="saving-overlay" id="savingOverlay">
-  <div class="saving-box">
-    <div class="spinner"></div>
-    <div>
-      <div class="saving-text">Guardando cambio en SharePoint...</div>
-      <div class="saving-sub">Power Automate se activará automáticamente si marcas CORREGIDA</div>
+    <div class="content">
+        <div class="sidebar">
+            <div style="margin-bottom: 12px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">NRCs</div>
+            <div class="nrc-list" id="nrcList"></div>
+        </div>
+
+        <div class="main-panel">
+            <div class="filters">
+                <div class="filter-row">
+                    <input type="text" id="searchInput" placeholder="Buscar por NRC, tutor, curso..." style="flex: 1;">
+                </div>
+                <div class="filter-row">
+                    <label style="font-size: 12px; color: #94a3b8; white-space: nowrap;">Desde:</label>
+                    <input type="date" id="dateFrom" style="flex: 1;">
+                    <label style="font-size: 12px; color: #94a3b8; white-space: nowrap;">Hasta:</label>
+                    <input type="date" id="dateTo" style="flex: 1;">
+                    <button class="btn-clear" onclick="clearDateFilters()">✕ Limpiar</button>
+                </div>
+            </div>
+
+            <div class="incidents-scroll" id="incidentsContainer">
+                <div class="empty-state"><p>⏳ Cargando incidencias...</p></div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-<div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg"></span></div>
 
 <script>
-// ============================================================
-// CONFIGURACIÓN
-// ============================================================
-const CONFIG = {
-  tenantId:     '8fbed393-d03b-49f8-be79-cd5e1f590fb2',
-  clientId:     '57fb890c-0dab-4253-a5e0-7188c88b2bb6',
-  siteUrl:      'https://unabportal365.sharepoint.com/sites/actasynrc',
-  listName:     'NRC_TUTOR_QA2_INCIDENCIA',
-  listItemType: 'SP.Data.NRC_x005f_TUTOR_x005f_QA2_x005f_INCIDENCIAListItem',
-  scopes:       ['https://unabportal365.sharepoint.com/.default'],
-  pageSize:     500
+// ============ MSAL Configuration ============
+const msalConfig = {
+    auth: {
+        clientId: '57fb890c-0dab-4253-a5e0-7188c88b2bb6',
+        authority: 'https://login.microsoftonline.com/8fbed393-d03b-49f8-be79-cd5e1f590fb2',
+        redirectUri: window.location.origin + window.location.pathname
+    },
+    cache: {
+        cacheLocation: 'sessionStorage',
+        storeAuthStateInCookie: false
+    }
 };
 
-// ============================================================
-// MSAL
-// ============================================================
-const msalInstance = new msal.PublicClientApplication({
-  auth: {
-    clientId:    CONFIG.clientId,
-    authority:   `https://login.microsoftonline.com/${CONFIG.tenantId}`,
-    redirectUri: window.location.origin + window.location.pathname
-  },
-  cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
-});
+const loginRequest = {
+    scopes: ['https://unabportal365.sharepoint.com/.default']
+};
 
-let accessToken = null;
-let currentAccount = null;
+let msalInstance;
+let allData = [];
+let filteredData = [];
 
-async function signIn() {
-  const btn = document.getElementById('loginBtn');
-  const errDiv = document.getElementById('loginError');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0;"></div> Iniciando sesión...';
-  errDiv.classList.remove('show');
-  try {
-    const resp = await msalInstance.loginPopup({ scopes: CONFIG.scopes });
-    currentAccount = resp.account;
-    accessToken = resp.accessToken;
-    showApp();
-    loadData();
-  } catch(e) {
-    console.error('Login error:', e);
-    btn.disabled = false;
-    btn.innerHTML = '<span>🔐</span> Iniciar sesión con cuenta UNAB';
-    // Mostrar error específico
-    if (e.errorCode === 'popup_window_error') {
-      errDiv.textContent = 'El navegador bloqueó la ventana emergente. Permite las ventanas emergentes para este sitio e intenta de nuevo.';
-    } else if (e.errorCode === 'user_cancelled') {
-      errDiv.textContent = 'Inicio de sesión cancelado.';
-    } else {
-      errDiv.textContent = `Error: ${e.message || e.errorCode}`;
+// ============ MSAL Initialization ============
+async function initializeMSAL() {
+    try {
+        msalInstance = new msal.PublicClientApplication(msalConfig);
+        await msalInstance.initialize();
+        await checkExistingSession();
+    } catch (err) {
+        console.error('MSAL init error:', err);
+        showError('Error al inicializar autenticación: ' + err.message);
     }
-    errDiv.classList.add('show');
-  }
-}
-
-async function getToken() {
-  if (!currentAccount) throw new Error('No hay sesión activa');
-  try {
-    const resp = await msalInstance.acquireTokenSilent({
-      scopes: CONFIG.scopes, account: currentAccount
-    });
-    accessToken = resp.accessToken;
-    return accessToken;
-  } catch(e) {
-    const resp = await msalInstance.acquireTokenPopup({ scopes: CONFIG.scopes });
-    accessToken = resp.accessToken;
-    return accessToken;
-  }
-}
-
-function signOut() {
-  msalInstance.logoutPopup({ account: currentAccount });
-  accessToken = null; currentAccount = null;
-  document.getElementById('appScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-}
-
-function showApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
-  if (currentAccount) {
-    document.getElementById('topbarUser').textContent =
-      (currentAccount.name || currentAccount.username) + ' ·';
-  }
 }
 
 async function checkExistingSession() {
-  await msalInstance.initialize();
-  const accounts = msalInstance.getAllAccounts();
-  if (accounts.length > 0) {
-    currentAccount = accounts[0];
     try {
-      await getToken();
-      showApp();
-      loadData();
-    } catch(e) { /* sesión expirada, mostrar login */ }
-  }
-}
-
-// ============================================================
-// SHAREPOINT REST
-// ============================================================
-async function spGet(url) {
-  const token = await getToken();
-  const results = [];
-  let nextUrl = url;
-  while (nextUrl) {
-    const resp = await fetch(nextUrl, {
-      headers: { 'Accept': 'application/json;odata=verbose', 'Authorization': `Bearer ${token}` }
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${resp.statusText}`);
-    const data = await resp.json();
-    results.push(...(data.d.results || []));
-    nextUrl = data.d.__next || null;
-  }
-  return results;
-}
-
-async function spPatch(itemId, body) {
-  const token = await getToken();
-  const url = `${CONFIG.siteUrl}/_api/web/lists/getbytitle('${CONFIG.listName}')/items(${itemId})`;
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json;odata=verbose',
-      'Content-Type': 'application/json;odata=verbose',
-      'Authorization': `Bearer ${token}`,
-      'IF-MATCH': '*',
-      'X-HTTP-Method': 'MERGE'
-    },
-    body: JSON.stringify({ '__metadata': { 'type': CONFIG.listItemType }, ...body })
-  });
-  if (!resp.ok && resp.status !== 204) throw new Error(`HTTP ${resp.status}`);
-  return true;
-}
-
-// ============================================================
-// DATOS
-// ============================================================
-let allCursos = {}, filteredNRCs = [], selectedNRC = null, currentFilter = 'todos';
-
-async function loadData() {
-  try {
-    const select = [
-      'ID','Title','field_2','field_3','field_5','field_6','field_7','field_8',
-      'field_9','field_10','field_16','field_17','ID_INCIDENCIAS','field_18',
-      'field_19','field_20','CATEGORIA','SEMANA_x002f_UNIDAD',
-      'OBSERVACIONES_COORD_x002e_','URL_QA2_x002f_F_x002e_I_x002e_',
-      'Modified','url_elemento','Curso_x003a_NRC_COD_CAL',
-      'Curso_x003a_NOMBRE_CURSO','Curso_x003a_FECHA_INICIO','Curso_x003a_FECHA_FIN',
-      'Curso_x003a__x0020_FACULTAD','Curso_x003a__x0020_PERIODO',
-      'Curso_x003a__x0020_NOMBRE_x0020_','Curso_x003a_CODIGO_x0020_CURSO',
-      'Curso_x003a_INTAKE_x0020_O_x0020'
-    ].join(',');
-
-    const url = `${CONFIG.siteUrl}/_api/web/lists/getbytitle('${CONFIG.listName}')/items`
-      + `?$select=${select}`
-      + `&$filter=${encodeURIComponent("field_17 ne 'NO APLICA'")}`
-      + `&$orderby=field_7 desc`
-      + `&$top=${CONFIG.pageSize}`;
-
-    const items = await spGet(url);
-    procesarItems(items);
-  } catch(e) {
-    console.error(e);
-    document.getElementById('nrcList').innerHTML = `
-      <div style="padding:16px 20px;font-size:12px;color:var(--con-incidencia);">
-        ⚠️ ${e.message}<br><br>
-        <button onclick="loadData()" style="font-size:12px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;background:white;">🔄 Reintentar</button>
-      </div>`;
-  }
-}
-
-function procesarItems(items) {
-  allCursos = {};
-  items.forEach(item => {
-    const nrcKey = item['Curso_x003a_NRC_COD_CAL'] || item.Title || 'SIN_NRC';
-    if (!allCursos[nrcKey]) {
-      const fi = item['Curso_x003a_FECHA_INICIO'] || item['field_7'];
-      const ff = item['Curso_x003a_FECHA_FIN'] || item['field_8'];
-      allCursos[nrcKey] = {
-        nrc: nrcKey,
-        nombre:   item['Curso_x003a_NOMBRE_CURSO'] || item['field_6'] || '—',
-        codigo:   item['Curso_x003a_CODIGO_x0020_CURSO'] || item['field_5'] || '—',
-        tutor:    item['Curso_x003a__x0020_NOMBRE_x0020_'] || item['field_10'] || '—',
-        facultad: item['Curso_x003a__x0020_FACULTAD'] || item['field_2'] || '—',
-        periodo:  item['Curso_x003a__x0020_PERIODO'] || item['field_3'] || '—',
-        intake:   item['Curso_x003a_INTAKE_x0020_O_x0020'] || item['field_9'] || '—',
-        fecha_inicio: formatFecha(fi), fecha_fin: formatFecha(ff),
-        fecha_inicio_raw: fi, incidencias: []
-      };
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+            msalInstance.setActiveAccount(accounts[0]);
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+            await loadData();
+        }
+    } catch (err) {
+        console.error('Session check error:', err);
     }
-    const urlF = item['URL_QA2_x002f_F_x002e_I_x002e_'];
-    allCursos[nrcKey].incidencias.push({
-      id: item.ID, id_inc: item['ID_INCIDENCIAS'] || '00',
-      qa_incidencias: item['field_17'] || 'NO APLICA',
-      tipo_qa: item['field_16'] || '—',
-      categoria: item['CATEGORIA'] || 'NO APLICA',
-      semana: item['SEMANA_x002f_UNIDAD'] || 'NO APLICA',
-      descripcion: item['field_18'] || '—',
-      estado: item['field_19'] || 'NO APLICA',
-      solucion: item['field_20'] || '',
-      url_qa: urlF?.Url || '',
-      modificado: formatFecha(item['Modified']),
-      observaciones: item['OBSERVACIONES_COORD_x002e_'] || '',
-      url_elemento: item['url_elemento'] || ''
+}
+
+// ============ Authentication ============
+async function login() {
+    const btn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('loginBtnText');
+    btn.disabled = true;
+    btnText.innerHTML = '<span class="loading-spinner"></span>Autenticando...';
+    
+    try {
+        const response = await msalInstance.loginPopup(loginRequest);
+        msalInstance.setActiveAccount(response.account);
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('appContainer').classList.add('active');
+        await loadData();
+    } catch (err) {
+        if (err.errorCode === 'popup_window_blocked') {
+            showError('Popup bloqueado. Permite popups para continuar.');
+        } else if (err.errorCode === 'user_cancelled') {
+            showError('Autenticación cancelada');
+        } else {
+            showError('Error: ' + (err.errorDescription || err.message));
+        }
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = '🔐 Iniciar sesión con cuenta UNAB';
+    }
+}
+
+function logout() {
+    msalInstance.logoutPopup({
+        postLogoutRedirectUri: window.location.origin + window.location.pathname
     });
-  });
-  Object.values(allCursos).forEach(c =>
-    c.incidencias.sort((a,b) => a.id_inc.localeCompare(b.id_inc))
-  );
-  applyFilters();
-  updateTopbar();
 }
 
-// ============================================================
-// FECHAS Y FILTROS
-// ============================================================
-function formatFecha(raw) {
-  if (!raw) return '—';
-  try {
-    let d = raw.includes('T') ? new Date(raw) : (() => {
-      const p = raw.split(' ')[0].split('/');
-      return new Date(p[2], p[0]-1, p[1]);
-    })();
-    return isNaN(d) ? raw : d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-  } catch(e){ return raw; }
+// ============ Data Loading ============
+async function loadData() {
+    try {
+        const accounts = msalInstance.getAllAccounts();
+        if (!accounts.length) {
+            showError('Sesión expirada. Recarga la página.');
+            return;
+        }
+        
+        const token = await msalInstance.acquireTokenSilent({
+            scopes: loginRequest.scopes,
+            account: accounts[0]
+        });
+
+        const siteId = '5adebafe-b8b3-4dff-b344-6bab643de1fb';
+        const listId = 'NRC_TUTOR_QA2_INCIDENCIA';
+        
+        // Filtro base: field_17 ne 'NO APLICA'
+        const filter = encodeURIComponent("fields/field_17 ne 'NO APLICA'");
+        const url = `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listId}/items?$filter=${filter}&$top=500&$select=fields`;
+
+        const response = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token.accessToken}` }
+        });
+
+        if (!response.ok) throw new Error(`Graph API error: ${response.status}`);
+        
+        const result = await response.json();
+        allData = (result.value || []).map(item => item.fields);
+        
+        renderData();
+        updateStats();
+    } catch (err) {
+        console.error('Data load error:', err);
+        showError('Error al cargar datos: ' + err.message);
+    }
 }
 
-function parseFechaRaw(raw) {
-  if (!raw) return null;
-  try {
-    if (raw.includes('T')) return new Date(raw);
-    const p = raw.split(' ')[0].split('/');
-    return new Date(p[2], p[0]-1, p[1]);
-  } catch(e){ return null; }
+// ============ Filtering & Rendering ============
+function filterData() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+
+    filteredData = allData.filter(item => {
+        const matchSearch = !search || 
+            (item.Title || '').toLowerCase().includes(search) ||
+            (item.field_10 || '').toLowerCase().includes(search) ||
+            (item.field_6 || '').toLowerCase().includes(search);
+
+        let matchDate = true;
+        if (dateFrom) {
+            const itemDate = new Date(item.field_7);
+            matchDate = !dateFrom || itemDate >= new Date(dateFrom);
+        }
+        if (dateTo && matchDate) {
+            const itemDate = new Date(item.field_7);
+            matchDate = !dateTo || itemDate <= new Date(dateTo);
+        }
+
+        return matchSearch && matchDate;
+    });
 }
 
-function applyFilters() {
-  const q = document.getElementById('searchInput')?.value.toLowerCase()||'';
-  const desde = document.getElementById('dateDesde')?.value ? new Date(document.getElementById('dateDesde').value+'T00:00:00') : null;
-  const hasta = document.getElementById('dateHasta')?.value ? new Date(document.getElementById('dateHasta').value+'T23:59:59') : null;
-
-  filteredNRCs = Object.values(allCursos).filter(c => {
-    if (q && ![c.nrc,c.tutor,c.nombre].some(v=>v.toLowerCase().includes(q))) return false;
-    if (currentFilter!=='todos' && !c.incidencias.some(i=>i.qa_incidencias===currentFilter||i.estado===currentFilter)) return false;
-    const fc = parseFechaRaw(c.fecha_inicio_raw);
-    if (desde && fc && fc < desde) return false;
-    if (hasta && fc && fc > hasta) return false;
-    return true;
-  }).sort((a,b)=>{
-    const fa=parseFechaRaw(a.fecha_inicio_raw), fb=parseFechaRaw(b.fecha_inicio_raw);
-    return (!fa||!fb)?0:fb-fa;
-  });
-
-  renderSidebar();
-  updateTopbar();
+function renderData() {
+    filterData();
+    updateStats();
+    renderNrcList();
+    renderIncidents();
 }
 
-function setFilter(f,el) {
-  currentFilter=f;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  applyFilters();
+function renderNrcList() {
+    const nrcs = [...new Set(allData.map(i => i.Title))].sort();
+    const container = document.getElementById('nrcList');
+    container.innerHTML = nrcs.map(nrc => {
+        const count = filteredData.filter(i => i.Title === nrc && i.field_17 !== 'NO APLICA').length;
+        const status = count > 0 ? '🔴' : '🟢';
+        return `<div class="nrc-item" onclick="filterByNrc('${nrc}')">${status} ${nrc} (${count})</div>`;
+    }).join('');
 }
 
-function clearDates() {
-  document.getElementById('dateDesde').value='';
-  document.getElementById('dateHasta').value='';
-  applyFilters();
+function renderIncidents() {
+    const container = document.getElementById('incidentsContainer');
+    if (!filteredData.length) {
+        container.innerHTML = '<div class="empty-state"><p>✓ Sin incidencias a mostrar</p></div>';
+        return;
+    }
+
+    container.innerHTML = filteredData.map((item, idx) => {
+        const status = item.field_19 === 'CORREGIDA' ? 'Corregida' : 'Pendiente';
+        const statusClass = status === 'Corregida' ? 'status-corrected' : 'status-pending';
+        
+        return `
+            <div class="incident-card">
+                <div class="incident-header">
+                    <div>
+                        <div class="incident-title">${item.field_6 || 'Sin nombre'}</div>
+                        <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">NRC: ${item.Title}</div>
+                    </div>
+                    <div class="incident-status ${statusClass}">${status}</div>
+                </div>
+                <div class="incident-body">
+                    <strong>Incidencia:</strong> ${item.field_18 || 'N/A'}<br>
+                    <strong>Tutor:</strong> ${item.field_10 || 'N/A'}<br>
+                    <strong>Categoría:</strong> ${item.CATEGORIA || 'N/A'}
+                </div>
+                <div class="incident-actions">
+                    <select id="status-${idx}" value="${item.field_19 || ''}">
+                        <option value="">-- Cambiar estado --</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="CORREGIDA">Corregida</option>
+                    </select>
+                    <button class="btn-save" onclick="saveIncident(${item.ID}, ${idx})">Guardar</button>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
-// ============================================================
-// SIDEBAR Y TOPBAR
-// ============================================================
-function getStats(c) {
-  return {
-    pendiente: c.incidencias.filter(i=>i.estado==='PENDIENTE').length,
-    conInc:    c.incidencias.filter(i=>i.qa_incidencias==='CON INCIDENCIA').length,
-    corregida: c.incidencias.filter(i=>i.estado==='CORREGIDA').length
-  };
+async function saveIncident(itemId, idx) {
+    const newStatus = document.getElementById(`status-${idx}`).value;
+    if (!newStatus) return;
+
+    const item = filteredData[idx];
+    if (newStatus === 'CORREGIDA' && !item.field_20) {
+        showError('Requiere descripción de solución para marcar como Corregida');
+        return;
+    }
+
+    try {
+        const siteId = '5adebafe-b8b3-4dff-b344-6bab643de1fb';
+        const listId = 'NRC_TUTOR_QA2_INCIDENCIA';
+        
+        const body = {
+            fields: {
+                field_19: newStatus,
+                field_20: item.field_20 || 'Marcado como corregido'
+            }
+        };
+
+        const accounts = msalInstance.getAllAccounts();
+        const token = await msalInstance.acquireTokenSilent({
+            scopes: loginRequest.scopes,
+            account: accounts[0]
+        });
+
+        const response = await fetch(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listId}/items/${itemId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token.accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) throw new Error(`Update failed: ${response.status}`);
+        
+        item.field_19 = newStatus;
+        renderIncidents();
+        showToast(`✓ Incidencia actualizada a "${newStatus}"`);
+        
+        // Reload datos after update
+        setTimeout(() => loadData(), 1500);
+    } catch (err) {
+        showError('Error al actualizar: ' + err.message);
+    }
 }
 
-function renderSidebar() {
-  const list = document.getElementById('nrcList');
-  if (!list) return;
-  if (!filteredNRCs.length) {
-    list.innerHTML=`<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px;">Sin resultados</div>`;
-    return;
-  }
-  list.innerHTML='';
-  filteredNRCs.forEach(c=>{
-    const s=getStats(c);
-    const el=document.createElement('div');
-    el.className='nrc-item'+(selectedNRC===c.nrc?' active':'');
-    el.onclick=()=>selectNRC(c.nrc);
-    el.innerHTML=`
-      <div class="nrc-item-code">${c.nrc}</div>
-      <div class="nrc-item-name">${c.nombre}</div>
-      <div class="nrc-item-name" style="color:#9ca3af;font-size:10px;">${c.tutor} · ${c.fecha_inicio}</div>
-      <div class="nrc-item-meta">
-        ${s.pendiente>0?`<div class="count-dot dot-yellow">${s.pendiente}</div>`:''}
-        ${s.conInc>0?`<div class="count-dot dot-red">${s.conInc}</div>`:''}
-        ${s.corregida>0?`<div class="count-dot dot-green">${s.corregida}</div>`:''}
-      </div>`;
-    list.appendChild(el);
-  });
+function filterByNrc(nrc) {
+    document.getElementById('searchInput').value = nrc;
+    filterData();
+    renderNrcList();
+    renderIncidents();
 }
 
-function updateTopbar() {
-  const pend = filteredNRCs.reduce((a,c)=>a+c.incidencias.filter(i=>i.estado==='PENDIENTE').length,0);
-  const conInc = filteredNRCs.reduce((a,c)=>a+c.incidencias.filter(i=>i.qa_incidencias==='CON INCIDENCIA').length,0);
-  const stats = document.getElementById('topbarStats');
-  if (stats) stats.textContent=`${filteredNRCs.length}/${Object.keys(allCursos).length} NRC · 🔴 ${conInc} · ⚠️ ${pend}`;
+function clearDateFilters() {
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    filterData();
+    renderIncidents();
 }
 
-// ============================================================
-// VISTA DETALLE
-// ============================================================
-function badgeClass(e) {
-  if (e==='PENDIENTE') return 'badge-pendiente';
-  if (e==='CON INCIDENCIA') return 'badge-con-incidencia';
-  if (e==='CORREGIDA') return 'badge-corregida';
-  return 'badge-no-aplica';
+function updateStats() {
+    const nrcCount = new Set(filteredData.map(i => i.Title)).size;
+    const incidentCount = filteredData.length;
+    const pendingCount = filteredData.filter(i => i.field_19 !== 'CORREGIDA').length;
+
+    document.getElementById('statNrc').textContent = nrcCount;
+    document.getElementById('statIncidents').textContent = incidentCount;
+    document.getElementById('statPending').textContent = pendingCount;
 }
 
-function selectNRC(nrc) {
-  selectedNRC=nrc; renderSidebar();
-  const c=allCursos[nrc]; if(!c) return;
-  const s=getStats(c);
-  const main=document.getElementById('mainContent');
-  main.innerHTML=`
-    <div class="course-card">
-      <div class="course-col-main">
-        <div class="course-name">${c.nombre}</div>
-        <div class="course-meta-grid">
-          <div><div class="course-label">NRC</div><div class="course-value" style="font-family:'DM Mono',monospace;font-size:12px;">${c.nrc}</div></div>
-          <div><div class="course-label">Código</div><div class="course-value">${c.codigo}</div></div>
-          <div><div class="course-label">Tutor</div><div class="course-value">${c.tutor}</div></div>
-          <div><div class="course-label">Facultad</div><div class="course-value">${c.facultad}</div></div>
-          <div><div class="course-label">Fecha Inicio</div><div class="course-value">${c.fecha_inicio}</div></div>
-          <div><div class="course-label">Fecha Término</div><div class="course-value">${c.fecha_fin}</div></div>
-          <div><div class="course-label">Período</div><div class="course-value">${c.periodo}</div></div>
-          <div><div class="course-label">Intake</div><div class="course-value">${c.intake}</div></div>
-        </div>
-      </div>
-      <div class="stats-col">
-        <div style="font-size:10px;font-weight:600;letter-spacing:1px;color:#7a8599;text-transform:uppercase;margin-bottom:4px;">Resumen</div>
-        <div class="stat-box"><div class="stat-dot" style="background:#E8A020;"></div><div><div class="stat-num">${s.pendiente}</div><div class="stat-label">Pendientes</div></div></div>
-        <div class="stat-box"><div class="stat-dot" style="background:#C0392B;"></div><div><div class="stat-num">${s.conInc}</div><div class="stat-label">Con incidencia</div></div></div>
-        <div class="stat-box"><div class="stat-dot" style="background:#1E8C45;"></div><div><div class="stat-num">${s.corregida}</div><div class="stat-label">Corregidas</div></div></div>
-      </div>
-    </div>
-    <div class="section-header">
-      <span class="section-title">Incidencias del curso</span>
-      <span class="section-count">${c.incidencias.length} registros</span>
-    </div>
-    <div class="incidencias-list" id="incList"></div>`;
-
-  const incList=document.getElementById('incList');
-  c.incidencias.forEach(inc=>{
-    const semanas = inc.semana&&inc.semana!=='NO APLICA'
-      ? inc.semana.replace(/;#/g,', ').replace(/^,\s*|,\s*$/g,'') : null;
-    const card=document.createElement('div');
-    card.className='inc-card'; card.id=`inc-${inc.id}`;
-    card.innerHTML=`
-      <div class="inc-card-header">
-        <div class="inc-header-left">
-          <span class="inc-id">#${inc.id_inc}</span>
-          <span class="inc-category">${inc.categoria}</span>
-          ${semanas?`<span class="inc-semana">${semanas}</span>`:''}
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span class="badge badge-no-aplica" style="font-size:10px;">${inc.tipo_qa}</span>
-          <span class="badge ${badgeClass(inc.estado)}" id="badge-${inc.id}">${inc.estado}</span>
-        </div>
-      </div>
-      <div class="inc-card-body">
-        <div class="inc-desc">${inc.descripcion}</div>
-        ${inc.url_qa?`<div style="font-size:12px;">📎 <a href="${inc.url_qa}" target="_blank" style="color:var(--accent);text-decoration:none;">Ver formulario →</a></div>`:''}
-        ${inc.estado==='CORREGIDA'&&inc.solucion?`
-        <div style="background:var(--corregida-bg);border:1px solid #80c898;border-radius:var(--radius-sm);padding:10px 14px;">
-          <div style="font-size:10px;font-weight:600;color:var(--corregida);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">✅ Solución aplicada</div>
-          <div style="font-size:13px;color:#2d6b3a;line-height:1.6;">${inc.solucion}</div>
-        </div>`:''}
-        ${inc.observaciones?`
-        <div style="background:#F0F7FF;border:1px solid #BDD7F7;border-radius:var(--radius-sm);padding:10px 14px;">
-          <div style="font-size:10px;font-weight:600;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">💬 Observaciones coordinación</div>
-          <div style="font-size:13px;color:#1e4a7a;line-height:1.6;">${inc.observaciones}</div>
-        </div>`:''}
-      </div>
-      <div class="edit-panel" id="edit-${inc.id}">
-        <div class="edit-panel-title">✏️ Actualizar incidencia</div>
-        <div class="edit-row">
-          <div class="edit-field" style="max-width:220px;">
-            <label class="edit-label">Estado Incidencia QA2</label>
-            <select class="edit-select" id="sel-${inc.id}">
-              <option value="NO APLICA" ${inc.estado==='NO APLICA'?'selected':''}>NO APLICA</option>
-              <option value="PENDIENTE" ${inc.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option>
-              <option value="CORREGIDA" ${inc.estado==='CORREGIDA'?'selected':''}>CORREGIDA</option>
-            </select>
-          </div>
-          <div class="edit-field">
-            <label class="edit-label">Descripción de la solución</label>
-            <textarea class="edit-textarea" id="sol-${inc.id}" placeholder="Describe cómo se resolvió...">${inc.solucion||''}</textarea>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-success" id="btnSave-${inc.id}" onclick="guardarCambio(${inc.id},'${nrc}')">
-            💾 Guardar — activa flujo si es CORREGIDA
-          </button>
-          <button class="btn btn-ghost" onclick="toggleEdit(${inc.id})">Cancelar</button>
-        </div>
-      </div>
-      <div class="inc-card-footer">
-        <span class="inc-footer-meta">Modificado: ${inc.modificado} · ID: ${inc.id}</span>
-        <div class="inc-footer-actions">
-          <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="toggleEdit(${inc.id})">✏️ Editar estado</button>
-          ${inc.url_elemento?`<a href="${inc.url_elemento}" target="_blank" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;text-decoration:none;">🔗 Ver en SP</a>`:''}
-        </div>
-      </div>`;
-    incList.appendChild(card);
-  });
+function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.classList.add('show');
+    setTimeout(() => box.classList.remove('show'), 5000);
 }
 
-function toggleEdit(id) { document.getElementById(`edit-${id}`)?.classList.toggle('open'); }
-
-// ============================================================
-// GUARDAR
-// ============================================================
-async function guardarCambio(id, nrc) {
-  const nuevoEstado = document.getElementById(`sel-${id}`).value;
-  const solucion    = document.getElementById(`sol-${id}`).value.trim();
-  const btnSave     = document.getElementById(`btnSave-${id}`);
-
-  if (nuevoEstado==='CORREGIDA' && !solucion) {
-    showToast('Describe la solución antes de marcar como CORREGIDA','error');
-    document.getElementById(`sol-${id}`).focus();
-    return;
-  }
-  btnSave.disabled=true;
-  document.getElementById('savingOverlay').classList.add('show');
-  try {
-    await spPatch(id, { field_19: nuevoEstado, field_20: solucion });
-    const inc=allCursos[nrc].incidencias.find(i=>i.id===id);
-    inc.estado=nuevoEstado; inc.solucion=solucion;
-    inc.modificado=new Date().toLocaleDateString('es-CL');
-    const badge=document.getElementById(`badge-${id}`);
-    if (badge) { badge.className=`badge ${badgeClass(nuevoEstado)}`; badge.textContent=nuevoEstado; }
-    document.getElementById(`edit-${id}`)?.classList.remove('open');
-    showToast(nuevoEstado==='CORREGIDA'
-      ?'✅ CORREGIDA — Power Automate enviará el correo automáticamente'
-      :`Estado actualizado: ${nuevoEstado}`,'success');
-    setTimeout(()=>selectNRC(nrc),800);
-    renderSidebar(); updateTopbar();
-  } catch(e) {
-    console.error(e);
-    showToast(`Error al guardar: ${e.message}`,'error');
-  } finally {
-    btnSave.disabled=false;
-    document.getElementById('savingOverlay').classList.remove('show');
-  }
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
 }
 
-function showToast(msg,type='success') {
-  const t=document.getElementById('toast');
-  document.getElementById('toastMsg').textContent=msg;
-  document.getElementById('toastIcon').textContent=type==='success'?'✅':'⚠️';
-  t.className=`toast toast-${type} show`;
-  setTimeout(()=>t.classList.remove('show'),5000);
-}
+// ============ Event Listeners ============
+document.getElementById('searchInput').addEventListener('input', () => {
+    filterData();
+    renderIncidents();
+});
 
-// INICIO
-checkExistingSession();
+document.getElementById('dateFrom').addEventListener('change', () => {
+    filterData();
+    renderIncidents();
+});
+
+document.getElementById('dateTo').addEventListener('change', () => {
+    filterData();
+    renderIncidents();
+});
+
+// ============ Initialize on Load ============
+window.addEventListener('load', initializeMSAL);
 </script>
+
 </body>
 </html>
