@@ -10,184 +10,231 @@
             --unab-blue: #003366;
             --unab-red: #e30613;
             --unab-gold: #c5a347;
-            --bg-light: #f4f7f6;
+            --sidebar-width: 250px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            padding: 20px;
+            display: flex;
+            background-color: #f4f7f6;
+            height: 100vh;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        h1 {
-            color: var(--unab-blue);
-            text-align: center;
-            border-bottom: 3px solid var(--unab-gold);
-            padding-bottom: 10px;
-        }
-
-        #login-section {
-            text-align: center;
-            padding: 50px 0;
-        }
-
-        .btn-principal {
+        /* Barra Lateral Estilo UNAB */
+        .sidebar {
+            width: var(--sidebar-width);
             background-color: var(--unab-blue);
             color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background 0.3s;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
-        .btn-principal:hover {
-            background-color: #002244;
+        .sidebar h2 {
+            font-size: 1.2em;
+            border-bottom: 2px solid var(--unab-gold);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Tarjetas de Métricas */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid var(--unab-gold);
+        }
+
+        .stat-card h3 { margin: 0; color: #666; font-size: 0.9em; }
+        .stat-card p { margin: 10px 0 0; font-size: 2em; font-weight: bold; color: var(--unab-blue); }
+
+        /* Tabla Estilizada */
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
         }
 
         th {
-            background-color: var(--unab-blue);
-            color: white;
+            background-color: #f8f9fa;
+            color: var(--unab-blue);
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid #dee2e6;
         }
 
-        tr:nth-child(even) { background-color: #f9f9f9; }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95em;
+        }
 
         .status-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .pendiente { background-color: #ffeeba; color: #856404; }
-        .corregido { background-color: #d4edda; color: #155724; }
+        .pendiente { background: #fff3cd; color: #856404; }
+        .corregida { background: #d4edda; color: #155724; }
+
+        .btn-update {
+            background: var(--unab-blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-update:hover { background: var(--unab-red); }
+
+        /* Pantalla de Carga */
+        #loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🚀 Gestión de Incidencias QA2</h1>
-
-    <div id="login-section">
-        <p>Conéctate para cargar las incidencias desde SharePoint.</p>
-        <button id="loginBtn" class="btn-principal" onclick="inicializarApp()">
-            🔐 Cargar Datos de Incidencias
-        </button>
+    <div id="loading-overlay">
+        <p style="color: var(--unab-blue); font-weight: 600;">Cargando Incidencias desde SharePoint...</p>
     </div>
 
-    <div id="app-content" style="display: none;">
-        <div id="stats-summary" style="margin-bottom: 20px; font-weight: 600;"></div>
-        <table id="incidencias-table">
-            <thead>
-                <tr>
-                    <th>NRC</th>
-                    <th>Tutor</th>
-                    <th>Incidencia</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="tabla-body">
-                </tbody>
-        </table>
+    <div class="sidebar">
+        <h2>ETOP UNAB</h2>
+        <p style="font-size: 0.8em; opacity: 0.8;">Gestión de Calidad QA2</p>
+        <hr style="width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+        <button class="btn-update" onclick="location.reload()">🔄 Actualizar Vista</button>
     </div>
-</div>
+
+    <div class="main-content">
+        <h1 style="color: var(--unab-blue); margin-bottom: 30px;">Tablero de Gestión de Incidencias</h1>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Casos</h3>
+                <p id="stat-total">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pendientes</h3>
+                <p id="stat-pendiente" style="color: var(--unab-red);">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Corregidas</h3>
+                <p id="stat-corregida" style="color: #28a745;">0</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NRC</th>
+                        <th>Tutor</th>
+                        <th>Incidencia</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
 
 <script>
     // URL de tu Flujo de Power Automate
     const URL_FLUJO_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e5dd388e533f4395a3afe603a392b0b2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AFu5zh6fcWXooO2bMoK-7P4AaTLp_YTgemlfBXqq24g';
 
-    let allData = [];
+    window.onload = loadData;
 
-    // Función principal que se activa al hacer clic
-    async function inicializarApp() {
-        const btn = document.getElementById('loginBtn');
-        btn.disabled = true;
-        btn.innerText = '⌛ Cargando...';
-
+    async function loadData() {
         try {
-            await loadData();
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
+            const response = await fetch(URL_FLUJO_LEER, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+            renderTable(data);
+            document.getElementById('loading-overlay').style.display = 'none';
         } catch (error) {
-            alert('Error al conectar con Power Automate. Revisa la consola.');
-            console.error(error);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = '🔐 Cargar Datos de Incidencias';
+            console.error("Error:", error);
+            alert("No se pudo cargar la información.");
         }
     }
 
-    // Carga de datos mediante el flujo HTTP
-    async function loadData() {
-        const response = await fetch(URL_FLUJO_LEER, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "read" })
-        });
-
-        if (!response.ok) throw new Error("Fallo en la respuesta del servidor");
-
-        const data = await response.json();
-        
-        // Asignamos los datos (SharePoint suele devolverlos en un array)
-        allData = data; 
-        renderTable();
-    }
-
-    // Dibujar la tabla en el HTML
-    function renderTable() {
+    function renderTable(items) {
         const tbody = document.getElementById('tabla-body');
         tbody.innerHTML = '';
 
-        allData.forEach(item => {
+        let pendientes = 0;
+        let corregidas = 0;
+
+        items.forEach(item => {
+            // MAPEO DE CAMPOS: Aquí ajustamos según lo que envía SharePoint
+            const nrc = item.Title || item.NRC || "N/A";
+            const tutor = item.NombreTutor || item.field_1 || "Sin asignar";
+            const detalle = item.Incidencia || item.field_2 || "Sin detalle";
+            const estado = (item.Estado || "PENDIENTE").toUpperCase();
+
+            if(estado === 'PENDIENTE') pendientes++;
+            else corregidas++;
+
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.NRC || 'N/A'}</td>
-                <td>${item.Tutor || 'N/A'}</td>
-                <td>${item.Incidencia || 'Sin detalle'}</td>
-                <td>
-                    <span class="status-badge ${item.Estado === 'Corregida' ? 'corregido' : 'pendiente'}">
-                        ${item.Estado || 'Pendiente'}
-                    </span>
-                </td>
-                <td>
-                    <button onclick="marcarCorregido(${item.ID})">✅ Marcar</button>
-                </td>
+                <td style="font-weight: 600;">${nrc}</td>
+                <td>${tutor}</td>
+                <td>${detalle}</td>
+                <td><span class="status-badge ${estado === 'CORREGIDA' ? 'corregida' : 'pendiente'}">${estado}</span></td>
+                <td><button class="btn-update" onclick="actualizarEstado(${item.ID})">✅ Corregir</button></td>
             `;
             tbody.appendChild(row);
         });
 
-        document.getElementById('stats-summary').innerText = `Total incidencias encontradas: ${allData.length}`;
+        document.getElementById('stat-total').innerText = items.length;
+        document.getElementById('stat-pendiente').innerText = pendientes;
+        document.getElementById('stat-corregida').innerText = corregidas;
     }
 
-    async function marcarCorregido(id) {
-        alert('Para guardar cambios, necesitas crear el segundo flujo de "Actualizar" en Power Automate con el ID: ' + id);
+    function actualizarEstado(id) {
+        alert("¡Casi listo! Ahora solo te falta crear el flujo de 'Actualizar' que reciba el ID: " + id);
     }
 </script>
-
 </body>
 </html>
