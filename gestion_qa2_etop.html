@@ -4,156 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Incidencias QA2 - ETOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            overflow: hidden;
-        }
-        .login-container {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            z-index: 1000;
-        }
-        .login-card {
-            background: white;
-            border-radius: 16px;
-            padding: 48px 40px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .qa-badge {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-        }
-        .login-card h1 {
-            font-size: 24px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
             color: #1e293b;
-            margin-bottom: 8px;
-            font-weight: 700;
         }
-        .login-card p {
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 32px;
-            line-height: 1.5;
-        }
-        .btn-login {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s ease;
-            margin-bottom: 12px;
-        }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
-        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
-        .helper-text {
-            color: #94a3b8;
-            font-size: 12px;
-            margin-bottom: 16px;
-        }
-        .error-box {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            color: #dc2626;
-            font-size: 13px;
-            display: none;
-        }
-        .error-box.show { display: block; }
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* APP LAYOUT */
-        .app-container {
-            display: none;
+        .container {
             height: 100vh;
+            display: flex;
             flex-direction: column;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
         }
-        .app-container.active { display: flex; }
-        .topbar {
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
-            padding: 16px 24px;
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
         }
-        .topbar-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #f1f5f9;
+        .header-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        .topbar-stats {
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 8px;
             display: flex;
-            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
         }
-        .stat-item {
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .header-subtitle {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .header-right {
             display: flex;
-            flex-direction: column;
+            gap: 16px;
             align-items: center;
         }
+        .stat {
+            text-align: center;
+        }
         .stat-value {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 700;
-            color: #fbbf24;
+            color: #3b82f6;
         }
         .stat-label {
-            color: #94a3b8;
             font-size: 11px;
-            margin-top: 2px;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 4px;
         }
-        .btn-logout {
-            background: #ef4444;
+        .btn-reload {
+            background: #3b82f6;
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 13px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
         }
-        .btn-logout:hover { background: #dc2626; }
+        .btn-reload:hover { background: #2563eb; }
+        .btn-reload:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .content {
             display: flex;
@@ -161,166 +90,240 @@
             overflow: hidden;
         }
         .sidebar {
-            width: 280px;
-            background: #0f172a;
-            border-right: 1px solid #334155;
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px;
             overflow-y: auto;
-            padding: 12px;
-            flex-shrink: 0;
         }
-        .nrc-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .sidebar-section {
+            margin-bottom: 24px;
         }
-        .nrc-item {
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .search-box {
+            width: 100%;
             padding: 10px 12px;
-            background: #1e293b;
-            border-left: 3px solid #334155;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
-            color: #cbd5e1;
-        }
-        .nrc-item:hover { background: #334155; }
-
-        .main-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: #0f172a;
-        }
-        .filters {
-            padding: 16px;
-            border-bottom: 1px solid #334155;
-            flex-shrink: 0;
-        }
-        .filter-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        input[type="text"] {
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: #f1f5f9;
-            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
             border-radius: 6px;
             font-size: 13px;
-            flex: 1;
+            margin-bottom: 12px;
         }
-        input[type="text"]:focus {
+        .search-box:focus {
             outline: none;
             border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
+        .date-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .date-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .date-row input { flex: 1; }
+        .date-row span { color: #94a3b8; font-size: 12px; white-space: nowrap; }
+        .btn-clear {
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+        .btn-clear:hover { background: #dc2626; }
 
-        .incidents-scroll {
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #64748b;
+        }
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        .tab-btn:hover { border-color: #3b82f6; }
+
+        .main {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 24px;
+        }
+        .incidents-grid {
+            display: grid;
+            gap: 12px;
         }
         .incident-card {
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 16px;
-            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .incident-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
         }
         .incident-header {
             display: flex;
             justify-content: space-between;
+            align-items: start;
             margin-bottom: 12px;
         }
         .incident-title {
             font-weight: 700;
-            color: #f1f5f9;
+            color: #1e293b;
             font-size: 14px;
         }
-        .incident-subtitle {
+        .incident-nrc {
             font-size: 12px;
-            color: #94a3b8;
+            color: #64748b;
             margin-top: 4px;
         }
+        .incident-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-corrected { background: #d1fae5; color: #065f46; }
         .incident-body {
             font-size: 13px;
-            color: #cbd5e1;
-            margin-bottom: 12px;
+            color: #475569;
             line-height: 1.5;
         }
 
         .empty-state {
-            padding: 48px 24px;
             text-align: center;
-            color: #64748b;
+            padding: 60px 24px;
+            color: #94a3b8;
         }
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #10b981;
-            color: white;
-            padding: 12px 20px;
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 24px;
+            color: #94a3b8;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg {
+            padding: 16px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
             border-radius: 8px;
+            color: #dc2626;
             font-size: 13px;
-            font-weight: 600;
-            z-index: 2000;
+            text-align: center;
+            margin: 24px;
         }
     </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-container" id="loginContainer">
-    <div class="login-card">
-        <div class="qa-badge">QA</div>
-        <h1>Gestión de Incidencias QA2</h1>
-        <p>Equipo de Tutoría Online de Postgrado — ETOP<br>Revisa el estado de tus cursos</p>
-        <div class="error-box" id="errorBox"></div>
-        <button class="btn-login" id="loginBtn" onclick="enterApp()">
-            <span id="loginBtnText">🔐 Entrar a la App</span>
-        </button>
-        <p class="helper-text">Carga los datos de los cursos</p>
-    </div>
-</div>
-
-<!-- APP -->
-<div class="app-container" id="appContainer">
-    <div class="topbar">
-        <div class="topbar-title">
-            <span style="color: #3b82f6; font-size: 24px;">QA</span>
-            Gestión de Incidencias QA2
+<div class="container">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">QA</div>
+            <div>
+                <div class="header-title">Gestión de Incidencias QA2</div>
+                <div class="header-subtitle">Equipo de Tutoría Online de Postgrado — ETOP</div>
+            </div>
         </div>
-        <div class="topbar-stats">
-            <div class="stat-item">
+        <div class="header-right">
+            <div class="stat">
                 <div class="stat-value" id="statTotal">0</div>
                 <div class="stat-label">Total</div>
             </div>
-            <div class="stat-item">
+            <div class="stat">
                 <div class="stat-value" id="statNrc">0</div>
                 <div class="stat-label">NRCs</div>
             </div>
+            <button class="btn-reload" id="reloadBtn" onclick="loadData()">⟳ Recargar</button>
         </div>
-        <button class="btn-logout" onclick="logout()">Salir</button>
     </div>
 
+    <!-- CONTENT -->
     <div class="content">
+        <!-- SIDEBAR -->
         <div class="sidebar">
-            <div style="margin-bottom: 12px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">NRCs</div>
-            <div class="nrc-list" id="nrcList"></div>
-        </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Búsqueda</div>
+                <input type="text" id="searchInput" class="search-box" placeholder="Buscar NRC o tutor...">
+            </div>
 
-        <div class="main-panel">
-            <div class="filters">
-                <div class="filter-row">
-                    <input type="text" id="searchInput" placeholder="Buscar por NRC, tutor, curso..." />
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fecha inicio del curso</div>
+                <div class="date-row">
+                    <span>Desde:</span>
+                    <input type="date" id="dateFrom" class="date-input">
+                </div>
+                <div class="date-row">
+                    <span>Hasta:</span>
+                    <input type="date" id="dateTo" class="date-input">
+                </div>
+                <button class="btn-clear" onclick="clearDates()">✕ Limpiar fechas</button>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Estado</div>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="filterByStatus('all')">Todos</button>
+                    <button class="tab-btn" onclick="filterByStatus('with')">Con Incidencia</button>
+                    <button class="tab-btn" onclick="filterByStatus('pending')">Pendiente</button>
+                    <button class="tab-btn" onclick="filterByStatus('corrected')">Corregida</button>
                 </div>
             </div>
+        </div>
 
-            <div class="incidents-scroll" id="incidentsContainer">
-                <div class="empty-state"><p>⏳ Cargando...</p></div>
-            </div>
+        <!-- MAIN -->
+        <div class="main">
+            <div id="container"></div>
         </div>
     </div>
 </div>
@@ -329,26 +332,15 @@
 const FLOW_URL = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e5dd388e533f4395a3afe603a392b0b2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AFu5zh6fcWXooO2bMoK-7P4AaTLp_YTgemlfBXqq24g';
 
 let allData = [];
-
-async function enterApp() {
-    const btn = document.getElementById('loginBtn');
-    const btnText = document.getElementById('loginBtnText');
-    btn.disabled = true;
-    btnText.innerHTML = '<span class="loading-spinner"></span>Cargando...';
-    
-    try {
-        await loadData();
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('appContainer').classList.add('active');
-    } catch (err) {
-        showError('Error: ' + err.message);
-    } finally {
-        btn.disabled = false;
-        btnText.textContent = '🔐 Entrar a la App';
-    }
-}
+let currentStatus = 'all';
 
 async function loadData() {
+    const btn = document.getElementById('reloadBtn');
+    btn.disabled = true;
+    
+    const container = document.getElementById('container');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando datos...</p></div>';
+    
     try {
         const response = await fetch(FLOW_URL, {
             method: 'POST',
@@ -361,70 +353,76 @@ async function loadData() {
         const result = await response.json();
         allData = result.items || [];
         
-        if (!Array.isArray(allData)) {
-            allData = [];
-        }
+        if (!Array.isArray(allData)) allData = [];
 
         renderData();
     } catch (err) {
-        console.error('Load error:', err);
-        throw new Error('No se pudieron cargar los datos: ' + err.message);
+        container.innerHTML = `<div class="error-msg">⚠️ Error al cargar: ${err.message}<br><small>Verifica que tu sesión en SharePoint sea válida</small></div>`;
+    } finally {
+        btn.disabled = false;
     }
 }
 
 function renderData() {
     const search = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = allData.filter(item => {
-        return !search || 
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+
+    let filtered = allData.filter(item => {
+        // Búsqueda
+        const matchSearch = !search || 
             (item.Title || '').toLowerCase().includes(search) ||
             (item.field_10 || '').toLowerCase().includes(search) ||
             (item.field_6 || '').toLowerCase().includes(search);
+
+        // Fechas
+        let matchDate = true;
+        if (dateFrom || dateTo) {
+            const itemDate = item.field_7 ? new Date(item.field_7) : null;
+            if (dateFrom && itemDate) matchDate = itemDate >= new Date(dateFrom);
+            if (dateTo && itemDate && matchDate) matchDate = itemDate <= new Date(dateTo);
+        }
+
+        // Estado
+        let matchStatus = true;
+        if (currentStatus === 'pending') matchStatus = item.field_19 !== 'CORREGIDA';
+        else if (currentStatus === 'corrected') matchStatus = item.field_19 === 'CORREGIDA';
+        else if (currentStatus === 'with') matchStatus = item.field_17 && item.field_17 !== 'NO APLICA';
+
+        return matchSearch && matchDate && matchStatus;
     });
 
     updateStats(filtered);
-    renderNrcList(filtered);
     renderIncidents(filtered);
 }
 
-function renderNrcList(data) {
-    const nrcs = [...new Set(data.map(i => i.Title).filter(Boolean))].sort();
-    document.getElementById('nrcList').innerHTML = nrcs.map(nrc => {
-        const count = data.filter(i => i.Title === nrc).length;
-        return `<div class="nrc-item" onclick="filterByNrc('${nrc}')">${nrc} (${count})</div>`;
-    }).join('');
-}
-
 function renderIncidents(data) {
-    const container = document.getElementById('incidentsContainer');
+    const container = document.getElementById('container');
     
     if (!data.length) {
-        container.innerHTML = '<div class="empty-state"><p>✓ Sin registros</p></div>';
+        container.innerHTML = '<div class="empty-state"><p>✓ Sin registros que coincidan</p></div>';
         return;
     }
 
-    container.innerHTML = data.map((item, idx) => {
-        return `
-            <div class="incident-card">
-                <div class="incident-header">
-                    <div>
-                        <div class="incident-title">${item.field_6 || 'Sin nombre'}</div>
-                        <div class="incident-subtitle">NRC: ${item.Title || 'N/A'}</div>
-                    </div>
+    container.innerHTML = `<div class="incidents-grid">${data.map(item => `
+        <div class="incident-card">
+            <div class="incident-header">
+                <div>
+                    <div class="incident-title">${item.field_6 || 'Sin nombre'}</div>
+                    <div class="incident-nrc">NRC: ${item.Title || 'N/A'}</div>
                 </div>
-                <div class="incident-body">
-                    <strong>Tutor:</strong> ${item.field_10 || 'N/A'}<br>
-                    <strong>Incidencia:</strong> ${item.field_18 || 'N/A'}<br>
-                    <strong>Estado:</strong> ${item.field_19 || 'N/A'}<br>
-                    <strong>Categoría:</strong> ${item.CATEGORIA || 'N/A'}
-                </div>
+                <span class="incident-badge ${item.field_19 === 'CORREGIDA' ? 'badge-corrected' : 'badge-pending'}">
+                    ${item.field_19 === 'CORREGIDA' ? 'Corregida' : 'Pendiente'}
+                </span>
             </div>
-        `;
-    }).join('');
-}
-
-function filterByNrc(nrc) {
-    document.getElementById('searchInput').value = nrc;
-    renderData();
+            <div class="incident-body">
+                <strong>Tutor:</strong> ${item.field_10 || 'N/A'}<br>
+                <strong>Incidencia:</strong> ${item.field_18 || 'N/A'}<br>
+                <strong>Categoría:</strong> ${item.CATEGORIA || 'N/A'}<br>
+                <strong>Fecha inicio:</strong> ${item.field_7 ? new Date(item.field_7).toLocaleDateString('es-CL') : 'N/A'}
+            </div>
+        </div>
+    `).join('')}</div>`;
 }
 
 function updateStats(data) {
@@ -432,21 +430,25 @@ function updateStats(data) {
     document.getElementById('statNrc').textContent = new Set(data.map(i => i.Title).filter(Boolean)).size;
 }
 
-function logout() {
-    document.getElementById('loginContainer').style.display = 'flex';
-    document.getElementById('appContainer').classList.remove('active');
-    document.getElementById('searchInput').value = '';
-    allData = [];
+function filterByStatus(status) {
+    currentStatus = status;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    renderData();
 }
 
-function showError(msg) {
-    const box = document.getElementById('errorBox');
-    box.textContent = msg;
-    box.classList.add('show');
-    setTimeout(() => box.classList.remove('show'), 5000);
+function clearDates() {
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    renderData();
 }
 
 document.getElementById('searchInput').addEventListener('input', renderData);
+document.getElementById('dateFrom').addEventListener('change', renderData);
+document.getElementById('dateTo').addEventListener('change', renderData);
+
+// Cargar datos al iniciar
+window.addEventListener('load', loadData);
 </script>
 
 </body>
