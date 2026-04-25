@@ -3,238 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Incidencias QA2 - UNAB Online</title>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Gestión de Incidencias QA2 - ETOP</title>
     <style>
-        :root {
-            --unab-blue: #003366;
-            --unab-red: #e30613;
-            --unab-gold: #c5a347;
-            --sidebar-width: 250px;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        .login-container {
+            position: fixed;
+            inset: 0;
             display: flex;
-            background-color: #f4f7f6;
-            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1000;
         }
-
-        /* Barra Lateral Estilo UNAB */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--unab-blue);
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar h2 {
-            font-size: 1.2em;
-            border-bottom: 2px solid var(--unab-gold);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
-
-        /* Contenido Principal */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* Tarjetas de Métricas */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
+        .login-card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            border-top: 4px solid var(--unab-gold);
-        }
-
-        .stat-card h3 { margin: 0; color: #666; font-size: 0.9em; }
-        .stat-card p { margin: 10px 0 0; font-size: 2em; font-weight: bold; color: var(--unab-blue); }
-
-        /* Tabla Estilizada */
-        .table-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-        }
-
-        table {
+            border-radius: 16px;
+            padding: 48px 40px;
             width: 100%;
-            border-collapse: collapse;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
         }
-
-        th {
-            background-color: #f8f9fa;
-            color: var(--unab-blue);
-            text-align: left;
-            padding: 15px;
-            border-bottom: 2px solid #dee2e6;
+        .qa-badge {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
         }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.95em;
+        .login-card h1 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
-            text-transform: uppercase;
+        .login-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.5;
         }
-
-        .pendiente { background: #fff3cd; color: #856404; }
-        .corregida { background: #d4edda; color: #155724; }
-
-        .btn-update {
-            background: var(--unab-blue);
+        .btn-login {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
         }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+        .helper-text {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+        .error-box {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #dc2626;
+            font-size: 13px;
+            display: none;
+        }
+        .error-box.show { display: block; }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .btn-update:hover { background: var(--unab-red); }
-
-        /* Pantalla de Carga */
-        #loading-overlay {
+        /* APP LAYOUT */
+        .app-container {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9);
+            inset: 0;
+            z-index: 100;
+        }
+        .app-container.active { display: flex; }
+        .topbar {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .topbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .topbar-stats {
+            display: flex;
+            gap: 24px;
+        }
+        .stat-item {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 1000;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-logout:hover { background: #dc2626; }
+
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 280px;
+            background: #0f172a;
+            border-right: 1px solid #334155;
+            overflow-y: auto;
+            padding: 12px;
+            flex-shrink: 0;
+        }
+        .nrc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .nrc-item {
+            padding: 10px 12px;
+            background: #1e293b;
+            border-left: 3px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        .nrc-item:hover { background: #334155; }
+
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        .filters {
+            padding: 16px;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        input[type="text"] {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            flex: 1;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .incidents-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .incident-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .incident-title {
+            font-weight: 700;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+        .incident-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .incident-body {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
+            color: #64748b;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 2000;
         }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay">
-        <p style="color: var(--unab-blue); font-weight: 600;">Cargando Incidencias desde SharePoint...</p>
+<!-- LOGIN -->
+<div class="login-container" id="loginContainer">
+    <div class="login-card">
+        <div class="qa-badge">QA</div>
+        <h1>Gestión de Incidencias QA2</h1>
+        <p>Equipo de Tutoría Online de Postgrado — ETOP<br>Revisa el estado de tus cursos</p>
+        <div class="error-box" id="errorBox"></div>
+        <button class="btn-login" id="loginBtn" onclick="enterApp()">
+            <span id="loginBtnText">🔐 Entrar a la App</span>
+        </button>
+        <p class="helper-text">Carga los datos de los cursos</p>
     </div>
+</div>
 
-    <div class="sidebar">
-        <h2>ETOP UNAB</h2>
-        <p style="font-size: 0.8em; opacity: 0.8;">Gestión de Calidad QA2</p>
-        <hr style="width: 100%; border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
-        <button class="btn-update" onclick="location.reload()">🔄 Actualizar Vista</button>
-    </div>
-
-    <div class="main-content">
-        <h1 style="color: var(--unab-blue); margin-bottom: 30px;">Tablero de Gestión de Incidencias</h1>
-
-        <div class="stats-container">
-            <div class="stat-card">
-                <h3>Total Casos</h3>
-                <p id="stat-total">0</p>
+<!-- APP -->
+<div class="app-container" id="appContainer">
+    <div class="topbar">
+        <div class="topbar-title">
+            <span style="color: #3b82f6; font-size: 24px;">QA</span>
+            Gestión de Incidencias QA2
+        </div>
+        <div class="topbar-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Total</div>
             </div>
-            <div class="stat-card">
-                <h3>Pendientes</h3>
-                <p id="stat-pendiente" style="color: var(--unab-red);">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Corregidas</h3>
-                <p id="stat-corregida" style="color: #28a745;">0</p>
+            <div class="stat-item">
+                <div class="stat-value" id="statNrc">0</div>
+                <div class="stat-label">NRCs</div>
             </div>
         </div>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+    </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>NRC</th>
-                        <th>Tutor</th>
-                        <th>Incidencia</th>
-                        <th>Estado</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-body">
-                    </tbody>
-            </table>
+    <div class="content">
+        <div class="sidebar">
+            <div style="margin-bottom: 12px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">NRCs</div>
+            <div class="nrc-list" id="nrcList"></div>
+        </div>
+
+        <div class="main-panel">
+            <div class="filters">
+                <div class="filter-row">
+                    <input type="text" id="searchInput" placeholder="Buscar por NRC, tutor, curso..." />
+                </div>
+            </div>
+
+            <div class="incidents-scroll" id="incidentsContainer">
+                <div class="empty-state"><p>⏳ Cargando...</p></div>
+            </div>
         </div>
     </div>
+</div>
 
 <script>
-    // URL de tu Flujo de Power Automate
-    const URL_FLUJO_LEER = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e5dd388e533f4395a3afe603a392b0b2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AFu5zh6fcWXooO2bMoK-7P4AaTLp_YTgemlfBXqq24g';
+const FLOW_URL = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e5dd388e533f4395a3afe603a392b0b2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AFu5zh6fcWXooO2bMoK-7P4AaTLp_YTgemlfBXqq24g';
 
-    window.onload = loadData;
+let allData = [];
 
-    async function loadData() {
-        try {
-            const response = await fetch(URL_FLUJO_LEER, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            const data = await response.json();
-            renderTable(data);
-            document.getElementById('loading-overlay').style.display = 'none';
-        } catch (error) {
-            console.error("Error:", error);
-            alert("No se pudo cargar la información.");
-        }
+async function enterApp() {
+    const btn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('loginBtnText');
+    btn.disabled = true;
+    btnText.innerHTML = '<span class="loading-spinner"></span>Cargando...';
+    
+    try {
+        await loadData();
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('appContainer').classList.add('active');
+    } catch (err) {
+        showError('Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = '🔐 Entrar a la App';
     }
+}
 
-    function renderTable(items) {
-        const tbody = document.getElementById('tabla-body');
-        tbody.innerHTML = '';
-
-        let pendientes = 0;
-        let corregidas = 0;
-
-        items.forEach(item => {
-            // MAPEO DE CAMPOS: Aquí ajustamos según lo que envía SharePoint
-            const nrc = item.Title || item.NRC || "N/A";
-            const tutor = item.NombreTutor || item.field_1 || "Sin asignar";
-            const detalle = item.Incidencia || item.field_2 || "Sin detalle";
-            const estado = (item.Estado || "PENDIENTE").toUpperCase();
-
-            if(estado === 'PENDIENTE') pendientes++;
-            else corregidas++;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="font-weight: 600;">${nrc}</td>
-                <td>${tutor}</td>
-                <td>${detalle}</td>
-                <td><span class="status-badge ${estado === 'CORREGIDA' ? 'corregida' : 'pendiente'}">${estado}</span></td>
-                <td><button class="btn-update" onclick="actualizarEstado(${item.ID})">✅ Corregir</button></td>
-            `;
-            tbody.appendChild(row);
+async function loadData() {
+    try {
+        const response = await fetch(FLOW_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read' })
         });
 
-        document.getElementById('stat-total').innerText = items.length;
-        document.getElementById('stat-pendiente').innerText = pendientes;
-        document.getElementById('stat-corregida').innerText = corregidas;
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        
+        const result = await response.json();
+        allData = result.items || [];
+        
+        if (!Array.isArray(allData)) {
+            allData = [];
+        }
+
+        renderData();
+    } catch (err) {
+        console.error('Load error:', err);
+        throw new Error('No se pudieron cargar los datos: ' + err.message);
+    }
+}
+
+function renderData() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = allData.filter(item => {
+        return !search || 
+            (item.Title || '').toLowerCase().includes(search) ||
+            (item.field_10 || '').toLowerCase().includes(search) ||
+            (item.field_6 || '').toLowerCase().includes(search);
+    });
+
+    updateStats(filtered);
+    renderNrcList(filtered);
+    renderIncidents(filtered);
+}
+
+function renderNrcList(data) {
+    const nrcs = [...new Set(data.map(i => i.Title).filter(Boolean))].sort();
+    document.getElementById('nrcList').innerHTML = nrcs.map(nrc => {
+        const count = data.filter(i => i.Title === nrc).length;
+        return `<div class="nrc-item" onclick="filterByNrc('${nrc}')">${nrc} (${count})</div>`;
+    }).join('');
+}
+
+function renderIncidents(data) {
+    const container = document.getElementById('incidentsContainer');
+    
+    if (!data.length) {
+        container.innerHTML = '<div class="empty-state"><p>✓ Sin registros</p></div>';
+        return;
     }
 
-    function actualizarEstado(id) {
-        alert("¡Casi listo! Ahora solo te falta crear el flujo de 'Actualizar' que reciba el ID: " + id);
-    }
+    container.innerHTML = data.map((item, idx) => {
+        return `
+            <div class="incident-card">
+                <div class="incident-header">
+                    <div>
+                        <div class="incident-title">${item.field_6 || 'Sin nombre'}</div>
+                        <div class="incident-subtitle">NRC: ${item.Title || 'N/A'}</div>
+                    </div>
+                </div>
+                <div class="incident-body">
+                    <strong>Tutor:</strong> ${item.field_10 || 'N/A'}<br>
+                    <strong>Incidencia:</strong> ${item.field_18 || 'N/A'}<br>
+                    <strong>Estado:</strong> ${item.field_19 || 'N/A'}<br>
+                    <strong>Categoría:</strong> ${item.CATEGORIA || 'N/A'}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function filterByNrc(nrc) {
+    document.getElementById('searchInput').value = nrc;
+    renderData();
+}
+
+function updateStats(data) {
+    document.getElementById('statTotal').textContent = data.length;
+    document.getElementById('statNrc').textContent = new Set(data.map(i => i.Title).filter(Boolean)).size;
+}
+
+function logout() {
+    document.getElementById('loginContainer').style.display = 'flex';
+    document.getElementById('appContainer').classList.remove('active');
+    document.getElementById('searchInput').value = '';
+    allData = [];
+}
+
+function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.classList.add('show');
+    setTimeout(() => box.classList.remove('show'), 5000);
+}
+
+document.getElementById('searchInput').addEventListener('input', renderData);
 </script>
+
 </body>
 </html>
