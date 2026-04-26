@@ -137,7 +137,6 @@
 </head>
 <body class="text-white h-screen flex flex-col">
 
-<!-- TOP NAV -->
 <header class="h-16 flex items-center justify-between px-8 bg-[#141b2d] border-b border-white/5 z-50 flex-shrink-0">
     <div class="flex items-center gap-6">
         <div class="flex items-center gap-3">
@@ -165,7 +164,6 @@
 
 <div class="flex flex-1 overflow-hidden">
 
-    <!-- SIDEBAR -->
     <aside class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
         <div class="px-4 mb-6">
             <button onclick="abrirAdmin()" class="w-full bg-[#facc15] text-[#1e293b] py-2.5 px-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all">
@@ -216,13 +214,10 @@
         </div>
     </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 p-6 grid grid-cols-12 gap-6 overflow-hidden">
 
-        <!-- ZONA IZQUIERDA (col-span-8) -->
         <div class="col-span-8 flex flex-col gap-3 overflow-hidden">
 
-            <!-- BANNER HERO compacto -->
             <div class="banner-hero flex-shrink-0" style="height:110px;">
                 <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png"
                      alt="Portal ETOP Banner"
@@ -235,18 +230,15 @@
                 </div>
             </div>
 
-            <!-- Layout inferior: anuncios izquierda vertical + video/grafico derecha -->
             <div class="flex gap-3 flex-1 overflow-hidden">
 
-                <!-- COLUMNA ANUNCIOS vertical con scroll -->
-                <div id="ann-grid" class="flex flex-col gap-3 overflow-y-auto custom-scrollbar" style="width:46%;flex-shrink:0;">
-                    <div class="glass-panel rounded-lg p-4 text-center text-slate-500 text-sm">⏳ Cargando...</div>
+                <div class="glass-panel rounded-xl overflow-hidden flex flex-col" style="width:46%; flex-shrink:0;">
+                    <iframe name="embed-feed" title="Viva Engage" src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9" style="border: 0px; overflow: hidden; width: 100%; height: 100%; min-height: 400px; flex: 1;"></iframe>
                 </div>
+                <div id="ann-grid" style="display: none;"></div>
 
-                <!-- COLUMNA DERECHA: video arriba, grafico abajo — cada uno flex:1 = 50% del espacio -->
                 <div class="flex flex-col gap-3 flex-1 overflow-hidden">
 
-                    <!-- VIDEO — ocupa mitad del espacio vertical -->
                     <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
                         <div class="px-3 pt-2 flex items-center gap-2" style="flex-shrink:0;">
                             <span class="material-symbols-outlined text-sm text-[#facc15]">play_circle</span>
@@ -261,13 +253,9 @@
                         </div>
                     </div>
 
-                    <!-- GRAFICO Power BI — fondo oscuro, iframe recortado para tapar bordes blancos -->
                     <div class="rounded-xl flex-1 overflow-hidden" style="min-height:0;border:1px solid rgba(250,204,21,0.15);position:relative;background:#141b2d;">
-                        <!-- Máscara izquierda -->
                         <div style="position:absolute;top:0;left:0;width:18px;height:100%;background:#141b2d;z-index:2;"></div>
-                        <!-- Máscara derecha -->
                         <div style="position:absolute;top:0;right:0;width:18px;height:100%;background:#141b2d;z-index:2;"></div>
-                        <!-- Máscara inferior -->
                         <div style="position:absolute;bottom:0;left:0;width:100%;height:14px;background:#141b2d;z-index:2;"></div>
                         <iframe
                             src="https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=118422f7b080b505c14b&navContentPaneEnabled=false&filterPaneEnabled=false"
@@ -280,15 +268,12 @@
             </div>
         </div>
 
-        <!-- ZONA HERRAMIENTAS (col-span-4) -->
         <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
 
-            <!-- Lanzador de Herramientas — todos los marcados en rojo + Correo + Recursos (11 items, grid 4 col) -->
             <div class="glass-panel rounded-xl p-4 flex-shrink-0">
                 <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Lanzador de Herramientas</h4>
                 <div class="grid grid-cols-4 gap-2">
 
-                    <!-- 1. Mesa de Servicios UNAB -->
                     <a href="https://unab.service-now.com/" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">headset_mic</span>
@@ -296,7 +281,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">Mesa UNAB</span>
                     </a>
 
-                    <!-- 2. Teams -->
                     <a href="https://teams.microsoft.com" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">groups</span>
@@ -304,7 +288,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center">Teams</span>
                     </a>
 
-                    <!-- 3. UNAB Online -->
                     <a href="https://online.unab.cl" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">language</span>
@@ -312,7 +295,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">UNAB Online</span>
                     </a>
 
-                    <!-- 4. Plataforma Canvas -->
                     <a href="https://canvas.unab.cl" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">edit_note</span>
@@ -320,7 +302,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center">Canvas</span>
                     </a>
 
-                    <!-- 5. CRM Servicio al Estudiante -->
                     <a href="https://unab.crm.dynamics.com/" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">support_agent</span>
@@ -328,7 +309,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">CRM Estud.</span>
                     </a>
 
-                    <!-- 6. Canvas.unab.cl (acceso directo) -->
                     <a href="https://canvas.unab.cl" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">draw</span>
@@ -336,7 +316,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">Canvas.unab</span>
                     </a>
 
-                    <!-- 7. Web de Integración -->
                     <a href="https://integracion.unab.cl" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">hub</span>
@@ -344,7 +323,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">Web Integrac.</span>
                     </a>
 
-                    <!-- 8. Aplicación Captura de Reuniones -->
                     <a href="aplicaciones.html" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">videocam</span>
@@ -352,7 +330,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center leading-tight">Cap. Reunión</span>
                     </a>
 
-                    <!-- 9. Correo -->
                     <a href="https://outlook.office.com/mail/" target="_blank" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">mail</span>
@@ -360,7 +337,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center">Correo</span>
                     </a>
 
-                    <!-- 10. Recursos -->
                     <a href="recursos_aprendizaje.html" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">school</span>
@@ -368,7 +344,6 @@
                         <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center">Recursos</span>
                     </a>
 
-                    <!-- 11. Gestión QA2 Incidencias -->
                     <a href="gestion_qa2_etop.html" class="flex flex-col items-center gap-1 group cursor-pointer">
                         <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                             <span class="material-symbols-outlined text-lg">bug_report</span>
@@ -379,7 +354,6 @@
                 </div>
             </div>
 
-            <!-- Canales del Equipo -->
             <div class="glass-panel rounded-xl p-4 flex-1 flex flex-col overflow-hidden">
                 <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Canales del Equipo</h4>
                 <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
@@ -414,7 +388,6 @@
                 </div>
             </div>
 
-            <!-- Widget Equipo ETOP -->
             <div class="glass-panel rounded-xl p-4 flex-shrink-0">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -446,7 +419,6 @@
     </main>
 </div>
 
-<!-- OVERLAY ADMIN -->
 <div class="admin-overlay" id="admin-overlay">
     <div class="admin-panel">
         <div id="admin-login-section">
