@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA2 Gestor - ETOP UNAB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #141b2d;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        .power-bi-section {
+            flex: 0 0 80%;
+            background-color: #ffffff;
+            overflow: auto;
+            border-right: 3px solid #004B87;
+        }
+
+        .formulario-section {
+            flex: 0 0 20%;
+            background-color: #f9f9f9;
+            overflow: auto;
+            padding: 16px;
+            border-left: 3px solid #004B87;
+        }
+
+        .formulario-section h3 {
+            color: #004B87;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .formulario-section p {
+            font-size: 12px;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .formulario-section label {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-top: 12px;
+            margin-bottom: 4px;
+        }
+
+        .formulario-section input,
+        .formulario-section textarea,
+        .formulario-section select {
+            width: 100%;
+            padding: 8px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+        }
+
+        .formulario-section textarea {
+            min-height: 80px;
+            max-height: 150px;
+        }
+
+        .btn-abrir {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background-color: #004B87;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+
+        .btn-abrir:hover {
+            background-color: #003559;
+        }
+
+        .info-box {
+            padding: 12px;
+            background-color: #dbeafe;
+            border-left: 4px solid #004B87;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #1e40af;
+        }
+
+        .sin-seleccion {
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #004B87;
+        }
+
+        .loader.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- LADO IZQUIERDO: POWER BI (80%) -->
+    <div class="power-bi-section">
+        <iframe 
+            title="QA2 ETOP"
+            src="https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/f32734ec-3c94-43fa-a8fb-8d8eebbcf11a/c7cb331250d18b546eb4?experience=power-bi"
+            allowfullscreen="true"
+            frameborder="0">
+        </iframe>
+    </div>
+
+    <!-- LADO DERECHO: FORMULARIO SHAREPOINT (20%) -->
+    <div class="formulario-section">
+        <h3>📋 Formulario QA2</h3>
+        
+        <div id="sin-seleccion" class="sin-seleccion">
+            <p>Selecciona una incidencia en Power BI y haz clic en "EDITAR" para ver el formulario.</p>
+        </div>
+
+        <div id="formulario-contenedor" style="display:none;">
+            <div class="info-box">
+                <strong>ID Incidencia:</strong> <span id="id-incidencia">—</span>
+            </div>
+
+            <label for="tipo-qa">Tipo QA</label>
+            <input type="text" id="tipo-qa" readonly>
+
+            <label for="estado-qa2">Estado QA2</label>
+            <input type="text" id="estado-qa2" readonly>
+
+            <label for="categoria">Categoría</label>
+            <input type="text" id="categoria" readonly>
+
+            <label for="semana">Semana/Unidad</label>
+            <input type="text" id="semana" readonly>
+
+            <label for="descripcion">Descripción Incidencia</label>
+            <textarea id="descripcion" readonly></textarea>
+
+            <label for="solucion">Solución</label>
+            <textarea id="solucion"></textarea>
+
+            <button class="btn-abrir" onclick="abrirFormularioCompleto()">
+                ✏️ Abrir Formulario Completo
+            </button>
+        </div>
+
+        <div id="loader" class="loader">
+            <p>Cargando formulario...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Extraer ID de la URL si viene en parámetros
+    function obtenerIDDelURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('ID');
+    }
+
+    // Extraer ID de URL de SharePoint
+    function extraerIDDeURL(url) {
+        const match = url.match(/[?&]ID=(\d+)/);
+        return match ? match[1] : null;
+    }
+
+    // Cargar datos de la incidencia (simulado, ya que no tenemos acceso directo a SharePoint desde JS)
+    function cargarFormulario(urlCompleta) {
+        const id = extraerIDDeURL(urlCompleta);
+        
+        if (!id) {
+            document.getElementById('sin-seleccion').style.display = 'block';
+            document.getElementById('formulario-contenedor').style.display = 'none';
+            return;
+        }
+
+        // Guardar la URL para usar después
+        window.urlFormularioCompleto = urlCompleta;
+
+        document.getElementById('id-incidencia').textContent = id;
+        document.getElementById('sin-seleccion').style.display = 'none';
+        document.getElementById('formulario-contenedor').style.display = 'block';
+
+        // Los campos se llenarían via API o conexión con Power BI
+        // Por ahora, solo guardamos el ID y la URL
+        document.getElementById('tipo-qa').value = '(Desde SharePoint)';
+        document.getElementById('estado-qa2').value = '(Desde SharePoint)';
+        document.getElementById('categoria').value = '(Desde SharePoint)';
+        document.getElementById('semana').value = '(Desde SharePoint)';
+        document.getElementById('descripcion').value = '(Desde SharePoint)';
+    }
+
+    // Abrir formulario completo en nueva ventana
+    function abrirFormularioCompleto() {
+        if (window.urlFormularioCompleto) {
+            window.open(window.urlFormularioCompleto, 'formulario-qa2', 'width=1200,height=800');
+        } else {
+            alert('No hay formulario cargado. Selecciona una incidencia primero.');
+        }
+    }
+
+    // Escuchar mensajes desde Power BI (si se implementa integración)
+    window.addEventListener('message', function(event) {
+        // Verificar origen por seguridad
+        if (event.origin !== 'https://app.powerbi.com' && event.origin !== window.location.origin) {
+            return;
+        }
+
+        // Si recibimos URL del formulario desde Power BI
+        if (event.data && event.data.urlFormulario) {
+            cargarFormulario(event.data.urlFormulario);
+        }
+    });
+
+    // Al cargar, verificar si hay ID en la URL
+    window.addEventListener('load', function() {
+        const idDelURL = obtenerIDDelURL();
+        if (idDelURL) {
+            const urlFormulario = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/DispForm.aspx?ID=' + idDelURL;
+            cargarFormulario(urlFormulario);
+        }
+    });
+
+    // Instrucción inicial
+    console.log('%cQA2 Gestor - ETOP UNAB', 'color: #004B87; font-size: 16px; font-weight: bold;');
+    console.log('Desde Power BI, haz clic en "EDITAR" para cargar el formulario aquí.');
+</script>
+
+</body>
+</html>
