@@ -274,8 +274,8 @@
                     <ol class="step-list">
                         <li><b>Izquierda:</b> Visualiza el reporte Power BI con las incidencias QA2.</li>
                         <li><b>Selecciona:</b> Haz clic en una tarjeta de incidencia.</li>
-                        <li><b>Edita:</b> Presiona el botón "EDITAR EN PANEL DIVIDIDO".</li>
-                        <li><b>Aquí:</b> Los datos aparecerán en este panel (derecha).</li>
+                        <li><b>Edita:</b> Presiona el botón "EDITAR EN SHAREPOINT".</li>
+                        <li><b>Aquí:</b> El formulario aparecerá en este panel (derecha).</li>
                     </ol>
                 </div>
                 
@@ -338,6 +338,14 @@
         function extraerIDDeURL(url) {
             const match = url.match(/[?&]ID=(\d+)/);
             return match ? match[1] : null;
+        }
+
+        function abrirEnPanel(event) {
+            event.preventDefault();
+            const url = event.target.href;
+            const rightPane = document.getElementById('rightPane');
+            // Limpiar contenido anterior
+            rightPane.innerHTML = '<iframe style="width:100%; height:100%; border:none;" src="' + url + '"></iframe>';
         }
 
         function cargarFormulario(urlCompleta) {
