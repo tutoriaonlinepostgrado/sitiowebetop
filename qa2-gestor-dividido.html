@@ -251,6 +251,16 @@
 
         .file-viewer-modal.active {
             display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
         }
 
         .file-viewer-header {
@@ -366,6 +376,7 @@
         <div class="pane" id="leftPane">
             <div class="glass-panel" id="leftGlass"></div>
             <iframe 
+                id="powerbiFrame"
                 title="tableros_postgrados - QA2"
                 src="https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&pageName=c7cb331250d18b546eb4&navContentPaneEnabled=false&filterPaneEnabled=false&toolbarEnabled=false"
                 allowfullscreen="true">
@@ -393,6 +404,7 @@
                         <li><b>Selecciona:</b> Haz clic en una tarjeta de incidencia.</li>
                         <li><b>Edita:</b> Presiona el botón "EDITAR EN SHAREPOINT".</li>
                         <li><b>Aquí:</b> El formulario aparecerá en este panel (derecha).</li>
+                        <li><b>Adjuntos:</b> Los archivos se abrirán en un panel lateral.</li>
                     </ol>
                 </div>
                 
@@ -465,8 +477,25 @@
     <script>
         let currentFileUrl = null;
 
-        function abrirArchivoEnPanel(event, url) {
-            event.preventDefault();
+        // ========================================
+        // LISTENER PRINCIPAL PARA MENSAJES
+        // ========================================
+        window.addEventListener('message', function(event) {
+            console.log('🔔 Mensaje recibido:', event.data);
+            
+            // Mensaje para cargar formulario
+            if (event.data && event.data.urlFormulario) {
+                cargarFormulario(event.data.urlFormulario);
+            }
+            
+            // Mensaje para abrir archivo (NUEVO)
+            if (event.data && event.data.type === 'openFile' && event.data.url) {
+                console.log('📎 Abriendo archivo en modal:', event.data.url);
+                abrirArchivoEnModal(event.data.url);
+            }
+        });
+
+        function abrirArchivoEnModal(url) {
             currentFileUrl = url;
             
             const modal = document.getElementById('fileViewerModal');
@@ -477,7 +506,7 @@
             overlay.classList.add('active');
             iframe.src = url;
             
-            return false;
+            console.log('✅ Modal activado con URL:', url);
         }
 
         function cerrarVisorArchivo() {
@@ -489,11 +518,14 @@
             overlay.classList.remove('active');
             iframe.src = '';
             currentFileUrl = null;
+            
+            console.log('❌ Modal cerrado');
         }
 
         function abrirArchivoNuevaVentana() {
             if (currentFileUrl) {
                 window.open(currentFileUrl, '_blank');
+                console.log('🔗 Archivo abierto en nueva ventana:', currentFileUrl);
             }
         }
 
@@ -537,25 +569,18 @@
             }
         }
 
-        window.addEventListener('message', function(event) {
-            if (event.data && event.data.urlFormulario) {
-                cargarFormulario(event.data.urlFormulario);
-            }
-        });
-
         window.addEventListener('load', function() {
-            console.log('Página cargada. URL:', window.location.href);
+            console.log('✅ Página cargada. URL:', window.location.href);
             const idDelURL = obtenerIDDelURL();
-            console.log('ID extraído:', idDelURL);
             if (idDelURL) {
                 const urlFormulario = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/DispForm.aspx?ID=' + idDelURL;
-                console.log('URL Formulario:', urlFormulario);
                 cargarFormulario(urlFormulario);
-            } else {
-                console.log('No se encontró ID en la URL');
             }
         });
 
+        // ========================================
+        // DIVISOR RESIZABLE
+        // ========================================
         const divider = document.getElementById('divider');
         const leftPane = document.getElementById('leftPane');
         const splitContainer = document.getElementById('splitContainer');
