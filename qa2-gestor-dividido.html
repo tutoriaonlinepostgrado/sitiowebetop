@@ -235,45 +235,120 @@
             color: #1e40af;
         }
 
-        #rightFrame {
+        /* Modal flotante para archivos */
+        .file-viewer-modal {
             display: none;
-            width: 100%;
-            height: 100%;
-            border: none;
+            position: fixed;
+            top: 55px;
+            right: 0;
+            width: 35%;
+            height: calc(100% - 55px);
             background-color: #ffffff;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            flex-direction: column;
         }
 
-        .viewer-active #setupDiv,
-        .viewer-active #formPanel {
-            display: none !important;
+        .file-viewer-modal.active {
+            display: flex;
         }
 
-        .viewer-active #rightFrame {
-            display: block !important;
+        .file-viewer-header {
+            background-color: #004B87;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .close-viewer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .file-viewer-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-close-viewer {
             background-color: #dc2626;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 6px 14px;
+            border-radius: 4px;
             font-weight: 700;
             font-size: 11px;
             cursor: pointer;
-            z-index: 1000;
-            display: none;
+            transition: background-color 0.2s;
             text-transform: uppercase;
         }
 
-        .close-viewer:hover {
+        .btn-close-viewer:hover {
             background-color: #b91c1c;
         }
 
-        .viewer-active .close-viewer {
+        .file-viewer-content {
+            flex: 1;
+            position: relative;
+            background-color: #f8fafc;
+        }
+
+        .file-viewer-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .file-viewer-actions {
+            padding: 12px 20px;
+            background-color: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            background-color: #475569;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-action:hover {
+            background-color: #334155;
+        }
+
+        .btn-action.primary {
+            background-color: #004B87;
+        }
+
+        .btn-action.primary:hover {
+            background-color: #003559;
+        }
+
+        /* Overlay oscuro */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 55px);
+            background-color: rgba(0,0,0,0.4);
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
             display: block;
         }
     </style>
@@ -300,10 +375,9 @@
         <!-- Divisor -->
         <div class="divider" id="divider" title="Arrastra para ajustar el tamaño"></div>
         
-        <!-- Panel Derecho -->
+        <!-- Panel Derecho: Formulario SharePoint -->
         <div class="pane" id="rightPane">
             <div class="glass-panel" id="rightGlass"></div>
-            <button class="close-viewer" onclick="cerrarVisor()">✕ Cerrar</button>
             
             <!-- Setup inicial -->
             <div class="setup-container" id="setupDiv">
@@ -369,30 +443,58 @@
                     ✏️ Abrir en SharePoint
                 </button>
             </div>
+        </div>
+    </div>
 
-            <!-- Iframe para archivos adjuntos -->
-            <iframe id="rightFrame"></iframe>
+    <!-- Modal Visor de Archivos -->
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarVisorArchivo()"></div>
+    <div class="file-viewer-modal" id="fileViewerModal">
+        <div class="file-viewer-header">
+            <h4>📎 Archivo Adjunto</h4>
+            <button class="btn-close-viewer" onclick="cerrarVisorArchivo()">✕ Cerrar</button>
+        </div>
+        <div class="file-viewer-content">
+            <iframe id="fileViewerFrame"></iframe>
+        </div>
+        <div class="file-viewer-actions">
+            <button class="btn-action primary" onclick="abrirArchivoNuevaVentana()">🔗 Abrir en Nueva Ventana</button>
+            <button class="btn-action" onclick="cerrarVisorArchivo()">⬅️ Volver</button>
         </div>
     </div>
 
     <script>
+        let currentFileUrl = null;
+
         function abrirArchivoEnPanel(event, url) {
             event.preventDefault();
-            const rightPane = document.getElementById('rightPane');
-            const rightFrame = document.getElementById('rightFrame');
+            currentFileUrl = url;
             
-            rightPane.classList.add('viewer-active');
-            rightFrame.src = url;
+            const modal = document.getElementById('fileViewerModal');
+            const overlay = document.getElementById('modalOverlay');
+            const iframe = document.getElementById('fileViewerFrame');
+            
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            iframe.src = url;
             
             return false;
         }
 
-        function cerrarVisor() {
-            const rightPane = document.getElementById('rightPane');
-            const rightFrame = document.getElementById('rightFrame');
+        function cerrarVisorArchivo() {
+            const modal = document.getElementById('fileViewerModal');
+            const overlay = document.getElementById('modalOverlay');
+            const iframe = document.getElementById('fileViewerFrame');
             
-            rightPane.classList.remove('viewer-active');
-            rightFrame.src = '';
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            iframe.src = '';
+            currentFileUrl = null;
+        }
+
+        function abrirArchivoNuevaVentana() {
+            if (currentFileUrl) {
+                window.open(currentFileUrl, '_blank');
+            }
         }
 
         function obtenerIDDelURL() {
@@ -482,6 +584,13 @@
                 leftGlass.style.display = 'none';
                 rightGlass.style.display = 'none';
                 document.body.style.cursor = 'default';
+            }
+        });
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarVisorArchivo();
             }
         });
     </script>
