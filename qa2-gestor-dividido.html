@@ -234,6 +234,48 @@
             font-size: 12px;
             color: #1e40af;
         }
+
+        #rightFrame {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #ffffff;
+        }
+
+        .viewer-active #setupDiv,
+        .viewer-active #formPanel {
+            display: none !important;
+        }
+
+        .viewer-active #rightFrame {
+            display: block !important;
+        }
+
+        .close-viewer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            z-index: 1000;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .close-viewer:hover {
+            background-color: #b91c1c;
+        }
+
+        .viewer-active .close-viewer {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -258,9 +300,10 @@
         <!-- Divisor -->
         <div class="divider" id="divider" title="Arrastra para ajustar el tamaño"></div>
         
-        <!-- Panel Derecho: Formulario SharePoint -->
+        <!-- Panel Derecho -->
         <div class="pane" id="rightPane">
             <div class="glass-panel" id="rightGlass"></div>
+            <button class="close-viewer" onclick="cerrarVisor()">✕ Cerrar</button>
             
             <!-- Setup inicial -->
             <div class="setup-container" id="setupDiv">
@@ -326,10 +369,32 @@
                     ✏️ Abrir en SharePoint
                 </button>
             </div>
+
+            <!-- Iframe para archivos adjuntos -->
+            <iframe id="rightFrame"></iframe>
         </div>
     </div>
 
     <script>
+        function abrirArchivoEnPanel(event, url) {
+            event.preventDefault();
+            const rightPane = document.getElementById('rightPane');
+            const rightFrame = document.getElementById('rightFrame');
+            
+            rightPane.classList.add('viewer-active');
+            rightFrame.src = url;
+            
+            return false;
+        }
+
+        function cerrarVisor() {
+            const rightPane = document.getElementById('rightPane');
+            const rightFrame = document.getElementById('rightFrame');
+            
+            rightPane.classList.remove('viewer-active');
+            rightFrame.src = '';
+        }
+
         function obtenerIDDelURL() {
             const params = new URLSearchParams(window.location.search);
             return params.get('ID');
@@ -338,104 +403,6 @@
         function extraerIDDeURL(url) {
             const match = url.match(/[?&]ID=(\d+)/);
             return match ? match[1] : null;
-        }
-
-        function abrirEnPanel(event) {
-            event.preventDefault();
-            const url = event.target.href;
-            const rightPane = document.getElementById('rightPane');
-            
-            // Ocultar setup y formulario
-            const setupDiv = document.getElementById('setupDiv');
-            const formPanel = document.getElementById('formPanel');
-            if (setupDiv) setupDiv.style.display = 'none';
-            if (formPanel) formPanel.style.display = 'none';
-            
-            // Crear contenedor para el visor de archivos
-            rightPane.innerHTML = `
-                <div style="height: 100%; display: flex; flex-direction: column; background-color: #f8fafc;">
-                    <div style="padding: 15px; background-color: #0f172a; color: #facc15; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                        <div style="font-size: 0.9rem; font-weight: 600;">
-                            📎 Visor de Archivo
-                        </div>
-                        <button onclick="cerrarVisorArchivo()" style="background-color: #facc15; color: #0f172a; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 0.75rem; transition: all 0.2s;">
-                            ✕ Cerrar
-                        </button>
-                    </div>
-                    <iframe name="rightPane" style="width:100%; height:100%; border:none; flex: 1; background-color: #ffffff;" src="${url}"></iframe>
-                </div>
-            `;
-        }
-        
-        function cerrarVisorArchivo() {
-            const rightPane = document.getElementById('rightPane');
-            // Restaurar el setup inicial
-            rightPane.innerHTML = `
-                <div class="glass-panel" id="rightGlass"></div>
-                
-                <div class="setup-container" id="setupDiv">
-                    <div>
-                        <h2>📋 Formulario QA2</h2>
-                        <p style="margin-top: 0; color: #64748b;">Desde Power BI, haz clic en el botón "EDITAR" para cargar la incidencia aquí.</p>
-                    </div>
-                    
-                    <div class="workflow-card">
-                        <h3>Instrucciones</h3>
-                        <ol class="step-list">
-                            <li><b>Izquierda:</b> Visualiza el reporte Power BI con las incidencias QA2.</li>
-                            <li><b>Selecciona:</b> Haz clic en una tarjeta de incidencia.</li>
-                            <li><b>Edita:</b> Presiona el botón "EDITAR EN SHAREPOINT".</li>
-                            <li><b>Aquí:</b> El formulario aparecerá en este panel (derecha).</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="instructions">
-                        <b>💡 Consejo:</b> Ajusta el divisor central para tener más o menos espacio en cada panel según necesites.
-                    </div>
-                </div>
-                
-                <div class="form-panel" id="formPanel" style="display: none;">
-                    <h3>🖊️ Editar Incidencia</h3>
-                    
-                    <div class="info-box">
-                        <strong>ID Incidencia:</strong> <span id="id-incidencia">—</span>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Tipo QA</label>
-                        <input type="text" id="tipo-qa" readonly>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Estado QA2</label>
-                        <input type="text" id="estado-qa2" readonly>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Categoría</label>
-                        <input type="text" id="categoria" readonly>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Semana/Unidad</label>
-                        <input type="text" id="semana" readonly>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Descripción Incidencia</label>
-                        <textarea id="descripcion" readonly></textarea>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Solución</label>
-                        <textarea id="solucion"></textarea>
-                    </div>
-                    
-                    <button class="btn-abrir" onclick="abrirFormularioCompleto()">
-                        ✏️ Abrir en SharePoint
-                    </button>
-                </div>
-            `;
         }
 
         function cargarFormulario(urlCompleta) {
