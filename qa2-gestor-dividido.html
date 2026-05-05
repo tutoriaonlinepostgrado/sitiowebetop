@@ -274,8 +274,8 @@
                     <ol class="step-list">
                         <li><b>Izquierda:</b> Visualiza el reporte Power BI con las incidencias QA2.</li>
                         <li><b>Selecciona:</b> Haz clic en una tarjeta de incidencia.</li>
-                        <li><b>Edita:</b> Presiona el botón "EDITAR EN SHAREPOINT".</li>
-                        <li><b>Aquí:</b> El formulario aparecerá en este panel (derecha).</li>
+                        <li><b>Edita:</b> Presiona el botón "EDITAR EN PANEL DIVIDIDO".</li>
+                        <li><b>Aquí:</b> Los datos aparecerán en este panel (derecha).</li>
                     </ol>
                 </div>
                 
@@ -353,6 +353,13 @@
             document.getElementById('id-incidencia').textContent = id;
             document.getElementById('setupDiv').style.display = 'none';
             document.getElementById('formPanel').style.display = 'block';
+            
+            document.getElementById('tipo-qa').value = 'Datos cargados desde SharePoint';
+            document.getElementById('estado-qa2').value = 'Ver en SharePoint';
+            document.getElementById('categoria').value = 'Abre el formulario completo';
+            document.getElementById('semana').value = 'ID: ' + id;
+            document.getElementById('descripcion').value = 'Los datos completos se cargan en SharePoint.\n\nHaz clic en el botón para editar.';
+            document.getElementById('solucion').value = '';
         }
 
         function abrirFormularioCompleto() {
