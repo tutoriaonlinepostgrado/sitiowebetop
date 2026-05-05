@@ -370,10 +370,15 @@
         });
 
         window.addEventListener('load', function() {
+            console.log('Página cargada. URL:', window.location.href);
             const idDelURL = obtenerIDDelURL();
+            console.log('ID extraído:', idDelURL);
             if (idDelURL) {
                 const urlFormulario = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/DispForm.aspx?ID=' + idDelURL;
+                console.log('URL Formulario:', urlFormulario);
                 cargarFormulario(urlFormulario);
+            } else {
+                console.log('No se encontró ID en la URL');
             }
         });
 
