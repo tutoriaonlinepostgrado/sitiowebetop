@@ -3,85 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QA2 Gestor - ETOP UNAB</title>
+    <title>QA2 Gestor - Estación de Trabajo - ETOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #141b2d;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #19202E;
         }
-
-        .container {
+        
+        .top-bar {
+            height: 55px;
+            background-color: #0f172a;
+            color: #facc15;
             display: flex;
-            height: 100vh;
-            gap: 0;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            z-index: 10;
+            position: relative;
         }
-
-        .power-bi-section {
-            flex: 0 0 80%;
+        
+        .top-bar-title { 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 1.1rem;
+        }
+        
+        .btn-back {
+            background-color: #facc15; 
+            color: #0f172a; 
+            text-decoration: none;
+            padding: 8px 18px; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-size: 0.85rem; 
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-back:hover { 
+            background-color: #eab308; 
+            transform: translateY(-1px);
+        }
+        
+        .split-container { 
+            display: flex; 
+            height: calc(100% - 55px); 
+            width: 100%; 
+        }
+        
+        .pane { 
+            height: 100%; 
+            position: relative; 
+        }
+        
+        #leftPane { flex: 0 0 70%; }
+        #rightPane { 
+            flex: 1; 
+            background-color: #f8fafc; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            background-color: #ffffff; 
+        }
+        
+        .divider {
+            width: 8px; 
+            background-color: #facc15; 
+            cursor: col-resize;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 5;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+        }
+        
+        .divider:hover, .divider:active { background-color: #eab308; }
+        .divider::after { content: "⋮"; color: #0f172a; font-weight: bold; font-size: 1.2rem; }
+        
+        .glass-panel { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 10; 
+            display: none; 
+        }
+        
+        .setup-container {
+            padding: 30px;
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 100%;
+            overflow-y: auto;
+        }
+        
+        .setup-container h2 { 
+            color: #0f172a; 
+            margin-top: 0; 
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .workflow-card {
             background-color: #ffffff;
-            overflow: auto;
-            border-right: 3px solid #004B87;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-
-        .formulario-section {
-            flex: 0 0 20%;
-            background-color: #f9f9f9;
-            overflow: auto;
-            padding: 16px;
-            border-left: 3px solid #004B87;
+        
+        .workflow-card h3 {
+            margin-top: 0;
+            color: #1e40af;
+            font-size: 1rem;
+            border-bottom: 2px solid #eff6ff;
+            padding-bottom: 10px;
         }
-
-        .formulario-section h3 {
-            color: #004B87;
+        
+        .step-list {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        
+        .step-list li {
             margin-bottom: 12px;
-            font-size: 14px;
-            text-transform: uppercase;
-            font-weight: 700;
+            line-height: 1.5;
         }
-
-        .formulario-section p {
-            font-size: 12px;
-            color: #475569;
-            line-height: 1.6;
-            margin-bottom: 8px;
+        
+        .step-list li::marker {
+            color: #2563eb;
+            font-weight: bold;
         }
-
-        .formulario-section label {
+        
+        .instructions { 
+            background-color: #fffbeb; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 4px solid #f59e0b; 
+            font-size: 0.85rem; 
+            color: #78350f;
+            line-height: 1.5;
+        }
+        
+        .form-panel {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .form-panel h3 {
+            color: #004B87;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-field {
+            margin-bottom: 12px;
+        }
+        
+        .form-field label {
             display: block;
             font-size: 11px;
             color: #64748b;
             text-transform: uppercase;
             font-weight: 700;
-            margin-top: 12px;
             margin-bottom: 4px;
         }
-
-        .formulario-section input,
-        .formulario-section textarea,
-        .formulario-section select {
+        
+        .form-field input,
+        .form-field textarea {
             width: 100%;
             padding: 8px;
-            background-color: #ffffff;
+            background-color: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 4px;
             font-size: 12px;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-field textarea {
+            min-height: 80px;
             resize: vertical;
         }
-
-        .formulario-section textarea {
-            min-height: 80px;
-            max-height: 150px;
-        }
-
+        
         .btn-abrir {
             width: 100%;
             padding: 10px;
@@ -94,13 +218,13 @@
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            transition: background-color 0.3s;
+            transition: background-color 0.2s;
         }
-
+        
         .btn-abrir:hover {
             background-color: #003559;
         }
-
+        
         .info-box {
             padding: 12px;
             background-color: #dbeafe;
@@ -110,161 +234,179 @@
             font-size: 12px;
             color: #1e40af;
         }
-
-        .sin-seleccion {
-            padding: 20px;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 13px;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .loader {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #004B87;
-        }
-
-        .loader.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <!-- LADO IZQUIERDO: POWER BI (80%) -->
-    <div class="power-bi-section">
-        <iframe 
-            title="tableros_postgrados"
-            src="https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2"
-            allowfullscreen="true"
-            frameborder="0">
-        </iframe>
-    </div>
-
-    <!-- LADO DERECHO: FORMULARIO SHAREPOINT (20%) -->
-    <div class="formulario-section">
-        <h3>📋 Formulario QA2</h3>
-        
-        <div id="sin-seleccion" class="sin-seleccion">
-            <p>Selecciona una incidencia en Power BI y haz clic en "EDITAR" para ver el formulario.</p>
+    <div class="top-bar">
+        <div class="top-bar-title">
+            📊 QA2 Gestor - Estación de Trabajo
         </div>
-
-        <div id="formulario-contenedor" style="display:none;">
-            <div class="info-box">
-                <strong>ID Incidencia:</strong> <span id="id-incidencia">—</span>
+        <a href="index.html" class="btn-back">Volver al Portal</a>
+    </div>
+    
+    <div class="split-container" id="splitContainer">
+        <!-- Panel Izquierdo: Power BI -->
+        <div class="pane" id="leftPane">
+            <div class="glass-panel" id="leftGlass"></div>
+            <iframe 
+                title="tableros_postgrados - Página 1"
+                src="https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&pageName=118422f7b080b505c14b"
+                allowfullscreen="true">
+            </iframe>
+        </div>
+        
+        <!-- Divisor -->
+        <div class="divider" id="divider" title="Arrastra para ajustar el tamaño"></div>
+        
+        <!-- Panel Derecho: Formulario SharePoint -->
+        <div class="pane" id="rightPane">
+            <div class="glass-panel" id="rightGlass"></div>
+            
+            <!-- Setup inicial -->
+            <div class="setup-container" id="setupDiv">
+                <div>
+                    <h2>📋 Formulario QA2</h2>
+                    <p style="margin-top: 0; color: #64748b;">Desde Power BI, haz clic en el botón "EDITAR" para cargar la incidencia aquí.</p>
+                </div>
+                
+                <div class="workflow-card">
+                    <h3>Instrucciones</h3>
+                    <ol class="step-list">
+                        <li><b>Izquierda:</b> Visualiza el reporte Power BI con las incidencias QA2.</li>
+                        <li><b>Selecciona:</b> Haz clic en una tarjeta de incidencia.</li>
+                        <li><b>Edita:</b> Presiona el botón "EDITAR EN SHAREPOINT".</li>
+                        <li><b>Aquí:</b> El formulario aparecerá en este panel (derecha).</li>
+                    </ol>
+                </div>
+                
+                <div class="instructions">
+                    <b>💡 Consejo:</b> Ajusta el divisor central para tener más o menos espacio en cada panel según necesites.
+                </div>
             </div>
-
-            <label for="tipo-qa">Tipo QA</label>
-            <input type="text" id="tipo-qa" readonly>
-
-            <label for="estado-qa2">Estado QA2</label>
-            <input type="text" id="estado-qa2" readonly>
-
-            <label for="categoria">Categoría</label>
-            <input type="text" id="categoria" readonly>
-
-            <label for="semana">Semana/Unidad</label>
-            <input type="text" id="semana" readonly>
-
-            <label for="descripcion">Descripción Incidencia</label>
-            <textarea id="descripcion" readonly></textarea>
-
-            <label for="solucion">Solución</label>
-            <textarea id="solucion"></textarea>
-
-            <button class="btn-abrir" onclick="abrirFormularioCompleto()">
-                ✏️ Abrir Formulario Completo
-            </button>
-        </div>
-
-        <div id="loader" class="loader">
-            <p>Cargando formulario...</p>
+            
+            <!-- Formulario (oculto hasta que seleccionen) -->
+            <div class="form-panel" id="formPanel" style="display: none;">
+                <h3>🖊️ Editar Incidencia</h3>
+                
+                <div class="info-box">
+                    <strong>ID Incidencia:</strong> <span id="id-incidencia">—</span>
+                </div>
+                
+                <div class="form-field">
+                    <label>Tipo QA</label>
+                    <input type="text" id="tipo-qa" readonly>
+                </div>
+                
+                <div class="form-field">
+                    <label>Estado QA2</label>
+                    <input type="text" id="estado-qa2" readonly>
+                </div>
+                
+                <div class="form-field">
+                    <label>Categoría</label>
+                    <input type="text" id="categoria" readonly>
+                </div>
+                
+                <div class="form-field">
+                    <label>Semana/Unidad</label>
+                    <input type="text" id="semana" readonly>
+                </div>
+                
+                <div class="form-field">
+                    <label>Descripción Incidencia</label>
+                    <textarea id="descripcion" readonly></textarea>
+                </div>
+                
+                <div class="form-field">
+                    <label>Solución</label>
+                    <textarea id="solucion"></textarea>
+                </div>
+                
+                <button class="btn-abrir" onclick="abrirFormularioCompleto()">
+                    ✏️ Abrir en SharePoint
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Extraer ID de la URL si viene en parámetros
-    function obtenerIDDelURL() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('ID');
-    }
-
-    // Extraer ID de URL de SharePoint
-    function extraerIDDeURL(url) {
-        const match = url.match(/[?&]ID=(\d+)/);
-        return match ? match[1] : null;
-    }
-
-    // Cargar datos de la incidencia (simulado, ya que no tenemos acceso directo a SharePoint desde JS)
-    function cargarFormulario(urlCompleta) {
-        const id = extraerIDDeURL(urlCompleta);
-        
-        if (!id) {
-            document.getElementById('sin-seleccion').style.display = 'block';
-            document.getElementById('formulario-contenedor').style.display = 'none';
-            return;
+    <script>
+        function obtenerIDDelURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('ID');
         }
 
-        // Guardar la URL para usar después
-        window.urlFormularioCompleto = urlCompleta;
-
-        document.getElementById('id-incidencia').textContent = id;
-        document.getElementById('sin-seleccion').style.display = 'none';
-        document.getElementById('formulario-contenedor').style.display = 'block';
-
-        // Los campos se llenarían via API o conexión con Power BI
-        // Por ahora, solo guardamos el ID y la URL
-        document.getElementById('tipo-qa').value = '(Desde SharePoint)';
-        document.getElementById('estado-qa2').value = '(Desde SharePoint)';
-        document.getElementById('categoria').value = '(Desde SharePoint)';
-        document.getElementById('semana').value = '(Desde SharePoint)';
-        document.getElementById('descripcion').value = '(Desde SharePoint)';
-    }
-
-    // Abrir formulario completo en nueva ventana
-    function abrirFormularioCompleto() {
-        if (window.urlFormularioCompleto) {
-            window.open(window.urlFormularioCompleto, 'formulario-qa2', 'width=1200,height=800');
-        } else {
-            alert('No hay formulario cargado. Selecciona una incidencia primero.');
-        }
-    }
-
-    // Escuchar mensajes desde Power BI (si se implementa integración)
-    window.addEventListener('message', function(event) {
-        // Verificar origen por seguridad
-        if (event.origin !== 'https://app.powerbi.com' && event.origin !== window.location.origin) {
-            return;
+        function extraerIDDeURL(url) {
+            const match = url.match(/[?&]ID=(\d+)/);
+            return match ? match[1] : null;
         }
 
-        // Si recibimos URL del formulario desde Power BI
-        if (event.data && event.data.urlFormulario) {
-            cargarFormulario(event.data.urlFormulario);
+        function cargarFormulario(urlCompleta) {
+            const id = extraerIDDeURL(urlCompleta);
+            
+            if (!id) {
+                document.getElementById('setupDiv').style.display = 'block';
+                document.getElementById('formPanel').style.display = 'none';
+                return;
+            }
+
+            window.urlFormularioCompleto = urlCompleta;
+            document.getElementById('id-incidencia').textContent = id;
+            document.getElementById('setupDiv').style.display = 'none';
+            document.getElementById('formPanel').style.display = 'block';
         }
-    });
 
-    // Al cargar, verificar si hay ID en la URL
-    window.addEventListener('load', function() {
-        const idDelURL = obtenerIDDelURL();
-        if (idDelURL) {
-            const urlFormulario = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/DispForm.aspx?ID=' + idDelURL;
-            cargarFormulario(urlFormulario);
+        function abrirFormularioCompleto() {
+            if (window.urlFormularioCompleto) {
+                window.open(window.urlFormularioCompleto, 'formulario-qa2', 'width=1000,height=800,left=100,top=100');
+            } else {
+                alert('No hay formulario cargado.');
+            }
         }
-    });
 
-    // Instrucción inicial
-    console.log('%cQA2 Gestor - ETOP UNAB', 'color: #004B87; font-size: 16px; font-weight: bold;');
-    console.log('Desde Power BI, haz clic en "EDITAR" para cargar el formulario aquí.');
-</script>
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.urlFormulario) {
+                cargarFormulario(event.data.urlFormulario);
+            }
+        });
 
+        window.addEventListener('load', function() {
+            const idDelURL = obtenerIDDelURL();
+            if (idDelURL) {
+                const urlFormulario = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/DispForm.aspx?ID=' + idDelURL;
+                cargarFormulario(urlFormulario);
+            }
+        });
+
+        const divider = document.getElementById('divider');
+        const leftPane = document.getElementById('leftPane');
+        const splitContainer = document.getElementById('splitContainer');
+        const leftGlass = document.getElementById('leftGlass');
+        const rightGlass = document.getElementById('rightGlass');
+        let isDragging = false;
+
+        divider.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            leftGlass.style.display = 'block';
+            rightGlass.style.display = 'block';
+            document.body.style.cursor = 'col-resize';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            let newLeftWidth = (e.clientX / splitContainer.offsetWidth) * 100;
+            if (newLeftWidth > 15 && newLeftWidth < 85) {
+                leftPane.style.flex = `0 0 ${newLeftWidth}%`;
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                leftGlass.style.display = 'none';
+                rightGlass.style.display = 'none';
+                document.body.style.cursor = 'default';
+            }
+        });
+    </script>
 </body>
 </html>
