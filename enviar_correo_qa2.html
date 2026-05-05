@@ -21,6 +21,7 @@
             background: rgba(255,255,255,0.1);
             border-radius: 16px;
             backdrop-filter: blur(10px);
+            max-width: 500px;
         }
         .spinner {
             border: 4px solid rgba(255,255,255,0.3);
@@ -37,6 +38,26 @@
         }
         h2 { margin: 0 0 10px 0; font-size: 24px; }
         p { margin: 0; font-size: 14px; opacity: 0.9; }
+        .debug {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 11px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: white;
+            color: #004B87;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -44,31 +65,76 @@
         <h2>📧 Abriendo correo...</h2>
         <div class="spinner"></div>
         <p>Redirigiendo a tu cliente de correo</p>
+        <div class="debug" id="debug"></div>
     </div>
 
     <script>
-        // Obtener parámetros de la URL
-        const params = new URLSearchParams(window.location.search);
-        const destinatario = params.get('destinatario') || '';
-        const subject = params.get('subject') || '';
-        const body = params.get('body') || '';
-
-        // Construir mailto
-        const mailtoLink = `mailto:${destinatario}?subject=${subject}&body=${body}`;
-
-        // Redirigir inmediatamente
-        window.location.href = mailtoLink;
-
-        // Mensaje alternativo si no redirige
-        setTimeout(() => {
-            document.querySelector('.container').innerHTML = `
-                <h2>✅ Listo</h2>
-                <p style="margin-top:20px;">Si no se abrió tu cliente de correo automáticamente:</p>
-                <a href="${mailtoLink}" style="display:inline-block; margin-top:20px; padding:12px 24px; background:white; color:#004B87; text-decoration:none; border-radius:6px; font-weight:700;">
-                    📧 Hacer clic aquí
-                </a>
-            `;
-        }, 2000);
+        // Obtener toda la URL
+        const fullURL = window.location.href;
+        const debugDiv = document.getElementById('debug');
+        
+        // Extraer parámetros manualmente
+        const urlParts = fullURL.split('?');
+        
+        if (urlParts.length < 2) {
+            debugDiv.innerHTML = '<strong>Error:</strong> No se encontraron parámetros en la URL<br><br>' + fullURL;
+        } else {
+            const queryString = urlParts[1];
+            
+            // Parsear parámetros
+            const params = {};
+            const pairs = queryString.split('&');
+            
+            pairs.forEach(pair => {
+                const [key, value] = pair.split('=');
+                params[key] = value || '';
+            });
+            
+            // Debug: mostrar parámetros
+            debugDiv.innerHTML = '<strong>Parámetros detectados:</strong><br>' +
+                                 'destinatario: ' + (params.destinatario || '(vacío)') + '<br>' +
+                                 'subject: ' + (params.subject ? decodeURIComponent(params.subject).substring(0, 50) + '...' : '(vacío)') + '<br>' +
+                                 'body: ' + (params.body ? decodeURIComponent(params.body).substring(0, 100) + '...' : '(vacío)');
+            
+            const destinatario = params.destinatario || '';
+            const subject = params.subject || '';
+            const body = params.body || '';
+            
+            // Construir mailto
+            let mailtoLink = 'mailto:' + destinatario;
+            
+            const mailtoParams = [];
+            if (subject) mailtoParams.push('subject=' + subject);
+            if (body) mailtoParams.push('body=' + body);
+            
+            if (mailtoParams.length > 0) {
+                mailtoLink += '?' + mailtoParams.join('&');
+            }
+            
+            console.log('mailto generado:', mailtoLink);
+            
+            // Redirigir inmediatamente
+            setTimeout(() => {
+                window.location.href = mailtoLink;
+            }, 500);
+            
+            // Mensaje alternativo si no redirige
+            setTimeout(() => {
+                document.querySelector('.container').innerHTML = `
+                    <h2>✅ Listo</h2>
+                    <p style="margin-top:20px;">Si no se abrió tu cliente de correo automáticamente:</p>
+                    <a href="${mailtoLink}" class="btn">
+                        📧 Hacer clic aquí
+                    </a>
+                    <div class="debug" style="margin-top: 20px; text-align: left;">
+                        <strong>Link generado:</strong><br>
+                        <div style="word-break: break-all; font-size: 10px; margin-top: 5px;">
+                            ${mailtoLink.substring(0, 300)}...
+                        </div>
+                    </div>
+                `;
+            }, 2500);
+        }
     </script>
 </body>
 </html>
