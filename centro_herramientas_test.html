@@ -373,8 +373,10 @@
   <div id="t2-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab2()">📥 Descargar Excel</button>
     <button class="btn primary" onclick="sendToSharePoint()">📨 Enviar a SharePoint</button>
+    <button class="btn primary" onclick="sendToSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
   </div>
   <div id="t2-sp-result"></div>
+  <div id="t2-sp-result-miguel"></div>
 
   <div id="t2-paso3" style="display:none; margin-top:1.2rem;">
     <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
@@ -384,6 +386,17 @@
     <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
     <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
       📧 Abrir app — Enviar correos de bienvenida
+    </button>
+  </div>
+
+  <div id="t2-paso3-miguel" style="display:none; margin-top:1.2rem;">
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
+      <div style="font-weight:700; font-size:1rem;">Enviar correos de bienvenida — Equipo Miguel</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
+      📧 Abrir app — Enviar correos Equipo Miguel
     </button>
   </div>
 </div>
@@ -538,8 +551,8 @@ function clearAll() {
   Object.assign(state, { t1Files:[], t1mFiles:[], t2File:null, t3File:null, t2Data:null, t3Data:null, t1Mode:'diario' });
   document.querySelectorAll('input[type=text], input[type=date], input[type=time], textarea').forEach(el => el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
-  ['t2-actions','t3-actions','t2-paso3','t3-paso3'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-  ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
+  ['t2-actions','t3-actions','t2-paso3','t2-paso3-miguel','t3-paso3'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['t1-result','t2-result','t3-result','t2-sp-result','t2-sp-result-miguel','t3-sp-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
   selectRadio(document.querySelector('#tab1-radio .radio-option'), 'tab1-mode', 'diario');
   switchTab(0, document.querySelectorAll('.tab-btn')[0]);
 }
@@ -1120,6 +1133,28 @@ async function sendToSharePoint() {
     if(res.ok || res.status===202) {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('t2-paso3').style.display = 'block';
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function sendToSharePointMiguel() {
+  if(!state.t2Data) return;
+  const spResult = document.getElementById('t2-sp-result-miguel');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.t2Data)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
+      document.getElementById('t2-paso3-miguel').style.display = 'block';
     } else {
       spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
     }
