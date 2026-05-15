@@ -431,12 +431,37 @@ async function procesarInvitaciones() {
       if(!correoEst && emails.length) correoEst = emails[0].toLowerCase();
       if(!correoEst) continue;
       correoEst = correoEst.toLowerCase();
-      const nombreCol = finalHeaders.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR'));
-      const apellidoCol = finalHeaders.find(h=>h.includes('APELLIDO'));
-      const partes = [];
-      if(nombreCol && r[nombreCol] && r[nombreCol].toLowerCase()!=='nan') partes.push(r[nombreCol].trim());
-      if(apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase()!=='nan') partes.push(r[apellidoCol].trim());
-      const nombre = partes.join(' ').trim().toUpperCase();
+      // Detectar tipo de nómina
+      const esAlumnoPotencial = finalHeaders.some(h => h.includes('ALUMNO POTENCIAL'));
+      
+      let nombre = '';
+      if (esAlumnoPotencial) {
+        // Tipo "Alumno Potencial": columna Nombre YA incluye apellido paterno
+        const nombreCol = finalHeaders.find(h => h.includes('NOMBRE') && h.includes('ALUMNO POTENCIAL') && !h.includes('TUTOR'));
+        const apellidoMaternoCol = finalHeaders.find(h => h.includes('APELLIDO MATERNO') && h.includes('ALUMNO POTENCIAL'));
+        
+        const partes = [];
+        if (nombreCol && r[nombreCol] && r[nombreCol].toLowerCase() !== 'nan') {
+          partes.push(r[nombreCol].trim());
+        }
+        if (apellidoMaternoCol && r[apellidoMaternoCol] && r[apellidoMaternoCol].toLowerCase() !== 'nan') {
+          partes.push(r[apellidoMaternoCol].trim());
+        }
+        nombre = partes.join(' ').trim().toUpperCase();
+      } else {
+        // Nóminas normales: construir nombre + apellido paterno
+        const nombreCol = finalHeaders.find(h => h.includes('NOMBRE') && !h.includes('TUTOR'));
+        const apellidoCol = finalHeaders.find(h => h.includes('APELLIDO'));
+        
+        const partes = [];
+        if (nombreCol && r[nombreCol] && r[nombreCol].toLowerCase() !== 'nan') {
+          partes.push(r[nombreCol].trim());
+        }
+        if (apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase() !== 'nan') {
+          partes.push(r[apellidoCol].trim());
+        }
+        nombre = partes.join(' ').trim().toUpperCase();
+      }
       const fechaHoraDisplay = fechaSesion ? formatSyncDisplay(fechaSesion, hora) : '';
       const formatoFechaHora = fechaSesion ? `${fechaSesion} ${hora}` : '';
       const fechaInicioDMY = fechaInicio ? formatDateDMY(fechaInicio) : '';
