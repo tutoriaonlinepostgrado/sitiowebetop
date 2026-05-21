@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Tutorial - ETOP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 950px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 14px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .info-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .info-card h3 {
+            color: #1e293b;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .info-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+        .info-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .info-value {
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .editor-section {
+            background: #fffbeb;
+            border: 2px dashed #fbbf24;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .editor-section h3 {
+            color: #92400e;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .editor-section p {
+            color: #78350f;
+            font-size: 13px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .editor-section textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        .editor-section textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+        }
+        .preview {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .preview-title {
+            background: #0ea5e9;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .email-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-family: Calibri, Helvetica, sans-serif;
+            font-size: 12pt;
+            line-height: 1.7;
+        }
+        .logo {
+            margin-bottom: 25px;
+        }
+        .course-info {
+            background: #f1f5f9;
+            padding: 15px 20px;
+            border-left: 4px solid #8b5cf6;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11pt;
+            line-height: 1.6;
+        }
+        .cronograma-placeholder {
+            background: #fef3c7;
+            border: 3px dashed #f59e0b;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .cronograma-placeholder p {
+            color: #92400e;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 0;
+        }
+        .custom-text-preview {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #065f46;
+            min-height: 60px;
+        }
+        .instructions {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+        .instructions h3 {
+            margin: 0 0 15px 0;
+            color: #1e40af;
+            font-size: 16px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #1e3a8a;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #8b5cf6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        .btn-primary:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+        .spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner.active {
+            display: block;
+        }
+        .spinner-icon {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8b5cf6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👋 Presentación Tutora de Acompañamiento</h1>
+            <p>ETOP - Equipo de Tutoría Online de Postgrado</p>
+        </div>
+
+        <div class="content">
+            <!-- INFORMACIÓN DEL CURSO -->
+            <div class="info-card">
+                <h3>📚 Datos del Curso (Pre-llenados desde Power BI)</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Tutor/a</div>
+                        <div class="info-value" id="nombreTutor"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Curso</div>
+                        <div class="info-value" id="nombreCurso"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">NRC</div>
+                        <div class="info-value" id="nrc"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Duración</div>
+                        <div class="info-value"><span id="duracion"></span> semanas</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha Inicio</div>
+                        <div class="info-value"><span id="diaInicio"></span> <span id="fechaInicio"></span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha Fin</div>
+                        <div class="info-value"><span id="diaFin"></span> <span id="fechaFin"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INSTRUCCIONES -->
+            <div class="instructions">
+                <h3>📋 Instrucciones para completar y enviar:</h3>
+                <ol>
+                    <li><strong>Pega el texto específico del curso</strong> en el área editable (información sobre grupos, evaluaciones, plazos, etc.)</li>
+                    <li><strong>Revisa la vista previa</strong> para verificar que todo esté correcto</li>
+                    <li><strong>Haz clic en "Abrir Outlook"</strong> - Se abrirá con el texto completo del correo</li>
+                    <li><strong>Inserta manualmente</strong> la imagen del cronograma en el espacio indicado</li>
+                    <li><strong>Agrega el logo UNAB</strong> al inicio del correo</li>
+                    <li><strong>Envía el correo</strong></li>
+                </ol>
+            </div>
+
+            <!-- EDITOR DE TEXTO ESPECÍFICO -->
+            <div class="editor-section">
+                <h3>📝 Texto Específico del Curso (Editable)</h3>
+                <p><strong>Instrucciones:</strong> Copia y pega aquí el texto específico de este curso desde tu plantilla (información sobre actividades grupales, evaluaciones, plazos especiales, instrucciones de autoinscripción, etc.)</p>
+                <textarea id="textoEspecifico" placeholder="Ejemplo:
+
+Con respecto a las actividades grupales: Sumativas de la semana 2 y 4 y formativas de la semana 1 y 3, según la programación del curso, los grupos serán constituidos entre 2 y 5 estudiantes (mismo de 5 estudiantes). Estas indicaciones ya se encuentran configuradas en la plataforma.
+
+Para su conocimiento, aclaro que, si las actividades son grupales, serán los propios estudiantes quienes se deben auto inscribir a través del enlace 'Personas', para lo cual solicito su cooperación en la motivación a los estudiantes a realizar esta acción..."></textarea>
+            </div>
+
+            <!-- VISTA PREVIA -->
+            <div class="preview">
+                <div class="preview-title">👁️ Vista Previa del Correo</div>
+                <div class="email-content">
+                    <div class="logo">
+                        <img src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/logo_unab_etop.png" alt="Logo UNAB ETOP" width="134" height="60">
+                    </div>
+
+                    <p><strong>Estimada/o Docente:</strong></p>
+                    <br>
+                    <p>Junto con saludar, mi nombre es <strong><span id="nombreTutorPreview"></span></strong>, y seré la tutora de Acompañamiento encargada de apoyar la asignatura <strong>"<span id="nombreCursoPreview"></span>"</strong> <strong><span id="nrcPreview"></span></strong>, la cual tiene una duración de <strong><span id="duracionPreview"></span> semanas</strong>, iniciando el <strong><span id="diaInicioPreview"></span> <span id="fechaInicioPreview"></span></strong> y finalizando el <strong><span id="diaFinPreview"></span> <span id="fechaFinPreview"></span></strong> en la plataforma Canvas.</p>
+                    <br>
+                    <p>Como parte del proceso de programación antes de la impartición y según indica la plantilla web del curso, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
+
+                    <div class="cronograma-placeholder">
+                        <p>⚠️ INSERTAR CRONOGRAMA AQUÍ (imagen) ⚠️</p>
+                    </div>
+
+                    <div class="custom-text-preview" id="customTextPreview">
+                        <em>El texto específico que pegues arriba aparecerá aquí...</em>
+                    </div>
+
+                    <p>Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su cooperación en la motivación a los estudiantes a realizar esta acción.</p>
+                    <br>
+                    <p>Adicionalmente, le sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecte. Estoy a su disposición para asistirle en este proceso.</p>
+                    <br>
+                    <p>Si requiere orientación sobre el uso de la plataforma, puede acceder al siguiente enlace <a href="https://canva.unab.cl/inicio-docentes/" style="color:#8b5cf6">https://canva.unab.cl/inicio-docentes/</a> o contactar a los canales de soporte disponibles.</p>
+                    <br>
+                    <p>Quedo atenta a cualquier consulta o información adicional que necesite.</p>
+                    <p><strong>Saludos cordiales,</strong></p>
+                </div>
+            </div>
+
+            <!-- BOTÓN DE ACCIÓN -->
+            <div class="actions">
+                <a href="#" id="mailtoLink" class="btn btn-primary">📧 Abrir Outlook</a>
+            </div>
+
+            <div class="spinner" id="spinner">
+                <div class="spinner-icon"></div>
+                <p style="margin-top: 15px; color: #64748b;">Abriendo Outlook...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const params = new URLSearchParams(window.location.search);
+        const nombreTutor = decodeURIComponent(params.get('nombreTutor') || '');
+        const nombreCurso = decodeURIComponent(params.get('nombreCurso') || '');
+        const nrc = params.get('nrc') || '';
+        const duracion = params.get('duracion') || '';
+        const fechaInicio = params.get('fechaInicio') || '';
+        const fechaFin = params.get('fechaFin') || '';
+        const diaInicio = params.get('diaInicio') || '';
+        const diaFin = params.get('diaFin') || '';
+
+        // Rellenar datos en la tarjeta de información
+        document.getElementById('nombreTutor').textContent = nombreTutor;
+        document.getElementById('nombreCurso').textContent = nombreCurso;
+        document.getElementById('nrc').textContent = nrc;
+        document.getElementById('duracion').textContent = duracion;
+        document.getElementById('fechaInicio').textContent = fechaInicio;
+        document.getElementById('fechaFin').textContent = fechaFin;
+        document.getElementById('diaInicio').textContent = diaInicio;
+        document.getElementById('diaFin').textContent = diaFin;
+
+        // Rellenar datos en la vista previa
+        document.getElementById('nombreTutorPreview').textContent = nombreTutor;
+        document.getElementById('nombreCursoPreview').textContent = nombreCurso;
+        document.getElementById('nrcPreview').textContent = nrc;
+        document.getElementById('duracionPreview').textContent = duracion;
+        document.getElementById('fechaInicioPreview').textContent = fechaInicio;
+        document.getElementById('fechaFinPreview').textContent = fechaFin;
+        document.getElementById('diaInicioPreview').textContent = diaInicio;
+        document.getElementById('diaFinPreview').textContent = diaFin;
+
+        // Actualizar vista previa del texto específico en tiempo real
+        const textoEspecificoInput = document.getElementById('textoEspecifico');
+        const customTextPreview = document.getElementById('customTextPreview');
+
+        textoEspecificoInput.addEventListener('input', function() {
+            const texto = this.value.trim();
+            if (texto) {
+                customTextPreview.innerHTML = texto.replace(/\n/g, '<br>');
+                customTextPreview.style.fontStyle = 'normal';
+            } else {
+                customTextPreview.innerHTML = '<em>El texto específico que pegues arriba aparecerá aquí...</em>';
+                customTextPreview.style.fontStyle = 'italic';
+            }
+        });
+
+        // Generar mailto link
+        function generarMailto() {
+            const textoEspecifico = textoEspecificoInput.value.trim();
+            
+            const cuerpoCorreo = `Estimada/o Docente:
+
+Junto con saludar, mi nombre es ${nombreTutor}, y seré la tutora de Acompañamiento encargada de apoyar la asignatura "${nombreCurso}" ${nrc}, la cual tiene una duración de ${duracion} semanas, iniciando el ${diaInicio} ${fechaInicio} y finalizando el ${diaFin} ${fechaFin} en la plataforma Canvas.
+
+Como parte del proceso de programación antes de la impartición y según indica la plantilla web del curso, las actividades serán las siguientes y así estarán disponibles en plataforma:
+
+[INSERTAR CRONOGRAMA AQUÍ - IMAGEN]
+
+${textoEspecifico}
+
+Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su cooperación en la motivación a los estudiantes a realizar esta acción.
+
+Adicionalmente, le sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecte. Estoy a su disposición para asistirle en este proceso.
+
+Si requiere orientación sobre el uso de la plataforma, puede acceder al siguiente enlace https://canva.unab.cl/inicio-docentes/ o contactar a los canales de soporte disponibles.
+
+Quedo atenta a cualquier consulta o información adicional que necesite.
+Saludos cordiales,`;
+
+            const asunto = `Presentación tutora de acompañamiento - ${nrc}`;
+            
+            return `mailto:?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoCorreo)}`;
+        }
+
+        // Configurar el botón de Outlook
+        const mailtoLink = document.getElementById('mailtoLink');
+        mailtoLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const textoEspecifico = textoEspecificoInput.value.trim();
+            if (!textoEspecifico) {
+                alert('⚠️ Por favor, completa el texto específico del curso antes de continuar.');
+                textoEspecificoInput.focus();
+                return;
+            }
+
+            // Mostrar spinner
+            document.getElementById('spinner').classList.add('active');
+            
+            // Abrir Outlook
+            window.location.href = generarMailto();
+            
+            // Ocultar spinner después de 3 segundos
+            setTimeout(() => {
+                document.getElementById('spinner').classList.remove('active');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
