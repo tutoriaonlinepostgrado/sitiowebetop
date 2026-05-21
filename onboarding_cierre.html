@@ -3,682 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cierre de Asignatura - ETOP</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Cierre de Asignatura</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 20px;
-}
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: #F3F2F1;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-.header {
-  background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-  color: white;
-  padding: 30px;
-  text-align: center;
-}
-.header h1 { font-size: 28px; margin-bottom: 10px; }
-.header p { opacity: 0.9; font-size: 16px; }
-.content {
-  padding: 40px;
-}
-.form-section {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.form-section h2 {
-  color: #0078d4;
-  font-size: 20px;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e1dfdd;
-}
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #323130;
-  font-size: 14px;
-}
-.form-group input, .form-group textarea {
-  padding: 12px;
-  border: 1px solid #d1d1d1;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-.form-group input:focus, .form-group textarea:focus {
-  outline: none;
-  border-color: #0078d4;
-  box-shadow: 0 0 0 2px rgba(0,120,212,0.1);
-}
-textarea {
-  resize: vertical;
-  min-height: 120px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.help-text {
-  font-size: 12px;
-  color: #605e5c;
-  margin-top: 5px;
-}
-.btn {
-  padding: 14px 28px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.btn-primary {
-  background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-  color: white;
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,120,212,0.4);
-}
-.btn-secondary {
-  background: #f3f2f1;
-  color: #323130;
-  border: 1px solid #d1d1d1;
-}
-.btn-secondary:hover {
-  background: #e1dfdd;
-}
-.resultado {
-  margin-top: 30px;
-}
-.correo-item {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  border-left: 4px solid #0078d4;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.correo-item h3 {
-  color: #0078d4;
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.correo-item .preview {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #605e5c;
-  max-height: 200px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  white-space: pre-wrap;
-  font-family: 'Courier New', monospace;
-}
-.btn-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.alert {
-  padding: 15px 20px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.alert-info {
-  background: #e6f4ff;
-  border-left: 4px solid #0078d4;
-  color: #004578;
-}
-.alert-success {
-  background: #e6f7e6;
-  border-left: 4px solid #107c10;
-  color: #0e5a0e;
-}
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(0,0,0,0.1);
-  border-radius: 50%;
-  border-top-color: #0078d4;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:1200px;margin:0 auto;background:#F3F2F1;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.1);overflow:hidden}
+.header{background:linear-gradient(135deg,#0078d4 0%,#005a9e 100%);color:white;padding:30px;text-align:center}
+.header h1{font-size:28px;margin-bottom:10px}
+.header p{opacity:0.9;font-size:16px}
+.content{padding:40px}
+.form-section{background:white;padding:30px;border-radius:8px;margin-bottom:25px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.form-section h2{color:#0078d4;font-size:20px;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #e1dfdd}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:20px}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-weight:600;margin-bottom:8px;color:#323130;font-size:14px}
+.form-group input,.form-group textarea{padding:12px;border:1px solid #d1d1d1;border-radius:4px;font-size:14px;transition:all 0.3s}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#0078d4;box-shadow:0 0 0 2px rgba(0,120,212,0.1)}
+textarea{resize:vertical;min-height:120px;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+.help-text{font-size:12px;color:#605e5c;margin-top:5px}
+.btn{padding:14px 28px;border:none;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,#0078d4 0%,#005a9e 100%);color:white}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,120,212,0.4)}
+.btn-secondary{background:#f3f2f1;color:#323130;border:1px solid #d1d1d1}
+.btn-secondary:hover{background:#e1dfdd}
+.resultado{margin-top:30px}
+.correo-item{background:white;padding:20px;border-radius:8px;margin-bottom:15px;border-left:4px solid #0078d4;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.correo-item h3{color:#0078d4;font-size:16px;margin-bottom:10px}
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.alert{padding:15px 20px;border-radius:6px;margin-bottom:20px}
+.alert-info{background:#e6f4ff;border-left:4px solid #0078d4;color:#004578}
+.alert-success{background:#e6f7e6;border-left:4px solid #107c10;color:#0e5a0e}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <div class="header">
-    <h1>🎓 Generador de Correos: Cierre de Asignatura</h1>
-    <p>Genera correos automáticos para notificar a los profesores sobre el cierre de sus cursos.</p>
-  </div>
-
-  <div class="content">
-    
-    <!-- SECCIÓN 1: Datos del Curso -->
-    <div class="form-section">
-      <h2>1️⃣ Datos del Curso</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>📚 Nombre del Curso</label>
-          <input type="text" id="nombre-curso" placeholder='Ej: "Epidemiología para la gestión"' />
-        </div>
-        <div class="form-group">
-          <label>🔢 NRC del Curso</label>
-          <input type="text" id="nrc-curso" placeholder="Ej: NRC1748" />
-        </div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>📅 Fecha Inicio del Curso</label>
-          <input type="date" id="fecha-inicio" />
-        </div>
-        <div class="form-group">
-          <label>📅 Fecha Fin del Curso</label>
-          <input type="date" id="fecha-fin" />
-          <div class="help-text">La fecha límite de gestiones se calculará automáticamente (+14 días)</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECCIÓN 2: Datos del Tutor -->
-    <div class="form-section">
-      <h2>2️⃣ Datos del Tutor</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>👤 Nombre Completo del Tutor</label>
-          <input type="text" id="nombre-tutor" placeholder="Ej: Carla Peña V." />
-        </div>
-        <div class="form-group">
-          <label>📧 Correo del Tutor</label>
-          <input type="email" id="correo-tutor" placeholder="Ej: tutoriaonline54@unab.cl" />
-        </div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>📞 Teléfono</label>
-          <input type="text" id="telefono-tutor" placeholder="Ej: 600 585 8550" value="600 585 8550" />
-        </div>
-        <div class="form-group">
-          <label>📠 Anexo</label>
-          <input type="text" id="anexo-tutor" placeholder="Ej: 7361" />
-        </div>
-      </div>
-    </div>
-
-    <!-- SECCIÓN 3: Lista de Profesores -->
-    <div class="form-section">
-      <h2>3️⃣ Lista de Profesores</h2>
-      <div class="form-group">
-        <label>👥 Pega aquí la lista de profesores</label>
-        <textarea id="lista-profesores" placeholder="Pega aquí la lista en formato:
-NOMBRE COMPLETO | correo@dominio.cl
-NOMBRE COMPLETO | correo@dominio.cl
-
-O simplemente:
-NOMBRE COMPLETO, correo@dominio.cl
-NOMBRE COMPLETO, correo@dominio.cl
-
-Ejemplos válidos:
-ROJAS BELTRÁN FERNANDO R | f.rojasbeltrrn@uandresbello.edu
-GARCÍA LÓPEZ MARÍA | m.garcia@uandresbello.edu
-
-PÉREZ SILVA JUAN, j.perez@uandresbello.edu
-GONZÁLEZ TORRES ANA, a.gonzalez@uandresbello.edu"></textarea>
-        <div class="help-text">✅ Formatos aceptados: "NOMBRE | correo" o "NOMBRE, correo" (uno por línea)</div>
-      </div>
-      
-      <button class="btn btn-primary" onclick="generarCorreos()">
-        ✨ Generar Correos
-      </button>
-    </div>
-
-    <!-- SECCIÓN 4: Resultados -->
-    <div id="resultado" class="resultado"></div>
-
-  </div>
+<div class="header">
+<h1>🎓 Generador de Correos: Cierre de Asignatura</h1>
+<p>Genera correos automáticos para notificar a los profesores sobre el cierre de sus cursos.</p>
 </div>
-
+<div class="content">
+<div class="form-section">
+<h2>1️⃣ Datos del Curso</h2>
+<div class="form-grid">
+<div class="form-group">
+<label>📚 Nombre del Curso</label>
+<input type="text" id="nombreCurso" placeholder="Ej: Epidemiología para la gestión">
+</div>
+<div class="form-group">
+<label>🔢 NRC del Curso</label>
+<input type="text" id="nrcCurso" placeholder="Ej: NRC1748">
+</div>
+</div>
+<div class="form-grid">
+<div class="form-group">
+<label>📅 Fecha Inicio del Curso</label>
+<input type="date" id="fechaInicio">
+</div>
+<div class="form-group">
+<label>📅 Fecha Fin del Curso</label>
+<input type="date" id="fechaFin">
+<div class="help-text">La fecha límite se calculará automáticamente (+14 días)</div>
+</div>
+</div>
+</div>
+<div class="form-section">
+<h2>2️⃣ Datos del Tutor</h2>
+<div class="form-grid">
+<div class="form-group">
+<label>👤 Nombre Completo del Tutor</label>
+<input type="text" id="nombreTutor" placeholder="Ej: Carla Peña V.">
+</div>
+<div class="form-group">
+<label>📧 Correo del Tutor</label>
+<input type="email" id="correoTutor" placeholder="Ej: tutoriaonline54@unab.cl">
+</div>
+</div>
+<div class="form-grid">
+<div class="form-group">
+<label>📞 Teléfono</label>
+<input type="text" id="telefonoTutor" value="600 585 8550">
+</div>
+<div class="form-group">
+<label>📠 Anexo</label>
+<input type="text" id="anexoTutor" placeholder="Ej: 7361">
+</div>
+</div>
+</div>
+<div class="form-section">
+<h2>3️⃣ Lista de Profesores</h2>
+<div class="form-group">
+<label>👥 Pega aquí la lista de profesores</label>
+<textarea id="listaProfesores" placeholder="NOMBRE COMPLETO | correo@dominio.cl
+NOMBRE COMPLETO, correo@dominio.cl"></textarea>
+<div class="help-text">✅ Formatos: "NOMBRE | correo" o "NOMBRE, correo"</div>
+</div>
+<button class="btn btn-primary" onclick="generar()">✨ Generar Correos</button>
+</div>
+<div id="resultado"></div>
+</div>
+</div>
 <script>
-function formatDateDMY(isoStr) {
-  if (!isoStr) return '';
-  const [y, m, d] = isoStr.split('-');
-  return `${d}-${m}-${y}`;
+function generar(){
+var nc=document.getElementById('nombreCurso').value.trim();
+var nrc=document.getElementById('nrcCurso').value.trim();
+var fi=document.getElementById('fechaInicio').value;
+var ff=document.getElementById('fechaFin').value;
+var nt=document.getElementById('nombreTutor').value.trim();
+var ct=document.getElementById('correoTutor').value.trim();
+var tel=document.getElementById('telefonoTutor').value.trim();
+var anx=document.getElementById('anexoTutor').value.trim();
+var lp=document.getElementById('listaProfesores').value.trim();
+var rd=document.getElementById('resultado');
+if(!nc||!nrc||!fi||!ff||!nt||!ct||!tel||!anx||!lp){
+rd.innerHTML='<div class="alert alert-info">⚠️ Completa todos los campos</div>';
+return;
 }
-
-function calcularFechaLimite(fechaFinISO) {
-  if (!fechaFinISO) return '';
-  const fecha = new Date(fechaFinISO + 'T12:00:00');
-  fecha.setDate(fecha.getDate() + 14);
-  const d = String(fecha.getDate()).padStart(2, '0');
-  const m = String(fecha.getMonth() + 1).padStart(2, '0');
-  const y = fecha.getFullYear();
-  return `${d}-${m}-${y}`;
+var ps=[];
+var ls=lp.split('\n');
+for(var i=0;i<ls.length;i++){
+var l=ls[i].trim();
+if(!l)continue;
+var m=l.match(/[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+if(!m)continue;
+var e=m[0].toLowerCase();
+var n=l.replace(e,'').replace(/[|,;]/g,'').trim().toUpperCase();
+if(n)ps.push({n:n,e:e});
 }
-
-function parsearProfesores(texto) {
-  const lineas = texto.split('\n').filter(l => l.trim());
-  const profesores = [];
-  const emailRe = /[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
-  
-  for (const linea of lineas) {
-    const match = linea.match(emailRe);
-    if (!match) continue;
-    
-    const correo = match[0].toLowerCase();
-    let nombre = linea.replace(correo, '').trim();
-    // Eliminar separadores comunes
-    nombre = nombre.replace(/[|,;]/g, '').trim();
-    
-    if (nombre) {
-      profesores.push({ nombre: nombre.toUpperCase(), correo });
-    }
-  }
-  
-  return profesores;
+if(ps.length===0){
+rd.innerHTML='<div class="alert alert-info">⚠️ No se encontraron profesores válidos</div>';
+return;
 }
-
-function generarHTMLCorreo(profesor, datos) {
-  return `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Cierre de Asignatura</title>
-</head>
-<body style="margin:0; padding:0; font-family: Arial, sans-serif;">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width: 950px; margin: 20px auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 12px; font-family: Arial, sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-  <tbody>
-    <tr>
-      <td style="padding: 45px 60px 25px 60px;">
-        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display: block; border: 0;">
-      </td>
-    </tr>
-    <tr>
-      <td style="padding: 0px 60px 40px 60px; color: #333333; font-size: 16px; line-height: 1.8; text-align: justify;">
-        <p style="font-size: 18px;">Estimado(a) docente:</p>
-        <p>Reciba mis saludos,</p>
-        <p>
-          En esta oportunidad y como hito de cierre confirmo la finalización del curso 
-          <strong>"${datos.nombreCurso}"</strong> <strong>${datos.nrcCurso}</strong> que tuvo inicio el día 
-          <strong>${datos.fechaInicio}</strong> y finalizó el domingo <strong>${datos.fechaFin}</strong>.
-        </p>
-        <p>
-          Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión 
-          dentro de la plataforma de algún/algunos estudiantes después <strong>${datos.fechaLimite}</strong> 
-          (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente 
-          con el área académica para su configuración correspondiente.
-        </p>
-        <p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p>
-        <p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding: 30px 60px 45px 60px; font-size: 16px; line-height: 1.6; color: #333333; background-color: #fafafa; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-        <p style="margin: 0;">Saludos Cordiales,</p>
-        <p style="margin-top: 15px;">
-          <strong style="color: #0056b3;">${datos.nombreTutor}</strong><br>
-          Tutor/a de Acompañamiento<br>
-          Teléfono: ${datos.telefono}<br>
-          Anexo: ${datos.anexo}<br>
-          <a href="http://www.unabonline.cl" style="color: #0056b3; text-decoration: none;">www.unabonline.cl</a>
-        </p>
-      </td>
-    </tr>
-  </tbody>
-</table>
-</body>
-</html>`;
+var fid=fi.split('-').reverse().join('-');
+var ffd=ff.split('-').reverse().join('-');
+var d=new Date(ff+'T12:00:00');
+d.setDate(d.getDate()+14);
+var fld=('0'+d.getDate()).slice(-2)+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+d.getFullYear();
+rd.innerHTML='<div class="alert alert-success">✅ Se generaron '+ps.length+' correo(s)</div>';
+for(var i=0;i<ps.length;i++){
+var p=ps[i];
+var h='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;font-family:Arial,sans-serif"><table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#fff;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05)"><tr><td style="padding:45px 60px 25px 60px"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0"></td></tr><tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify"><p style="font-size:18px">Estimado(a) docente:</p><p>Reciba mis saludos,</p><p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <strong>"'+nc+'"</strong> <strong>'+nrc+'</strong> que tuvo inicio el día <strong>'+fid+'</strong> y finalizó el domingo <strong>'+ffd+'</strong>.</p><p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <strong>'+fld+'</strong> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p><p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p><p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p></td></tr><tr><td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px"><p style="margin:0">Saludos Cordiales,</p><p style="margin-top:15px"><strong style="color:#0056b3">'+nt+'</strong><br>Tutor/a de Acompañamiento<br>Teléfono: '+tel+'<br>Anexo: '+anx+'<br><a href="http://www.unabonline.cl" style="color:#0056b3;text-decoration:none">www.unabonline.cl</a></p></td></tr></table></body></html>';
+var div=document.createElement('div');
+div.className='correo-item';
+div.innerHTML='<h3>📧 Correo '+(i+1)+': '+p.n+'</h3><div><strong>Para:</strong> '+p.e+'</div><div><strong>Asunto:</strong> Recordatorio cierre de asignatura - '+nrc+'</div><div class="btn-group"><button class="btn btn-primary" onclick="abrir(\''+h.replace(/'/g,"\\'")+'\\',\\''+p.n.replace(/'/g,"\\'")+'\\',\\''+p.e+'\\')">👁️ Ver y Copiar</button><button class="btn btn-secondary" onclick="outlook(\\''+p.e+'\\',\\''+nrc+'\\')">📧 Outlook</button></div>';
+rd.appendChild(div);
 }
-
-function copiarAlPortapapeles(texto, btnElement) {
-  navigator.clipboard.writeText(texto).then(() => {
-    const originalText = btnElement.innerHTML;
-    btnElement.innerHTML = '✅ Copiado!';
-    btnElement.style.background = '#107c10';
-    setTimeout(() => {
-      btnElement.innerHTML = originalText;
-      btnElement.style.background = '';
-    }, 2000);
-  }).catch(err => {
-    alert('Error al copiar: ' + err);
-  });
+var inf=document.createElement('div');
+inf.className='alert alert-info';
+inf.innerHTML='💡 <strong>Instrucciones:</strong><br>1. Click "Ver y Copiar" → Seleccionar Todo → Copiar<br>2. Click "Outlook" → Pega (Ctrl+V)<br>3. Adjunta PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>4. Envía';
+rd.appendChild(inf);
 }
-
-function copiarComoHTMLRenderizado(htmlBody, btnElement) {
-  // Crear un iframe oculto con el HTML
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'absolute';
-  iframe.style.left = '-9999px';
-  document.body.appendChild(iframe);
-  
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  iframeDoc.open();
-  iframeDoc.write(htmlBody);
-  iframeDoc.close();
-  
-  // Seleccionar todo el contenido del iframe
-  const range = iframeDoc.createRange();
-  range.selectNodeContents(iframeDoc.body);
-  const selection = iframe.contentWindow.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
-  
-  try {
-    // Copiar al portapapeles
-    iframeDoc.execCommand('copy');
-    
-    const originalText = btnElement.innerHTML;
-    btnElement.innerHTML = '✅ Copiado! Ahora pega en Outlook';
-    btnElement.style.background = '#107c10';
-    setTimeout(() => {
-      btnElement.innerHTML = originalText;
-      btnElement.style.background = '';
-    }, 3000);
-  } catch (err) {
-    alert('Error al copiar. Usa la opción "Ver y Copiar HTML Renderizado"');
-  } finally {
-    document.body.removeChild(iframe);
-  }
+function abrir(h,n,e){
+var w=window.open('','_blank','width=1000,height=800');
+w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+n+'</title><style>body{margin:0;padding:20px;background:#f0f0f0;font-family:Arial}.toolbar{background:#fff;padding:15px;margin-bottom:20px;border-radius:8px;display:flex;gap:15px}.btn{padding:12px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer}.btn-primary{background:#0078d4;color:#fff}.btn-success{background:#107c10;color:#fff}</style></head><body><div class="toolbar"><button class="btn btn-primary" onclick="sel()">📋 Seleccionar Todo</button><button class="btn btn-success" id="bc" onclick="cop()">✅ Copiar</button><span style="margin-left:auto">Para: <strong>'+e+'</strong></span></div><div id="cc">'+h+'</div><script>function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById("cc"));window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.getElementById("bc").innerHTML="⚡ Ahora COPIAR"}function cop(){document.execCommand("copy");document.getElementById("bc").innerHTML="✅ Copiado!"}<\/script></body></html>');
+w.document.close();
 }
-
-function abrirEnOutlook(profesor, asunto) {
-  // Crear mailto básico
-  const mailtoLink = `mailto:${profesor.correo}?subject=${encodeURIComponent(asunto)}`;
-  window.open(mailtoLink, '_blank');
+function outlook(e,n){
+window.open('mailto:'+e+'?subject='+encodeURIComponent('Recordatorio cierre de asignatura - '+n),'_blank');
 }
-
-function verHTMLRenderizado(htmlBody, profesor) {
-  // Extraer solo el contenido del body (la tabla del correo)
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlBody, 'text/html');
-  const tablaCorreo = doc.querySelector('table');
-  const tablaHTML = tablaCorreo ? tablaCorreo.outerHTML : htmlBody;
-  
-  // Abrir ventana nueva con el HTML renderizado
-  const ventana = window.open('', '_blank', 'width=1000,height=800');
-  ventana.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Correo para ${profesor.nombre}</title>
-      <style>
-        body { margin: 0; padding: 20px; background: #f0f0f0; font-family: Arial, sans-serif; }
-        .toolbar { 
-          background: white; 
-          padding: 15px; 
-          margin-bottom: 20px; 
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          display: flex;
-          gap: 15px;
-          align-items: center;
-        }
-        .btn {
-          padding: 12px 24px;
-          border: none;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-        .btn-primary {
-          background: #0078d4;
-          color: white;
-        }
-        .btn-primary:hover {
-          background: #005a9e;
-        }
-        .btn-success {
-          background: #107c10;
-          color: white;
-        }
-        .instrucciones {
-          background: #fff4ce;
-          border-left: 4px solid #ffb900;
-          padding: 15px;
-          margin-bottom: 20px;
-          border-radius: 4px;
-        }
-        .instrucciones h3 {
-          margin: 0 0 10px 0;
-          color: #323130;
-        }
-        .instrucciones ol {
-          margin: 10px 0 0 20px;
-          padding: 0;
-        }
-        .instrucciones li {
-          margin: 5px 0;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="toolbar">
-        <button class="btn btn-primary" onclick="seleccionarTodo()">
-          📋 Seleccionar Todo el Correo
-        </button>
-        <button class="btn btn-success" id="btnCopiar" onclick="copiarSeleccion()">
-          ✅ Copiar al Portapapeles
-        </button>
-        <span style="margin-left: auto; color: #605e5c;">Para: <strong>${profesor.correo}</strong></span>
-      </div>
-      
-      <div class="instrucciones">
-        <h3>📌 Instrucciones:</h3>
-        <ol>
-          <li><strong>Opción 1 (Recomendada):</strong> Click en "Seleccionar Todo" → Click en "Copiar" → Abre Outlook → Pega (Ctrl+V)</li>
-          <li><strong>Opción 2:</strong> Selecciona manualmente el correo de abajo → Copia (Ctrl+C) → Pega en Outlook</li>
-          <li><strong>Importante:</strong> No olvides adjuntar el PDF "Proceso de Cierre de Curso en Canvas.pdf"</li>
-        </ol>
-      </div>
-      
-      <div id="contenidoCorreo">
-        ${tablaHTML}
-      </div>
-      
-      <script>
-        function seleccionarTodo() {
-          const contenido = document.getElementById('contenidoCorreo');
-          const range = document.createRange();
-          range.selectNodeContents(contenido);
-          const selection = window.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(range);
-          
-          document.getElementById('btnCopiar').style.background = '#ffb900';
-          document.getElementById('btnCopiar').innerHTML = '⚡ Ahora haz clic en COPIAR';
-        }
-        
-        function copiarSeleccion() {
-          try {
-            document.execCommand('copy');
-            document.getElementById('btnCopiar').innerHTML = '✅ ¡Copiado! Ahora pega en Outlook';
-            document.getElementById('btnCopiar').style.background = '#107c10';
-            
-            setTimeout(() => {
-              document.getElementById('btnCopiar').innerHTML = '✅ Copiar al Portapapeles';
-              document.getElementById('btnCopiar').style.background = '#107c10';
-            }, 3000);
-          } catch (err) {
-            alert('Usa Ctrl+C para copiar el contenido seleccionado');
-          }
-        }
-      </script>
-    </body>
-    </html>
-  `);
-  ventana.document.close();
-}
-
-function generarCorreos() {
-  const resultadoDiv = document.getElementById('resultado');
-  
-  // Validar campos
-  const nombreCurso = document.getElementById('nombre-curso').value.trim();
-  const nrcCurso = document.getElementById('nrc-curso').value.trim();
-  const fechaInicio = document.getElementById('fecha-inicio').value;
-  const fechaFin = document.getElementById('fecha-fin').value;
-  const nombreTutor = document.getElementById('nombre-tutor').value.trim();
-  const correoTutor = document.getElementById('correo-tutor').value.trim();
-  const telefono = document.getElementById('telefono-tutor').value.trim();
-  const anexo = document.getElementById('anexo-tutor').value.trim();
-  const listaProfesores = document.getElementById('lista-profesores').value.trim();
-  
-  if (!nombreCurso || !nrcCurso || !fechaInicio || !fechaFin || !nombreTutor || !correoTutor || !telefono || !anexo || !listaProfesores) {
-    resultadoDiv.innerHTML = '<div class="alert alert-info">⚠️ Por favor completa todos los campos antes de generar los correos.</div>';
-    return;
-  }
-  
-  // Parsear profesores
-  const profesores = parsearProfesores(listaProfesores);
-  
-  if (profesores.length === 0) {
-    resultadoDiv.innerHTML = '<div class="alert alert-info">⚠️ No se encontraron profesores válidos. Verifica el formato de la lista.</div>';
-    return;
-  }
-  
-  // Calcular fechas
-  const fechaInicioFormat = formatDateDMY(fechaInicio);
-  const fechaFinFormat = formatDateDMY(fechaFin);
-  const fechaLimite = calcularFechaLimite(fechaFin);
-  
-  const datos = {
-    nombreCurso,
-    nrcCurso,
-    fechaInicio: fechaInicioFormat,
-    fechaFin: fechaFinFormat,
-    fechaLimite,
-    nombreTutor,
-    correoTutor,
-    telefono,
-    anexo
-  };
-  
-  // Generar HTML para cada profesor
-  let html = `<div class="alert alert-success">✅ Se generaron ${profesores.length} correo(s) exitosamente</div>`;
-  
-  // Limpiar contenedor de resultados
-  resultadoDiv.innerHTML = html;
-  
-  // Crear elementos dinámicamente para cada profesor
-  profesores.forEach((profesor, index) => {
-    const htmlCorreo = generarHTMLCorreo(profesor, datos);
-    const asunto = `Recordatorio cierre de asignatura - ${nrcCurso}`;
-    
-    // Crear div del correo
-    const correoDiv = document.createElement('div');
-    correoDiv.className = 'correo-item';
-    
-    // Título
-    const titulo = document.createElement('h3');
-    titulo.textContent = `📧 Correo ${index + 1}: ${profesor.nombre}`;
-    correoDiv.appendChild(titulo);
-    
-    // Para
-    const paraDiV = document.createElement('div');
-    paraDiV.innerHTML = `<strong>Para:</strong> ${profesor.correo}`;
-    correoDiv.appendChild(paraDiV);
-    
-    // Asunto
-    const asuntoDiv = document.createElement('div');
-    asuntoDiv.innerHTML = `<strong>Asunto:</strong> ${asunto}`;
-    correoDiv.appendChild(asuntoDiv);
-    
-    // Preview
-    const previewDiv = document.createElement('div');
-    previewDiv.className = 'preview';
-    previewDiv.textContent = htmlCorreo.substring(0, 300) + '...';
-    correoDiv.appendChild(previewDiv);
-    
-    // Botones
-    const btnGroup = document.createElement('div');
-    btnGroup.className = 'btn-group';
-    
-    // Botón Ver HTML
-    const btnVer = document.createElement('button');
-    btnVer.className = 'btn btn-primary';
-    btnVer.innerHTML = '👁️ Ver y Copiar HTML Renderizado';
-    btnVer.onclick = function() {
-      verHTMLRenderizado(htmlCorreo, profesor);
-    };
-    btnGroup.appendChild(btnVer);
-    
-    // Botón Outlook
-    const btnOutlook = document.createElement('button');
-    btnOutlook.className = 'btn btn-secondary';
-    btnOutlook.innerHTML = '📧 Abrir en Outlook';
-    btnOutlook.onclick = function() {
-      abrirEnOutlook(profesor, asunto);
-    };
-    btnGroup.appendChild(btnOutlook);
-    
-    correoDiv.appendChild(btnGroup);
-    resultadoDiv.appendChild(correoDiv);
-  });
-  
-  // Agregar instrucciones al final
-  const instruccionesDiv = document.createElement('div');
-  instruccionesDiv.className = 'alert alert-info';
-  instruccionesDiv.innerHTML = `
-    💡 <strong>Instrucciones para cada correo:</strong><br><br>
-    <strong>Método recomendado:</strong><br>
-    1. Haz clic en "👁️ Ver y Copiar HTML Renderizado"<br>
-    2. En la ventana que se abre, haz clic en "Seleccionar Todo el Correo"<br>
-    3. Haz clic en "Copiar al Portapapeles"<br>
-    4. Haz clic en "📧 Abrir en Outlook" para crear un nuevo correo<br>
-    5. Pega en Outlook con Ctrl+V (el HTML se pegará con formato)<br>
-    6. Adjunta el PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>
-    7. Envía el correo<br><br>
-    ⚠️ <strong>Importante:</strong> No olvides adjuntar el PDF manualmente antes de enviar.
-  `;
-  resultadoDiv.appendChild(instruccionesDiv);
-}
-
-// Auto-configurar fecha de hoy en fecha fin
-window.addEventListener('DOMContentLoaded', () => {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('fecha-fin').value = today;
-  
-  // Calcular fecha inicio (3 meses atrás como ejemplo)
-  const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 2);
-  document.getElementById('fecha-inicio').value = threeMonthsAgo.toISOString().split('T')[0];
+window.addEventListener('DOMContentLoaded',function(){
+var t=new Date().toISOString().split('T')[0];
+document.getElementById('fechaFin').value=t;
+var a=new Date();
+a.setMonth(a.getMonth()-2);
+document.getElementById('fechaInicio').value=a.toISOString().split('T')[0];
 });
 </script>
-
 </body>
 </html>
