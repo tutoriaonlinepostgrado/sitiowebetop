@@ -97,75 +97,120 @@ textarea{resize:vertical;min-height:120px;font-family:'Segoe UI',Tahoma,Geneva,V
 NOMBRE COMPLETO, correo@dominio.cl"></textarea>
 <div class="help-text">✅ Formatos: "NOMBRE | correo" o "NOMBRE, correo"</div>
 </div>
-<button class="btn btn-primary" onclick="generar()">✨ Generar Correos</button>
+<button class="btn btn-primary" id="btnGenerar">✨ Generar Correos</button>
 </div>
 <div id="resultado"></div>
 </div>
 </div>
 <script>
-function generar(){
-var nc=document.getElementById('nombreCurso').value.trim();
-var nrc=document.getElementById('nrcCurso').value.trim();
-var fi=document.getElementById('fechaInicio').value;
-var ff=document.getElementById('fechaFin').value;
-var nt=document.getElementById('nombreTutor').value.trim();
-var ct=document.getElementById('correoTutor').value.trim();
-var tel=document.getElementById('telefonoTutor').value.trim();
-var anx=document.getElementById('anexoTutor').value.trim();
-var lp=document.getElementById('listaProfesores').value.trim();
-var rd=document.getElementById('resultado');
-if(!nc||!nrc||!fi||!ff||!nt||!ct||!tel||!anx||!lp){
-rd.innerHTML='<div class="alert alert-info">⚠️ Completa todos los campos</div>';
-return;
+document.getElementById('btnGenerar').addEventListener('click', function() {
+  var nc = document.getElementById('nombreCurso').value.trim();
+  var nrc = document.getElementById('nrcCurso').value.trim();
+  var fi = document.getElementById('fechaInicio').value;
+  var ff = document.getElementById('fechaFin').value;
+  var nt = document.getElementById('nombreTutor').value.trim();
+  var ct = document.getElementById('correoTutor').value.trim();
+  var tel = document.getElementById('telefonoTutor').value.trim();
+  var anx = document.getElementById('anexoTutor').value.trim();
+  var lp = document.getElementById('listaProfesores').value.trim();
+  var rd = document.getElementById('resultado');
+  
+  if (!nc || !nrc || !fi || !ff || !nt || !ct || !tel || !anx || !lp) {
+    rd.innerHTML = '<div class="alert alert-info">⚠️ Completa todos los campos</div>';
+    return;
+  }
+  
+  var ps = [];
+  var ls = lp.split('\n');
+  for (var i = 0; i < ls.length; i++) {
+    var l = ls[i].trim();
+    if (!l) continue;
+    var m = l.match(/[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+    if (!m) continue;
+    var e = m[0].toLowerCase();
+    var n = l.replace(e, '').replace(/[|,;]/g, '').trim().toUpperCase();
+    if (n) ps.push({nombre: n, correo: e});
+  }
+  
+  if (ps.length === 0) {
+    rd.innerHTML = '<div class="alert alert-info">⚠️ No se encontraron profesores válidos</div>';
+    return;
+  }
+  
+  var fid = fi.split('-').reverse().join('-');
+  var ffd = ff.split('-').reverse().join('-');
+  var d = new Date(ff + 'T12:00:00');
+  d.setDate(d.getDate() + 14);
+  var fld = ('0' + d.getDate()).slice(-2) + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
+  
+  rd.innerHTML = '<div class="alert alert-success">✅ Se generaron ' + ps.length + ' correo(s)</div>';
+  
+  for (var i = 0; i < ps.length; i++) {
+    var p = ps[i];
+    var asunto = 'Recordatorio cierre de asignatura - ' + nrc;
+    
+    var div = document.createElement('div');
+    div.className = 'correo-item';
+    
+    var h3 = document.createElement('h3');
+    h3.textContent = '📧 Correo ' + (i + 1) + ': ' + p.nombre;
+    div.appendChild(h3);
+    
+    var para = document.createElement('div');
+    para.innerHTML = '<strong>Para:</strong> ' + p.correo;
+    div.appendChild(para);
+    
+    var asun = document.createElement('div');
+    asun.innerHTML = '<strong>Asunto:</strong> ' + asunto;
+    div.appendChild(asun);
+    
+    var btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+    
+    var btnVer = document.createElement('button');
+    btnVer.className = 'btn btn-primary';
+    btnVer.textContent = '👁️ Ver y Copiar';
+    btnVer.onclick = (function(nombre, correo, nc, nrc, fid, ffd, fld, nt, tel, anx) {
+      return function() {
+        abrirVentana(nombre, correo, nc, nrc, fid, ffd, fld, nt, tel, anx);
+      };
+    })(p.nombre, p.correo, nc, nrc, fid, ffd, fld, nt, tel, anx);
+    btnGroup.appendChild(btnVer);
+    
+    var btnOutlook = document.createElement('button');
+    btnOutlook.className = 'btn btn-secondary';
+    btnOutlook.textContent = '📧 Outlook';
+    btnOutlook.onclick = (function(correo, asunto) {
+      return function() {
+        window.open('mailto:' + correo + '?subject=' + encodeURIComponent(asunto), '_blank');
+      };
+    })(p.correo, asunto);
+    btnGroup.appendChild(btnOutlook);
+    
+    div.appendChild(btnGroup);
+    rd.appendChild(div);
+  }
+  
+  var inf = document.createElement('div');
+  inf.className = 'alert alert-info';
+  inf.innerHTML = '💡 <strong>Instrucciones:</strong><br>1. Click "Ver y Copiar" → Seleccionar Todo → Copiar<br>2. Click "Outlook" → Pega (Ctrl+V)<br>3. Adjunta PDF<br>4. Envía';
+  rd.appendChild(inf);
+});
+
+function abrirVentana(nombre, correo, nc, nrc, fid, ffd, fld, nt, tel, anx) {
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;font-family:Arial,sans-serif"><table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#fff;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05)"><tr><td style="padding:45px 60px 25px 60px"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0"></td></tr><tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify"><p style="font-size:18px">Estimado(a) docente:</p><p>Reciba mis saludos,</p><p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <strong>"' + nc + '"</strong> <strong>' + nrc + '</strong> que tuvo inicio el día <strong>' + fid + '</strong> y finalizó el domingo <strong>' + ffd + '</strong>.</p><p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <strong>' + fld + '</strong> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p><p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p><p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p></td></tr><tr><td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px"><p style="margin:0">Saludos Cordiales,</p><p style="margin-top:15px"><strong style="color:#0056b3">' + nt + '</strong><br>Tutor/a de Acompañamiento<br>Teléfono: ' + tel + '<br>Anexo: ' + anx + '<br><a href="http://www.unabonline.cl" style="color:#0056b3;text-decoration:none">www.unabonline.cl</a></p></td></tr></table></body></html>';
+  
+  var w = window.open('', '_blank', 'width=1000,height=800');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + nombre + '</title><style>body{margin:0;padding:20px;background:#f0f0f0;font-family:Arial}.toolbar{background:#fff;padding:15px;margin-bottom:20px;border-radius:8px;display:flex;gap:15px}.btn{padding:12px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer}.btn-primary{background:#0078d4;color:#fff}.btn-success{background:#107c10;color:#fff}</style></head><body><div class="toolbar"><button class="btn btn-primary" onclick="sel()">📋 Seleccionar Todo</button><button class="btn btn-success" id="bc" onclick="cop()">✅ Copiar</button><span style="margin-left:auto">Para: <strong>' + correo + '</strong></span></div><div id="cc">' + html + '</div><script>function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById("cc"));window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.getElementById("bc").innerHTML="⚡ Ahora COPIAR"}function cop(){document.execCommand("copy");document.getElementById("bc").innerHTML="✅ Copiado!"}<\/script></body></html>');
+  w.document.close();
 }
-var ps=[];
-var ls=lp.split('\n');
-for(var i=0;i<ls.length;i++){
-var l=ls[i].trim();
-if(!l)continue;
-var m=l.match(/[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
-if(!m)continue;
-var e=m[0].toLowerCase();
-var n=l.replace(e,'').replace(/[|,;]/g,'').trim().toUpperCase();
-if(n)ps.push({n:n,e:e});
-}
-if(ps.length===0){
-rd.innerHTML='<div class="alert alert-info">⚠️ No se encontraron profesores válidos</div>';
-return;
-}
-var fid=fi.split('-').reverse().join('-');
-var ffd=ff.split('-').reverse().join('-');
-var d=new Date(ff+'T12:00:00');
-d.setDate(d.getDate()+14);
-var fld=('0'+d.getDate()).slice(-2)+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+d.getFullYear();
-rd.innerHTML='<div class="alert alert-success">✅ Se generaron '+ps.length+' correo(s)</div>';
-for(var i=0;i<ps.length;i++){
-var p=ps[i];
-var h='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;font-family:Arial,sans-serif"><table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#fff;border:1px solid #ddd;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05)"><tr><td style="padding:45px 60px 25px 60px"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0"></td></tr><tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify"><p style="font-size:18px">Estimado(a) docente:</p><p>Reciba mis saludos,</p><p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <strong>"'+nc+'"</strong> <strong>'+nrc+'</strong> que tuvo inicio el día <strong>'+fid+'</strong> y finalizó el domingo <strong>'+ffd+'</strong>.</p><p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <strong>'+fld+'</strong> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p><p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p><p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p></td></tr><tr><td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px"><p style="margin:0">Saludos Cordiales,</p><p style="margin-top:15px"><strong style="color:#0056b3">'+nt+'</strong><br>Tutor/a de Acompañamiento<br>Teléfono: '+tel+'<br>Anexo: '+anx+'<br><a href="http://www.unabonline.cl" style="color:#0056b3;text-decoration:none">www.unabonline.cl</a></p></td></tr></table></body></html>';
-var div=document.createElement('div');
-div.className='correo-item';
-div.innerHTML='<h3>📧 Correo '+(i+1)+': '+p.n+'</h3><div><strong>Para:</strong> '+p.e+'</div><div><strong>Asunto:</strong> Recordatorio cierre de asignatura - '+nrc+'</div><div class="btn-group"><button class="btn btn-primary" onclick="abrir(\''+h.replace(/'/g,"\\'")+'\\',\\''+p.n.replace(/'/g,"\\'")+'\\',\\''+p.e+'\\')">👁️ Ver y Copiar</button><button class="btn btn-secondary" onclick="outlook(\\''+p.e+'\\',\\''+nrc+'\\')">📧 Outlook</button></div>';
-rd.appendChild(div);
-}
-var inf=document.createElement('div');
-inf.className='alert alert-info';
-inf.innerHTML='💡 <strong>Instrucciones:</strong><br>1. Click "Ver y Copiar" → Seleccionar Todo → Copiar<br>2. Click "Outlook" → Pega (Ctrl+V)<br>3. Adjunta PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>4. Envía';
-rd.appendChild(inf);
-}
-function abrir(h,n,e){
-var w=window.open('','_blank','width=1000,height=800');
-w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+n+'</title><style>body{margin:0;padding:20px;background:#f0f0f0;font-family:Arial}.toolbar{background:#fff;padding:15px;margin-bottom:20px;border-radius:8px;display:flex;gap:15px}.btn{padding:12px 24px;border:none;border-radius:6px;font-weight:600;cursor:pointer}.btn-primary{background:#0078d4;color:#fff}.btn-success{background:#107c10;color:#fff}</style></head><body><div class="toolbar"><button class="btn btn-primary" onclick="sel()">📋 Seleccionar Todo</button><button class="btn btn-success" id="bc" onclick="cop()">✅ Copiar</button><span style="margin-left:auto">Para: <strong>'+e+'</strong></span></div><div id="cc">'+h+'</div><script>function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById("cc"));window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.getElementById("bc").innerHTML="⚡ Ahora COPIAR"}function cop(){document.execCommand("copy");document.getElementById("bc").innerHTML="✅ Copiado!"}<\/script></body></html>');
-w.document.close();
-}
-function outlook(e,n){
-window.open('mailto:'+e+'?subject='+encodeURIComponent('Recordatorio cierre de asignatura - '+n),'_blank');
-}
-window.addEventListener('DOMContentLoaded',function(){
-var t=new Date().toISOString().split('T')[0];
-document.getElementById('fechaFin').value=t;
-var a=new Date();
-a.setMonth(a.getMonth()-2);
-document.getElementById('fechaInicio').value=a.toISOString().split('T')[0];
+
+window.addEventListener('DOMContentLoaded', function() {
+  var t = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaFin').value = t;
+  var a = new Date();
+  a.setMonth(a.getMonth() - 2);
+  document.getElementById('fechaInicio').value = a.toISOString().split('T')[0];
 });
 </script>
 </body>
