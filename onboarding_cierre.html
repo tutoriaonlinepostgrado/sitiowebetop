@@ -376,13 +376,166 @@ function copiarAlPortapapeles(texto, btnElement) {
   });
 }
 
-function abrirEnOutlook(profesor, asunto, htmlBody) {
-  // Crear mailto con HTML (algunos clientes lo soportan)
-  const mailtoLink = `mailto:${profesor.correo}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent('Ver correo en formato HTML')}`;
-  window.open(mailtoLink, '_blank');
+function copiarComoHTMLRenderizado(htmlBody, btnElement) {
+  // Crear un iframe oculto con el HTML
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'absolute';
+  iframe.style.left = '-9999px';
+  document.body.appendChild(iframe);
   
-  // Mostrar instrucciones
-  alert(`Se abrirá Outlook con el correo para ${profesor.nombre}.\n\nRecuerda:\n1. Pegar el HTML copiado en el cuerpo del correo\n2. Adjuntar el PDF "Proceso de Cierre de Curso en Canvas.pdf"\n3. Enviar`);
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  iframeDoc.open();
+  iframeDoc.write(htmlBody);
+  iframeDoc.close();
+  
+  // Seleccionar todo el contenido del iframe
+  const range = iframeDoc.createRange();
+  range.selectNodeContents(iframeDoc.body);
+  const selection = iframe.contentWindow.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  
+  try {
+    // Copiar al portapapeles
+    iframeDoc.execCommand('copy');
+    
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '✅ Copiado! Ahora pega en Outlook';
+    btnElement.style.background = '#107c10';
+    setTimeout(() => {
+      btnElement.innerHTML = originalText;
+      btnElement.style.background = '';
+    }, 3000);
+  } catch (err) {
+    alert('Error al copiar. Usa la opción "Ver y Copiar HTML Renderizado"');
+  } finally {
+    document.body.removeChild(iframe);
+  }
+}
+
+function abrirEnOutlook(profesor, asunto) {
+  // Crear mailto básico
+  const mailtoLink = `mailto:${profesor.correo}?subject=${encodeURIComponent(asunto)}`;
+  window.open(mailtoLink, '_blank');
+}
+
+function verHTMLRenderizado(htmlBody, profesor) {
+  // Abrir ventana nueva con el HTML renderizado
+  const ventana = window.open('', '_blank', 'width=1000,height=800');
+  ventana.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Correo para ${profesor.nombre}</title>
+      <style>
+        body { margin: 0; padding: 20px; background: #f0f0f0; font-family: Arial, sans-serif; }
+        .toolbar { 
+          background: white; 
+          padding: 15px; 
+          margin-bottom: 20px; 
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          display: flex;
+          gap: 15px;
+          align-items: center;
+        }
+        .btn {
+          padding: 12px 24px;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+        .btn-primary {
+          background: #0078d4;
+          color: white;
+        }
+        .btn-primary:hover {
+          background: #005a9e;
+        }
+        .btn-success {
+          background: #107c10;
+          color: white;
+        }
+        .instrucciones {
+          background: #fff4ce;
+          border-left: 4px solid #ffb900;
+          padding: 15px;
+          margin-bottom: 20px;
+          border-radius: 4px;
+        }
+        .instrucciones h3 {
+          margin: 0 0 10px 0;
+          color: #323130;
+        }
+        .instrucciones ol {
+          margin: 10px 0 0 20px;
+          padding: 0;
+        }
+        .instrucciones li {
+          margin: 5px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="toolbar">
+        <button class="btn btn-primary" onclick="seleccionarTodo()">
+          📋 Seleccionar Todo el Correo
+        </button>
+        <button class="btn btn-success" id="btnCopiar" onclick="copiarSeleccion()">
+          ✅ Copiar al Portapapeles
+        </button>
+        <span style="margin-left: auto; color: #605e5c;">Para: <strong>${profesor.correo}</strong></span>
+      </div>
+      
+      <div class="instrucciones">
+        <h3>📌 Instrucciones:</h3>
+        <ol>
+          <li><strong>Opción 1 (Recomendada):</strong> Click en "Seleccionar Todo" → Click en "Copiar" → Abre Outlook → Pega (Ctrl+V)</li>
+          <li><strong>Opción 2:</strong> Selecciona manualmente el correo de abajo → Copia (Ctrl+C) → Pega en Outlook</li>
+          <li><strong>Importante:</strong> No olvides adjuntar el PDF "Proceso de Cierre de Curso en Canvas.pdf"</li>
+        </ol>
+      </div>
+      
+      <div id="contenidoCorreo">
+        ${htmlBody}
+      </div>
+      
+      <script>
+        function seleccionarTodo() {
+          const contenido = document.getElementById('contenidoCorreo');
+          const range = document.createRange();
+          range.selectNodeContents(contenido);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          
+          document.getElementById('btnCopiar').style.background = '#ffb900';
+          document.getElementById('btnCopiar').innerHTML = '⚡ Ahora haz clic en COPIAR';
+        }
+        
+        function copiarSeleccion() {
+          try {
+            document.execCommand('copy');
+            document.getElementById('btnCopiar').innerHTML = '✅ ¡Copiado! Ahora pega en Outlook';
+            document.getElementById('btnCopiar').style.background = '#107c10';
+            
+            setTimeout(() => {
+              document.getElementById('btnCopiar').innerHTML = '✅ Copiar al Portapapeles';
+              document.getElementById('btnCopiar').style.background = '#107c10';
+            }, 3000);
+          } catch (err) {
+            alert('Usa Ctrl+C para copiar el contenido seleccionado');
+          }
+        }
+      </script>
+    </body>
+    </html>
+  `);
+  ventana.document.close();
 }
 
 function generarCorreos() {
@@ -443,10 +596,10 @@ function generarCorreos() {
         <div><strong>Asunto:</strong> ${asunto}</div>
         <div class="preview">${htmlCorreo.substring(0, 300)}...</div>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick='copiarAlPortapapeles(\`${htmlCorreo.replace(/`/g, '\\`')}\`, this)'>
-            📋 Copiar HTML
+          <button class="btn btn-primary" onclick='verHTMLRenderizado(\`${htmlCorreo.replace(/`/g, '\\`')}\`, ${JSON.stringify(profesor)})'>
+            👁️ Ver y Copiar HTML Renderizado
           </button>
-          <button class="btn btn-secondary" onclick='abrirEnOutlook(${JSON.stringify(profesor)}, "${asunto}", \`${htmlCorreo.replace(/`/g, '\\`')}\`)'>
+          <button class="btn btn-secondary" onclick='abrirEnOutlook(${JSON.stringify(profesor)}, "${asunto}")'>
             📧 Abrir en Outlook
           </button>
         </div>
@@ -456,13 +609,16 @@ function generarCorreos() {
   
   html += `
     <div class="alert alert-info">
-      💡 <strong>Instrucciones:</strong><br>
-      1. Haz clic en "📋 Copiar HTML" para copiar el correo al portapapeles<br>
-      2. Haz clic en "📧 Abrir en Outlook" para abrir un nuevo correo<br>
-      3. Pega el HTML en el cuerpo del correo (Ctrl+V)<br>
-      4. Adjunta el PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>
-      5. Envía el correo<br><br>
-      ⚠️ <strong>Recuerda adjuntar el PDF manualmente antes de enviar.</strong>
+      💡 <strong>Instrucciones para cada correo:</strong><br><br>
+      <strong>Método recomendado:</strong><br>
+      1. Haz clic en "👁️ Ver y Copiar HTML Renderizado"<br>
+      2. En la ventana que se abre, haz clic en "Seleccionar Todo el Correo"<br>
+      3. Haz clic en "Copiar al Portapapeles"<br>
+      4. Haz clic en "📧 Abrir en Outlook" para crear un nuevo correo<br>
+      5. Pega en Outlook con Ctrl+V (el HTML se pegará con formato)<br>
+      6. Adjunta el PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>
+      7. Envía el correo<br><br>
+      ⚠️ <strong>Importante:</strong> No olvides adjuntar el PDF manualmente antes de enviar.
     </div>
   `;
   
