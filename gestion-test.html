@@ -41,7 +41,7 @@
         .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
         .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
 
-        /* BOTÓN IR A COORDINACIÓN — diferenciado */
+        /* BOTÓN IR A COORDINACIÓN */
         .btn-coordinacion {
             margin: 12px 15px;
             padding: 12px 16px;
@@ -151,6 +151,23 @@
             <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
             <button class="menu-btn" onclick="cargar('SEMAFORO',this)">🚦 Reporte Semáforo</button>
 
+            <div class="menu-category">Onboarding</div>
+            <div class="collapsible-header" id="header-onboarding" onclick="toggleCollapsible('onboarding')">
+                <div class="header-left"><span>📧</span><span>Generación de Correos</span></div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-body" id="body-onboarding">
+                <button class="menu-btn" onclick="cargarOnboarding('CORREOS',this)">
+                    📧 Correos de Bienvenida
+                </button>
+                <button class="menu-btn" onclick="cargarOnboarding('INVITACIONES',this)">
+                    📅 Invitación Sesión Sincrónica
+                </button>
+                <button class="menu-btn" onclick="cargarOnboarding('CIERRE',this)">
+                    🎓 Cierre de Asignatura
+                </button>
+            </div>
+
             <div class="menu-category">Canales del Equipo</div>
             <div class="collapsible-header" id="header-canales" onclick="toggleCollapsible('canales')">
                 <div class="header-left"><span>🟣</span><span>Canales SharePoint</span></div>
@@ -161,11 +178,6 @@
                     🟣 Ver todos los canales
                 </button>
             </div>
-
-            <div class="menu-category">Herramientas</div>
-            <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn">
-                ⚡ Centro de Herramientas ETOP ↗️
-            </a>
 
             <div class="menu-category"> </div>
             <a href="gestion_coordinacion.html" class="btn-coordinacion">
@@ -271,17 +283,34 @@
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
+        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+        'CORREOS': "onboarding_correos.html",
+        'INVITACIONES': "onboarding_invitaciones.html",
+        'CIERRE': "onboarding_cierre.html"
     };
 
     const titulos = {
         'DASHBOARD':'Tablero de Gestión','NOMINA_ESTUDIANTES':'Nómina Estudiantes',
         'CURSOS_ACTIVOS':'Cursos Activos','CURSOS_PREPARACION':'Cursos en Preparación',
         'CURSOS_CIERRE':'Cursos en Cierre','FICHA_ESTUDIANTE':'Ficha del Estudiante',
-        'SEMAFORO':'Reporte Semáforo'
+        'SEMAFORO':'Reporte Semáforo',
+        'CORREOS':'📧 Generador de Correos de Bienvenida',
+        'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica',
+        'CIERRE':'🎓 Generador de Correos: Cierre de Asignatura'
     };
 
     function cargar(clave, btn) {
+        document.getElementById('canal-splash').classList.remove('visible');
+        document.getElementById('visor').style.display = 'block';
+        const url = misReportes[clave];
+        if (url) document.getElementById('visor').src = url;
+        document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
+        if (window.innerWidth < 800) toggleSidebar();
+    }
+
+    function cargarOnboarding(clave, btn) {
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
         const url = misReportes[clave];
