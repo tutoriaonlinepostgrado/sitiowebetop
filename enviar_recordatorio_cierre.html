@@ -68,6 +68,14 @@
         .logo { margin-bottom: 20px; }
         .highlight { font-weight: bold; }
         .underline { text-decoration: underline; }
+        .course-info {
+            background: #f1f5f9;
+            padding: 15px 20px;
+            border-left: 4px solid #1d4ed8;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11pt;
+        }
         .instructions {
             background: #fef3c7;
             border-left: 4px solid #f59e0b;
@@ -168,21 +176,20 @@
                     <br>
                     <p>Reciba mis saludos,</p>
                     <br>
-                    <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso 
-                    <span class="highlight">"<span id="nombreCurso"></span>"</span> 
-                    <span class="highlight">NRC <span id="nrc"></span></span> 
-                    que tuvo inicio el día 
-                    <span class="highlight underline"><span id="fechaInicio"></span></span> 
-                    y finalizó el domingo 
-                    <span class="highlight underline"><span id="fechaFin"></span></span>.</p>
-                    <br>
-                    <p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del 
-                    <span class="highlight underline"><span id="fechaLimite"></span></span> 
-                    (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
+                    <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso:</p>
+                    
+                    <div class="course-info">
+                        CURSO: "<span id="nombreCurso"></span>"<br>
+                        NRC: <span id="nrc"></span><br>
+                        FECHA INICIO: <span id="fechaInicio"></span><br>
+                        FECHA FIN: <span id="fechaFin"></span>
+                    </div>
+
+                    <p>Agradezco el trabajo en conjunto y aprovecho de comentar que cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del 📅 <strong><span id="fechaLimite"></span></strong> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
                     <br>
                     <p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p>
                     <br>
-                    <p>Agradecida de su <span class="highlight">acuso de recibo</span> y de acompañarle con mi gestión tutorial.</p>
+                    <p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p>
                 </div>
             </div>
 
@@ -213,49 +220,25 @@
         document.getElementById('fechaFin').textContent = fechaFin;
         document.getElementById('fechaLimite').textContent = fechaLimite;
 
-        // Texto plano MEJORADO con íconos y formato visual
-        const cuerpoTexto = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📧 RECORDATORIO DE CIERRE DE ASIGNATURA
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-
-Estimado/a docente:
+        // Texto plano profesional y sobrio
+        const cuerpoTexto = `Estimado/a docente:
 
 Reciba mis saludos,
 
-
 En esta oportunidad y como hito de cierre confirmo la finalización del curso:
 
-📚 CURSO: "${nombreCurso}"
-🔢 NRC: ${nrc}
+    CURSO: "${nombreCurso}"
+    NRC: ${nrc}
+    FECHA INICIO: ${fechaInicio}
+    FECHA FIN: ${fechaFin}
 
-📅 FECHA DE INICIO: ${fechaInicio}
-🏁 FECHA DE FINALIZACIÓN: ${fechaFin}
+Agradezco el trabajo en conjunto y aprovecho de comentar que cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del 📅 ${fechaLimite} (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.
 
+Adjunto para su guía un paso a paso para el correcto cierre del curso.
 
-Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del:
+Agradecida de su acuso de recibo y de acompañarle con mi gestión tutorial.`;
 
-⚠️ ${fechaLimite} (dos semanas después de la fecha de fin)
-
-...no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.
-
-
-📎 Adjunto para su guía un paso a paso para el correcto cierre del curso.
-
-
-Agradecida de su ACUSO DE RECIBO y de acompañarle con mi gestión tutorial.
-
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Equipo de Tutoría Online de Postgrado (ETOP)
-Universidad Andrés Bello
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-
-        const asunto = `🔔 Recordatorio cierre de asignatura - ${nrc}`;
+        const asunto = `Recordatorio cierre de asignatura - ${nrc}`;
         const mailtoLink = document.getElementById('mailtoLink');
         mailtoLink.href = `mailto:${destinatario}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoTexto)}`;
 
