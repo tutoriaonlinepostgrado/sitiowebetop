@@ -68,10 +68,6 @@
         .logo { margin-bottom: 20px; }
         .highlight { font-weight: bold; }
         .underline { text-decoration: underline; }
-        .signature {
-            margin-top: 25px;
-            font-weight: bold;
-        }
         .instructions {
             background: #fef3c7;
             border-left: 4px solid #f59e0b;
@@ -156,7 +152,7 @@
                 <h3>📋 Instrucciones para enviar el correo:</h3>
                 <ol>
                     <li><strong>Haz clic en "Abrir Outlook"</strong> - Se abrirá con el texto del correo</li>
-                    <li><strong>Copia el contenido formateado</strong> de la vista previa abajo y pégalo en Outlook</li>
+                    <li><strong>Copia el contenido formateado</strong> de la vista previa y pégalo en Outlook</li>
                     <li><strong>Agrega el logo UNAB</strong> al inicio del correo (desde tu equipo)</li>
                     <li><strong>Envía el correo</strong></li>
                 </ol>
@@ -188,16 +184,6 @@
                     <p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p>
                     <br>
                     <p>Agradecida de su <span class="highlight">acuso de recibo</span> y de acompañarle con mi gestión tutorial.</p>
-                    <br>
-                    <p>Saludos Cordiales,</p>
-                    
-                    <div class="signature">
-                        <p>Carla Peña V.<br>
-                        Tutora de Acompañamiento<br>
-                        Teléfono: 600 585 8550<br>
-                        Anexo: 7361<br>
-                        <a href="https://www.unabonline.cl">www.unabonline.cl</a></p>
-                    </div>
                 </div>
             </div>
 
@@ -228,7 +214,7 @@
         document.getElementById('fechaFin').textContent = fechaFin;
         document.getElementById('fechaLimite').textContent = fechaLimite;
 
-        // Texto plano para mailto
+        // Texto plano para mailto (SIN FIRMA)
         const cuerpoTexto = `Estimado/a docente:
 
 Reciba mis saludos,
@@ -239,15 +225,7 @@ Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega 
 
 Adjunto para su guía un paso a paso para el correcto cierre del curso.
 
-Agradecida de su acuso de recibo y de acompañarle con mi gestión tutorial.
-
-Saludos Cordiales,
-
-Carla Peña V.
-Tutora de Acompañamiento
-Teléfono: 600 585 8550
-Anexo: 7361
-www.unabonline.cl`;
+Agradecida de su acuso de recibo y de acompañarle con mi gestión tutorial.`;
 
         const asunto = `Recordatorio cierre de asignatura - ${nrc}`;
         const mailtoLink = document.getElementById('mailtoLink');
