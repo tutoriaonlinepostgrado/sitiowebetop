@@ -585,44 +585,81 @@ function generarCorreos() {
   // Generar HTML para cada profesor
   let html = `<div class="alert alert-success">✅ Se generaron ${profesores.length} correo(s) exitosamente</div>`;
   
+  // Limpiar contenedor de resultados
+  resultadoDiv.innerHTML = html;
+  
+  // Crear elementos dinámicamente para cada profesor
   profesores.forEach((profesor, index) => {
     const htmlCorreo = generarHTMLCorreo(profesor, datos);
     const asunto = `Recordatorio cierre de asignatura - ${nrcCurso}`;
     
-    html += `
-      <div class="correo-item">
-        <h3>📧 Correo ${index + 1}: ${profesor.nombre}</h3>
-        <div><strong>Para:</strong> ${profesor.correo}</div>
-        <div><strong>Asunto:</strong> ${asunto}</div>
-        <div class="preview">${htmlCorreo.substring(0, 300)}...</div>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick='verHTMLRenderizado(\`${htmlCorreo.replace(/`/g, '\\`')}\`, ${JSON.stringify(profesor)})'>
-            👁️ Ver y Copiar HTML Renderizado
-          </button>
-          <button class="btn btn-secondary" onclick='abrirEnOutlook(${JSON.stringify(profesor)}, "${asunto}")'>
-            📧 Abrir en Outlook
-          </button>
-        </div>
-      </div>
-    `;
+    // Crear div del correo
+    const correoDiv = document.createElement('div');
+    correoDiv.className = 'correo-item';
+    
+    // Título
+    const titulo = document.createElement('h3');
+    titulo.textContent = `📧 Correo ${index + 1}: ${profesor.nombre}`;
+    correoDiv.appendChild(titulo);
+    
+    // Para
+    const paraDiV = document.createElement('div');
+    paraDiV.innerHTML = `<strong>Para:</strong> ${profesor.correo}`;
+    correoDiv.appendChild(paraDiV);
+    
+    // Asunto
+    const asuntoDiv = document.createElement('div');
+    asuntoDiv.innerHTML = `<strong>Asunto:</strong> ${asunto}`;
+    correoDiv.appendChild(asuntoDiv);
+    
+    // Preview
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'preview';
+    previewDiv.textContent = htmlCorreo.substring(0, 300) + '...';
+    correoDiv.appendChild(previewDiv);
+    
+    // Botones
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+    
+    // Botón Ver HTML
+    const btnVer = document.createElement('button');
+    btnVer.className = 'btn btn-primary';
+    btnVer.innerHTML = '👁️ Ver y Copiar HTML Renderizado';
+    btnVer.onclick = function() {
+      verHTMLRenderizado(htmlCorreo, profesor);
+    };
+    btnGroup.appendChild(btnVer);
+    
+    // Botón Outlook
+    const btnOutlook = document.createElement('button');
+    btnOutlook.className = 'btn btn-secondary';
+    btnOutlook.innerHTML = '📧 Abrir en Outlook';
+    btnOutlook.onclick = function() {
+      abrirEnOutlook(profesor, asunto);
+    };
+    btnGroup.appendChild(btnOutlook);
+    
+    correoDiv.appendChild(btnGroup);
+    resultadoDiv.appendChild(correoDiv);
   });
   
-  html += `
-    <div class="alert alert-info">
-      💡 <strong>Instrucciones para cada correo:</strong><br><br>
-      <strong>Método recomendado:</strong><br>
-      1. Haz clic en "👁️ Ver y Copiar HTML Renderizado"<br>
-      2. En la ventana que se abre, haz clic en "Seleccionar Todo el Correo"<br>
-      3. Haz clic en "Copiar al Portapapeles"<br>
-      4. Haz clic en "📧 Abrir en Outlook" para crear un nuevo correo<br>
-      5. Pega en Outlook con Ctrl+V (el HTML se pegará con formato)<br>
-      6. Adjunta el PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>
-      7. Envía el correo<br><br>
-      ⚠️ <strong>Importante:</strong> No olvides adjuntar el PDF manualmente antes de enviar.
-    </div>
+  // Agregar instrucciones al final
+  const instruccionesDiv = document.createElement('div');
+  instruccionesDiv.className = 'alert alert-info';
+  instruccionesDiv.innerHTML = `
+    💡 <strong>Instrucciones para cada correo:</strong><br><br>
+    <strong>Método recomendado:</strong><br>
+    1. Haz clic en "👁️ Ver y Copiar HTML Renderizado"<br>
+    2. En la ventana que se abre, haz clic en "Seleccionar Todo el Correo"<br>
+    3. Haz clic en "Copiar al Portapapeles"<br>
+    4. Haz clic en "📧 Abrir en Outlook" para crear un nuevo correo<br>
+    5. Pega en Outlook con Ctrl+V (el HTML se pegará con formato)<br>
+    6. Adjunta el PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>
+    7. Envía el correo<br><br>
+    ⚠️ <strong>Importante:</strong> No olvides adjuntar el PDF manualmente antes de enviar.
   `;
-  
-  resultadoDiv.innerHTML = html;
+  resultadoDiv.appendChild(instruccionesDiv);
 }
 
 // Auto-configurar fecha de hoy en fecha fin
