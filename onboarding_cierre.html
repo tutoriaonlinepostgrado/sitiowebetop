@@ -420,6 +420,12 @@ function abrirEnOutlook(profesor, asunto) {
 }
 
 function verHTMLRenderizado(htmlBody, profesor) {
+  // Extraer solo el contenido del body (la tabla del correo)
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlBody, 'text/html');
+  const tablaCorreo = doc.querySelector('table');
+  const tablaHTML = tablaCorreo ? tablaCorreo.outerHTML : htmlBody;
+  
   // Abrir ventana nueva con el HTML renderizado
   const ventana = window.open('', '_blank', 'width=1000,height=800');
   ventana.document.write(`
@@ -501,7 +507,7 @@ function verHTMLRenderizado(htmlBody, profesor) {
       </div>
       
       <div id="contenidoCorreo">
-        ${htmlBody}
+        ${tablaHTML}
       </div>
       
       <script>
