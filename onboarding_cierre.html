@@ -152,20 +152,71 @@ document.getElementById('btn').addEventListener('click', function() {
     var p = ps[i];
     var asunto = 'Recordatorio cierre de asignatura - ' + nrc;
     
-    var html = '<div class="correo-item">';
-    html += '<h3>📧 Correo ' + (i + 1) + ': ' + p.nombre + '</h3>';
-    html += '<div><strong>Para:</strong> ' + p.correo + '</div>';
-    html += '<div><strong>Asunto:</strong> ' + asunto + '</div>';
-    html += '<div class="btn-group">';
-    html += '<button class="btn btn-primary" onclick="alert(\'Ver correo para ' + p.nombre + '\')">👁️ Ver y Copiar</button>';
-    html += '<button class="btn btn-secondary" onclick="window.open(\'mailto:' + p.correo + '?subject=' + encodeURIComponent(asunto) + '\')">📧 Outlook</button>';
-    html += '</div>';
-    html += '</div>';
+    var correoDiv = document.createElement('div');
+    correoDiv.className = 'correo-item';
     
-    rd.innerHTML += html;
+    var h3 = document.createElement('h3');
+    h3.textContent = '📧 Correo ' + (i + 1) + ': ' + p.nombre;
+    correoDiv.appendChild(h3);
+    
+    var paraDiv = document.createElement('div');
+    paraDiv.innerHTML = '<strong>Para:</strong> ' + p.correo;
+    correoDiv.appendChild(paraDiv);
+    
+    var asuntoDiv = document.createElement('div');
+    asuntoDiv.innerHTML = '<strong>Asunto:</strong> ' + asunto;
+    correoDiv.appendChild(asuntoDiv);
+    
+    var btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+    
+    var btnVer = document.createElement('button');
+    btnVer.className = 'btn btn-primary';
+    btnVer.textContent = '👁️ Ver y Copiar';
+    btnVer.setAttribute('data-nombre', p.nombre);
+    btnVer.setAttribute('data-correo', p.correo);
+    btnVer.setAttribute('data-nc', nc);
+    btnVer.setAttribute('data-nrc', nrc);
+    btnVer.setAttribute('data-fid', fid);
+    btnVer.setAttribute('data-ffd', ffd);
+    btnVer.setAttribute('data-fld', fld);
+    btnVer.setAttribute('data-nt', nt);
+    btnVer.setAttribute('data-tel', tel);
+    btnVer.setAttribute('data-anx', anx);
+    btnVer.onclick = function() {
+      abrirVentana(
+        this.getAttribute('data-nombre'),
+        this.getAttribute('data-correo'),
+        this.getAttribute('data-nc'),
+        this.getAttribute('data-nrc'),
+        this.getAttribute('data-fid'),
+        this.getAttribute('data-ffd'),
+        this.getAttribute('data-fld'),
+        this.getAttribute('data-nt'),
+        this.getAttribute('data-tel'),
+        this.getAttribute('data-anx')
+      );
+    };
+    btnGroup.appendChild(btnVer);
+    
+    var btnOutlook = document.createElement('button');
+    btnOutlook.className = 'btn btn-secondary';
+    btnOutlook.textContent = '📧 Outlook';
+    btnOutlook.onclick = (function(correo, asunto) {
+      return function() {
+        window.open('mailto:' + correo + '?subject=' + encodeURIComponent(asunto), '_blank');
+      };
+    })(p.correo, asunto);
+    btnGroup.appendChild(btnOutlook);
+    
+    correoDiv.appendChild(btnGroup);
+    rd.appendChild(correoDiv);
   }
   
-  rd.innerHTML += '<div class="alert alert-info">💡 <strong>Instrucciones:</strong><br>1. Click "Ver y Copiar" → Seleccionar Todo → Copiar<br>2. Click "Outlook" → Pega (Ctrl+V)<br>3. Adjunta PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>4. Envía</div>';
+  var instrDiv = document.createElement('div');
+  instrDiv.className = 'alert alert-info';
+  instrDiv.innerHTML = '💡 <strong>Instrucciones:</strong><br>1. Click "Ver y Copiar" → Seleccionar Todo → Copiar<br>2. Click "Outlook" → Pega (Ctrl+V)<br>3. Adjunta PDF "Proceso de Cierre de Curso en Canvas.pdf"<br>4. Envía';
+  rd.appendChild(instrDiv);
 });
 
 // Auto-rellenar fechas
