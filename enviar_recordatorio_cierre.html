@@ -1,4 +1,220 @@
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio Cierre - ETOP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 850px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: #1d4ed8;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .preview {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .preview-title {
+            background: #0ea5e9;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .email-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-family: Calibri, Helvetica, sans-serif;
+            font-size: 12pt;
+            line-height: 1.6;
+        }
+        .logo { margin-bottom: 20px; }
+        .highlight { font-weight: bold; }
+        .underline { text-decoration: underline; }
+        .instructions {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+        .instructions h3 {
+            margin: 0 0 15px 0;
+            color: #92400e;
+            font-size: 16px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #78350f;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #059669;
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .btn-primary:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+        }
+        .spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner.active {
+            display: block;
+        }
+        .spinner-icon {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1d4ed8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Recordatorio de Cierre de Asignatura</h1>
+            <p>ETOP - Equipo de Tutoría Online de Postgrado</p>
+        </div>
+
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 Instrucciones para enviar el correo:</h3>
+                <ol>
+                    <li><strong>Haz clic en "Abrir Outlook"</strong> - Se abrirá con el texto formateado del correo</li>
+                    <li><strong>Agrega el logo UNAB</strong> al inicio del correo (desde tu equipo)</li>
+                    <li><strong>Envía el correo</strong></li>
+                </ol>
+            </div>
+
+            <div class="preview">
+                <div class="preview-title">👁️ Vista Previa del Formato</div>
+                <div class="email-content">
+                    <div class="logo">
+                        <img src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/logo_unab_etop.png" alt="Logo UNAB ETOP" width="134" height="60">
+                    </div>
+
+                    <p><strong>Estimado/a docente:</strong></p>
+                    <br>
+                    <p>Reciba mis saludos,</p>
+                    <br>
+                    <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso 
+                    <span class="highlight">"<span id="nombreCurso"></span>"</span> 
+                    <span class="highlight">NRC <span id="nrc"></span></span> 
+                    que tuvo inicio el día 
+                    <span class="highlight underline"><span id="fechaInicio"></span></span> 
+                    y finalizó el domingo 
+                    <span class="highlight underline"><span id="fechaFin"></span></span>.</p>
+                    <br>
+                    <p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del 
+                    <span class="highlight underline"><span id="fechaLimite"></span></span> 
+                    (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
+                    <br>
+                    <p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p>
+                    <br>
+                    <p>Agradecida de su <span class="highlight">acuso de recibo</span> y de acompañarle con mi gestión tutorial.</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="#" id="mailtoLink" class="btn btn-primary">📧 Abrir Outlook</a>
+            </div>
+
+            <div class="spinner" id="spinner">
+                <div class="spinner-icon"></div>
+                <p style="margin-top: 15px; color: #64748b;">Abriendo Outlook...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const destinatario = params.get('destinatario') || '';
+        const nrc = params.get('nrc') || '';
+        const nombreCurso = decodeURIComponent(params.get('nombreCurso') || '');
+        const fechaInicio = params.get('fechaInicio') || '';
+        const fechaFin = params.get('fechaFin') || '';
+        const fechaLimite = params.get('fechaLimite') || '';
+
+        // Rellenar datos en la vista previa
+        document.getElementById('nrc').textContent = nrc;
+        document.getElementById('nombreCurso').textContent = nombreCurso;
+        document.getElementById('fechaInicio').textContent = fechaInicio;
+        document.getElementById('fechaFin').textContent = fechaFin;
+        document.getElementById('fechaLimite').textContent = fechaLimite;
+
+        // Texto plano MEJORADO con íconos y formato visual
+        const cuerpoTexto = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📧 RECORDATORIO DE CIERRE DE ASIGNATURA
 
@@ -12,16 +228,16 @@ Reciba mis saludos,
 
 En esta oportunidad y como hito de cierre confirmo la finalización del curso:
 
-📚 CURSO: "Epidemiología para la gestión"
-🔢 NRC: NRC1748
+📚 CURSO: "${nombreCurso}"
+🔢 NRC: ${nrc}
 
-📅 FECHA DE INICIO: 23-02-2026
-🏁 FECHA DE FINALIZACIÓN: 12-04-2026
+📅 FECHA DE INICIO: ${fechaInicio}
+🏁 FECHA DE FINALIZACIÓN: ${fechaFin}
 
 
 Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del:
 
-⚠️ 26-04-2026 (dos semanas después de la fecha de fin)
+⚠️ ${fechaLimite} (dos semanas después de la fecha de fin)
 
 ...no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.
 
@@ -37,4 +253,19 @@ Agradecida de su ACUSO DE RECIBO y de acompañarle con mi gestión tutorial.
 Equipo de Tutoría Online de Postgrado (ETOP)
 Universidad Andrés Bello
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+        const asunto = `🔔 Recordatorio cierre de asignatura - ${nrc}`;
+        const mailtoLink = document.getElementById('mailtoLink');
+        mailtoLink.href = `mailto:${destinatario}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoTexto)}`;
+
+        // Mostrar spinner al hacer clic
+        mailtoLink.addEventListener('click', function() {
+            document.getElementById('spinner').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('spinner').classList.remove('active');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
