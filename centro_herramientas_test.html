@@ -168,8 +168,17 @@
   .btn:hover { background: rgba(246,193,40,0.1); }
   .btn.primary { background: rgba(246,193,40,0.14); }
   .btn.primary:hover { background: rgba(246,193,40,0.22); }
+  .btn.danger { background: rgba(218,55,55,0.14); border-color: #da3737; }
+  .btn.danger:hover { background: rgba(218,55,55,0.22); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+  .btn-delete {
+    background: transparent; border: 1px solid #da3737; color: #da3737;
+    font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px;
+    cursor: pointer; transition: all 0.15s; font-weight: 700;
+  }
+  .btn-delete:hover { background: rgba(218,55,55,0.2); }
 
   .alert { border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; margin-top: 0.75rem; }
   .alert.success { background: var(--ok-bg); color: var(--ok-text); }
@@ -283,11 +292,24 @@
   </div>
 
   <div id="t1-manual" class="dynamic-section">
-    <div class="form-group">
-      <label>📥 Archivos (Excel / CSV)</label>
+    <div class="helper">💡 <strong>Modo acumulativo:</strong> Completa los campos, sube el CSV del curso y haz clic en "Procesar". Los registros se acumularán. Repite para cada curso.</div>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>🔖 NRC_COD (ej: 12345_MDL711)</label>
+        <input type="text" id="t1m-nrccod" placeholder="12345_MDL711" />
+      </div>
+      <div class="form-group">
+        <label>📅 FECHA INICIO</label>
+        <input type="date" id="t1m-fecha" />
+      </div>
+    </div>
+
+    <div class="form-group mt1">
+      <label>📥 Archivo CSV del curso</label>
       <div class="file-drop" id="drop1m">
-        <input type="file" accept=".xlsx,.xls,.csv" multiple onchange="handleFiles(this, 'drop1m', 't1m-files')" />
-        📂 Haz clic o arrastra tus archivos aquí
+        <input type="file" accept=".csv" onchange="handleFiles(this, 'drop1m', 't1m-files')" />
+        📂 Haz clic o arrastra tu archivo CSV aquí
         <div class="file-name" id="drop1m-names"></div>
       </div>
     </div>
@@ -303,6 +325,7 @@
 
   <div class="btn-row">
     <button class="btn primary" onclick="processTab1()">⚡ Procesar</button>
+    <button class="btn danger" onclick="clearAccumulated()" id="btn-clear-accum" style="display:none">🗑️ Limpiar Registros Acumulados</button>
   </div>
   <div id="t1-result"></div>
 </div>
@@ -373,10 +396,8 @@
   <div id="t2-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab2()">📥 Descargar Excel</button>
     <button class="btn primary" onclick="sendToSharePoint()">📨 Enviar a SharePoint</button>
-    <button class="btn primary" onclick="sendToSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
   </div>
   <div id="t2-sp-result"></div>
-  <div id="t2-sp-result-miguel"></div>
 
   <div id="t2-paso3" style="display:none; margin-top:1.2rem;">
     <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
@@ -386,17 +407,6 @@
     <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
     <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
       📧 Abrir app — Enviar correos de bienvenida
-    </button>
-  </div>
-
-  <div id="t2-paso3-miguel" style="display:none; margin-top:1.2rem;">
-    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
-      <div style="font-weight:700; font-size:1rem;">Enviar correos de bienvenida — Equipo Miguel</div>
-    </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
-      📧 Abrir app — Enviar correos Equipo Miguel
     </button>
   </div>
 </div>
@@ -534,10 +544,15 @@
 <script>
 // ─── STATE ────────────────────────────────────────────────────────────────────
 const state = {
-  t1Files: [], t1mFiles: [],
-  t2File: null, t3File: null,
-  t2Data: null, t3Data: null,
-  t1Mode: 'diario', t4Data: null
+  t1Files: [], 
+  t1mFiles: [],
+  t1mAccumulated: [], // ← NUEVO: Acumulador de registros CSV
+  t2File: null, 
+  t3File: null,
+  t2Data: null, 
+  t3Data: null,
+  t1Mode: 'diario', 
+  t4Data: null
 };
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -548,13 +563,40 @@ function switchTab(idx, btn) {
 
 // ─── CLEAR ────────────────────────────────────────────────────────────────────
 function clearAll() {
-  Object.assign(state, { t1Files:[], t1mFiles:[], t2File:null, t3File:null, t2Data:null, t3Data:null, t1Mode:'diario' });
+  Object.assign(state, { 
+    t1Files:[], 
+    t1mFiles:[], 
+    t1mAccumulated: [], // ← Borra acumulados
+    t2File:null, 
+    t3File:null, 
+    t2Data:null, 
+    t3Data:null, 
+    t1Mode:'diario' 
+  });
   document.querySelectorAll('input[type=text], input[type=date], input[type=time], textarea').forEach(el => el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
-  ['t2-actions','t3-actions','t2-paso3','t2-paso3-miguel','t3-paso3'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-  ['t1-result','t2-result','t3-result','t2-sp-result','t2-sp-result-miguel','t3-sp-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
+  ['t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
   selectRadio(document.querySelector('#tab1-radio .radio-option'), 'tab1-mode', 'diario');
   switchTab(0, document.querySelectorAll('.tab-btn')[0]);
+}
+
+// ─── CLEAR ACCUMULATED (NUEVO) ────────────────────────────────────────────────
+function clearAccumulated() {
+  if(!confirm('¿Estás seguro de que deseas eliminar todos los registros acumulados?')) return;
+  state.t1mAccumulated = [];
+  document.getElementById('t1-result').innerHTML = '<div class="alert info">Registros acumulados eliminados.</div>';
+  document.getElementById('btn-clear-accum').style.display = 'none';
+}
+
+// ─── DELETE ROW (NUEVO) ───────────────────────────────────────────────────────
+function deleteRow(index) {
+  if(!confirm('¿Eliminar este registro?')) return;
+  state.t1mAccumulated.splice(index, 1);
+  renderAccumulatedTable();
+  if(state.t1mAccumulated.length === 0) {
+    document.getElementById('btn-clear-accum').style.display = 'none';
+  }
 }
 
 // ─── RADIO ────────────────────────────────────────────────────────────────────
@@ -665,12 +707,50 @@ function renderTable(rows, containerEl) {
   containerEl.innerHTML = html;
 }
 
+// ─── RENDER ACCUMULATED TABLE (NUEVO) ─────────────────────────────────────────
+function renderAccumulatedTable() {
+  const resultEl = document.getElementById('t1-result');
+  if(!state.t1mAccumulated.length) {
+    resultEl.innerHTML = '<div class="alert info">No hay registros acumulados aún.</div>';
+    return;
+  }
+  
+  const cols = Object.keys(state.t1mAccumulated[0]);
+  let html = `<div class="alert success">📊 Total acumulado: <span class="badge">${state.t1mAccumulated.length}</span> registros</div>`;
+  html += '<div class="table-wrap"><table><thead><tr>';
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += '<th>Acciones</th></tr></thead><tbody>';
+  
+  state.t1mAccumulated.slice(0, 200).forEach((r, idx) => {
+    html += '<tr>';
+    cols.forEach(c => html += `<td title="${String(r[c]).replace(/"/g,'&quot;')}">${r[c]??''}</td>`);
+    html += `<td><button class="btn-delete" onclick="deleteRow(${idx})">🗑️ Eliminar</button></td>`;
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  
+  if(state.t1mAccumulated.length > 200) {
+    html += `<div class="alert info mt05">Mostrando primeras 200 filas de ${state.t1mAccumulated.length}.</div>`;
+  }
+  
+  html += '<div class="btn-row mt1">';
+  html += '<button class="btn" onclick="downloadAccumulated()">📥 Descargar Excel</button>';
+  html += '</div>';
+  
+  resultEl.innerHTML = html;
+}
+
 // ─── EXPORT XLSX ──────────────────────────────────────────────────────────────
 function exportXLSX(rows, filename) {
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
   XLSX.writeFile(wb, filename);
+}
+
+function downloadAccumulated() {
+  if(!state.t1mAccumulated.length) return;
+  exportXLSX(state.t1mAccumulated, 'Nomina_Acumulada.xlsx');
 }
 
 function exportXLSXConTabla(rows, filename) {
@@ -831,12 +911,59 @@ function findCol(cols, ...keywords) {
   return null;
 }
 
+// ─── PROCESAR CSV MANUAL (NUEVO) ──────────────────────────────────────────────
+async function processCSVManual(file, nrcCod, fechaInicio) {
+  const rows = await readFile(file, true);
+  
+  const filas = [];
+  
+  for(const r of rows) {
+    // Extracción según mapeo especificado (usando nombres exactos de columnas)
+    const nombreSeccion = String(r['Nombre de sección'] || r['Nombre de secci  n'] || '').trim();
+    const rut = String(r['Identificación de SIS del estudiante'] || r['Identificacion de SIS del estudiante'] || '').trim();
+    const nombre = String(r['Nombre del estudiante'] || '').trim();
+    const correo = String(r['Correo electrónico'] || r['Correo electronico'] || '').trim().toLowerCase();
+    
+    // Validación de campos obligatorios
+    if(!correo || !correo.includes('@')) continue;
+    if(!rut) continue;
+    
+    // Extracción de PERIODO (primeros 6 dígitos del nombre de sección)
+    let periodo = '';
+    if(nombreSeccion) {
+      const match = nombreSeccion.match(/^(\d{6})/);
+      if(match) periodo = match[1];
+    }
+    
+    // Extracción de NOMBRE_CURSO (texto después del |)
+    let nombreCurso = '';
+    if(nombreSeccion && nombreSeccion.includes('|')) {
+      nombreCurso = nombreSeccion.split('|')[1].trim();
+    }
+    
+    filas.push({
+      PERIODO: periodo,
+      NRC_COD: nrcCod,
+      NOMBRE_CURSO: nombreCurso,
+      FECHA_INICIO: fechaInicio,
+      RUT: rut,
+      NOMBRE: nombre.toUpperCase(),
+      CORREO_UNAB: correo,
+      Columna7: '' // Vacío según especificación
+    });
+  }
+  
+  return filas;
+}
+
 async function processTab1() {
   const resultEl = document.getElementById('t1-result');
   resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Procesando...</div>';
+  
   try {
     const mode = state.t1Mode;
     let filas = [];
+    
     if(mode==='diario') {
       const files = state.t1Files;
       if(!files.length) { resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>'; return; }
@@ -884,36 +1011,80 @@ async function processTab1() {
       const seen=new Set();
       filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
       if(nrcFilter.length) filas = filas.filter(r=>nrcFilter.includes(r.NRC_COD?.toUpperCase()));
+      
+      if(!filas.length) { resultEl.innerHTML='<div class="alert info">No se encontraron registros con los criterios indicados.</div>'; return; }
+      state.t1Data = filas;
+      resultEl.innerHTML = `<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
+      const tableDiv = document.createElement('div');
+      resultEl.appendChild(tableDiv);
+      renderTable(filas, tableDiv);
+      const btnRow = document.createElement('div');
+      btnRow.className = 'btn-row';
+      const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+      btnRow.innerHTML = '<button class="btn" onclick="exportXLSXConTabla(state.t1Data, \'Estudiantes_Formateados_' + ts + '.xlsx\')">✅ Descargar Excel</button>';
+      resultEl.appendChild(btnRow);
+      
     } else if(mode==='manual') {
-      const files = state.t1mFiles;
-      if(!files.length) { resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>'; return; }
-      for(const file of files) {
-        const rawRows = await readFile(file, false);
-        const rawText = rawRows.map(r=>r.filter(c=>String(c).trim()).join('\t')).join('\n');
-        filas.push(...parseWebTextBlocks(rawText));
+      // ── MODO CSV ACUMULATIVO (NUEVO) ──────────────────────────────────────
+      const nrcCod = document.getElementById('t1m-nrccod').value.trim();
+      const fechaInicio = document.getElementById('t1m-fecha').value;
+      
+      if(!nrcCod) {
+        resultEl.innerHTML = '<div class="alert error">Debes ingresar el NRC_COD.</div>';
+        return;
       }
-      const seen=new Set();
-      filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
+      if(!fechaInicio) {
+        resultEl.innerHTML = '<div class="alert error">Debes ingresar la FECHA INICIO.</div>';
+        return;
+      }
+      if(!state.t1mFiles.length) {
+        resultEl.innerHTML = '<div class="alert error">Debes subir un archivo CSV.</div>';
+        return;
+      }
+      
+      const file = state.t1mFiles[0];
+      const nuevasFilas = await processCSVManual(file, nrcCod, fechaInicio);
+      
+      if(!nuevasFilas.length) {
+        resultEl.innerHTML = '<div class="alert error">No se encontraron registros válidos en el CSV.</div>';
+        return;
+      }
+      
+      // Acumular registros
+      state.t1mAccumulated.push(...nuevasFilas);
+      
+      // Mostrar tabla acumulada
+      renderAccumulatedTable();
+      
+      // Mostrar botón de limpiar
+      document.getElementById('btn-clear-accum').style.display = 'inline-flex';
+      
+      // Limpiar campos de entrada para siguiente curso
+      document.getElementById('t1m-nrccod').value = '';
+      document.getElementById('t1m-fecha').value = new Date().toISOString().substring(0,10);
+      document.getElementById('drop1m-names').textContent = '';
+      state.t1mFiles = [];
+      
     } else {
+      // ── MODO TEXTO ────────────────────────────────────────────────────────
       const txt = document.getElementById('t1-rawtext').value;
       if(!txt.trim()) { resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>'; return; }
       filas = parseWebTextBlocks(txt);
       const seen=new Set();
       filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
+      
+      if(!filas.length) { resultEl.innerHTML='<div class="alert info">No se encontraron registros con los criterios indicados.</div>'; return; }
+      state.t1Data = filas;
+      resultEl.innerHTML = `<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
+      const tableDiv = document.createElement('div');
+      resultEl.appendChild(tableDiv);
+      renderTable(filas, tableDiv);
+      const btnRow = document.createElement('div');
+      btnRow.className = 'btn-row';
+      btnRow.innerHTML = '<button class="btn" onclick="exportXLSX(state.t1Data, \'Nomina.xlsx\')">✅ Descargar Excel</button>';
+      resultEl.appendChild(btnRow);
     }
-    if(!filas.length) { resultEl.innerHTML='<div class="alert info">No se encontraron registros con los criterios indicados.</div>'; return; }
-    state.t1Data = filas;
-    resultEl.innerHTML = `<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
-    const tableDiv = document.createElement('div');
-    resultEl.appendChild(tableDiv);
-    renderTable(filas, tableDiv);
-    const btnRow = document.createElement('div');
-    btnRow.className = 'btn-row';
-    const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-    const fname = (mode==='manual') ? 'Nomina.xlsx' : 'Estudiantes_Formateados_' + ts + '.xlsx';
-    const exportFn = (mode==='manual') ? 'exportXLSX' : 'exportXLSXConTabla';
-    btnRow.innerHTML = '<button class="btn" onclick="' + exportFn + '(state.t1Data, \'' + fname + '\')">✅ Descargar Excel</button>';
-    resultEl.appendChild(btnRow);
+    
   } catch(err) {
     resultEl.innerHTML = `<div class="alert error">Error al procesar: ${err.message}</div>`;
     console.error(err);
@@ -922,23 +1093,15 @@ async function processTab1() {
 
 // ═══════════════════════════════ TAB 2 LOGIC ══════════════════════════════════
 
-// ─── DETECTOR: Nómina tipo "Alumno Potencial" (exportación CRM/Dynamics) ──────
-// Criterio: la fila de encabezados contiene el sufijo "(Alumno Potencial)"
-// Y tiene columnas RUT y DV separadas. Esto la distingue sin ambigüedad.
 function isAlumnoPotencialNomina(headerRow) {
   const joined = headerRow.map(c => String(c||'')).join('|').toLowerCase();
   return joined.includes('alumno potencial') && joined.includes('dv');
 }
 
-// Procesa nómina tipo "Alumno Potencial".
-// Construye RUT completo (RUT-DV), nombre desde tres columnas separadas
-// y extrae el correo desde la columna "Correo Electrónico".
-// Devuelve el mismo esquema de columnas de salida que la lógica genérica.
 function procesarAlumnoPotencial(rawRows, params) {
   const { tn, tc, ta, pr, ni, c1, c2, fi, ff } = params;
   const headers = rawRows[0].map(h => String(h||'').trim());
 
-  // Busca índice por coincidencia parcial, tolerante a espacios extra y mayúsculas
   const findIdx = (...kws) => {
     for(const kw of kws) {
       const idx = headers.findIndex(h => h.toLowerCase().includes(kw.toLowerCase()));
@@ -956,19 +1119,15 @@ function procesarAlumnoPotencial(rawRows, params) {
 
   for(let i = 1; i < rawRows.length; i++) {
     const row = rawRows[i];
-    // Saltar filas completamente vacías
     if(!row || row.every(c => !String(c||'').trim())) continue;
 
-    // Correo: campo obligatorio
     const correo = idxCorreo !== -1 ? String(row[idxCorreo]||'').trim().toLowerCase() : '';
     if(!correo || !correo.includes('@')) continue;
 
-    // RUT + DV → "12345678-9"
     const rutBase = idxRut !== -1 ? String(row[idxRut]||'').replace('.0','').trim() : '';
     const dvVal   = idxDv  !== -1 ? String(row[idxDv] ||'').replace('.0','').trim().toUpperCase() : '';
     const rut = (rutBase && dvVal) ? `${rutBase}-${dvVal}` : rutBase;
 
-    // Nombre completo: la columna "Nombre (Alumno Potencial)" ya trae nombre + apellidos completos
     const nombreRaw = idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '';
     const nombre = (nombreRaw && nombreRaw.toLowerCase() !== 'nan') ? nombreRaw.toUpperCase() : '';
 
@@ -1004,10 +1163,8 @@ async function processTab2() {
   if(!state.t2File) { resultEl.innerHTML='<div class="alert error">Sube la nómina original primero.</div>'; return; }
 
   try {
-    // Leer siempre como array crudo (sin header automático) para poder detectar el tipo
     const rawRows = await readFile(state.t2File, false);
 
-    // Campos de inducción, comunes a todos los formatos
     const tn = document.getElementById('t2-tn').value;
     const tc = document.getElementById('t2-tc').value;
     const ta = document.getElementById('t2-ta').value;
@@ -1021,15 +1178,12 @@ async function processTab2() {
 
     let salida = [];
 
-    // ── DETECCIÓN DE TIPO ────────────────────────────────────────────────────
     const firstRow = rawRows[0] || [];
 
     if(isAlumnoPotencialNomina(firstRow)) {
-      // RAMAL A: Nómina CRM / Alumno Potencial (exportación Dynamics)
       salida = procesarAlumnoPotencial(rawRows, params);
 
     } else {
-      // RAMAL B: Lógica genérica original — sin ninguna modificación
       let hIdx=-1;
       for(let i=0; i<Math.min(20,rawRows.length); i++) {
         const rowStr = rawRows[i].join(' ').toUpperCase();
@@ -1097,7 +1251,6 @@ async function processTab2() {
         salida.push(fila);
       }
     }
-    // ── FIN DETECCIÓN ────────────────────────────────────────────────────────
 
     if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos en el archivo.</div>'; return; }
 
@@ -1133,28 +1286,6 @@ async function sendToSharePoint() {
     if(res.ok || res.status===202) {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('t2-paso3').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-async function sendToSharePointMiguel() {
-  if(!state.t2Data) return;
-  const spResult = document.getElementById('t2-sp-result-miguel');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t2Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
-      document.getElementById('t2-paso3-miguel').style.display = 'block';
     } else {
       spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
     }
@@ -1438,7 +1569,7 @@ async function sendToSharePointCal() {
 // ─── INIT DATES ───────────────────────────────────────────────────────────────
 (function initDates() {
   const today = new Date().toISOString().substring(0,10);
-  ['t1-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id => {
+  ['t1-fecha','t1m-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.value = today;
   });
