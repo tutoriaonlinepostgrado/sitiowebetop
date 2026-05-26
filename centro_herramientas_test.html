@@ -750,7 +750,8 @@ function exportXLSX(rows, filename) {
 
 function downloadAccumulated() {
   if(!state.t1mAccumulated.length) return;
-  exportXLSX(state.t1mAccumulated, 'Nomina_Acumulada.xlsx');
+  const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+  exportXLSXConTabla(state.t1mAccumulated, 'Estudiantes_Formateados_' + ts + '.xlsx');
 }
 
 function exportXLSXConTabla(rows, filename) {
@@ -1081,7 +1082,8 @@ async function processTab1() {
       renderTable(filas, tableDiv);
       const btnRow = document.createElement('div');
       btnRow.className = 'btn-row';
-      btnRow.innerHTML = '<button class="btn" onclick="exportXLSX(state.t1Data, \'Nomina.xlsx\')">✅ Descargar Excel</button>';
+      const ts2 = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+      btnRow.innerHTML = '<button class="btn" onclick="exportXLSXConTabla(state.t1Data, \'Estudiantes_Formateados_' + ts2 + '.xlsx\')">✅ Descargar Excel</button>';
       resultEl.appendChild(btnRow);
     }
     
@@ -1269,7 +1271,8 @@ async function processTab2() {
 
 function downloadTab2() {
   if(!state.t2Data) return;
-  exportXLSX(state.t2Data, 'Nomina_SharePoint.xlsx');
+  const ts3 = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+  exportXLSXConTabla(state.t2Data, 'Nomina_SharePoint_' + ts3 + '.xlsx');
 }
 
 async function sendToSharePoint() {
@@ -1379,7 +1382,8 @@ async function processTab3() {
 
 function downloadTab3() {
   if(!state.t3Data) return;
-  exportXLSX(state.t3Data, 'Envio_invitacion_sesion_sincronica.xlsx');
+  const ts4 = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+  exportXLSXConTabla(state.t3Data, 'Envio_invitacion_sesion_sincronica_' + ts4 + '.xlsx');
 }
 
 async function sendToSharePointSync() {
