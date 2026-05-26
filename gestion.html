@@ -144,7 +144,7 @@
         <div class="sidebar-menu">
             <div class="menu-category">Operación Diaria</div>
             <button class="menu-btn active" onclick="cargar('DASHBOARD',this)">📊 Tablero de Gestión (App)</button>
-            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES',this)">📋 Nómina Estudiantes- Base Semáforo</button>
+            <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES',this)">📋 Nómina Estudiantes</button>
             <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS',this)">🟢 Cursos Activos</button>
             <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION',this)">⏳ Cursos en Preparación</button>
             <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
@@ -162,6 +162,9 @@
                 </button>
                 <button class="menu-btn" onclick="cargarOnboarding('INVITACIONES',this)">
                     📅 Invitación Sesión Sincrónica
+                </button>
+                <button class="menu-btn" onclick="cargarOnboarding('CIERRE',this)">
+                    🎓 Cierre de Asignatura
                 </button>
             </div>
 
@@ -282,7 +285,8 @@
         'FICHA_ESTUDIANTE': "https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
         'CORREOS': "onboarding_correos.html",
-        'INVITACIONES': "onboarding_invitaciones.html"
+        'INVITACIONES': "onboarding_invitaciones.html",
+        'CIERRE': "onboarding_cierre.html"
     };
 
     const titulos = {
@@ -291,7 +295,8 @@
         'CURSOS_CIERRE':'Cursos en Cierre','FICHA_ESTUDIANTE':'Ficha del Estudiante',
         'SEMAFORO':'Reporte Semáforo',
         'CORREOS':'📧 Generador de Correos de Bienvenida',
-        'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica'
+        'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica',
+        'CIERRE':'🎓 Generador de Correos: Cierre de Asignatura'
     };
 
     function cargar(clave, btn) {
