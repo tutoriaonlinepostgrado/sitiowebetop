@@ -4,96 +4,253 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding y Comunicaciones - ETOP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .main-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid #facc15;
-            position: relative;
+        :root {
+            --azul-fondo: #141b2d;
+            --azul-sidebar: #1f2940;
+            --amarillo: #ffd700;
+            --texto-gris: #94a3b8;
+            --borde: rgba(255,255,255,0.06);
         }
-        .stage-card {
-            background-color: #334155; /* slate-700 */
-            border-radius: 0.75rem; /* rounded-xl */
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: 1px solid #475569; /* slate-600 */
-        }
-        .stage-card:hover {
-            background-color: #475569; /* slate-600 */
-            transform: translateY(-5px);
-            border-color: #facc15;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); color: #fff; }
+        .app { display: flex; height: 100vh; width: 100vw; }
+
+        /* PANEL 1: ETAPAS */
+        .panel-etapas { width: 110px; background: #0f1623; border-right: 1px solid var(--borde); display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 4px; flex-shrink: 0; }
+        .panel-etapas-logo { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--borde); width: 100%; display: flex; justify-content: center; }
+        .panel-etapas-logo img { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--amarillo); padding: 2px; object-fit: contain; }
+        .etapa-btn { width: 90px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; border: none; background: transparent; color: var(--texto-gris); cursor: pointer; border-radius: 8px; border-left: 2px solid transparent; transition: all 0.2s; text-align: center; }
+        .etapa-btn:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .etapa-btn.active { color: var(--amarillo); background: rgba(255,215,0,0.08); border-left-color: var(--amarillo); }
+        .etapa-btn .etapa-icon { font-size: 22px; line-height: 1; }
+        .etapa-btn .etapa-nombre { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.3; }
+        .etapa-divider { width: 60%; height: 0.5px; background: var(--borde); margin: 4px 0; }
+        .btn-volver-etapas { margin-top: auto; width: 90px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 5px; border: none; background: transparent; color: var(--texto-gris); cursor: pointer; border-radius: 8px; text-decoration: none; transition: all 0.2s; font-size: 9px; text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+        .btn-volver-etapas:hover { color: var(--amarillo); }
+        .btn-volver-etapas .etapa-icon { font-size: 18px; }
+
+        /* PANEL 2: LISTA */
+        .panel-lista { width: 220px; background: var(--azul-sidebar); border-right: 1px solid var(--borde); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
+        .panel-lista-header { padding: 14px 14px 10px; border-bottom: 1px solid var(--borde); flex-shrink: 0; }
+        .panel-lista-header .etapa-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amarillo); margin-bottom: 2px; }
+        .panel-lista-header .etapa-titulo { font-size: 13px; font-weight: 600; color: #fff; }
+        .panel-lista-header .etapa-desc { font-size: 10px; color: var(--texto-gris); margin-top: 3px; line-height: 1.4; }
+        .lista-items { flex: 1; overflow-y: auto; padding: 6px 0; }
+        .lista-items::-webkit-scrollbar { width: 4px; }
+        .lista-items::-webkit-scrollbar-track { background: transparent; }
+        .lista-items::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 2px; }
+        .lista-item { padding: 9px 14px; display: flex; align-items: flex-start; gap: 9px; cursor: pointer; border-left: 2px solid transparent; transition: all 0.15s; }
+        .lista-item:hover { background: rgba(255,255,255,0.04); }
+        .lista-item.active { background: rgba(255,215,0,0.07); border-left-color: var(--amarillo); }
+        .lista-item-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; color: var(--texto-gris); }
+        .lista-item.active .lista-item-icon { color: var(--amarillo); }
+        .lista-item-info { flex: 1; min-width: 0; }
+        .lista-item-nombre { font-size: 11px; color: #cbd5e1; line-height: 1.35; font-weight: 400; }
+        .lista-item.active .lista-item-nombre { color: var(--amarillo); font-weight: 500; }
+        .lista-item-tipo { font-size: 9px; margin-top: 3px; padding: 1px 6px; border-radius: 8px; display: inline-block; font-weight: 500; }
+        .tipo-correo { background: rgba(24,95,165,0.2); color: #b5d4f4; }
+        .tipo-anuncio { background: rgba(250,204,21,0.15); color: #facc15; }
+        .tipo-material { background: rgba(59,109,17,0.2); color: #c0dd97; }
+        .tipo-video { background: rgba(163,45,45,0.2); color: #f7c1c1; }
+
+        /* PANEL 3: PREVIEW */
+        .panel-preview { flex: 1; display: flex; flex-direction: column; background: #f1f5f9; overflow: hidden; }
+        .preview-topbar { background: var(--azul-sidebar); height: 44px; display: flex; align-items: center; padding: 0 16px; gap: 10px; border-bottom: 1px solid var(--borde); flex-shrink: 0; }
+        .preview-topbar-icon { font-size: 15px; color: var(--texto-gris); }
+        .preview-topbar-titulo { font-size: 12px; font-weight: 500; color: #e2e8f0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .preview-topbar-btn { font-size: 11px; padding: 4px 10px; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); color: var(--amarillo); border-radius: 5px; cursor: pointer; text-decoration: none; transition: all 0.15s; white-space: nowrap; }
+        .preview-topbar-btn:hover { background: rgba(255,215,0,0.2); }
+        .preview-content { flex: 1; overflow: hidden; position: relative; }
+        .preview-content iframe { width: 100%; height: 100%; border: none; display: block; }
+        .preview-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #f8fafc; }
+        .placeholder-icon { font-size: 48px; opacity: 0.3; }
+        .placeholder-title { font-size: 15px; font-weight: 600; color: #64748b; }
+        .placeholder-sub { font-size: 12px; color: #94a3b8; text-align: center; max-width: 260px; line-height: 1.5; }
+        .placeholder-badge { font-size: 10px; padding: 4px 12px; background: #e2e8f0; color: #64748b; border-radius: 10px; font-weight: 500; }
     </style>
 </head>
-<body class="bg-slate-900 text-white">
-    <div class="min-h-screen flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(to bottom right, #19202E, #1e293b);">
-        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl">
-            
-            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
-                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
+<body>
+<div class="app">
+
+    <!-- PANEL 1: ETAPAS -->
+    <div class="panel-etapas">
+        <div class="panel-etapas-logo">
+            <a href="index.html" title="Volver al Portal Principal">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP">
             </a>
+        </div>
+        <button class="etapa-btn active" onclick="seleccionarEtapa('preparacion', this)">
+            <span class="etapa-icon">✨</span>
+            <span class="etapa-nombre">Preparación</span>
+        </button>
+        <button class="etapa-btn" onclick="seleccionarEtapa('induccion', this)">
+            <span class="etapa-icon">🎓</span>
+            <span class="etapa-nombre">Semana Inducción</span>
+        </button>
+        <button class="etapa-btn" onclick="seleccionarEtapa('imparticion', this)">
+            <span class="etapa-icon">✏️</span>
+            <span class="etapa-nombre">Impartición</span>
+        </button>
+        <button class="etapa-btn" onclick="seleccionarEtapa('cierre', this)">
+            <span class="etapa-icon">🏁</span>
+            <span class="etapa-nombre">Cierre</span>
+        </button>
+        <div class="etapa-divider"></div>
+        <a href="index.html" class="btn-volver-etapas">
+            <span class="etapa-icon">⬅️</span>
+            Portal
+        </a>
+    </div>
 
-            <header class="text-center mb-8 md:mb-10">
-                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Onboarding y Comunicaciones Impartición</h1>
-                <p class="text-slate-300 mt-2">Selecciona una etapa para acceder a los recursos y plantillas correspondientes.</p>
-            </header>
-            <main class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                
-                <!-- Etapa de Preparación -->
-                <a href="etapa_preparacion.html" class="stage-card p-6 flex items-center gap-6">
-                    <div class="flex-shrink-0">
-                        <svg class="w-16 h-16 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM18 15.75l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 20l-1.035.259a3.375 3.375 0 00-2.456 2.456L18 23.75l-.259-1.035a3.375 3.375 0 00-2.456-2.456L14.25 20l1.035-.259a3.375 3.375 0 002.456-2.456L18 15.75z" /></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-white">Etapa de Preparación</h2>
-                        <p class="text-slate-300">Correos de bienvenida y recursos iniciales estudiantes y docentes.</p>
-                    </div>
-                </a>
+    <!-- PANEL 2: LISTA -->
+    <div class="panel-lista">
+        <div class="panel-lista-header">
+            <div class="etapa-tag" id="lista-tag">Etapa 1</div>
+            <div class="etapa-titulo" id="lista-titulo">Preparación</div>
+            <div class="etapa-desc" id="lista-desc">Correos de bienvenida y recursos iniciales para estudiantes y docentes.</div>
+        </div>
+        <div class="lista-items" id="lista-items"></div>
+    </div>
 
-                <!-- Etapa Semana Inducción -->
-                <a href="etapa_induccion.html" class="stage-card p-6 flex items-center gap-6">
-                     <div class="flex-shrink-0">
-                        <svg class="w-16 h-16 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 10.5V15m0-4.5V6" /></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-white">Etapa Semana Inducción</h2>
-                        <p class="text-slate-300">Invitaciones, anuncios y material de apoyo estudiantes y docentes.</p>
-                    </div>
-                </a>
-
-                <!-- Etapa impartición Curso Malla -->
-                <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/CORREOS%20Y%20ANUNCIOS%20TIPO_OFICIAL/Anuncios%20Tipo%20Curso%20Malla%20-%20Correos%20seguimiento%20tipo?csf=1&web=1&e=jkOPhM" target="_blank" class="stage-card p-6 flex items-center gap-6">
-                     <div class="flex-shrink-0">
-                        <svg class="w-16 h-16 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-white">Etapa Impartición Curso Malla</h2>
-                        <p class="text-slate-300">Anuncios y Correos Tipo Curso Malla.</p>
-                    </div>
-                </a>
-
-                <!-- Etapa Cierre Curso Malla - URL ACTUALIZADA -->
-                <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc/Documentos%20compartidos/Canal%20General%20ETOP/DOCUMENTOS%20CANVAS/CORREOS%20Y%20ANUNCIOS%20TIPO_OFICIAL/Etapa%20de%20cierre%20curso%20malla?csf=1&web=1&e=CuTrDq" target="_blank" class="stage-card p-6 flex items-center gap-6">
-                     <div class="flex-shrink-0">
-                        <svg class="w-16 h-16 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l6-6 4.5 4.5m-13.5 6l6-6 4.5 4.5m-13.5 6V6" /></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-white">Etapa Cierre Curso Malla</h2>
-                        <p class="text-slate-300">Material y plantillas para la finalización del curso - Apoyo al docente.</p>
-                    </div>
-                </a>
-            </main>
-
-            <div class="text-center mt-10">
-                <a href="index.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver al Portal Principal</a>
+    <!-- PANEL 3: PREVIEW -->
+    <div class="panel-preview">
+        <div class="preview-topbar">
+            <span class="preview-topbar-icon" id="preview-icon">📄</span>
+            <span class="preview-topbar-titulo" id="preview-titulo">Selecciona un elemento de la lista</span>
+            <a href="#" class="preview-topbar-btn" id="preview-btn-sp" target="_blank" style="display:none">Abrir en SharePoint ↗</a>
+        </div>
+        <div class="preview-content">
+            <div class="preview-placeholder" id="preview-placeholder">
+                <div class="placeholder-icon">📂</div>
+                <div class="placeholder-title">Selecciona un elemento</div>
+                <div class="placeholder-sub">Elige una etapa y luego un elemento de la lista para ver su contenido aquí.</div>
+                <div class="placeholder-badge">Portal ETOP · Onboarding y Comunicaciones</div>
             </div>
+            <iframe id="preview-iframe" src="" style="display:none;"></iframe>
         </div>
     </div>
+
+</div>
+
+<script>
+const etapas = {
+    preparacion: {
+        tag: 'Etapa 1',
+        titulo: 'Preparación',
+        desc: 'Correos de bienvenida y recursos iniciales para estudiantes y docentes.',
+        items: [
+            { nombre: 'Correo de Bienvenida a Programa Nuevo', tipo: 'correo', icono: '✉️', url: 'correo_bienvenida.html' },
+            { nombre: 'Invitación a Sesión Sincrónica de Semana de Inducción', tipo: 'correo', icono: '✉️', url: 'invitacion_sincronica.html' }
+        ]
+    },
+    induccion: {
+        tag: 'Etapa 2',
+        titulo: 'Semana de Inducción',
+        desc: 'Anuncios, invitaciones y materiales de apoyo para la semana de inducción.',
+        items: [
+            { nombre: 'Anuncio de Bienvenida a la Semana de Inducción', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQCaUnE9fQU2QbAlI-jFjKSuARBPdx717YrE5VbqBvkfo4o?e=RxBI9s' },
+            { nombre: 'Anuncio Lunes — Invitación Sesión Sincrónica', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQCrJNmt7H1UQ5WXGfKcmO7yAV6p9PH_tW_oof7TqT0PsWo?e=MGQKhY' },
+            { nombre: 'Anuncio Martes — Activa tu Cuenta Zoom', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQA-WVpHj1_XTKh_VMNQwhaFARzxuq9l9W2LQApPexUJ_BQ?e=DCZham' },
+            { nombre: 'Anuncio Miércoles — Grabación Sesión Sincrónica', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQCeNXo-hCFwRYvvvCf9w109ATDAUHljvXgxYmXpWlBBgl4?e=FN5Xz6' },
+            { nombre: 'Anuncio Jueves — Gestiona tu Caso y Cuenta desde el Extranjero', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQA6KS15-UI2RZFYhURsvKY5Afps5od5_sEgsphrr3gDcoY?e=iVWDuk' },
+            { nombre: 'Anuncio Cierre Semana de Inducción', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQChJQ0LyCrnTr1DyzCWFnwCATWSjdtbhTw-KjvMAwo5v3I?e=Fhawj8' },
+            { nombre: 'Ejemplo de Sesión Sincrónica de Bienvenida', tipo: 'video', icono: '🎥', url: 'etapa_induccion.html' },
+            { nombre: 'Material — Recupera tu Contraseña', tipo: 'material', icono: '📄', url: 'https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQC6geGpQYyQQ5CuYJ1xW1OwASU1GZe9i7VXadsCMWrz4ow?e=L28nbM' },
+            { nombre: 'Material — Activa tu Cuenta Outlook', tipo: 'material', icono: '📄', url: 'https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQCiDjnfWWqQRL2K4J_ETD4FAWiGuUKrcx8MtwTfqgXEJEw?e=Msmejh' }
+        ]
+    },
+    imparticion: {
+        tag: 'Etapa 3',
+        titulo: 'Impartición',
+        desc: 'Anuncios y correos de seguimiento para el curso malla.',
+        items: [
+            { nombre: 'Anuncio Bienvenida Curso Malla', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQC5HdP3LeBqTpBs1BingBhtAZAN2OL8MI-lEvbv7cYx2JI?e=bo0nL3' },
+            { nombre: 'Anuncio Auto Inscripción de Grupo', tipo: 'anuncio', icono: '📢', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQAg71P5FYMaTqv0esnjT2HcAUMaLwPd8JaYNmgDLy-N6I0?e=qTDJvP' },
+            { nombre: 'Mailing Tutor de Acompañamiento', tipo: 'correo', icono: '✉️', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQBugoaqSnBZT7BPDZ-m5rpKAWgQBDpvMSWDKMESeguihHY?e=zWJ7fO' },
+            { nombre: 'Presentación Tutorial Innovado', tipo: 'material', icono: '📊', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQBhC_X2NwWqS6JAl_d2Lc_SAcrnxZa81l4Hiqf7n5QPz5M?e=ePsntH' },
+            { nombre: 'Mensaje Seguimiento Tareas Pendientes', tipo: 'correo', icono: '✉️', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQD9EJklD_aFRIpJePKQZ4yyAbta64JCiZDa8dkKYAzDRYs?e=OvQ4N7' },
+            { nombre: 'Seguimiento No Ingreso', tipo: 'correo', icono: '✉️', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQA7CPDONBnlQYSBtKCT9XMCAcPIVUniwh0978ypAdsTexI?e=f2lRGO' }
+        ]
+    },
+    cierre: {
+        tag: 'Etapa 4',
+        titulo: 'Cierre',
+        desc: 'Material y plantillas para la finalización del curso.',
+        items: [
+            { nombre: 'Correo de Cierre de Curso', tipo: 'correo', icono: '✉️', url: 'https://unabportal365.sharepoint.com/:w:/s/actasynrc/IQAsb4Z9FPq-SoyoXclxSmP0AZ--7NaCFj59OjwBffwlThU?e=sQ3sRK' }
+        ]
+    }
+};
+
+let etapaActual = 'preparacion';
+
+function seleccionarEtapa(etapaId, btn) {
+    document.querySelectorAll('.etapa-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    etapaActual = etapaId;
+    const etapa = etapas[etapaId];
+    document.getElementById('lista-tag').textContent = etapa.tag;
+    document.getElementById('lista-titulo').textContent = etapa.titulo;
+    document.getElementById('lista-desc').textContent = etapa.desc;
+
+    const container = document.getElementById('lista-items');
+    container.innerHTML = '';
+    etapa.items.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'lista-item';
+        div.innerHTML = `
+            <span class="lista-item-icon">${item.icono}</span>
+            <div class="lista-item-info">
+                <div class="lista-item-nombre">${item.nombre}</div>
+                <span class="lista-item-tipo tipo-${item.tipo}">${item.tipo}</span>
+            </div>`;
+        div.addEventListener('click', () => cargarItem(item, div));
+        container.appendChild(div);
+    });
+    resetPreview();
+}
+
+function cargarItem(item, el) {
+    document.querySelectorAll('.lista-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('preview-icon').textContent = item.icono;
+    document.getElementById('preview-titulo').textContent = item.nombre;
+    const btnSP = document.getElementById('preview-btn-sp');
+    const iframe = document.getElementById('preview-iframe');
+    const ph = document.getElementById('preview-placeholder');
+
+    // Mostrar botón SharePoint solo para URLs externas
+    if (item.url.startsWith('http')) {
+        btnSP.href = item.url;
+        btnSP.style.display = 'inline-block';
+    } else {
+        btnSP.style.display = 'none';
+    }
+
+    ph.style.display = 'none';
+    iframe.style.display = 'block';
+    iframe.src = item.url;
+}
+
+function resetPreview() {
+    document.getElementById('preview-icon').textContent = '📄';
+    document.getElementById('preview-titulo').textContent = 'Selecciona un elemento de la lista';
+    document.getElementById('preview-btn-sp').style.display = 'none';
+    document.getElementById('preview-iframe').style.display = 'none';
+    document.getElementById('preview-iframe').src = '';
+    const ph = document.getElementById('preview-placeholder');
+    ph.style.display = 'flex';
+    ph.innerHTML = `
+        <div class="placeholder-icon">📂</div>
+        <div class="placeholder-title">Selecciona un elemento</div>
+        <div class="placeholder-sub">Elige una etapa y luego un elemento de la lista para ver su contenido aquí.</div>
+        <div class="placeholder-badge">Portal ETOP · Onboarding y Comunicaciones</div>`;
+}
+
+window.onload = () => {
+    seleccionarEtapa('preparacion', document.querySelector('.etapa-btn.active'));
+};
+</script>
 </body>
 </html>
-
-
-
