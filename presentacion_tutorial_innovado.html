@@ -1,29 +1,204 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Presentación Tutorial Innovado — Docente</title>
-<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}</style></head>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Plantilla — Presentación Tutorial Innovado</title>
+<style>
+body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
+.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.tbl{display:flex;align-items:center;gap:12px;}
+.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}
+.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
+.tbr{display:flex;gap:10px;align-items:center;}
+.auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
+.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
+.btn-outlook:hover{background:rgba(255,255,255,0.2);}
+.btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
+.btn-copiar:hover{background:#facc15;}
+.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
+.toast.show{display:block;}
+/* Campos editables */
+.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
+.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
+.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
+.campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
+/* Tabla de actividades editable */
+
+.ew{padding:20px;max-width:990px;margin:0 auto;}
+</style>
+</head>
 <body>
-<div class="tb"><div class="tbl"><span class="badge">📊 Presentación</span><span class="tbt">Presentación Tutorial Innovado — Docente</span></div><div class="tbr"><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="dl()">⬇ Descargar para Outlook/Canvas</a></div></div>
-<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Descargar</strong></li><li>Abre el archivo, Ctrl+A → Ctrl+C → pega en Outlook o Canvas</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
-<div class="ew">
+
+<div class="toast" id="toast"></div>
+
+<div class="tb">
+  <div class="tbl">
+    <span class="badge">📊 Presentación</span>
+    <span class="tbt">Presentación Tutorial Innovado — Docente</span>
+    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+  </div>
+  <div class="tbr">
+    <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
+    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
+  </div>
+</div>
+
+<div class="ew" id="email-content">
 <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
 <tbody>
-<tr><td style="padding:40px 60px 20px 60px;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0;"></td></tr>
-<tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
-<div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;"><p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">📊 Presentación · Tutorial Innovado — Dirigido al Docente</p></div>
-<p style="font-size:18px;">Estimado/a Docente,</p>
-<p>Junto con saludar, mi nombre es <span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura <span class="campo" contenteditable="true" data-placeholder="NOMBRE ASIGNATURA"></span>, la cual tiene una duración de <span class="campo" contenteditable="true" data-placeholder="N° SEMANAS"></span> semanas, iniciando el lunes <span class="campo" contenteditable="true" data-placeholder="FECHA INICIO"></span> y finalizando el domingo <span class="campo" contenteditable="true" data-placeholder="FECHA FIN"></span> en la plataforma Canvas.</p>
-<p>Como parte del proceso de programación y según indica la plantilla web del curso, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
-<div style="background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0;">
-<p style="margin:0 0 10px 0;font-weight:bold;color:#0F2463;">📋 Programación de actividades: <span class="campo" contenteditable="true" data-placeholder="CÓDIGO PROGRAMA (ej: MS PXXXX)"></span></p>
-<span class="campo" contenteditable="true" data-placeholder="DETALLE DE ACTIVIDADES POR SEMANA (ej: Semana 1 - Sumativa 1 - Análisis de caso Individual, Semana 2 - Formativa 1 - Grupal, etc.)" style="display:block;padding:12px;border-radius:6px;font-size:14px;line-height:1.8;"></span>
+  <tr><td style="padding:40px 60px 20px 60px;">
+    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+  </td></tr>
+  <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
+
+    <p>Estimadas Docentes</p>
+
+    <p>Junto con saludar, mi nombre es <span class="campo" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré la tutora de Acompañamiento encargada de apoyar la asignatura "<span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA (ej: lunes)"></span> <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA (ej: domingo)"></span> <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
+
+    <p>Como parte del proceso de programación antes de la impartición, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
+
+    <!-- CRONOGRAMA — subir imagen -->
+    <div id="cronograma-wrap" style="margin:16px 0;">
+      <!-- Zona de carga — se oculta después de subir imagen -->
+      <div id="zona-upload" style="border:2px dashed #185FA5;border-radius:8px;padding:24px;text-align:center;background:#EFF6FF;cursor:pointer;" onclick="document.getElementById('input-imagen').click()">
+        <div style="font-size:32px;margin-bottom:8px;">🖼️</div>
+        <div style="font-size:13px;font-weight:600;color:#185FA5;margin-bottom:4px;">Haz clic para subir la imagen del cronograma</div>
+        <div style="font-size:11px;color:#64748b;">PNG, JPG o GIF — la imagen se insertará en el correo</div>
+        <input type="file" id="input-imagen" accept="image/*" style="display:none" onchange="cargarImagen(event)">
+      </div>
+      <!-- Imagen cargada -->
+      <div id="zona-imagen" style="display:none;">
+        <img id="img-cronograma" src="" alt="Cronograma de actividades" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
+        <br>
+        <button onclick="cambiarImagen()" style="margin-top:8px;font-size:11px;padding:4px 10px;background:#EFF6FF;border:1px solid #185FA5;color:#185FA5;border-radius:5px;cursor:pointer;">🔄 Cambiar imagen</button>
+      </div>
+    </div>
+
+    <!-- PÁRRAFO GRUPOS — editable -->
+    <p style="background:#FFF8E1;border-left:3px solid #F59E0B;padding:10px 14px;border-radius:4px;font-size:15px;">
+      Con respecto a las actividades grupales de las semanas <span class="campo" contenteditable="true" data-placeholder="N° SEMANAS GRUPALES (ej: 2, 3, 6 y 7)"></span>, según la programación del curso, los grupos serán constituidos por máximo <span class="campo" contenteditable="true" data-placeholder="N° MÁXIMO INTEGRANTES (ej: 2)"></span> estudiantes, estas indicaciones ya se encuentran configuradas en la plataforma.
+    </p>
+
+    <p>Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su colaboración en motivar a los estudiantes a realizar este paso de manera oportuna.</p>
+
+    <p>Adicionalmente, les sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecten. Estoy a su disposición para asistirles en este proceso.</p>
+
+    <p>Si requieren orientación sobre el uso de la plataforma, pueden acceder al siguiente enlace: <a href="https://canvasunab.unab.cl/inicio-docentes/" style="color:#0056b3;">https://canvasunab.unab.cl/inicio-docentes/</a> o contactar a los canales de soporte disponibles.</p>
+
+    <p>Quedo atenta a cualquier consulta o información adicional que necesiten.</p>
+
+  </td></tr>
+</tbody>
+</table>
 </div>
-<p>Quedo a su disposición ante cualquier consulta o requerimiento.</p>
-</td></tr>
-<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
-</tbody></table>
-</div>
+
 <script>
-function ti(){document.getElementById("ip").classList.toggle("visible");}
-document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
-function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Presentación Tutorial Innovado — Docente</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Presentacion_Tutorial_Innovado.html"});a.click();}
+// ── AUTOCOMPLETAR DESDE URL ──
+const params = new URLSearchParams(window.location.search);
+const mapa = {
+  nombre_tutor: params.get('nombreTutor'),
+  nombre_curso: params.get('nombreCurso'),
+  nrc:          params.get('nrc'),
+  duracion:     params.get('duracion'),
+  fecha_inicio: params.get('fechaInicio'),
+  fecha_fin:    params.get('fechaFin'),
+  dia_inicio:   params.get('diaInicio'),
+  dia_fin:      params.get('diaFin')
+};
+
+let hayDatos = false;
+document.querySelectorAll('.campo[data-campo]').forEach(el => {
+  const val = mapa[el.getAttribute('data-campo')];
+  if (val) {
+    el.textContent = decodeURIComponent(val);
+    el.classList.add('auto-filled');
+    hayDatos = true;
+  }
+});
+if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+
+// ── GESTIÓN DE IMAGEN CRONOGRAMA ──
+function cargarImagen(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('img-cronograma').src = e.target.result;
+    document.getElementById('zona-upload').style.display = 'none';
+    document.getElementById('zona-imagen').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function cambiarImagen() {
+  document.getElementById('input-imagen').click();
+}
+
+// ── COPIAR CORREO ──
+async function copiarCorreo() {
+  // Ocultar controles de tabla antes de copiar
+  document.getElementById('zona-upload').style.display = 'none';
+
+  const contenido = document.getElementById('email-content').cloneNode(true);
+
+  // Limpiar estilos de edición
+  contenido.querySelectorAll('.campo').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.style.cssText = 'font-weight:bold;color:#333;';
+    el.classList.remove('auto-filled','campo');
+  });
+  contenido.querySelectorAll('[contenteditable]').forEach(el => {
+    el.removeAttribute('contenteditable');
+  });
+  // Quitar controles de tabla del clon
+  const ctrl = contenido.querySelector('#tabla-controls');
+  if (ctrl) ctrl.remove();
+  // Quitar fondo amarillo del párrafo de grupos en la copia
+  contenido.querySelectorAll('p').forEach(p => {
+    if (p.style.background) p.style.background = '';
+    if (p.style.borderLeft) p.style.borderLeft = '';
+    p.style.padding = '';
+  });
+
+  const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
+
+  try {
+    const blob = new Blob([htmlFinal], {type: 'text/html'});
+    const item = new ClipboardItem({'text/html': blob});
+    await navigator.clipboard.write([item]);
+    mostrarToast('✅ Correo copiado con formato — pega con Ctrl+V en Outlook');
+  } catch(e) {
+    try {
+      const div = document.createElement('div');
+      div.innerHTML = htmlFinal;
+      div.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(div);
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(div);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      document.body.removeChild(div);
+      mostrarToast('✅ Correo copiado — pega con Ctrl+V en Outlook');
+    } catch(e2) {
+      mostrarToast('⚠️ No se pudo copiar automáticamente', true);
+    }
+  }
+  if(document.getElementById('zona-imagen').style.display === 'none') document.getElementById('zona-upload').style.display = 'flex';
+}
+
+function mostrarToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = error ? '#DC2626' : '#059669';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ── ABRIR OUTLOOK ──
+function abrirOutlook() {
+  const nrc = params.get('nrc') ? decodeURIComponent(params.get('nrc')) : '';
+  const asunto = encodeURIComponent('Presentación Tutora de Acompañamiento — ' + nrc);
+  window.open('mailto:?subject=' + asunto, '_blank');
+}
 </script>
 </body></html>
