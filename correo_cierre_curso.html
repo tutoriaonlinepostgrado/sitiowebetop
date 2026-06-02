@@ -6,12 +6,12 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}
 .tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
 .tbr{display:flex;gap:10px;align-items:center;}
-.btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;transition:all 0.15s;}
-.btn-copiar:hover{background:#facc15;}
-.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;transition:all 0.15s;}
-.btn-outlook:hover{background:rgba(255,255,255,0.2);}
 .auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
-.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
+.btn-outlook:hover{background:rgba(255,255,255,0.2);}
+.btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
+.btn-copiar:hover{background:#facc15;}
+.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
 .toast.show{display:block;}
 .campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
 .campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
@@ -22,7 +22,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 </head>
 <body>
 
-<div class="toast" id="toast">✅ Correo copiado — abre Outlook y pega con Ctrl+V</div>
+<div class="toast" id="toast"></div>
 
 <div class="tb">
   <div class="tbl">
@@ -43,29 +43,25 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
   </td></tr>
   <tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
+
     <div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
       <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🏁 Correo · Cierre de Curso</p>
     </div>
+
     <p>Presentación equipo tutorial</p>
     <p style="font-size:18px;">Estimado/a docente:</p>
     <p>Reciba mis saludos,</p>
+
     <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <span class="campo" contenteditable="true" data-campo="nrc_curso" data-placeholder="NOMBRE Y NRC DEL CURSO"></span> que tuvo inicio el día <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA DE INICIO"></span> y finalizó el domingo <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA DE FIN"></span>.</p>
+
     <p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS"></span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
+
     <div style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
-      <p style="margin:0;color:#333;font-size:15px;">📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a href="#" style="color:#0056b3;font-weight:bold;">Haga clic acá</a></p>
+      <p style="margin:0;color:#333;font-size:15px;">📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a href="https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA" target="_blank" style="color:#0056b3;font-weight:bold;">Haga clic acá</a></p>
     </div>
+
     <p>Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.</p>
-  </td></tr>
-  <tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
-    <p style="margin:0;">Saludos cordiales,</p>
-    <p style="margin-top:10px;margin-bottom:15px;">
-      <strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>
-      Tutor/a de Acompañamiento<br>
-      <a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a>
-    </p>
-    <p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;">
-      <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO
-    </p>
+
   </td></tr>
 </tbody>
 </table>
@@ -75,10 +71,9 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 // ── AUTOCOMPLETAR DESDE URL ──
 const params = new URLSearchParams(window.location.search);
 const mapa = {
-  nombre_tutor: params.get('nombre_tutor'),
-  nrc_curso:    params.get('nrc') && params.get('nombre_curso')
+  nrc_curso:    (params.get('nombre_curso') && params.get('nrc'))
                   ? decodeURIComponent(params.get('nombre_curso')) + ' (' + decodeURIComponent(params.get('nrc')) + ')'
-                  : params.get('nrc'),
+                  : (params.get('nrc') ? decodeURIComponent(params.get('nrc')) : null),
   fecha_inicio: params.get('fecha_inicio'),
   fecha_fin:    params.get('fecha_fin'),
   fecha_limite: params.get('fecha_limite')
@@ -88,7 +83,7 @@ let hayDatos = false;
 document.querySelectorAll('.campo[data-campo]').forEach(el => {
   const val = mapa[el.getAttribute('data-campo')];
   if (val) {
-    el.textContent = decodeURIComponent(val);
+    el.textContent = val;
     el.classList.add('auto-filled');
     hayDatos = true;
   }
@@ -98,38 +93,79 @@ if (hayDatos) {
   document.getElementById('auto-badge').style.display = 'inline-block';
 }
 
-// ── COPIAR CORREO AL PORTAPAPELES ──
+// ── COPIAR CORREO ──
+// Genera un documento HTML limpio (sin barra, sin estilos de edición)
+// y lo copia al portapapeles como HTML formateado
 async function copiarCorreo() {
-  const contenido = document.getElementById('email-content');
-  const blob = new Blob([contenido.innerHTML], {type: 'text/html'});
-  const item = new ClipboardItem({'text/html': blob});
+  const toast = document.getElementById('toast');
+
+  // Clonar solo el contenido del email
+  const contenido = document.getElementById('email-content').cloneNode(true);
+
+  // Limpiar estilos de edición de los campos
+  contenido.querySelectorAll('.campo').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.style.background = '';
+    el.style.border = '';
+    el.style.borderRadius = '';
+    el.style.padding = '';
+    el.style.color = '#333333';
+    el.style.fontWeight = 'bold';
+    el.classList.remove('auto-filled','campo');
+  });
+
+  // HTML final limpio para pegar en Outlook
+  const htmlFinal = `
+    <html>
+    <body style="margin:0;padding:0;font-family:Arial,sans-serif;">
+    ${contenido.innerHTML}
+    </body>
+    </html>`;
+
   try {
+    // Método moderno: copia como HTML nativo
+    const blob = new Blob([htmlFinal], {type: 'text/html'});
+    const item = new ClipboardItem({'text/html': blob});
     await navigator.clipboard.write([item]);
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
+    mostrarToast('✅ Correo copiado con formato — pega con Ctrl+V en Outlook');
   } catch(e) {
-    // Fallback para navegadores sin soporte ClipboardItem
-    const sel = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(contenido);
-    sel.removeAllRanges();
-    sel.addRange(range);
-    document.execCommand('copy');
-    sel.removeAllRanges();
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
+    // Fallback: selección de texto
+    try {
+      const div = document.createElement('div');
+      div.innerHTML = htmlFinal;
+      div.style.position = 'fixed';
+      div.style.opacity = '0';
+      div.style.pointerEvents = 'none';
+      document.body.appendChild(div);
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(div);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      document.body.removeChild(div);
+      mostrarToast('✅ Correo copiado — pega con Ctrl+V en Outlook');
+    } catch(e2) {
+      mostrarToast('⚠️ No se pudo copiar — selecciona el correo manualmente y copia con Ctrl+C', true);
+    }
   }
+}
+
+function mostrarToast(msg, error=false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.background = error ? '#DC2626' : '#059669';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
 // ── ABRIR OUTLOOK ──
 function abrirOutlook() {
-  const tutor = document.querySelector('[data-campo="nombre_tutor"]').textContent.trim();
-  const nrc = document.querySelector('[data-campo="nrc_curso"]').textContent.trim();
-  const asunto = encodeURIComponent('Cierre de Curso — ' + nrc);
   const destinatario = params.get('destinatario') || '';
-  window.location.href = 'mailto:' + destinatario + '?subject=' + asunto;
+  const nrc = params.get('nrc') ? decodeURIComponent(params.get('nrc')) : '';
+  const asunto = encodeURIComponent('Cierre de Curso — ' + nrc);
+  window.open('mailto:' + destinatario + '?subject=' + asunto, '_blank');
 }
 </script>
 </body></html>
