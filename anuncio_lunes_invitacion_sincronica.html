@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantilla — Anuncio Lunes — Invitación Sesión Sincrónica</title>
+<style>
+  body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
+  .template-bar{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+  .template-bar-left{display:flex;align-items:center;gap:12px;}
+  .template-bar-badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}
+  .template-bar-title{font-size:13px;font-weight:500;color:#e2e8f0;}
+  .template-bar-right{display:flex;gap:10px;align-items:center;}
+  .btn-instrucciones{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}
+  .btn-instrucciones:hover{background:rgba(255,255,255,0.15);}
+  .btn-descargar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
+  .campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
+  .campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
+  .campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
+  .instrucciones-panel{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+  .instrucciones-panel.visible{display:block;}
+  .instrucciones-panel h4{margin:0 0 10px;font-size:13px;color:#0F2463;}
+  .instrucciones-panel ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}
+  .instrucciones-panel .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}
+  .email-wrapper{padding:20px;max-width:990px;margin:0 auto;}
+</style>
+</head>
+<body>
+<div class="template-bar">
+  <div class="template-bar-left">
+    <span class="template-bar-badge">📢 Anuncio</span>
+    <span class="template-bar-title">Anuncio Lunes — Invitación Sesión Sincrónica</span>
+  </div>
+  <div class="template-bar-right">
+    <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
+    <a class="btn-descargar" onclick="descargarPlantilla()">⬇ Descargar para Canvas</a>
+  </div>
+</div>
+<div class="instrucciones-panel" id="instrucciones-panel">
+  <h4>📋 Cómo usar esta plantilla</h4>
+  <ol>
+    <li>Haz clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li>
+    <li>Haz clic en <strong>Descargar para Canvas</strong></li>
+    <li>Abre el archivo, selecciona todo (<strong>Ctrl+A</strong>), copia (<strong>Ctrl+C</strong>)</li>
+    <li>Pega en el editor de anuncios de Canvas</li>
+  </ol>
+  <div class="hint">💡 Los campos azules son editables directamente en pantalla</div>
+</div>
+<div class="email-wrapper">
+<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+  <tbody>
+    <tr>
+      <td style="padding:40px 60px 20px 60px;">
+        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:0px 60px 30px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify;">
+        <div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
+          <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">📢 Anuncio · Lunes — Semana de Inducción</p>
+        </div>
+        <p>Estimadas y estimados estudiantes,</p>
+<p>Como ya sabemos, mañana <span class="campo" contenteditable="true" data-placeholder="DÍA Y HORA SESIÓN SINCRÓNICA"></span> tenemos la cita de nuestra reunión sincrónica, que se llevará a cabo a través de la plataforma Canvas – Zoom.</p>
+<p>Recuerda que el objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta será también la oportunidad de que conozcas a tus compañeros y compañeras.</p>
+<div style="background:#f0f7ff;border:1px solid #0056b3;border-radius:8px;padding:24px;margin:24px 0;text-align:center;">
+  <p style="margin:0 0 16px 0;font-weight:bold;color:#333;">El link para conectarte es:</p>
+  <span class="campo" contenteditable="true" data-placeholder="LINK SESIÓN SINCRÓNICA" style="display:inline-block;margin-bottom:16px;font-size:13px;"></span><br>
+  <a href="#" style="background:#0056b3;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;">👉 Unirse a la sesión</a>
+</div>
+<p>Si presentas inconvenientes para asistir, favor tomar contacto conmigo a través del correo.</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
+        <p style="margin:0;">Saludos cordiales,</p>
+        <p style="margin-top:10px;margin-bottom:15px;">
+          <strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>
+          Tutor/a de Acompañamiento<br>
+          <a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a>
+        </p>
+        <p style="margin:0;padding-top:15px;border-top:1px solid #eeeeee;font-size:13px;color:#666666;">
+          <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<script>
+function toggleInstrucciones(){document.getElementById('instrucciones-panel').classList.toggle('visible');}
+document.addEventListener('click',function(e){if(!e.target.closest('#instrucciones-panel')&&!e.target.closest('.btn-instrucciones'))document.getElementById('instrucciones-panel').classList.remove('visible');});
+function descargarPlantilla(){
+  const emailNode=document.querySelector('.email-wrapper').cloneNode(true);
+  emailNode.querySelectorAll('.campo').forEach(el=>{const span=document.createElement('span');span.textContent=el.textContent||el.getAttribute('data-placeholder');el.replaceWith(span);});
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Anuncio Lunes — Invitación Sesión Sincrónica</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+emailNode.innerHTML+'</body></html>';
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'Anuncio_Lunes_Invitacion_Sincronica.html'});
+  a.click();
+}
+</script>
+</body>
+</html>

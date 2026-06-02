@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantilla — Correo de Bienvenida al Programa</title>
+<style>
+  body { margin: 0; padding: 0; background: #f1f5f9; font-family: Arial, sans-serif; }
+  
+  /* BARRA DE PLANTILLA */
+  .template-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #0F2463; color: white;
+    padding: 10px 24px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .template-bar-left { display: flex; align-items: center; gap: 12px; }
+  .template-bar-badge {
+    background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3);
+    color: #ffd700; font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .template-bar-title { font-size: 13px; font-weight: 500; color: #e2e8f0; }
+  .template-bar-right { display: flex; gap: 10px; align-items: center; }
+  .btn-instrucciones {
+    font-size: 11px; padding: 6px 12px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: #cbd5e1; border-radius: 5px; cursor: pointer; text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-instrucciones:hover { background: rgba(255,255,255,0.15); }
+  .btn-descargar {
+    font-size: 12px; font-weight: 700; padding: 7px 16px;
+    background: #ffd700; color: #0F2463; border: none;
+    border-radius: 5px; cursor: pointer; text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-descargar:hover { background: #facc15; }
+
+  /* CAMPOS EDITABLES */
+  .campo {
+    display: inline;
+    background: #EFF6FF;
+    border: 1.5px dashed #185FA5;
+    border-radius: 4px;
+    color: #185FA5;
+    font-weight: bold;
+    padding: 1px 6px;
+    cursor: text;
+    outline: none;
+    min-width: 20px;
+  }
+  .campo:focus {
+    background: #DBEAFE;
+    border-color: #0F2463;
+    border-style: solid;
+    box-shadow: 0 0 0 3px rgba(24,95,165,0.15);
+  }
+  .campo:empty:before {
+    content: attr(data-placeholder);
+    color: #93C5FD;
+    font-style: italic;
+  }
+
+  /* TOOLTIP INSTRUCCIONES */
+  .instrucciones-panel {
+    display: none; position: fixed; top: 52px; right: 24px; z-index: 200;
+    background: white; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 16px 20px; width: 280px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .instrucciones-panel.visible { display: block; }
+  .instrucciones-panel h4 { margin: 0 0 10px; font-size: 13px; color: #0F2463; }
+  .instrucciones-panel ol { margin: 0; padding-left: 18px; font-size: 12px; color: #374151; line-height: 1.7; }
+  .instrucciones-panel .hint {
+    margin-top: 12px; padding: 8px 10px; background: #EFF6FF;
+    border-radius: 6px; font-size: 11px; color: #185FA5;
+  }
+
+  /* EMAIL WRAPPER */
+  .email-wrapper { padding: 20px; max-width: 990px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<!-- BARRA DE PLANTILLA -->
+<div class="template-bar">
+  <div class="template-bar-left">
+    <span class="template-bar-badge">📋 Plantilla</span>
+    <span class="template-bar-title">Correo de Bienvenida al Programa</span>
+  </div>
+  <div class="template-bar-right">
+    <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
+    <a class="btn-descargar" onclick="descargarPlantilla()">⬇ Descargar para Outlook</a>
+  </div>
+</div>
+
+<!-- PANEL INSTRUCCIONES -->
+<div class="instrucciones-panel" id="instrucciones-panel">
+  <h4>📋 Cómo usar esta plantilla</h4>
+  <ol>
+    <li>Haz clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato del estudiante</li>
+    <li>Cuando todos los campos estén completos, haz clic en <strong>Descargar para Outlook</strong></li>
+    <li>Abre el archivo descargado en tu navegador</li>
+    <li>Selecciona todo (<strong>Ctrl+A</strong>) y copia (<strong>Ctrl+C</strong>)</li>
+    <li>Pega en el cuerpo de un correo en Outlook (<strong>Ctrl+V</strong>)</li>
+    <li>Envía el correo</li>
+  </ol>
+  <div class="hint">💡 Los campos azules son editables directamente en la pantalla</div>
+</div>
+
+<!-- EMAIL -->
+<div class="email-wrapper">
+<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+  <tbody>
+    <tr>
+      <td style="padding:40px 60px 20px 60px;">
+        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:0px 60px 30px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify;">
+
+        <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante"></span>,</p>
+
+        <p>Junto con saludar y esperando que se encuentre bien, le escribo para presentarme. Mi nombre es <span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor"></span>, soy parte de la Unidad de Impartición de Postgrado de UNAB Online y seré su tutor(a) de acompañamiento en el Programa <span class="campo" contenteditable="true" data-placeholder="NOMBRE DEL PROGRAMA" data-campo="nombre_programa"></span>.</p>
+
+        <p>Mi función es acompañar y asistir todo su proceso de aprendizaje en temas relacionados con la usabilidad de la plataforma, además de ser un nexo con los docentes. En esta etapa de aprendizaje le invitamos a participar en el curso de inducción que tiene por objetivo conocer el funcionamiento de la plataforma Canvas y sus herramientas de aprendizaje. El curso lo podrá encontrar en la sección "Cursos" y lleva por nombre <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO INDUCCIÓN" data-campo="curso_induccion"></span>, el cual estará disponible desde el <span class="campo" contenteditable="true" data-placeholder="FECHA INICIO" data-campo="fecha_inicio"></span> hasta el <span class="campo" contenteditable="true" data-placeholder="FECHA FIN" data-campo="fecha_fin"></span>. Posterior al término de su curso de inducción, encontrará la primera asignatura de su malla curricular, llamada <span class="campo" contenteditable="true" data-placeholder="NOMBRE PRIMER CURSO MALLA" data-campo="primer_curso"></span>.</p>
+
+        <hr style="border:0;border-top:1px solid #eeeeee;margin:25px 0;">
+
+        <div style="border-left:5px solid #0056b3;background-color:#f9f9f9;padding:20px;margin:25px 0;text-align:left;">
+          <h3 style="color:#0056b3;margin-top:0;font-size:19px;">IMPORTANTE</h3>
+          <ul style="padding-left:20px;margin:0;">
+            <li style="margin-bottom:8px;">Para acceder a la Plataforma Canvas, le recomendamos hacerlo mediante la Intranet de alumnos: <a href="https://portal.unab.cl/" style="color:#0056b3;text-decoration:underline;">https://portal.unab.cl/</a>.</li>
+            <li style="margin-bottom:8px;">Ingrese con los datos de usuario y password que le fueron entregados al momento de matricularse.</li>
+            <li>Una vez ingresando al Portal, diríjase a la opción "Canvas" (parte inferior de la página).</li>
+          </ul>
+        </div>
+
+        <div style="text-align:center;margin:30px 0;">
+          <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771959260/Gemini_Generated_Image_e3tnj1e3tnj1e3tn_cwim2f.png" alt="Pasos para ingresar a Canvas" width="100%" style="max-width:800px;height:auto;border-radius:8px;">
+        </div>
+
+        <div style="background-color:#fcfcfc;border:2px dashed #0056b3;border-radius:10px;padding:20px;margin-top:20px;text-align:center;">
+          <p style="margin:0 0 15px 0;color:#333333;font-size:16px;"><strong>Por favor, verifica que tus datos registrados sean correctos:</strong></p>
+          <div style="background-color:#ffffff;border:1px solid #dddddd;border-radius:6px;padding:15px;margin:0 auto 20px auto;max-width:400px;text-align:left;">
+            <p style="margin:0 0 8px 0;font-size:15px;color:#333333;"><strong>Nombre:</strong> <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante_2"></span></p>
+            <p style="margin:0;font-size:15px;color:#333333;"><strong>RUT o ID:</strong> <span class="campo" contenteditable="true" data-placeholder="RUT O ID ESTUDIANTE" data-campo="rut_estudiante"></span></p>
+          </div>
+          <p style="margin:0 0 15px 0;color:#333333;font-size:15px;">Si están correctos, confirma la recepción haciendo clic aquí:</p>
+          <table border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+            <tbody><tr>
+              <td style="border-radius:6px;">
+                <a href="#" style="padding:12px 25px;background-color:#28a745;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;display:inline-block;border-radius:6px;">✅ Confirmar Recepción</a>
+              </td>
+            </tr></tbody>
+          </table>
+        </div>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
+        <p style="margin:0;">Saludos cordiales,</p>
+        <p style="margin-top:10px;margin-bottom:15px;">
+          <strong style="color:#0056b3;font-size:18px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor_firma"></span></strong><br>
+          <span class="campo" contenteditable="true" data-placeholder="CARGO TUTOR/A" data-campo="cargo_tutor"></span><br>
+          <a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a>
+        </p>
+        <p style="margin:0;padding-top:15px;border-top:1px solid #eeeeee;font-size:13px;color:#666666;">
+          <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>
+          UNIVERSIDAD ANDRÉS BELLO
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<script>
+function toggleInstrucciones() {
+  document.getElementById('instrucciones-panel').classList.toggle('visible');
+}
+
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('instrucciones-panel');
+  if (!e.target.closest('#instrucciones-panel') && !e.target.closest('.btn-instrucciones')) {
+    panel.classList.remove('visible');
+  }
+});
+
+function descargarPlantilla() {
+  // Clonar el email sin la barra de plantilla ni los estilos de edición
+  const emailNode = document.querySelector('.email-wrapper').cloneNode(true);
+
+  // Convertir campos editables a texto plano en el clon
+  emailNode.querySelectorAll('.campo').forEach(el => {
+    const span = document.createElement('span');
+    span.textContent = el.textContent || el.getAttribute('data-placeholder');
+    el.replaceWith(span);
+  });
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Correo de Bienvenida al Programa</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
+${emailNode.innerHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Correo_Bienvenida_Programa.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
