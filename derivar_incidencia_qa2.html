@@ -1,0 +1,297 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Derivar Incidencia QA2</title>
+<style>
+body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
+.tb{position:sticky;top:0;z-index:100;background:#0F2463;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.tbl{display:flex;align-items:center;gap:12px;}
+.badge{background:rgba(220,38,38,0.2);border:1px solid rgba(220,38,38,0.4);color:#FCA5A5;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}
+.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
+.auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
+.tbr{display:flex;gap:10px;align-items:center;}
+.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
+.btn-outlook:hover{background:rgba(255,255,255,0.2);}
+.btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
+.btn-copiar:hover{background:#facc15;}
+.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
+.toast.show{display:block;}
+.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
+.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
+.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
+.campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
+/* Destinatario */
+.dest-wrap{background:#FFF8E1;border:1.5px dashed #F59E0B;border-radius:6px;padding:10px 16px;margin:16px 0;display:flex;align-items:center;gap:10px;}
+.dest-label{font-size:11px;font-weight:700;color:#92400E;white-space:nowrap;}
+.dest-campo{flex:1;background:white;border:1.5px dashed #F59E0B;border-radius:4px;color:#92400E;font-weight:bold;padding:4px 8px;cursor:text;outline:none;font-size:13px;}
+.dest-campo:focus{background:#FFFBEB;border-style:solid;box-shadow:0 0 0 3px rgba(245,158,11,0.15);}
+.dest-campo:empty:before{content:"destinatario@unab.cl";color:#FCD34D;font-style:italic;}
+/* Zona evidencia */
+.evidencia-section{margin:16px 0;}
+.evidencia-titulo{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.evidencia-link-auto{display:flex;align-items:center;gap:8px;background:#DCFCE7;border:1px solid #86EFAC;border-radius:6px;padding:8px 12px;margin-bottom:8px;}
+.evidencia-link-auto a{color:#15803D;font-size:12px;font-weight:600;text-decoration:none;word-break:break-all;}
+.evidencia-link-auto a:hover{text-decoration:underline;}
+.zona-upload{border:2px dashed #CBD5E1;border-radius:8px;padding:16px;text-align:center;background:#F8FAFC;cursor:pointer;transition:all 0.15s;}
+.zona-upload:hover{border-color:#185FA5;background:#EFF6FF;}
+.zona-imagen{display:none;}
+.zona-imagen img{max-width:100%;border:1px solid #E2E8F0;border-radius:6px;}
+.btn-cambiar{margin-top:6px;font-size:11px;padding:3px 10px;background:#EFF6FF;border:1px solid #185FA5;color:#185FA5;border-radius:5px;cursor:pointer;}
+.ew{padding:20px;max-width:990px;margin:0 auto;}
+/* Controles fuera del email */
+.controles-externos{display:block;}
+</style></head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="tb">
+  <div class="tbl">
+    <span class="badge">🔴 Derivar Incidencia</span>
+    <span class="tbt">QA2 — Solicitud de Revisión</span>
+    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+  </div>
+  <div class="tbr">
+    <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
+    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
+  </div>
+</div>
+
+<div class="ew">
+
+  <!-- CONTROLES EXTERNOS — no se copian al correo -->
+  <div class="controles-externos" id="controles-externos">
+
+    <!-- Destinatario -->
+    <div class="dest-wrap">
+      <span class="dest-label">📬 Para:</span>
+      <span class="dest-campo" contenteditable="true" id="campo-destinatario"></span>
+      <span style="font-size:10px;color:#92400E;">← Ingresa el correo del destinatario</span>
+    </div>
+
+    <!-- Zona evidencia adicional (imagen manual) -->
+    <div class="evidencia-section">
+      <div class="evidencia-titulo">
+        🖼️ Evidencia adicional
+        <span style="font-size:10px;font-weight:400;color:#94A3B8;">(opcional — imagen PNG/JPG que se insertará en el correo)</span>
+      </div>
+      <div id="zona-upload" class="zona-upload" onclick="document.getElementById('input-evidencia').click()">
+        <div style="font-size:24px;margin-bottom:4px;">📎</div>
+        <div style="font-size:12px;font-weight:600;color:#64748b;">Haz clic para subir imagen de evidencia</div>
+        <div style="font-size:11px;color:#94A3B8;">PNG o JPG — se insertará en el cuerpo del correo</div>
+        <input type="file" id="input-evidencia" accept="image/*" style="display:none" onchange="cargarEvidencia(event)">
+      </div>
+      <div class="zona-imagen" id="zona-imagen">
+        <img id="img-evidencia" src="" alt="Evidencia">
+        <br><button class="btn-cambiar" onclick="document.getElementById('input-evidencia').click()">🔄 Cambiar imagen</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMAIL -->
+  <div id="email-content">
+  <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:0 auto 20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+  <tbody>
+    <tr><td style="padding:40px 60px 20px 60px;">
+      <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+    </td></tr>
+    <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
+
+      <div style="background:#DC2626;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
+        <p style="margin:0;color:white;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🔴 Solicitud de Revisión — Incidencia QA2</p>
+      </div>
+
+      <p>Estimado/a,</p>
+      <p>Junto con saludar, solicito tu apoyo para la revisión y resolución de la siguiente incidencia detectada durante el proceso de QA2 del curso:</p>
+
+      <!-- DATOS DEL CURSO -->
+      <table border="0" cellpadding="0" cellspacing="0" style="width:100%;background:#F8FAFC;border-radius:8px;margin:16px 0;border:1px solid #E2E8F0;">
+        <tbody>
+          <tr>
+            <td style="padding:10px 16px;border-bottom:1px solid #E2E8F0;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">NRC / Curso</span>
+              <span style="font-size:13px;color:#0F2463;font-weight:700;" id="val-nrc-curso"></span>
+            </td>
+            <td style="padding:10px 16px;border-bottom:1px solid #E2E8F0;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Tutor/a</span>
+              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-tutor"></span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:10px 16px;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Fecha Inicio</span>
+              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-fecha-inicio"></span>
+            </td>
+            <td style="padding:10px 16px;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Fecha Fin</span>
+              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-fecha-fin"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- DETALLE INCIDENCIA -->
+      <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:4px solid #DC2626;">
+        <p style="margin:0 0 12px 0;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:0.05em;">📋 Detalle de la Incidencia</p>
+        <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+          <tbody>
+            <tr>
+              <td style="padding:4px 0;width:50%;vertical-align:top;">
+                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Incidencia N°</span>
+                <span style="font-size:13px;color:#DC2626;font-weight:800;" id="val-id">#—</span>
+              </td>
+              <td style="padding:4px 0;vertical-align:top;">
+                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Estado</span>
+                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-estado"></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0 4px 0;vertical-align:top;">
+                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Categoría</span>
+                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-categoria"></span>
+              </td>
+              <td style="padding:8px 0 4px 0;vertical-align:top;">
+                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Semana / Unidad</span>
+                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-semana"></span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:8px 0 0 0;">
+                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Tipo QA</span>
+                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-tipo"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div style="margin:16px 0;">
+        <p style="font-size:10px;color:#94A3B8;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">📝 Descripción de la Incidencia</p>
+        <div style="background:#F8FAFC;border-left:3px solid #DC2626;border-radius:4px;padding:12px 16px;font-size:13px;color:#374151;line-height:1.7;" id="val-descripcion"></div>
+      </div>
+
+      <!-- EVIDENCIA — link automático desde DAX -->
+      <div id="evidencia-auto-wrap" style="display:none;margin:16px 0;">
+        <p style="font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">📎 Evidencia adjunta</p>
+        <div style="background:#DCFCE7;border:1px solid #86EFAC;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:14px;">📄</span>
+          <a id="evidencia-auto-link" href="#" target="_blank" style="color:#15803D;font-size:12px;font-weight:600;text-decoration:none;word-break:break-all;"></a>
+        </div>
+      </div>
+
+      <!-- EVIDENCIA — imagen subida manualmente -->
+      <div id="evidencia-img-wrap" style="display:none;margin:16px 0;">
+        <p style="font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">🖼️ Imagen de evidencia</p>
+        <img id="img-evidencia-email" src="" alt="Evidencia" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
+      </div>
+
+      <!-- LINKS SHAREPOINT -->
+      <div id="links-wrap" style="margin:16px 0;display:flex;gap:10px;flex-wrap:wrap;"></div>
+
+      <p>Agradezco tu pronta atención a esta solicitud. Quedo a disposición para cualquier información adicional que requieras.</p>
+
+    </td></tr>
+  </tbody>
+  </table>
+  </div><!-- fin email-content -->
+
+</div><!-- fin ew -->
+
+<script>
+const params = new URLSearchParams(window.location.search);
+function dec(key) {
+  const val = params.get(key);
+  return val ? decodeURIComponent(val) : '';
+}
+
+// Datos curso
+const nrc = dec('nrc');
+const nombreCurso = dec('nombre_curso');
+const tutor = dec('tutor');
+document.getElementById('val-nrc-curso').textContent    = nombreCurso ? nrc + ' — ' + nombreCurso : nrc || '—';
+document.getElementById('val-tutor').textContent        = tutor || '—';
+document.getElementById('val-fecha-inicio').textContent = dec('fecha_inicio') || '—';
+document.getElementById('val-fecha-fin').textContent    = dec('fecha_fin') || '—';
+
+// Datos incidencia
+const idInc = dec('id_incidencia');
+document.getElementById('val-id').textContent          = idInc ? '#' + idInc : '#—';
+document.getElementById('val-estado').textContent      = dec('estado') || '—';
+document.getElementById('val-categoria').textContent   = dec('categoria') || '—';
+document.getElementById('val-semana').textContent      = dec('semana') || '—';
+document.getElementById('val-tipo').textContent        = dec('tipo_qa') || '—';
+document.getElementById('val-descripcion').textContent = dec('descripcion') || '—';
+
+// Evidencia automática desde DAX
+const urlAdj = dec('url_adjunto');
+if (urlAdj) {
+  document.getElementById('evidencia-auto-wrap').style.display = 'block';
+  const link = document.getElementById('evidencia-auto-link');
+  link.href = urlAdj;
+  link.textContent = urlAdj.length > 80 ? urlAdj.substring(0, 80) + '...' : urlAdj;
+}
+
+// Links SharePoint
+const linksWrap = document.getElementById('links-wrap');
+const urlSP = dec('url_sp');
+if (urlSP) {
+  linksWrap.innerHTML += `<a href="${urlSP}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#0F2463;color:white;text-decoration:none;border-radius:6px;font-weight:700;font-size:12px;">✏️ Ver en SharePoint</a>`;
+}
+
+// Badge automático
+if (nrc || idInc) document.getElementById('auto-badge').style.display = 'inline-block';
+
+// Cargar imagen de evidencia manual
+function cargarEvidencia(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('img-evidencia').src = e.target.result;
+    document.getElementById('zona-upload').style.display = 'none';
+    document.getElementById('zona-imagen').style.display = 'block';
+    // Mostrar también en el email
+    document.getElementById('img-evidencia-email').src = e.target.result;
+    document.getElementById('evidencia-img-wrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Copiar correo
+async function copiarCorreo() {
+  // Ocultar controles externos
+  document.getElementById('controles-externos').style.display = 'none';
+  const contenido = document.getElementById('email-content').cloneNode(true);
+  document.getElementById('controles-externos').style.display = 'block';
+
+  const h = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
+  try {
+    await navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([h], {type:'text/html'})})]);
+    mostrarToast('✅ Correo copiado — pega con Ctrl+V en Outlook');
+  } catch(e) {
+    try {
+      const d = document.createElement('div');
+      d.innerHTML = h; d.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(d);
+      const s = window.getSelection(), r = document.createRange();
+      r.selectNodeContents(d); s.removeAllRanges(); s.addRange(r);
+      document.execCommand('copy'); s.removeAllRanges();
+      document.body.removeChild(d);
+      mostrarToast('✅ Correo copiado — pega con Ctrl+V en Outlook');
+    } catch(e2) { mostrarToast('⚠️ No se pudo copiar automáticamente', true); }
+  }
+}
+
+// Abrir Outlook
+function abrirOutlook() {
+  const dest = document.getElementById('campo-destinatario').textContent.trim();
+  const asunto = encodeURIComponent('Solicitud de Revisión — Incidencia QA2 #' + idInc + ' | ' + nrc);
+  window.open('mailto:' + dest + '?subject=' + asunto, '_blank');
+}
+
+function mostrarToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = error ? '#DC2626' : '#059669';
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000);
+}
+</script>
+</body></html>
