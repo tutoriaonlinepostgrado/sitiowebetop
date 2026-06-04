@@ -14,10 +14,6 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .btn-copiar:hover{background:#facc15;}
 .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
 .toast.show{display:block;}
-.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
-.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
-.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
-.campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 /* Destinatario */
 .dest-wrap{background:#FFF8E1;border:1.5px dashed #F59E0B;border-radius:6px;padding:10px 16px;margin:16px 0;display:flex;align-items:center;gap:10px;}
 .dest-label{font-size:11px;font-weight:700;color:#92400E;white-space:nowrap;}
@@ -25,19 +21,18 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .dest-campo:focus{background:#FFFBEB;border-style:solid;box-shadow:0 0 0 3px rgba(245,158,11,0.15);}
 .dest-campo:empty:before{content:"destinatario@unab.cl";color:#FCD34D;font-style:italic;}
 /* Zona evidencia */
-.evidencia-section{margin:16px 0;}
-.evidencia-titulo{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.evidencia-link-auto{display:flex;align-items:center;gap:8px;background:#DCFCE7;border:1px solid #86EFAC;border-radius:6px;padding:8px 12px;margin-bottom:8px;}
-.evidencia-link-auto a{color:#15803D;font-size:12px;font-weight:600;text-decoration:none;word-break:break-all;}
-.evidencia-link-auto a:hover{text-decoration:underline;}
 .zona-upload{border:2px dashed #CBD5E1;border-radius:8px;padding:16px;text-align:center;background:#F8FAFC;cursor:pointer;transition:all 0.15s;}
 .zona-upload:hover{border-color:#185FA5;background:#EFF6FF;}
 .zona-imagen{display:none;}
 .zona-imagen img{max-width:100%;border:1px solid #E2E8F0;border-radius:6px;}
 .btn-cambiar{margin-top:6px;font-size:11px;padding:3px 10px;background:#EFF6FF;border:1px solid #185FA5;color:#185FA5;border-radius:5px;cursor:pointer;}
+/* Comentario editable */
+.comentario-wrap{margin:16px 0;}
+.comentario-label{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.comentario-box{background:#FFFBEB;border:1.5px dashed #F59E0B;border-radius:6px;padding:12px 16px;font-size:13px;color:#374151;line-height:1.7;min-height:48px;cursor:text;outline:none;}
+.comentario-box:focus{border-style:solid;box-shadow:0 0 0 3px rgba(245,158,11,0.12);}
+.comentario-box:empty:before{content:"Escribe aquí un comentario adicional si lo necesitas...";color:#D1D5DB;font-style:italic;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
-/* Controles fuera del email */
-.controles-externos{display:block;}
 </style></head>
 <body>
 <div class="toast" id="toast"></div>
@@ -56,30 +51,29 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 
 <div class="ew">
 
-  <!-- CONTROLES EXTERNOS — no se copian al correo -->
-  <div class="controles-externos" id="controles-externos">
+  <!-- CONTROLES EXTERNOS — no se copian -->
+  <div id="controles-externos">
 
-    <!-- Destinatario -->
     <div class="dest-wrap">
       <span class="dest-label">📬 Para:</span>
       <span class="dest-campo" contenteditable="true" id="campo-destinatario"></span>
       <span style="font-size:10px;color:#92400E;">← Ingresa el correo del destinatario</span>
     </div>
 
-    <!-- Zona evidencia adicional (imagen manual) -->
-    <div class="evidencia-section">
-      <div class="evidencia-titulo">
+    <!-- Evidencia adicional (imagen manual) -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin-bottom:6px;">
         🖼️ Evidencia adicional
-        <span style="font-size:10px;font-weight:400;color:#94A3B8;">(opcional — imagen PNG/JPG que se insertará en el correo)</span>
+        <span style="font-size:10px;font-weight:400;color:#94A3B8;">(opcional — imagen que se insertará en el correo)</span>
       </div>
       <div id="zona-upload" class="zona-upload" onclick="document.getElementById('input-evidencia').click()">
         <div style="font-size:24px;margin-bottom:4px;">📎</div>
         <div style="font-size:12px;font-weight:600;color:#64748b;">Haz clic para subir imagen de evidencia</div>
-        <div style="font-size:11px;color:#94A3B8;">PNG o JPG — se insertará en el cuerpo del correo</div>
+        <div style="font-size:11px;color:#94A3B8;">PNG o JPG</div>
         <input type="file" id="input-evidencia" accept="image/*" style="display:none" onchange="cargarEvidencia(event)">
       </div>
       <div class="zona-imagen" id="zona-imagen">
-        <img id="img-evidencia" src="" alt="Evidencia">
+        <img id="img-evidencia-preview" src="" alt="Evidencia">
         <br><button class="btn-cambiar" onclick="document.getElementById('input-evidencia').click()">🔄 Cambiar imagen</button>
       </div>
     </div>
@@ -95,81 +89,53 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     </td></tr>
     <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
 
+      <!-- HEADER -->
       <div style="background:#DC2626;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
         <p style="margin:0;color:white;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🔴 Solicitud de Revisión — Incidencia QA2</p>
       </div>
 
       <p>Estimado/a,</p>
-      <p>Junto con saludar, solicito tu apoyo para la revisión y resolución de la siguiente incidencia detectada durante el proceso de QA2 del curso:</p>
+      <p>Junto con saludar, solicito tu apoyo para la revisión y resolución de la siguiente incidencia detectada durante el proceso de QA2 del curso <strong id="val-nrc-curso-inline"></strong>, con fecha de inicio <strong id="val-fecha-inicio-inline"></strong>.</p>
 
-      <!-- DATOS DEL CURSO -->
+      <!-- DATOS CURSO — solo NRC y fecha inicio -->
       <table border="0" cellpadding="0" cellspacing="0" style="width:100%;background:#F8FAFC;border-radius:8px;margin:16px 0;border:1px solid #E2E8F0;">
         <tbody>
           <tr>
-            <td style="padding:10px 16px;border-bottom:1px solid #E2E8F0;">
+            <td style="padding:10px 16px;border-right:1px solid #E2E8F0;">
               <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">NRC / Curso</span>
               <span style="font-size:13px;color:#0F2463;font-weight:700;" id="val-nrc-curso"></span>
             </td>
-            <td style="padding:10px 16px;border-bottom:1px solid #E2E8F0;">
-              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Tutor/a</span>
-              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-tutor"></span>
+            <td style="padding:10px 16px;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Incidencia N°</span>
+              <span style="font-size:13px;color:#DC2626;font-weight:800;" id="val-id">#—</span>
             </td>
           </tr>
           <tr>
-            <td style="padding:10px 16px;">
-              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Fecha Inicio</span>
-              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-fecha-inicio"></span>
+            <td style="padding:10px 16px;border-right:1px solid #E2E8F0;border-top:1px solid #E2E8F0;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Categoría</span>
+              <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-categoria"></span>
             </td>
-            <td style="padding:10px 16px;">
-              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Fecha Fin</span>
-              <span style="font-size:13px;color:#1e293b;font-weight:600;" id="val-fecha-fin"></span>
+            <td style="padding:10px 16px;border-top:1px solid #E2E8F0;">
+              <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Semana / Unidad</span>
+              <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-semana"></span>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- DETALLE INCIDENCIA -->
-      <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:16px 20px;margin:16px 0;border-left:4px solid #DC2626;">
-        <p style="margin:0 0 12px 0;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:0.05em;">📋 Detalle de la Incidencia</p>
-        <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
-          <tbody>
-            <tr>
-              <td style="padding:4px 0;width:50%;vertical-align:top;">
-                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Incidencia N°</span>
-                <span style="font-size:13px;color:#DC2626;font-weight:800;" id="val-id">#—</span>
-              </td>
-              <td style="padding:4px 0;vertical-align:top;">
-                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Estado</span>
-                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-estado"></span>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:8px 0 4px 0;vertical-align:top;">
-                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Categoría</span>
-                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-categoria"></span>
-              </td>
-              <td style="padding:8px 0 4px 0;vertical-align:top;">
-                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;">Semana / Unidad</span>
-                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-semana"></span>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" style="padding:8px 0 0 0;">
-                <span style="font-size:9px;color:#94A3B8;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px;">Tipo QA</span>
-                <span style="font-size:12px;color:#1e293b;font-weight:600;" id="val-tipo"></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- DESCRIPCIÓN — protagonista -->
+      <div style="margin:20px 0;">
+        <p style="font-size:11px;color:#DC2626;text-transform:uppercase;font-weight:700;margin:0 0 8px 0;letter-spacing:0.05em;">📝 Descripción de la Incidencia</p>
+        <div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:16px 20px;font-size:14px;color:#1e293b;line-height:1.8;font-weight:500;" id="val-descripcion"></div>
       </div>
 
-      <!-- DESCRIPCIÓN -->
-      <div style="margin:16px 0;">
-        <p style="font-size:10px;color:#94A3B8;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">📝 Descripción de la Incidencia</p>
-        <div style="background:#F8FAFC;border-left:3px solid #DC2626;border-radius:4px;padding:12px 16px;font-size:13px;color:#374151;line-height:1.7;" id="val-descripcion"></div>
+      <!-- COMENTARIO OPCIONAL -->
+      <div class="comentario-wrap" id="comentario-wrap">
+        <div class="comentario-label">💬 Comentario adicional <span style="font-size:10px;font-weight:400;color:#94A3B8;">(opcional)</span></div>
+        <div class="comentario-box" contenteditable="true" id="campo-comentario"></div>
       </div>
 
-      <!-- EVIDENCIA — link automático desde DAX -->
+      <!-- EVIDENCIA AUTO -->
       <div id="evidencia-auto-wrap" style="display:none;margin:16px 0;">
         <p style="font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">📎 Evidencia adjunta</p>
         <div style="background:#DCFCE7;border:1px solid #86EFAC;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
@@ -178,23 +144,23 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         </div>
       </div>
 
-      <!-- EVIDENCIA — imagen subida manualmente -->
+      <!-- IMAGEN EVIDENCIA MANUAL -->
       <div id="evidencia-img-wrap" style="display:none;margin:16px 0;">
         <p style="font-size:10px;color:#64748b;text-transform:uppercase;font-weight:700;margin:0 0 6px 0;">🖼️ Imagen de evidencia</p>
         <img id="img-evidencia-email" src="" alt="Evidencia" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
       </div>
 
-      <!-- LINKS SHAREPOINT -->
+      <!-- LINKS -->
       <div id="links-wrap" style="margin:16px 0;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
-      <p>Agradezco tu pronta atención a esta solicitud. Quedo a disposición para cualquier información adicional que requieras.</p>
+      <p>Agradezco tu pronta atención. Quedo a disposición para cualquier información adicional que requieras.</p>
 
     </td></tr>
   </tbody>
   </table>
-  </div><!-- fin email-content -->
+  </div>
 
-</div><!-- fin ew -->
+</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -203,25 +169,22 @@ function dec(key) {
   return val ? decodeURIComponent(val) : '';
 }
 
-// Datos curso
 const nrc = dec('nrc');
 const nombreCurso = dec('nombre_curso');
-const tutor = dec('tutor');
-document.getElementById('val-nrc-curso').textContent    = nombreCurso ? nrc + ' — ' + nombreCurso : nrc || '—';
-document.getElementById('val-tutor').textContent        = tutor || '—';
-document.getElementById('val-fecha-inicio').textContent = dec('fecha_inicio') || '—';
-document.getElementById('val-fecha-fin').textContent    = dec('fecha_fin') || '—';
-
-// Datos incidencia
 const idInc = dec('id_incidencia');
-document.getElementById('val-id').textContent          = idInc ? '#' + idInc : '#—';
-document.getElementById('val-estado').textContent      = dec('estado') || '—';
-document.getElementById('val-categoria').textContent   = dec('categoria') || '—';
-document.getElementById('val-semana').textContent      = dec('semana') || '—';
-document.getElementById('val-tipo').textContent        = dec('tipo_qa') || '—';
-document.getElementById('val-descripcion').textContent = dec('descripcion') || '—';
+const nrcCurso = nombreCurso ? nrc + ' — ' + nombreCurso : nrc || '—';
+const fechaInicio = dec('fecha_inicio') || '—';
 
-// Evidencia automática desde DAX
+// Rellenar datos
+document.getElementById('val-nrc-curso').textContent         = nrcCurso;
+document.getElementById('val-nrc-curso-inline').textContent  = nrcCurso;
+document.getElementById('val-fecha-inicio-inline').textContent = fechaInicio;
+document.getElementById('val-id').textContent                = idInc ? '#' + idInc : '#—';
+document.getElementById('val-categoria').textContent         = dec('categoria') || '—';
+document.getElementById('val-semana').textContent            = dec('semana') || '—';
+document.getElementById('val-descripcion').textContent       = dec('descripcion') || '—';
+
+// Evidencia automática
 const urlAdj = dec('url_adjunto');
 if (urlAdj) {
   document.getElementById('evidencia-auto-wrap').style.display = 'block';
@@ -231,25 +194,23 @@ if (urlAdj) {
 }
 
 // Links SharePoint
-const linksWrap = document.getElementById('links-wrap');
 const urlSP = dec('url_sp');
 if (urlSP) {
-  linksWrap.innerHTML += `<a href="${urlSP}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#0F2463;color:white;text-decoration:none;border-radius:6px;font-weight:700;font-size:12px;">✏️ Ver en SharePoint</a>`;
+  document.getElementById('links-wrap').innerHTML =
+    `<a href="${urlSP}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#0F2463;color:white;text-decoration:none;border-radius:6px;font-weight:700;font-size:12px;">✏️ Ver en SharePoint</a>`;
 }
 
-// Badge automático
 if (nrc || idInc) document.getElementById('auto-badge').style.display = 'inline-block';
 
-// Cargar imagen de evidencia manual
+// Imagen evidencia manual
 function cargarEvidencia(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
-    document.getElementById('img-evidencia').src = e.target.result;
+    document.getElementById('img-evidencia-preview').src = e.target.result;
     document.getElementById('zona-upload').style.display = 'none';
     document.getElementById('zona-imagen').style.display = 'block';
-    // Mostrar también en el email
     document.getElementById('img-evidencia-email').src = e.target.result;
     document.getElementById('evidencia-img-wrap').style.display = 'block';
   };
@@ -258,10 +219,24 @@ function cargarEvidencia(event) {
 
 // Copiar correo
 async function copiarCorreo() {
-  // Ocultar controles externos
+  // Ocultar comentario si está vacío
+  const comentario = document.getElementById('campo-comentario');
+  const comentarioWrap = document.getElementById('comentario-wrap');
+  const comentarioVacio = !comentario.textContent.trim();
+  if (comentarioVacio) comentarioWrap.style.display = 'none';
+
   document.getElementById('controles-externos').style.display = 'none';
   const contenido = document.getElementById('email-content').cloneNode(true);
   document.getElementById('controles-externos').style.display = 'block';
+  if (comentarioVacio) comentarioWrap.style.display = 'block';
+
+  // Limpiar estilos editables del comentario en el clon
+  const comentarioClon = contenido.querySelector('#campo-comentario');
+  if (comentarioClon) {
+    comentarioClon.removeAttribute('contenteditable');
+    comentarioClon.style.background = '#FFFBEB';
+    comentarioClon.style.border = '1px solid #FDE68A';
+  }
 
   const h = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
   try {
@@ -281,7 +256,6 @@ async function copiarCorreo() {
   }
 }
 
-// Abrir Outlook
 function abrirOutlook() {
   const dest = document.getElementById('campo-destinatario').textContent.trim();
   const asunto = encodeURIComponent('Solicitud de Revisión — Incidencia QA2 #' + idInc + ' | ' + nrc);
