@@ -100,7 +100,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <tr><td style="padding:40px 60px 20px 60px;">
       <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
     </td></tr>
-    <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
+    <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:left;">
 
       <!-- HEADER ROJO -->
       <div style="background:#DC2626;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
@@ -133,8 +133,6 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         <img id="img-evidencia-email" src="" alt="Evidencia" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
       </div>
 
-      <!-- LINK SHAREPOINT -->
-      <div id="links-wrap" style="margin:16px 0;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
       <p>Agradezco tu pronta atención. Quedo a disposición para cualquier información adicional que requieras.</p>
 
@@ -216,14 +214,7 @@ function actualizarBloques() {
     bloquesEl.appendChild(bloque);
   });
 
-  // Links SharePoint de las seleccionadas
-  const linksWrap = document.getElementById('links-wrap');
-  linksWrap.innerHTML = '';
-  seleccionadas.forEach(inc => {
-    if (inc.url_sp) {
-      linksWrap.innerHTML += `<a href="${inc.url_sp}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#0F2463;color:white;text-decoration:none;border-radius:6px;font-weight:700;font-size:12px;">✏️ SharePoint #${inc.id}</a>`;
-    }
-  });
+
 }
 
 // Inicializar bloques con todas seleccionadas
