@@ -133,6 +133,62 @@
         color: rgba(255,255,255,0.65);
         font-weight: 400;
     }
+
+    /* ── MENÚ QA2 DESPLEGABLE ── */
+    .nav-group { position: relative; }
+    .nav-group-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        width: 100%;
+        padding: 12px 24px;
+        font-size: 14px;
+        color: #94a3b8;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-align: left;
+    }
+    .nav-group-trigger:hover { background: rgba(255,255,255,0.05); color: #facc15; }
+    .nav-group-trigger.active { color: #facc15; background: rgba(255,255,255,0.05); }
+    .nav-group-trigger .trigger-left { display: flex; align-items: center; gap: 16px; }
+    .nav-group-trigger .chevron {
+        font-size: 16px;
+        transition: transform 0.2s;
+        color: #475569;
+        flex-shrink: 0;
+    }
+    .nav-group-trigger.open .chevron { transform: rotate(180deg); color: #facc15; }
+    .nav-submenu {
+        display: none;
+        flex-direction: column;
+        background: rgba(0,0,0,0.2);
+        border-left: 2px solid rgba(250,204,21,0.2);
+        margin-left: 24px;
+        margin-right: 8px;
+        border-radius: 0 0 6px 6px;
+    }
+    .nav-submenu.open { display: flex; }
+    .nav-subitem {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 16px;
+        font-size: 12px;
+        color: #64748b;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        text-align: left;
+        width: 100%;
+        transition: all 0.15s;
+        border-radius: 4px;
+    }
+    .nav-subitem:hover { color: #facc15; background: rgba(250,204,21,0.05); }
+    .nav-subitem.active { color: #facc15; font-weight: 600; }
+    .nav-subitem .material-symbols-outlined { font-size: 16px; }
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
@@ -165,22 +221,36 @@
 <div class="flex flex-1 overflow-hidden">
 
     <aside class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
-        <div class="px-4 mb-6">
-            <button onclick="abrirAdmin()" class="w-full bg-[#facc15] text-[#1e293b] py-2.5 px-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all">
-                <span class="material-symbols-outlined text-sm">add</span>
-                Nueva Publicación
-            </button>
-        </div>
-        <nav class="flex-1 space-y-0.5 overflow-y-auto">
+        <!-- SIN botón Nueva Publicación -->
+        <nav class="flex-1 space-y-0.5 overflow-y-auto pt-2">
             <a href="gestion.html" class="flex items-center gap-4 px-6 py-3 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
                 <span class="material-symbols-outlined">dashboard</span>Gestión Tutorial
             </a>
             <a href="gestion_coordinacion.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">account_balance</span>Coordinación
             </a>
-            <a href="#" onclick="mostrarQA2(event)" id="btn-qa2" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">bug_report</span>Gestión QA2
-            </a>
+
+            <!-- ── GESTIÓN QA2 DESPLEGABLE ── -->
+            <div class="nav-group">
+                <button id="btn-qa2-trigger" onclick="toggleQA2Menu()" class="nav-group-trigger" id="btn-qa2">
+                    <div class="trigger-left">
+                        <span class="material-symbols-outlined">bug_report</span>
+                        <span>Gestión QA2</span>
+                    </div>
+                    <span class="material-symbols-outlined chevron">expand_more</span>
+                </button>
+                <div id="qa2-submenu" class="nav-submenu">
+                    <button onclick="mostrarVistaQA2('gestion')" id="sub-gestion" class="nav-subitem">
+                        <span class="material-symbols-outlined">manage_search</span>
+                        Gestión de QA2
+                    </button>
+                    <button onclick="mostrarVistaQA2('consolidado')" id="sub-consolidado" class="nav-subitem">
+                        <span class="material-symbols-outlined">table_chart</span>
+                        Consolidado Incidencias
+                    </button>
+                </div>
+            </div>
+
             <a href="onboarding.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">person_add</span>Onboarding
             </a>
@@ -350,7 +420,7 @@
                             <span class="text-[9px] font-medium text-slate-400 group-hover:text-white text-center">Recursos</span>
                         </a>
 
-                        <a href="#" onclick="mostrarQA2(event)" class="flex flex-col items-center gap-1 group cursor-pointer">
+                        <a href="#" onclick="toggleQA2Menu(); mostrarVistaQA2('gestion'); return false;" class="flex flex-col items-center gap-1 group cursor-pointer">
                             <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#facc15] group-hover:bg-[#facc15] group-hover:text-[#1e293b] transition-all">
                                 <span class="material-symbols-outlined text-lg">bug_report</span>
                             </div>
@@ -430,8 +500,8 @@
         <div id="vista-qa2" style="display:none; grid-row:1; grid-column:1; flex-direction:column; height:100%;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-shrink:0;">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="material-symbols-outlined" style="color:#facc15;">bug_report</span>
-                    <span style="font-size:13px; font-weight:600; color:#facc15;">Gestión QA2</span>
+                    <span class="material-symbols-outlined" style="color:#facc15;" id="qa2-vista-icono">bug_report</span>
+                    <span style="font-size:13px; font-weight:600; color:#facc15;" id="qa2-vista-titulo">Gestión QA2</span>
                 </div>
                 <button onclick="ocultarQA2()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; border-radius:6px; padding:5px 12px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:4px;">
                     <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Volver
@@ -495,7 +565,10 @@ const FLOW_LEER  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment
 const FLOW_CREAR = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/879689098af34bea90d8edcc323c335d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xKKyWbfkMX0sYeZo3wE-IsDDhTqsZc_v1Q1EuByaU4k';
 const ADMIN_PASS = 'etop2025';
 const STORAGE_KEY = 'etop_anuncios_leidos';
-const URL_QA2 = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7d74430bab11d80e0097&navContentPaneEnabled=false&filterPaneEnabled=false';
+
+// URLs de los iframes QA2
+const URL_QA2_GESTION     = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7d74430bab11d80e0097&navContentPaneEnabled=false&filterPaneEnabled=false';
+const URL_QA2_CONSOLIDADO = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=5bab0bb006ec70b06518&navContentPaneEnabled=false&filterPaneEnabled=false';
 
 const MENSAJES = [
     "El acompañamiento genuino marca la diferencia en la vida de un estudiante.",
@@ -541,29 +614,56 @@ function getMensajeDelDia() {
     document.getElementById('mensaje-dia').textContent = '"' + MENSAJES[new Date().getDate() % MENSAJES.length] + '"';
 }
 
-function mostrarQA2(e) {
-    e.preventDefault();
+// ── MENÚ QA2 DESPLEGABLE ──
+function toggleQA2Menu() {
+    const trigger  = document.getElementById('btn-qa2-trigger');
+    const submenu  = document.getElementById('qa2-submenu');
+    const isOpen   = submenu.classList.contains('open');
+    trigger.classList.toggle('open', !isOpen);
+    submenu.classList.toggle('open', !isOpen);
+}
+
+function mostrarVistaQA2(tipo) {
     const vistaNormal = document.getElementById('vista-normal');
-    const vistaQA2 = document.getElementById('vista-qa2');
-    const iframe = document.getElementById('iframe-qa2');
-    const btnQA2 = document.getElementById('btn-qa2');
-    if (!iframe.src || iframe.src === window.location.href) {
-        iframe.src = URL_QA2;
+    const vistaQA2    = document.getElementById('vista-qa2');
+    const iframe      = document.getElementById('iframe-qa2');
+    const titulo      = document.getElementById('qa2-vista-titulo');
+    const icono       = document.getElementById('qa2-vista-icono');
+
+    // Asignar URL e info según el subitem
+    if (tipo === 'consolidado') {
+        iframe.src   = URL_QA2_CONSOLIDADO;
+        titulo.textContent = 'Consolidado Incidencias';
+        icono.textContent  = 'table_chart';
+        // Marcar subitem activo
+        document.getElementById('sub-gestion').classList.remove('active');
+        document.getElementById('sub-consolidado').classList.add('active');
+    } else {
+        iframe.src   = URL_QA2_GESTION;
+        titulo.textContent = 'Gestión de QA2';
+        icono.textContent  = 'manage_search';
+        document.getElementById('sub-consolidado').classList.remove('active');
+        document.getElementById('sub-gestion').classList.add('active');
     }
+
+    // Asegurar que el menú quede abierto y el trigger activo
+    document.getElementById('btn-qa2-trigger').classList.add('open', 'active');
+    document.getElementById('qa2-submenu').classList.add('open');
+
     vistaNormal.style.display = 'none';
-    vistaQA2.style.display = 'flex';
-    btnQA2.classList.add('text-[#facc15]', 'bg-white/5', 'border-l-2', 'border-[#facc15]', 'font-semibold');
-    btnQA2.classList.remove('text-slate-400');
+    vistaQA2.style.display    = 'flex';
 }
 
 function ocultarQA2() {
     const vistaNormal = document.getElementById('vista-normal');
-    const vistaQA2 = document.getElementById('vista-qa2');
-    const btnQA2 = document.getElementById('btn-qa2');
-    vistaQA2.style.display = 'none';
+    const vistaQA2    = document.getElementById('vista-qa2');
+    vistaQA2.style.display    = 'none';
     vistaNormal.style.display = 'grid';
-    btnQA2.classList.remove('text-[#facc15]', 'bg-white/5', 'border-l-2', 'border-[#facc15]', 'font-semibold');
-    btnQA2.classList.add('text-slate-400');
+    // Limpiar estados activos del menú
+    document.getElementById('btn-qa2-trigger').classList.remove('open', 'active');
+    document.getElementById('qa2-submenu').classList.remove('open');
+    document.getElementById('sub-gestion').classList.remove('active');
+    document.getElementById('sub-consolidado').classList.remove('active');
 }
 
 function getLeidosIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
