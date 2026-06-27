@@ -1,16 +1,31 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Anuncio Bienvenida Curso Malla</title>
-<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.template-bar{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;}.bd:hover{background:rgba(255,255,255,0.2);}.bc{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.bc:hover{background:#facc15;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}.toast.show{display:block;}</style></head>
+<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.template-bar{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;display:none;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;}.bd:hover{background:rgba(255,255,255,0.2);}.bc{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.bc:hover{background:#facc15;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}.toast.show{display:block;}</style>
+</head>
 <body>
 <div class="toast" id="toast"></div>
 <div class="template-bar">
-  <div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt">Bienvenida Curso Malla</span></div>
+  <div class="tbl">
+    <span class="badge">📢 Anuncio</span>
+    <span class="tbt">Bienvenida Curso Malla</span>
+    <span class="auto-badge" id="auto-badge">⚡ Datos automáticos</span>
+  </div>
   <div class="tbr">
     <a class="bi" onclick="ti()">❓ ¿Cómo usar?</a>
     <a class="bd" onclick="dl()">⬇ Descargar</a>
     <button class="bc" onclick="copiar()">📋 Copiar para Canvas</button>
   </div>
 </div>
-<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Copiar para Canvas</strong></li><li>En Canvas → Crear Anuncio → pega con <strong>Ctrl+V</strong></li></ol><div class="hint">💡 También puedes descargar el archivo si necesitas guardarlo</div></div>
+<div class="ip" id="ip">
+  <h4>📋 Cómo usar</h4>
+  <ol>
+    <li>Los campos <span style="color:#16A34A;font-weight:bold">[verdes]</span> vienen precargados desde Power BI</li>
+    <li>Edita si necesitas ajustar algún dato</li>
+    <li>Clic en <strong>📋 Copiar para Canvas</strong></li>
+    <li>En Canvas → Crear Anuncio → pega con <strong>Ctrl+V</strong></li>
+  </ol>
+  <div class="hint">💡 Los campos azules son editables directamente en pantalla</div>
+</div>
+
 <div class="ew" id="email-content">
 <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
 <tbody>
@@ -18,7 +33,7 @@
 <tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
 <div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;"><p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">📢 Anuncio · Inicio Curso Malla — Etapa de Impartición</p></div>
 <p>Estimadas y estimados estudiantes,</p>
-<p>Mi nombre es <span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span>, tutor(a) de acompañamiento durante la impartición de la asignatura <span class="campo" contenteditable="true" data-placeholder="NOMBRE ASIGNATURA"></span>, la cual comenzó hoy lunes <span class="campo" contenteditable="true" data-placeholder="FECHA INICIO"></span> y finaliza el domingo <span class="campo" contenteditable="true" data-placeholder="FECHA FIN"></span>.</p>
+<p>Mi nombre es <span class="campo" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, tutor(a) de acompañamiento durante la impartición de la asignatura <span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>, la cual comenzó hoy lunes <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA INICIO"></span> y finaliza el domingo <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA FIN"></span>.</p>
 <p>Mi principal labor será orientarte en el funcionamiento y navegación en la plataforma Canvas, además de aclarar dudas respecto a la modalidad del curso.</p>
 <div style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
 <p style="margin:0 0 8px 0;font-weight:bold;color:#0056b3;">📌 ¿Cómo contactarme?</p>
@@ -26,33 +41,70 @@
 </div>
 <p style="color:#555;font-size:15px;">⚠️ Las dudas sobre <strong>contenido, tareas y/o evaluaciones</strong> debes realizarlas a través del <strong>Foro de Consultas al Docente</strong> ubicado en el enlace correspondiente de tu curso.</p>
 </td></tr>
-<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
-</tbody></table>
+<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
+<p style="margin:0;">Saludos cordiales,</p>
+<p style="margin-top:10px;margin-bottom:15px;">
+  <strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-campo="nombre_tutor_firma" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>
+  Tutor/a de Acompañamiento<br>
+  <a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a>
+</p>
+<p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p>
+</td></tr>
+</tbody>
+</table>
 </div>
+
 <script>
-function ti(){document.getElementById("ip").classList.toggle("visible");}
-document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
+// ── AUTOCOMPLETAR DESDE URL ──
+const params = new URLSearchParams(window.location.search);
+
+const mapa = {
+  'nombre_tutor':       params.get('nombre_tutor')  ? decodeURIComponent(params.get('nombre_tutor'))  : null,
+  'nombre_curso':       params.get('nombre_curso')  ? decodeURIComponent(params.get('nombre_curso'))  : null,
+  'fecha_inicio':       params.get('fecha_inicio')  ? decodeURIComponent(params.get('fecha_inicio'))  : null,
+  'fecha_fin':          params.get('fecha_fin')      ? decodeURIComponent(params.get('fecha_fin'))      : null,
+  'nombre_tutor_firma': params.get('nombre_tutor')  ? decodeURIComponent(params.get('nombre_tutor'))  : null
+};
+
+let hayDatos = false;
+document.querySelectorAll('.campo[data-campo]').forEach(el => {
+  const val = mapa[el.getAttribute('data-campo')];
+  if (val) {
+    el.textContent = val;
+    el.classList.add('auto-filled');
+    hayDatos = true;
+  }
+});
+
+if (hayDatos) {
+  document.getElementById('auto-badge').style.display = 'inline-block';
+}
+
+// ── TOOLTIP ──
+function ti() { document.getElementById("ip").classList.toggle("visible"); }
+document.addEventListener("click", function(e) {
+  if (!e.target.closest("#ip") && !e.target.closest(".bi"))
+    document.getElementById("ip").classList.remove("visible");
+});
 
 // ── DESCARGAR ──
-function dl(){
-  const n=document.querySelector(".ew").cloneNode(true);
-  n.querySelectorAll(".campo").forEach(el=>{
-    const s=document.createElement("span");
-    s.textContent=el.textContent||el.getAttribute("data-placeholder");
+function dl() {
+  const n = document.querySelector(".ew").cloneNode(true);
+  n.querySelectorAll(".campo").forEach(el => {
+    const s = document.createElement("span");
+    s.textContent = el.textContent || el.getAttribute("data-placeholder");
     el.replaceWith(s);
   });
-  const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Bienvenida Curso Malla</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';
-  const b=new Blob([h],{type:"text/html;charset=utf-8"});
-  const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Anuncio_Bienvenida_Curso_Malla.html"});
+  const h = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Anuncio Bienvenida Curso Malla</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">' + n.innerHTML + '</body></html>';
+  const b = new Blob([h], {type: "text/html;charset=utf-8"});
+  const a = Object.assign(document.createElement("a"), {href: URL.createObjectURL(b), download: "Anuncio_Bienvenida_Curso_Malla.html"});
   a.click();
 }
 
 // ── COPIAR PARA CANVAS ──
 async function copiar() {
-  // Clonar el contenido del email
   const contenido = document.getElementById('email-content').cloneNode(true);
 
-  // Limpiar estilos de edición de los campos
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
     el.style.background = '';
@@ -61,19 +113,17 @@ async function copiar() {
     el.style.padding = '';
     el.style.color = '#333333';
     el.style.fontWeight = 'bold';
-    el.classList.remove('campo');
+    el.classList.remove('auto-filled', 'campo');
   });
 
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
 
   try {
-    // Método moderno — copia como HTML nativo
     const blob = new Blob([htmlFinal], {type: 'text/html'});
     const item = new ClipboardItem({'text/html': blob});
     await navigator.clipboard.write([item]);
     mostrarToast('✅ Anuncio copiado — pega con Ctrl+V en el editor de Canvas');
   } catch(e) {
-    // Fallback — selección de texto
     try {
       const div = document.createElement('div');
       div.innerHTML = htmlFinal;
