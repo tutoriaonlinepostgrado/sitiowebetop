@@ -1,12 +1,19 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Correo de Cierre de Curso</title>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Plantilla — Correo de Cierre de Curso</title>
 <style>
 body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
 .tbl{display:flex;align-items:center;gap:12px;}
 .badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}
 .tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
-.tbr{display:flex;gap:10px;align-items:center;}
 .auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
+.tbr{display:flex;gap:10px;align-items:center;}
+.sel-programa{font-size:12px;padding:6px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;cursor:pointer;outline:none;}
+.sel-programa option{background:#0F2463;color:white;}
 .btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
 .btn-outlook:hover{background:rgba(255,255,255,0.2);}
 .btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
@@ -18,6 +25,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
+.prog-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;display:none;}
+.prog-tag.mgpc{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
 </style>
 </head>
 <body>
@@ -29,8 +38,13 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <span class="badge">🏁 Cierre</span>
     <span class="tbt">Correo de Cierre de Curso</span>
     <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+    <span class="prog-tag mgpc" id="tag-mgpc">MGPC</span>
   </div>
   <div class="tbr">
+    <select id="sel-programa" class="sel-programa" onchange="cambiarPrograma()">
+      <option value="estandar">📄 Estándar</option>
+      <option value="mgpc">🏥 MGPC</option>
+    </select>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -48,16 +62,17 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🏁 Correo · Cierre de Curso</p>
     </div>
 
-   
     <p style="font-size:18px;">Estimado/a docente:</p>
     <p>Reciba mis saludos,</p>
 
     <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <span class="campo" contenteditable="true" data-campo="nrc_curso" data-placeholder="NOMBRE Y NRC DEL CURSO"></span> que tuvo inicio el día <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA DE INICIO"></span> y finalizó el domingo <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA DE FIN"></span>.</p>
 
-    <p>Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS"></span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
+    <!-- Párrafo variable según programa -->
+    <p id="parrafo-plazo">Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS"></span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
 
-    <div style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
-      <p style="margin:0;color:#333;font-size:15px;">📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a href="https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA" target="_blank" style="color:#0056b3;font-weight:bold;">Haga clic acá</a></p>
+    <!-- Bloque adjunto variable según programa -->
+    <div id="bloque-adjunto" style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
+      <p style="margin:0;color:#333;font-size:15px;">📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a id="link-pdf" href="https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA" target="_blank" style="color:#0056b3;font-weight:bold;">Haga clic acá</a></p>
     </div>
 
     <p>Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.</p>
@@ -68,17 +83,48 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 </div>
 
 <script>
-// ── AUTOCOMPLETAR DESDE URL ──
+// ── PARÁMETROS URL ──
 const params = new URLSearchParams(window.location.search);
 const mapa = {
   nrc_curso:    (params.get('nombre_curso') && params.get('nrc'))
                   ? decodeURIComponent(params.get('nombre_curso')) + ' (' + decodeURIComponent(params.get('nrc')) + ')'
                   : (params.get('nrc') ? decodeURIComponent(params.get('nrc')) : null),
-  fecha_inicio: params.get('fecha_inicio'),
-  fecha_fin:    params.get('fecha_fin'),
-  fecha_limite: params.get('fecha_limite')
+  fecha_inicio: params.get('fecha_inicio') ? decodeURIComponent(params.get('fecha_inicio')) : null,
+  fecha_fin:    params.get('fecha_fin')    ? decodeURIComponent(params.get('fecha_fin'))    : null,
+  fecha_limite: params.get('fecha_limite') ? decodeURIComponent(params.get('fecha_limite')) : null
 };
 
+// ── TEXTOS POR PROGRAMA ──
+const configs = {
+  estandar: {
+    parrafo: () => `Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo${mapa.fecha_limite ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS">${mapa.fecha_limite || ''}</span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.`,
+    linkPDF: "https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA",
+    textoPDF: "📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a id='link-pdf' href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
+  },
+  mgpc: {
+    parrafo: () => `Agradezco el trabajo en conjunto y aprovecho de comentar que el sistema Canvas permite transferir automáticamente las notas a Banner para luego hacer el cierre anticipado en la intranet, por lo tanto, las notas quedan en sistema permitiendo que los alumnos puedan visualizarlas y solicitar sus certificaciones intermedias.<br><br>
+    Cabe señalar que cualquier entrega atrasada o gestión dentro de la plataforma tiene un plazo límite de <strong>10 días finalizada la asignatura</strong>, plazo que se cumple el día <span class="campo${mapa.fecha_limite ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 10 DÍAS">${mapa.fecha_limite || ''}</span>, posterior a esa fecha podrá ser realizada solicitándolo directamente con el secretario académico de la Facultad de Educación y Ciencias Sociales. Eduardo Valenzuela, <a href='mailto:eduardovalenzuela@unab.cl' style='color:#0056b3;'>eduardovalenzuela@unab.cl</a>.`,
+    linkPDF: "https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQD62HEbIlPbTaiMBB5HrdulAf5gF5fLupPPIaHoznMeov4?e=QJgp4y",
+    textoPDF: "📎 Adjunto para su guía los siguientes documentos:<br><br>&nbsp;&nbsp;• Paso a paso para el correcto cierre del curso: <a href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a><br>&nbsp;&nbsp;• Proceso de cierre del libro de calificaciones MGPC (Cierre Anticipado de Asignatura): <a href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQD62HEbIlPbTaiMBB5HrdulAf5gF5fLupPPIaHoznMeov4?e=QJgp4y' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
+  }
+};
+
+// ── CAMBIAR PROGRAMA ──
+function cambiarPrograma() {
+  const prog = document.getElementById('sel-programa').value;
+  const cfg = configs[prog];
+
+  // Actualizar párrafo
+  document.getElementById('parrafo-plazo').innerHTML = cfg.parrafo();
+
+  // Actualizar bloque PDF
+  document.getElementById('bloque-adjunto').querySelector('p').innerHTML = cfg.textoPDF;
+
+  // Mostrar/ocultar tag MGPC
+  document.getElementById('tag-mgpc').style.display = prog === 'mgpc' ? 'inline-block' : 'none';
+}
+
+// ── AUTOCOMPLETAR DESDE URL ──
 let hayDatos = false;
 document.querySelectorAll('.campo[data-campo]').forEach(el => {
   const val = mapa[el.getAttribute('data-campo')];
@@ -93,16 +139,17 @@ if (hayDatos) {
   document.getElementById('auto-badge').style.display = 'inline-block';
 }
 
-// ── COPIAR CORREO ──
-// Genera un documento HTML limpio (sin barra, sin estilos de edición)
-// y lo copia al portapapeles como HTML formateado
-async function copiarCorreo() {
-  const toast = document.getElementById('toast');
+// ── PROGRAMA DESDE URL ──
+const progParam = params.get('programa');
+if (progParam && configs[progParam]) {
+  document.getElementById('sel-programa').value = progParam;
+  cambiarPrograma();
+}
 
-  // Clonar solo el contenido del email
+// ── COPIAR CORREO ──
+async function copiarCorreo() {
   const contenido = document.getElementById('email-content').cloneNode(true);
 
-  // Limpiar estilos de edición de los campos
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
     el.style.background = '';
@@ -114,22 +161,14 @@ async function copiarCorreo() {
     el.classList.remove('auto-filled','campo');
   });
 
-  // HTML final limpio para pegar en Outlook
-  const htmlFinal = `
-    <html>
-    <body style="margin:0;padding:0;font-family:Arial,sans-serif;">
-    ${contenido.innerHTML}
-    </body>
-    </html>`;
+  const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
 
   try {
-    // Método moderno: copia como HTML nativo
     const blob = new Blob([htmlFinal], {type: 'text/html'});
     const item = new ClipboardItem({'text/html': blob});
     await navigator.clipboard.write([item]);
     mostrarToast('✅ Correo copiado con formato — pega con Ctrl+V en Outlook');
   } catch(e) {
-    // Fallback: selección de texto
     try {
       const div = document.createElement('div');
       div.innerHTML = htmlFinal;
@@ -168,4 +207,5 @@ function abrirOutlook() {
   window.open('mailto:' + destinatario + '?subject=' + asunto, '_blank');
 }
 </script>
-</body></html>
+</body>
+</html>
