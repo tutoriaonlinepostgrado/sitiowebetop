@@ -1,9 +1,17 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Anuncio Bienvenida Curso Malla</title>
-<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.template-bar{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}</style></head>
+<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.template-bar{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;}.bd:hover{background:rgba(255,255,255,0.2);}.bc{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.bc:hover{background:#facc15;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}.toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}.toast.show{display:block;}</style></head>
 <body>
-<div class="template-bar"><div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt">Bienvenida Curso Malla</span></div><div class="tbr"><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="dl()">⬇ Descargar para Canvas/Outlook</a></div></div>
-<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Descargar</strong></li><li>Abre el archivo, Ctrl+A → Ctrl+C → pega en Outlook o Canvas</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
-<div class="ew">
+<div class="toast" id="toast"></div>
+<div class="template-bar">
+  <div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt">Bienvenida Curso Malla</span></div>
+  <div class="tbr">
+    <a class="bi" onclick="ti()">❓ ¿Cómo usar?</a>
+    <a class="bd" onclick="dl()">⬇ Descargar</a>
+    <button class="bc" onclick="copiar()">📋 Copiar para Canvas</button>
+  </div>
+</div>
+<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Copiar para Canvas</strong></li><li>En Canvas → Crear Anuncio → pega con <strong>Ctrl+V</strong></li></ol><div class="hint">💡 También puedes descargar el archivo si necesitas guardarlo</div></div>
+<div class="ew" id="email-content">
 <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
 <tbody>
 <tr><td style="padding:40px 60px 20px 60px;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0;"></td></tr>
@@ -24,6 +32,76 @@
 <script>
 function ti(){document.getElementById("ip").classList.toggle("visible");}
 document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
-function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Bienvenida Curso Malla</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Anuncio_Bienvenida_Curso_Malla.html"});a.click();}
+
+// ── DESCARGAR ──
+function dl(){
+  const n=document.querySelector(".ew").cloneNode(true);
+  n.querySelectorAll(".campo").forEach(el=>{
+    const s=document.createElement("span");
+    s.textContent=el.textContent||el.getAttribute("data-placeholder");
+    el.replaceWith(s);
+  });
+  const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Bienvenida Curso Malla</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';
+  const b=new Blob([h],{type:"text/html;charset=utf-8"});
+  const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Anuncio_Bienvenida_Curso_Malla.html"});
+  a.click();
+}
+
+// ── COPIAR PARA CANVAS ──
+async function copiar() {
+  // Clonar el contenido del email
+  const contenido = document.getElementById('email-content').cloneNode(true);
+
+  // Limpiar estilos de edición de los campos
+  contenido.querySelectorAll('.campo').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.style.background = '';
+    el.style.border = '';
+    el.style.borderRadius = '';
+    el.style.padding = '';
+    el.style.color = '#333333';
+    el.style.fontWeight = 'bold';
+    el.classList.remove('campo');
+  });
+
+  const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
+
+  try {
+    // Método moderno — copia como HTML nativo
+    const blob = new Blob([htmlFinal], {type: 'text/html'});
+    const item = new ClipboardItem({'text/html': blob});
+    await navigator.clipboard.write([item]);
+    mostrarToast('✅ Anuncio copiado — pega con Ctrl+V en el editor de Canvas');
+  } catch(e) {
+    // Fallback — selección de texto
+    try {
+      const div = document.createElement('div');
+      div.innerHTML = htmlFinal;
+      div.style.position = 'fixed';
+      div.style.opacity = '0';
+      div.style.pointerEvents = 'none';
+      document.body.appendChild(div);
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(div);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      document.body.removeChild(div);
+      mostrarToast('✅ Anuncio copiado — pega con Ctrl+V en Canvas');
+    } catch(e2) {
+      mostrarToast('⚠️ No se pudo copiar — usa Ctrl+A y Ctrl+C manualmente', true);
+    }
+  }
+}
+
+function mostrarToast(msg, error=false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.background = error ? '#DC2626' : '#059669';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
 </script>
 </body></html>
