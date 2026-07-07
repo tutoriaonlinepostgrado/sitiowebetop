@@ -411,9 +411,9 @@
             + '&autoAuth=true&pageName=' + cfg.page
             + '&navContentPaneEnabled=false&filterPaneEnabled=false';
         const fx = [];
-        if (BUSQUEDA.facultad) fx.push("NRC_TUTOR_ACTUAL/FACULTAD eq '" + sanitizarFiltro(BUSQUEDA.facultad) + "'");
-        if (BUSQUEDA.tutor)    fx.push("NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '" + sanitizarFiltro(BUSQUEDA.tutor) + "'");
-        if (BUSQUEDA.tipo)     fx.push("NRC_TUTOR_ACTUAL/TIPO_NRC eq '" + sanitizarFiltro(BUSQUEDA.tipo) + "'");
+        if (BUSQUEDA.facultad) fx.push("NRC_TUTOR_ACTUAL/FACULTAD eq '" + BUSQUEDA.facultad + "'");
+        if (BUSQUEDA.tutor)    fx.push("NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '" + BUSQUEDA.tutor + "'");
+        if (BUSQUEDA.tipo)     fx.push("NRC_TUTOR_ACTUAL/TIPO_NRC eq '" + BUSQUEDA.tipo + "'");
         if (BUSQUEDA.nrc)      fx.push("NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '" + BUSQUEDA.nrc + "'");
         if (BUSQUEDA.rut && cfg.filtroRut) fx.push("consolidado_esudiantes/RUT eq '" + BUSQUEDA.rut + "'");
         return fx.length ? base + '&filter=' + encodeURIComponent(fx.join(' and ')) : base;
