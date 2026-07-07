@@ -219,7 +219,7 @@
                     <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
                     <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
                     <option value="BARBARA ROJAS">BARBARA ROJAS</option>
-                    <option value="CARLA PENA">CARLA PENA</option>
+                    <option value="CARLA PEÑA">CARLA PEÑA</option>
                     <option value="CATALINA FIERRO">CATALINA FIERRO</option>
                     <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
                     <option value="CONSUELO PARGA">CONSUELO PARGA</option>
@@ -439,7 +439,7 @@
         if (!catalogoNRC.length) { Array.from(sel.options).forEach(o => { o.hidden = false; }); return; }
         // Deduplicar con Set antes de ordenar
         const valoresDisponibles = [...new Set(
-            nrcsFiltrados(excluir).map(n => n[campo]).filter(Boolean)
+            nrcsFiltrados(excluir).map(n => (n[campo]||'').trim()).filter(Boolean)
         )].sort();
         sel.innerHTML = '<option value="">' + placeholder + '</option>';
         valoresDisponibles.forEach(function(v) {
@@ -460,8 +460,9 @@
         // Deduplicar NRCs
         const nrcsVistos = new Set();
         nrcsFiltrados('nrc').forEach(function(n) {
-            if (!n.nrc || nrcsVistos.has(n.nrc)) return;
-            nrcsVistos.add(n.nrc);
+            const nrcVal = (n.nrc||'').trim();
+            if (!nrcVal || nrcsVistos.has(nrcVal)) return;
+            nrcsVistos.add(nrcVal);
             const opt = document.createElement('option');
             opt.value = n.nrc;
             opt.label = n.descripcion ? n.nrc + ' · ' + n.descripcion : n.nrc;
