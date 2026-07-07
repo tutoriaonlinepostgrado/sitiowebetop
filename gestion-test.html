@@ -613,6 +613,19 @@
     let catalogoNRC = [];
 
     // ── Construir URL con filtros ─────────────────────────
+    // Sanitiza valores para el filtro OData de Power BI
+    // Power BI no acepta caracteres especiales sin sanitizar en el parámetro &filter=
+    function sanitizarFiltro(valor) {
+        return (valor || '')
+            .replace(/Á/g, 'A').replace(/á/g, 'a')
+            .replace(/É/g, 'E').replace(/é/g, 'e')
+            .replace(/Í/g, 'I').replace(/í/g, 'i')
+            .replace(/Ó/g, 'O').replace(/ó/g, 'o')
+            .replace(/Ú/g, 'U').replace(/ú/g, 'u')
+            .replace(/Ñ/g, 'N').replace(/ñ/g, 'n')
+            .replace(/Ü/g, 'U').replace(/ü/g, 'u');
+    }
+
     function buildURLFiltrada(clave) {
         const cfg = urlsBase[clave];
         if (!cfg) return misReportes[clave];
@@ -628,11 +641,11 @@
 
         const fx = [];
         if (BUSQUEDA.facultad)
-            fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${BUSQUEDA.facultad}'`);
+            fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         if (BUSQUEDA.tutor)
-            fx.push(`NRC_TUTOR_ACTUAL/NOMBRE TUTOR eq '${BUSQUEDA.tutor}'`);
+            fx.push(`NRC_TUTOR_ACTUAL/NOMBRE TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
         if (BUSQUEDA.tipo)
-            fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${BUSQUEDA.tipo}'`);
+            fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
         if (BUSQUEDA.nrc)
             fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${BUSQUEDA.nrc}'`);
         if (BUSQUEDA.rut && cfg.filtroRut)
@@ -766,8 +779,24 @@
             const resp = await fetch('nrcs.json', { cache: 'no-store' });
             if (!resp.ok) return;
             catalogoNRC = await resp.json();
-            sincronizarFiltros(); // primer render con catálogo disponible
-        } catch(e) { /* nrcs.json no disponible — filtros siguen funcionando sin cross-filter */ }
+            // Habilitar selects y restaurar placeholders originales
+            const labels = { 'sel-facultad': 'Facultad', 'sel-tutor': 'Tutor', 'sel-tipo': 'Tipo NRC' };
+            Object.entries(labels).forEach(([id, label]) => {
+                const sel = document.getElementById(id);
+                sel.options[0].text = label;
+                sel.disabled = false;
+            });
+            // Reconstruir opciones desde el catálogo
+            sincronizarFiltros();
+        } catch(e) {
+            // JSON no disponible: habilitar igualmente con opciones estáticas
+            const labels = { 'sel-facultad': 'Facultad', 'sel-tutor': 'Tutor', 'sel-tipo': 'Tipo NRC' };
+            Object.entries(labels).forEach(([id, label]) => {
+                const sel = document.getElementById(id);
+                sel.options[0].text = label;
+                sel.disabled = false;
+            });
+        }
     }
 
     // ── Navegación principal ──────────────────────────────
@@ -806,6 +835,12 @@
     }
 
     // ── Init ──────────────────────────────────────────────
+    // Marcar selects como "cargando" hasta que el JSON esté disponible
+    ['sel-facultad','sel-tutor','sel-tipo'].forEach(id => {
+        const sel = document.getElementById(id);
+        sel.disabled = true;
+        sel.options[0].text = sel.options[0].text + ' ⏳';
+    });
     cargarSugerenciasNRC();
     window.onload = function() {
         const btn = document.querySelector('.menu-btn.active');
