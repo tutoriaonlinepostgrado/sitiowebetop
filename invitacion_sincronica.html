@@ -20,45 +20,37 @@
     border-radius: 12px; text-transform: uppercase; letter-spacing: 0.06em;
   }
   .template-bar-title { font-size: 13px; font-weight: 500; color: #e2e8f0; }
+  .auto-badge {
+    background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);
+    color: #4ade80; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px;
+    display: none;
+  }
   .template-bar-right { display: flex; gap: 10px; align-items: center; }
   .btn-instrucciones {
     font-size: 11px; padding: 6px 12px;
     background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-    color: #cbd5e1; border-radius: 5px; cursor: pointer; text-decoration: none;
-    transition: all 0.15s;
+    color: #cbd5e1; border-radius: 5px; cursor: pointer; text-decoration: none; transition: all 0.15s;
   }
   .btn-instrucciones:hover { background: rgba(255,255,255,0.15); }
-  .btn-descargar {
+  .btn-copiar {
     font-size: 12px; font-weight: 700; padding: 7px 16px;
     background: #ffd700; color: #0F2463; border: none;
-    border-radius: 5px; cursor: pointer; text-decoration: none;
-    transition: all 0.15s;
+    border-radius: 5px; cursor: pointer; transition: all 0.15s;
   }
-  .btn-descargar:hover { background: #facc15; }
+  .btn-copiar:hover { background: #facc15; }
 
   .campo {
     display: inline;
-    background: #EFF6FF;
-    border: 1.5px dashed #185FA5;
-    border-radius: 4px;
-    color: #185FA5;
-    font-weight: bold;
-    padding: 1px 6px;
-    cursor: text;
-    outline: none;
-    min-width: 20px;
+    background: #EFF6FF; border: 1.5px dashed #185FA5;
+    border-radius: 4px; color: #185FA5; font-weight: bold;
+    padding: 1px 6px; cursor: text; outline: none; min-width: 20px;
   }
   .campo:focus {
-    background: #DBEAFE;
-    border-color: #0F2463;
-    border-style: solid;
+    background: #DBEAFE; border-color: #0F2463; border-style: solid;
     box-shadow: 0 0 0 3px rgba(24,95,165,0.15);
   }
-  .campo:empty:before {
-    content: attr(data-placeholder);
-    color: #93C5FD;
-    font-style: italic;
-  }
+  .campo:empty:before { content: attr(data-placeholder); color: #93C5FD; font-style: italic; }
+  .campo.auto-filled { background: #DCFCE7; border-color: #16A34A; border-style: solid; color: #15803D; }
 
   .instrucciones-panel {
     display: none; position: fixed; top: 52px; right: 24px; z-index: 200;
@@ -73,36 +65,44 @@
     border-radius: 6px; font-size: 11px; color: #185FA5;
   }
 
+  .toast {
+    display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    color: white; font-size: 13px; font-weight: 600; padding: 10px 20px;
+    border-radius: 8px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); white-space: nowrap;
+  }
+  .toast.show { display: block; }
+
   .email-wrapper { padding: 20px; max-width: 990px; margin: 0 auto; }
 </style>
 </head>
 <body>
 
+<div class="toast" id="toast"></div>
+
 <div class="template-bar">
   <div class="template-bar-left">
     <span class="template-bar-badge">📋 Plantilla</span>
-    <span class="template-bar-title">Invitación Sesión Sincrónica de Bienvenida</span>
+    <span class="template-bar-title">Invitación Sesión Sincrónica — Individual</span>
+    <span class="auto-badge" id="auto-badge">⚡ Datos del contexto NRC aplicados</span>
   </div>
   <div class="template-bar-right">
     <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
-    <a class="btn-descargar" onclick="descargarPlantilla()">⬇ Descargar para Outlook</a>
+    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
 </div>
 
 <div class="instrucciones-panel" id="instrucciones-panel">
   <h4>📋 Cómo usar esta plantilla</h4>
   <ol>
-    <li>Haz clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato del estudiante</li>
-    <li>Cuando todos los campos estén completos, haz clic en <strong>Descargar para Outlook</strong></li>
-    <li>Abre el archivo descargado en tu navegador</li>
-    <li>Selecciona todo (<strong>Ctrl+A</strong>) y copia (<strong>Ctrl+C</strong>)</li>
-    <li>Pega en el cuerpo de un correo en Outlook (<strong>Ctrl+V</strong>)</li>
-    <li>Envía el correo</li>
+    <li>Si activaste el contexto NRC, los campos en <span style="color:#16A34A;font-weight:bold">verde</span> ya están pre-llenados</li>
+    <li>Completa los campos en <span style="color:#185FA5;font-weight:bold">azul</span> que falten (nombre estudiante, fecha y hora sesión, link Zoom)</li>
+    <li>Haz clic en <strong>Copiar correo</strong></li>
+    <li>Pega con <strong>Ctrl+V</strong> directamente en Outlook</li>
   </ol>
-  <div class="hint">💡 Los campos azules son editables directamente en la pantalla</div>
+  <div class="hint">💡 Los campos en verde vienen del contexto NRC activado en el panel izquierdo</div>
 </div>
 
-<div class="email-wrapper">
+<div class="email-wrapper" id="email-content">
 <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
   <tbody>
     <tr>
@@ -113,15 +113,15 @@
     <tr>
       <td style="padding:0px 60px 40px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify;">
 
-        <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE"></span>,</p>
+        <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante"></span>,</p>
 
-        <p>Como parte de tu semana de Inducción <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO DE INDUCCIÓN"></span>, te invito a nuestra sesión sincrónica el día <span class="campo" contenteditable="true" data-placeholder="FECHA Y HORA SESIÓN"></span> vía Zoom.</p>
+        <p>Como parte de tu semana de Inducción <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO DE INDUCCIÓN" data-campo="curso_induccion"></span>, te invito a nuestra sesión sincrónica el día <span class="campo" contenteditable="true" data-placeholder="FECHA Y HORA SESIÓN (ej: lunes 07 de julio, 18:00 HRS)" data-campo="fecha_hora_sesion"></span> vía Zoom.</p>
 
         <p>El objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta instancia también te permitirá conocer a tus compañeros y compañeras.</p>
 
         <div style="background-color:#f0f7ff;border:1px solid #0056b3;border-radius:8px;padding:30px;margin:30px 0;text-align:center;">
           <p style="margin:0 0 20px 0;font-weight:bold;color:#333333;">Accede a tu sesión sincrónica aquí:</p>
-          <span class="campo" contenteditable="true" data-placeholder="LINK ZOOM DE LA SESIÓN" style="display:inline-block;margin-bottom:16px;font-size:13px;"></span><br>
+          <span class="campo" contenteditable="true" data-placeholder="LINK ZOOM DE LA SESIÓN" data-campo="link_zoom" style="display:inline-block;margin-bottom:16px;font-size:13px;"></span><br>
           <a href="#" style="background-color:#0056b3;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px;">👉 Unirse a la sesión</a>
         </div>
 
@@ -134,8 +134,8 @@
       <td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
         <p style="margin:0;">Saludos cordiales,</p>
         <p style="margin-top:15px;">
-          <strong style="color:#0056b3;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>
-          <span class="campo" contenteditable="true" data-placeholder="CORREO TUTOR/A"></span>
+          <strong style="color:#0056b3;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor"></span></strong><br>
+          <span class="campo" contenteditable="true" data-placeholder="CORREO TUTOR/A" data-campo="correo_tutor"></span>
         </p>
         <p style="margin-top:15px;padding-top:15px;border-top:1px solid #eeeeee;font-size:13px;color:#666666;">
           <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>
@@ -148,6 +148,28 @@
 </div>
 
 <script>
+// ── PRE-LLENADO DESDE URL PARAMS (panel NRC del Onboarding) ──
+const params = new URLSearchParams(window.location.search);
+
+const mapa = {
+  curso_induccion:  params.get('nombreCurso'),
+  nombre_tutor:     params.get('nombreTutor'),
+  correo_tutor:     params.get('correoTutor'),
+  fecha_hora_sesion: params.get('fechaInicio') ? 'desde el ' + params.get('fechaInicio') : null
+};
+
+let hayDatos = false;
+document.querySelectorAll('.campo[data-campo]').forEach(el => {
+  const val = mapa[el.getAttribute('data-campo')];
+  if (val && val.trim()) {
+    el.textContent = decodeURIComponent(val);
+    el.classList.add('auto-filled');
+    hayDatos = true;
+  }
+});
+if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+
+// ── INSTRUCCIONES ──
 function toggleInstrucciones() {
   document.getElementById('instrucciones-panel').classList.toggle('visible');
 }
@@ -158,30 +180,38 @@ document.addEventListener('click', function(e) {
   }
 });
 
-function descargarPlantilla() {
-  const emailNode = document.querySelector('.email-wrapper').cloneNode(true);
-  emailNode.querySelectorAll('.campo').forEach(el => {
-    const span = document.createElement('span');
-    span.textContent = el.textContent || el.getAttribute('data-placeholder');
-    el.replaceWith(span);
+// ── COPIAR CORREO ──
+async function copiarCorreo() {
+  const contenido = document.getElementById('email-content').cloneNode(true);
+  contenido.querySelectorAll('.campo').forEach(el => {
+    el.removeAttribute('contenteditable');
+    el.style.cssText = 'font-weight:bold;color:#333;';
+    el.classList.remove('auto-filled', 'campo');
   });
-  const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Invitación Sesión Sincrónica de Bienvenida</title>
-</head>
-<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
-${emailNode.innerHTML}
-</body>
-</html>`;
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'Invitacion_Sesion_Sincronica.html';
-  a.click();
-  URL.revokeObjectURL(url);
+  const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
+  try {
+    const blob = new Blob([htmlFinal], { type: 'text/html' });
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })]);
+    mostrarToast('✅ Correo copiado con formato — pega con Ctrl+V en Outlook');
+  } catch(e) {
+    try {
+      const div = document.createElement('div');
+      div.innerHTML = htmlFinal;
+      div.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(div);
+      const sel = window.getSelection(), r = document.createRange();
+      r.selectNodeContents(div); sel.removeAllRanges(); sel.addRange(r);
+      document.execCommand('copy'); sel.removeAllRanges();
+      document.body.removeChild(div);
+      mostrarToast('✅ Correo copiado — pega con Ctrl+V en Outlook');
+    } catch(e2) { mostrarToast('⚠️ No se pudo copiar automáticamente', true); }
+  }
+}
+
+function mostrarToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = error ? '#DC2626' : '#059669';
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000);
 }
 </script>
 </body>
