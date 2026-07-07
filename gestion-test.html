@@ -643,7 +643,7 @@
         if (BUSQUEDA.facultad)
             fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         if (BUSQUEDA.tutor)
-            fx.push(`NRC_TUTOR_ACTUAL/NOMBRE TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
+            fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
         if (BUSQUEDA.tipo)
             fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
         if (BUSQUEDA.nrc)
