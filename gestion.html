@@ -40,91 +40,104 @@
         .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
         .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
         .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
-
-        /* BOTÓN IR A COORDINACIÓN */
-        .btn-coordinacion {
-            margin: 12px 15px;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
-            border: 1px solid rgba(255,215,0,0.4);
-            border-radius: 8px;
-            color: var(--amarillo-top);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
+        .btn-coordinacion { margin: 12px 15px; padding: 12px 16px; background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.4); border-radius: 8px; color: var(--amarillo-top); text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: all 0.2s; cursor: pointer; }
         .btn-coordinacion:hover { background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1)); border-color: var(--amarillo-top); }
-
-        /* CANALES SHAREPOINT */
-        .canal-btn {
-            background: none; border: none; color: #e0e0e0;
-            padding: 10px 20px 10px 36px;
-            text-align: left; font-size: 13px; cursor: pointer;
-            border-left: 4px solid transparent; transition: all 0.2s;
-            display: flex; align-items: center; gap: 8px;
-            width: 100%; text-decoration: none; box-sizing: border-box;
-            color: #c0c0c0;
-        }
+        .canal-btn { background: none; border: none; color: #e0e0e0; padding: 10px 20px 10px 36px; text-align: left; font-size: 13px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; color: #c0c0c0; }
         .canal-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
         .canal-btn:hover { background-color: rgba(100,65,165,0.15); color: #b39ddb; border-left-color: #7c4dff; }
-
-        /* PANTALLA CANAL SHAREPOINT */
-        .canal-splash {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: #F3F2F1;
-            gap: 20px;
-            padding: 40px;
-            text-align: center;
-        }
+        .canal-splash { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #F3F2F1; gap: 20px; padding: 40px; text-align: center; }
         .canal-splash.visible { display: flex; }
         .canal-icon { font-size: 64px; }
         .canal-titulo { font-size: 22px; font-weight: 700; color: #1f2940; }
         .canal-desc { font-size: 14px; color: #666; max-width: 420px; line-height: 1.6; }
-        .canal-abrir {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: #7c4dff; color: white;
-            padding: 14px 28px; border-radius: 8px;
-            text-decoration: none; font-size: 15px; font-weight: 700;
-            transition: all 0.2s; box-shadow: 0 4px 15px rgba(124,77,255,0.3);
-        }
+        .canal-abrir { display: inline-flex; align-items: center; gap: 10px; background: #7c4dff; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 15px rgba(124,77,255,0.3); }
         .canal-abrir:hover { background: #651fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,77,255,0.4); }
         .canal-nota { font-size: 11px; color: #999; }
-        .canal-card {
-            display: flex; align-items: center; gap: 12px;
-            background: white; border: 1px solid #e5e7eb;
-            border-radius: 8px; padding: 14px 16px;
-            text-decoration: none; color: #1f2940;
-            transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
+        .canal-card { display: flex; align-items: center; gap: 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; text-decoration: none; color: #1f2940; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .canal-card:hover { border-color: #6264a7; box-shadow: 0 4px 12px rgba(98,100,167,0.15); transform: translateY(-1px); }
         .canal-card-info { flex: 1; }
         .canal-card-nombre { font-size: 13px; font-weight: 700; color: #1f2940; }
         .canal-card-sub { font-size: 11px; color: #999; margin-top: 2px; }
         .canal-card-arrow { font-size: 16px; color: #6264a7; font-weight: 700; flex-shrink: 0; }
-        .teams-icon-sm {
-            width: 28px; height: 28px; background: #6264a7; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
+        .teams-icon-sm { width: 28px; height: 28px; background: #6264a7; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .teams-icon-sm span { color: white; font-weight: 900; font-size: 15px; font-family: 'Segoe UI', sans-serif; }
-        .teams-icon-lg {
-            width: 44px; height: 44px; background: #6264a7; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
+        .teams-icon-lg { width: 44px; height: 44px; background: #6264a7; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .teams-icon-lg span { color: white; font-weight: 900; font-size: 26px; font-family: 'Segoe UI', sans-serif; }
-
         .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
-        .top-bar { background-color: var(--azul-sidebar); height: 50px; display: flex; align-items: center; padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
+
+        /* ══════════════════════════════════════
+           TOP-BAR CON FILTROS
+        ══════════════════════════════════════ */
+        .top-bar {
+            background-color: var(--azul-sidebar);
+            height: 52px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px 0 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            flex-shrink: 0;
+        }
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-right: 14px;
+            border-right: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
         .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
+        #titulo-vista { font-size: 13px; font-weight: 600; color: #e2e8f0; white-space: nowrap; }
+        .top-bar-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.07); margin: 0 10px; flex-shrink: 0; }
+        .top-bar-search { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: nowrap; }
+
+        /* Dropdowns */
+        .fsel-topbar {
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            color: #94a3b8;
+            padding: 0 22px 0 8px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.15s;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 5px center;
+            flex-shrink: 0;
+            max-width: 120px;
+        }
+        .fsel-topbar:hover, .fsel-topbar:focus { border-color: rgba(255,215,0,0.3); color: #ffd700; background-color: rgba(255,255,255,0.07); }
+        .fsel-topbar:disabled { opacity: 0.5; cursor: not-allowed; }
+        .fsel-topbar option { background: #1e293b; color: #f1f5f9; }
+
+        /* Pills NRC / RUT */
+        .search-group { display: flex; align-items: center; gap: 6px; }
+        .search-group-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,215,0,0.35); white-space: nowrap; flex-shrink: 0; user-select: none; }
+        .search-pill-wrap { position: relative; display: flex; align-items: center; }
+        .search-pill-icon { position: absolute; left: 9px; pointer-events: none; font-size: 13px; color: rgba(255,255,255,0.2); transition: color 0.15s; line-height: 1; }
+        .search-pill-input { height: 28px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: #cbd5e1; padding: 0 30px 0 28px; font-size: 11px; font-weight: 500; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; outline: none; transition: all 0.2s; width: 100px; }
+        .search-pill-input::placeholder { color: rgba(255,255,255,0.18); font-weight: 400; }
+        .search-pill-input:hover { border-color: rgba(255,215,0,0.22); background: rgba(255,255,255,0.06); }
+        .search-pill-input:focus { border-color: rgba(255,215,0,0.55); background: rgba(255,255,255,0.07); color: #ffd700; width: 130px; box-shadow: 0 0 0 3px rgba(255,215,0,0.06); }
+        .search-pill-wrap:focus-within .search-pill-icon { color: rgba(255,215,0,0.5); }
+        .search-pill-go { position: absolute; right: 6px; height: 18px; padding: 0 6px; border-radius: 9px; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.28); color: var(--amarillo-top); font-size: 9px; font-weight: 700; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.15s; display: flex; align-items: center; white-space: nowrap; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .search-pill-go:hover { background: rgba(255,215,0,0.2); }
+        .search-pill-input:focus + .search-pill-go { opacity: 1; pointer-events: all; }
+
+        /* Badge y limpiar */
+        .filter-badge { display: none; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 10px; background: rgba(255,215,0,0.07); border: 1px solid rgba(255,215,0,0.2); font-size: 9px; font-weight: 600; color: rgba(255,215,0,0.75); white-space: nowrap; flex-shrink: 0; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+        .filter-badge.on { display: flex; }
+        .btn-clear-filter { display: none; align-items: center; gap: 3px; height: 24px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(239,68,68,0.25); background: rgba(239,68,68,0.05); color: #f87171; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; flex-shrink: 0; letter-spacing: 0.04em; }
+        .btn-clear-filter.on { display: flex; }
+        .btn-clear-filter:hover { background: rgba(239,68,68,0.14); color: #fca5a5; }
+
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
         .btn-volver { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--texto-gris); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.3s; flex-shrink: 0; background-color: var(--azul-sidebar); }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
@@ -140,7 +153,6 @@
             </div>
             <button class="toggle-btn" onclick="toggleSidebar()" style="font-size:18px;">✕</button>
         </div>
-
         <div class="sidebar-menu">
             <div class="menu-category">Operación Diaria</div>
             <button class="menu-btn active" onclick="cargar('DASHBOARD',this)">📊 Tablero de Gestión (App)</button>
@@ -150,47 +162,135 @@
             <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
             <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
             <button class="menu-btn" onclick="cargar('SEMAFORO',this)">🚦 Reporte Semáforo</button>
-
             <div class="menu-category">Onboarding</div>
             <div class="collapsible-header" id="header-onboarding" onclick="toggleCollapsible('onboarding')">
                 <div class="header-left"><span>📧</span><span>Generación de Correos</span></div>
                 <span class="arrow">▼</span>
             </div>
             <div class="collapsible-body" id="body-onboarding">
-                <button class="menu-btn" onclick="cargarOnboarding('CORREOS',this)">
-                    📧 Correos de Bienvenida
-                </button>
-                <button class="menu-btn" onclick="cargarOnboarding('INVITACIONES',this)">
-                    📅 Invitación Sesión Sincrónica
-                </button>
+                <button class="menu-btn" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
+                <button class="menu-btn" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
             </div>
-
             <div class="menu-category">Canales del Equipo</div>
             <div class="collapsible-header" id="header-canales" onclick="toggleCollapsible('canales')">
                 <div class="header-left"><span>🟣</span><span>Canales SharePoint</span></div>
                 <span class="arrow">▼</span>
             </div>
             <div class="collapsible-body" id="body-canales">
-                <button class="canal-btn" onclick="mostrarCanales(this)">
-                    🟣 Ver todos los canales
-                </button>
+                <button class="canal-btn" onclick="mostrarCanales(this)">🟣 Ver todos los canales</button>
             </div>
-
             <div class="menu-category"> </div>
-            <a href="gestion_coordinacion.html" class="btn-coordinacion">
-                🏛️ Ir a Espacio Coordinación →
-            </a>
+            <a href="gestion_coordinacion.html" class="btn-coordinacion">🏛️ Ir a Espacio Coordinación →</a>
         </div>
-
         <a href="index.html" class="btn-volver">⬅️ Volver al Portal Principal</a>
     </div>
 
     <div class="content-area">
+
+        <!-- TOP-BAR -->
         <div class="top-bar">
-            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-            <span style="margin-left:15px;font-size:14px;font-weight:600;" id="titulo-vista">Vista de Reporte</span>
+            <div class="top-bar-left">
+                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+                <span id="titulo-vista">Tablero de Gestión</span>
+            </div>
+            <div class="top-bar-sep"></div>
+            <div class="top-bar-search">
+
+                <!-- FACULTAD -->
+                <select class="fsel-topbar" id="sel-facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
+                    <option value="">Facultad ⏳</option>
+                    <option value="ARDI">ARDI</option>
+                    <option value="CSRE">CSRE</option>
+                    <option value="ECOM">ECOM</option>
+                    <option value="ECOM_INNOVADO">ECOM_INNOVADO</option>
+                    <option value="ENFE">ENFE</option>
+                    <option value="ENFE_INNOVADO">ENFE_INNOVADO</option>
+                    <option value="ESCUELA DE GOBIERNO">ESC. GOBIERNO</option>
+                    <option value="FEDU">FEDU</option>
+                    <option value="FEDU_INNOVADO">FEDU_INNOVADO</option>
+                    <option value="INGE">INGE</option>
+                    <option value="MEDI">MEDI</option>
+                    <option value="VRP">VRP</option>
+                </select>
+
+                <!-- TUTOR -->
+                <select class="fsel-topbar" id="sel-tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
+                    <option value="">Tutor ⏳</option>
+                    <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
+                    <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
+                    <option value="BARBARA ROJAS">BARBARA ROJAS</option>
+                    <option value="CARLA PEÑA">CARLA PEÑA</option>
+                    <option value="CATALINA FIERRO">CATALINA FIERRO</option>
+                    <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
+                    <option value="CONSUELO PARGA">CONSUELO PARGA</option>
+                    <option value="DANIEL SANDOVAL">DANIEL SANDOVAL</option>
+                    <option value="DANITZA JANSEN">DANITZA JANSEN</option>
+                    <option value="FRANCISCA INDA">FRANCISCA INDA</option>
+                    <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
+                    <option value="HECTOR TAPIA">HECTOR TAPIA</option>
+                    <option value="JAVIER SANCHEZ">JAVIER SANCHEZ</option>
+                    <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
+                    <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
+                    <option value="MARCEL MEDINA">MARCEL MEDINA</option>
+                    <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
+                    <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
+                    <option value="NOEMI PAZ">NOEMI PAZ</option>
+                    <option value="ORIETTA CORTES">ORIETTA CORTES</option>
+                    <option value="PAULA PARDO">PAULA PARDO</option>
+                    <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
+                </select>
+
+                <!-- TIPO NRC -->
+                <select class="fsel-topbar" id="sel-tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
+                    <option value="">Tipo NRC ⏳</option>
+                    <option value="100%ONLINE">100%ONLINE</option>
+                    <option value="SEMIPRES">SEMIPRES</option>
+                </select>
+
+                <div class="top-bar-sep"></div>
+
+                <!-- NRC -->
+                <div class="search-group">
+                    <span class="search-group-label">NRC</span>
+                    <datalist id="dl-nrc"></datalist>
+                    <div class="search-pill-wrap">
+                        <span class="search-pill-icon">⌗</span>
+                        <input type="text" class="search-pill-input" id="input-nrc" list="dl-nrc"
+                            placeholder="Buscar NRC…" maxlength="30"
+                            oninput="this.value=this.value.replace(/[^0-9_A-Za-z]/g,'')"
+                            onkeydown="if(event.key==='Enter'){aplicarBusqueda('nrc',this.value.trim());this.blur()}"
+                            onchange="aplicarBusqueda('nrc',this.value.trim())">
+                        <button class="search-pill-go" onclick="aplicarBusqueda('nrc',document.getElementById('input-nrc').value.trim())">↵</button>
+                    </div>
+                </div>
+
+                <!-- RUT -->
+                <div class="search-group">
+                    <span class="search-group-label">RUT</span>
+                    <div class="search-pill-wrap">
+                        <span class="search-pill-icon">◈</span>
+                        <input type="text" class="search-pill-input" id="input-rut"
+                            placeholder="Buscar RUT…" maxlength="12"
+                            oninput="this.value=this.value.replace(/[^0-9kK\-]/g,'')"
+                            onkeydown="if(event.key==='Enter'){aplicarBusqueda('rut',this.value.trim());this.blur()}"
+                            onchange="aplicarBusqueda('rut',this.value.trim())">
+                        <button class="search-pill-go" onclick="aplicarBusqueda('rut',document.getElementById('input-rut').value.trim())">↵</button>
+                    </div>
+                </div>
+
+                <!-- Badge + Limpiar -->
+                <div class="filter-badge" id="filter-badge">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    <span id="badge-txt">—</span>
+                </div>
+                <button class="btn-clear-filter" id="btn-clear-filter" onclick="limpiarBusqueda()">✕ Limpiar</button>
+
+            </div>
         </div>
+        <!-- FIN TOP-BAR -->
+
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
+
         <div class="canal-splash" id="canal-splash">
             <div style="max-width:720px;width:100%;padding:20px;">
                 <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
@@ -204,58 +304,37 @@
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
                     <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Medicina</div>
-                            <div class="canal-card-sub">actasynrc-ISPAB</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Medicina</div><div class="canal-card-sub">actasynrc-ISPAB</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Educación y Cs. Sociales Innovado</div>
-                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES_INNOVADO</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Educación y Cs. Sociales Innovado</div><div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES_INNOVADO</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=tBMSF9&id=%2Fsites%2Factasynrc%2DECONOMA%5FINNOVADO%2FDocumentos%20compartidos%2FECONOM%C3%8DA%5FINNOVADO" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Economía Innovado</div>
-                            <div class="canal-card-sub">actasynrc-ECONOMA_INNOVADO</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Economía Innovado</div><div class="canal-card-sub">actasynrc-ECONOMA_INNOVADO</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=Jobu49&id=%2Fsites%2Factasynrc%2DINGENIERIA%2FDocumentos%20compartidos%2FINGENIERIA" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Ingeniería</div>
-                            <div class="canal-card-sub">actasynrc-INGENIERIA</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Ingeniería</div><div class="canal-card-sub">actasynrc-INGENIERIA</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=2zYXgS&id=%2Fsites%2Factasynrc%2DENFERMERIA%5FINNOVADO%2FDocumentos%20compartidos%2FENFERMERIA%5FINNOVADO" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Enfermería Innovado</div>
-                            <div class="canal-card-sub">actasynrc-ENFERMERIA_INNOVADO</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Enfermería Innovado</div><div class="canal-card-sub">actasynrc-ENFERMERIA_INNOVADO</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Educación y Cs. Sociales</div>
-                            <div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Educación y Cs. Sociales</div><div class="canal-card-sub">actasynrc-EDUCACINYCS.SOCIALES</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                     <a href="https://unabportal365.sharepoint.com/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=ubsBcK&id=%2Fsites%2Factasynrc%2DCIENCIAS%5FDE%5FLA%5FREHABILITACIN%2FDocumentos%20compartidos%2FCIENCIAS%20%5FDE%5FLA%20%5FREHABILITACI%C3%93N" target="_blank" class="canal-card">
                         <div class="teams-icon-sm"><span>T</span></div>
-                        <div class="canal-card-info">
-                            <div class="canal-card-nombre">Ciencias de la Rehabilitación</div>
-                            <div class="canal-card-sub">actasynrc-CIENCIAS_DE_LA_REHABILITACIN</div>
-                        </div>
+                        <div class="canal-card-info"><div class="canal-card-nombre">Ciencias de la Rehabilitación</div><div class="canal-card-sub">actasynrc-CIENCIAS_DE_LA_REHABILITACIN</div></div>
                         <span class="canal-card-arrow">↗</span>
                     </a>
                 </div>
@@ -266,13 +345,14 @@
 </div>
 
 <script>
+    // ── Sidebar y collapsibles (sin cambios) ─────────────
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
-
     function toggleCollapsible(nombre) {
         document.getElementById('header-'+nombre).classList.toggle('open');
         document.getElementById('body-'+nombre).classList.toggle('open');
     }
 
+    // ── URLs de reportes (sin cambios) ───────────────────
     const misReportes = {
         'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false",
         'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
@@ -285,6 +365,15 @@
         'INVITACIONES': "onboarding_invitaciones.html"
     };
 
+    // ── URLs base para filtrado (vistas Power BI normales) ─
+    const urlsBase = {
+        'DASHBOARD':          { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'a90b3a4c28d3179b1fae', filtroRut:true  },
+        'NOMINA_ESTUDIANTES': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'255c88d86191d22dd1c3', filtroRut:true  },
+        'CURSOS_ACTIVOS':     { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'9df5f2db687d901b71b9', filtroRut:false },
+        'CURSOS_PREPARACION': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'75dcbe8308cd22de087d', filtroRut:false },
+        'CURSOS_CIERRE':      { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'ab4e8f37a94c688a5869', filtroRut:false },
+    };
+
     const titulos = {
         'DASHBOARD':'Tablero de Gestión','NOMINA_ESTUDIANTES':'Nómina Estudiantes',
         'CURSOS_ACTIVOS':'Cursos Activos','CURSOS_PREPARACION':'Cursos en Preparación',
@@ -294,18 +383,178 @@
         'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica'
     };
 
+    // ── Estado ───────────────────────────────────────────
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null };
+    let vistaActual = 'DASHBOARD';
+    let catalogoNRC = [];
+
+    // ── Sanitizar valores para OData (caracteres especiales) ─
+    function sanitizarFiltro(v) {
+        return (v||'')
+            .replace(/\u00C1/g,'A').replace(/\u00E1/g,'a')
+            .replace(/\u00C9/g,'E').replace(/\u00E9/g,'e')
+            .replace(/\u00CD/g,'I').replace(/\u00ED/g,'i')
+            .replace(/\u00D3/g,'O').replace(/\u00F3/g,'o')
+            .replace(/\u00DA/g,'U').replace(/\u00FA/g,'u')
+            .replace(/\u00D1/g,'N').replace(/\u00F1/g,'n')
+            .replace(/\u00DC/g,'U').replace(/\u00FC/g,'u');
+    }
+
+    // ── Construir URL con filtros OData ──────────────────
+    function buildURLFiltrada(clave) {
+        const cfg = urlsBase[clave];
+        if (!cfg) return misReportes[clave];
+        const base = 'https://app.powerbi.com/reportEmbed'
+            + '?reportId=' + cfg.reportId
+            + '&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13'
+            + '&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2'
+            + '&autoAuth=true&pageName=' + cfg.page
+            + '&navContentPaneEnabled=false&filterPaneEnabled=false';
+        const fx = [];
+        if (BUSQUEDA.facultad) fx.push("NRC_TUTOR_ACTUAL/FACULTAD eq '" + BUSQUEDA.facultad + "'");
+        if (BUSQUEDA.tutor)    fx.push("NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '" + BUSQUEDA.tutor + "'");
+        if (BUSQUEDA.tipo)     fx.push("NRC_TUTOR_ACTUAL/TIPO_NRC eq '" + BUSQUEDA.tipo + "'");
+        if (BUSQUEDA.nrc)      fx.push("NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '" + BUSQUEDA.nrc + "'");
+        if (BUSQUEDA.rut && cfg.filtroRut) fx.push("consolidado_esudiantes/RUT eq '" + BUSQUEDA.rut + "'");
+        return fx.length ? base + '&filter=' + encodeURIComponent(fx.join(' and ')) : base;
+    }
+
+    // ── Cross-filter: NRCs compatibles con filtros activos ─
+    const eqCI = (a, b) => (a||'').toUpperCase() === (b||'').toUpperCase();
+    function nrcsFiltrados(excluir) {
+        return catalogoNRC.filter(n => {
+            if (excluir !== 'facultad' && BUSQUEDA.facultad && !eqCI(n.facultad, BUSQUEDA.facultad)) return false;
+            if (excluir !== 'tutor'    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
+            if (excluir !== 'tipo'     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
+            if (excluir !== 'nrc'      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
+            return true;
+        });
+    }
+
+    // ── Reconstruir select desde catálogo (con deduplicación) ─
+    function reconstruirSelect(id, campo, excluir) {
+        const sel = document.getElementById(id);
+        const valorActual = sel.value;
+        const placeholder = sel.options[0].text.replace(' ⏳','');
+        if (!catalogoNRC.length) { Array.from(sel.options).forEach(o => { o.hidden = false; }); return; }
+        // Deduplicar con Set antes de ordenar
+        const valoresDisponibles = [...new Set(
+            nrcsFiltrados(excluir).map(n => (n[campo]||'').trim()).filter(Boolean)
+        )].sort();
+        sel.innerHTML = '<option value="">' + placeholder + '</option>';
+        valoresDisponibles.forEach(function(v) {
+            const opt = document.createElement('option');
+            opt.value = v; opt.textContent = v;
+            sel.appendChild(opt);
+        });
+        if (valorActual && valoresDisponibles.includes(valorActual)) {
+            sel.value = valorActual;
+        } else if (valorActual) {
+            sel.value = ''; BUSQUEDA[campo] = null;
+        }
+    }
+
+    function reconstruirDatalistNRC() {
+        const dl = document.getElementById('dl-nrc');
+        dl.innerHTML = '';
+        // Deduplicar NRCs
+        const nrcsVistos = new Set();
+        nrcsFiltrados('nrc').forEach(function(n) {
+            const nrcVal = (n.nrc||'').trim();
+            if (!nrcVal || nrcsVistos.has(nrcVal)) return;
+            nrcsVistos.add(nrcVal);
+            const opt = document.createElement('option');
+            opt.value = n.nrc;
+            opt.label = n.descripcion ? n.nrc + ' · ' + n.descripcion : n.nrc;
+            dl.appendChild(opt);
+        });
+    }
+
+    function sincronizarFiltros() {
+        reconstruirSelect('sel-facultad', 'facultad', 'facultad');
+        reconstruirSelect('sel-tutor',    'tutor',    'tutor');
+        reconstruirSelect('sel-tipo',     'tipo',     'tipo');
+        reconstruirDatalistNRC();
+    }
+
+    // ── Aplicar filtro ───────────────────────────────────
+    function aplicarBusqueda(campo, valor) {
+        BUSQUEDA[campo] = valor || null;
+        sincronizarFiltros();
+        actualizarBadge();
+        if (urlsBase[vistaActual])
+            document.getElementById('visor').src = buildURLFiltrada(vistaActual);
+    }
+
+    // ── Limpiar filtros ──────────────────────────────────
+    function limpiarBusqueda() {
+        BUSQUEDA.nrc = null; BUSQUEDA.rut = null;
+        BUSQUEDA.facultad = null; BUSQUEDA.tutor = null; BUSQUEDA.tipo = null;
+        document.getElementById('input-nrc').value = '';
+        document.getElementById('input-rut').value = '';
+        document.getElementById('sel-facultad').value = '';
+        document.getElementById('sel-tutor').value = '';
+        document.getElementById('sel-tipo').value = '';
+        sincronizarFiltros();
+        actualizarBadge();
+        if (urlsBase[vistaActual])
+            document.getElementById('visor').src = buildURLFiltrada(vistaActual);
+    }
+
+    // ── Badge filtros activos ────────────────────────────
+    function actualizarBadge() {
+        const p = [];
+        if (BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
+        if (BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
+        if (BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
+        if (BUSQUEDA.nrc)      p.push('NRC: ' + BUSQUEDA.nrc);
+        if (BUSQUEDA.rut)      p.push('RUT: ' + BUSQUEDA.rut);
+        const badge = document.getElementById('filter-badge');
+        const clear = document.getElementById('btn-clear-filter');
+        if (p.length) {
+            document.getElementById('badge-txt').textContent = p.join(' · ');
+            badge.classList.add('on'); clear.classList.add('on');
+        } else {
+            badge.classList.remove('on'); clear.classList.remove('on');
+        }
+    }
+
+    // ── Cargar nrcs.json y habilitar selects ─────────────
+    async function cargarSugerenciasNRC() {
+        const labels = {'sel-facultad':'Facultad','sel-tutor':'Tutor','sel-tipo':'Tipo NRC'};
+        try {
+            const resp = await fetch('nrcs.json', { cache: 'no-store' });
+            if (!resp.ok) throw new Error('no ok');
+            catalogoNRC = await resp.json();
+            Object.entries(labels).forEach(function(e) {
+                const sel = document.getElementById(e[0]);
+                sel.options[0].text = e[1];
+                sel.disabled = false;
+            });
+            sincronizarFiltros();
+        } catch(err) {
+            Object.entries(labels).forEach(function(e) {
+                const sel = document.getElementById(e[0]);
+                sel.options[0].text = e[1];
+                sel.disabled = false;
+            });
+        }
+    }
+
+    // ── Navegación (sin cambios, solo agrega vistaActual) ─
     function cargar(clave, btn) {
+        vistaActual = clave;
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
-        const url = misReportes[clave];
+        const url = urlsBase[clave] ? buildURLFiltrada(clave) : misReportes[clave];
         if (url) document.getElementById('visor').src = url;
         document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
         if (window.innerWidth < 800) toggleSidebar();
     }
-
     function cargarOnboarding(clave, btn) {
+        vistaActual = clave;
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
         const url = misReportes[clave];
@@ -315,8 +564,8 @@
         document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
         if (window.innerWidth < 800) toggleSidebar();
     }
-
     function mostrarCanales(btn) {
+        vistaActual = null;
         document.getElementById('visor').style.display = 'none';
         document.getElementById('canal-splash').classList.add('visible');
         document.querySelectorAll('.menu-btn, .canal-btn').forEach(b => b.classList.remove('active'));
@@ -325,6 +574,8 @@
         if (window.innerWidth < 800) toggleSidebar();
     }
 
+    // ── Init ─────────────────────────────────────────────
+    cargarSugerenciasNRC();
     window.onload = function() {
         const btn = document.querySelector('.menu-btn.active');
         if (btn) cargar('DASHBOARD', btn);
