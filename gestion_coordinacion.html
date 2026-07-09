@@ -42,10 +42,129 @@
         .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
         .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
         .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
-        .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
-        .top-bar { background-color: var(--azul-sidebar); height: 50px; display: flex; align-items: center; padding-left: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
-        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+        .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .top-bar { background-color: var(--azul-sidebar); min-height: 50px; display: flex; align-items: center; padding: 6px 12px 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+        .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; flex-shrink: 0; }
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
+        .titulo-vista { font-size: 13px; font-weight: 600; color: white; flex-shrink: 0; margin-right: 4px; white-space: nowrap; }
+        .separator-bar { width: 1px; height: 24px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+
+        /* ── FILTROS ── */
+        .filtros-wrapper { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; flex: 1; }
+        .filtro-select {
+            background-color: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 12px;
+            padding: 4px 10px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+            max-width: 155px;
+            min-width: 90px;
+        }
+        .filtro-select:hover, .filtro-select:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); color: #fff; }
+        .filtro-select option { background-color: #1f2940; color: #e0e0e0; }
+        .filtro-select:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* pill NRC */
+        .pill-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
+        .pill-input {
+            background-color: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 12px;
+            padding: 4px 10px;
+            outline: none;
+            transition: all 0.2s;
+            width: 90px;
+        }
+        .pill-input::placeholder { color: rgba(255,255,255,0.35); }
+        .pill-input:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); color: #fff; width: 140px; }
+        .pill-input:disabled { opacity: 0.4; cursor: not-allowed; }
+        /* dropdown custom NRC */
+        .nrc-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            background: #1a2540;
+            border: 1px solid rgba(255,215,0,0.35);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999;
+            min-width: 220px;
+            display: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        }
+        .nrc-dropdown.visible { display: block; }
+        .nrc-dropdown-item {
+            padding: 7px 12px;
+            font-size: 12px;
+            color: #d0d0d0;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nrc-dropdown-item:hover, .nrc-dropdown-item.selected { background: rgba(255,215,0,0.15); color: #fff; }
+        .nrc-dropdown-item .match { color: var(--amarillo-top); font-weight: 700; }
+        .nrc-dropdown::-webkit-scrollbar { width: 4px; }
+        .nrc-dropdown::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 4px; }
+
+        /* filtro fecha */
+        .fecha-wrap { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+        .fecha-label { font-size: 11px; color: var(--texto-gris); white-space: nowrap; }
+        .filtro-fecha {
+            background-color: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 11px;
+            padding: 4px 8px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 105px;
+        }
+        .filtro-fecha::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+        .filtro-fecha:hover, .filtro-fecha:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); }
+        .filtro-fecha:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* badge + limpiar */
+        .badge-activo {
+            background: rgba(255,215,0,0.18);
+            border: 1px solid rgba(255,215,0,0.4);
+            border-radius: 20px;
+            color: var(--amarillo-top);
+            font-size: 11px;
+            padding: 3px 9px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .badge-activo.visible { display: flex; }
+        .btn-limpiar {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 20px;
+            color: #fca5a5;
+            font-size: 11px;
+            padding: 4px 10px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .btn-limpiar:hover { background: rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.7); }
+        .btn-limpiar.visible { display: flex; }
+
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
         .btn-tutoria {
             margin: 12px 15px;
@@ -127,32 +246,120 @@
     <div class="content-area">
         <div class="top-bar">
             <button class="toggle-btn" onclick="toggleSidebar()" title="Abrir/Cerrar Menú">☰</button>
-            <span style="margin-left: 15px; font-size: 14px; font-weight: 600;" id="titulo-vista">Vista de Reporte</span>
+            <span class="titulo-vista" id="titulo-vista">Dashboard Macro Facultades</span>
+            <div class="separator-bar"></div>
+
+            <div class="filtros-wrapper">
+                <!-- Facultad -->
+                <select class="filtro-select" id="sel-facultad" onchange="sincronizarFiltros('facultad')" disabled title="Facultad">
+                    <option value="">⏳ Facultad</option>
+                </select>
+
+                <!-- Tutor -->
+                <select class="filtro-select" id="sel-tutor" onchange="sincronizarFiltros('tutor')" disabled title="Tutor">
+                    <option value="">⏳ Tutor</option>
+                </select>
+
+                <!-- Tipo NRC -->
+                <select class="filtro-select" id="sel-tipo" onchange="sincronizarFiltros('tipo')" disabled title="Tipo NRC">
+                    <option value="">⏳ Tipo</option>
+                </select>
+
+                <!-- Estado CAL -->
+                <select class="filtro-select" id="sel-estado" onchange="sincronizarFiltros('estado')" disabled title="Estado">
+                    <option value="">⏳ Estado</option>
+                </select>
+
+                <div class="separator-bar"></div>
+
+                <!-- Pill NRC con dropdown custom (filtra por "contiene") -->
+                <div class="pill-wrap" id="nrc-wrap">
+                    <input type="text" id="pill-nrc" class="pill-input" placeholder="🔍 NRC"
+                        oninput="onNRCInput(this.value)"
+                        onkeydown="onNRCKeydown(event)"
+                        onfocus="mostrarDropdownNRC()"
+                        disabled
+                        maxlength="30"
+                        title="Buscar NRC — filtra por cualquier parte del código"
+                        autocomplete="off">
+                    <div class="nrc-dropdown" id="nrc-dropdown"></div>
+                </div>
+
+                <div class="separator-bar"></div>
+
+                <!-- Fecha Inicio -->
+                <div class="fecha-wrap">
+                    <span class="fecha-label">📅 Inicio:</span>
+                    <select class="filtro-select" id="sel-fecha" onchange="sincronizarFiltros('fecha')" disabled title="Fecha de inicio" style="min-width:130px; max-width:170px;">
+                        <option value="">⏳ Fecha inicio</option>
+                    </select>
+                </div>
+
+                <div class="separator-bar"></div>
+
+                <!-- Badge + Limpiar -->
+                <div class="badge-activo" id="badge-activo">🔍 <span id="badge-txt"></span></div>
+                <button class="btn-limpiar" id="btn-limpiar" onclick="limpiarTodo()">✕ Limpiar</button>
+            </div>
         </div>
+
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
     </div>
 </div>
 
 <script>
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
-
-    function toggleCollapsible(nombre) {
-        document.getElementById('header-' + nombre).classList.toggle('open');
-        document.getElementById('body-' + nombre).classList.toggle('open');
-    }
-
+    /* ========================================================
+       MAPA DE REPORTES
+       Solo los reportes Power BI (powerbi.com/reportEmbed)
+       reciben filtros OData. Los RDL (rdlEmbed) se cargan sin
+       filtro porque no soportan el parámetro &filter=
+    ======================================================== */
     const misReportes = {
-        'BASE_COORDINACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9740492cd2050949826e&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'DASHBOARD_MACRO': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'REPORTE_INDUCCION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CARGA_TUTORIAL': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'RESUMEN_SEMAFORO': "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CALENDARIOS': "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'CURSOS_INICIAR': "https://app.powerbi.com/rdlEmbed?reportId=2d95ad06-3811-4fba-a187-7e1e8f2ea61c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'REPORTE_NRC': "https://app.powerbi.com/rdlEmbed?reportId=a0026236-1552-4a2d-bdc8-ee487be7de93&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'INCIDENCIAS_MASTER': "https://app.powerbi.com/rdlEmbed?reportId=42ddd2bd-2af5-4354-9c11-4f9f20c0805c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'INCIDENCIAS_NRC': "https://app.powerbi.com/rdlEmbed?reportId=eda17000-5679-49f5-bc46-41cfff1bcb95&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'BASE_SEGUIMIENTO': "https://app.powerbi.com/rdlEmbed?reportId=72cf6f52-dfa3-4cba-92f4-6a8c5c8ccf8e&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi"
+        'BASE_COORDINACION': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9740492cd2050949826e&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
+        'DASHBOARD_MACRO': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
+        'REPORTE_INDUCCION': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
+        'CARGA_TUTORIAL': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
+        'RESUMEN_SEMAFORO': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
+        // RDL — no reciben filtro OData
+        'CALENDARIOS': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=94fc6064-322a-48be-9968-27fe00ee8ae0&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        },
+        'CURSOS_INICIAR': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=2d95ad06-3811-4fba-a187-7e1e8f2ea61c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        },
+        'REPORTE_NRC': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=a0026236-1552-4a2d-bdc8-ee487be7de93&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        },
+        'INCIDENCIAS_MASTER': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=42ddd2bd-2af5-4354-9c11-4f9f20c0805c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        },
+        'INCIDENCIAS_NRC': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=eda17000-5679-49f5-bc46-41cfff1bcb95&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        },
+        'BASE_SEGUIMIENTO': {
+            url: "https://app.powerbi.com/rdlEmbed?reportId=72cf6f52-dfa3-4cba-92f4-6a8c5c8ccf8e&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
+            tipo: 'rdl'
+        }
     };
 
     const titulosVista = {
@@ -169,16 +376,359 @@
         'BASE_SEGUIMIENTO': 'Estado Base Seguimiento'
     };
 
-    function cargar(clave, btn) {
-        const url = misReportes[clave];
+    /* ── estado global ── */
+    let nrcsData = [];
+    let claveActual = 'DASHBOARD_MACRO';
+
+    const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
+
+    /* ========================================================
+       CARGA DE nrcs.json
+    ======================================================== */
+    async function cargarNRCS() {
+        try {
+            const r = await fetch(NRCS_JSON_URL, { cache: 'no-store' });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            nrcsData = await r.json();
+            poblarSelects(nrcsData);
+            habilitarControles();
+        } catch (e) {
+            console.warn('nrcs.json no disponible:', e.message);
+            // deja controles deshabilitados con texto de error
+            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha'].forEach(id => {
+                const el = document.getElementById(id);
+                el.innerHTML = '<option value="">⚠️ Sin datos</option>';
+            });
+            document.getElementById('pill-nrc').placeholder = '⚠️ Sin datos';
+        }
+    }
+
+    function habilitarControles() {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha','pill-nrc'].forEach(id => {
+            document.getElementById(id).disabled = false;
+        });
+    }
+
+    /* ========================================================
+       POBLAR SELECTS desde array de NRCs
+    ======================================================== */
+    function poblarSelects(arr) {
+        const facultades  = [...new Set(arr.map(x => x.facultad).filter(Boolean))].sort();
+        const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean))].sort();
+        const tipos       = [...new Set(arr.map(x => x.tipo).filter(Boolean))].sort();
+        const estados     = [...new Set(arr.map(x => x.estado).filter(Boolean))].sort();
+        const fechas      = [...new Set(arr.map(x => x['fecha inicio']).filter(Boolean))].sort();
+        const nrcs        = [...new Set(arr.map(x => x.nrc).filter(Boolean))].sort();
+
+        llenarSelect('sel-facultad', facultades, '— Facultad —');
+        llenarSelect('sel-tutor',    tutores,    '— Tutor —');
+        llenarSelect('sel-tipo',     tipos,      '— Tipo —');
+        llenarSelect('sel-estado',   estados,    '— Estado —');
+        llenarSelectFechas(fechas);
+        llenarDatalist(nrcs);
+    }
+
+    function llenarSelect(id, valores, placeholder) {
+        const el = document.getElementById(id);
+        el.innerHTML = `<option value="">${placeholder}</option>`;
+        valores.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = v;
+            el.appendChild(o);
+        });
+    }
+
+    function llenarSelectFechas(fechas) {
+        const el = document.getElementById('sel-fecha');
+        el.innerHTML = '<option value="">— Fecha inicio —</option>';
+        fechas.forEach(f => {
+            const o = document.createElement('option');
+            o.value = f;
+            // formato legible DD/MM/YYYY
+            const partes = f.split('-');
+            o.textContent = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : f;
+            el.appendChild(o);
+        });
+    }
+
+    /* NRC dropdown custom */
+    let nrcListaCompleta = [];
+    let nrcDropdownIdx = -1;
+
+    function llenarDatalist(nrcs) {
+        // guarda la lista; el dropdown se construye al escribir
+        nrcListaCompleta = nrcs;
+    }
+
+    function onNRCInput(val) {
+        nrcDropdownIdx = -1;
+        const q = val.trim().toUpperCase();
+        if (!q) {
+            ocultarDropdownNRC();
+            sincronizarFiltros('nrc');
+            return;
+        }
+        const matches = nrcListaCompleta.filter(n => n.toUpperCase().includes(q)).slice(0, 50);
+        renderDropdownNRC(matches, q);
+    }
+
+    function onNRCKeydown(e) {
+        const dd = document.getElementById('nrc-dropdown');
+        const items = dd.querySelectorAll('.nrc-dropdown-item');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            nrcDropdownIdx = Math.min(nrcDropdownIdx + 1, items.length - 1);
+            actualizarSeleccionDropdown(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            nrcDropdownIdx = Math.max(nrcDropdownIdx - 1, -1);
+            actualizarSeleccionDropdown(items);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (nrcDropdownIdx >= 0 && items[nrcDropdownIdx]) {
+                seleccionarNRC(items[nrcDropdownIdx].dataset.val);
+            } else {
+                seleccionarNRC(document.getElementById('pill-nrc').value.trim());
+            }
+        } else if (e.key === 'Escape') {
+            ocultarDropdownNRC();
+        }
+    }
+
+    function actualizarSeleccionDropdown(items) {
+        items.forEach((el, i) => el.classList.toggle('selected', i === nrcDropdownIdx));
+        if (nrcDropdownIdx >= 0 && items[nrcDropdownIdx]) items[nrcDropdownIdx].scrollIntoView({ block: 'nearest' });
+    }
+
+    function renderDropdownNRC(matches, q) {
+        const dd = document.getElementById('nrc-dropdown');
+        if (!matches.length) { ocultarDropdownNRC(); return; }
+        dd.innerHTML = '';
+        matches.forEach(n => {
+            const div = document.createElement('div');
+            div.className = 'nrc-dropdown-item';
+            div.dataset.val = n;
+            // resalta la parte que coincide
+            const idx = n.toUpperCase().indexOf(q);
+            if (idx >= 0) {
+                div.innerHTML = escHtml(n.slice(0, idx))
+                    + `<span class="match">${escHtml(n.slice(idx, idx + q.length))}</span>`
+                    + escHtml(n.slice(idx + q.length));
+            } else {
+                div.textContent = n;
+            }
+            div.addEventListener('mousedown', () => seleccionarNRC(n));
+            dd.appendChild(div);
+        });
+        dd.classList.add('visible');
+    }
+
+    function seleccionarNRC(val) {
+        document.getElementById('pill-nrc').value = val;
+        ocultarDropdownNRC();
+        sincronizarFiltros('nrc');
+    }
+
+    function mostrarDropdownNRC() {
+        const q = document.getElementById('pill-nrc').value.trim().toUpperCase();
+        if (q) onNRCInput(document.getElementById('pill-nrc').value);
+    }
+
+    function ocultarDropdownNRC() {
+        document.getElementById('nrc-dropdown').classList.remove('visible');
+    }
+
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    /* ========================================================
+       CROSS-FILTER INTERDEPENDIENTE
+       Al cambiar cualquier filtro se recalcula el subconjunto
+       de NRCs válidos para los demás filtros.
+    ======================================================== */
+    function getFiltrosActivos() {
+        return {
+            facultad : document.getElementById('sel-facultad').value,
+            tutor    : (document.getElementById('sel-tutor').value),
+            tipo     : document.getElementById('sel-tipo').value,
+            estado   : document.getElementById('sel-estado').value,
+            fecha    : document.getElementById('sel-fecha').value,
+            nrc      : document.getElementById('pill-nrc').value.trim()
+        };
+    }
+
+    function nrcsFiltrados(excluir = null) {
+        const f = getFiltrosActivos();
+        return nrcsData.filter(x => {
+            if (excluir !== 'facultad' && f.facultad && x.facultad !== f.facultad)           return false;
+            if (excluir !== 'tutor'    && f.tutor    && x.tutor !== f.tutor)                  return false;
+            if (excluir !== 'tipo'     && f.tipo     && x.tipo !== f.tipo)                    return false;
+            if (excluir !== 'estado'   && f.estado   && x.estado !== f.estado)                return false;
+            if (excluir !== 'fecha'    && f.fecha    && x['fecha inicio'] !== f.fecha)        return false;
+            if (excluir !== 'nrc'      && f.nrc      && !x.nrc.includes(f.nrc))               return false;
+            return true;
+        });
+    }
+
+    function reconstruirSelect(id, campo, placeholder, excluir) {
+        const el = document.getElementById(id);
+        const valActual = el.value;
+        const subset = nrcsFiltrados(excluir);
+        let vals;
+        if (campo === 'tutor') {
+            vals = [...new Set(subset.map(x => x.tutor).filter(Boolean))].sort();
+        } else if (campo === 'fecha') {
+            vals = [...new Set(subset.map(x => x['fecha inicio']).filter(Boolean))].sort();
+        } else {
+            vals = [...new Set(subset.map(x => x[campo]).filter(Boolean))].sort();
+        }
+        el.innerHTML = `<option value="">${placeholder}</option>`;
+        vals.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v;
+            if (campo === 'fecha') {
+                const p = v.split('-');
+                o.textContent = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+            } else {
+                o.textContent = v;
+            }
+            el.appendChild(o);
+        });
+        if (vals.includes(valActual)) el.value = valActual;
+    }
+
+    function sincronizarFiltros(cambiado) {
+        // reconstruye todos los selects EXCEPTO el que acaba de cambiar
+        if (cambiado !== 'facultad') reconstruirSelect('sel-facultad', 'facultad', '— Facultad —', 'facultad');
+        if (cambiado !== 'tutor')    reconstruirSelect('sel-tutor',    'tutor',    '— Tutor —',    'tutor');
+        if (cambiado !== 'tipo')     reconstruirSelect('sel-tipo',     'tipo',     '— Tipo —',     'tipo');
+        if (cambiado !== 'estado')   reconstruirSelect('sel-estado',   'estado',   '— Estado —',   'estado');
+        if (cambiado !== 'fecha')    reconstruirSelect('sel-fecha',    'fecha',    '— Fecha inicio —', 'fecha');
+
+        // actualizar lista de NRCs disponibles según subconjunto activo
+        const nrcsActivos = [...new Set(nrcsFiltrados(null).map(x => x.nrc).filter(Boolean))].sort();
+        nrcListaCompleta = nrcsActivos;
+
+        actualizarBadge();
+        refrescarIframe();
+    }
+
+    // cierra dropdown al hacer click fuera
+    document.addEventListener('click', e => {
+        if (!document.getElementById('nrc-wrap').contains(e.target)) ocultarDropdownNRC();
+    });
+
+    /* ========================================================
+       CONSTRUCCIÓN DE URL OData
+       Tabla semántica: NRC_TUTOR_ACTUAL
+       Solo para reportes tipo 'pbi'. Los RDL quedan sin filtro.
+    ======================================================== */
+    function sanitizar(v) {
+        // Escapa comillas simples dentro del valor OData
+        return v.replace(/'/g, "''");
+    }
+
+    function buildURLFiltrada() {
+        const cfg = misReportes[claveActual];
+        if (!cfg || cfg.tipo === 'rdl') return cfg ? cfg.url : '';
+
+        const f = getFiltrosActivos();
+        const condiciones = [];
+
+        if (f.nrc) {
+            condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
+        } else {
+            // Filtros por dropdown solo si no hay NRC específico
+            if (f.facultad) condiciones.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizar(f.facultad)}'`);
+            if (f.tutor)    condiciones.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizar(f.tutor)}'`);
+            if (f.tipo)     condiciones.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizar(f.tipo)}'`);
+            if (f.estado)   condiciones.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizar(f.estado)}'`);
+            if (f.fecha)    condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${f.fecha}T00:00:00'`);
+        }
+
+        if (condiciones.length === 0) return cfg.url;
+
+        const filtro = condiciones.join(' and ');
+        return cfg.url + '&filter=' + encodeURIComponent(filtro);
+    }
+
+    /* ========================================================
+       BADGE DE FILTROS ACTIVOS
+    ======================================================== */
+    function actualizarBadge() {
+        const f = getFiltrosActivos();
+        const partes = [];
+        if (f.facultad) partes.push(f.facultad);
+        if (f.tutor)    partes.push(f.tutor);
+        if (f.tipo)     partes.push(f.tipo);
+        if (f.estado)   partes.push(f.estado);
+        if (f.fecha)    {
+            const p = f.fecha.split('-');
+            partes.push(p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : f.fecha);
+        }
+        if (f.nrc)      partes.push('NRC: ' + f.nrc);
+
+        const badge   = document.getElementById('badge-activo');
+        const limpiar = document.getElementById('btn-limpiar');
+        const txt     = document.getElementById('badge-txt');
+
+        if (partes.length > 0) {
+            txt.textContent = partes.join(' › ');
+            badge.classList.add('visible');
+            limpiar.classList.add('visible');
+        } else {
+            badge.classList.remove('visible');
+            limpiar.classList.remove('visible');
+        }
+    }
+
+    /* ========================================================
+       LIMPIAR TODO
+    ======================================================== */
+    function limpiarTodo() {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        document.getElementById('pill-nrc').value = '';
+        ocultarDropdownNRC();
+        poblarSelects(nrcsData);
+        actualizarBadge();
+        refrescarIframe();
+    }
+
+    /* ========================================================
+       CARGA DE REPORTE EN IFRAME
+    ======================================================== */
+    function refrescarIframe() {
+        const url = buildURLFiltrada();
         if (url) document.getElementById('visor').src = url;
+    }
+
+    function cargar(clave, btn) {
+        claveActual = clave;
+        refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        if (btn) btn.classList.add('active');
         document.getElementById('titulo-vista').textContent = titulosVista[clave] || 'Vista de Reporte';
         if (window.innerWidth < 800) toggleSidebar();
     }
 
+    /* ========================================================
+       SIDEBAR
+    ======================================================== */
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+
+    function toggleCollapsible(nombre) {
+        document.getElementById('header-' + nombre).classList.toggle('open');
+        document.getElementById('body-' + nombre).classList.toggle('open');
+    }
+
+    /* ========================================================
+       INIT
+    ======================================================== */
     window.onload = function() {
+        cargarNRCS();
         const btnInicio = document.querySelector('.menu-btn.active');
         if (btnInicio) cargar('DASHBOARD_MACRO', btnInicio);
     };
