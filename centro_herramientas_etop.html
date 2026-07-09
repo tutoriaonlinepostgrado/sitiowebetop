@@ -710,8 +710,15 @@ function parseWebTextBlocks(rawText) {
 
     // ── Bloque de metadatos del curso (líneas de texto plano) ───────────────
     if (!isTabular) {
+      // Reset completo al detectar inicio de nuevo bloque de curso
+      if (/^Inscripciones de Curso/i.test(stripped)) {
+        currentPeriodo = ''; currentNrc = ''; currentNrcCod = ''; currentNombre = '';
+        inTable = false; colRut = -1; colNombre = -1; colEmail = -1; colRol = -1;
+        continue;
+      }
+
       // Detectar Periodo y NRC por la línea anterior como label
-      if (PERIODO_RE.test(stripped) && !inTable) {
+      if (PERIODO_RE.test(stripped)) {
         const prev = (lines[i - 1] || '').trim().toUpperCase();
         if      (prev === 'PERIODO') { currentPeriodo = stripped; }
         else if (prev === 'NRC')     { currentNrc     = stripped; }
