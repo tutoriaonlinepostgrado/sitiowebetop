@@ -379,6 +379,7 @@
     /* ── estado global ── */
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
+    let nrcConfirmado = '';   // NRC seleccionado que se envía al iframe (distinto del texto parcial del input)
 
     const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
 
@@ -440,7 +441,10 @@
 
     function llenarSelectFechas(fechas) {
         const el = document.getElementById('sel-fecha');
-        el.innerHTML = '<option value="">— Fecha inicio —</option>';
+        const label = fechas.length > 0
+            ? `— Fecha inicio (${fechas.length}) —`
+            : '— Fecha inicio —';
+        el.innerHTML = `<option value="">${label}</option>`;
         fechas.forEach(f => {
             const o = document.createElement('option');
             o.value = f;
@@ -463,12 +467,18 @@
     function onNRCInput(val) {
         nrcDropdownIdx = -1;
         const q = val.trim().toUpperCase();
+        // Si el usuario edita el campo → anular la confirmación previa
+        if (val.trim() !== nrcConfirmado) nrcConfirmado = '';
         if (!q) {
             ocultarDropdownNRC();
-            sincronizarFiltros('nrc');
+            sincronizarFiltros('nrc');   // refresca iframe sin NRC
             return;
         }
-        const matches = nrcListaCompleta.filter(n => n.toUpperCase().includes(q)).slice(0, 50);
+        // Busca SIEMPRE en nrcsData completo — no en el subconjunto filtrado
+        // para que el usuario pueda encontrar cualquier NRC independientemente
+        // de los otros filtros activos.
+        const todosLosNRCs = [...new Set(nrcsData.map(x => x.nrc).filter(Boolean))].sort();
+        const matches = todosLosNRCs.filter(n => n.toUpperCase().includes(q)).slice(0, 50);
         renderDropdownNRC(matches, q);
     }
 
@@ -524,6 +534,9 @@
     }
 
     function seleccionarNRC(val) {
+        // Solo confirmar si el valor existe exactamente en la lista
+        const existe = nrcsData.some(x => x.nrc === val);
+        nrcConfirmado = existe ? val : '';
         document.getElementById('pill-nrc').value = val;
         ocultarDropdownNRC();
         sincronizarFiltros('nrc');
@@ -550,23 +563,25 @@
     function getFiltrosActivos() {
         return {
             facultad : document.getElementById('sel-facultad').value,
-            tutor    : (document.getElementById('sel-tutor').value),
+            tutor    : document.getElementById('sel-tutor').value,
             tipo     : document.getElementById('sel-tipo').value,
             estado   : document.getElementById('sel-estado').value,
             fecha    : document.getElementById('sel-fecha').value,
-            nrc      : document.getElementById('pill-nrc').value.trim()
+            nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
 
     function nrcsFiltrados(excluir = null) {
         const f = getFiltrosActivos();
+        // Para el cross-filter de los dropdowns usamos el NRC confirmado (coincidencia exacta).
+        // El texto parcial del input NO restringe los demás selects.
         return nrcsData.filter(x => {
             if (excluir !== 'facultad' && f.facultad && x.facultad !== f.facultad)           return false;
             if (excluir !== 'tutor'    && f.tutor    && x.tutor !== f.tutor)                  return false;
             if (excluir !== 'tipo'     && f.tipo     && x.tipo !== f.tipo)                    return false;
             if (excluir !== 'estado'   && f.estado   && x.estado !== f.estado)                return false;
             if (excluir !== 'fecha'    && f.fecha    && x['fecha inicio'] !== f.fecha)        return false;
-            if (excluir !== 'nrc'      && f.nrc      && !x.nrc.includes(f.nrc))               return false;
+            if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
     }
@@ -580,19 +595,19 @@
             vals = [...new Set(subset.map(x => x.tutor).filter(Boolean))].sort();
         } else if (campo === 'fecha') {
             vals = [...new Set(subset.map(x => x['fecha inicio']).filter(Boolean))].sort();
+            // Para fecha usa llenarSelectFechas para mantener el contador y formato
+            llenarSelectFechas(vals);
+            if (vals.includes(valActual)) el.value = valActual;
+            return;
         } else {
             vals = [...new Set(subset.map(x => x[campo]).filter(Boolean))].sort();
         }
-        el.innerHTML = `<option value="">${placeholder}</option>`;
+        const label = vals.length > 0 ? `${placeholder} (${vals.length})` : placeholder;
+        el.innerHTML = `<option value="">${label}</option>`;
         vals.forEach(v => {
             const o = document.createElement('option');
             o.value = v;
-            if (campo === 'fecha') {
-                const p = v.split('-');
-                o.textContent = p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
-            } else {
-                o.textContent = v;
-            }
+            o.textContent = v;
             el.appendChild(o);
         });
         if (vals.includes(valActual)) el.value = valActual;
@@ -637,14 +652,15 @@
         const condiciones = [];
 
         if (f.nrc) {
+            // NRC confirmado → filtro exacto, tiene prioridad sobre todo
             condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
         } else {
-            // Filtros por dropdown solo si no hay NRC específico
+            // Dropdowns — la FECHA no se envía al iframe (es solo para cross-filter entre selects)
             if (f.facultad) condiciones.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizar(f.facultad)}'`);
             if (f.tutor)    condiciones.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizar(f.tutor)}'`);
             if (f.tipo)     condiciones.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizar(f.tipo)}'`);
             if (f.estado)   condiciones.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizar(f.estado)}'`);
-            if (f.fecha)    condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${f.fecha}T00:00:00'`);
+            // f.fecha → NO va al iframe; su único rol es acotar los demás selects (cross-filter)
         }
 
         if (condiciones.length === 0) return cfg.url;
@@ -691,6 +707,7 @@
             document.getElementById(id).value = '';
         });
         document.getElementById('pill-nrc').value = '';
+        nrcConfirmado = '';
         ocultarDropdownNRC();
         poblarSelects(nrcsData);
         actualizarBadge();
