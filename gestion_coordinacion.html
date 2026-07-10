@@ -115,24 +115,7 @@
         .nrc-dropdown::-webkit-scrollbar { width: 4px; }
         .nrc-dropdown::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 4px; }
 
-        /* filtro fecha */
-        .fecha-wrap { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-        .fecha-label { font-size: 11px; color: var(--texto-gris); white-space: nowrap; }
-        .filtro-fecha {
-            background-color: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,215,0,0.25);
-            border-radius: 20px;
-            color: #e0e0e0;
-            font-size: 11px;
-            padding: 4px 8px;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 105px;
-        }
-        .filtro-fecha::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
-        .filtro-fecha:hover, .filtro-fecha:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); }
-        .filtro-fecha:disabled { opacity: 0.4; cursor: not-allowed; }
+
 
         /* badge + limpiar */
         .badge-activo {
@@ -284,17 +267,6 @@
                         autocomplete="off">
                     <div class="nrc-dropdown" id="nrc-dropdown"></div>
                 </div>
-
-                <div class="separator-bar"></div>
-
-                <!-- Fecha Inicio -->
-                <div class="fecha-wrap">
-                    <span class="fecha-label">📅 Inicio:</span>
-                    <select class="filtro-select" id="sel-fecha" onchange="sincronizarFiltros('fecha')" disabled title="Fecha de inicio" style="min-width:130px; max-width:170px;">
-                        <option value="">⏳ Fecha inicio</option>
-                    </select>
-                </div>
-
                 <div class="separator-bar"></div>
 
                 <!-- Badge + Limpiar -->
@@ -396,7 +368,7 @@
         } catch (e) {
             console.warn('nrcs.json no disponible:', e.message);
             // deja controles deshabilitados con texto de error
-            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha'].forEach(id => {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-estado'].forEach(id => {
                 const el = document.getElementById(id);
                 el.innerHTML = '<option value="">⚠️ Sin datos</option>';
             });
@@ -405,7 +377,7 @@
     }
 
     function habilitarControles() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha','pill-nrc'].forEach(id => {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','pill-nrc'].forEach(id => {
             document.getElementById(id).disabled = false;
         });
     }
@@ -418,14 +390,12 @@
         const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean))].sort();
         const tipos       = [...new Set(arr.map(x => x.tipo).filter(Boolean))].sort();
         const estados     = [...new Set(arr.map(x => x.estado).filter(Boolean))].sort();
-        const fechas      = [...new Set(arr.map(x => x['fecha inicio']).filter(Boolean))].sort();
         const nrcs        = [...new Set(arr.map(x => x.nrc).filter(Boolean))].sort();
 
         llenarSelect('sel-facultad', facultades, '— Facultad —');
         llenarSelect('sel-tutor',    tutores,    '— Tutor —');
         llenarSelect('sel-tipo',     tipos,      '— Tipo —');
         llenarSelect('sel-estado',   estados,    '— Estado —');
-        llenarSelectFechas(fechas);
         llenarDatalist(nrcs);
     }
 
@@ -439,21 +409,6 @@
         });
     }
 
-    function llenarSelectFechas(fechas) {
-        const el = document.getElementById('sel-fecha');
-        const label = fechas.length > 0
-            ? `— Fecha inicio (${fechas.length}) —`
-            : '— Fecha inicio —';
-        el.innerHTML = `<option value="">${label}</option>`;
-        fechas.forEach(f => {
-            const o = document.createElement('option');
-            o.value = f;
-            // formato legible DD/MM/YYYY
-            const partes = f.split('-');
-            o.textContent = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : f;
-            el.appendChild(o);
-        });
-    }
 
     /* NRC dropdown custom */
     let nrcListaCompleta = [];
@@ -566,7 +521,6 @@
             tutor    : document.getElementById('sel-tutor').value,
             tipo     : document.getElementById('sel-tipo').value,
             estado   : document.getElementById('sel-estado').value,
-            fecha    : document.getElementById('sel-fecha').value,
             nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
@@ -580,7 +534,6 @@
             if (excluir !== 'tutor'    && f.tutor    && x.tutor !== f.tutor)                  return false;
             if (excluir !== 'tipo'     && f.tipo     && x.tipo !== f.tipo)                    return false;
             if (excluir !== 'estado'   && f.estado   && x.estado !== f.estado)                return false;
-            if (excluir !== 'fecha'    && f.fecha    && x['fecha inicio'] !== f.fecha)        return false;
             if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
@@ -593,12 +546,6 @@
         let vals;
         if (campo === 'tutor') {
             vals = [...new Set(subset.map(x => x.tutor).filter(Boolean))].sort();
-        } else if (campo === 'fecha') {
-            vals = [...new Set(subset.map(x => x['fecha inicio']).filter(Boolean))].sort();
-            // Para fecha usa llenarSelectFechas para mantener el contador y formato
-            llenarSelectFechas(vals);
-            if (vals.includes(valActual)) el.value = valActual;
-            return;
         } else {
             vals = [...new Set(subset.map(x => x[campo]).filter(Boolean))].sort();
         }
@@ -619,7 +566,6 @@
         if (cambiado !== 'tutor')    reconstruirSelect('sel-tutor',    'tutor',    '— Tutor —',    'tutor');
         if (cambiado !== 'tipo')     reconstruirSelect('sel-tipo',     'tipo',     '— Tipo —',     'tipo');
         if (cambiado !== 'estado')   reconstruirSelect('sel-estado',   'estado',   '— Estado —',   'estado');
-        if (cambiado !== 'fecha')    reconstruirSelect('sel-fecha',    'fecha',    '— Fecha inicio —', 'fecha');
 
         // actualizar lista de NRCs disponibles según subconjunto activo
         const nrcsActivos = [...new Set(nrcsFiltrados(null).map(x => x.nrc).filter(Boolean))].sort();
@@ -679,10 +625,6 @@
         if (f.tutor)    partes.push(f.tutor);
         if (f.tipo)     partes.push(f.tipo);
         if (f.estado)   partes.push(f.estado);
-        if (f.fecha)    {
-            const p = f.fecha.split('-');
-            partes.push(p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : f.fecha);
-        }
         if (f.nrc)      partes.push('NRC: ' + f.nrc);
 
         const badge   = document.getElementById('badge-activo');
@@ -703,7 +645,7 @@
        LIMPIAR TODO
     ======================================================== */
     function limpiarTodo() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-fecha'].forEach(id => {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado'].forEach(id => {
             document.getElementById(id).value = '';
         });
         document.getElementById('pill-nrc').value = '';
