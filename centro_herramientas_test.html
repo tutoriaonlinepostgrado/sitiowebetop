@@ -926,13 +926,18 @@ function parsearTextoCalendario(texto){
     if(!profesor||/^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor))profesor='POR DEFINIR';
     if(!nombre&&!inicio)continue;
     // ── NRC: real o temporal globalmente único ──────────────────────────────
+    // Si NRC vacío pero tampoco hay fecha de inicio → no es un curso real (observación, nota, etc.) → descartar
     let nrcFinal='';
     if(NRC_PAT.test(nv)){
       nrcFinal=nv;
-    }else{
+    }else if(inicio){
+      // Solo asignar TMP si hay fecha de inicio válida → es un curso real sin NRC aún
       tmpSeq++;
       const base=(codigo||nombre.replace(/[^A-Z0-9]/gi,'').toUpperCase().substring(0,6)||'CURSO');
       nrcFinal='TMP-'+base+'-'+ts+'-'+String(tmpSeq).padStart(2,'0');
+    }else{
+      // NRC vacío + sin fecha de inicio = observación/nota/fila basura → skip
+      continue;
     }
     resultados.push({NRC:nrcFinal,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,PROFESOR:profesor,_programa:mP});
   }
