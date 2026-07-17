@@ -1311,7 +1311,9 @@ function t4CoordRenderChips(){
   selArr.forEach(c=>{
     const chip=document.createElement('span');
     chip.style.cssText='background:rgba(246,193,40,0.18);border:1px solid rgba(246,193,40,0.5);color:#f6c128;font-size:0.75rem;font-weight:700;padding:0.18rem 0.55rem;border-radius:20px;display:inline-flex;align-items:center;gap:0.35rem;white-space:nowrap;';
-    chip.innerHTML=c.nombre+' <span style="cursor:pointer;font-size:0.9rem;line-height:1;" onclick="event.stopPropagation();t4CoordRemove(''+c.correo+'')">×</span>';
+    chip.dataset.correo=c.correo;
+    chip.innerHTML=c.nombre+' <span style="cursor:pointer;font-size:0.9rem;line-height:1;">×</span>';
+    chip.querySelector('span').addEventListener('click',function(e){e.stopPropagation();t4CoordRemove(c.correo);});
     chips.insertBefore(chip, ph);
   });
   // Valor hidden: correos separados por ;
