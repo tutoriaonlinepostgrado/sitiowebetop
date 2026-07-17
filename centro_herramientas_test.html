@@ -459,8 +459,53 @@
     <div class="form-group"><label>INTAKE O VERSION</label><input type="text" id="t4-intake" placeholder="Ej: V1" /></div>
     <div class="form-group"><label>NOMBRE DE PROGRAMA (vacío = usar el del calendario)</label><input type="text" id="t4-programa" placeholder="Opcional" /></div>
     <div class="form-group"><label>FACULTAD (vacío = usar la del calendario)</label><input type="text" id="t4-facultad" placeholder="Opcional" /></div>
-    <div class="form-group"><label>NOMBRE TUTOR</label><input type="text" id="t4-tutor" placeholder="Nombre completo" /></div>
-    <div class="form-group"><label>CORREO TUTOR</label><input type="text" id="t4-correotutor" placeholder="tutor@dominio.cl" /></div>
+    <div class="form-group">
+      <label>NOMBRE TUTOR</label>
+      <select id="t4-tutor" onchange="t4AutoCorreo()">
+        <option value="">— Selecciona tutor —</option>
+        <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
+        <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
+        <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
+        <option value="DANITZA JANSEN">DANITZA JANSEN</option>
+        <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
+        <option value="PAULA PARDO">PAULA PARDO</option>
+        <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
+        <option value="BARBARA ROJAS">BARBARA ROJAS</option>
+        <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
+        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
+        <option value="NOEMI PAZ">NOEMI PAZ</option>
+        <option value="CONSUELO PARGA">CONSUELO PARGA</option>
+        <option value="FRANCISCA INDA">FRANCISCA INDA</option>
+        <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
+        <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
+        <option value="CAROLINA MONSALVE">CAROLINA MONSALVE</option>
+        <option value="PATRICIO COLLAO">PATRICIO COLLAO</option>
+        <option value="FELIPE GARCIA">FELIPE GARCIA</option>
+        <option value="RITA GALVEZ">RITA GALVEZ</option>
+        <option value="MIGUEL ROSALES">MIGUEL ROSALES</option>
+        <option value="HECTOR TAPIA">HECTOR TAPIA</option>
+        <option value="PABLO ALDERETE">PABLO ALDERETE</option>
+        <option value="DANIELA CORNEJO">DANIELA CORNEJO</option>
+        <option value="POR DEFINIR">POR DEFINIR</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(se autocompleta)</span></label>
+      <input type="text" id="t4-correotutor" placeholder="Se autocompleta al elegir tutor" />
+    </div>
+    <div class="form-group full">
+      <label>COORDINADORES <span style="color:#95a3b8;font-weight:400;text-transform:none;">(seleccion multiple — Coordinadores_Emails_Texto)</span></label>
+      <div id="t4-coord-chips" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:2.4rem;background:#eef2f7;border:1px solid rgba(246,193,40,0.8);border-radius:8px;padding:0.4rem 0.6rem;align-items:center;cursor:pointer;" onclick="t4CoordToggle()">
+        <span id="t4-coord-placeholder" style="color:#888;font-size:0.88rem;">Haz clic para seleccionar coordinadores...</span>
+      </div>
+      <div id="t4-coord-dropdown" style="display:none;position:relative;z-index:50;">
+        <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+          <div id="t4-coord-options"></div>
+        </div>
+      </div>
+      <input type="hidden" id="t4-coord-value" />
+    </div>
   </div>
   <div class="btn-row"><button class="btn primary" onclick="processTab4()">⚡ Procesar Calendario</button></div>
   <div id="t4-result"></div>
@@ -953,7 +998,8 @@ async function processTab4(){
   try{
     const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
     const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
-    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
+    const coordEmails=document.getElementById('t4-coord-value').value;
+    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'Correo_Tutor_a':cTut,'Coordinadores_Emails_Texto':coordEmails,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
     state.t4Data=salida;re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados.</div>';
     const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
   }catch(err){re.innerHTML='<div class="alert error">Error: '+err.message+'</div>';}
@@ -1154,6 +1200,133 @@ function cReset(){
   cAdd();cAdd();
 }
 
+// ─── TUTORES Y COORDINADORES TAB 4 ───────────────────────────────────────────
+const T4_TUTORES = {
+  'HANS NOVAKOVIC':           'tutoriaonline45@unab.cl',
+  'KIMBERLY JORQUERA':        'tutoriaonline52@unab.cl',
+  'MARTA GONZALEZ':           'marta.gonzalez@unab.cl',
+  'DANITZA JANSEN':           'danitza.jansen@unab.cl',
+  'SYLVIA VALENZUELA':        'sylvia.valenzuela@unab.cl',
+  'PAULA PARDO':              'tutoriaonline82@unab.cl',
+  'MARIA FERNANDA GONZALEZ':  'tutoriaonline41@unab.cl',
+  'BARBARA ROJAS':            'barbara.rojas.c@unab.cl',
+  'CONSTANZA CONTRERAS':      'tutoriaonline56@unab.cl',
+  'CARLA PENA':               'tutoriaonline54@unab.cl',
+  'ALVARO ORELLANA':          'tutoriaonline86@unab.cl',
+  'NOEMI PAZ':                'tutoriaonline08@unab.cl',
+  'CONSUELO PARGA':           'tutoriaonline70@unab.cl',
+  'FRANCISCA INDA':           'tutoriaonline75@unab.cl',
+  'JAVIERA ROJAS':            'tutoriaonline76@unab.cl',
+  'ALYSON HERNANDEZ':         'tutoriaonline72@unab.cl',
+  'CAROLINA MONSALVE':        'carolina.monsalve.g@unab.cl',
+  'PATRICIO COLLAO':          'patricio.collao@unab.cl',
+  'FELIPE GARCIA':            'felipe.garcia@unab.cl',
+  'RITA GALVEZ':              'rita.galvez@unab.cl',
+  'MIGUEL ROSALES':           'tutoriaonline16@unab.cl',
+  'HECTOR TAPIA':             'tutoriaonline23@unab.cl',
+  'PABLO ALDERETE':           'tutoriaonline47@unab.cl',
+  'DANIELA CORNEJO':          'tutoriaonline36@unab.cl',
+  'POR DEFINIR':              'pordefinir@unab.cl'
+};
+
+const T4_COORDINADORES = [
+  {nombre:'CAROLINA MONSALVE', correo:'carolina.monsalve.g@unab.cl'},
+  {nombre:'PATRICIO COLLAO',   correo:'patricio.collao@unab.cl'},
+  {nombre:'FELIPE GARCIA',     correo:'felipe.garcia@unab.cl'},
+  {nombre:'RITA GALVEZ',       correo:'rita.galvez@unab.cl'},
+  {nombre:'MIGUEL ROSALES',    correo:'tutoriaonline16@unab.cl'},
+  {nombre:'HECTOR TAPIA',      correo:'tutoriaonline23@unab.cl'},
+  {nombre:'PABLO ALDERETE',    correo:'tutoriaonline47@unab.cl'},
+  {nombre:'DANIELA CORNEJO',   correo:'tutoriaonline36@unab.cl'}
+];
+
+// Set de coordinadores seleccionados (correos)
+const t4CoordSel = new Set();
+
+function t4AutoCorreo(){
+  const sel=document.getElementById('t4-tutor').value;
+  const correo=T4_TUTORES[sel]||'';
+  document.getElementById('t4-correotutor').value=correo;
+}
+
+function t4CoordToggle(){
+  const dd=document.getElementById('t4-coord-dropdown');
+  dd.style.display=dd.style.display==='none'?'block':'none';
+}
+
+function t4CoordInit(){
+  const cont=document.getElementById('t4-coord-options');
+  cont.innerHTML='';
+  T4_COORDINADORES.forEach(c=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:0.6rem;padding:0.55rem 1rem;cursor:pointer;transition:background 0.1s;';
+    row.onmouseenter=()=>row.style.background='rgba(246,193,40,0.08)';
+    row.onmouseleave=()=>row.style.background='transparent';
+    const chk=document.createElement('div');
+    chk.id='t4chk-'+c.correo.replace(/[@.]/g,'_');
+    chk.style.cssText='width:16px;height:16px;border-radius:4px;border:2px solid #95a3b8;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;';
+    const lbl=document.createElement('div');
+    lbl.innerHTML='<span style="color:#fff;font-size:0.88rem;font-weight:600;">'+c.nombre+'</span><br><span style="color:#95a3b8;font-size:0.75rem;">'+c.correo+'</span>';
+    row.appendChild(chk);row.appendChild(lbl);
+    row.onclick=()=>t4CoordToggleItem(c, chk);
+    cont.appendChild(row);
+  });
+  // Cerrar al hacer clic fuera
+  document.addEventListener('click', function t4Outside(e){
+    const chips=document.getElementById('t4-coord-chips');
+    const dd=document.getElementById('t4-coord-dropdown');
+    if(chips&&dd&&!chips.contains(e.target)&&!dd.contains(e.target)){
+      dd.style.display='none';
+    }
+  });
+}
+
+function t4CoordToggleItem(c, chkEl){
+  if(t4CoordSel.has(c.correo)){
+    t4CoordSel.delete(c.correo);
+    chkEl.style.background='transparent';
+    chkEl.style.borderColor='#95a3b8';
+    chkEl.innerHTML='';
+  }else{
+    t4CoordSel.add(c.correo);
+    chkEl.style.background='#f6c128';
+    chkEl.style.borderColor='#f6c128';
+    chkEl.innerHTML='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#17202d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  t4CoordRenderChips();
+}
+
+function t4CoordRenderChips(){
+  const chips=document.getElementById('t4-coord-chips');
+  const ph=document.getElementById('t4-coord-placeholder');
+  // Limpiar chips anteriores (mantener placeholder)
+  Array.from(chips.children).forEach(ch=>{if(ch.id!=='t4-coord-placeholder')ch.remove();});
+  if(t4CoordSel.size===0){
+    ph.style.display='';
+    document.getElementById('t4-coord-value').value='';
+    return;
+  }
+  ph.style.display='none';
+  const selArr=T4_COORDINADORES.filter(c=>t4CoordSel.has(c.correo));
+  selArr.forEach(c=>{
+    const chip=document.createElement('span');
+    chip.style.cssText='background:rgba(246,193,40,0.18);border:1px solid rgba(246,193,40,0.5);color:#f6c128;font-size:0.75rem;font-weight:700;padding:0.18rem 0.55rem;border-radius:20px;display:inline-flex;align-items:center;gap:0.35rem;white-space:nowrap;';
+    chip.innerHTML=c.nombre+' <span style="cursor:pointer;font-size:0.9rem;line-height:1;" onclick="event.stopPropagation();t4CoordRemove(''+c.correo+'')">×</span>';
+    chips.insertBefore(chip, ph);
+  });
+  // Valor hidden: correos separados por ;
+  document.getElementById('t4-coord-value').value=selArr.map(c=>c.correo).join(';');
+}
+
+function t4CoordRemove(correo){
+  t4CoordSel.delete(correo);
+  // Desmarcar checkbox
+  const id='t4chk-'+correo.replace(/[@.]/g,'_');
+  const chk=document.getElementById(id);
+  if(chk){chk.style.background='transparent';chk.style.borderColor='#95a3b8';chk.innerHTML='';}
+  t4CoordRenderChips();
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (function init(){
   const today=new Date().toISOString().substring(0,10);
@@ -1161,6 +1334,7 @@ function cReset(){
     const el=document.getElementById(id);if(el)el.value=today;
   });
   cAdd();cAdd();
+  t4CoordInit();
 })();
 </script>
 </body>
