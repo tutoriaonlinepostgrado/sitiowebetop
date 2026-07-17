@@ -208,7 +208,6 @@
   }
   .c-btn-add:hover { border-color: var(--line); color: var(--line); background: rgba(246,193,40,0.06); }
 
-  /* preview panel */
   .c-preview-panel {
     background: var(--panel); border: 1px solid var(--line-dim);
     border-radius: var(--radius); overflow: hidden;
@@ -262,7 +261,6 @@
     border: 1px solid var(--line-dim);
   }
 
-  /* toast */
   .etop-toast {
     position: fixed; bottom: 1.5rem; right: 1.5rem;
     background: var(--ok-bg); color: var(--ok-text); border: 1px solid rgba(46,125,50,0.5);
@@ -479,8 +477,6 @@
   <div class="section-sub">Genera el correo de aviso al coordinador/tutora con los vínculos a las carpetas del intake.</div>
 
   <div class="carpetas-layout">
-
-    <!-- FORMULARIO -->
     <div class="c-form-panel">
       <div>
         <span class="c-section-lbl">📋 Datos del correo</span>
@@ -495,13 +491,11 @@
           </div>
         </div>
       </div>
-
       <div>
         <span class="c-section-lbl">📂 Carpetas en Teams</span>
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
         <button class="c-btn-add" onclick="cAdd()">＋ Agregar carpeta</button>
       </div>
-
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
         <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;">
@@ -511,7 +505,6 @@
       </div>
     </div>
 
-    <!-- VISTA PREVIA -->
     <div class="c-preview-panel">
       <div class="c-preview-bar">
         <div>
@@ -526,7 +519,6 @@
           <button class="c-btn-copy" id="c-copy-btn" onclick="cCopiar()">📋 Copiar correo</button>
         </div>
       </div>
-
       <div class="c-preview-body" id="c-preview-body">
         <div class="c-empty" id="c-empty">
           <div class="ce-icon">📬</div>
@@ -535,12 +527,10 @@
         </div>
         <div id="c-rendered" style="display:none;"></div>
       </div>
-
       <div class="c-code-area" id="c-code-area">
         <pre id="c-code-pre"></pre>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -670,140 +660,70 @@ async function injectTableIntoXlsx(wboutBinary,tableXml,sheetName,tableRef){
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // parseWebTextBlocks — v2.0 (2025-07)
-// Reescrita para el nuevo formato tabular de la web "Inscripciones de Curso" UNAB.
-//
-// FORMATO ANTERIOR (vertical):  RUT solo / nombre / email / ESTUDIANTE en líneas separadas
-// NUEVO FORMATO (tabular):      Cabecera texto plano + tabla con columnas separadas por TAB
-//   Cabecera: Periodo / 202581 / NRC / 4384 / NOMBRE: ... / CÓDIGO: MAPS014.202581.4384.EL.ON
-//   Tabla:    Rut\tNombre Completo\tEmail\tPIDM\tRol\t...\tFecha
-//
-// Soporta múltiples cursos pegados consecutivamente y deduplicación por RUT+NRC_COD.
 // ═══════════════════════════════════════════════════════════════════════════════
 function parseWebTextBlocks(rawText) {
   const filas  = [];
   const seen   = new Set();
   const lines  = rawText.split('\n');
+  let currentPeriodo='',currentNrc='',currentNrcCod='',currentNombre='';
+  let inTable=false,colRut=-1,colNombre=-1,colEmail=-1,colRol=-1;
+  const RUT_RE=/^\d{7,9}-?[0-9Kk]$/i,PERIODO_RE=/^\d{6}$/;
 
-  // Estado del curso activo (se resetea al detectar nuevo encabezado)
-  let currentPeriodo  = '';
-  let currentNrc      = '';
-  let currentNrcCod   = '';
-  let currentNombre   = '';
-
-  // Estado de la tabla tabular
-  let inTable   = false;
-  let colRut    = -1;
-  let colNombre = -1;
-  let colEmail  = -1;
-  let colRol    = -1;
-
-  const RUT_RE     = /^\d{7,9}-?[0-9Kk]$/i;
-  const PERIODO_RE = /^\d{6}$/;
-
-  for (let i = 0; i < lines.length; i++) {
-    const raw      = lines[i];
-    const stripped = raw.trim();
-    if (!stripped) continue;
-
-    const parts    = raw.split('\t');
-    const isTabular = parts.length >= 3;
-
-    // ── Bloque de metadatos del curso (líneas de texto plano) ───────────────
-    if (!isTabular) {
-      // Detectar Periodo y NRC por la línea anterior como label
-      if (PERIODO_RE.test(stripped) && !inTable) {
-        const prev = (lines[i - 1] || '').trim().toUpperCase();
-        if      (prev === 'PERIODO') { currentPeriodo = stripped; }
-        else if (prev === 'NRC')     { currentNrc     = stripped; }
+  for(let i=0;i<lines.length;i++){
+    const raw=lines[i],stripped=raw.trim();
+    if(!stripped)continue;
+    const parts=raw.split('\t'),isTabular=parts.length>=3;
+    if(!isTabular){
+      if(/^Inscripciones de Curso/i.test(stripped)){
+        currentPeriodo='';currentNrc='';currentNrcCod='';currentNombre='';
+        inTable=false;colRut=-1;colNombre=-1;colEmail=-1;colRol=-1;continue;
+      }
+      if(PERIODO_RE.test(stripped)){
+        const prev=(lines[i-1]||'').trim().toUpperCase();
+        if(prev==='PERIODO')currentPeriodo=stripped;
+        else if(prev==='NRC')currentNrc=stripped;
         continue;
       }
-
-      // NOMBRE: Gestión de la Calidad...
-      const mNom = stripped.match(/^NOMBRE:\s*(.+)$/i);
-      if (mNom) { currentNombre = mNom[1].trim(); inTable = false; continue; }
-
-      // CÓDIGO: MAPS014.202581.4384.EL.ON  →  NRC_COD = 4384_MAPS014
-      const mCod = stripped.match(/^C[ÓO]DIGO:\s*(.+)$/i);
-      if (mCod) {
-        const partes = mCod[1].trim().split('.');
-        if (partes.length >= 3) {
-          const materiaNum = partes[0];        // MAPS014
-          if (!currentPeriodo) currentPeriodo = partes[1]; // 202581
-          if (!currentNrc)     currentNrc     = partes[2]; // 4384
-          const mm = materiaNum.match(/^([A-Za-z]+)(\d+)$/);
-          currentNrcCod = mm
-            ? `${currentNrc}_${mm[1].toUpperCase()}${mm[2]}`
-            : `${currentNrc}_${materiaNum.toUpperCase()}`;
+      const mNom=stripped.match(/^NOMBRE:\s*(.+)$/i);
+      if(mNom){currentNombre=mNom[1].trim();inTable=false;continue;}
+      const mCod=stripped.match(/^C[ÓO]DIGO:\s*(.+)$/i);
+      if(mCod){
+        const partes=mCod[1].trim().split('.');
+        if(partes.length>=3){
+          const materiaNum=partes[0];
+          if(!currentPeriodo)currentPeriodo=partes[1];
+          if(!currentNrc)currentNrc=partes[2];
+          const mm=materiaNum.match(/^([A-Za-z]+)(\d+)$/);
+          currentNrcCod=mm?`${currentNrc}_${mm[1].toUpperCase()}${mm[2]}`:`${currentNrc}_${materiaNum.toUpperCase()}`;
         }
-        inTable = false;
-        continue;
+        inTable=false;continue;
       }
-      // Ignorar el resto de líneas de cabecera (CANVAS, FACU, Mostrando, etc.)
       continue;
     }
-
-    // ── Detección del header de la tabla tabular ────────────────────────────
-    const partsClean = parts.map(p => p.trim());
-    const partsUpper = partsClean.map(p => p.toUpperCase());
-
-    const hasRut    = partsUpper.some(p => p === 'RUT');
-    const hasEmail  = partsUpper.some(p => p.includes('EMAIL') || p.includes('CORREO'));
-    const hasNombre = partsUpper.some(p => p.includes('NOMBRE'));
-
-    if (hasRut && (hasEmail || hasNombre)) {
-      inTable   = true;
-      colRut    = partsUpper.findIndex(p => p === 'RUT');
-      colNombre = partsUpper.findIndex(p => p.includes('NOMBRE'));
-      colEmail  = partsUpper.findIndex(p => p.includes('EMAIL') || p.includes('CORREO'));
-      colRol    = partsUpper.findIndex(p => p === 'ROL');
-      // Fallbacks si los headers no matchean exactamente
-      if (colEmail  === -1) colEmail  = 2;
-      if (colNombre === -1) colNombre = 1;
-      if (colRut    === -1) colRut    = 0;
+    const partsClean=parts.map(p=>p.trim()),partsUpper=partsClean.map(p=>p.toUpperCase());
+    const hasRut=partsUpper.some(p=>p==='RUT'),hasEmail=partsUpper.some(p=>p.includes('EMAIL')||p.includes('CORREO')),hasNombre=partsUpper.some(p=>p.includes('NOMBRE'));
+    if(hasRut&&(hasEmail||hasNombre)){
+      inTable=true;
+      colRut=partsUpper.findIndex(p=>p==='RUT');
+      colNombre=partsUpper.findIndex(p=>p.includes('NOMBRE'));
+      colEmail=partsUpper.findIndex(p=>p.includes('EMAIL')||p.includes('CORREO'));
+      colRol=partsUpper.findIndex(p=>p==='ROL');
+      if(colEmail===-1)colEmail=2;if(colNombre===-1)colNombre=1;if(colRut===-1)colRut=0;
       continue;
     }
-
-    if (!inTable) continue;
-
-    // ── Fila de datos ───────────────────────────────────────────────────────
-    // Col 0 siempre es RUT en el nuevo layout de la web
-    const rutVal    = (colRut !== -1 && colRut < partsClean.length)
-                      ? partsClean[colRut] : partsClean[0];
-    if (!RUT_RE.test(rutVal)) continue;
-
-    let nombreVal = (colNombre !== -1 && colNombre < partsClean.length)
-                    ? partsClean[colNombre] : '';
-    let emailVal  = (colEmail  !== -1 && colEmail  < partsClean.length)
-                    ? partsClean[colEmail]  : '';
-    const rolVal  = (colRol    !== -1 && colRol    < partsClean.length)
-                    ? partsClean[colRol]   : '';
-
-    // Fallback: buscar email en cualquier columna de la fila
-    if (!emailVal.includes('@')) {
-      emailVal = partsClean.find(p => p.includes('@') && p.includes('.')) || '';
-    }
-
-    // Filtrar: solo Estudiante (excluir Docente, Docente (P), etc.)
-    if (rolVal && !/ESTUDIANTE/i.test(rolVal)) continue;
-    if (!emailVal || !emailVal.includes('@'))   continue;
-
-    // Deduplicar
-    const key = `${rutVal.toUpperCase()}|${currentNrcCod}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-
-    filas.push({
-      PERIODO:      currentPeriodo,
-      NRC_COD:      currentNrcCod || `${currentNrc}_`,
-      NOMBRE_CURSO: currentNombre,
-      FECHA_INICIO: '',
-      RUT:          rutVal.toUpperCase(),
-      NOMBRE:       nombreVal.toUpperCase(),
-      CORREO_UNAB:  emailVal.toLowerCase(),
-      Columna7:     ''
-    });
+    if(!inTable)continue;
+    const rutVal=(colRut!==-1&&colRut<partsClean.length)?partsClean[colRut]:partsClean[0];
+    if(!RUT_RE.test(rutVal))continue;
+    let nombreVal=(colNombre!==-1&&colNombre<partsClean.length)?partsClean[colNombre]:'';
+    let emailVal=(colEmail!==-1&&colEmail<partsClean.length)?partsClean[colEmail]:'';
+    const rolVal=(colRol!==-1&&colRol<partsClean.length)?partsClean[colRol]:'';
+    if(!emailVal.includes('@'))emailVal=partsClean.find(p=>p.includes('@')&&p.includes('.'))||'';
+    if(rolVal&&!/ESTUDIANTE/i.test(rolVal))continue;
+    if(!emailVal||!emailVal.includes('@'))continue;
+    const key=`${rutVal.toUpperCase()}|${currentNrcCod}`;
+    if(seen.has(key))continue;seen.add(key);
+    filas.push({PERIODO:currentPeriodo,NRC_COD:currentNrcCod||`${currentNrc}_`,NOMBRE_CURSO:currentNombre,FECHA_INICIO:'',RUT:rutVal.toUpperCase(),NOMBRE:nombreVal.toUpperCase(),CORREO_UNAB:emailVal.toLowerCase(),Columna7:''});
   }
-
   return filas;
 }
 
@@ -863,7 +783,6 @@ async function processTab1(){
       document.getElementById('btn-clear-accum').style.display='inline-flex';
       document.getElementById('t1m-nrccod').value='';document.getElementById('t1m-fecha').value=new Date().toISOString().substring(0,10);document.getElementById('drop1m-names').textContent='';state.t1mFiles=[];
     }else{
-      // ── MODO TEXTO: nuevo formato tabular web ────────────────────────────
       const txt=document.getElementById('t1-rawtext').value;
       if(!txt.trim()){resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>';return;}
       filas=parseWebTextBlocks(txt);
@@ -969,8 +888,27 @@ function calDetectarHeader(cols){
   return Object.keys(hits).length>=2?hits:null;
 }
 function calFmtFecha(v){if(!v)return'';const s=String(v).trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// parsearTextoCalendario
+// Cambio v2025-07: NRC vacío → TMP-<CODIGO>-<YYYYMMDDTHHMM>-<SEQ>
+// Globalmente único: timestamp fijo por ejecución + secuencial local.
+// Sin columnas adicionales. Estructura del objeto idéntica a la versión anterior.
+// ═══════════════════════════════════════════════════════════════════════════════
 function parsearTextoCalendario(texto){
-  const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];let headerMap=null,mF='',mP='',mPer='';
+  const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];
+  let headerMap=null,mF='',mP='',mPer='';
+  // Timestamp fijo para todo el procesamiento: YYYYMMDDTHHMM
+  const now=new Date();
+  const ts=now.getFullYear().toString()
+    +(now.getMonth()+1).toString().padStart(2,'0')
+    +now.getDate().toString().padStart(2,'0')
+    +'T'
+    +now.getHours().toString().padStart(2,'0')
+    +now.getMinutes().toString().padStart(2,'0');
+  // Contador secuencial local para desambiguar dentro del mismo procesamiento
+  let tmpSeq=0;
+
   for(const linea of lineas){
     const cols=linea.split('\t'),cs=cols.map(c=>c.trim()),ne=cs.filter(Boolean);if(!ne.length)continue;const c0=cs[0].toLowerCase();
     if(c0==='facultad'){const v=cs.slice(1).find(Boolean)||'';if(v)mF=v;}
@@ -978,7 +916,8 @@ function parsearTextoCalendario(texto){
     if(c0.startsWith('período')||c0.startsWith('periodo')){const v=cs.slice(1).find(c=>/^\d{6}$/.test(c))||'';if(v)mPer=v;}
     if(ne.length===1&&ne[0].length>30&&/magíster|master|mba|diplomado|ingeniería|educación|salud/i.test(ne[0])&&!/\d{2}[\/\-]\d{2}[\/\-]\d{4}/.test(ne[0]))mP=ne[0];
     const hmap=calDetectarHeader(cs);if(hmap){headerMap=hmap;continue;}if(!headerMap)continue;
-    const ni=headerMap.nrc;if(ni===undefined||ni>=cs.length)continue;const nv=cs[ni];if(!NRC_PAT.test(nv))continue;
+    const ni=headerMap.nrc;if(ni===undefined)continue;
+    const nv=(ni<cs.length)?cs[ni]:'';
     const get=(c,d)=>{const i=headerMap[c];return(i!==undefined&&i<cs.length)?cs[i]:(d||'');};
     let codigo=get('codigo').replace(/\s+/g,'').toUpperCase(),nombre=get('nombre');
     const inicio=calFmtFecha(get('inicio')),termino=calFmtFecha(get('termino')),periodo=get('periodo')||mPer;let profesor=get('profesor').trim();const facultad=get('facultad')||mF;
@@ -986,10 +925,20 @@ function parsearTextoCalendario(texto){
     if(!codigo&&/INDUCC/i.test(nombre))codigo='INDUCCION';
     if(!profesor||/^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor))profesor='POR DEFINIR';
     if(!nombre&&!inicio)continue;
-    resultados.push({NRC:nv,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,PROFESOR:profesor,_programa:mP});
+    // ── NRC: real o temporal globalmente único ──────────────────────────────
+    let nrcFinal='';
+    if(NRC_PAT.test(nv)){
+      nrcFinal=nv;
+    }else{
+      tmpSeq++;
+      const base=(codigo||nombre.replace(/[^A-Z0-9]/gi,'').toUpperCase().substring(0,6)||'CURSO');
+      nrcFinal='TMP-'+base+'-'+ts+'-'+String(tmpSeq).padStart(2,'0');
+    }
+    resultados.push({NRC:nrcFinal,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,PROFESOR:profesor,_programa:mP});
   }
   return resultados;
 }
+
 async function processTab4(){
   const re=document.getElementById('t4-result'),ae=document.getElementById('t4-actions');ae.style.display='none';
   re.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
@@ -1082,10 +1031,7 @@ function cBuildEmail(coord,intake,carpetas){
 <html lang="es">
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#ffffff;">
-
 <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;background:#ffffff;">
-
-  <!-- HEADER AZUL CON LOGO -->
   <tr>
     <td style="background:#1B3A6B;padding:18px 32px;">
       <table cellpadding="0" cellspacing="0" width="100%">
@@ -1101,36 +1047,22 @@ function cBuildEmail(coord,intake,carpetas){
       </table>
     </td>
   </tr>
-
-  <!-- FRANJA ACENTO TEAL -->
   <tr><td style="background:#0097A7;height:4px;font-size:0;">&nbsp;</td></tr>
-
-  <!-- CUERPO -->
   <tr>
     <td style="padding:32px 32px 28px;background:#ffffff;">
-
-      <!-- Saludo -->
       <p style="font-size:15px;color:#1A2035;margin:0 0 14px;font-family:'Segoe UI',Arial,sans-serif;">
         Estimado(a) Coordinador(a): <strong>${esc(coord)}</strong>
       </p>
-
-      <!-- Intro -->
       <p style="font-size:14px;color:#3D4A66;line-height:1.7;margin:0 0 26px;font-family:'Segoe UI',Arial,sans-serif;">
         Junto con saludar, te comento que el calendario ya quedó ingresado en la base de calendarios
         y las carpetas del programa <strong style="color:#1A2035;">${esc(intake)}</strong> han sido creadas en Teams.
       </p>
-
-      <!-- Título carpetas -->
       <p style="font-size:13.5px;font-weight:700;color:#1B3A6B;text-decoration:underline;margin:0 0 12px;font-family:'Segoe UI',Arial,sans-serif;">
         Vínculo a la carpeta en Teams:
       </p>
-
-      <!-- Carpetas -->
       <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:28px;">
         ${cRows}
       </table>
-
-      <!-- Bloque Favor solicito -->
       <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
         <tr>
           <td style="background:#FFFBEC;border-left:5px solid #C8A951;padding:16px 20px;">
@@ -1158,10 +1090,8 @@ function cBuildEmail(coord,intake,carpetas){
           </td>
         </tr>
       </table>
-
     </td>
   </tr>
-
 </table>
 </body>
 </html>`;
@@ -1196,15 +1126,11 @@ function cCopiar(){
     btn.textContent='✅ Copiado';btn.classList.add('copied');toast.classList.add('show');
     setTimeout(()=>{btn.innerHTML='📋 Copiar correo';btn.classList.remove('copied');toast.classList.remove('show');},2600);
   };
-  try {
+  try{
     const blob=new Blob([cHTML],{type:'text/html'});
     const item=new ClipboardItem({'text/html':blob});
-    navigator.clipboard.write([item]).then(showOk).catch(()=>{
-      navigator.clipboard.writeText(cHTML).then(showOk);
-    });
-  } catch(e) {
-    navigator.clipboard.writeText(cHTML).then(showOk);
-  }
+    navigator.clipboard.write([item]).then(showOk).catch(()=>{navigator.clipboard.writeText(cHTML).then(showOk);});
+  }catch(e){navigator.clipboard.writeText(cHTML).then(showOk);}
 }
 
 function cReset(){
