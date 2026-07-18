@@ -372,17 +372,74 @@
   </div>
   <hr class="divider">
   <div style="font-weight:700; margin-bottom:1rem;">2. Ingresa los datos de la Inducción</div>
+  <div class="helper" id="t2-nrcs-status">⏳ Cargando cursos desde nrcs.json...</div>
   <div class="form-grid">
-    <div class="form-group"><label>NOMBRE TUTOR</label><input type="text" id="t2-tn" placeholder="Nombre completo del tutor" /></div>
-    <div class="form-group"><label>CORREO TUTOR</label><input type="text" id="t2-tc" placeholder="tutor@dominio.cl" /></div>
-    <div class="form-group"><label>ANEXO TUTOR</label><input type="text" id="t2-ta" placeholder="Ej: 1234" /></div>
+    <!-- TUTOR -->
+    <div class="form-group">
+      <label>NOMBRE TUTOR</label>
+      <select id="t2-tutor-sel" onchange="t2AutoTutor()">
+        <option value="">— Selecciona tutor —</option>
+        <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
+        <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
+        <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
+        <option value="DANITZA JANSEN">DANITZA JANSEN</option>
+        <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
+        <option value="PAULA PARDO">PAULA PARDO</option>
+        <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
+        <option value="BARBARA ROJAS">BARBARA ROJAS</option>
+        <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
+        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="NOEMI PAZ">NOEMI PAZ</option>
+        <option value="HECTOR TAPIA">HECTOR TAPIA</option>
+        <option value="CONSUELO PARGA">CONSUELO PARGA</option>
+        <option value="FRANCISCA INDA">FRANCISCA INDA</option>
+        <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
+        <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
+        <option value="CAROLINA MONSALVE">CAROLINA MONSALVE</option>
+        <option value="PATRICIO COLLAO">PATRICIO COLLAO</option>
+        <option value="FELIPE GARCIA">FELIPE GARCIA</option>
+        <option value="RITA GALVEZ">RITA GALVEZ</option>
+        <option value="MIGUEL ROSALES">MIGUEL ROSALES</option>
+        <option value="PABLO ALDERETE">PABLO ALDERETE</option>
+        <option value="DANIELA CORNEJO">DANIELA CORNEJO</option>
+        <option value="POR DEFINIR">POR DEFINIR</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-tc" placeholder="Se autocompleta al elegir tutor" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE COMPLETO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-tn" placeholder="Se autocompleta al elegir tutor" />
+    </div>
+    <div class="form-group">
+      <label>ANEXO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-ta" placeholder="Se autocompleta al elegir tutor" />
+    </div>
     <div class="form-group"><label>NOMBRE DE PROGRAMA</label><input type="text" id="t2-pr" placeholder="Nombre del programa" /></div>
-    <div class="form-group"><label>NRC Y NOMBRE DE CURSO INDUCC</label><input type="text" id="t2-ni" placeholder="Ej: 12345 - Inducción Postgrado" /></div>
+    <!-- BUSCADOR NRC INDUCCION -->
+    <div class="form-group">
+      <label>BUSCAR NRC INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta fechas)</span></label>
+      <input type="text" id="t2-nrc-search" placeholder="Escribe NRC, código o tutor..." oninput="t2BuscarNrc()" autocomplete="off" />
+      <div id="t2-nrc-dropdown" style="display:none;position:relative;z-index:60;">
+        <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+          <div id="t2-nrc-options"></div>
+        </div>
+      </div>
+      <input type="hidden" id="t2-ni" />
+    </div>
+    <div class="form-group"><label>NRC Y NOMBRE DE CURSO INDUCC <span style="color:#95a3b8;font-weight:400;text-transform:none;">(editable)</span></label><input type="text" id="t2-ni-display" placeholder="Ej: 12345 - Inducción Postgrado" oninput="document.getElementById('t2-ni').value=this.value" /></div>
     <div class="form-group"><label>NOMBRE PRIMER CURSO</label><input type="text" id="t2-c1" placeholder="Nombre del primer curso" /></div>
     <div class="form-group"><label>NOMBRE SEGUNDO CURSO (opcional)</label><input type="text" id="t2-c2" placeholder="Opcional" /></div>
-    <div class="form-group"></div>
-    <div class="form-group"><label>FECHA INICIO INDUCCION</label><input type="date" id="t2-fi" /></div>
-    <div class="form-group"><label>FECHA TERMINO INDUCCION</label><input type="date" id="t2-ff" /></div>
+    <div class="form-group">
+      <label>FECHA INICIO INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="date" id="t2-fi" />
+    </div>
+    <div class="form-group">
+      <label>FECHA TERMINO INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="date" id="t2-ff" />
+    </div>
   </div>
   <div class="btn-row"><button class="btn primary" onclick="processTab2()">🪄 Construir Plantilla Exacta</button></div>
   <div id="t2-result"></div>
@@ -865,7 +922,7 @@ async function processTab2(){
   if(!state.t2File){re.innerHTML='<div class="alert error">Sube la nómina original primero.</div>';return;}
   try{
     const rawRows=await readFile(state.t2File,false);
-    const tn=document.getElementById('t2-tn').value,tc=document.getElementById('t2-tc').value,ta=document.getElementById('t2-ta').value,pr=document.getElementById('t2-pr').value,ni=document.getElementById('t2-ni').value,c1=document.getElementById('t2-c1').value,c2=document.getElementById('t2-c2').value.trim(),fi=document.getElementById('t2-fi').value,ff=document.getElementById('t2-ff').value;
+    const tn=document.getElementById('t2-tn').value||document.getElementById('t2-tutor-sel').value,tc=document.getElementById('t2-tc').value,ta=document.getElementById('t2-ta').value,pr=document.getElementById('t2-pr').value,ni=document.getElementById('t2-ni').value||document.getElementById('t2-ni-display').value,c1=document.getElementById('t2-c1').value,c2=document.getElementById('t2-c2').value.trim(),fi=document.getElementById('t2-fi').value,ff=document.getElementById('t2-ff').value;
     let salida=[];
     if(isAlumnoPotencialNomina(rawRows[0]||[])){salida=procesarAlumnoPotencial(rawRows,{tn,tc,ta,pr,ni,c1,c2,fi,ff});}
     else{
@@ -1203,34 +1260,116 @@ function cReset(){
   cAdd();cAdd();
 }
 
-// ─── TUTORES Y COORDINADORES TAB 4 ───────────────────────────────────────────
-const T4_TUTORES = {
-  'HANS NOVAKOVIC':           'tutoriaonline45@unab.cl',
-  'KIMBERLY JORQUERA':        'tutoriaonline52@unab.cl',
-  'MARTA GONZALEZ':           'marta.gonzalez@unab.cl',
-  'DANITZA JANSEN':           'danitza.jansen@unab.cl',
-  'SYLVIA VALENZUELA':        'sylvia.valenzuela@unab.cl',
-  'PAULA PARDO':              'tutoriaonline82@unab.cl',
-  'MARIA FERNANDA GONZALEZ':  'tutoriaonline41@unab.cl',
-  'BARBARA ROJAS':            'barbara.rojas.c@unab.cl',
-  'CONSTANZA CONTRERAS':      'tutoriaonline56@unab.cl',
-  'CARLA PENA':               'tutoriaonline54@unab.cl',
-  'ALVARO ORELLANA':          'tutoriaonline86@unab.cl',
-  'NOEMI PAZ':                'tutoriaonline08@unab.cl',
-  'CONSUELO PARGA':           'tutoriaonline70@unab.cl',
-  'FRANCISCA INDA':           'tutoriaonline75@unab.cl',
-  'JAVIERA ROJAS':            'tutoriaonline76@unab.cl',
-  'ALYSON HERNANDEZ':         'tutoriaonline72@unab.cl',
-  'CAROLINA MONSALVE':        'carolina.monsalve.g@unab.cl',
-  'PATRICIO COLLAO':          'patricio.collao@unab.cl',
-  'FELIPE GARCIA':            'felipe.garcia@unab.cl',
-  'RITA GALVEZ':              'rita.galvez@unab.cl',
-  'MIGUEL ROSALES':           'tutoriaonline16@unab.cl',
-  'HECTOR TAPIA':             'tutoriaonline23@unab.cl',
-  'PABLO ALDERETE':           'tutoriaonline47@unab.cl',
-  'DANIELA CORNEJO':          'tutoriaonline36@unab.cl',
-  'POR DEFINIR':              'pordefinir@unab.cl'
+// ─── MAPA TUTORES COMPLETO (Tab 2 y Tab 4) ───────────────────────────────────
+const TUTORES_MAP = {
+  'HANS NOVAKOVIC':          {correo:'tutoriaonline45@unab.cl', nombre:'Hans Novakovic',                           anexo:'600 585 8550 Anexo 7261'},
+  'KIMBERLY JORQUERA':       {correo:'tutoriaonline52@unab.cl', nombre:'Kimberly Jorquera Sepúlveda',              anexo:'600 585 8550 Anexo 7284'},
+  'MARTA GONZALEZ':          {correo:'marta.gonzalez@unab.cl',  nombre:'Marta Teresa Gonzalez Luque',              anexo:'600 585 8550 Anexo 5216'},
+  'DANITZA JANSEN':          {correo:'danitza.jansen@unab.cl',  nombre:'Danitza Alejandra Jansen Jara',            anexo:'600 585 8550 Anexo 5866'},
+  'SYLVIA VALENZUELA':       {correo:'sylvia.valenzuela@unab.cl',nombre:'Sylvia Valenzuela Herrera',               anexo:'600 585 8550 Anexo 5873'},
+  'PAULA PARDO':             {correo:'tutoriaonline82@unab.cl', nombre:'Paula Natalia Pardo Gaete',                anexo:'600 585 8550 Anexo 1285'},
+  'MARIA FERNANDA GONZALEZ': {correo:'tutoriaonline41@unab.cl', nombre:'María Fernanda González Valenzuela',       anexo:'600 585 8550 Anexo 5644'},
+  'BARBARA ROJAS':           {correo:'barbara.rojas.c@unab.cl', nombre:'Barbara Belen Rojas Castro',               anexo:'600 585 8550 Anexo 7260'},
+  'CONSTANZA CONTRERAS':     {correo:'tutoriaonline56@unab.cl', nombre:'Constanza Contreras Palma',                anexo:'600 585 8550 Anexo 8201'},
+  'CARLA PENA':              {correo:'tutoriaonline54@unab.cl', nombre:'Carla Peña',                               anexo:'600 585 8550 Anexo 7361'},
+  'NOEMI PAZ':               {correo:'tutoriaonline08@unab.cl', nombre:'Noemí Paz',                                anexo:'600 585 8550 Anexo 1288'},
+  'HECTOR TAPIA':            {correo:'tutoriaonline23@unab.cl', nombre:'Héctor Tapia Ruminado',                    anexo:'600 585 8550 Anexo 5685'},
+  'CONSUELO PARGA':          {correo:'tutoriaonline70@unab.cl', nombre:'Consuelo Parga',                           anexo:'600 585 8550 Anexo 1273'},
+  'FRANCISCA INDA':          {correo:'tutoriaonline75@unab.cl', nombre:'Francisca Inda',                           anexo:'600 585 8550 Anexo 1278'},
+  'JAVIERA ROJAS':           {correo:'tutoriaonline76@unab.cl', nombre:'Javiera Rojas',                            anexo:'600 585 8550 Anexo 1279'},
+  'ALYSON HERNANDEZ':        {correo:'tutoriaonline72@unab.cl', nombre:'Alyson Francisca Hernández Valenzuela',    anexo:'600 585 8550 Anexo 5245'},
+  'CAROLINA MONSALVE':       {correo:'carolina.monsalve.g@unab.cl', nombre:'Carolina Monsalve',                   anexo:'600 585 8550 Anexo 0000'},
+  'PATRICIO COLLAO':         {correo:'patricio.collao@unab.cl', nombre:'Patricio Alejandro Collao Farfan',         anexo:'600 585 8550 Anexo 0000'},
+  'FELIPE GARCIA':           {correo:'felipe.garcia@unab.cl',   nombre:'Felipe Garcia Cornejo',                   anexo:'600 585 8550 Anexo 0000'},
+  'RITA GALVEZ':             {correo:'rita.galvez@unab.cl',     nombre:'Rita Gálvez',                             anexo:'600 585 8550 Anexo 0000'},
+  'MIGUEL ROSALES':          {correo:'tutoriaonline16@unab.cl', nombre:'Miguel Rosales Salazar',                   anexo:'600 585 8550 Anexo 0000'},
+  'PABLO ALDERETE':          {correo:'tutoriaonline47@unab.cl', nombre:'Pablo Alderete',                           anexo:'600 585 8550 Anexo 0000'},
+  'DANIELA CORNEJO':         {correo:'tutoriaonline36@unab.cl', nombre:'Daniela Cornejo',                          anexo:'600 585 8550 Anexo 0000'},
+  'POR DEFINIR':             {correo:'pordefinir@unab.cl',      nombre:'Por Definir',                             anexo:'600 585 8550'}
 };
+
+// ─── FUNCIONES TAB 2 — AUTOCOMPLETE TUTOR Y BUSCADOR NRC ─────────────────────
+let t2NrcsData = [];
+
+async function t2CargarNrcs(){
+  const statusEl = document.getElementById('t2-nrcs-status');
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json');
+    t2NrcsData = await r.json();
+    if(statusEl) statusEl.innerHTML = '✅ <strong>'+t2NrcsData.length+'</strong> cursos cargados desde nrcs.json';
+    setTimeout(()=>{if(statusEl)statusEl.style.display='none';}, 3000);
+  } catch(e) {
+    if(statusEl) statusEl.innerHTML = '⚠️ No se pudo cargar nrcs.json — ingresa los datos manualmente.';
+  }
+}
+
+function t2AutoTutor(){
+  const key = document.getElementById('t2-tutor-sel').value;
+  const t = TUTORES_MAP[key];
+  if(t){
+    document.getElementById('t2-tn').value = t.nombre;
+    document.getElementById('t2-tc').value = t.correo;
+    document.getElementById('t2-ta').value = t.anexo;
+  } else {
+    document.getElementById('t2-tn').value = '';
+    document.getElementById('t2-tc').value = '';
+    document.getElementById('t2-ta').value = '';
+  }
+}
+
+function t2BuscarNrc(){
+  const q = document.getElementById('t2-nrc-search').value.trim().toLowerCase();
+  const dd = document.getElementById('t2-nrc-dropdown');
+  const opts = document.getElementById('t2-nrc-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = t2NrcsData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r.tutor||'').toLowerCase().includes(q) ||
+    (r.facultad||'').toLowerCase().includes(q)
+  ).slice(0, 30);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:0.5rem 0.9rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    div.innerHTML = '<span style="color:#f6c128;font-size:0.78rem;font-weight:700;font-family:IBM Plex Mono,monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#95a3b8;font-size:0.72rem;">'+r.tutor+' · '+r.facultad
+      +' · Inicio: '+(r['fecha inicio']||'—')+' · Fin: '+(r['fecha fin']||'—')+'</span>';
+    div.onclick = ()=>t2SeleccionarNrc(r);
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+function t2SeleccionarNrc(r){
+  document.getElementById('t2-nrc-search').value = r.nrc;
+  document.getElementById('t2-ni').value = r.nrc;
+  document.getElementById('t2-ni-display').value = r.nrc;
+  if(r['fecha inicio']) document.getElementById('t2-fi').value = r['fecha inicio'];
+  if(r['fecha fin'])    document.getElementById('t2-ff').value = r['fecha fin'];
+  // Autocompletar tutor si coincide
+  if(r.tutor && TUTORES_MAP[r.tutor.toUpperCase()]){
+    const key = r.tutor.toUpperCase();
+    document.getElementById('t2-tutor-sel').value = key;
+    t2AutoTutor();
+  }
+  document.getElementById('t2-nrc-dropdown').style.display = 'none';
+}
+
+// Cerrar dropdown NRC al clic fuera
+document.addEventListener('click', function(e){
+  const inp = document.getElementById('t2-nrc-search');
+  const dd  = document.getElementById('t2-nrc-dropdown');
+  if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)){
+    dd.style.display = 'none';
+  }
+});
+
+// ─── TUTORES Y COORDINADORES TAB 4 ───────────────────────────────────────────
+// T4_TUTORES usa TUTORES_MAP definido arriba
+const T4_TUTORES = Object.fromEntries(Object.entries(TUTORES_MAP).map(([k,v])=>[k,v.correo]));
 
 const T4_COORDINADORES = [
   {nombre:'CAROLINA MONSALVE', correo:'carolina.monsalve.g@unab.cl'},
@@ -1340,6 +1479,7 @@ function t4CoordRemove(correo){
   });
   cAdd();cAdd();
   t4CoordInit();
+  t2CargarNrcs();
 })();
 </script>
 </body>
