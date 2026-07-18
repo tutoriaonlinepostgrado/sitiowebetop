@@ -932,7 +932,7 @@ function calDetectarHeader(cols){
   for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw))){if(!(campo in hits))hits[campo]=i;}}}
   return Object.keys(hits).length>=2?hits:null;
 }
-function calFmtFecha(v){if(!v)return'';const s=String(v).trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
+function calFmtFecha(v){if(!v)return'';const s=String(v).trim().replace(/\.+$/,'').trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // parsearTextoCalendario
