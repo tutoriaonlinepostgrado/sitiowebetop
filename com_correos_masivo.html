@@ -277,18 +277,18 @@
       <label>NRC Y NOMBRE DE CURSO INDUCC</label>
       <input type="text" id="nrc-induccion" placeholder="Ej: 12345 - Inducción Postgrado" />
     </div>
-    <div class="form-group" style="position:relative;">
+    <div class="form-group">
       <label>NOMBRE PRIMER CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(busca por NRC)</span></label>
       <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso1')" autocomplete="off" />
-      <div id="curso1-dropdown" style="display:none;position:absolute;left:0;right:0;z-index:100;background:#1e293b;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:2px;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+      <div id="curso1-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
         <div id="curso1-options"></div>
       </div>
       <input type="hidden" id="curso1" />
     </div>
-    <div class="form-group" style="position:relative;">
+    <div class="form-group">
       <label>NOMBRE SEGUNDO CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(opcional — busca por NRC)</span></label>
       <input type="text" id="curso2-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso2')" autocomplete="off" />
-      <div id="curso2-dropdown" style="display:none;position:absolute;left:0;right:0;z-index:100;background:#1e293b;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:2px;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+      <div id="curso2-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
         <div id="curso2-options"></div>
       </div>
       <input type="hidden" id="curso2" />
@@ -641,8 +641,11 @@ function buscarCurso(campo) {
     div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
     div.onmouseleave = ()=>div.style.background='transparent';
     const nombre = r['nombre curso'] || '';
-    div.innerHTML = '<span style="color:#f6c128;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
-      +'<br><span style="color:#e2e8f0;font-size:0.82rem;">'+nombre+'</span>';
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='#dbeafe';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
     div.onclick = () => seleccionarCurso(campo, r.nrc, nombre);
     opts.appendChild(div);
   });
