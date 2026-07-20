@@ -351,7 +351,7 @@ function filtrarNrc(){
   );
   poblarSelect(f);
   document.getElementById('nsel').value = '';
-  document.getElementById('nficha').classList.remove('vis');
+  const nrcMini = document.getElementById('nrc-mini'); if(nrcMini) nrcMini.style.display='none';
   document.getElementById('nph').style.display = 'block';
 }
 
