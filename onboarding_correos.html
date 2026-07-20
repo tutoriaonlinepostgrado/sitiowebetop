@@ -279,7 +279,11 @@
     </div>
     <div class="form-group">
       <label>NOMBRE PRIMER CURSO</label>
-      <input type="text" id="curso1" placeholder="Nombre del primer curso" />
+      <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre..." oninput="buscarCurso1()" autocomplete="off" />
+      <div id="curso1-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="curso1-options"></div>
+      </div>
+      <input type="hidden" id="curso1" />
     </div>
     <div class="form-group">
       <label>NOMBRE SEGUNDO CURSO (opcional)</label>
@@ -608,6 +612,47 @@ async function enviarSharePointPabloDaniela() {
 }
 
 let nrcsObCache = [];
+let intakeActivo = '';
+
+function buscarCurso1() {
+  const q = document.getElementById('curso1-search').value.trim().toLowerCase();
+  const dd = document.getElementById('curso1-dropdown');
+  const opts = document.getElementById('curso1-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+
+  // Filtrar por intake activo Y por query
+  const resultados = nrcsObCache.filter(r => {
+    if(intakeActivo && (r.intake||'') !== intakeActivo) return false;
+    return (r.nrc||'').toLowerCase().includes(q) ||
+           (r['nombre curso']||'').toLowerCase().includes(q);
+  }).slice(0, 25);
+
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='#dbeafe';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
+    div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
+    div.onclick = () => {
+      document.getElementById('curso1-search').value = nombre;
+      document.getElementById('curso1').value = nombre;
+      dd.style.display = 'none';
+    };
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+// Cerrar dropdown al clic fuera
+document.addEventListener('click', function(e){
+  const inp = document.getElementById('curso1-search');
+  const dd  = document.getElementById('curso1-dropdown');
+  if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+});
 async function cargarNrcsOb() {
   try {
     const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
@@ -641,17 +686,23 @@ window.onload = async function() {
   if(fi) document.getElementById('fecha-inicio').value = fi;
   if(ff) document.getElementById('fecha-fin').value   = ff;
 
-  // Si viene NRC, buscar nombre de programa e induccion en nrcs_onboarding
+  // Cargar nrcs_onboarding siempre para el buscador de curso1
   const nrcParam = p.get('nrc');
-  if(nrcParam && !p.get('nombrePrograma')) {
-    await cargarNrcsOb();
+  await cargarNrcsOb();
+
+  // Guardar intake activo para filtrar buscador de curso1
+  intakeActivo = p.get('intake') || '';
+
+  if(nrcParam) {
     const ob = nrcsObCache.find(x => x.nrc === nrcParam);
     if(ob) {
-      if(ob['nombre programa']) set('programa', ob['nombre programa']);
+      if(ob['nombre programa'] && !p.get('nombrePrograma')) set('programa', ob['nombre programa']);
       if(ob['nombre curso']) {
         const niVal = nrcParam + ' — ' + ob['nombre curso'];
         set('nrc-induccion', niVal);
       }
+      // Si no vino intake en params, tomarlo del onboarding
+      if(!intakeActivo && ob.intake) intakeActivo = ob.intake;
     }
   }
 };
