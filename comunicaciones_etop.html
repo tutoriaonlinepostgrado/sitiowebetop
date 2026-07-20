@@ -478,7 +478,7 @@ function selEtapa(id, btn){
   const e = CAT[id];
   document.getElementById('l-tag').textContent  = e.tag;
   document.getElementById('l-tit').textContent  = e.tit;
-  document.getElementById('l-desc').textContent = e.desc;
+  const ldesc = document.getElementById('l-desc'); if(ldesc) ldesc.textContent = e.desc;
 
   const cont = document.getElementById('lista-items');
   cont.innerHTML = '';
