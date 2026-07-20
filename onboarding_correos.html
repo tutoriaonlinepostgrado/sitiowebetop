@@ -607,10 +607,53 @@ async function enviarSharePointPabloDaniela() {
   }
 }
 
-window.onload = function() {
+let nrcsObCache = [];
+async function cargarNrcsOb() {
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
+    nrcsObCache = await r.json();
+  } catch(e) {}
+}
+
+window.onload = async function() {
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
   document.getElementById('fecha-fin').value = today;
+
+  // ── PRE-LLENADO DESDE URL PARAMS (gestion.html o comunicaciones_etop.html) ──
+  const p = new URLSearchParams(window.location.search);
+  const toISO = v => {
+    if(!v) return '';
+    if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10);
+    const m = v.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    return m ? m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0') : '';
+  };
+  const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
+
+  if(p.get('nombreTutor')) set('nombre-tutor', p.get('nombreTutor'));
+  if(p.get('correoTutor')) set('correo-tutor', p.get('correoTutor'));
+  if(p.get('anexoTutor'))  set('anexo-tutor',  p.get('anexoTutor'));
+  if(p.get('nombrePrograma')) set('programa',   p.get('nombrePrograma'));
+  if(p.get('nombreCurso'))    set('nrc-induccion', p.get('nombreCurso'));
+
+  const fi = toISO(p.get('fechaInicio'));
+  const ff = toISO(p.get('fechaFin'));
+  if(fi) document.getElementById('fecha-inicio').value = fi;
+  if(ff) document.getElementById('fecha-fin').value   = ff;
+
+  // Si viene NRC, buscar nombre de programa e induccion en nrcs_onboarding
+  const nrcParam = p.get('nrc');
+  if(nrcParam && !p.get('nombrePrograma')) {
+    await cargarNrcsOb();
+    const ob = nrcsObCache.find(x => x.nrc === nrcParam);
+    if(ob) {
+      if(ob['nombre programa']) set('programa', ob['nombre programa']);
+      if(ob['nombre curso']) {
+        const niVal = nrcParam + ' — ' + ob['nombre curso'];
+        set('nrc-induccion', niVal);
+      }
+    }
+  }
 };
 </script>
 </body>
