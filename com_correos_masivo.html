@@ -277,13 +277,21 @@
       <label>NRC Y NOMBRE DE CURSO INDUCC</label>
       <input type="text" id="nrc-induccion" placeholder="Ej: 12345 - Inducción Postgrado" />
     </div>
-    <div class="form-group">
-      <label>NOMBRE PRIMER CURSO</label>
-      <input type="text" id="curso1" placeholder="Nombre del primer curso" />
+    <div class="form-group" style="position:relative;">
+      <label>NOMBRE PRIMER CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(busca por NRC)</span></label>
+      <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso1')" autocomplete="off" />
+      <div id="curso1-dropdown" style="display:none;position:absolute;left:0;right:0;z-index:100;background:#1e293b;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:2px;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+        <div id="curso1-options"></div>
+      </div>
+      <input type="hidden" id="curso1" />
     </div>
-    <div class="form-group">
-      <label>NOMBRE SEGUNDO CURSO (opcional)</label>
-      <input type="text" id="curso2" placeholder="Opcional" />
+    <div class="form-group" style="position:relative;">
+      <label>NOMBRE SEGUNDO CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(opcional — busca por NRC)</span></label>
+      <input type="text" id="curso2-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso2')" autocomplete="off" />
+      <div id="curso2-dropdown" style="display:none;position:absolute;left:0;right:0;z-index:100;background:#1e293b;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:2px;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+        <div id="curso2-options"></div>
+      </div>
+      <input type="hidden" id="curso2" />
     </div>
     <div class="form-group"></div>
     <div class="form-group">
@@ -607,7 +615,57 @@ async function enviarSharePointPabloDaniela() {
   }
 }
 
+// ── DATOS NRC PARA BUSCADOR DE CURSOS ──
+let nrcsObData = [];
+async function cargarNrcsOb(){
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
+    nrcsObData = await r.json();
+  } catch(e) { console.warn('No se pudo cargar nrcs_onboarding.json'); }
+}
+
+function buscarCurso(campo) {
+  const q = document.getElementById(campo+'-search').value.trim().toLowerCase();
+  const dd = document.getElementById(campo+'-dropdown');
+  const opts = document.getElementById(campo+'-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = nrcsObData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r['nombre curso']||'').toLowerCase().includes(q)
+  ).slice(0, 25);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
+    div.innerHTML = '<span style="color:#f6c128;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#e2e8f0;font-size:0.82rem;">'+nombre+'</span>';
+    div.onclick = () => seleccionarCurso(campo, r.nrc, nombre);
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+function seleccionarCurso(campo, nrc, nombre) {
+  document.getElementById(campo+'-search').value = nombre;
+  document.getElementById(campo).value = nombre;
+  document.getElementById(campo+'-dropdown').style.display = 'none';
+}
+
+// Cerrar dropdowns al clic fuera
+document.addEventListener('click', function(e){
+  ['curso1','curso2'].forEach(c => {
+    const inp = document.getElementById(c+'-search');
+    const dd  = document.getElementById(c+'-dropdown');
+    if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+  });
+});
+
 window.onload = function() {
+  cargarNrcsOb();
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
   document.getElementById('fecha-fin').value = today;
