@@ -31,10 +31,15 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 <div class="tb">
   <div class="tbl">
     <span class="badge">📊 Presentación</span>
-    <span class="tbt">Presentación Tutorial Innovado — Docente</span>
+    <span class="tbt">Presentación Tutorial — Docente</span>
     <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
   </div>
   <div class="tbr">
+    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.08);border-radius:7px;padding:3px;">
+      <button onclick="setTipo('ajustado',this)" id="btn-ajustado" style="font-size:11px;font-weight:700;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;background:#ffd700;color:#0F2463;">Ajustado</button>
+      <button onclick="setTipo('general',this)" id="btn-general" style="font-size:11px;font-weight:700;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;">General</button>
+      <button onclick="setTipo('individual',this)" id="btn-individual" style="font-size:11px;font-weight:700;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;">Individual</button>
+    </div>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -71,14 +76,14 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       </div>
     </div>
 
-    <!-- PÁRRAFO GRUPOS — editable -->
-    <p style="background:#FFF8E1;border-left:3px solid #F59E0B;padding:10px 14px;border-radius:4px;font-size:15px;">
+    <!-- PÁRRAFO GRUPOS — solo en tipo Ajustado -->
+    <p id="p-grupos" style="background:#FFF8E1;border-left:3px solid #F59E0B;padding:10px 14px;border-radius:4px;font-size:15px;">
       Con respecto a las actividades grupales de las semanas <span class="campo" contenteditable="true" data-placeholder="N° SEMANAS GRUPALES (ej: 2, 3, 6 y 7)"></span>, según la programación del curso, los grupos serán constituidos por máximo <span class="campo" contenteditable="true" data-placeholder="N° MÁXIMO INTEGRANTES (ej: 2)"></span> estudiantes, estas indicaciones ya se encuentran configuradas en la plataforma.
     </p>
 
-    <p>Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su colaboración en motivar a los estudiantes a realizar este paso de manera oportuna.</p>
+    <p id="p-autoinscripcion">Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su colaboración en motivar a los estudiantes a realizar este paso de manera oportuna.</p>
 
-  <p>Adicionalmente, les sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecten. <span class="campo" contenteditable="true" data-placeholder="Texto adicional (editable)">Asimismo, les recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.</span> Estoy a su disposición para asistirles en este proceso.</p>
+  <p>Adicionalmente, les sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecten. <span id="span-conoce" class="campo" contenteditable="true" data-placeholder="Texto adicional (editable)">Asimismo, les recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.</span> Estoy a su disposición para asistirles en este proceso.</p>
 
     <p>Si requieren orientación sobre el uso de la plataforma, pueden acceder al siguiente enlace: <a href="https://canvasunab.unab.cl/inicio-docentes/" style="color:#0056b3;">https://canvasunab.unab.cl/inicio-docentes/</a> o contactar a los canales de soporte disponibles.</p>
 
@@ -192,6 +197,47 @@ function mostrarToast(msg, error=false) {
   t.style.background = error ? '#DC2626' : '#059669';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ── SELECTOR DE TIPO ──
+function setTipo(tipo, btn) {
+  // Actualizar botones
+  ['btn-ajustado','btn-general','btn-individual'].forEach(id => {
+    const b = document.getElementById(id);
+    b.style.background = 'transparent';
+    b.style.color = '#cbd5e1';
+  });
+  btn.style.background = '#ffd700';
+  btn.style.color = '#0F2463';
+
+  const pGrupos       = document.getElementById('p-grupos');
+  const pAutoInsc     = document.getElementById('p-autoinscripcion');
+  const spanConoce    = document.getElementById('span-conoce');
+
+  if(tipo === 'ajustado'){
+    pGrupos.style.display      = '';
+    pAutoInsc.style.display    = '';
+    if(spanConoce){
+      spanConoce.textContent = 'Asimismo, les recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.';
+      spanConoce.style.display = '';
+    }
+  } else if(tipo === 'general'){
+    // Con grupos y autoinscripción, sin "Conoce a tu docente"
+    pGrupos.style.display      = '';
+    pAutoInsc.style.display    = '';
+    if(spanConoce){
+      spanConoce.textContent = '';
+      spanConoce.style.display = 'none';
+    }
+  } else if(tipo === 'individual'){
+    // Sin grupos, sin autoinscripción, sin "Conoce a tu docente"
+    pGrupos.style.display      = 'none';
+    pAutoInsc.style.display    = 'none';
+    if(spanConoce){
+      spanConoce.textContent = '';
+      spanConoce.style.display = 'none';
+    }
+  }
 }
 
 // ── ABRIR OUTLOOK ──
