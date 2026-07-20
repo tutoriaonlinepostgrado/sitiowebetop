@@ -155,46 +155,38 @@ iframe{width:100%;height:100%;border:none;display:block;}
   <!-- PANEL IZQUIERDO -->
   <div class="left">
 
-    <!-- Selector NRC -->
+    <!-- Buscador NRC compacto -->
     <div class="nrc-block">
       <div class="nrc-hdr">
-        <span class="nrc-lbl">📋 Contexto NRC</span>
+        <span class="nrc-lbl">📋 NRC</span>
         <span class="ndot loading" id="ndot"></span>
       </div>
       <div class="nrc-search-wrap">
-        <input class="nrc-search" id="nsearch" placeholder="🔍 Buscar NRC, curso, tutor..." oninput="filtrarNrc()" />
+        <input class="nrc-search" id="nsearch" placeholder="🔍 NRC, curso, tutor..." oninput="filtrarNrc()" />
       </div>
       <div class="nrc-select-wrap">
         <select class="nrc-select" id="nsel" onchange="selNRC(this.value)">
           <option value="">— Selecciona un curso —</option>
         </select>
       </div>
-
-      <!-- Ficha NRC activo -->
-      <div class="nrc-ficha" id="nficha">
-        <div class="nrc-estado" id="n-estado">—</div>
-        <div class="nrc-nombre" id="n-nombre">—</div>
-        <div class="nrc-grid">
-          <div class="nrc-field full"><span class="nf-lbl">NRC</span><div class="nf-val" id="n-nrc">—</div></div>
-          <div class="nrc-field"><span class="nf-lbl">Fecha inicio</span><input type="date" class="nf-inp" id="n-fi" /></div>
-          <div class="nrc-field"><span class="nf-lbl">Fecha fin</span><div class="nf-val" id="n-ff">—</div></div>
-          <div class="nrc-field full"><span class="nf-lbl">Intake</span><div class="nf-val" id="n-intake">—</div></div>
-          <div class="nrc-field full"><span class="nf-lbl">Tutor/a</span><input type="text" class="nf-inp" id="n-tutor" placeholder="Nombre tutor/a" /></div>
-          <div class="nrc-field full"><span class="nf-lbl">Correo tutor/a</span><input type="text" class="nf-inp" id="n-correo" placeholder="tutor@uandresbello.edu" /></div>
-          <div class="nrc-field full"><span class="nf-lbl">Docente</span><input type="text" class="nf-inp" id="n-docente" placeholder="Nombre docente (opcional)" /></div>
-          <div class="nrc-field"><span class="nf-lbl">N° semanas</span><input type="number" class="nf-inp" id="n-semanas" placeholder="Ej: 8" min="1" max="52" /></div>
-          <div class="nrc-field"><span class="nf-lbl">Periodo</span><div class="nf-val" id="n-periodo">—</div></div>
+      <!-- Contexto mini -->
+      <div id="nrc-mini" style="display:none;padding:0 12px 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <div>
+            <div class="nrc-estado" id="n-estado" style="margin-bottom:4px;">—</div>
+            <div style="font-size:10px;color:#cbd5e1;font-weight:600;line-height:1.3;" id="n-nombre">—</div>
+            <div style="font-size:9px;color:var(--soft);margin-top:2px;" id="n-nrc">—</div>
+          </div>
+          <button class="btn-activar" id="btn-activar" onclick="activarCtx()" style="width:auto;padding:6px 10px;font-size:10px;white-space:nowrap;">✓ Activar</button>
         </div>
-        <button class="btn-activar" id="btn-activar" onclick="activarCtx()">✓ Activar contexto</button>
       </div>
-      <div class="nrc-ph" id="nph"><span>📂</span>Selecciona un curso para cargar su contexto y pre-completar las plantillas.</div>
+      <div class="nrc-ph" id="nph" style="padding:10px 14px;font-size:10px;"><span style="font-size:16px;display:block;margin-bottom:4px;opacity:.4;">📂</span>Selecciona un curso</div>
     </div>
 
     <!-- Lista plantillas -->
     <div class="lista-hdr">
       <div class="lista-etapa-lbl" id="l-tag">Etapa 1</div>
       <div class="lista-etapa-tit" id="l-tit">Preparación</div>
-      <div class="lista-etapa-desc" id="l-desc">Herramientas y plantillas para la etapa de preparación.</div>
     </div>
     <div class="lista-items" id="lista-items"></div>
   </div>
@@ -364,7 +356,7 @@ function filtrarNrc(){
 // ── SELECCIÓN NRC ────────────────────────────────────────────────────────────
 function selNRC(cod){
   if(!cod){
-    document.getElementById('nficha').classList.remove('vis');
+    document.getElementById('nrc-mini').style.display = 'none';
     document.getElementById('nph').style.display = 'block';
     nrcActual = null; ctxOn = false;
     document.getElementById('pb-badge').classList.remove('vis');
@@ -375,7 +367,7 @@ function selNRC(cod){
   nrcActual = c; ctxOn = false;
 
   document.getElementById('nph').style.display = 'none';
-  document.getElementById('nficha').classList.add('vis');
+  document.getElementById('nrc-mini').style.display = 'block';
 
   // Estado badge
   const estadoEl = document.getElementById('n-estado');
@@ -383,55 +375,18 @@ function selNRC(cod){
   estadoEl.className = 'nrc-estado e' + est;
   estadoEl.textContent = c.estado || '—';
 
-  // Nombre curso
-  document.getElementById('n-nombre').textContent = c['nombre curso'] || c.nrc || '—';
-
-  // NRC
+  // Nombre y NRC
+  document.getElementById('n-nombre').textContent = (c['nombre curso'] || c.nrc || '—').substring(0,38);
   document.getElementById('n-nrc').textContent = c.nrc || '—';
 
-  // Fechas
-  const fi = document.getElementById('n-fi');
-  const fechaI = c['fecha inicio'] || '';
-  fi.value = fechaI.includes('T') ? fechaI.split('T')[0] : fechaI;
-  fi.classList.toggle('af', !!fechaI);
-
-  const fechaF = c['fecha fin'] || c.fechaFin || '';
-  document.getElementById('n-ff').textContent = fechaF ? fmtDMY(fechaF) : '—';
-
-  // Intake
-  document.getElementById('n-intake').textContent = c.intake || '—';
-
-  // Tutor
-  const tutor = limpiar(c.tutor || '');
-  const tutorEl = document.getElementById('n-tutor');
-  tutorEl.value = tutor;
-  tutorEl.classList.toggle('af', !!tutor);
-
-  // Correo tutor (desde mapa)
-  const correo = TUTORES_CORREOS[tutor?.toUpperCase()] || '';
-  const correoEl = document.getElementById('n-correo');
-  correoEl.value = correo;
-  correoEl.classList.toggle('af', !!correo);
-
-  // Docente
-  const docente = limpiar(c.docente || '');
-  const docenteEl = document.getElementById('n-docente');
-  docenteEl.value = docente;
-  docenteEl.classList.toggle('af', !!docente);
-
-  // Periodo
-  document.getElementById('n-periodo').textContent = c.periodo || '—';
-
-  // Reset semanas y botón activar
-  document.getElementById('n-semanas').value = '';
+  // Reset botón
   const btn = document.getElementById('btn-activar');
   btn.classList.remove('on');
-  btn.textContent = '✓ Activar contexto';
+  btn.textContent = '✓ Activar';
 
   document.getElementById('pb-badge').classList.remove('vis');
 
-  // Si hay item activo que requiere ctx, mostrar aviso
-  if(itemAct && itemAct.req) {
+  if(itemAct && itemAct.req){
     document.getElementById('ctx-req').classList.add('vis');
     document.getElementById('pframe').style.display = 'none';
   }
@@ -442,7 +397,7 @@ function activarCtx(){
   ctxOn = true;
   const btn = document.getElementById('btn-activar');
   btn.classList.add('on');
-  btn.textContent = '✓ Contexto activo';
+  btn.textContent = '✓ Activo';
   if(itemAct) cargarItem(itemAct, document.querySelector('.litem.active'));
 }
 
@@ -452,11 +407,12 @@ function buildURL(item){
   if(!ctxOn || !nrcActual) return item.url;
 
   const c = nrcActual;
-  const fi   = document.getElementById('n-fi').value || '';
+  const fechaIRaw = c['fecha inicio'] || '';
+  const fi   = fechaIRaw.includes('T') ? fechaIRaw.split('T')[0] : fechaIRaw;
   const ff   = c['fecha fin'] || c.fechaFin || '';
-  const tutor = document.getElementById('n-tutor').value.trim();
-  const correo = document.getElementById('n-correo').value.trim();
-  const semanas = document.getElementById('n-semanas').value.trim();
+  const tutor = limpiar(c.tutor || '');
+  const correo = TUTORES_CORREOS[tutor?.toUpperCase()] || '';
+  const semanas = c['n° de semanas'] || c.semanas || '';
   const nrc   = c.nrc || '';
   const nombre = c['nombre curso'] || '';
 
