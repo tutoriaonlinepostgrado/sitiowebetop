@@ -551,7 +551,10 @@
             }
         }
 
-        document.getElementById('visor').src = url;
+        // Forzar recarga del iframe aunque la URL sea la misma
+        const visor = document.getElementById('visor');
+        visor.src = '';
+        setTimeout(() => { visor.src = url; }, 50);
         document.querySelectorAll('.menu-btn,.canal-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
