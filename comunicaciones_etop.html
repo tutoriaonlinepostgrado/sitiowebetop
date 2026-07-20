@@ -244,8 +244,10 @@ const CAT = {
     tag:'Etapa 1', tit:'Preparación',
     desc:'Herramientas masivas y plantillas individuales para la etapa de preparación.',
     items:[
-      {n:'Correos Bienvenida — Masivo',          t:'masivo',      i:'📧', url:'onboarding_correos.html',           req:false, params:[]},
-      {n:'Invitación Sincrónica — Masivo',        t:'masivo',      i:'📅', url:'onboarding_invitaciones.html',      req:false, params:[]},
+      {n:'Correos Bienvenida — Masivo',          t:'masivo',      i:'📧', url:'com_correos_masivo.html',           req:true,
+        params:['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']},
+      {n:'Invitación Sincrónica — Masivo',        t:'masivo',      i:'📅', url:'com_invitaciones_masivo.html',      req:true,
+        params:['nombreTutor','correoTutor','nombreCurso','fechaInicio']},
       {n:'Correo Bienvenida — Rezagado',          t:'correo',      i:'✉️', url:'correo_bienvenida.html',            req:true,
         params:['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']},
       {n:'Invitación Sincrónica — Rezagado',      t:'correo',      i:'✉️', url:'invitacion_sincronica.html',        req:true,
