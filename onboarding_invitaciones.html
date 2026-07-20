@@ -259,7 +259,11 @@
   <div class="form-grid">
     <div class="form-group">
       <label>CURSO DE INDUCCION</label>
-      <input type="text" id="curso" placeholder="Nombre del curso" />
+      <input type="text" id="curso-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCursoInv()" autocomplete="off" />
+      <div id="curso-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="curso-options"></div>
+      </div>
+      <input type="hidden" id="curso" />
     </div>
     <div class="form-group">
       <label>FECHA INICIO CURSO DE INDUCCION</label>
@@ -580,11 +584,88 @@ async function enviarSharePointPabloDaniela() {
   }
 }
 
-window.onload = function() {
+let nrcsObCacheInv = [];
+let intakeActivoInv = '';
+
+async function cargarNrcsObInv() {
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
+    nrcsObCacheInv = await r.json();
+  } catch(e) {}
+}
+
+function buscarCursoInv() {
+  const q = document.getElementById('curso-search').value.trim().toLowerCase();
+  const dd = document.getElementById('curso-dropdown');
+  const opts = document.getElementById('curso-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = nrcsObCacheInv.filter(r => {
+    if(intakeActivoInv && (r.intake||'') !== intakeActivoInv) return false;
+    return (r.nrc||'').toLowerCase().includes(q) ||
+           (r['nombre curso']||'').toLowerCase().includes(q);
+  }).slice(0, 25);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='#dbeafe';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
+    div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
+    div.onclick = () => {
+      document.getElementById('curso-search').value = nombre;
+      document.getElementById('curso').value = nombre;
+      dd.style.display = 'none';
+    };
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+document.addEventListener('click', function(e){
+  const inp = document.getElementById('curso-search');
+  const dd  = document.getElementById('curso-dropdown');
+  if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+});
+
+window.onload = async function() {
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
   document.getElementById('fechacal').value = today;
   document.getElementById('fecha-sesion').value = today;
+
+  // ── PRE-LLENADO DESDE URL PARAMS ──
+  const p = new URLSearchParams(window.location.search);
+  const toISO = v => {
+    if(!v) return '';
+    if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10);
+    const m = v.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    return m ? m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0') : '';
+  };
+  const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
+
+  set('nombre-tutor', p.get('nombreTutor'));
+  set('correo-tutor', p.get('correoTutor'));
+  const fi = toISO(p.get('fechaInicio'));
+  if(fi) document.getElementById('fecha-inicio').value = fi;
+
+  // Cargar nrcs_onboarding para buscador de curso
+  const nrcParam = p.get('nrc');
+  intakeActivoInv = p.get('intake') || '';
+  await cargarNrcsObInv();
+
+  if(nrcParam) {
+    const ob = nrcsObCacheInv.find(x => x.nrc === nrcParam);
+    if(ob) {
+      if(ob['nombre curso']) {
+        document.getElementById('curso-search').value = ob['nombre curso'];
+        document.getElementById('curso').value = ob['nombre curso'];
+      }
+      if(!intakeActivoInv && ob.intake) intakeActivoInv = ob.intake;
+    }
+  }
 };
 </script>
 </body>
