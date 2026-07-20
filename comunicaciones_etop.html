@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comunicaciones ETOP</title>
+<style>
+:root {
+  --bg:        #111827;
+  --sidebar:   #0f172a;
+  --panel:     #1e293b;
+  --border:    rgba(255,255,255,0.07);
+  --gold:      #ffd700;
+  --gold-dim:  rgba(255,215,0,0.12);
+  --gold-line: rgba(255,215,0,0.25);
+  --text:      #f1f5f9;
+  --muted:     #94a3b8;
+  --soft:      #64748b;
+  --green:     #4ade80;
+  --green-bg:  rgba(74,222,128,0.1);
+  --green-bd:  rgba(74,222,128,0.25);
+  --red:       #f87171;
+  --amber:     #fde047;
+  --orange:    #fb923c;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:54px 280px 1fr;height:100vh;}
+
+/* ── RAIL (etapas) ── */
+.rail{background:#0a1120;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:2px;}
+.rail-logo{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);width:100%;display:flex;justify-content:center;}
+.rail-logo img{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gold);}
+.rail-btn{width:42px;height:42px;border:none;background:transparent;color:var(--soft);cursor:pointer;border-radius:8px;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative;}
+.rail-btn:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+.rail-btn.active{background:var(--gold-dim);color:var(--gold);box-shadow:inset 2px 0 0 var(--gold);}
+.rail-btn[title]:hover::after{content:attr(title);position:absolute;left:52px;top:50%;transform:translateY(-50%);background:#1e293b;color:var(--text);font-size:11px;font-weight:600;white-space:nowrap;padding:4px 10px;border-radius:6px;border:1px solid var(--border);pointer-events:none;z-index:100;}
+.rail-sep{width:28px;height:1px;background:var(--border);margin:6px 0;}
+.rail-back{margin-top:auto;}
+
+/* ── PANEL IZQUIERDO ── */
+.left{background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+
+/* NRC selector */
+.nrc-block{border-bottom:1px solid var(--border);flex-shrink:0;}
+.nrc-hdr{padding:12px 14px 8px;display:flex;align-items:center;justify-content:space-between;}
+.nrc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);}
+.ndot{width:6px;height:6px;border-radius:50%;background:var(--soft);}
+.ndot.ok{background:var(--green);}
+.ndot.err{background:var(--red);}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.ndot.loading{animation:pulse 1.2s infinite;}
+.nrc-search-wrap{padding:0 12px 8px;}
+.nrc-search{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:6px 10px;font-size:11px;font-family:inherit;outline:none;}
+.nrc-search::placeholder{color:var(--soft);}
+.nrc-search:focus{border-color:var(--gold-line);}
+.nrc-select-wrap{padding:0 12px 10px;}
+.nrc-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-line);color:var(--text);border-radius:7px;padding:6px 28px 6px 10px;font-size:11px;font-family:inherit;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23ffd700' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+.nrc-select option{background:#1e293b;}
+
+/* Ficha NRC */
+.nrc-ficha{padding:10px 14px 14px;display:none;flex-direction:column;gap:8px;}
+.nrc-ficha.vis{display:flex;}
+.nrc-estado{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.eACTIVO{background:rgba(74,222,128,.12);color:var(--green);border:1px solid var(--green-bd);}
+.ePREPARACION{background:rgba(253,224,71,.1);color:var(--amber);border:1px solid rgba(253,224,71,.2);}
+.eEN_CIERRE{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.2);}
+.eCERRADO{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);}
+.nrc-nombre{font-size:12px;font-weight:600;color:var(--text);line-height:1.4;}
+.nrc-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.nrc-field{display:flex;flex-direction:column;gap:2px;}
+.nrc-field.full{grid-column:1/-1;}
+.nf-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);}
+.nf-val{font-size:10px;color:#cbd5e1;padding:3px 7px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid var(--border);min-height:22px;line-height:1.4;}
+.nf-inp{font-size:10px;color:#cbd5e1;padding:3px 7px;background:rgba(255,255,255,0.05);border-radius:4px;border:1px solid var(--gold-line);min-height:22px;outline:none;font-family:inherit;width:100%;}
+.nf-inp:focus{border-color:var(--gold);}
+.nf-inp::placeholder{color:var(--soft);}
+.nf-inp.af{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06);color:#86efac;}
+
+.btn-activar{width:100%;padding:8px;background:var(--gold-dim);border:1px solid var(--gold-line);color:var(--gold);font-family:inherit;font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;transition:all .15s;}
+.btn-activar:hover{background:rgba(255,215,0,.2);}
+.btn-activar.on{background:var(--green-bg);border-color:var(--green-bd);color:var(--green);}
+
+.nrc-ph{padding:14px;text-align:center;color:var(--soft);font-size:10px;line-height:1.7;}
+.nrc-ph span{font-size:22px;display:block;margin-bottom:6px;opacity:.4;}
+
+/* Lista de plantillas */
+.lista-hdr{padding:10px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.lista-etapa-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);}
+.lista-etapa-tit{font-size:13px;font-weight:600;margin-top:2px;}
+.lista-etapa-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.lista-items{flex:1;overflow-y:auto;padding:5px 0;}
+.lista-items::-webkit-scrollbar{width:3px;}
+.lista-items::-webkit-scrollbar-thumb{background:var(--gold-line);border-radius:2px;}
+.litem{padding:9px 14px;display:flex;align-items:flex-start;gap:9px;cursor:pointer;border-left:2px solid transparent;transition:all .12s;}
+.litem:hover{background:rgba(255,255,255,0.03);}
+.litem.active{background:var(--gold-dim);border-left-color:var(--gold);}
+.li-ic{font-size:15px;flex-shrink:0;margin-top:1px;color:var(--soft);}
+.litem.active .li-ic{color:var(--gold);}
+.li-inf{flex:1;min-width:0;}
+.li-nom{font-size:11px;color:#cbd5e1;line-height:1.35;}
+.litem.active .li-nom{color:var(--gold);font-weight:500;}
+.li-tipo{font-size:9px;margin-top:3px;padding:1px 6px;border-radius:8px;display:inline-block;font-weight:500;}
+.t-correo{background:rgba(24,95,165,.18);color:#b5d4f4;}
+.t-anuncio{background:rgba(253,224,71,.12);color:#facc15;}
+.t-masivo{background:rgba(139,92,246,.15);color:#c4b5fd;}
+.t-seguimiento{background:rgba(249,115,22,.15);color:#fdba74;}
+
+/* ── PANEL DERECHO (preview) ── */
+.preview{display:flex;flex-direction:column;background:#f1f5f9;overflow:hidden;}
+.preview-bar{background:var(--panel);height:44px;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.pb-ic{font-size:15px;color:var(--soft);}
+.pb-tit{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pb-badge{font-size:9px;padding:3px 9px;background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);border-radius:8px;white-space:nowrap;display:none;}
+.pb-badge.vis{display:inline-block;}
+.pb-btn{font-size:11px;padding:4px 12px;background:var(--gold-dim);border:1px solid var(--gold-line);color:var(--gold);border-radius:6px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s;}
+.pb-btn:hover{background:rgba(255,215,0,.2);}
+.preview-body{flex:1;overflow:hidden;position:relative;}
+iframe{width:100%;height:100%;border:none;display:block;}
+
+/* Estados vacíos */
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#f8fafc;}
+.ph-ic{font-size:52px;opacity:.25;}
+.ph-t{font-size:15px;font-weight:700;color:#475569;}
+.ph-s{font-size:12px;color:#94a3b8;text-align:center;max-width:300px;line-height:1.6;}
+.ph-tag{font-size:10px;padding:4px 14px;background:#e2e8f0;color:#64748b;border-radius:20px;font-weight:600;}
+
+.ctx-req{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(248,250,252,.96);z-index:10;}
+.ctx-req.vis{display:flex;}
+.ctx-box{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:36px 44px;text-align:center;max-width:360px;box-shadow:0 4px 28px rgba(0,0,0,.08);}
+.ctx-ic{font-size:44px;margin-bottom:12px;}
+.ctx-t{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px;}
+.ctx-s{font-size:12px;color:#64748b;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- RAIL -->
+  <nav class="rail">
+    <div class="rail-logo">
+      <a href="index.html"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP"></a>
+    </div>
+    <button class="rail-btn active" id="rb-preparacion" title="Preparación" onclick="selEtapa('preparacion',this)">✨</button>
+    <button class="rail-btn" id="rb-induccion" title="Semana Inducción" onclick="selEtapa('induccion',this)">🎓</button>
+    <button class="rail-btn" id="rb-imparticion" title="Impartición" onclick="selEtapa('imparticion',this)">✏️</button>
+    <button class="rail-btn" id="rb-cierre" title="Cierre" onclick="selEtapa('cierre',this)">🏁</button>
+    <div class="rail-sep"></div>
+    <a href="index.html" class="rail-btn rail-back" title="Portal ETOP">⬅️</a>
+  </nav>
+
+  <!-- PANEL IZQUIERDO -->
+  <div class="left">
+
+    <!-- Selector NRC -->
+    <div class="nrc-block">
+      <div class="nrc-hdr">
+        <span class="nrc-lbl">📋 Contexto NRC</span>
+        <span class="ndot loading" id="ndot"></span>
+      </div>
+      <div class="nrc-search-wrap">
+        <input class="nrc-search" id="nsearch" placeholder="🔍 Buscar NRC, curso, tutor..." oninput="filtrarNrc()" />
+      </div>
+      <div class="nrc-select-wrap">
+        <select class="nrc-select" id="nsel" onchange="selNRC(this.value)">
+          <option value="">— Selecciona un curso —</option>
+        </select>
+      </div>
+
+      <!-- Ficha NRC activo -->
+      <div class="nrc-ficha" id="nficha">
+        <div class="nrc-estado" id="n-estado">—</div>
+        <div class="nrc-nombre" id="n-nombre">—</div>
+        <div class="nrc-grid">
+          <div class="nrc-field full"><span class="nf-lbl">NRC</span><div class="nf-val" id="n-nrc">—</div></div>
+          <div class="nrc-field"><span class="nf-lbl">Fecha inicio</span><input type="date" class="nf-inp" id="n-fi" /></div>
+          <div class="nrc-field"><span class="nf-lbl">Fecha fin</span><div class="nf-val" id="n-ff">—</div></div>
+          <div class="nrc-field full"><span class="nf-lbl">Intake</span><div class="nf-val" id="n-intake">—</div></div>
+          <div class="nrc-field full"><span class="nf-lbl">Tutor/a</span><input type="text" class="nf-inp" id="n-tutor" placeholder="Nombre tutor/a" /></div>
+          <div class="nrc-field full"><span class="nf-lbl">Correo tutor/a</span><input type="text" class="nf-inp" id="n-correo" placeholder="tutor@uandresbello.edu" /></div>
+          <div class="nrc-field full"><span class="nf-lbl">Docente</span><input type="text" class="nf-inp" id="n-docente" placeholder="Nombre docente (opcional)" /></div>
+          <div class="nrc-field"><span class="nf-lbl">N° semanas</span><input type="number" class="nf-inp" id="n-semanas" placeholder="Ej: 8" min="1" max="52" /></div>
+          <div class="nrc-field"><span class="nf-lbl">Periodo</span><div class="nf-val" id="n-periodo">—</div></div>
+        </div>
+        <button class="btn-activar" id="btn-activar" onclick="activarCtx()">✓ Activar contexto</button>
+      </div>
+      <div class="nrc-ph" id="nph"><span>📂</span>Selecciona un curso para cargar su contexto y pre-completar las plantillas.</div>
+    </div>
+
+    <!-- Lista plantillas -->
+    <div class="lista-hdr">
+      <div class="lista-etapa-lbl" id="l-tag">Etapa 1</div>
+      <div class="lista-etapa-tit" id="l-tit">Preparación</div>
+      <div class="lista-etapa-desc" id="l-desc">Herramientas y plantillas para la etapa de preparación.</div>
+    </div>
+    <div class="lista-items" id="lista-items"></div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="preview-bar">
+      <span class="pb-ic" id="pb-ic">📄</span>
+      <span class="pb-tit" id="pb-tit">Selecciona una plantilla de la lista</span>
+      <span class="pb-badge" id="pb-badge">⚡ Datos NRC aplicados</span>
+      <a href="#" class="pb-btn" id="pb-abrir" target="_blank" style="display:none">Abrir en nueva pestaña ↗</a>
+    </div>
+    <div class="preview-body">
+      <div class="ph" id="ph">
+        <div class="ph-ic">📬</div>
+        <div class="ph-t">Selecciona una plantilla</div>
+        <div class="ph-s">Elige una etapa en el rail izquierdo y luego una plantilla de la lista.</div>
+        <div class="ph-tag">Portal ETOP · Comunicaciones</div>
+      </div>
+      <div class="ctx-req" id="ctx-req">
+        <div class="ctx-box">
+          <div class="ctx-ic">⚡</div>
+          <div class="ctx-t">Activa el contexto del curso</div>
+          <div class="ctx-s">Selecciona un NRC en el panel izquierdo y haz clic en <strong>"Activar contexto"</strong> para que los datos del curso se pre-completen automáticamente en la plantilla.</div>
+        </div>
+      </div>
+      <iframe id="pframe" src="" style="display:none;"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DATOS ────────────────────────────────────────────────────────────────────
+const TUTORES_CORREOS = {
+  'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl',
+  'MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+  'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl',
+  'MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+  'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl',
+  'NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+  'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl',
+  'JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl',
+  'CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl',
+  'FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl',
+  'MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl',
+  'DANIELA CORNEJO':'tutoriaonline36@unab.cl'
+};
+
+// Catálogo de plantillas por etapa
+// params: lista de param names que necesita del contexto NRC
+// req: true = necesita ctx activo para mostrarse
+const CAT = {
+  preparacion:{
+    tag:'Etapa 1', tit:'Preparación',
+    desc:'Herramientas masivas y plantillas individuales para la etapa de preparación.',
+    items:[
+      {n:'Correos Bienvenida — Masivo',          t:'masivo',      i:'📧', url:'onboarding_correos.html',           req:false, params:[]},
+      {n:'Invitación Sincrónica — Masivo',        t:'masivo',      i:'📅', url:'onboarding_invitaciones.html',      req:false, params:[]},
+      {n:'Correo Bienvenida — Rezagado',          t:'correo',      i:'✉️', url:'correo_bienvenida.html',            req:true,
+        params:['nombreTutor','nombreCurso','fechaInicio','fechaFin']},
+      {n:'Invitación Sincrónica — Rezagado',      t:'correo',      i:'✉️', url:'invitacion_sincronica.html',        req:true,
+        params:['nombreTutor','nombreCurso','fechaInicio']},
+      {n:'Presentación Tutorial — Docente',       t:'correo',      i:'📊', url:'presentacion_tutorial_innovado.html',req:true,
+        params:['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']},
+    ]
+  },
+  induccion:{
+    tag:'Etapa 2', tit:'Semana de Inducción',
+    desc:'Anuncios y materiales para la semana de inducción.',
+    items:[
+      {n:'Anuncio Bienvenida Inducción',          t:'anuncio',     i:'📢', url:'anuncio_bienvenida_induccion.html',         req:false, params:[]},
+      {n:'Anuncio Lunes — Invitación Sincrónica', t:'anuncio',     i:'📢', url:'anuncio_lunes_invitacion_sincronica.html',   req:false, params:[]},
+      {n:'Anuncio Martes — Activa Zoom',          t:'anuncio',     i:'📢', url:'anuncio_martes_zoom.html',                  req:false, params:[]},
+      {n:'Anuncio Miércoles — Grabación',         t:'anuncio',     i:'📢', url:'anuncio_miercoles_grabacion.html',          req:false, params:[]},
+      {n:'Anuncio Jueves — Gestiona tu Caso',     t:'anuncio',     i:'📢', url:'anuncio_jueves_gestiona.html',              req:false, params:[]},
+      {n:'Anuncio Cierre Semana Inducción',       t:'anuncio',     i:'📢', url:'anuncio_cierre_induccion.html',             req:false, params:[]},
+    ]
+  },
+  imparticion:{
+    tag:'Etapa 3', tit:'Impartición',
+    desc:'Anuncios y correos de seguimiento para el curso malla.',
+    items:[
+      {n:'Anuncio Bienvenida Curso Malla',        t:'anuncio',     i:'📢', url:'anuncio_bienvenida_curso_malla.html',  req:true,
+        params:['nombre_tutor','nombre_curso','fecha_inicio','fecha_fin']},
+      {n:'Anuncio Auto Inscripción Grupo',        t:'anuncio',     i:'📢', url:'anuncio_auto_inscripcion_grupo.html',  req:false, params:[]},
+      {n:'Mailing Tutor — Docente',               t:'correo',      i:'✉️', url:'mailing_tutor_docente.html',           req:false, params:[]},
+      {n:'Presentación Tutorial Innovado',        t:'correo',      i:'📊', url:'presentacion_tutorial_innovado.html',  req:true,
+        params:['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']},
+      {n:'Seguimiento Tareas Pendientes',         t:'seguimiento', i:'✉️', url:'mensaje_seguimiento_tareas.html',      req:true,
+        params:['nrc','nombre_curso']},
+      {n:'Seguimiento No Ingreso',                t:'seguimiento', i:'✉️', url:'seguimiento_no_ingreso.html',          req:true,
+        params:['nrc','nombre_curso']},
+    ]
+  },
+  cierre:{
+    tag:'Etapa 4', tit:'Cierre',
+    desc:'Plantillas para la finalización del curso.',
+    items:[
+      {n:'Correo Cierre de Curso',                t:'correo',      i:'✉️', url:'enviar_correo_cierre.html',            req:true,
+        params:['nrc','nombre_curso','fecha_inicio','fecha_fin']},
+    ]
+  }
+};
+
+// ── ESTADO ───────────────────────────────────────────────────────────────────
+let nrcsBase = [], nrcsOb = [], nrcsMerged = [];
+let nrcActual = null, ctxOn = false;
+let etapaAct = 'preparacion', itemAct = null;
+
+// ── CARGA DE DATOS ───────────────────────────────────────────────────────────
+async function cargarDatos(){
+  const dot = document.getElementById('ndot');
+  dot.className = 'ndot loading';
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now()),
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
+    ]);
+    nrcsBase = await r1.json();   // nrc, estado, tipo, facultad, fecha inicio, fecha fin, tutor
+    nrcsOb   = await r2.json();   // nrc, nombre curso, codigo curso, intake, periodo, nombre programa, docente, materia, id
+
+    // Join por nrc
+    const obMap = {};
+    nrcsOb.forEach(r => { obMap[r.nrc] = r; });
+    nrcsMerged = nrcsBase.map(r => ({ ...r, ...(obMap[r.nrc] || {}) }));
+
+    poblarSelect(nrcsMerged);
+    dot.className = 'ndot ok';
+    dot.title = nrcsMerged.length + ' cursos cargados';
+  } catch(e) {
+    dot.className = 'ndot err';
+    dot.title = 'Error al cargar datos';
+    document.getElementById('nph').innerHTML = '<span>⚠️</span>No se pudo cargar la lista de cursos.';
+  }
+}
+
+function poblarSelect(data){
+  const sel = document.getElementById('nsel');
+  sel.innerHTML = '<option value="">— Selecciona un curso ('+ data.length +') —</option>';
+  data.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.nrc;
+    const estado = (c.estado||'').substring(0,3).toUpperCase();
+    const nombre = (c['nombre curso']||c.nrc||'').substring(0,40);
+    o.textContent = '['+estado+'] ' + nombre;
+    o.title = c.nrc + ' · ' + (c.tutor||'');
+    sel.appendChild(o);
+  });
+}
+
+function filtrarNrc(){
+  const q = document.getElementById('nsearch').value.toLowerCase().trim();
+  const f = !q ? nrcsMerged : nrcsMerged.filter(c =>
+    (c.nrc||'').toLowerCase().includes(q) ||
+    (c['nombre curso']||'').toLowerCase().includes(q) ||
+    (c.tutor||'').toLowerCase().includes(q) ||
+    (c.facultad||'').toLowerCase().includes(q) ||
+    (c.intake||'').toLowerCase().includes(q)
+  );
+  poblarSelect(f);
+  document.getElementById('nsel').value = '';
+  document.getElementById('nficha').classList.remove('vis');
+  document.getElementById('nph').style.display = 'block';
+}
+
+// ── SELECCIÓN NRC ────────────────────────────────────────────────────────────
+function selNRC(cod){
+  if(!cod){
+    document.getElementById('nficha').classList.remove('vis');
+    document.getElementById('nph').style.display = 'block';
+    nrcActual = null; ctxOn = false;
+    document.getElementById('pb-badge').classList.remove('vis');
+    return;
+  }
+  const c = nrcsMerged.find(x => x.nrc === cod);
+  if(!c) return;
+  nrcActual = c; ctxOn = false;
+
+  document.getElementById('nph').style.display = 'none';
+  document.getElementById('nficha').classList.add('vis');
+
+  // Estado badge
+  const estadoEl = document.getElementById('n-estado');
+  const est = (c.estado||'').replace(/ /g,'_');
+  estadoEl.className = 'nrc-estado e' + est;
+  estadoEl.textContent = c.estado || '—';
+
+  // Nombre curso
+  document.getElementById('n-nombre').textContent = c['nombre curso'] || c.nrc || '—';
+
+  // NRC
+  document.getElementById('n-nrc').textContent = c.nrc || '—';
+
+  // Fechas
+  const fi = document.getElementById('n-fi');
+  const fechaI = c['fecha inicio'] || '';
+  fi.value = fechaI.includes('T') ? fechaI.split('T')[0] : fechaI;
+  fi.classList.toggle('af', !!fechaI);
+
+  const fechaF = c['fecha fin'] || c.fechaFin || '';
+  document.getElementById('n-ff').textContent = fechaF ? fmtDMY(fechaF) : '—';
+
+  // Intake
+  document.getElementById('n-intake').textContent = c.intake || '—';
+
+  // Tutor
+  const tutor = limpiar(c.tutor || '');
+  const tutorEl = document.getElementById('n-tutor');
+  tutorEl.value = tutor;
+  tutorEl.classList.toggle('af', !!tutor);
+
+  // Correo tutor (desde mapa)
+  const correo = TUTORES_CORREOS[tutor?.toUpperCase()] || '';
+  const correoEl = document.getElementById('n-correo');
+  correoEl.value = correo;
+  correoEl.classList.toggle('af', !!correo);
+
+  // Docente
+  const docente = limpiar(c.docente || '');
+  const docenteEl = document.getElementById('n-docente');
+  docenteEl.value = docente;
+  docenteEl.classList.toggle('af', !!docente);
+
+  // Periodo
+  document.getElementById('n-periodo').textContent = c.periodo || '—';
+
+  // Reset semanas y botón activar
+  document.getElementById('n-semanas').value = '';
+  const btn = document.getElementById('btn-activar');
+  btn.classList.remove('on');
+  btn.textContent = '✓ Activar contexto';
+
+  document.getElementById('pb-badge').classList.remove('vis');
+
+  // Si hay item activo que requiere ctx, mostrar aviso
+  if(itemAct && itemAct.req) {
+    document.getElementById('ctx-req').classList.add('vis');
+    document.getElementById('pframe').style.display = 'none';
+  }
+}
+
+function activarCtx(){
+  if(!nrcActual) return;
+  ctxOn = true;
+  const btn = document.getElementById('btn-activar');
+  btn.classList.add('on');
+  btn.textContent = '✓ Contexto activo';
+  if(itemAct) cargarItem(itemAct, document.querySelector('.litem.active'));
+}
+
+// ── CONSTRUCCIÓN URL CON PARAMS ──────────────────────────────────────────────
+function buildURL(item){
+  if(!item.params || item.params.length === 0) return item.url;
+  if(!ctxOn || !nrcActual) return item.url;
+
+  const c = nrcActual;
+  const fi   = document.getElementById('n-fi').value || '';
+  const ff   = c['fecha fin'] || c.fechaFin || '';
+  const tutor = document.getElementById('n-tutor').value.trim();
+  const correo = document.getElementById('n-correo').value.trim();
+  const semanas = document.getElementById('n-semanas').value.trim();
+  const nrc   = c.nrc || '';
+  const nombre = c['nombre curso'] || '';
+
+  // Ambos formatos camelCase y snake_case
+  const p = {
+    // camelCase (correo_bienvenida, invitacion_sincronica, presentacion_tutorial)
+    nombreTutor:  tutor,
+    correoTutor:  correo,
+    nombreCurso:  nombre,
+    nrc:          nrc,
+    fechaInicio:  fi ? fmtDMY(fi) : '',
+    fechaFin:     ff ? fmtDMY(ff) : '',
+    diaInicio:    fi ? diaNom(fi) : '',
+    diaFin:       ff ? diaNom(ff) : '',
+    duracion:     semanas,
+    // snake_case (anuncio_bienvenida_curso_malla, enviar_correo_cierre)
+    nombre_tutor:  tutor,
+    correo_tutor:  correo,
+    nombre_curso:  nombre,
+    fecha_inicio:  fi ? fmtDMY(fi) : '',
+    fecha_fin:     ff ? fmtDMY(ff) : '',
+    // seguimiento
+    nombre:        '',
+  };
+
+  const qs = item.params
+    .filter(k => p[k] !== undefined && p[k] !== '')
+    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(p[k]))
+    .join('&');
+
+  return qs ? item.url + '?' + qs : item.url;
+}
+
+// ── ETAPAS Y LISTA ───────────────────────────────────────────────────────────
+function selEtapa(id, btn){
+  document.querySelectorAll('.rail-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  etapaAct = id; itemAct = null;
+
+  const e = CAT[id];
+  document.getElementById('l-tag').textContent  = e.tag;
+  document.getElementById('l-tit').textContent  = e.tit;
+  document.getElementById('l-desc').textContent = e.desc;
+
+  const cont = document.getElementById('lista-items');
+  cont.innerHTML = '';
+  e.items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'litem';
+    div.innerHTML = `<span class="li-ic">${item.i}</span>
+      <div class="li-inf">
+        <div class="li-nom">${item.n}</div>
+        <span class="li-tipo t-${item.t}">${item.t}</span>
+      </div>`;
+    div.addEventListener('click', () => cargarItem(item, div));
+    cont.appendChild(div);
+  });
+
+  resetPreview();
+}
+
+function cargarItem(item, el){
+  document.querySelectorAll('.litem').forEach(i => i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  itemAct = item;
+
+  document.getElementById('pb-ic').textContent  = item.i;
+  document.getElementById('pb-tit').textContent = item.n;
+
+  const frame   = document.getElementById('pframe');
+  const ph      = document.getElementById('ph');
+  const ctxReq  = document.getElementById('ctx-req');
+  const badge   = document.getElementById('pb-badge');
+  const abrirBtn = document.getElementById('pb-abrir');
+
+  ph.style.display = 'none';
+
+  // Plantilla requiere contexto pero no está activado
+  if(item.req && !ctxOn){
+    ctxReq.classList.add('vis');
+    frame.style.display = 'none';
+    frame.src = '';
+    badge.classList.remove('vis');
+    abrirBtn.style.display = 'none';
+    return;
+  }
+
+  ctxReq.classList.remove('vis');
+  const url = buildURL(item);
+  frame.src = url;
+  frame.style.display = 'block';
+  badge.classList.toggle('vis', item.req && ctxOn && item.params.length > 0);
+  abrirBtn.href = url;
+  abrirBtn.style.display = 'inline-block';
+}
+
+function resetPreview(){
+  document.getElementById('pb-ic').textContent  = '📄';
+  document.getElementById('pb-tit').textContent = 'Selecciona una plantilla de la lista';
+  document.getElementById('pb-abrir').style.display = 'none';
+  document.getElementById('pframe').style.display = 'none';
+  document.getElementById('pframe').src = '';
+  document.getElementById('ctx-req').classList.remove('vis');
+  document.getElementById('pb-badge').classList.remove('vis');
+  const ph = document.getElementById('ph');
+  ph.style.display = 'flex';
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function fmtDMY(iso){
+  if(!iso) return '';
+  const s = iso.split('T')[0];
+  const [y,m,d] = s.split('-');
+  return d+'-'+m+'-'+y;
+}
+function diaNom(iso){
+  if(!iso) return '';
+  return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][new Date(iso+'T12:00:00').getDay()];
+}
+function limpiar(v){
+  if(!v) return '';
+  const l = v.trim().toLowerCase();
+  return ['por definir','por confirmar','0','nan','definir'].includes(l) ? '' : v.trim();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  cargarDatos();
+  selEtapa('preparacion', document.getElementById('rb-preparacion'));
+};
+</script>
+</body>
+</html>
