@@ -177,10 +177,12 @@ const params = new URLSearchParams(window.location.search);
 const mapa = {
   nombre_tutor:       params.get('nombreTutor'),
   nombre_tutor_firma: params.get('nombreTutor'),
-  nombre_programa:    params.get('nombreCurso'),
+  cargo_tutor:        params.get('anexoTutor') ? 'Tutor/a de Acompañamiento — ' + params.get('anexoTutor') : null,
+  nombre_programa:    params.get('nombrePrograma'),
   curso_induccion:    params.get('nombreCurso'),
   fecha_inicio:       params.get('fechaInicio'),
-  fecha_fin:          params.get('fechaFin')
+  fecha_fin:          params.get('fechaFin'),
+  primer_curso:       params.get('primerCurso') || null
 };
 
 let hayDatos = false;
