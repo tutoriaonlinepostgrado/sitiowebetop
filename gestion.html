@@ -529,7 +529,54 @@
         vistaActual=clave;
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display='block';
-        document.getElementById('visor').src=misReportes[clave];
+
+        // Si hay NRC seleccionado, buscar sus datos y pasarlos como params
+        let url = misReportes[clave];
+        if(clave === 'CORREOS' && BUSQUEDA.nrc && catalogoNRC.length) {
+            const nrcData = catalogoNRC.find(n => (n.nrc||'').toUpperCase() === BUSQUEDA.nrc.toUpperCase());
+            if(nrcData) {
+                const TUTORES_CORREOS = {
+                    'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl',
+                    'MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+                    'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl',
+                    'MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+                    'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl',
+                    'NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+                    'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl',
+                    'JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl',
+                    'CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl',
+                    'FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl',
+                    'MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl',
+                    'DANIELA CORNEJO':'tutoriaonline36@unab.cl'
+                };
+                const TUTORES_ANEXOS = {
+                    'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284',
+                    'MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866',
+                    'SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285',
+                    'MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260',
+                    'CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361',
+                    'NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685',
+                    'CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278',
+                    'JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'
+                };
+                const tutor = (nrcData.tutor||'').trim().toUpperCase();
+                const correo = TUTORES_CORREOS[tutor] || '';
+                const anexo  = TUTORES_ANEXOS[tutor]  || '';
+                const fi = nrcData['fecha inicio'] || '';
+                const ff = nrcData['fecha fin']    || nrcData.fechaFin || '';
+                const p = new URLSearchParams({
+                    nombreTutor:  nrcData.tutor || '',
+                    correoTutor:  correo,
+                    anexoTutor:   anexo,
+                    nrc:          BUSQUEDA.nrc,
+                    fechaInicio:  fi,
+                    fechaFin:     ff
+                });
+                url = misReportes[clave] + '?' + p.toString();
+            }
+        }
+
+        document.getElementById('visor').src = url;
         document.querySelectorAll('.menu-btn,.canal-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
