@@ -255,9 +255,9 @@ const CAT = {
       {n:'Correos Bienvenida — Masivo',          t:'masivo',      i:'📧', url:'onboarding_correos.html',           req:false, params:[]},
       {n:'Invitación Sincrónica — Masivo',        t:'masivo',      i:'📅', url:'onboarding_invitaciones.html',      req:false, params:[]},
       {n:'Correo Bienvenida — Rezagado',          t:'correo',      i:'✉️', url:'correo_bienvenida.html',            req:true,
-        params:['nombreTutor','nombreCurso','fechaInicio','fechaFin']},
+        params:['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']},
       {n:'Invitación Sincrónica — Rezagado',      t:'correo',      i:'✉️', url:'invitacion_sincronica.html',        req:true,
-        params:['nombreTutor','nombreCurso','fechaInicio']},
+        params:['nombreTutor','correoTutor','nombreCurso']},
       {n:'Presentación Tutorial — Docente',       t:'correo',      i:'📊', url:'presentacion_tutorial_innovado.html',req:true,
         params:['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']},
     ]
@@ -461,25 +461,48 @@ function buildURL(item){
   const nombre = c['nombre curso'] || '';
 
   // Ambos formatos camelCase y snake_case
+  const intake  = c.intake || '';
+  const programa = c['nombre programa'] || '';
+  const periodo  = c.periodo || '';
+  const anexo    = TUTORES_CORREOS[tutor?.toUpperCase()] ? 
+    (Object.entries(TUTORES_CORREOS).find(([k])=>k===tutor?.toUpperCase())||[])[1]||'' : '';
+  // Obtener anexo desde mapa de tutores
+  const TUTORES_ANEXOS = {
+    'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284',
+    'MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866',
+    'SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285',
+    'MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260',
+    'CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361',
+    'NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685',
+    'CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278',
+    'JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'
+  };
+  const anexoVal = TUTORES_ANEXOS[tutor?.toUpperCase()] || '';
+
   const p = {
-    // camelCase (correo_bienvenida, invitacion_sincronica, presentacion_tutorial)
-    nombreTutor:  tutor,
-    correoTutor:  correo,
-    nombreCurso:  nombre,
-    nrc:          nrc,
-    fechaInicio:  fi ? fmtDMY(fi) : '',
-    fechaFin:     ff ? fmtDMY(ff) : '',
-    diaInicio:    fi ? diaNom(fi) : '',
-    diaFin:       ff ? diaNom(ff) : '',
-    duracion:     semanas,
-    // snake_case (anuncio_bienvenida_curso_malla, enviar_correo_cierre)
-    nombre_tutor:  tutor,
-    correo_tutor:  correo,
-    nombre_curso:  nombre,
-    fecha_inicio:  fi ? fmtDMY(fi) : '',
-    fecha_fin:     ff ? fmtDMY(ff) : '',
+    // camelCase
+    nombreTutor:    tutor,
+    correoTutor:    correo,
+    anexoTutor:     anexoVal,
+    nombreCurso:    nombre,
+    nombrePrograma: programa,
+    intake:         intake,
+    periodo:        periodo,
+    nrc:            nrc,
+    fechaInicio:    fi ? fmtDMY(fi) : '',
+    fechaFin:       ff ? fmtDMY(ff) : '',
+    diaInicio:      fi ? diaNom(fi) : '',
+    diaFin:         ff ? diaNom(ff) : '',
+    duracion:       semanas,
+    // snake_case
+    nombre_tutor:   tutor,
+    correo_tutor:   correo,
+    nombre_curso:   nombre,
+    nombre_programa:programa,
+    fecha_inicio:   fi ? fmtDMY(fi) : '',
+    fecha_fin:      ff ? fmtDMY(ff) : '',
     // seguimiento
-    nombre:        '',
+    nombre:         '',
   };
 
   const qs = item.params
