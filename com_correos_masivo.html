@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Correos de Bienvenida</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --bg: #F3F2F1;
+    --panel: #ffffff;
+    --line: #f6c128;
+    --line-dim: rgba(246,193,40,0.25);
+    --text: #1f2940;
+    --muted: #666666;
+    --soft: #888888;
+    --ok-bg: #d4edda;
+    --ok-text: #155724;
+    --err-bg: #f8d7da;
+    --err-text: #721c24;
+    --input-bg: #ffffff;
+    --input-text: #1f2940;
+    --radius: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 2rem;
+  }
+
+  .header { margin-bottom: 2rem; border-bottom: 2px solid var(--line); padding-bottom: 1rem; }
+  .header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text); }
+  .header p { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  @media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } }
+  
+  .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  input[type="text"], input[type="date"], textarea {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid rgba(246,193,40,0.8);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--line);
+    box-shadow: 0 0 0 2px rgba(246,193,40,0.15);
+  }
+
+  .file-drop {
+    border: 1px dashed rgba(246,193,40,0.5);
+    border-radius: 10px;
+    padding: 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    background: transparent;
+    position: relative;
+  }
+  .file-drop:hover { border-color: var(--line); background: rgba(246,193,40,0.05); color: var(--text); }
+  .file-drop input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .file-drop .file-name {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--line);
+    font-family: 'IBM Plex Mono', monospace;
+    word-break: break-all;
+  }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .btn:hover { background: rgba(246,193,40,0.1); }
+  .btn.primary { background: rgba(246,193,40,0.14); }
+  .btn.primary:hover { background: rgba(246,193,40,0.22); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+  .alert { border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; margin-top: 0.75rem; }
+  .alert.success { background: var(--ok-bg); color: var(--ok-text); }
+  .alert.error { background: var(--err-bg); color: var(--err-text); }
+  .alert.info { background: #d1ecf1; color: #0c5460; }
+
+  .helper {
+    background: rgba(246,193,40,0.1);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--line);
+  }
+
+  .table-wrap {
+    overflow: auto;
+    max-height: 340px;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border: 1px solid var(--line-dim);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  th {
+    background: rgba(246,193,40,0.1);
+    color: var(--text);
+    font-weight: 700;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line-dim);
+  }
+  td {
+    padding: 0.4rem 0.75rem;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(246,193,40,0.05); color: var(--text); }
+
+  .divider { border: none; border-top: 1px solid var(--line-dim); margin: 1.5rem 0; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(246,193,40,0.3);
+    border-top-color: var(--line);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .badge {
+    display: inline-block;
+    background: rgba(246,193,40,0.15);
+    color: var(--line);
+    border-radius: 6px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .paso3-box {
+    display: none;
+    margin-top: 1.2rem;
+    background: rgba(246,193,40,0.05);
+    border-left: 4px solid var(--line);
+    border-radius: 8px;
+    padding: 1.2rem;
+  }
+  .paso3-box.visible { display: block; }
+  .paso3-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .paso3-badge {
+    background: var(--line);
+    color: #17202d;
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .paso3-titulo {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📧 Generador de Correos de Bienvenida</h1>
+    <p>Sube la nómina original y completa los datos de la inducción.</p>
+  </div>
+
+  <div class="form-group" style="max-width:600px">
+    <label>📥 Sube la nómina original</label>
+    <div class="file-drop" id="drop-nomina">
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this)" />
+      📂 Haz clic o arrastra el archivo aquí
+      <div class="file-name" id="file-name"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div style="font-weight:700; margin-bottom:1rem;">2. Ingresa los datos de la Inducción</div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>NOMBRE TUTOR</label>
+      <input type="text" id="nombre-tutor" placeholder="Nombre completo del tutor" />
+    </div>
+    <div class="form-group">
+      <label>CORREO TUTOR</label>
+      <input type="text" id="correo-tutor" placeholder="tutor@dominio.cl" />
+    </div>
+    <div class="form-group">
+      <label>ANEXO TUTOR</label>
+      <input type="text" id="anexo-tutor" placeholder="Ej: 1234" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE DE PROGRAMA</label>
+      <input type="text" id="programa" placeholder="Nombre del programa" />
+    </div>
+    <div class="form-group">
+      <label>NRC Y NOMBRE DE CURSO INDUCC</label>
+      <input type="text" id="nrc-induccion" placeholder="Ej: 12345 - Inducción Postgrado" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE PRIMER CURSO</label>
+      <input type="text" id="curso1" placeholder="Nombre del primer curso" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE SEGUNDO CURSO (opcional)</label>
+      <input type="text" id="curso2" placeholder="Opcional" />
+    </div>
+    <div class="form-group"></div>
+    <div class="form-group">
+      <label>FECHA INICIO INDUCCION</label>
+      <input type="date" id="fecha-inicio" />
+    </div>
+    <div class="form-group">
+      <label>FECHA TERMINO INDUCCION</label>
+      <input type="date" id="fecha-fin" />
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" onclick="procesarNomina()">🪄 Construir Plantilla Exacta</button>
+  </div>
+
+  <div id="resultado"></div>
+
+  <div id="acciones" style="display:none" class="btn-row">
+    <button class="btn" onclick="descargarExcel()">📥 Descargar Excel</button>
+    <button class="btn primary" onclick="enviarSharePoint()">📨 Enviar a SharePoint</button>
+    <button class="btn primary" onclick="enviarSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
+    <button class="btn primary" onclick="enviarSharePointPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
+  </div>
+  
+  <div id="sp-result"></div>
+  <div id="sp-result-miguel"></div>
+  <div id="sp-result-pablo-daniela"></div>
+
+  <div id="paso3" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
+      📧 Abrir app — Enviar correos de bienvenida
+    </button>
+  </div>
+
+  <div id="paso3-miguel" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Miguel</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
+      📧 Abrir app — Enviar correos Equipo Miguel
+    </button>
+  </div>
+
+  <div id="paso3-pablo-daniela" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Pablo_Daniela</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778798468383','_blank')">
+      📧 Abrir app — Enviar correos Equipo Pablo_Daniela
+    </button>
+  </div>
+</div>
+
+<script>
+let nominaFile = null;
+let datosFinales = null;
+
+function handleFile(input) {
+  nominaFile = input.files[0];
+  document.getElementById('file-name').textContent = nominaFile ? nominaFile.name : '';
+}
+
+async function leerArchivo(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:'array', cellDates:true});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        resolve(XLSX.utils.sheet_to_json(ws, {header:1, defval:''}));
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function esAlumnoPotencial(headerRow) {
+  const joined = headerRow.map(c => String(c||'')).join('|').toLowerCase();
+  return joined.includes('alumno potencial') && joined.includes('dv');
+}
+
+async function procesarNomina() {
+  const resultEl = document.getElementById('resultado');
+  const accionesEl = document.getElementById('acciones');
+  accionesEl.style.display='none';
+  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Construyendo plantilla...</div>';
+
+  if(!nominaFile) { resultEl.innerHTML='<div class="alert error">Sube la nómina original primero.</div>'; return; }
+
+  try {
+    const rawRows = await leerArchivo(nominaFile);
+    const tn = document.getElementById('nombre-tutor').value;
+    const tc = document.getElementById('correo-tutor').value;
+    const ta = document.getElementById('anexo-tutor').value;
+    const pr = document.getElementById('programa').value;
+    const ni = document.getElementById('nrc-induccion').value;
+    const c1 = document.getElementById('curso1').value;
+    const c2 = document.getElementById('curso2').value.trim();
+    const fi = document.getElementById('fecha-inicio').value;
+    const ff = document.getElementById('fecha-fin').value;
+
+    let salida = [];
+    const firstRow = rawRows[0] || [];
+
+    if(esAlumnoPotencial(firstRow)) {
+      salida = procesarAlumnoPotencial(rawRows, {tn, tc, ta, pr, ni, c1, c2, fi, ff});
+    } else {
+      let hIdx=-1;
+      for(let i=0; i<Math.min(20,rawRows.length); i++) {
+        const rowStr = rawRows[i].join(' ').toUpperCase();
+        if((rowStr.includes('RUT')||rowStr.includes('ID')) && (rowStr.includes('CORREO')||rowStr.includes('EMAIL')||rowStr.includes('MAIL'))) {
+          hIdx=i; break;
+        }
+      }
+      const headers = hIdx!==-1 ? rawRows[hIdx].map(h=>String(h).toUpperCase().trim()) : rawRows[0].map((_,i)=>`C${i}`);
+      const dataRows = rawRows.slice(hIdx+1);
+      const seenH=new Set(), finalHeaders=[];
+      for(const h of headers) { finalHeaders.push(seenH.has(h) ? h+'_R' : h); seenH.add(h); }
+
+      const emailRe = /[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+      const rutRe = /\b(\d{7,8}-?[0-9Kk])\b/i;
+
+      for(const rawRow of dataRows) {
+        const r = {};
+        finalHeaders.forEach((h,i) => r[h] = String(rawRow[i]??''));
+        const rowStr = Object.values(r).join(' ');
+        if(!rowStr.includes('@')) continue;
+
+        const emails = rowStr.match(emailRe)||[];
+        let correoPersonal = emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';
+        if(!correoPersonal && emails.length) correoPersonal = emails[0].toLowerCase();
+        if(!correoPersonal) continue;
+        correoPersonal = correoPersonal.toLowerCase();
+
+        const rutCol = finalHeaders.find(h=>h.includes('RUT')||h.includes('ID'));
+        let rut = '';
+        if(rutCol && r[rutCol]) {
+          const v = String(r[rutCol]).replace('.0','').trim().toUpperCase();
+          if(/^\d{7,9}-?[0-9Kk]$/i.test(v)) rut=v;
+        }
+        if(!rut) { const m=rowStr.match(rutRe); if(m) rut=m[1].toUpperCase(); }
+
+        const nombreCol = finalHeaders.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR'));
+        const apellidoCol = finalHeaders.find(h=>h.includes('APELLIDO'));
+        const partes = [];
+        if(nombreCol && r[nombreCol] && r[nombreCol].toLowerCase()!=='nan') partes.push(r[nombreCol].trim());
+        if(apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase()!=='nan') partes.push(r[apellidoCol].trim());
+        const nombre = partes.join(' ').trim().toUpperCase() || '';
+
+        const fila = {
+          'Columna1': salida.length+1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correoPersonal,
+          'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
+          'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+          'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
+          'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
+        };
+        if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
+        salida.push(fila);
+      }
+    }
+
+    if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos en el archivo.</div>'; return; }
+
+    datosFinales = salida;
+    resultEl.innerHTML = `<div class="alert success">🎉 Plantilla generada con éxito. <span class="badge">${salida.length}</span> registros.</div>`;
+    const tableDiv = document.createElement('div');
+    resultEl.appendChild(tableDiv);
+    renderTable(salida, tableDiv);
+    accionesEl.style.display='flex';
+
+  } catch(err) {
+    resultEl.innerHTML = `<div class="alert error">Error: ${err.message}</div>`;
+    console.error(err);
+  }
+}
+
+function procesarAlumnoPotencial(rawRows, params) {
+  const { tn, tc, ta, pr, ni, c1, c2, fi, ff } = params;
+  const headers = rawRows[0].map(h => String(h||'').trim());
+  const findIdx = (...kws) => {
+    for(const kw of kws) {
+      const idx = headers.findIndex(h => h.toLowerCase().includes(kw.toLowerCase()));
+      if(idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxRut    = findIdx('RUT (Alumno Potencial)');
+  const idxDv     = findIdx('DV (Alumno Potencial)');
+  const idxNombre = findIdx('Nombre (Alumno Potencial)');
+  const idxCorreo = findIdx('Correo Electrónico', 'Correo Electronico', 'correo electrónico');
+
+  const salida = [];
+
+  for(let i = 1; i < rawRows.length; i++) {
+    const row = rawRows[i];
+    if(!row || row.every(c => !String(c||'').trim())) continue;
+
+    const correo = idxCorreo !== -1 ? String(row[idxCorreo]||'').trim().toLowerCase() : '';
+    if(!correo || !correo.includes('@')) continue;
+
+    const rutBase = idxRut !== -1 ? String(row[idxRut]||'').replace('.0','').trim() : '';
+    const dvVal   = idxDv  !== -1 ? String(row[idxDv] ||'').replace('.0','').trim().toUpperCase() : '';
+    const rut = (rutBase && dvVal) ? `${rutBase}-${dvVal}` : rutBase;
+
+    const nombreRaw = idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '';
+    const nombre = (nombreRaw && nombreRaw.toLowerCase() !== 'nan') ? nombreRaw.toUpperCase() : '';
+
+    const fila = {
+      'Columna1': salida.length + 1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correo,
+      'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
+      'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+      'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
+      'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
+    };
+    if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
+    salida.push(fila);
+  }
+  return salida;
+}
+
+function renderTable(rows, containerEl) {
+  if(!rows || rows.length===0) { containerEl.innerHTML='<div class="alert info">No se encontraron registros.</div>'; return; }
+  const cols = Object.keys(rows[0]);
+  let html = '<div class="table-wrap"><table><thead><tr>';
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += '</tr></thead><tbody>';
+  rows.slice(0,200).forEach(r => {
+    html += '<tr>';
+    cols.forEach(c => html += `<td title="${String(r[c]).replace(/"/g,'&quot;')}">${r[c]??''}</td>`);
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  if(rows.length>200) html += `<div class="alert info" style="margin-top:0.5rem;">Mostrando primeras 200 filas de ${rows.length}.</div>`;
+  containerEl.innerHTML = html;
+}
+
+function descargarExcel() {
+  if(!datosFinales) return;
+  const ws = XLSX.utils.json_to_sheet(datosFinales);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
+  XLSX.writeFile(wb, 'Nomina_SharePoint.xlsx');
+}
+
+async function enviarSharePoint() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
+      document.getElementById('paso3').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function enviarSharePointMiguel() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-miguel');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
+      document.getElementById('paso3-miguel').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function enviarSharePointPabloDaniela() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-pablo-daniela');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Pablo_Daniela...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d040109474f04cebbc90300640607f30/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=35S4lnBFfc3aPPnEcX0P2g0DDpPMxCPvBeyLNZXjq7c";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
+      document.getElementById('paso3-pablo-daniela').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+window.onload = function() {
+  const today = new Date().toISOString().substring(0,10);
+  document.getElementById('fecha-inicio').value = today;
+  document.getElementById('fecha-fin').value = today;
+
+  // ── PRE-LLENADO DESDE CONTEXTO NRC (comunicaciones_etop.html) ──
+  const p = new URLSearchParams(window.location.search);
+  const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
+  set('nombre-tutor',  p.get('nombreTutor'));
+  set('correo-tutor',  p.get('correoTutor'));
+  set('anexo-tutor',   p.get('anexoTutor'));
+  set('programa',      p.get('nombrePrograma'));
+  set('nrc-induccion', p.get('nombreCurso'));
+  set('fecha-inicio',  p.get('fechaInicio'));
+  set('fecha-fin',     p.get('fechaFin'));
+};
+</script>
+</body>
+</html>
