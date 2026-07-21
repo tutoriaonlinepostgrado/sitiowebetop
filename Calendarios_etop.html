@@ -389,30 +389,53 @@ async function cargarDatos() {
   const chip = document.getElementById('status-chip');
   const txt  = document.getElementById('status-txt');
   try {
-    const [r1, r2] = await Promise.all([
-      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now()),
-      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
-    ]);
-    const base = await r1.json();  // nrc, estado, tipo, facultad, fecha inicio, fecha fin, tutor
-    const ob   = await r2.json();  // nrc, nombre curso, codigo curso, intake, periodo, nombre programa, docente, materia, id
+    // FASE 1 — cargar nrcs.json (fuente principal, todos los cursos) y mostrar inmediatamente
+    const r1 = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now());
+    const base = await r1.json();
 
-    // JOIN por nrc
-    const obMap = {};
-    ob.forEach(r => { obMap[r.nrc] = r; });
-    dataMerged = base.map(r => ({ ...r, ...(obMap[r.nrc] || {}) }));
+    dataMerged = base.map(r => ({...r}));
 
-    // Poblar filtros
     poblarFiltro('f-facultad', [...new Set(dataMerged.map(r=>r.facultad||'').filter(Boolean))].sort());
-    // Intake viene solo del onboarding — filtrar vacíos y ordenar
-    poblarFiltro('f-intake',   [...new Set(ob.map(r=>r.intake||'').filter(Boolean))].sort());
     poblarFiltro('f-tutor',    [...new Set(dataMerged.map(r=>(r.tutor||'').trim()).filter(v=>v&&v.toLowerCase()!=='por definir'))].sort());
 
     chip.className = 'topbar-chip';
-    txt.textContent = dataMerged.length + ' cursos cargados';
+    txt.textContent = dataMerged.length + ' cursos · enriqueciendo...';
 
     aplicarFiltros();
     document.getElementById('estado-carga').style.display = 'none';
     document.getElementById('tabla').style.display = 'table';
+
+    // FASE 2 — cargar nrcs_onboarding.json en segundo plano y enriquecer
+    fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
+      .then(r2 => r2.json())
+      .then(ob => {
+        const obMap = {};
+        ob.forEach(r => { obMap[r.nrc] = r; });
+
+        dataMerged = dataMerged.map(r => {
+          const o = obMap[r.nrc] || {};
+          return {
+            ...r,
+            'nombre curso':   o['nombre curso']   || '',
+            'codigo curso':   o['codigo curso']   || '',
+            intake:           o.intake             || '',
+            periodo:          o.periodo            || '',
+            'nombre programa':o['nombre programa'] || '',
+            docente:          o.docente            || '',
+            materia:          o.materia            || '',
+            id:               o.id                 || '',
+          };
+        });
+
+        // Actualizar filtro intake ahora que tenemos los datos
+        poblarFiltro('f-intake', [...new Set(dataMerged.map(r=>r.intake||'').filter(Boolean))].sort());
+
+        txt.textContent = dataMerged.length + ' cursos cargados';
+        aplicarFiltros();
+      })
+      .catch(() => {
+        txt.textContent = dataMerged.length + ' cursos (sin detalle)';
+      });
 
   } catch(e) {
     chip.className = 'topbar-chip err';
