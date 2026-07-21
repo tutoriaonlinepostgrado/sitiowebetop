@@ -226,6 +226,27 @@ tr.selected td:first-child{padding-left:11px;}
 .panel-empty .pe-ic{font-size:36px;opacity:.18;}
 .panel-empty .pe-t{font-size:13px;font-weight:600;color:var(--text);}
 .panel-empty .pe-s{font-size:11px;color:var(--muted);line-height:1.6;}
+
+/* ── KPI ── */
+.kpi-card{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:8px 16px;display:flex;flex-direction:column;gap:2px;min-width:120px;
+}
+.kpi-val{font-size:22px;font-weight:700;color:var(--navy);font-family:'IBM Plex Mono',monospace;line-height:1;}
+.kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.kpi-card.k-act .kpi-val{color:var(--act);}
+.kpi-card.k-prep .kpi-val{color:var(--prep);}
+.kpi-card.k-cierre .kpi-val{color:var(--cierre);}
+.kpi-card.k-cerr .kpi-val{color:var(--cerr);}
+
+/* ── BTN EXCEL ── */
+.btn-excel{
+  font-size:11px;font-weight:600;padding:5px 12px;
+  background:#1D6F42;border:1px solid #1D6F42;
+  color:#fff;border-radius:6px;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;gap:5px;
+}
+.btn-excel:hover{background:#155a35;}
 </style>
 </head>
 <body>
@@ -276,6 +297,11 @@ tr.selected td:first-child{padding-left:11px;}
   </select>
   <button class="btn-limpiar" onclick="limpiarFiltros()">✕ Limpiar</button>
   <span class="filtros-count" id="f-count">— cursos</span>
+  <button class="btn-excel" onclick="descargarExcel()">📥 Descargar Excel</button>
+</div>
+
+<!-- KPIs -->
+<div id="kpi-bar" style="display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:12px;flex-wrap:wrap;">
 </div>
 
 <!-- MAIN -->
@@ -377,8 +403,9 @@ async function cargarDatos() {
 
     // Poblar filtros
     poblarFiltro('f-facultad', [...new Set(dataMerged.map(r=>r.facultad||'').filter(Boolean))].sort());
-    poblarFiltro('f-intake',   [...new Set(dataMerged.map(r=>r.intake||'').filter(Boolean))].sort());
-    poblarFiltro('f-tutor',    [...new Set(dataMerged.map(r=>r.tutor||'').filter(Boolean))].sort());
+    // Intake viene solo del onboarding — filtrar vacíos y ordenar
+    poblarFiltro('f-intake',   [...new Set(ob.map(r=>r.intake||'').filter(Boolean))].sort());
+    poblarFiltro('f-tutor',    [...new Set(dataMerged.map(r=>(r.tutor||'').trim()).filter(v=>v&&v.toLowerCase()!=='por definir'))].sort());
 
     chip.className = 'topbar-chip';
     txt.textContent = dataMerged.length + ' cursos cargados';
@@ -434,6 +461,7 @@ function aplicarFiltros() {
   });
 
   renderTabla();
+  actualizarKPIs();
   document.getElementById('f-count').textContent = dataFiltrada.length.toLocaleString('es') + ' cursos';
 }
 
@@ -585,7 +613,10 @@ function seleccionar(idx) {
     intake: r.intake||''
   });
   document.getElementById('panel-acciones').innerHTML = `
-    <a class="btn-acc primary" href="${BASE}comunicaciones_etop.html" target="_blank">
+    <a class="btn-acc primary" href="https://unabportal365.sharepoint.com/sites/ActasSync/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=${r.id||''}" target="_blank">
+      <span class="btn-acc-ic">📋</span> Ver en SharePoint
+    </a>
+    <a class="btn-acc" href="${BASE}comunicaciones_etop.html" target="_blank">
       <span class="btn-acc-ic">✉️</span> Ir a Comunicaciones
     </a>
     <a class="btn-acc" href="${BASE}onboarding_correos.html?${p}" target="_blank">
@@ -636,6 +667,71 @@ function limpiar(v) {
 
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── KPIs ─────────────────────────────────────────────────────────────────────
+function actualizarKPIs() {
+  const bar = document.getElementById('kpi-bar');
+  if(!dataFiltrada.length){ bar.style.display='none'; return; }
+
+  const total  = dataFiltrada.length;
+  const activo = dataFiltrada.filter(r=>r.estado==='ACTIVO').length;
+  const prep   = dataFiltrada.filter(r=>r.estado==='PREPARACION').length;
+  const cierre = dataFiltrada.filter(r=>r.estado==='EN CIERRE').length;
+  const cerr   = dataFiltrada.filter(r=>r.estado==='CERRADO').length;
+  const tutores= new Set(dataFiltrada.map(r=>r.tutor||'').filter(v=>v&&v.toLowerCase()!=='por definir')).size;
+  const docentes=new Set(dataFiltrada.map(r=>r.docente||'').filter(v=>v&&v.toLowerCase()!=='por definir')).size;
+
+  bar.style.display = 'flex';
+  bar.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-val">${total}</div>
+      <div class="kpi-lbl">Total Cursos</div>
+    </div>
+    <div class="kpi-card k-act">
+      <div class="kpi-val">${activo}</div>
+      <div class="kpi-lbl">Activos</div>
+    </div>
+    <div class="kpi-card k-prep">
+      <div class="kpi-val">${prep}</div>
+      <div class="kpi-lbl">Preparación</div>
+    </div>
+    <div class="kpi-card k-cierre">
+      <div class="kpi-val">${cierre}</div>
+      <div class="kpi-lbl">En Cierre</div>
+    </div>
+    <div class="kpi-card k-cerr">
+      <div class="kpi-val">${cerr}</div>
+      <div class="kpi-lbl">Cerrados</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">${tutores}</div>
+      <div class="kpi-lbl">Tutores/as</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">${docentes}</div>
+      <div class="kpi-lbl">Docentes</div>
+    </div>
+  `;
+}
+
+// ── EXCEL ─────────────────────────────────────────────────────────────────────
+function descargarExcel() {
+  if(!dataFiltrada.length) return;
+  const cols = ['nrc','estado','nombre curso','facultad','fecha inicio','fecha fin','tutor','docente','intake','periodo','nombre programa','codigo curso','materia','id'];
+  const rows = [cols.map(c => c.toUpperCase())];
+  dataFiltrada.forEach(r => rows.push(cols.map(c => r[c]||'')));
+
+  let csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('
+');
+  const BOM = '﻿';
+  const blob = new Blob([BOM+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+  a.download = 'Calendarios_ETOP_'+ts+'.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
