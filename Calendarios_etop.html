@@ -744,10 +744,12 @@ function descargarExcel() {
   const cols = ['nrc','estado','nombre curso','facultad','fecha inicio','fecha fin','tutor','docente','intake','periodo','nombre programa','codigo curso','materia','id'];
   const rows = [cols.map(c => c.toUpperCase())];
   dataFiltrada.forEach(r => rows.push(cols.map(c => r[c]||'')));
-
-  let csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('
-');
-  const BOM = '﻿';
+  const lines = rows.map(row => row.map(cell => {
+    const s = String(cell).replace(/"/g, '""');
+    return '"' + s + '"';
+  }).join(','));
+  const csv = lines.join('\n');
+  const BOM = '\uFEFF';
   const blob = new Blob([BOM+csv], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
