@@ -78,6 +78,101 @@
     .canal-arrow { font-size:10px; color:#6264a7; }
     .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); }
     .banner-hero img { width:100%; height:100%; object-fit:cover; object-position:center 25%; display:block; }
+
+    /* ─────────────────────────────────────────
+       BANNER SUPERIOR DEL PORTAL
+       ───────────────────────────────────────── */
+
+    .banner-top {
+        position:relative;
+        height:42px;
+        min-width:280px;
+        max-width:620px;
+        border-radius:10px;
+        overflow:hidden;
+        border:1px solid rgba(250,204,21,0.18);
+        flex:1;
+        min-width:0;
+    }
+
+    .banner-top img {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        object-position:center 25%;
+        display:block;
+    }
+
+    .banner-top-overlay {
+        position:absolute;
+        inset:0;
+        background:linear-gradient(
+            90deg,
+            rgba(20,27,45,0.78) 0%,
+            rgba(20,27,45,0.35) 65%,
+            rgba(20,27,45,0.05) 100%
+        );
+    }
+
+    .banner-top-content {
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:0 14px;
+        white-space:nowrap;
+        overflow:hidden;
+    }
+
+    .banner-top-content span {
+        font-size:7px;
+        font-weight:700;
+        letter-spacing:0.14em;
+        text-transform:uppercase;
+        color:#facc15;
+        opacity:0.9;
+        flex-shrink:0;
+    }
+
+    .banner-top-content strong {
+        font-size:15px;
+        font-weight:800;
+        color:#ffffff;
+        line-height:1;
+        flex-shrink:0;
+    }
+
+    .banner-top-content strong b {
+        color:#facc15;
+    }
+
+    .banner-top-content small {
+        font-size:8px;
+        color:rgba(255,255,255,0.65);
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    @media (max-width:1200px) {
+        .banner-top {
+            max-width:420px;
+        }
+
+        .banner-top-content span {
+            display:none;
+        }
+    }
+
+    @media (max-width:900px) {
+        .banner-top {
+            max-width:300px;
+        }
+
+        .banner-top-content small {
+            display:none;
+        }
+    }
     .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.75) 0%,rgba(20,27,45,0.3) 60%,transparent 100%); }
     .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 24px; }
     .banner-label { font-size:8px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#facc15; margin-bottom:0px; opacity:0.85; }
@@ -101,28 +196,67 @@
 </head>
 <body class="text-white h-screen flex flex-col">
 <header class="h-16 flex items-center justify-between px-8 bg-[#141b2d] border-b border-white/5 z-50 flex-shrink-0">
-    <div class="flex items-center gap-6">
-        <div class="flex items-center gap-3">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-8 w-8 object-contain">
+
+    <!-- BLOQUE IZQUIERDO -->
+    <div class="flex items-center gap-6 flex-1 min-w-0">
+
+        <!-- IDENTIDAD ETOP -->
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <img
+                src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png"
+                alt="ETOP"
+                class="h-8 w-8 object-contain">
+
             <span class="text-[#facc15] font-extrabold text-xl tracking-tighter">ETOP</span>
             <span class="text-slate-500 font-light text-xl">|</span>
             <span class="text-slate-300 font-medium text-sm tracking-widest uppercase">Portal</span>
         </div>
-        <div class="flex items-center bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+
+        <!-- ESTADO DEL SISTEMA -->
+        <div class="flex items-center bg-white/5 px-3 py-1.5 rounded-full border border-white/10 flex-shrink-0">
             <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot mr-2"></div>
-            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Sistema Activo</span>
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                Sistema Activo
+            </span>
         </div>
+
+        <!-- BANNER SUPERIOR -->
+        <div class="banner-top">
+            <img
+                src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png"
+                alt="Portal ETOP Banner"
+                onerror="this.style.display='none'">
+
+            <div class="banner-top-overlay"></div>
+
+            <div class="banner-top-content">
+                <span>Universidad Andrés Bello · ETOP</span>
+                <strong>Portal <b>ETOP</b></strong>
+                <small>Equipo de Tutoría Online de Postgrado · Panel de Gestión</small>
+            </div>
+        </div>
+
     </div>
-    <div class="flex items-center gap-4">
-        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-7 w-7 object-contain opacity-70">
+
+    <!-- BLOQUE DERECHO -->
+    <div class="flex items-center gap-4 flex-shrink-0">
+        <img
+            src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png"
+            alt="UNAB Online"
+            class="h-7 w-7 object-contain opacity-70">
+
         <div class="border-l border-white/10 pl-4 flex items-center gap-3">
             <div class="text-right">
                 <p class="text-xs font-semibold text-white">Equipo ETOP</p>
                 <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
             </div>
-            <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
+
+            <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">
+                ET
+            </div>
         </div>
     </div>
+
 </header>
 <div class="flex flex-1 overflow-hidden">
     <aside class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
@@ -190,17 +324,6 @@
 
             <!-- COLUMNA IZQUIERDA (8 cols) -->
             <div class="col-span-8 flex flex-col gap-3 overflow-hidden">
-                <!-- BANNER -->
-                <div class="banner-hero flex-shrink-0" style="height:56px;">
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png" alt="Portal ETOP Banner" onerror="this.style.display='none'">
-                    <div class="banner-overlay"></div>
-                    <div class="banner-content" style="padding:0 24px;">
-                        <p class="banner-label" style="margin-bottom:0px;">Universidad Andrés Bello · ETOP</p>
-                        <h1 class="banner-title" style="font-size:18px;">Portal <span>ETOP</span></h1>
-                        <p class="banner-sub" style="margin-top:2px;font-size:9px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
-                    </div>
-                </div>
-
                 <div class="flex gap-3 flex-1 overflow-hidden">
                     <!-- VIVA ENGAGE -->
                     <div class="glass-panel rounded-xl overflow-hidden flex flex-col" style="width:46%;flex-shrink:0;">
