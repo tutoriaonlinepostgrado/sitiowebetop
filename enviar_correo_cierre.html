@@ -67,12 +67,10 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 
     <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <span class="campo" contenteditable="true" data-campo="nrc_curso" data-placeholder="NOMBRE Y NRC DEL CURSO"></span> que tuvo inicio el día <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA DE INICIO"></span> y finalizó el domingo <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA DE FIN"></span>.</p>
 
-    <!-- Párrafo variable según programa -->
-    <p id="parrafo-plazo">Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS"></span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.</p>
+    <p id="parrafo-plazo"></p>
 
-    <!-- Bloque adjunto variable según programa -->
     <div id="bloque-adjunto" style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
-      <p style="margin:0;color:#333;font-size:15px;">📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a id="link-pdf" href="https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA" target="_blank" style="color:#0056b3;font-weight:bold;">Haga clic acá</a></p>
+      <p id="texto-pdf" style="margin:0;color:#333;font-size:15px;"></p>
     </div>
 
     <p>Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.</p>
@@ -98,14 +96,12 @@ const mapa = {
 const configs = {
   estandar: {
     parrafo: () => `Agradezco el trabajo en conjunto y aprovecho de comentar que, cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después <span class="campo${mapa.fecha_limite ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 14 DÍAS">${mapa.fecha_limite || ''}</span> (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.`,
-    linkPDF: "https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA",
-    textoPDF: "📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a id='link-pdf' href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
+    textoPDF: "📎 Adjunto para su guía un paso a paso para el correcto cierre del curso. <a href='https://unabportal365-my.sharepoint.com/:b:/g/personal/patricio_collao_unab_cl/IQBbLCPeFjIjRJlf6HSAn2c-Af3Y_Sgm3A80xtkfvRcPhhQ?e=e7lPz5' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
   },
   mgpc: {
     parrafo: () => `Agradezco el trabajo en conjunto y aprovecho de comentar que el sistema Canvas permite transferir automáticamente las notas a Banner para luego hacer el cierre anticipado en la intranet, por lo tanto, las notas quedan en sistema permitiendo que los alumnos puedan visualizarlas y solicitar sus certificaciones intermedias.<br><br>
     Cabe señalar que cualquier entrega atrasada o gestión dentro de la plataforma tiene un plazo límite de <strong>10 días finalizada la asignatura</strong>, plazo que se cumple el día <span class="campo${mapa.fecha_limite ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 10 DÍAS">${mapa.fecha_limite || ''}</span>, posterior a esa fecha podrá ser realizada solicitándolo directamente con el secretario académico de la Facultad de Educación y Ciencias Sociales. Eduardo Valenzuela, <a href='mailto:eduardovalenzuela@unab.cl' style='color:#0056b3;'>eduardovalenzuela@unab.cl</a>.`,
-    linkPDF: "https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQD62HEbIlPbTaiMBB5HrdulAf5gF5fLupPPIaHoznMeov4?e=QJgp4y",
-    textoPDF: "📎 Adjunto para su guía los siguientes documentos:<br><br>&nbsp;&nbsp;• Paso a paso para el correcto cierre del curso: <a href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQBfnTSIY29aQ6_VgoEInAZbATaZB1JgXteAwZEXMC_tLBo?e=T5wZiA' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a><br>&nbsp;&nbsp;• Proceso de cierre del libro de calificaciones MGPC (Cierre Anticipado de Asignatura): <a href='https://unabportal365.sharepoint.com/:b:/s/actasynrc/IQD62HEbIlPbTaiMBB5HrdulAf5gF5fLupPPIaHoznMeov4?e=QJgp4y' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
+    textoPDF: "📎 Adjunto para su guía los siguientes documentos:<br><br>&nbsp;&nbsp;• Paso a paso para el correcto cierre del curso: <a href='https://unabportal365-my.sharepoint.com/:b:/g/personal/patricio_collao_unab_cl/IQBbLCPeFjIjRJlf6HSAn2c-Af3Y_Sgm3A80xtkfvRcPhhQ?e=e7lPz5' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a><br>&nbsp;&nbsp;• Proceso de cierre del libro de calificaciones MGPC (Cierre Anticipado de Asignatura): <a href='https://unabportal365-my.sharepoint.com/:b:/g/personal/patricio_collao_unab_cl/IQB9_S_aWEy_ToxPI8zN3hpSAUGF4RuS5ufrRedhEhGs7_U?e=E1aK4Z' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
   }
 };
 
@@ -114,13 +110,8 @@ function cambiarPrograma() {
   const prog = document.getElementById('sel-programa').value;
   const cfg = configs[prog];
 
-  // Actualizar párrafo
   document.getElementById('parrafo-plazo').innerHTML = cfg.parrafo();
-
-  // Actualizar bloque PDF
-  document.getElementById('bloque-adjunto').querySelector('p').innerHTML = cfg.textoPDF;
-
-  // Mostrar/ocultar tag MGPC
+  document.getElementById('texto-pdf').innerHTML = cfg.textoPDF;
   document.getElementById('tag-mgpc').style.display = prog === 'mgpc' ? 'inline-block' : 'none';
 }
 
@@ -139,12 +130,12 @@ if (hayDatos) {
   document.getElementById('auto-badge').style.display = 'inline-block';
 }
 
-// ── PROGRAMA DESDE URL ──
+// ── INICIALIZACIÓN ──
 const progParam = params.get('programa');
 if (progParam && configs[progParam]) {
   document.getElementById('sel-programa').value = progParam;
-  cambiarPrograma();
 }
+cambiarPrograma();
 
 // ── COPIAR CORREO ──
 async function copiarCorreo() {
