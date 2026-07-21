@@ -183,10 +183,6 @@
                 <span class="material-symbols-outlined text-base">smart_toy</span>Copilot
             </a>
         </div>
-        <div class="mx-4 mt-3 p-3 rounded-lg bg-[#facc15]/5 border border-[#facc15]/10">
-            <p class="text-[9px] text-[#facc15]/50 uppercase font-bold tracking-wider mb-1">💡 Mensaje del día</p>
-            <p id="mensaje-dia" class="text-[10px] text-slate-400 leading-relaxed italic"></p>
-        </div>
     </aside>
     <main class="flex-1 p-6 overflow-hidden" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;">
         <!-- VISTA NORMAL -->
@@ -215,8 +211,14 @@
 
                     <div id="ann-grid" style="display:none;"></div>
 
-                    <!-- COLUMNA DERECHA INTERNA: GRÁFICO + IFRAME PBI -->
+                    <!-- COLUMNA DERECHA INTERNA: MENSAJE DEL DIA + GRÁFICO + IFRAME PBI -->
                     <div class="flex flex-col gap-3 flex-1 overflow-hidden">
+
+                        <!-- MENSAJE DEL DÍA -->
+                        <div class="p-3 rounded-xl bg-[#facc15]/5 border border-[#facc15]/10 flex-shrink-0">
+                            <p class="text-[9px] text-[#facc15]/50 uppercase font-bold tracking-wider mb-1">💡 Mensaje del día</p>
+                            <p id="mensaje-dia" class="text-[10px] text-slate-400 leading-relaxed italic"></p>
+                        </div>
 
                         <!-- GRÁFICO BARRAS POR FACULTAD desde nrcs.json -->
                         <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
