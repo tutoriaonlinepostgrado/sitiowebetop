@@ -162,16 +162,12 @@ function cambiarImagen() {
 
 // ── COPIAR CORREO ──
 async function copiarCorreo() {
-  // Ocultar controles de tabla antes de copiar
   document.getElementById('zona-upload').style.display = 'none';
-
   const contenido = document.getElementById('email-content').cloneNode(true);
 
-  // Ocultar el hint de edición del bloque apertura
   const hint = contenido.querySelector('#apertura-hint');
   if (hint) hint.remove();
 
-  // Quitar borde y fondo verde del bloque apertura
   const aperturaDiv = contenido.querySelector('#apertura-texto');
   if (aperturaDiv) {
     aperturaDiv.style.border = 'none';
@@ -180,7 +176,6 @@ async function copiarCorreo() {
     aperturaDiv.removeAttribute('contenteditable');
   }
 
-  // Limpiar estilos de edición
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
     el.style.cssText = 'font-weight:bold;color:#333;';
@@ -189,10 +184,10 @@ async function copiarCorreo() {
   contenido.querySelectorAll('[contenteditable]').forEach(el => {
     el.removeAttribute('contenteditable');
   });
-  // Quitar controles de tabla del clon
+  
   const ctrl = contenido.querySelector('#tabla-controls');
   if (ctrl) ctrl.remove();
-  // Quitar fondo amarillo del párrafo de grupos en la copia
+  
   contenido.querySelectorAll('p').forEach(p => {
     if (p.style.background) p.style.background = '';
     if (p.style.borderLeft) p.style.borderLeft = '';
@@ -236,23 +231,37 @@ function mostrarToast(msg, error=false) {
   setTimeout(() => t.classList.remove('show'), 4000);
 }
 
-// ── SELECTOR DE TIPO ──
-// ── TEMPLATES DE APERTURA ──
-function getAperturaHTML(estilo) {
-  // Leer valores actuales de los campos dinámicos (si ya están rellenados)
-  var nt  = getValCampo('nombre_tutor')  || '<span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>';
-  var nc  = getValCampo('nombre_curso')  || '<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>';
-  var nrc = getValCampo('nrc')           || '<span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>';
-  var dur = getValCampo('duracion')      || '<span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span>';
-  var di  = getValCampo('dia_inicio')    || '<span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span>';
-  var fi  = getValCampo('fecha_inicio')  || '<span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span>';
-  var df  = getValCampo('dia_fin')       || '<span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span>';
-  var ff  = getValCampo('fecha_fin')     || '<span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span>';
-  var nd  = '<span class="campo" contenteditable="true" data-campo="nombre_docente" data-placeholder="NOMBRE DOCENTE"></span>';
+// ── RECONSTRUCTOR DE CAMPOS (NUEVA FUNCIÓN) ──
+function buildSpan(campo, ph) {
+  let el = document.querySelector('[data-campo="'+campo+'"]');
+  let val = "";
+  
+  // 1. Obtener valor actual del DOM (si el usuario lo editó manualmente antes de cambiar la apertura)
+  if (el) {
+    val = el.textContent.trim();
+    if (val === el.getAttribute('data-placeholder')) val = "";
+  }
+  
+  // 2. Si el DOM está vacío, fallback al mapa de la URL de Power BI
+  if (!val && typeof mapa !== 'undefined' && mapa[campo]) {
+    val = decodeURIComponent(mapa[campo]);
+  }
 
-  var span = function(campo, val, ph) {
-    return '<span class="campo auto-filled" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
-  };
+  let cls = val ? 'campo auto-filled' : 'campo';
+  return '<span class="'+cls+'" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
+}
+
+// ── TEMPLATES DE APERTURA (ACTUALIZADO) ──
+function getAperturaHTML(estilo) {
+  var nt  = buildSpan('nombre_tutor', 'NOMBRE TUTOR/A');
+  var nc  = buildSpan('nombre_curso', 'NOMBRE ASIGNATURA');
+  var nrc = buildSpan('nrc', 'NRC');
+  var dur = buildSpan('duracion', 'N° SEMANAS');
+  var di  = buildSpan('dia_inicio', 'DÍA');
+  var fi  = buildSpan('fecha_inicio', 'DD-MM-YYYY');
+  var df  = buildSpan('dia_fin', 'DÍA');
+  var ff  = buildSpan('fecha_fin', 'DD-MM-YYYY');
+  var nd  = buildSpan('nombre_docente', 'NOMBRE DOCENTE');
 
   var templates = {
     primera:
@@ -274,20 +283,7 @@ function getAperturaHTML(estilo) {
   return templates[estilo] || templates.primera;
 }
 
-function getValCampo(campo) {
-  // Busca el campo en el DOM actual y devuelve su textContent si tiene valor
-  var el = document.querySelector('[data-campo="'+campo+'"]');
-  if (!el) return null;
-  var val = el.textContent.trim();
-  return (val && val !== el.getAttribute('data-placeholder')) ? val : null;
-}
-
-function makeSpan(campo, val, ph) {
-  return '<span class="campo auto-filled" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
-}
-
 function setApertura(estilo, btn) {
-  // Actualizar botones
   ['ap-primera','ap-reencuentro','ap-personal','ap-calido'].forEach(function(id) {
     var b = document.getElementById(id);
     if (!b) return;
@@ -303,7 +299,6 @@ function setApertura(estilo, btn) {
 }
 
 function setTipo(tipo, btn) {
-  // Actualizar botones
   ['btn-ajustado','btn-general','btn-individual'].forEach(id => {
     const b = document.getElementById(id);
     b.style.background = 'transparent';
@@ -324,7 +319,6 @@ function setTipo(tipo, btn) {
       spanConoce.style.display = '';
     }
   } else if(tipo === 'general'){
-    // Con grupos y autoinscripción, sin "Conoce a tu docente"
     pGrupos.style.display      = '';
     pAutoInsc.style.display    = '';
     if(spanConoce){
@@ -332,7 +326,6 @@ function setTipo(tipo, btn) {
       spanConoce.style.display = 'none';
     }
   } else if(tipo === 'individual'){
-    // Sin grupos, sin autoinscripción, sin "Conoce a tu docente"
     pGrupos.style.display      = 'none';
     pAutoInsc.style.display    = 'none';
     if(spanConoce){
