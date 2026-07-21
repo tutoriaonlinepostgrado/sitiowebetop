@@ -85,15 +85,15 @@
     .banner-title span { color:#facc15; }
     .banner-sub { margin-top:6px; font-size:12px; color:rgba(255,255,255,0.65); font-weight:400; }
     .nav-group { position:relative; }
-    .nav-group-trigger { display:flex; align-items:center; justify-content:space-between; gap:4px; width:100%; padding:12px 24px; font-size:14px; color:#94a3b8; background:transparent; border:none; cursor:pointer; transition:all 0.15s; text-align:left; }
+    .nav-group-trigger { display:flex; align-items:center; justify-content:space-between; gap:4px; width:100%; padding:8px 24px; font-size:14px; color:#94a3b8; background:transparent; border:none; cursor:pointer; transition:all 0.15s; text-align:left; }
     .nav-group-trigger:hover { background:rgba(255,255,255,0.05); color:#facc15; }
     .nav-group-trigger.active { color:#facc15; background:rgba(255,255,255,0.05); }
-    .nav-group-trigger .trigger-left { display:flex; align-items:center; gap:16px; }
+    .nav-group-trigger .trigger-left { display:flex; align-items:center; gap:12px; }
     .nav-group-trigger .chevron { font-size:16px; transition:transform 0.2s; color:#475569; flex-shrink:0; }
     .nav-group-trigger.open .chevron { transform:rotate(180deg); color:#facc15; }
     .nav-submenu { display:none; flex-direction:column; background:rgba(0,0,0,0.2); border-left:2px solid rgba(250,204,21,0.2); margin-left:24px; margin-right:8px; border-radius:0 0 6px 6px; }
     .nav-submenu.open { display:flex; }
-    .nav-subitem { display:flex; align-items:center; gap:10px; padding:9px 16px; font-size:12px; color:#64748b; cursor:pointer; border:none; background:transparent; text-align:left; width:100%; transition:all 0.15s; border-radius:4px; }
+    .nav-subitem { display:flex; align-items:center; gap:10px; padding:6px 16px; font-size:12px; color:#64748b; cursor:pointer; border:none; background:transparent; text-align:left; width:100%; transition:all 0.15s; border-radius:4px; }
     .nav-subitem:hover { color:#facc15; background:rgba(250,204,21,0.05); }
     .nav-subitem.active { color:#facc15; font-weight:600; }
     .nav-subitem .material-symbols-outlined { font-size:16px; }
@@ -127,10 +127,10 @@
 <div class="flex flex-1 overflow-hidden">
     <aside class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
         <nav class="flex-1 space-y-0.5 overflow-y-auto pt-2">
-            <a href="gestion.html" class="flex items-center gap-4 px-6 py-3 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
+            <a href="gestion.html" class="flex items-center gap-3 px-6 py-2 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
                 <span class="material-symbols-outlined">dashboard</span>Gestión Tutorial
             </a>
-            <a href="gestion_coordinacion.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="gestion_coordinacion.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">account_balance</span>Coordinación
             </a>
             <div class="nav-group">
@@ -150,36 +150,36 @@
                     </button>
                 </div>
             </div>
-            <a href="onboarding.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">person_add</span>Onboarding
+            <a href="comunicaciones_etop.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+                <span class="material-symbols-outlined">campaign</span>Comunicaciones
             </a>
-            <a href="aplicaciones.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="aplicaciones.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">apps</span>Aplicaciones
             </a>
-            <a href="recursos_aprendizaje.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="recursos_aprendizaje.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">school</span>Recursos
             </a>
-            <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D" target="_blank" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D" target="_blank" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">chat</span>Chat de Equipo
             </a>
-            <a href="reporte_completo.html" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="reporte_completo.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">menu_book</span>Índice del Sitio
             </a>
-            <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx" target="_blank" class="flex items-center gap-4 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="https://unabportal365.sharepoint.com/sites/actasynrc/SitePages/Equipo-de-Tutoria-online-de-postgrado.aspx" target="_blank" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">groups</span>Equipo ETOP
             </a>
         </nav>
         <div class="border-t border-white/5 pt-3 mt-2">
-            <div class="px-6 py-2">
-                <p class="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-2">Mi espacio</p>
+            <div class="px-6 py-1">
+                <p class="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-1">Mi espacio</p>
             </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="flex items-center gap-4 px-6 py-2.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="https://outlook.office.com/mail/" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined text-base">mail</span>Outlook
             </a>
-            <a href="https://outlook.office.com/calendar/" target="_blank" class="flex items-center gap-4 px-6 py-2.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="https://outlook.office.com/calendar/" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined text-base">calendar_month</span>Calendario
             </a>
-            <a href="https://m365.cloud.microsoft/chat" target="_blank" class="flex items-center gap-4 px-6 py-2.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+            <a href="https://m365.cloud.microsoft/chat" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined text-base">smart_toy</span>Copilot
             </a>
         </div>
