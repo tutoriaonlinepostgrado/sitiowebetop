@@ -390,7 +390,7 @@ async function cargarDatos() {
   const txt  = document.getElementById('status-txt');
   try {
     // FASE 1 — cargar nrcs.json (fuente principal, todos los cursos) y mostrar inmediatamente
-    const r1 = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now());
+    const r1 = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json');
     const base = await r1.json();
 
     dataMerged = base.map(r => ({...r}));
@@ -406,7 +406,7 @@ async function cargarDatos() {
     document.getElementById('tabla').style.display = 'table';
 
     // FASE 2 — cargar nrcs_onboarding.json en segundo plano y enriquecer
-    fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
+    fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json')
       .then(r2 => r2.json())
       .then(ob => {
         const obMap = {};
