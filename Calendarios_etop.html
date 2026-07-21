@@ -248,6 +248,7 @@ tr.selected td:first-child{padding-left:11px;}
 }
 .btn-excel:hover{background:#155a35;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -297,7 +298,7 @@ tr.selected td:first-child{padding-left:11px;}
   </select>
   <button class="btn-limpiar" onclick="limpiarFiltros()">✕ Limpiar</button>
   <span class="filtros-count" id="f-count">— cursos</span>
-  <button class="btn-excel" onclick="descargarExcel()">📥 Descargar Excel</button>
+  <button class="btn-excel" onclick="descargarExcel()">📥 Descargar .xlsx</button>
 </div>
 
 <!-- KPIs -->
@@ -636,7 +637,7 @@ function seleccionar(idx) {
     intake: r.intake||''
   });
   document.getElementById('panel-acciones').innerHTML = `
-    <a class="btn-acc primary" href="https://unabportal365.sharepoint.com/sites/ActasSync/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=${r.id||''}" target="_blank">
+    <a class="btn-acc primary" href="https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=${r.id||''}" target="_blank">
       <span class="btn-acc-ic">📋</span> Ver en SharePoint
     </a>
     <a class="btn-acc" href="${BASE}comunicaciones_etop.html" target="_blank">
@@ -742,21 +743,19 @@ function actualizarKPIs() {
 function descargarExcel() {
   if(!dataFiltrada.length) return;
   const cols = ['nrc','estado','nombre curso','facultad','fecha inicio','fecha fin','tutor','docente','intake','periodo','nombre programa','codigo curso','materia','id'];
-  const rows = [cols.map(c => c.toUpperCase())];
-  dataFiltrada.forEach(r => rows.push(cols.map(c => r[c]||'')));
-  const lines = rows.map(row => row.map(cell => {
-    const s = String(cell).replace(/"/g, '""');
-    return '"' + s + '"';
-  }).join(','));
-  const csv = lines.join('\n');
-  const BOM = '\uFEFF';
-  const blob = new Blob([BOM+csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const encabezados = {'nrc':'NRC_COD_CAL','estado':'ESTADO','nombre curso':'NOMBRE CURSO','facultad':'FACULTAD','fecha inicio':'FECHA INICIO','fecha fin':'FECHA FIN','tutor':'TUTOR/A','docente':'DOCENTE','intake':'INTAKE O VERSION','periodo':'PERIODO','nombre programa':'NOMBRE PROGRAMA','codigo curso':'CODIGO CURSO','materia':'MATERIA','id':'ID'};
+  const rows = dataFiltrada.map(r => {
+    const obj = {};
+    cols.forEach(c => { obj[encabezados[c]] = r[c]||''; });
+    return obj;
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Calendarios');
+  // Ancho de columnas
+  ws['!cols'] = [20,14,35,10,14,14,22,22,30,8,50,12,10,8].map(w=>({wch:w}));
   const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-  a.download = 'Calendarios_ETOP_'+ts+'.csv';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  XLSX.writeFile(wb, 'Calendarios_ETOP_'+ts+'.xlsx');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
