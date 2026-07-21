@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendarios — ETOP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --navy:    #0F2463;
+  --teal:    #0097A7;
+  --teal-lt: rgba(0,151,167,0.1);
+  --gold:    #F6C128;
+  --gold-lt: rgba(246,193,40,0.12);
+  --bg:      #F0F4F8;
+  --surface: #FFFFFF;
+  --border:  #DDE3EC;
+  --text:    #1A2535;
+  --muted:   #5C6B82;
+  --soft:    #8C9BAD;
+
+  --prep:    #F59E0B;
+  --prep-bg: rgba(245,158,11,0.1);
+  --act:     #10B981;
+  --act-bg:  rgba(16,185,129,0.1);
+  --cierre:  #F97316;
+  --cierre-bg: rgba(249,115,22,0.1);
+  --cerr:    #EF4444;
+  --cerr-bg: rgba(239,68,68,0.08);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:var(--navy);
+  height:52px;
+  display:flex;align-items:center;
+  padding:0 20px;gap:16px;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 12px rgba(15,36,99,0.18);
+}
+.topbar-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.topbar-logo img{height:32px;border-radius:50%;border:1.5px solid var(--gold);}
+.topbar-title{color:#fff;font-size:14px;font-weight:700;letter-spacing:0.02em;}
+.topbar-sub{color:rgba(255,255,255,0.45);font-size:11px;margin-left:2px;}
+.topbar-divider{width:1px;height:28px;background:rgba(255,255,255,0.12);}
+.topbar-chip{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.7);
+  font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:5px;
+}
+.topbar-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--act);}
+.topbar-chip.loading .dot{background:var(--gold);animation:blink 1s infinite;}
+.topbar-chip.err .dot{background:var(--cerr);}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.topbar-search{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  color:#fff;font-family:'Inter',sans-serif;font-size:13px;
+  padding:5px 12px;border-radius:6px;width:220px;outline:none;
+}
+.topbar-search::placeholder{color:rgba(255,255,255,0.35);}
+.topbar-search:focus{border-color:var(--gold);background:rgba(255,255,255,0.12);}
+
+/* ── FILTROS ── */
+.filtros{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:10px 20px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.filtro-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:2px;}
+.filtro-sel{
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--text);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+  padding:5px 28px 5px 10px;border-radius:6px;outline:none;cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235C6B82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;
+  transition:border-color .15s;
+}
+.filtro-sel:focus{border-color:var(--teal);}
+.filtros-sep{width:1px;height:22px;background:var(--border);margin:0 4px;}
+.filtros-count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:500;}
+.btn-limpiar{
+  font-size:11px;font-weight:600;padding:5px 10px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);border-radius:6px;cursor:pointer;
+  transition:all .15s;
+}
+.btn-limpiar:hover{border-color:var(--cerr);color:var(--cerr);}
+
+/* ── LAYOUT PRINCIPAL ── */
+.main{
+  display:grid;
+  grid-template-columns:1fr 360px;
+  height:calc(100vh - 52px - 53px);
+}
+.main.sin-panel{grid-template-columns:1fr 0;}
+
+/* ── TABLA ── */
+.tabla-wrap{overflow:auto;position:relative;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{position:sticky;top:0;z-index:10;}
+th{
+  background:var(--navy);color:rgba(255,255,255,0.85);
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;padding:10px 14px;
+  text-align:left;white-space:nowrap;
+  border-right:1px solid rgba(255,255,255,0.06);
+  cursor:pointer;user-select:none;
+}
+th:hover{background:#1a3a7a;color:#fff;}
+th .sort-ic{margin-left:4px;opacity:0.4;font-size:9px;}
+th.sorted .sort-ic{opacity:1;color:var(--gold);}
+td{
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  color:var(--text);vertical-align:middle;
+  white-space:nowrap;max-width:220px;
+  overflow:hidden;text-overflow:ellipsis;
+}
+tr{cursor:pointer;transition:background .1s;}
+tr:hover td{background:#EEF3FB;}
+tr.selected td{background:#E8F0FE;border-left:3px solid var(--teal);}
+tr.selected td:first-child{padding-left:11px;}
+
+/* badges estado */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;
+  text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;
+}
+.b-prep{background:var(--prep-bg);color:var(--prep);}
+.b-act{background:var(--act-bg);color:var(--act);}
+.b-cierre{background:var(--cierre-bg);color:var(--cierre);}
+.b-cerr{background:var(--cerr-bg);color:var(--cerr);}
+.b-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* ── PANEL LATERAL ── */
+.panel{
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:width .2s;
+}
+.panel-hdr{
+  background:var(--navy);
+  padding:16px 18px 14px;
+  flex-shrink:0;
+}
+.panel-hdr-top{display:flex;align-items:flex-start;justify-content:space-between;}
+.panel-estado{margin-bottom:8px;}
+.panel-nombre{color:#fff;font-size:15px;font-weight:700;line-height:1.3;margin-bottom:4px;}
+.panel-nrc{color:rgba(255,255,255,0.5);font-size:11px;font-family:'IBM Plex Mono',monospace;}
+.panel-close{
+  background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);
+  width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;
+}
+.panel-close:hover{background:rgba(255,255,255,0.15);color:#fff;}
+.panel-body{flex:1;overflow-y:auto;padding:14px 18px;}
+.panel-body::-webkit-scrollbar{width:4px;}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ficha campos */
+.pf-sec{margin-bottom:16px;}
+.pf-sec-lbl{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--teal);border-bottom:1px solid var(--teal-lt);
+  padding-bottom:6px;margin-bottom:10px;
+}
+.pf-row{display:flex;flex-direction:column;gap:2px;margin-bottom:10px;}
+.pf-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);}
+.pf-val{font-size:13px;color:var(--text);line-height:1.4;}
+.pf-val.mono{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--navy);}
+.pf-val.muted{color:var(--muted);}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* fechas visual */
+.fechas-bar{
+  background:var(--bg);border-radius:8px;padding:10px 12px;
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.fecha-blk{text-align:center;}
+.fecha-blk .fd{font-size:16px;font-weight:700;color:var(--navy);font-family:'IBM Plex Mono',monospace;}
+.fecha-blk .fl{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--soft);letter-spacing:.06em;margin-top:2px;}
+.fechas-arrow{color:var(--teal);font-size:18px;flex:1;text-align:center;opacity:.5;}
+
+/* botones acción */
+.panel-acciones{padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:6px;}
+.btn-acc{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:7px;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);
+  background:var(--bg);color:var(--text);
+  transition:all .15s;text-decoration:none;
+}
+.btn-acc:hover{background:var(--teal-lt);border-color:var(--teal);color:var(--teal);}
+.btn-acc.primary{background:var(--navy);border-color:var(--navy);color:#fff;}
+.btn-acc.primary:hover{background:#1a3a7a;}
+.btn-acc-ic{font-size:14px;}
+
+/* ── EMPTY / LOADING ── */
+.estado-tabla{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:60px 20px;color:var(--muted);
+}
+.estado-ic{font-size:44px;opacity:.25;}
+.estado-t{font-size:15px;font-weight:700;color:var(--text);}
+.estado-s{font-size:12px;text-align:center;max-width:280px;line-height:1.6;}
+
+/* ── PANEL VACÍO ── */
+.panel-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;flex:1;padding:40px 20px;text-align:center;
+}
+.panel-empty .pe-ic{font-size:36px;opacity:.18;}
+.panel-empty .pe-t{font-size:13px;font-weight:600;color:var(--text);}
+.panel-empty .pe-s{font-size:11px;color:var(--muted);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="topbar-logo" href="index.html">
+    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP">
+  </a>
+  <div>
+    <div class="topbar-title">Calendarios Postgrado</div>
+    <div class="topbar-sub">ETOP · UNAB Online</div>
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-chip loading" id="status-chip">
+    <span class="dot"></span>
+    <span id="status-txt">Cargando cursos...</span>
+  </div>
+  <div class="topbar-right">
+    <input class="topbar-search" id="busq-global" placeholder="🔍  Buscar NRC, curso, tutor..." oninput="aplicarFiltros()" />
+  </div>
+</div>
+
+<!-- FILTROS -->
+<div class="filtros">
+  <span class="filtro-lbl">Facultad</span>
+  <select class="filtro-sel" id="f-facultad" onchange="aplicarFiltros()">
+    <option value="">Todas</option>
+  </select>
+  <div class="filtros-sep"></div>
+  <span class="filtro-lbl">Intake</span>
+  <select class="filtro-sel" id="f-intake" onchange="aplicarFiltros()">
+    <option value="">Todos</option>
+  </select>
+  <div class="filtros-sep"></div>
+  <span class="filtro-lbl">Tutor</span>
+  <select class="filtro-sel" id="f-tutor" onchange="aplicarFiltros()">
+    <option value="">Todos</option>
+  </select>
+  <div class="filtros-sep"></div>
+  <span class="filtro-lbl">Estado</span>
+  <select class="filtro-sel" id="f-estado" onchange="aplicarFiltros()">
+    <option value="">Todos</option>
+    <option value="PREPARACION">Preparación</option>
+    <option value="ACTIVO">Activo</option>
+    <option value="EN CIERRE">En Cierre</option>
+    <option value="CERRADO">Cerrado</option>
+  </select>
+  <button class="btn-limpiar" onclick="limpiarFiltros()">✕ Limpiar</button>
+  <span class="filtros-count" id="f-count">— cursos</span>
+</div>
+
+<!-- MAIN -->
+<div class="main sin-panel" id="main">
+
+  <!-- TABLA -->
+  <div class="tabla-wrap" id="tabla-wrap">
+    <div class="estado-tabla" id="estado-carga">
+      <div class="estado-ic">📅</div>
+      <div class="estado-t">Cargando calendarios</div>
+      <div class="estado-s">Obteniendo datos desde los flujos ETOP...</div>
+    </div>
+    <table id="tabla" style="display:none;">
+      <thead>
+        <tr>
+          <th onclick="ordenar('nrc')" data-col="nrc">NRC_COD_CAL <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('estado')" data-col="estado">Estado <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('nombre curso')" data-col="nombre curso">Nombre Curso <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('facultad')" data-col="facultad">Facultad <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('fecha inicio')" data-col="fecha inicio">Fecha Inicio <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('fecha fin')" data-col="fecha fin">Fecha Fin <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('tutor')" data-col="tutor">Tutor/a <span class="sort-ic">↕</span></th>
+          <th onclick="ordenar('docente')" data-col="docente">Docente <span class="sort-ic">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="estado-tabla" id="estado-empty" style="display:none;">
+      <div class="estado-ic">🔍</div>
+      <div class="estado-t">Sin resultados</div>
+      <div class="estado-s">Prueba cambiando los filtros o buscando con otros términos.</div>
+    </div>
+  </div>
+
+  <!-- PANEL LATERAL -->
+  <div class="panel" id="panel">
+    <div class="panel-empty" id="panel-empty">
+      <div class="pe-ic">📋</div>
+      <div class="pe-t">Selecciona un curso</div>
+      <div class="pe-s">Haz clic en cualquier fila de la tabla para ver el detalle completo del curso.</div>
+    </div>
+    <div id="panel-contenido" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="panel-hdr">
+        <div class="panel-hdr-top">
+          <div>
+            <div class="panel-estado" id="p-estado"></div>
+            <div class="panel-nombre" id="p-nombre">—</div>
+            <div class="panel-nrc" id="p-nrc">—</div>
+          </div>
+          <button class="panel-close" onclick="cerrarPanel()">✕</button>
+        </div>
+      </div>
+      <div class="panel-body" id="panel-body"></div>
+      <div class="panel-acciones" id="panel-acciones"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DATOS ─────────────────────────────────────────────────────────────────────
+let dataMerged = [];
+let dataFiltrada = [];
+let sortCol = 'fecha inicio';
+let sortAsc = true;
+let selRow = null;
+
+const TUTORES_CORREOS = {
+  'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl',
+  'MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+  'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl',
+  'MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+  'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl',
+  'NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+  'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl',
+  'JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl',
+  'CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl',
+  'FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl',
+  'MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl',
+  'DANIELA CORNEJO':'tutoriaonline36@unab.cl'
+};
+
+// ── CARGA ─────────────────────────────────────────────────────────────────────
+async function cargarDatos() {
+  const chip = document.getElementById('status-chip');
+  const txt  = document.getElementById('status-txt');
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now()),
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
+    ]);
+    const base = await r1.json();  // nrc, estado, tipo, facultad, fecha inicio, fecha fin, tutor
+    const ob   = await r2.json();  // nrc, nombre curso, codigo curso, intake, periodo, nombre programa, docente, materia, id
+
+    // JOIN por nrc
+    const obMap = {};
+    ob.forEach(r => { obMap[r.nrc] = r; });
+    dataMerged = base.map(r => ({ ...r, ...(obMap[r.nrc] || {}) }));
+
+    // Poblar filtros
+    poblarFiltro('f-facultad', [...new Set(dataMerged.map(r=>r.facultad||'').filter(Boolean))].sort());
+    poblarFiltro('f-intake',   [...new Set(dataMerged.map(r=>r.intake||'').filter(Boolean))].sort());
+    poblarFiltro('f-tutor',    [...new Set(dataMerged.map(r=>r.tutor||'').filter(Boolean))].sort());
+
+    chip.className = 'topbar-chip';
+    txt.textContent = dataMerged.length + ' cursos cargados';
+
+    aplicarFiltros();
+    document.getElementById('estado-carga').style.display = 'none';
+    document.getElementById('tabla').style.display = 'table';
+
+  } catch(e) {
+    chip.className = 'topbar-chip err';
+    txt.textContent = 'Error al cargar';
+    document.getElementById('estado-carga').querySelector('.estado-t').textContent = 'No se pudieron cargar los datos';
+    document.getElementById('estado-carga').querySelector('.estado-s').textContent = 'Verifica tu conexión e intenta de nuevo.';
+  }
+}
+
+function poblarFiltro(id, vals) {
+  const sel = document.getElementById(id);
+  const curr = sel.value;
+  while(sel.options.length > 1) sel.remove(1);
+  vals.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+  if(curr) sel.value = curr;
+}
+
+// ── FILTROS ───────────────────────────────────────────────────────────────────
+function aplicarFiltros() {
+  const q       = document.getElementById('busq-global').value.trim().toLowerCase();
+  const fac     = document.getElementById('f-facultad').value;
+  const intake  = document.getElementById('f-intake').value;
+  const tutor   = document.getElementById('f-tutor').value;
+  const estado  = document.getElementById('f-estado').value;
+
+  dataFiltrada = dataMerged.filter(r => {
+    if(fac    && r.facultad !== fac)   return false;
+    if(intake && r.intake   !== intake) return false;
+    if(tutor  && r.tutor    !== tutor)  return false;
+    if(estado && r.estado   !== estado) return false;
+    if(q){
+      const hay = (r.nrc||'')+(r['nombre curso']||'')+(r.tutor||'')+(r.docente||'')+(r.facultad||'')+(r.intake||'');
+      if(!hay.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Ordenar
+  dataFiltrada.sort((a,b) => {
+    const va = String(a[sortCol]||''), vb = String(b[sortCol]||'');
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  renderTabla();
+  document.getElementById('f-count').textContent = dataFiltrada.length.toLocaleString('es') + ' cursos';
+}
+
+function limpiarFiltros() {
+  ['f-facultad','f-intake','f-tutor','f-estado'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('busq-global').value = '';
+  aplicarFiltros();
+}
+
+// ── RENDER TABLA ──────────────────────────────────────────────────────────────
+function renderTabla() {
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('estado-empty');
+  const tabla = document.getElementById('tabla');
+
+  if(!dataFiltrada.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'flex';
+    tabla.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  tabla.style.display = 'table';
+
+  tbody.innerHTML = dataFiltrada.map((r,i) => `
+    <tr onclick="seleccionar(${i})" id="row-${i}" ${selRow===i?'class="selected"':''}>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--navy);">${esc(r.nrc||'—')}</span></td>
+      <td>${badgeEstado(r.estado)}</td>
+      <td title="${esc(r['nombre curso']||'')}">${esc(r['nombre curso']||'—')}</td>
+      <td>${esc(r.facultad||'—')}</td>
+      <td>${fmtFecha(r['fecha inicio'])}</td>
+      <td>${fmtFecha(r['fecha fin'])}</td>
+      <td>${esc(limpiar(r.tutor)||'—')}</td>
+      <td style="color:var(--muted);">${esc(limpiar(r.docente)||'—')}</td>
+    </tr>
+  `).join('');
+
+  // Actualizar indicadores de ordenamiento
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.col === sortCol);
+    const ic = th.querySelector('.sort-ic');
+    if(ic && th.dataset.col === sortCol) ic.textContent = sortAsc ? '↑' : '↓';
+    else if(ic) ic.textContent = '↕';
+  });
+}
+
+function ordenar(col) {
+  if(sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
+  aplicarFiltros();
+}
+
+// ── PANEL LATERAL ─────────────────────────────────────────────────────────────
+function seleccionar(idx) {
+  selRow = idx;
+  const r = dataFiltrada[idx];
+  document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+  const row = document.getElementById('row-'+idx);
+  if(row) row.classList.add('selected');
+
+  // Mostrar panel
+  document.getElementById('main').classList.remove('sin-panel');
+  document.getElementById('panel-empty').style.display = 'none';
+  const cont = document.getElementById('panel-contenido');
+  cont.style.display = 'flex';
+
+  // Header
+  document.getElementById('p-estado').innerHTML = badgeEstado(r.estado);
+  document.getElementById('p-nombre').textContent = r['nombre curso'] || r.nrc || '—';
+  document.getElementById('p-nrc').textContent = r.nrc || '—';
+
+  // Body
+  const fi = fmtFecha(r['fecha inicio']);
+  const ff = fmtFecha(r['fecha fin']);
+  const correoTutor = TUTORES_CORREOS[(r.tutor||'').toUpperCase()] || '';
+
+  document.getElementById('panel-body').innerHTML = `
+    <div class="fechas-bar">
+      <div class="fecha-blk">
+        <div class="fd">${fi||'—'}</div>
+        <div class="fl">Inicio</div>
+      </div>
+      <div class="fechas-arrow">→</div>
+      <div class="fecha-blk">
+        <div class="fd">${ff||'—'}</div>
+        <div class="fl">Término</div>
+      </div>
+    </div>
+
+    <div class="pf-sec">
+      <div class="pf-sec-lbl">Datos del Curso</div>
+      <div class="pf-grid">
+        <div class="pf-row">
+          <div class="pf-lbl">Código</div>
+          <div class="pf-val mono">${esc(r['codigo curso']||'—')}</div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-lbl">Materia</div>
+          <div class="pf-val mono">${esc(r.materia||'—')}</div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-lbl">Periodo</div>
+          <div class="pf-val mono">${esc(r.periodo||'—')}</div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-lbl">Tipo NRC</div>
+          <div class="pf-val">${esc(r.tipo||'—')}</div>
+        </div>
+      </div>
+      <div class="pf-row">
+        <div class="pf-lbl">Intake / Versión</div>
+        <div class="pf-val mono">${esc(r.intake||'—')}</div>
+      </div>
+      <div class="pf-row">
+        <div class="pf-lbl">Nombre Programa</div>
+        <div class="pf-val">${esc(r['nombre programa']||'—')}</div>
+      </div>
+    </div>
+
+    <div class="pf-sec">
+      <div class="pf-sec-lbl">Gestión Académica</div>
+      <div class="pf-row">
+        <div class="pf-lbl">Tutor/a</div>
+        <div class="pf-val">${esc(limpiar(r.tutor)||'—')}</div>
+      </div>
+      ${correoTutor ? `<div class="pf-row">
+        <div class="pf-lbl">Correo Tutor/a</div>
+        <div class="pf-val" style="font-size:12px;">${esc(correoTutor)}</div>
+      </div>` : ''}
+      <div class="pf-row">
+        <div class="pf-lbl">Docente</div>
+        <div class="pf-val">${esc(limpiar(r.docente)||'—')}</div>
+      </div>
+      <div class="pf-row">
+        <div class="pf-lbl">Facultad</div>
+        <div class="pf-val">${esc(r.facultad||'—')}</div>
+      </div>
+    </div>
+  `;
+
+  // Acciones
+  const BASE = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+  const p = new URLSearchParams({
+    nrc: r.nrc||'',
+    nombreTutor: r.tutor||'',
+    correoTutor: correoTutor,
+    fechaInicio: r['fecha inicio']||'',
+    fechaFin: r['fecha fin']||'',
+    intake: r.intake||''
+  });
+  document.getElementById('panel-acciones').innerHTML = `
+    <a class="btn-acc primary" href="${BASE}comunicaciones_etop.html" target="_blank">
+      <span class="btn-acc-ic">✉️</span> Ir a Comunicaciones
+    </a>
+    <a class="btn-acc" href="${BASE}onboarding_correos.html?${p}" target="_blank">
+      <span class="btn-acc-ic">📧</span> Correo Bienvenida
+    </a>
+    <a class="btn-acc" href="${BASE}onboarding_invitaciones.html?${p}" target="_blank">
+      <span class="btn-acc-ic">📅</span> Invitación Sincrónica
+    </a>
+    <a class="btn-acc" href="${BASE}presentacion_tutorial_innovado.html?nombreTutor=${encodeURIComponent(r.tutor||'')}&nombreCurso=${encodeURIComponent(r['nombre curso']||'')}&nrc=${encodeURIComponent(r.nrc||'')}&fechaInicio=${encodeURIComponent(r['fecha inicio']||'')}&fechaFin=${encodeURIComponent(r['fecha fin']||'')}" target="_blank">
+      <span class="btn-acc-ic">📊</span> Presentación Tutorial
+    </a>
+  `;
+}
+
+function cerrarPanel() {
+  selRow = null;
+  document.getElementById('main').classList.add('sin-panel');
+  document.getElementById('panel-empty').style.display = 'flex';
+  document.getElementById('panel-contenido').style.display = 'none';
+  document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function badgeEstado(e) {
+  const map = {
+    'PREPARACION': ['b-prep','PREPARACIÓN'],
+    'ACTIVO':      ['b-act','ACTIVO'],
+    'EN CIERRE':   ['b-cierre','EN CIERRE'],
+    'CERRADO':     ['b-cerr','CERRADO']
+  };
+  const [cls, lbl] = map[e] || ['b-cerr', e||'—'];
+  return `<span class="badge ${cls}"><span class="b-dot"></span>${lbl}</span>`;
+}
+
+function fmtFecha(v) {
+  if(!v) return '—';
+  const s = String(v).split('T')[0];
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const [y,m,d] = s.split('-');
+  return `${d}-${m}-${y}`;
+}
+
+function limpiar(v) {
+  if(!v) return '';
+  const l = v.trim().toLowerCase();
+  return ['por definir','por confirmar','0','nan','definir'].includes(l) ? '' : v.trim();
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+cargarDatos();
+</script>
+</body>
+</html>
