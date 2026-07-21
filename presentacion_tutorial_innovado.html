@@ -40,6 +40,16 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <button onclick="setTipo('general',this)" id="btn-general" style="font-size:11px;font-weight:700;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;">General</button>
       <button onclick="setTipo('individual',this)" id="btn-individual" style="font-size:11px;font-weight:700;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;">Individual</button>
     </div>
+    <div style="width:1px;height:22px;background:rgba(255,255,255,0.15);"></div>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;white-space:nowrap;">Apertura:</span>
+      <div style="display:flex;gap:3px;background:rgba(255,255,255,0.08);border-radius:7px;padding:3px;">
+        <button onclick="setApertura('primera',this)" id="ap-primera" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:#4ade80;color:#052e16;white-space:nowrap;">Primera vez</button>
+        <button onclick="setApertura('reencuentro',this)" id="ap-reencuentro" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;white-space:nowrap;">Reencuentro</button>
+        <button onclick="setApertura('personal',this)" id="ap-personal" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;white-space:nowrap;">Personal</button>
+        <button onclick="setApertura('calido',this)" id="ap-calido" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;white-space:nowrap;">Cálido</button>
+      </div>
+    </div>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -53,9 +63,23 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
   </td></tr>
   <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
 
-    <p>Estimado(a) Docente</p>
+    <!-- BLOQUE APERTURA — editable y reemplazable por setApertura() -->
+    <div id="bloque-apertura" style="position:relative;">
 
-    <p>Junto con saludar, mi nombre es <span class="campo" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré la tutora de Acompañamiento encargada de apoyar la asignatura "<span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA (ej: lunes)"></span> <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA (ej: domingo)"></span> <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
+      <!-- Hint editable -->
+      <div id="apertura-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:#F0FDF4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;">
+        <span style="font-size:11px;">✏️</span>
+        <span style="font-size:10px;color:#166534;font-weight:500;">Este párrafo es editable — haz clic en cualquier parte para ajustarlo. Usa los botones de <strong>Apertura</strong> para cambiar el estilo.</span>
+      </div>
+
+      <div id="apertura-texto" contenteditable="true"
+        style="outline:none;border:1.5px dashed #86efac;border-radius:8px;padding:10px 14px;background:#F0FDF4;font-size:16px;line-height:1.8;color:#333;cursor:text;"
+        onfocus="this.style.borderColor='#16a34a';this.style.background='#dcfce7';"
+        onblur="this.style.borderColor='#86efac';this.style.background='#F0FDF4';">
+        <p style="margin:0 0 12px 0;">Estimado/a Docente,</p>
+        <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
+      </div>
+    </div>
 
     <p>Como parte del proceso de programación antes de la impartición, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
 
@@ -143,6 +167,19 @@ async function copiarCorreo() {
 
   const contenido = document.getElementById('email-content').cloneNode(true);
 
+  // Ocultar el hint de edición del bloque apertura
+  const hint = contenido.querySelector('#apertura-hint');
+  if (hint) hint.remove();
+
+  // Quitar borde y fondo verde del bloque apertura
+  const aperturaDiv = contenido.querySelector('#apertura-texto');
+  if (aperturaDiv) {
+    aperturaDiv.style.border = 'none';
+    aperturaDiv.style.background = 'transparent';
+    aperturaDiv.style.padding = '0';
+    aperturaDiv.removeAttribute('contenteditable');
+  }
+
   // Limpiar estilos de edición
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
@@ -200,6 +237,71 @@ function mostrarToast(msg, error=false) {
 }
 
 // ── SELECTOR DE TIPO ──
+// ── TEMPLATES DE APERTURA ──
+function getAperturaHTML(estilo) {
+  // Leer valores actuales de los campos dinámicos (si ya están rellenados)
+  var nt  = getValCampo('nombre_tutor')  || '<span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>';
+  var nc  = getValCampo('nombre_curso')  || '<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>';
+  var nrc = getValCampo('nrc')           || '<span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>';
+  var dur = getValCampo('duracion')      || '<span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span>';
+  var di  = getValCampo('dia_inicio')    || '<span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span>';
+  var fi  = getValCampo('fecha_inicio')  || '<span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span>';
+  var df  = getValCampo('dia_fin')       || '<span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span>';
+  var ff  = getValCampo('fecha_fin')     || '<span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span>';
+  var nd  = '<span class="campo" contenteditable="true" data-campo="nombre_docente" data-placeholder="NOMBRE DOCENTE"></span>';
+
+  var span = function(campo, val, ph) {
+    return '<span class="campo auto-filled" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
+  };
+
+  var templates = {
+    primera:
+      '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
+      '<p style="margin:0;">Junto con saludar, mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>',
+
+    reencuentro:
+      '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
+      '<p style="margin:0;">Junto con saludar, me comunico para informarle que nuevamente seré el/la Tutor/a de Acompañamiento a cargo de la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, comenzando el '+di+' '+fi+' hasta el '+df+' '+ff+' en la plataforma Canvas.</p>',
+
+    personal:
+      '<p style="margin:0 0 12px 0;">Estimado/a '+nd+',</p>' +
+      '<p style="margin:0;">Junto con saludar, me presento: mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en plataforma Canvas, según el calendario del programa.</p>',
+
+    calido:
+      '<p style="margin:0 0 12px 0;">Estimado/a Docente '+nd+',</p>' +
+      '<p style="margin:0;">Junto con saludar y esperando que se encuentre bien, es de mi agrado informar que seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>'
+  };
+  return templates[estilo] || templates.primera;
+}
+
+function getValCampo(campo) {
+  // Busca el campo en el DOM actual y devuelve su textContent si tiene valor
+  var el = document.querySelector('[data-campo="'+campo+'"]');
+  if (!el) return null;
+  var val = el.textContent.trim();
+  return (val && val !== el.getAttribute('data-placeholder')) ? val : null;
+}
+
+function makeSpan(campo, val, ph) {
+  return '<span class="campo auto-filled" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
+}
+
+function setApertura(estilo, btn) {
+  // Actualizar botones
+  ['ap-primera','ap-reencuentro','ap-personal','ap-calido'].forEach(function(id) {
+    var b = document.getElementById(id);
+    if (!b) return;
+    b.style.background = 'transparent';
+    b.style.color = '#cbd5e1';
+  });
+  if (btn) { btn.style.background = '#4ade80'; btn.style.color = '#052e16'; }
+
+  var bloque = document.getElementById('apertura-texto');
+  if (!bloque) return;
+
+  bloque.innerHTML = getAperturaHTML(estilo);
+}
+
 function setTipo(tipo, btn) {
   // Actualizar botones
   ['btn-ajustado','btn-general','btn-individual'].forEach(id => {
