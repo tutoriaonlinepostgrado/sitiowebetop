@@ -1,134 +1,178 @@
 from pathlib import Path
+import re
 
 src = Path("/mnt/data/Pasted text.txt")
-text = src.read_text(encoding="utf-8")
+html = src.read_text(encoding="utf-8")
 
-# 1) Insert the new top banner CSS after the existing .banner-hero rules.
+# ---------------------------------------------------------------------
+# 1. Insert clean CSS for the header banner and daily phrase.
+# ---------------------------------------------------------------------
 css_anchor = """    .banner-hero img { width:100%; height:100%; object-fit:cover; object-position:center 25%; display:block; }
 """
+
 new_css = """    .banner-hero img { width:100%; height:100%; object-fit:cover; object-position:center 25%; display:block; }
 
-    /* ─────────────────────────────────────────
-       BANNER SUPERIOR DEL PORTAL
-       ───────────────────────────────────────── */
-
-    .banner-top {
-        position:relative;
-        height:42px;
-        min-width:280px;
-        max-width:620px;
-        border-radius:10px;
-        overflow:hidden;
-        border:1px solid rgba(250,204,21,0.18);
-        flex:1;
-        min-width:0;
+    /* Banner compacto ubicado en el encabezado */
+    .header-banner {
+        position: relative;
+        flex: 1 1 360px;
+        min-width: 260px;
+        max-width: 540px;
+        height: 42px;
+        overflow: hidden;
+        border-radius: 10px;
+        border: 1px solid rgba(250,204,21,0.20);
+        background:
+            linear-gradient(110deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.95) 52%, rgba(51,65,85,0.92) 100%);
+        box-shadow: inset 0 0 24px rgba(250,204,21,0.04);
     }
 
-    .banner-top img {
-        width:100%;
-        height:100%;
-        object-fit:cover;
-        object-position:center 25%;
-        display:block;
+    .header-banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 82% 50%, rgba(250,204,21,0.14), transparent 26%),
+            linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 55%, transparent 100%);
+        pointer-events: none;
     }
 
-    .banner-top-overlay {
-        position:absolute;
-        inset:0;
-        background:linear-gradient(
-            90deg,
-            rgba(20,27,45,0.78) 0%,
-            rgba(20,27,45,0.35) 65%,
-            rgba(20,27,45,0.05) 100%
-        );
+    .header-banner-content {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 16px;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
-    .banner-top-content {
-        position:absolute;
-        inset:0;
-        display:flex;
-        align-items:center;
-        gap:10px;
-        padding:0 14px;
-        white-space:nowrap;
-        overflow:hidden;
+    .header-banner-kicker {
+        color: rgba(250,204,21,0.82);
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        flex-shrink: 0;
     }
 
-    .banner-top-content span {
-        font-size:7px;
-        font-weight:700;
-        letter-spacing:0.14em;
-        text-transform:uppercase;
-        color:#facc15;
-        opacity:0.9;
-        flex-shrink:0;
+    .header-banner-title {
+        color: #ffffff;
+        font-size: 15px;
+        line-height: 1;
+        font-weight: 800;
+        flex-shrink: 0;
     }
 
-    .banner-top-content strong {
-        font-size:15px;
-        font-weight:800;
-        color:#ffffff;
-        line-height:1;
-        flex-shrink:0;
+    .header-banner-title span {
+        color: #facc15;
     }
 
-    .banner-top-content strong b {
-        color:#facc15;
+    .header-banner-description {
+        color: rgba(226,232,240,0.72);
+        font-size: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .banner-top-content small {
-        font-size:8px;
-        color:rgba(255,255,255,0.65);
-        overflow:hidden;
-        text-overflow:ellipsis;
+    .header-daily-message {
+        width: 260px;
+        min-width: 220px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding-left: 16px;
+        border-left: 1px solid rgba(255,255,255,0.08);
     }
 
-    @media (max-width:1200px) {
-        .banner-top {
-            max-width:420px;
+    .header-daily-message-icon {
+        color: #facc15;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .header-daily-message-copy {
+        min-width: 0;
+    }
+
+    .header-daily-message-label {
+        margin: 0 0 2px;
+        color: rgba(250,204,21,0.65);
+        font-size: 7px;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .header-daily-message-text {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 9px;
+        line-height: 1.25;
+        font-style: italic;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 1350px) {
+        .header-banner-kicker,
+        .header-banner-description {
+            display: none;
         }
 
-        .banner-top-content span {
-            display:none;
+        .header-daily-message {
+            width: 220px;
         }
     }
 
-    @media (max-width:900px) {
-        .banner-top {
-            max-width:300px;
+    @media (max-width: 1100px) {
+        .header-daily-message {
+            display: none;
         }
 
-        .banner-top-content small {
-            display:none;
+        .header-banner {
+            max-width: none;
+        }
+    }
+
+    @media (max-width: 850px) {
+        .header-banner {
+            display: none;
         }
     }
 """
-if css_anchor not in text:
-    raise ValueError("No se encontró el ancla CSS esperada.")
-text = text.replace(css_anchor, new_css, 1)
 
-# 2) Replace the existing header.
-header_start = text.index('<header class="h-16 flex items-center justify-between px-8 bg-[#141b2d] border-b border-white/5 z-50 flex-shrink-0">')
-header_end = text.index('</header>', header_start) + len('</header>')
+if css_anchor not in html:
+    raise RuntimeError("No se encontró el punto de inserción CSS.")
+html = html.replace(css_anchor, new_css, 1)
 
-new_header = """<header class="h-16 flex items-center justify-between px-8 bg-[#141b2d] border-b border-white/5 z-50 flex-shrink-0">
+# ---------------------------------------------------------------------
+# 2. Replace the entire original header with a clean header.
+# ---------------------------------------------------------------------
+header_pattern = re.compile(
+    r'<header class="h-16 flex items-center justify-between px-8 bg-\[#141b2d\] border-b border-white/5 z-50 flex-shrink-0">.*?</header>',
+    re.S
+)
 
-    <!-- BLOQUE IZQUIERDO -->
-    <div class="flex items-center gap-6 flex-1 min-w-0">
+new_header = """<header class="h-16 flex items-center justify-between gap-5 px-8 bg-[#141b2d] border-b border-white/5 z-50 flex-shrink-0">
 
-        <!-- IDENTIDAD ETOP -->
+    <!-- Identidad, estado y banner -->
+    <div class="flex items-center gap-5 flex-1 min-w-0">
+
         <div class="flex items-center gap-3 flex-shrink-0">
             <img
                 src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png"
                 alt="ETOP"
                 class="h-8 w-8 object-contain">
-
             <span class="text-[#facc15] font-extrabold text-xl tracking-tighter">ETOP</span>
             <span class="text-slate-500 font-light text-xl">|</span>
             <span class="text-slate-300 font-medium text-sm tracking-widest uppercase">Portal</span>
         </div>
 
-        <!-- ESTADO DEL SISTEMA -->
         <div class="flex items-center bg-white/5 px-3 py-1.5 rounded-full border border-white/10 flex-shrink-0">
             <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot mr-2"></div>
             <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
@@ -136,25 +180,29 @@ new_header = """<header class="h-16 flex items-center justify-between px-8 bg-[#
             </span>
         </div>
 
-        <!-- BANNER SUPERIOR -->
-        <div class="banner-top">
-            <img
-                src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png"
-                alt="Portal ETOP Banner"
-                onerror="this.style.display='none'">
-
-            <div class="banner-top-overlay"></div>
-
-            <div class="banner-top-content">
-                <span>Universidad Andrés Bello · ETOP</span>
-                <strong>Portal <b>ETOP</b></strong>
-                <small>Equipo de Tutoría Online de Postgrado · Panel de Gestión</small>
+        <!-- Banner sin fotografía: fondo limpio para máxima legibilidad -->
+        <div class="header-banner">
+            <div class="header-banner-content">
+                <span class="header-banner-kicker">Universidad Andrés Bello · ETOP</span>
+                <strong class="header-banner-title">Portal <span>ETOP</span></strong>
+                <span class="header-banner-description">
+                    Equipo de Tutoría Online de Postgrado · Panel de Gestión
+                </span>
             </div>
         </div>
 
     </div>
 
-    <!-- BLOQUE DERECHO -->
+    <!-- Frase del día -->
+    <div class="header-daily-message">
+        <span class="material-symbols-outlined header-daily-message-icon">lightbulb</span>
+        <div class="header-daily-message-copy">
+            <p class="header-daily-message-label">Frase del día</p>
+            <p id="mensaje-dia-header" class="header-daily-message-text"></p>
+        </div>
+    </div>
+
+    <!-- Identidad institucional -->
     <div class="flex items-center gap-4 flex-shrink-0">
         <img
             src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png"
@@ -166,7 +214,6 @@ new_header = """<header class="h-16 flex items-center justify-between px-8 bg-[#
                 <p class="text-xs font-semibold text-white">Equipo ETOP</p>
                 <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
             </div>
-
             <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">
                 ET
             </div>
@@ -175,10 +222,21 @@ new_header = """<header class="h-16 flex items-center justify-between px-8 bg-[#
 
 </header>"""
 
-text = text[:header_start] + new_header + text[header_end:]
+html, count = header_pattern.subn(new_header, html, count=1)
+if count != 1:
+    raise RuntimeError("No se pudo reemplazar correctamente el encabezado.")
 
-# 3) Remove the old banner from the main content.
-old_banner = """                <!-- BANNER -->
+# ---------------------------------------------------------------------
+# 3. Remove the old banner from the main content.
+# ---------------------------------------------------------------------
+old_main_banner_pattern = re.compile(
+    r'\s*<!-- BANNER -->\s*'
+    r'<div class="banner-hero flex-shrink-0" style="height:56px;">.*?</div>\s*</div>\s*</div>\s*',
+    re.S
+)
+
+# Use an exact block replacement to avoid consuming surrounding tags.
+old_main_banner = """                <!-- BANNER -->
                 <div class="banner-hero flex-shrink-0" style="height:56px;">
                     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png" alt="Portal ETOP Banner" onerror="this.style.display='none'">
                     <div class="banner-overlay"></div>
@@ -190,11 +248,67 @@ old_banner = """                <!-- BANNER -->
                 </div>
 
 """
-if old_banner not in text:
-    raise ValueError("No se encontró el banner antiguo esperado.")
-text = text.replace(old_banner, "", 1)
+if old_main_banner not in html:
+    raise RuntimeError("No se encontró el banner original del contenido central.")
+html = html.replace(old_main_banner, "", 1)
 
-out = Path("/mnt/data/portal_etop_banner_superior.html")
-out.write_text(text, encoding="utf-8")
-print(f"Archivo creado: {out}")
-print(f"Líneas: {len(text.splitlines())}")
+# ---------------------------------------------------------------------
+# 4. Remove the central daily-message card to avoid duplication.
+# ---------------------------------------------------------------------
+old_message_card = """                        <!-- MENSAJE DEL DÍA -->
+                        <div class="p-3 rounded-xl bg-[#facc15]/5 border border-[#facc15]/10 flex-shrink-0">
+                            <p class="text-[9px] text-[#facc15]/50 uppercase font-bold tracking-wider mb-1">💡 Mensaje del día</p>
+                            <p id="mensaje-dia" class="text-[10px] text-slate-400 leading-relaxed italic"></p>
+                        </div>
+
+"""
+if old_message_card not in html:
+    raise RuntimeError("No se encontró la tarjeta central de mensaje del día.")
+html = html.replace(old_message_card, "", 1)
+
+# ---------------------------------------------------------------------
+# 5. Update message function so it writes only to the header.
+# ---------------------------------------------------------------------
+old_function = """function getMensajeDelDia() {
+    document.getElementById('mensaje-dia').textContent = '"' + MENSAJES[new Date().getDate() % MENSAJES.length] + '"';
+}
+"""
+
+new_function = """function getMensajeDelDia() {
+    const mensaje = MENSAJES[new Date().getDate() % MENSAJES.length];
+    const destino = document.getElementById('mensaje-dia-header');
+
+    if (destino) {
+        destino.textContent = '"' + mensaje + '"';
+        destino.title = mensaje;
+    }
+}
+"""
+
+if old_function not in html:
+    raise RuntimeError("No se encontró la función original de mensaje diario.")
+html = html.replace(old_function, new_function, 1)
+
+# ---------------------------------------------------------------------
+# 6. Basic validation: file must begin as HTML and must contain no Python code.
+# ---------------------------------------------------------------------
+for forbidden in ("from pathlib import Path", "text.replace(", "raise ValueError", "new_css ="):
+    if forbidden in html:
+        raise RuntimeError(f"Se detectó código Python accidental en el HTML: {forbidden}")
+
+if not html.lstrip().startswith("<!DOCTYPE html>"):
+    raise RuntimeError("El archivo no comienza con DOCTYPE HTML.")
+
+required_ids = ["vista-normal", "mensaje-dia-header", "chartFacultad", "iframe-qa2"]
+for element_id in required_ids:
+    if f'id="{element_id}"' not in html:
+        raise RuntimeError(f"Falta un elemento esencial: {element_id}")
+
+output = Path("/mnt/data/portal_etop_corregido.html")
+output.write_text(html, encoding="utf-8")
+
+print("Archivo reconstruido correctamente.")
+print(f"Ruta: {output}")
+print(f"Tamaño: {output.stat().st_size:,} bytes")
+print(f"Líneas: {len(html.splitlines())}")
+print("Validación: sin código Python incrustado y con DOCTYPE correcto.")
