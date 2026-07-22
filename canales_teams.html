@@ -5,96 +5,350 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canales Teams - ETOP</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .main-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid #facc15;
-            position: relative; /* Needed for absolute positioning of the logo */
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1f2940;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(250,204,21,0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(250,204,21,0.03) 0%, transparent 40%);
+            min-height: 100vh;
+            color: #ebe2d0;
         }
-        .link-button {
-            background-color: #334155; /* slate-700 */
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem; /* rounded-lg */
-            transition: all 0.3s ease-in-out;
-            transform: scale(1);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 0.5rem; 
+
+        /* ── Header ── idéntico al index ── */
+        .site-header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: #1f2940;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
         }
-        .link-button:hover {
-            background-color: #facc15; /* yellow-500 */
-            color: #1e2b3b; /* slate-800 */
-            transform: scale(1.05);
+        .header-left  { display: flex; align-items: center; gap: 1.5rem; }
+        .header-brand { display: flex; align-items: center; gap: 0.75rem; }
+        .header-logo  { height: 2rem; width: 2rem; object-fit: contain; }
+        .header-etop  { color: #facc15; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.05em; }
+        .header-sep   { color: #475569; font-weight: 300; font-size: 1.25rem; }
+        .header-sub   { color: #cbd5e1; font-weight: 500; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; }
+        .header-badge {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 0.375rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            gap: 0.5rem;
+        }
+        .pulse-dot {
+            width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #22c55e;
+            box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%  { transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0.7); }
+            70% { transform:scale(1);    box-shadow:0 0 0 6px rgba(34,197,94,0); }
+            100%{ transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0);   }
+        }
+        .header-badge-label { font-size: 0.6875rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.1em; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .unab-logo    { height: 1.75rem; width: 1.75rem; object-fit: contain; opacity: 0.7; }
+        .header-user  { border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .header-user-info { text-align: right; }
+        .header-user-name { font-size: 0.75rem; font-weight: 600; color: #fff; }
+        .header-user-inst { font-size: 0.625rem; color: #94a3b8; }
+        .header-avatar {
+            width: 2rem; height: 2rem; border-radius: 50%;
+            background: #facc15; color: #1e293b;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.75rem;
+        }
+
+        /* ── Panel principal glass — igual que .glass-panel del index ── */
+        .glass-panel {
+            background: rgba(31,41,64,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(250,204,21,0.12);
+        }
+
+        /* ── Contenido ── */
+        .page-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        /* ── Breadcrumb / back ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.15s;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover { color: #facc15; }
+        .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+
+        /* ── Encabezado de sección ── */
+        .section-eyebrow {
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #facc15;
+            opacity: 0.7;
+            margin-bottom: 0.35rem;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.03em;
+        }
+        .section-title span { color: #facc15; }
+        .section-sub {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* ── Grid de canales ── */
+        .canales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1.75rem;
+        }
+
+        /* ── Tarjeta de canal — .canal-quick del index ── */
+        .canal-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(98,100,167,0.06);
+            border: 1px solid transparent;
+            text-decoration: none;
+            transition: all 0.18s ease;
+        }
+        .canal-card:hover {
+            background: rgba(98,100,167,0.18);
+            border-color: rgba(98,100,167,0.35);
+        }
+        .canal-left  { display: flex; align-items: center; gap: 0.625rem; }
+        .canal-badge {
+            width: 28px; height: 28px;
+            background: #6264a7;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .canal-badge span {
+            color: #fff;
+            font-weight: 900;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .canal-info {}
+        .canal-nombre {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #c4b5fd;
+            line-height: 1.2;
+        }
+        .canal-tipo {
+            font-size: 0.6rem;
+            color: #475569;
+            margin-top: 1px;
+        }
+        .canal-arrow {
+            font-size: 0.625rem;
+            color: #6264a7;
+            flex-shrink: 0;
+        }
+
+        /* ── Divisor ── */
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.05);
+            margin: 1.75rem 0;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-white">
-    <div class="min-h-screen flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(to bottom right, #0d1a3e, #1e293b);">
-        <div class="w-full max-w-7xl mx-auto rounded-2xl p-6 md:p-8 main-panel shadow-2xl">
-            
-            <!-- Logo en la esquina superior derecha -->
-            <a href="index.html" class="absolute top-6 right-8 md:top-8 md:right-10 h-16 w-16 transition-transform duration-300 hover:scale-110" title="Volver al Portal Principal">
-                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="Logo ETOP" class="rounded-full border-2 border-yellow-500 p-1">
-            </a>
+<body>
 
-            <header class="text-center mb-8 md:mb-10">
-                <h1 class="text-3xl md:text-4xl font-bold tracking-wider text-white">Canales Teams</h1>
-                <p class="text-slate-300 mt-2">Enlaces directos a los canales de comunicación del equipo.</p>
-            </header>
-            <main>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    
-                    <a href="https://teams.microsoft.com/l/channel/19%3Adfd8e3b9b41b44ec8ffcbcbac5d56281%40thread.tacv2/COORDINACION?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Coordinación</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3A34bf85febac548b0a58f2079c4b337ca%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Educación y CS. Sociales Innovado</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3A3995b44ce61e48fe9bc86e5776d054b0%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Educación y CS. Sociales</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3Abd6c00f4456e4ed8a3b19a669dfe613e%40thread.tacv2/MED_ISPAB_MBAES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - MED_ISPAB</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3Ac07604d2347a41109ca2c41e52a4318e%40thread.tacv2/CIENCIAS%20_DE_LA%20_REHABILITACI%C3%93N?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Ciencias de la Rehabilitación</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Enfermería Innovado</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Economía Innovado</span>
-                    </a>
-                    <a href="https://teams.microsoft.com/l/channel/19%3A6974c03c6cdf4529a145589c7154764d%40thread.tacv2/INGENIERIA?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>Canal - Ingeniería</span>
-                    </a>
-                     <a href="https://teams.microsoft.com/l/channel/19%3A5a497d05671d40809375af71d434a6a6%40thread.tacv2/SEMI_PRESENCIAL%20(FULLSIN)?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="link-button md:col-span-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span>SEMI_PRESENCIAL (FULLSIN)</span>
-                    </a>
+    <!-- HEADER — idéntico al index -->
+    <header class="site-header">
+        <div class="header-left">
+            <div class="header-brand">
+                <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="header-logo">
+                <span class="header-etop">ETOP</span>
+                <span class="header-sep">|</span>
+                <span class="header-sub">Portal</span>
+            </div>
+            <div class="header-badge">
+                <div class="pulse-dot"></div>
+                <span class="header-badge-label">Sistema Activo</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="unab-logo">
+            <div class="header-user">
+                <div class="header-user-info">
+                    <p class="header-user-name">Equipo ETOP</p>
+                    <p class="header-user-inst">Universidad Andrés Bello</p>
                 </div>
-            </main>
+                <div class="header-avatar">ET</div>
+            </div>
+        </div>
+    </header>
 
-            <div class="text-center mt-10">
-                <a href="index.html" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-6 rounded-lg transition-all duration-300 inline-block">← Volver al Portal Principal</a>
+    <!-- CONTENIDO -->
+    <div class="page-content">
+
+        <a href="index.html" class="back-link">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+            Volver al Portal Principal
+        </a>
+
+        <div class="glass-panel rounded-2xl p-6 md:p-8">
+
+            <!-- Encabezado -->
+            <div style="margin-bottom:0.25rem;">
+                <p class="section-eyebrow">Microsoft Teams · ETOP</p>
+                <h1 class="section-title">Canales del <span>Equipo</span></h1>
+                <p class="section-sub">Acceso directo a los canales de comunicación por facultad.</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Grid de canales -->
+            <div class="canales-grid">
+
+                <a href="https://teams.microsoft.com/l/channel/19%3Adfd8e3b9b41b44ec8ffcbcbac5d56281%40thread.tacv2/COORDINACION?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Coordinación</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3A34bf85febac548b0a58f2079c4b337ca%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Ed. y Cs. Sociales Innovado</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3A3995b44ce61e48fe9bc86e5776d054b0%40thread.tacv2/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Ed. y Cs. Sociales</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3Abd6c00f4456e4ed8a3b19a669dfe613e%40thread.tacv2/MED_ISPAB_MBAES?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">MED · ISPAB · MBAES</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3Ac07604d2347a41109ca2c41e52a4318e%40thread.tacv2/CIENCIAS%20_DE_LA%20_REHABILITACI%C3%93N?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Cs. de la Rehabilitación</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Economía Innovado</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <!-- Enfermería: URL corregida desde el index.html real -->
+                <a href="https://teams.microsoft.com/l/channel/19%3A865fc8fba1a24752a13bcaf78a7dfd4c%40thread.tacv2/ECONOM%C3%8DA_INNOVADO?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Enfermería Innovado</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3A6974c03c6cdf4529a145589c7154764d%40thread.tacv2/INGENIERIA?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Ingeniería</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://unabportal365.sharepoint.com/sites/EQUIPODETUTORIAONLINEDEPOSTGRADO-ESCUELADEGOBIERNO" target="_blank" rel="noopener noreferrer" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Escuela de Gobierno</div>
+                            <div class="canal-tipo">SharePoint</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
+                <a href="https://teams.microsoft.com/l/channel/19%3A5a497d05671d40809375af71d434a6a6%40thread.tacv2/SEMI_PRESENCIAL%20(FULLSIN)?groupId=916a39e1-9006-4ce6-93a1-cf58954d0f6a&tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ngc=true" target="_blank" class="canal-card">
+                    <div class="canal-left">
+                        <div class="canal-badge"><span>T</span></div>
+                        <div class="canal-info">
+                            <div class="canal-nombre">Semi Presencial (FULLSIN)</div>
+                            <div class="canal-tipo">Canal Teams</div>
+                        </div>
+                    </div>
+                    <span class="canal-arrow">↗</span>
+                </a>
+
             </div>
         </div>
     </div>
+
 </body>
 </html>
-
