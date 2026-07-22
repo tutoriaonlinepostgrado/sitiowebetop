@@ -14,36 +14,36 @@
         }
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background-color: var(--azul-fondo); }
         .app-container { display: flex; height: 100vh; width: 100vw; transition: all 0.3s ease; }
-        .sidebar { width: 300px; background-color: var(--azul-sidebar); color: var(--texto-blanco); display: flex; flex-direction: column; border-right: 1px solid rgba(255,215,0,0.1); z-index: 10; transition: margin-left 0.3s ease; flex-shrink: 0; overflow: hidden; }
-        .sidebar.closed { margin-left: -300px; }
-        .sidebar-header { padding: 25px 20px; border-bottom: 2px solid var(--amarillo-top); background-color: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .sidebar-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
-        .sidebar-header span { font-size: 12px; color: var(--texto-gris); display: block; margin-top: 5px; }
-        .sidebar-menu { flex-grow: 1; overflow-y: auto; padding-bottom: 15px; }
-        .sidebar-menu::-webkit-scrollbar { width: 5px; }
+        .sidebar { width: 280px; background-color: var(--azul-sidebar); color: var(--texto-blanco); display: flex; flex-direction: column; border-right: 1px solid rgba(255,215,0,0.1); z-index: 10; transition: margin-left 0.3s ease; flex-shrink: 0; overflow: hidden; }
+        .sidebar.closed { margin-left: -280px; }
+        .sidebar-header { padding: 14px 16px; border-bottom: 2px solid var(--amarillo-top); background-color: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .sidebar-header h2 { margin: 0; font-size: 15px; font-weight: 700; color: var(--amarillo-top); text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-header span { font-size: 11px; color: var(--texto-gris); display: block; margin-top: 3px; }
+        .sidebar-menu { flex-grow: 1; overflow-y: auto; padding-bottom: 8px; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
         .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
         .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 10px; }
         .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255,215,0,0.6); }
-        .menu-category { padding: 15px 20px 5px 20px; font-size: 11px; text-transform: uppercase; color: var(--texto-gris); font-weight: 700; letter-spacing: 1px; }
-        .menu-btn { background: none; border: none; color: #e0e0e0; padding: 12px 20px; text-align: left; font-size: 14px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; text-decoration: none; box-sizing: border-box; }
+        .menu-category { padding: 8px 16px 3px 16px; font-size: 10px; text-transform: uppercase; color: var(--texto-gris); font-weight: 700; letter-spacing: 1px; }
+        .menu-btn { background: none; border: none; color: #e0e0e0; padding: 7px 16px; text-align: left; font-size: 13px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; }
         .menu-btn:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
         .menu-btn.active { background-color: rgba(255,215,0,0.15); color: var(--amarillo-top); border-left: 4px solid var(--amarillo-top); font-weight: 600; }
-        .collapsible-header { padding: 13px 20px; font-size: 14px; color: #e0e0e0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid transparent; transition: all 0.2s; user-select: none; }
+        .collapsible-header { padding: 7px 16px; font-size: 13px; color: #e0e0e0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid transparent; transition: all 0.2s; user-select: none; }
         .collapsible-header:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
-        .collapsible-header .header-left { display: flex; align-items: center; gap: 10px; }
+        .collapsible-header .header-left { display: flex; align-items: center; gap: 8px; }
         .collapsible-header .arrow { font-size: 10px; color: var(--texto-gris); transition: transform 0.25s ease; flex-shrink: 0; }
         .collapsible-header.open .arrow { transform: rotate(180deg); color: var(--amarillo-top); }
         .collapsible-header.open { color: var(--amarillo-top); background-color: rgba(255,215,0,0.06); border-left: 4px solid rgba(255,215,0,0.3); }
         .collapsible-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
-        .collapsible-body.open { max-height: 500px; }
-        .collapsible-body .menu-btn { padding-left: 36px; font-size: 13px; color: #c0c0c0; border-left: 4px solid transparent; }
-        .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
+        .collapsible-body.open { max-height: 600px; }
+        .collapsible-body .menu-btn { padding-left: 30px; font-size: 12px; color: #c0c0c0; border-left: 4px solid transparent; }
+        .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 15px; margin-right: -4px; }
         .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
         .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
-        .btn-coordinacion { margin: 12px 15px; padding: 12px 16px; background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.4); border-radius: 8px; color: var(--amarillo-top); text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: all 0.2s; cursor: pointer; }
+        .btn-coordinacion { margin: 8px 12px; padding: 9px 14px; background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.4); border-radius: 8px; color: var(--amarillo-top); text-decoration: none; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s; cursor: pointer; }
         .btn-coordinacion:hover { background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1)); border-color: var(--amarillo-top); }
-        .canal-btn { background: none; border: none; color: #e0e0e0; padding: 10px 20px 10px 36px; text-align: left; font-size: 13px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; color: #c0c0c0; }
-        .canal-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
+        .canal-btn { background: none; border: none; color: #e0e0e0; padding: 7px 16px 7px 30px; text-align: left; font-size: 12px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; color: #c0c0c0; }
+        .canal-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 15px; margin-right: -4px; }
         .canal-btn:hover { background-color: rgba(100,65,165,0.15); color: #b39ddb; border-left-color: #7c4dff; }
         .canal-splash { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #F3F2F1; gap: 20px; padding: 40px; text-align: center; }
         .canal-splash.visible { display: flex; }
@@ -77,7 +77,7 @@
         .fsel-topbar:hover, .fsel-topbar:focus { border-color: rgba(255,215,0,0.3); color: #ffd700; background-color: rgba(255,255,255,0.07); }
         .fsel-topbar:disabled { opacity: 0.5; cursor: not-allowed; }
         .fsel-topbar option { background: #1e293b; color: #f1f5f9; }
-        /* Pills RUT (sin cambios) */
+        /* Pills RUT */
         .search-group { display: flex; align-items: center; gap: 6px; }
         .search-group-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,215,0,0.35); white-space: nowrap; flex-shrink: 0; user-select: none; }
         .search-pill-wrap { position: relative; display: flex; align-items: center; }
@@ -90,7 +90,7 @@
         .search-pill-go { position: absolute; right: 6px; height: 18px; padding: 0 6px; border-radius: 9px; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.28); color: var(--amarillo-top); font-size: 9px; font-weight: 700; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.15s; display: flex; align-items: center; white-space: nowrap; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .search-pill-go:hover { background: rgba(255,215,0,0.2); }
         .search-pill-input:focus + .search-pill-go { opacity: 1; pointer-events: all; }
-        /* ── NRC dropdown custom ── */
+        /* NRC dropdown custom */
         .nrc-pill-wrap { position: relative; display: flex; align-items: center; }
         .nrc-pill-icon { position: absolute; left: 9px; pointer-events: none; font-size: 13px; color: rgba(255,255,255,0.2); transition: color 0.15s; line-height: 1; z-index: 1; }
         .nrc-pill-input { height: 28px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: #cbd5e1; padding: 0 10px 0 28px; font-size: 11px; font-weight: 500; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; outline: none; transition: all 0.2s; width: 110px; }
@@ -98,21 +98,7 @@
         .nrc-pill-input:hover { border-color: rgba(255,215,0,0.22); background: rgba(255,255,255,0.06); }
         .nrc-pill-input:focus { border-color: rgba(255,215,0,0.55); background: rgba(255,255,255,0.07); color: #ffd700; width: 150px; box-shadow: 0 0 0 3px rgba(255,215,0,0.06); }
         .nrc-pill-wrap:focus-within .nrc-pill-icon { color: rgba(255,215,0,0.5); }
-        /* dropdown flotante */
-        .nrc-dropdown {
-            position: absolute;
-            top: calc(100% + 5px);
-            left: 0;
-            background: #1a2540;
-            border: 1px solid rgba(255,215,0,0.3);
-            border-radius: 8px;
-            max-height: 220px;
-            overflow-y: auto;
-            z-index: 9999;
-            min-width: 240px;
-            display: none;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
+        .nrc-dropdown { position: absolute; top: calc(100% + 5px); left: 0; background: #1a2540; border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; max-height: 220px; overflow-y: auto; z-index: 9999; min-width: 240px; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
         .nrc-dropdown.visible { display: block; }
         .nrc-dropdown-item { padding: 7px 12px; font-size: 11px; color: #c8d4e8; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Segoe UI', sans-serif; }
         .nrc-dropdown-item:last-child { border-bottom: none; }
@@ -127,7 +113,7 @@
         .btn-clear-filter.on { display: flex; }
         .btn-clear-filter:hover { background: rgba(239,68,68,0.14); color: #fca5a5; }
         iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
-        .btn-volver { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--texto-gris); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.3s; flex-shrink: 0; background-color: var(--azul-sidebar); }
+        .btn-volver { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--texto-gris); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.3s; flex-shrink: 0; background-color: var(--azul-sidebar); }
         .btn-volver:hover { color: var(--amarillo-top); background-color: rgba(0,0,0,0.2); }
     </style>
 </head>
@@ -139,7 +125,7 @@
                 <h2>📋 Espacio Tutoría</h2>
                 <span>Operación Diaria</span>
             </div>
-            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size:18px;">✕</button>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="font-size:16px;">✕</button>
         </div>
         <div class="sidebar-menu">
             <div class="menu-category">Operación Diaria</div>
@@ -149,7 +135,7 @@
             <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION',this)">⏳ Cursos en Preparación</button>
             <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
             <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
-            <button class="menu-btn" onclick="cargar('SEMAFORO',this)">🚦 Reporte Semáforo</button>
+            <button class="menu-btn" onclick="cargar('CALENDARIOS',this)">📅 Calendarios</button>
             <div class="menu-category">Onboarding</div>
             <div class="collapsible-header" id="header-onboarding" onclick="toggleCollapsible('onboarding')">
                 <div class="header-left"><span>📧</span><span>Generación de Correos</span></div>
@@ -158,6 +144,8 @@
             <div class="collapsible-body" id="body-onboarding">
                 <button class="menu-btn" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
                 <button class="menu-btn" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
+                <button class="menu-btn" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
+                <button class="menu-btn" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
             </div>
             <div class="menu-category">Canales del Equipo</div>
             <div class="collapsible-header" id="header-canales" onclick="toggleCollapsible('canales')">
@@ -230,7 +218,7 @@
                     <option value="SEMIPRES">SEMIPRES</option>
                 </select>
                 <div class="top-bar-sep"></div>
-                <!-- NRC — dropdown custom (reemplaza datalist nativo) -->
+                <!-- NRC dropdown custom -->
                 <div class="search-group">
                     <span class="search-group-label">NRC</span>
                     <div class="nrc-pill-wrap" id="nrc-pill-wrap">
@@ -244,7 +232,7 @@
                         <div class="nrc-dropdown" id="nrc-dropdown"></div>
                     </div>
                 </div>
-                <!-- RUT (sin cambios) -->
+                <!-- RUT -->
                 <div class="search-group">
                     <span class="search-group-label">RUT</span>
                     <div class="search-pill-wrap">
@@ -298,31 +286,43 @@
         document.getElementById('header-'+nombre).classList.toggle('open');
         document.getElementById('body-'+nombre).classList.toggle('open');
     }
+
     // ── URLs de reportes ──────────────────────────────────
     const misReportes = {
-        'DASHBOARD': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'DASHBOARD':          "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false",
         'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CURSOS_ACTIVOS': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CURSOS_ACTIVOS':     "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CURSOS_CIERRE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'FICHA_ESTUDIANTE': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'SEMAFORO': "https://app.powerbi.com/rdlEmbed?reportId=b5b9144d-ff71-40fb-bf8a-2b8fe12eddbd&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-        'CORREOS': "onboarding_correos.html",
-        'INVITACIONES': "onboarding_invitaciones.html"
+        'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CALENDARIOS':        "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=d54429931a6e1ad00200&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CORREOS':            "onboarding_correos.html",
+        'INVITACIONES':       "onboarding_invitaciones.html",
+        'PRESENTACION':       "presentacion_tutorial_innovado.html",
+        'CIERRE':             "enviar_correo_cierre.html"
     };
+
     const urlsBase = {
         'DASHBOARD':          { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'a90b3a4c28d3179b1fae', filtroRut:true  },
         'NOMINA_ESTUDIANTES': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'255c88d86191d22dd1c3', filtroRut:true  },
         'CURSOS_ACTIVOS':     { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'9df5f2db687d901b71b9', filtroRut:false },
         'CURSOS_PREPARACION': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'75dcbe8308cd22de087d', filtroRut:false },
         'CURSOS_CIERRE':      { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'ab4e8f37a94c688a5869', filtroRut:false },
+        'CALENDARIOS':        { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'d54429931a6e1ad00200', filtroRut:false }
     };
+
     const titulos = {
-        'DASHBOARD':'Tablero de Gestión','NOMINA_ESTUDIANTES':'Nómina Estudiantes',
-        'CURSOS_ACTIVOS':'Cursos Activos','CURSOS_PREPARACION':'Cursos en Preparación',
-        'CURSOS_CIERRE':'Cursos en Cierre','FICHA_ESTUDIANTE':'Ficha del Estudiante',
-        'SEMAFORO':'Reporte Semáforo','CORREOS':'📧 Generador de Correos de Bienvenida',
-        'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica'
+        'DASHBOARD':'Tablero de Gestión',
+        'NOMINA_ESTUDIANTES':'Nómina Estudiantes',
+        'CURSOS_ACTIVOS':'Cursos Activos',
+        'CURSOS_PREPARACION':'Cursos en Preparación',
+        'CURSOS_CIERRE':'Cursos en Cierre',
+        'FICHA_ESTUDIANTE':'Ficha del Estudiante',
+        'CALENDARIOS':'📅 Calendarios',
+        'CORREOS':'📧 Generador de Correos de Bienvenida',
+        'INVITACIONES':'📅 Envío Invitación Sesión Sincrónica',
+        'PRESENTACION':'👩‍🏫 Presentación Tutorial',
+        'CIERRE':'🏁 Correo de Cierre'
     };
 
     // ── Estado ────────────────────────────────────────────
@@ -342,7 +342,6 @@
         }
         const q = val.trim().toUpperCase();
         if (!q) { ocultarNRCDropdown(); actualizarIframe(); return; }
-        // Busca siempre en catálogo completo (no en subconjunto filtrado)
         const todosNRCs = [...new Set(catalogoNRC.map(n => (n.nrc||'').trim()).filter(Boolean))].sort();
         const matches = todosNRCs.filter(n => n.toUpperCase().includes(q)).slice(0, 60);
         renderNRCDropdown(matches, q);
@@ -399,7 +398,6 @@
 
     function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-    // Cierra dropdown al click fuera
     document.addEventListener('click', function(e) {
         if (!document.getElementById('nrc-pill-wrap').contains(e.target)) ocultarNRCDropdown();
     });
@@ -514,67 +512,176 @@
         }
     }
 
-    // ── Navegación ────────────────────────────────────────
-    function cargar(clave, btn) {
-        vistaActual=clave;
-        document.getElementById('canal-splash').classList.remove('visible');
-        document.getElementById('visor').style.display='block';
-        document.getElementById('visor').src = urlsBase[clave] ? buildURLFiltrada(clave) : misReportes[clave];
-        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
-        if (window.innerWidth<800) toggleSidebar();
+    // ── Tabla de correos tutor (email y anexo) ────────────
+    const TC = {
+        'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl',
+        'MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+        'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl',
+        'MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+        'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl',
+        'NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+        'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl',
+        'JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl',
+        'CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl',
+        'FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl',
+        'MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl',
+        'DANIELA CORNEJO':'tutoriaonline36@unab.cl'
+    };
+    const TA = {
+        'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284',
+        'MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866',
+        'SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285',
+        'MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260',
+        'CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361',
+        'NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685',
+        'CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278',
+        'JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'
+    };
+
+    // ── Utilidad: calcular día de semana en español ───────
+    function diaSemana(fechaStr) {
+        if (!fechaStr) return '';
+        // Acepta DD-MM-YYYY o YYYY-MM-DD
+        let partes = fechaStr.split('-');
+        let d;
+        if (partes[0].length === 4) {
+            // YYYY-MM-DD
+            d = new Date(partes[0], parseInt(partes[1])-1, parseInt(partes[2]));
+        } else {
+            // DD-MM-YYYY
+            d = new Date(partes[2], parseInt(partes[1])-1, parseInt(partes[0]));
+        }
+        const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+        return isNaN(d.getTime()) ? '' : dias[d.getDay()];
     }
-    function cargarOnboarding(clave,btn) {
-        vistaActual=clave;
+
+    // ── Calcular duración en semanas entre dos fechas ─────
+    function calcularSemanas(ini, fin) {
+        if (!ini || !fin) return '';
+        let pIni = ini.split('-'), pFin = fin.split('-');
+        let dIni, dFin;
+        if (pIni[0].length === 4) {
+            dIni = new Date(pIni[0], parseInt(pIni[1])-1, parseInt(pIni[2]));
+            dFin = new Date(pFin[0], parseInt(pFin[1])-1, parseInt(pFin[2]));
+        } else {
+            dIni = new Date(pIni[2], parseInt(pIni[1])-1, parseInt(pIni[0]));
+            dFin = new Date(pFin[2], parseInt(pFin[1])-1, parseInt(pFin[0]));
+        }
+        if (isNaN(dIni.getTime()) || isNaN(dFin.getTime())) return '';
+        return String(Math.round((dFin - dIni) / (7 * 24 * 3600 * 1000)) + 1);
+    }
+
+    // ── Calcular fecha límite (N días después del fin) ────
+    function calcularFechaLimite(finStr, dias) {
+        if (!finStr) return '';
+        let partes = finStr.split('-');
+        let d;
+        if (partes[0].length === 4) {
+            d = new Date(partes[0], parseInt(partes[1])-1, parseInt(partes[2]));
+        } else {
+            d = new Date(partes[2], parseInt(partes[1])-1, parseInt(partes[0]));
+        }
+        if (isNaN(d.getTime())) return '';
+        d.setDate(d.getDate() + dias);
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yyyy = d.getFullYear();
+        return dd + '-' + mm + '-' + yyyy;
+    }
+
+    // ── Navegación: reportes Power BI ────────────────────
+    function cargar(clave, btn) {
+        vistaActual = clave;
         document.getElementById('canal-splash').classList.remove('visible');
-        document.getElementById('visor').style.display='block';
+        document.getElementById('visor').style.display = 'block';
+        document.getElementById('visor').src = urlsBase[clave] ? buildURLFiltrada(clave) : misReportes[clave];
+        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
+        if (window.innerWidth < 800) toggleSidebar();
+    }
+
+    // ── Navegación: páginas de onboarding (GitHub Pages) ──
+    function cargarOnboarding(clave, btn) {
+        vistaActual = clave;
+        document.getElementById('canal-splash').classList.remove('visible');
+        document.getElementById('visor').style.display = 'block';
 
         const BASE = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
         let url = BASE + misReportes[clave];
 
-        if((clave==='CORREOS'||clave==='INVITACIONES') && BUSQUEDA.nrc && catalogoNRC.length) {
-            const nd = catalogoNRC.find(n=>(n.nrc||'').trim()===BUSQUEDA.nrc.trim());
-            if(nd) {
-                const TC={'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl','CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl','FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl','MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl','DANIELA CORNEJO':'tutoriaonline36@unab.cl'};
-                const TA={'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284','MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866','SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285','MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260','CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361','NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685','CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278','JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'};
-                const tutor=(nd.tutor||'').trim().toUpperCase();
-                const p=new URLSearchParams({
-                    nombreTutor: nd.tutor||'',
-                    correoTutor: TC[tutor]||'',
-                    anexoTutor:  TA[tutor]||'',
-                    nrc:         BUSQUEDA.nrc,
-                    fechaInicio: nd['fecha inicio']||'',
-                    fechaFin:    nd['fecha fin']||''
+        // Construir parámetros comunes si hay NRC seleccionado
+        if (BUSQUEDA.nrc && catalogoNRC.length) {
+            const nd = catalogoNRC.find(n => (n.nrc||'').trim() === BUSQUEDA.nrc.trim());
+            if (nd) {
+                const tutor = (nd.tutor || '').trim().toUpperCase();
+                const fi = nd['fecha inicio'] || '';
+                const ff = nd['fecha fin']    || '';
+
+                // Parámetros compartidos por todos los correos
+                const p = new URLSearchParams({
+                    nombreTutor:  nd.tutor || '',
+                    correoTutor:  TC[tutor] || '',
+                    anexoTutor:   TA[tutor] || '',
+                    nrc:          BUSQUEDA.nrc,
+                    fechaInicio:  fi,
+                    fechaFin:     ff
                 });
+
+                // Parámetros adicionales según el tipo de correo
+                if (clave === 'PRESENTACION') {
+                    // Presentación Tutorial necesita: nombreCurso, duracion, diaInicio, diaFin
+                    const duracion  = calcularSemanas(fi, ff);
+                    const diaInicio = diaSemana(fi);
+                    const diaFin    = diaSemana(ff);
+                    if (nd['nombre curso']) p.set('nombreCurso', nd['nombre curso']);
+                    if (duracion)           p.set('duracion', duracion);
+                    if (diaInicio)          p.set('diaInicio', diaInicio);
+                    if (diaFin)             p.set('diaFin', diaFin);
+
+                } else if (clave === 'CIERRE') {
+                    // Correo de Cierre necesita: nombre_curso, nrc, fecha_inicio, fecha_fin, fecha_limite
+                    // (la plantilla usa fecha_limite = fin + 14 días para estándar / fin + 10 para MGPC)
+                    // Pasamos ambas variantes; la plantilla usa la correcta según el selector de programa
+                    const fechaLimEst  = calcularFechaLimite(ff, 14);
+                    const fechaLimMGPC = calcularFechaLimite(ff, 10);
+                    if (nd['nombre curso']) p.set('nombre_curso', nd['nombre curso']);
+                    // Sobreescribir claves para que coincidan con lo que espera onboarding_cierre.html
+                    p.set('fecha_inicio',   fi);
+                    p.set('fecha_fin',      ff);
+                    p.set('fecha_limite',   fechaLimEst);   // estándar por defecto
+                    p.set('fecha_limite_mgpc', fechaLimMGPC);
+                }
+
                 url = BASE + misReportes[clave] + '?' + p.toString();
             }
         }
 
-        // Forzar recarga del iframe aunque la URL sea la misma
+        // Forzar recarga del iframe
         const visor = document.getElementById('visor');
         visor.src = '';
         setTimeout(() => { visor.src = url; }, 50);
-        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
-        if(window.innerWidth<800) toggleSidebar();
+        document.getElementById('titulo-vista').textContent = titulos[clave] || 'Vista de Reporte';
+        if (window.innerWidth < 800) toggleSidebar();
     }
+
     function mostrarCanales(btn) {
-        vistaActual=null;
-        document.getElementById('visor').style.display='none';
+        vistaActual = null;
+        document.getElementById('visor').style.display = 'none';
         document.getElementById('canal-splash').classList.add('visible');
-        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.menu-btn,.canal-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('titulo-vista').textContent='🟣 Canales del Equipo';
-        if (window.innerWidth<800) toggleSidebar();
+        document.getElementById('titulo-vista').textContent = '🟣 Canales del Equipo';
+        if (window.innerWidth < 800) toggleSidebar();
     }
 
     // ── Init ──────────────────────────────────────────────
     cargarSugerenciasNRC();
-    window.onload=function() {
-        const btn=document.querySelector('.menu-btn.active');
-        if (btn) cargar('DASHBOARD',btn);
+    window.onload = function() {
+        const btn = document.querySelector('.menu-btn.active');
+        if (btn) cargar('DASHBOARD', btn);
     };
 </script>
 </body>
