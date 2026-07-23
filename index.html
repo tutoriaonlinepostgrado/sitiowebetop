@@ -76,10 +76,12 @@
     .canal-badge span { color:white; font-weight:900; font-size:11px; font-family:'Segoe UI',sans-serif; }
     .canal-nombre { font-size:11px; font-weight:500; color:#c4b5fd; }
     .canal-arrow { font-size:10px; color:#6264a7; }
-    .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); }
-    .banner-hero img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
-    .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.75) 0%,rgba(20,27,45,0.3) 60%,transparent 100%); }
-    .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 28px; }
+    .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); background:linear-gradient(90deg,#0f274f 0%, #12366f 48%, #174791 100%); }
+    .banner-bg-accent { position:absolute; inset:0; background:radial-gradient(circle at 18% 50%, rgba(250,204,21,0.10) 0%, transparent 34%), radial-gradient(circle at 78% 28%, rgba(255,255,255,0.06) 0%, transparent 24%); }
+    .banner-side-photo { position:absolute; top:0; right:0; width:42%; height:100%; background-image:url('https://res.cloudinary.com/dk53pztfo/image/upload/v1784773664/ChatGPT_Image_22_jul_2026_10_25_47_p.m_oycgrb.png'); background-size:cover; background-position:center right; opacity:0.92; }
+    .banner-side-fade { position:absolute; top:0; right:28%; width:24%; height:100%; background:linear-gradient(90deg, rgba(15,39,79,1) 0%, rgba(15,39,79,0.88) 28%, rgba(15,39,79,0.42) 64%, rgba(15,39,79,0) 100%); }
+    .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.28) 0%,rgba(20,27,45,0.08) 60%,transparent 100%); }
+    .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 28px; z-index:2; }
     .banner-label { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#facc15; margin-bottom:6px; opacity:0.85; }
     .banner-title { font-size:28px; font-weight:800; color:#ffffff; line-height:1.15; letter-spacing:-0.5px; text-shadow:0 2px 12px rgba(0,0,0,0.4); }
     .banner-title span { color:#facc15; }
@@ -97,31 +99,36 @@
     .nav-subitem:hover { color:#facc15; background:rgba(250,204,21,0.05); }
     .nav-subitem.active { color:#facc15; font-weight:600; }
     .nav-subitem .material-symbols-outlined { font-size:16px; }
+
+    .header-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:9999px; border:1px solid rgba(255,255,255,0.10); }
+    .header-message { min-width:0; max-width:420px; }
+    .header-message #mensaje-dia { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
 <header class="h-16 flex items-center justify-between px-8 bg-[#1f2940] border-b border-white/5 z-50 flex-shrink-0">
-    <div class="flex items-center gap-6">
-        <div class="flex items-center gap-3">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-8 w-8 object-contain">
-            <span class="text-[#facc15] font-extrabold text-xl tracking-tighter">ETOP</span>
+    <div class="flex items-center gap-4 min-w-0">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-11 w-auto object-contain">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-10 w-auto object-contain">
             <span class="text-slate-500 font-light text-xl">|</span>
             <span class="text-slate-300 font-medium text-sm tracking-widest uppercase">Portal</span>
         </div>
-        <div class="flex items-center bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-            <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot mr-2"></div>
+        <div class="header-pill flex-shrink-0">
+            <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot"></div>
             <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Sistema Activo</span>
         </div>
-    </div>
-    <div class="flex items-center gap-4">
-        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-7 w-7 object-contain opacity-70">
-        <div class="border-l border-white/10 pl-4 flex items-center gap-3">
-            <div class="text-right">
-                <p class="text-xs font-semibold text-white">Equipo ETOP</p>
-                <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
-            </div>
-            <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
+        <div class="header-pill header-message min-w-0">
+            <span class="text-[10px] text-[#facc15]/80 uppercase font-bold tracking-wider whitespace-nowrap">💡 Mensaje del día</span>
+            <p id="mensaje-dia" class="text-[10px] text-slate-300 leading-relaxed italic min-w-0"></p>
         </div>
+    </div>
+    <div class="border-l border-white/10 pl-4 flex items-center gap-3 flex-shrink-0">
+        <div class="text-right">
+            <p class="text-xs font-semibold text-white">Equipo ETOP</p>
+            <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
     </div>
 </header>
 <div class="flex flex-1 overflow-hidden">
@@ -183,10 +190,6 @@
                 <span class="material-symbols-outlined text-base">smart_toy</span>Copilot
             </a>
         </div>
-        <div class="mx-4 mt-3 p-3 rounded-lg bg-[#facc15]/5 border border-[#facc15]/10">
-            <p class="text-[9px] text-[#facc15]/50 uppercase font-bold tracking-wider mb-1">💡 Mensaje del día</p>
-            <p id="mensaje-dia" class="text-[10px] text-slate-400 leading-relaxed italic"></p>
-        </div>
     </aside>
     <main class="flex-1 p-6 overflow-hidden" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;">
         <!-- VISTA NORMAL -->
@@ -196,9 +199,11 @@
             <div class="col-span-8 flex flex-col gap-3 overflow-hidden">
                 <!-- BANNER -->
                 <div class="banner-hero flex-shrink-0" style="height:110px;">
-                    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1776818847/Gemini_Generated_Image_o252yto252yto252_dsywj4.png" alt="Portal ETOP Banner" onerror="this.style.display='none'">
+                    <div class="banner-bg-accent"></div>
+                    <div class="banner-side-photo"></div>
+                    <div class="banner-side-fade"></div>
                     <div class="banner-overlay"></div>
-                    <div class="banner-content" style="padding:0 24px;">
+                    <div class="banner-content" style="padding:0 24px; max-width:60%;">
                         <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
                         <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
                         <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
@@ -234,12 +239,9 @@
 
                         <!-- IFRAME POWER BI página 4a3046f9033c652229fd -->
                         <div class="rounded-xl flex-1 overflow-hidden" style="min-height:0;border:1px solid rgba(250,204,21,0.15);position:relative;background:#1f2940;">
-                            <div style="position:absolute;top:0;left:0;width:18px;height:100%;background:#1f2940;z-index:2;"></div>
-                            <div style="position:absolute;top:0;right:0;width:18px;height:100%;background:#1f2940;z-index:2;"></div>
-                            <div style="position:absolute;bottom:0;left:0;width:100%;height:14px;background:#1f2940;z-index:2;"></div>
                             <iframe
                                 src="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=4a3046f9033c652229fd&navContentPaneEnabled=false&filterPaneEnabled=false"
-                                style="position:absolute;top:-1px;left:-1px;width:calc(100% + 2px);height:calc(100% + 2px);border:none;display:block;"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;"
                                 allowfullscreen title="Dashboard Tutor ETOP">
                             </iframe>
                         </div>
