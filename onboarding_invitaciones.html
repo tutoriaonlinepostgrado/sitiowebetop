@@ -413,7 +413,7 @@ async function procesarInvitaciones() {
     const seenH=new Set(), finalHeaders=[];
     for(const h of headers) { finalHeaders.push(seenH.has(h) ? h+'_R' : h); seenH.add(h); }
 
-    const curso       = document.getElementById('curso').value;
+    const curso       = document.getElementById('curso').value || document.getElementById('curso-search').value.trim();
     const fechaInicio = document.getElementById('fecha-inicio').value;
     const link        = document.getElementById('link').value;
     const fechacal    = document.getElementById('fechacal').value;
