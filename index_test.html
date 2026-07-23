@@ -76,9 +76,12 @@
     .canal-badge span { color:white; font-weight:900; font-size:11px; font-family:'Segoe UI',sans-serif; }
     .canal-nombre { font-size:11px; font-weight:500; color:#c4b5fd; }
     .canal-arrow { font-size:10px; color:#6264a7; }
-    .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); }
-    .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.75) 0%,rgba(20,27,45,0.3) 60%,transparent 100%); }
-    .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 28px; }
+    .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); background:linear-gradient(90deg,#0f274f 0%, #12366f 48%, #174791 100%); }
+    .banner-bg-accent { position:absolute; inset:0; background:radial-gradient(circle at 18% 50%, rgba(250,204,21,0.10) 0%, transparent 34%), radial-gradient(circle at 78% 28%, rgba(255,255,255,0.06) 0%, transparent 24%); }
+    .banner-side-photo { position:absolute; top:0; right:0; width:42%; height:100%; background-image:url('https://res.cloudinary.com/dk53pztfo/image/upload/v1784773664/ChatGPT_Image_22_jul_2026_10_25_47_p.m_oycgrb.png'); background-size:cover; background-position:center right; opacity:0.92; }
+    .banner-side-fade { position:absolute; top:0; right:28%; width:24%; height:100%; background:linear-gradient(90deg, rgba(15,39,79,1) 0%, rgba(15,39,79,0.88) 28%, rgba(15,39,79,0.42) 64%, rgba(15,39,79,0) 100%); }
+    .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.28) 0%,rgba(20,27,45,0.08) 60%,transparent 100%); }
+    .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 28px; z-index:2; }
     .banner-label { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#facc15; margin-bottom:6px; opacity:0.85; }
     .banner-title { font-size:28px; font-weight:800; color:#ffffff; line-height:1.15; letter-spacing:-0.5px; text-shadow:0 2px 12px rgba(0,0,0,0.4); }
     .banner-title span { color:#facc15; }
@@ -96,52 +99,39 @@
     .nav-subitem:hover { color:#facc15; background:rgba(250,204,21,0.05); }
     .nav-subitem.active { color:#facc15; font-weight:600; }
     .nav-subitem .material-symbols-outlined { font-size:16px; }
+
+    .header-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:9999px; border:1px solid rgba(255,255,255,0.10); }
+    .header-message { min-width:0; max-width:420px; }
+    .header-message #mensaje-dia { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
-
-<!-- ══════════════════════════════════════════════════════
-     HEADER — logos ETOP + UNAB juntos, mensaje del día centrado
-     ══════════════════════════════════════════════════════ -->
 <header class="h-16 flex items-center justify-between px-8 bg-[#1f2940] border-b border-white/5 z-50 flex-shrink-0">
-    <div class="flex items-center gap-5">
-        <!-- Logos lado a lado, más grandes -->
-        <div class="flex items-center gap-2">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-10 w-10 object-contain">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-10 w-10 object-contain">
-        </div>
-        <div class="flex items-center gap-3">
-            <span class="text-[#facc15] font-extrabold text-xl tracking-tighter">ETOP</span>
+    <div class="flex items-center gap-4 min-w-0">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-11 w-auto object-contain">
+            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-10 w-auto object-contain">
             <span class="text-slate-500 font-light text-xl">|</span>
             <span class="text-slate-300 font-medium text-sm tracking-widest uppercase">Portal</span>
         </div>
-        <div class="flex items-center bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-            <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot mr-2"></div>
+        <div class="header-pill flex-shrink-0">
+            <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot"></div>
             <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Sistema Activo</span>
         </div>
-    </div>
-
-    <!-- Mensaje del día — centrado en la franja del header -->
-    <div class="flex-1 mx-8 flex items-center justify-center">
-        <p id="mensaje-dia" class="text-[11px] text-[#facc15]/60 italic text-center leading-relaxed max-w-md"></p>
-    </div>
-
-    <!-- Info equipo (sin logo UNAB aquí, ya está a la izquierda) -->
-    <div class="flex items-center gap-4">
-        <div class="border-l border-white/10 pl-4 flex items-center gap-3">
-            <div class="text-right">
-                <p class="text-xs font-semibold text-white">Equipo ETOP</p>
-                <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
-            </div>
-            <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
+        <div class="header-pill header-message min-w-0">
+            <span class="text-[10px] text-[#facc15]/80 uppercase font-bold tracking-wider whitespace-nowrap">💡 Mensaje del día</span>
+            <p id="mensaje-dia" class="text-[10px] text-slate-300 leading-relaxed italic min-w-0"></p>
         </div>
     </div>
+    <div class="border-l border-white/10 pl-4 flex items-center gap-3 flex-shrink-0">
+        <div class="text-right">
+            <p class="text-xs font-semibold text-white">Equipo ETOP</p>
+            <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
+    </div>
 </header>
-
 <div class="flex flex-1 overflow-hidden">
-    <!-- ══════════════════════════════════════════════════════
-         SIDEBAR
-         ══════════════════════════════════════════════════════ -->
     <aside class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
         <nav class="flex-1 space-y-0.5 overflow-y-auto pt-2">
             <a href="gestion.html" class="flex items-center gap-3 px-6 py-2 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
@@ -186,7 +176,6 @@
                 <span class="material-symbols-outlined">groups</span>Equipo ETOP
             </a>
         </nav>
-        <!-- Mi espacio — bloque "Mensaje del día" eliminado del sidebar -->
         <div class="border-t border-white/5 pt-3 mt-2">
             <div class="px-6 py-1">
                 <p class="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-1">Mi espacio</p>
@@ -202,70 +191,24 @@
             </a>
         </div>
     </aside>
-
-    <!-- ══════════════════════════════════════════════════════
-         MAIN
-         ══════════════════════════════════════════════════════ -->
     <main class="flex-1 p-6 overflow-hidden" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;">
-
         <!-- VISTA NORMAL -->
         <div id="vista-normal" class="grid grid-cols-12 gap-6 overflow-hidden" style="grid-row:1;grid-column:1;">
 
             <!-- COLUMNA IZQUIERDA (8 cols) -->
             <div class="col-span-8 flex flex-col gap-3 overflow-hidden">
-
-                <!-- ── BANNER con SVG inline (sin imagen externa con personas cortadas) ── -->
+                <!-- BANNER -->
                 <div class="banner-hero flex-shrink-0" style="height:110px;">
-                    <svg viewBox="0 0 900 110" xmlns="http://www.w3.org/2000/svg"
-                         style="position:absolute;inset:0;width:100%;height:100%;"
-                         preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0f1623"/>
-                                <stop offset="100%" style="stop-color:#1a2640"/>
-                            </linearGradient>
-                            <linearGradient id="glowRight" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:rgba(250,204,21,0);"/>
-                                <stop offset="100%" style="stop-color:rgba(250,204,21,0.07);"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- Fondo -->
-                        <rect width="900" height="110" fill="url(#bgGrad)"/>
-                        <!-- Glow derecho sutil -->
-                        <rect width="900" height="110" fill="url(#glowRight)"/>
-                        <!-- Cuadrícula horizontal -->
-                        <line x1="0" y1="22" x2="900" y2="22" stroke="rgba(250,204,21,0.05)" stroke-width="1"/>
-                        <line x1="0" y1="44" x2="900" y2="44" stroke="rgba(250,204,21,0.05)" stroke-width="1"/>
-                        <line x1="0" y1="66" x2="900" y2="66" stroke="rgba(250,204,21,0.05)" stroke-width="1"/>
-                        <line x1="0" y1="88" x2="900" y2="88" stroke="rgba(250,204,21,0.05)" stroke-width="1"/>
-                        <!-- Cuadrícula vertical -->
-                        <line x1="180" y1="0" x2="180" y2="110" stroke="rgba(250,204,21,0.03)" stroke-width="1"/>
-                        <line x1="360" y1="0" x2="360" y2="110" stroke="rgba(250,204,21,0.03)" stroke-width="1"/>
-                        <line x1="540" y1="0" x2="540" y2="110" stroke="rgba(250,204,21,0.03)" stroke-width="1"/>
-                        <line x1="720" y1="0" x2="720" y2="110" stroke="rgba(250,204,21,0.03)" stroke-width="1"/>
-                        <!-- Círculos concéntricos decorativos — derecha -->
-                        <circle cx="820" cy="55" r="90" fill="none" stroke="rgba(250,204,21,0.07)" stroke-width="1"/>
-                        <circle cx="820" cy="55" r="65" fill="none" stroke="rgba(250,204,21,0.06)" stroke-width="1"/>
-                        <circle cx="820" cy="55" r="42" fill="none" stroke="rgba(250,204,21,0.05)" stroke-width="1"/>
-                        <circle cx="820" cy="55" r="22" fill="rgba(250,204,21,0.04)"/>
-                        <circle cx="820" cy="55" r="7" fill="rgba(250,204,21,0.22)"/>
-                        <!-- Dot pequeño extra -->
-                        <circle cx="700" cy="25" r="3" fill="rgba(250,204,21,0.18)"/>
-                        <circle cx="660" cy="80" r="2" fill="rgba(250,204,21,0.12)"/>
-                        <circle cx="750" cy="88" r="2" fill="rgba(250,204,21,0.10)"/>
-                        <!-- Acento barra izquierda -->
-                        <rect x="0" y="0" width="4" height="110" fill="#facc15" opacity="0.75"/>
-                        <rect x="7" y="18" width="2" height="74" fill="#facc15" opacity="0.18"/>
-                    </svg>
-                    <!-- Overlay izquierdo suave para que el texto contraste -->
-                    <div class="banner-overlay" style="background:linear-gradient(90deg,rgba(10,16,30,0.55) 0%,rgba(10,16,30,0.15) 65%,transparent 100%);"></div>
-                    <div class="banner-content" style="padding:0 24px;">
+                    <div class="banner-bg-accent"></div>
+                    <div class="banner-side-photo"></div>
+                    <div class="banner-side-fade"></div>
+                    <div class="banner-overlay"></div>
+                    <div class="banner-content" style="padding:0 24px; max-width:60%;">
                         <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
                         <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
                         <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
                     </div>
                 </div>
-                <!-- ── FIN BANNER ── -->
 
                 <div class="flex gap-3 flex-1 overflow-hidden">
                     <!-- VIVA ENGAGE -->
@@ -280,29 +223,28 @@
                     <!-- COLUMNA DERECHA INTERNA: GRÁFICO + IFRAME PBI -->
                     <div class="flex flex-col gap-3 flex-1 overflow-hidden">
 
-                        <!-- GRÁFICO BARRAS POR FACULTAD -->
+                        <!-- GRÁFICO BARRAS POR FACULTAD desde nrcs.json -->
                         <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
                             <div class="px-3 pt-2 pb-1 flex items-center justify-between" style="flex-shrink:0;">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm text-[#facc15]">bar_chart</span>
                                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cursos por Facultad</span>
                                 </div>
-                                <div id="chart-legend" class="flex items-center gap-3" style="font-size:9px;color:#64748b;"></div>
+                                    <div id="chart-legend" class="flex items-center gap-3" style="font-size:9px;color:#64748b;"></div>
                             </div>
                             <div style="height:calc(100% - 32px);padding:4px 8px 8px;">
                                 <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
                             </div>
                         </div>
 
-                        <!-- ── IFRAME POWER BI KPI — sin márgenes que recorten el reporte ── -->
+                        <!-- IFRAME POWER BI página 4a3046f9033c652229fd -->
                         <div class="rounded-xl flex-1 overflow-hidden" style="min-height:0;border:1px solid rgba(250,204,21,0.15);position:relative;background:#1f2940;">
                             <iframe
                                 src="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=4a3046f9033c652229fd&navContentPaneEnabled=false&filterPaneEnabled=false"
-                                style="width:100%;height:100%;border:none;display:block;"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;"
                                 allowfullscreen title="Dashboard Tutor ETOP">
                             </iframe>
                         </div>
-                        <!-- ── FIN IFRAME KPI ── -->
                     </div>
                 </div>
             </div>
@@ -310,7 +252,7 @@
             <!-- COLUMNA DERECHA (4 cols) -->
             <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
 
-                <!-- VIDEO MANUAL DE APOYO -->
+                <!-- VIDEO MANUAL DE APOYO — 50% del espacio -->
                 <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
                     <div class="px-3 pt-2 flex items-center gap-2" style="flex-shrink:0;">
                         <span class="material-symbols-outlined text-sm text-[#facc15]">play_circle</span>
@@ -325,7 +267,7 @@
                     </div>
                 </div>
 
-                <!-- CANALES DEL EQUIPO -->
+                <!-- CANALES DEL EQUIPO — 50% del espacio -->
                 <div class="glass-panel rounded-xl p-4 flex-1 flex flex-col overflow-hidden" style="min-height:0;">
                     <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Canales del Equipo</h4>
                     <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
@@ -501,11 +443,19 @@ async function cargarGrafico() {
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: { padding: { bottom: 8 } },
-                plugins: { legend:{ display:false } },
+                plugins: {
+                    legend:{ display:false }
+                },
                 scales: {
                     x: {
                         stacked: true,
-                        ticks: { color:'#64748b', font:{ size:9, family:'Inter' }, autoSkip:false, maxRotation:45, minRotation:45 },
+                        ticks: {
+                            color:'#64748b',
+                            font:{ size:9, family:'Inter' },
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
                         grid: { display:false },
                         border: { display:false }
                     },
@@ -519,6 +469,7 @@ async function cargarGrafico() {
             }
         });
 
+        // ── Leyenda interactiva HTML ──
         const legendEl = document.getElementById('chart-legend');
         const datasets = [
             { label:'Activo',      color:'#3b82f6' },
