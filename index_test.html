@@ -381,6 +381,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const FLOW_LEER  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/033d4b3364af4f0394cabafbbf59c300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LEoBoI-3mLGoahjIBsuu7r32jhnFp1RlrgVtDTjB9V0';
+const FLOW_NOTICIAS = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3c4be34d940843a0aefc9c9c28b3f16b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=P_ZTHBe5wWsRwBtyLfTMFbK28FYOUmlB96hFoCvBOio';
 const FLOW_CREAR = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/879689098af34bea90d8edcc323c335d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xKKyWbfkMX0sYeZo3wE-IsDDhTqsZc_v1Q1EuByaU4k';
 const ADMIN_PASS = 'etop2025';
 const STORAGE_KEY = 'etop_anuncios_leidos';
@@ -549,43 +550,118 @@ function ocultarQA2() {
 function getLeidosIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
 function marcarLeido(id) { const l=getLeidosIds(); if(!l.includes(id)){l.push(id);localStorage.setItem(STORAGE_KEY,JSON.stringify(l));} }
 async function cargarAnuncios() {
+    const grid = document.getElementById('ann-grid');
+    if (!grid) return;
+
+    grid.innerHTML = `
+        <div class="flex items-center justify-center h-full min-h-[120px]">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-[#facc15] animate-pulse">sync</span>
+                <p class="text-[10px] text-slate-500 mt-1">Cargando novedades...</p>
+            </div>
+        </div>`;
+
     try {
-        const r = await fetch(FLOW_LEER, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({}) });
-        if (!r.ok) throw new Error('HTTP '+r.status);
-        const texto = await r.text();
-        let items;
-        try { const d = JSON.parse(texto); items = Array.isArray(d) ? d : (d.value||[]); } catch { throw new Error('JSON inválido'); }
-        const grid = document.getElementById('ann-grid');
-        if (!items.length) { grid.innerHTML = ''; return; }
-        const leidos = getLeidosIds();
+        if (!FLOW_NOTICIAS || FLOW_NOTICIAS.includes('PEGA_AQUI')) {
+            throw new Error('Falta configurar FLOW_NOTICIAS');
+        }
+
+        const r = await fetch(FLOW_NOTICIAS, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+
+        const data = await r.json();
+        const items = Array.isArray(data) ? data : (data.value || []);
+
         grid.innerHTML = '';
-        items.slice(0,2).forEach(item => {
-            const id = String(item.ID||item.Id||'');
-            const tipoRaw = (item.TipoAnuncio?.Value||item.TipoAnuncio||'aviso').toLowerCase();
-            const cfg = TIPO_CONFIG[tipoRaw] || TIPO_CONFIG.aviso;
-            const esNuevo = !leidos.includes(id);
-            const fecha = item.FechaPublicacion ? new Date(item.FechaPublicacion).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '';
-            const tituloItem = item.Title || item.Titulo || 'Sin título';
-            const cuerpoTexto = (item.Cuerpo||'').replace(/<[^>]*>/g,'').trim();
-            const card = document.createElement('div');
-            card.className = 'glass-panel rounded-lg p-4 border-l-4 cursor-pointer relative flex-shrink-0';
-            card.style.borderLeftColor = cfg.color;
-            card.innerHTML = `
-                ${esNuevo ? `<span class="ann-new-badge absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full">Nuevo</span>` : ''}
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[9px] font-bold uppercase tracking-widest" style="color:${cfg.color}">${cfg.label}</span>
-                    <span class="text-[9px] text-slate-500">${fecha}</span>
-                </div>
-                <h3 class="font-bold text-white text-xs mb-1.5 leading-snug">${tituloItem}</h3>
-                <p class="text-slate-400 text-[11px] leading-relaxed">${cuerpoTexto}</p>
-                <div class="mt-2 pt-2 border-t border-white/5">
-                    <span class="text-[9px] text-slate-600">${item.Autor||'ETOP'}</span>
+
+        if (!items.length) {
+            grid.innerHTML = `
+                <div class="rounded-lg border border-white/5 p-4 text-center">
+                    <span class="material-symbols-outlined text-slate-600 text-2xl">newspaper</span>
+                    <p class="text-[10px] text-slate-500 mt-1">No hay novedades publicadas.</p>
                 </div>`;
-            card.addEventListener('click', () => { marcarLeido(id); card.querySelector('.ann-new-badge')?.remove(); });
+            return;
+        }
+
+        const ordenadas = [...items].sort((a, b) => {
+            const destacadaA = Boolean(a.Destacada ?? a.DestacadaPortal);
+            const destacadaB = Boolean(b.Destacada ?? b.DestacadaPortal);
+            if (destacadaA !== destacadaB) return destacadaB - destacadaA;
+
+            const fechaA = new Date(a.Fecha || a.Modified || a.FirstPublishedDate || 0).getTime();
+            const fechaB = new Date(b.Fecha || b.Modified || b.FirstPublishedDate || 0).getTime();
+            return fechaB - fechaA;
+        });
+
+        ordenadas.slice(0, 4).forEach((item, index) => {
+            const id = String(item.ID || item.Id || index);
+            const titulo = item.Titulo || item.Title || 'Novedad ETOP';
+            const resumen = item.Resumen || item.Description || '';
+            const categoria = item.Categoria || item.CategoriaPortal || 'ETOP';
+            const destacada = Boolean(item.Destacada ?? item.DestacadaPortal);
+            const url = item.URL || item.PaginaURL || item['{Link}'] || '#';
+            const imagen = item.Imagen || item.BannerImageUrl || '';
+            const autor = item.Autor || 'Equipo ETOP';
+            const fechaRaw = item.Fecha || item.Modified || item.FirstPublishedDate;
+            const fecha = fechaRaw
+                ? new Date(fechaRaw).toLocaleDateString('es-CL', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                })
+                : '';
+
+            const card = document.createElement('a');
+            card.href = url;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+            card.className = 'block rounded-lg overflow-hidden border border-white/10 hover:border-[#facc15]/35 transition-all flex-shrink-0';
+            card.style.background = destacada
+                ? 'linear-gradient(135deg,rgba(250,204,21,0.10),rgba(59,130,246,0.10))'
+                : 'rgba(255,255,255,0.025)';
+
+            card.innerHTML = `
+                <div class="flex min-h-[92px]">
+                    ${imagen ? `
+                        <div class="w-[34%] flex-shrink-0 bg-slate-900 overflow-hidden">
+                            <img src="${imagen}" alt="" loading="lazy"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.closest('div').style.display='none'">
+                        </div>` : ''}
+                    <div class="p-3 flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 mb-1.5">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                ${destacada ? `
+                                    <span class="text-[7px] font-bold uppercase tracking-wider text-[#1f2940] bg-[#facc15] px-1.5 py-0.5 rounded">Destacada</span>` : ''}
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-blue-300 bg-blue-500/10 px-1.5 py-0.5 rounded truncate">${categoria}</span>
+                            </div>
+                            <span class="text-[8px] text-slate-500 whitespace-nowrap">${fecha}</span>
+                        </div>
+                        <h3 class="text-[11px] font-semibold text-white leading-snug line-clamp-2">${titulo}</h3>
+                        ${resumen ? `<p class="text-[9px] text-slate-400 leading-relaxed mt-1 line-clamp-2">${resumen}</p>` : ''}
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[8px] text-slate-600 truncate">${autor}</span>
+                            <span class="text-[8px] text-[#facc15] font-semibold">Leer más ↗</span>
+                        </div>
+                    </div>
+                </div>`;
+
+            card.addEventListener('click', () => marcarLeido(id));
             grid.appendChild(card);
         });
-    } catch(e) {
-        document.getElementById('ann-grid').innerHTML = '';
+    } catch (e) {
+        console.error('Error cargando novedades SharePoint:', e);
+        grid.innerHTML = `
+            <div class="rounded-lg border border-red-400/10 bg-red-500/5 p-4 text-center">
+                <span class="material-symbols-outlined text-red-400 text-xl">cloud_off</span>
+                <p class="text-[10px] text-red-300 mt-1">No fue posible cargar las novedades.</p>
+                <p class="text-[8px] text-slate-600 mt-1">Revisa la URL del flujo y sus permisos.</p>
+            </div>`;
     }
 }
 function abrirAdmin() { document.getElementById('admin-overlay').classList.add('open'); }
