@@ -645,7 +645,7 @@ async function cargarBannerCursos() {
                 vistos.add(clave);
                 return true;
             })
-            .slice(0, 10);
+            .slice(0, 15);
 
         if (!cursos.length) {
             track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">📅</div><div class="course-slide-body"><div class="course-slide-programa">No hay inicios programados para los próximos 14 días</div><div class="course-slide-nrc">La información se actualizará automáticamente desde GitHub</div></div></div>`;
