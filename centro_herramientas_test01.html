@@ -37,50 +37,25 @@
   }
 
   .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 2rem 2rem 1rem;
-    border-bottom: 1px solid var(--line-dim);
-    gap: 1rem;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 2rem 2rem 1rem; border-bottom: 1px solid var(--line-dim); gap: 1rem;
   }
   .header h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; }
   .header p { color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem; }
   .btn-clear {
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--text);
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 0.82rem;
-    padding: 0.45rem 1rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s;
-    flex-shrink: 0;
+    background: transparent; border: 1px solid var(--line); color: var(--text);
+    font-family: inherit; font-weight: 700; font-size: 0.82rem; padding: 0.45rem 1rem;
+    border-radius: var(--radius); cursor: pointer; white-space: nowrap; transition: background 0.15s; flex-shrink: 0;
   }
   .btn-clear:hover { background: rgba(246,193,40,0.1); }
 
   .tabs-nav {
-    display: flex;
-    gap: 0;
-    padding: 0 2rem;
-    border-bottom: 1px solid var(--line-dim);
-    overflow-x: auto;
+    display: flex; gap: 0; padding: 0 2rem; border-bottom: 1px solid var(--line-dim); overflow-x: auto;
   }
   .tab-btn {
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--muted);
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 0.88rem;
-    padding: 0.9rem 1.1rem 0.75rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
+    background: transparent; border: none; border-bottom: 2px solid transparent;
+    color: var(--muted); font-family: inherit; font-weight: 700; font-size: 0.88rem;
+    padding: 0.9rem 1.1rem 0.75rem; cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
   }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--text); border-bottom-color: var(--line); }
@@ -93,35 +68,22 @@
 
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .form-grid.col3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 700px) {
-    .form-grid, .form-grid.col3 { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 700px) { .form-grid, .form-grid.col3 { grid-template-columns: 1fr; } }
   .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
   .form-group.full { grid-column: 1 / -1; }
 
   label {
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text);
+    font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--text);
   }
 
-  input[type="text"], input[type="date"], input[type="time"], textarea, select {
-    background: var(--input-bg);
-    color: var(--input-text);
-    border: 1px solid rgba(246,193,40,0.8);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    font-family: inherit;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    width: 100%;
+  input[type="text"], input[type="date"], input[type="time"], input[type="url"], textarea, select {
+    background: var(--input-bg); color: var(--input-text); border: 1px solid rgba(246,193,40,0.8);
+    border-radius: 8px; padding: 0.5rem 0.75rem; font-family: inherit; font-size: 0.9rem;
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
   }
   input:focus, textarea:focus, select:focus {
-    border-color: var(--line);
-    box-shadow: 0 0 0 2px rgba(246,193,40,0.15);
+    border-color: var(--line); box-shadow: 0 0 0 2px rgba(246,193,40,0.15);
   }
   textarea { resize: vertical; min-height: 180px; }
 
@@ -129,8 +91,7 @@
   .radio-option {
     display: flex; align-items: center; gap: 0.6rem; cursor: pointer;
     color: var(--muted); font-size: 0.9rem; font-weight: 600;
-    padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid transparent;
-    transition: all 0.15s;
+    padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid transparent; transition: all 0.15s;
   }
   .radio-option:hover { background: var(--panel-2); color: var(--text); }
   .radio-option.selected { background: var(--panel-2); color: var(--text); border-color: var(--line-dim); }
@@ -139,10 +100,7 @@
     width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--soft);
     flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
   }
-  .radio-option.selected .radio-dot {
-    border-color: var(--line); background: var(--line);
-    box-shadow: 0 0 0 3px rgba(246,193,40,0.2);
-  }
+  .radio-option.selected .radio-dot { border-color: var(--line); background: var(--line); box-shadow: 0 0 0 3px rgba(246,193,40,0.2); }
 
   .file-drop {
     border: 1px dashed rgba(246,193,40,0.5); border-radius: 10px; padding: 1.2rem;
@@ -150,52 +108,41 @@
     transition: all 0.15s; background: transparent; position: relative;
   }
   .file-drop:hover { border-color: var(--line); background: var(--panel-2); color: var(--text); }
-  .file-drop input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer;
-    width: 100%; height: 100%; background: transparent; border: none;
-  }
-  .file-drop .file-name {
-    margin-top: 0.4rem; font-size: 0.8rem; color: var(--line);
-    font-family: 'IBM Plex Mono', monospace; word-break: break-all;
-  }
+  .file-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; background: transparent; border: none; }
+  .file-drop .file-name { margin-top: 0.4rem; font-size: 0.8rem; color: var(--line); font-family: 'IBM Plex Mono', monospace; word-break: break-all; }
 
   .btn {
     background: transparent; border: 1px solid var(--line); color: var(--text);
-    font-family: inherit; font-weight: 700; font-size: 0.88rem;
-    padding: 0.5rem 1.2rem; border-radius: var(--radius); cursor: pointer;
-    transition: background 0.15s; display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: inherit; font-weight: 700; font-size: 0.88rem; padding: 0.5rem 1.2rem;
+    border-radius: var(--radius); cursor: pointer; transition: background 0.15s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
   }
   .btn:hover { background: rgba(246,193,40,0.1); }
   .btn.primary { background: rgba(246,193,40,0.14); }
   .btn.primary:hover { background: rgba(246,193,40,0.22); }
+  .btn.danger { background: rgba(218,55,55,0.14); border-color: #da3737; }
+  .btn.danger:hover { background: rgba(218,55,55,0.22); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+  .btn-delete {
+    background: transparent; border: 1px solid #da3737; color: #da3737;
+    font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px;
+    cursor: pointer; transition: all 0.15s; font-weight: 700;
+  }
+  .btn-delete:hover { background: rgba(218,55,55,0.2); }
 
   .alert { border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; margin-top: 0.75rem; }
   .alert.success { background: var(--ok-bg); color: var(--ok-text); }
   .alert.error { background: var(--err-bg); color: var(--err-text); }
   .alert.info { background: var(--panel-2); color: var(--muted); }
 
-  .helper {
-    background: var(--panel-2); border-radius: 10px; padding: 0.8rem 1rem;
-    color: var(--muted); font-size: 0.88rem; margin-bottom: 1rem;
-  }
+  .helper { background: var(--panel-2); border-radius: 10px; padding: 0.8rem 1rem; color: var(--muted); font-size: 0.88rem; margin-bottom: 1rem; }
 
-  .table-wrap {
-    overflow: auto; max-height: 340px; border-radius: 10px;
-    margin-top: 1rem; border: 1px solid var(--line-dim);
-  }
+  .table-wrap { overflow: auto; max-height: 340px; border-radius: 10px; margin-top: 1rem; border: 1px solid var(--line-dim); }
   table { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-family: 'IBM Plex Mono', monospace; }
-  th {
-    background: var(--panel-2); color: var(--line); font-weight: 700; text-align: left;
-    padding: 0.5rem 0.75rem; position: sticky; top: 0; white-space: nowrap;
-    border-bottom: 1px solid var(--line-dim);
-  }
-  td {
-    padding: 0.4rem 0.75rem; color: var(--muted);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
-  }
+  th { background: var(--panel-2); color: var(--line); font-weight: 700; text-align: left; padding: 0.5rem 0.75rem; position: sticky; top: 0; white-space: nowrap; border-bottom: 1px solid var(--line-dim); }
+  td { padding: 0.4rem 0.75rem; color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.04); white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--panel-2); color: var(--text); }
 
@@ -203,21 +150,127 @@
   .dynamic-section { display: none; }
   .dynamic-section.visible { display: block; }
 
-  .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid rgba(246,193,40,0.3); border-top-color: var(--line);
-    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
-  }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(246,193,40,0.3); border-top-color: var(--line); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .badge {
-    display: inline-block; background: rgba(246,193,40,0.15); color: var(--line);
-    border-radius: 6px; padding: 0.15rem 0.55rem; font-size: 0.75rem; font-weight: 700;
-    font-family: 'IBM Plex Mono', monospace;
-  }
+  .badge { display: inline-block; background: rgba(246,193,40,0.15); color: var(--line); border-radius: 6px; padding: 0.15rem 0.55rem; font-size: 0.75rem; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
 
   .mt1 { margin-top: 1rem; }
   .mt05 { margin-top: 0.5rem; }
+
+  /* ═══ TAB 5: CARPETAS CREADAS ════════════════════════════════════════════ */
+  .carpetas-layout {
+    display: grid; grid-template-columns: 370px 1fr; gap: 1.5rem; align-items: start;
+  }
+  @media (max-width: 900px) { .carpetas-layout { grid-template-columns: 1fr; } }
+
+  .c-form-panel {
+    background: var(--panel); border: 1px solid var(--line-dim);
+    border-radius: var(--radius); padding: 1.4rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+
+  .c-section-lbl {
+    font-size: 0.67rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--line);
+    padding-bottom: 0.45rem; border-bottom: 1px solid var(--line-dim);
+    margin-bottom: 0.1rem; display: block;
+  }
+
+  .c-carpeta-item {
+    background: var(--panel-2); border: 1px solid var(--line-dim);
+    border-radius: 8px; padding: 0.85rem 1rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    animation: cFade .2s ease;
+  }
+  @keyframes cFade { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+
+  .c-item-hdr {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.1rem;
+  }
+  .c-num-badge {
+    font-size: 0.67rem; font-weight: 800; font-family: 'IBM Plex Mono', monospace;
+    color: var(--line); background: rgba(246,193,40,0.1);
+    border: 1px solid rgba(246,193,40,0.28); padding: 0.12rem 0.6rem; border-radius: 20px;
+  }
+  .c-btn-rm {
+    background: none; border: 1px solid rgba(218,55,55,0.35); color: #da3737;
+    font-size: 0.72rem; font-weight: 700; padding: 0.18rem 0.5rem; border-radius: 5px;
+    cursor: pointer; transition: background .15s; font-family: inherit;
+  }
+  .c-btn-rm:hover { background: rgba(218,55,55,0.15); }
+
+  .c-btn-add {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;
+    padding: 0.58rem; background: transparent; border: 1px dashed rgba(246,193,40,0.35);
+    border-radius: 8px; color: var(--soft); font-family: inherit; font-size: 0.82rem;
+    font-weight: 700; cursor: pointer; transition: all .15s; margin-top: 0.4rem;
+  }
+  .c-btn-add:hover { border-color: var(--line); color: var(--line); background: rgba(246,193,40,0.06); }
+
+  .c-preview-panel {
+    background: var(--panel); border: 1px solid var(--line-dim);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .c-preview-bar {
+    background: var(--panel-2); border-bottom: 1px solid var(--line-dim);
+    padding: 0.7rem 1.2rem; display: flex; align-items: center;
+    justify-content: space-between; gap: 0.7rem; flex-wrap: wrap;
+  }
+  .c-preview-bar-title { font-size: 0.82rem; font-weight: 700; }
+  .c-preview-bar-sub { font-size: 0.7rem; color: var(--soft); margin-top: 1px; }
+
+  .c-tabs {
+    display: flex; gap: 2px; background: var(--bg); border-radius: 6px; padding: 3px;
+  }
+  .c-tab-btn {
+    border: none; background: transparent; padding: 4px 11px; font-size: 0.74rem; font-weight: 700;
+    border-radius: 4px; cursor: pointer; color: var(--muted); font-family: inherit; transition: all .15s;
+  }
+  .c-tab-btn.active { background: var(--panel-2); color: var(--line); }
+
+  .c-btn-copy {
+    background: rgba(246,193,40,0.12); border: 1px solid var(--line); color: var(--text);
+    font-family: inherit; font-size: 0.78rem; font-weight: 700; padding: 0.38rem 0.85rem;
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;
+    transition: background .15s; white-space: nowrap;
+  }
+  .c-btn-copy:hover { background: rgba(246,193,40,0.2); }
+  .c-btn-copy.copied { background: rgba(29,58,53,0.8); border-color: #2e7d32; color: #d6ffe8; }
+
+  .c-preview-body { padding: 1.4rem; }
+  .c-email-box {
+    background: #fff; border-radius: 9px; overflow: hidden;
+    box-shadow: 0 4px 22px rgba(0,0,0,.38);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  .c-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.7rem; padding: 3.2rem 2rem; color: var(--soft); text-align: center;
+  }
+  .c-empty .ce-icon { font-size: 2.8rem; opacity: .32; }
+  .c-empty h3 { font-size: 0.95rem; font-weight: 700; color: var(--muted); }
+  .c-empty p { font-size: 0.8rem; max-width: 230px; line-height: 1.5; }
+
+  .c-code-area { padding: 1.4rem; background: var(--panel); display: none; }
+  .c-code-area pre {
+    background: #111820; color: #a8d8ea; padding: 1rem 1.1rem; border-radius: 8px;
+    font-size: 0.71rem; line-height: 1.55; white-space: pre-wrap; word-break: break-all;
+    font-family: 'IBM Plex Mono', monospace; max-height: 480px; overflow-y: auto;
+    border: 1px solid var(--line-dim);
+  }
+
+  .etop-toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--ok-bg); color: var(--ok-text); border: 1px solid rgba(46,125,50,0.5);
+    padding: 0.65rem 1.1rem; border-radius: 9px; font-size: 0.85rem; font-weight: 700;
+    font-family: 'IBM Plex Sans', sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.35);
+    display: flex; align-items: center; gap: 0.5rem;
+    opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s;
+    pointer-events: none; z-index: 999;
+  }
+  .etop-toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -235,9 +288,10 @@
   <button class="tab-btn" onclick="switchTab(1, this)">📧 Generador Correos Bienvenida</button>
   <button class="tab-btn" onclick="switchTab(2, this)">📨 Envío Invitación Sesión Sincrónica</button>
   <button class="tab-btn" onclick="switchTab(3, this)">📅 Formateador Calendarios</button>
+  <button class="tab-btn" onclick="switchTab(4, this)">📂 Notificación Carpetas Creadas</button>
 </div>
 
-<!-- TAB 1 -->
+<!-- TAB 1: FORMATEADOR NÓMINAS -->
 <div class="tab-panel active" id="tab0">
   <div class="section-title">Formateador Universal de Estudiantes</div>
   <div class="section-sub">Sube archivos o pega los datos directamente de la web.</div>
@@ -263,14 +317,8 @@
 
   <div id="t1-diario" class="dynamic-section visible">
     <div class="form-grid col3">
-      <div class="form-group">
-        <label>📅 Fecha</label>
-        <input type="date" id="t1-fecha" />
-      </div>
-      <div class="form-group">
-        <label>🔍 NRCs (separados por coma)</label>
-        <input type="text" id="t1-nrcs" placeholder="Ej: 12345, 67890" />
-      </div>
+      <div class="form-group"><label>📅 Fecha</label><input type="date" id="t1-fecha" /></div>
+      <div class="form-group"><label>🔍 NRCs (separados por coma)</label><input type="text" id="t1-nrcs" placeholder="Ej: 12345, 67890" /></div>
     </div>
     <div class="form-group mt1">
       <label>📥 Archivos (Excel / CSV)</label>
@@ -283,35 +331,37 @@
   </div>
 
   <div id="t1-manual" class="dynamic-section">
-    <div class="form-group">
-      <label>📥 Archivos (Excel / CSV)</label>
+    <div class="helper">💡 <strong>Modo acumulativo:</strong> Completa los campos, sube el CSV del curso y haz clic en "Procesar". Los registros se acumularán. Repite para cada curso.</div>
+    <div class="form-grid">
+      <div class="form-group"><label>🔖 NRC_COD (ej: 12345_MDL711)</label><input type="text" id="t1m-nrccod" placeholder="12345_MDL711" /></div>
+      <div class="form-group"><label>📅 FECHA INICIO</label><input type="date" id="t1m-fecha" /></div>
+    </div>
+    <div class="form-group mt1">
+      <label>📥 Archivo CSV del curso</label>
       <div class="file-drop" id="drop1m">
-        <input type="file" accept=".xlsx,.xls,.csv" multiple onchange="handleFiles(this, 'drop1m', 't1m-files')" />
-        📂 Haz clic o arrastra tus archivos aquí
+        <input type="file" accept=".csv" onchange="handleFiles(this, 'drop1m', 't1m-files')" />
+        📂 Haz clic o arrastra tu archivo CSV aquí
         <div class="file-name" id="drop1m-names"></div>
       </div>
     </div>
   </div>
 
   <div id="t1-texto" class="dynamic-section">
-    <div class="helper">💡 Ve a la web de tus cursos, selecciona todo el texto y pégalo abajo.</div>
-    <div class="form-group">
-      <label>📋 Pega aquí los datos de la web:</label>
-      <textarea id="t1-rawtext" placeholder="Pega aquí el texto copiado de la web..."></textarea>
-    </div>
+    <div class="helper">💡 Ve a la web de inscripciones, selecciona todo el texto de la página (Ctrl+A) y pégalo abajo. Compatible con el nuevo formato tabular de la web UNAB.</div>
+    <div class="form-group"><label>📋 Pega aquí los datos de la web:</label><textarea id="t1-rawtext" placeholder="Pega aquí el texto copiado de la web de Inscripciones de Curso..."></textarea></div>
   </div>
 
   <div class="btn-row">
     <button class="btn primary" onclick="processTab1()">⚡ Procesar</button>
+    <button class="btn danger" onclick="clearAccumulated()" id="btn-clear-accum" style="display:none">🗑️ Limpiar Registros Acumulados</button>
   </div>
   <div id="t1-result"></div>
 </div>
 
-<!-- TAB 2 -->
+<!-- TAB 2: CORREOS BIENVENIDA -->
 <div class="tab-panel" id="tab1">
   <div class="section-title">Generador de Base para Correos de Bienvenida</div>
   <div class="section-sub">Sube la nómina original y completa los datos de la inducción.</div>
-
   <div class="form-group" style="max-width:600px">
     <label>📥 Sube la nómina original</label>
     <div class="file-drop" id="drop2">
@@ -320,105 +370,98 @@
       <div class="file-name" id="drop2-names"></div>
     </div>
   </div>
-
   <hr class="divider">
   <div style="font-weight:700; margin-bottom:1rem;">2. Ingresa los datos de la Inducción</div>
-
+  <div class="helper" id="t2-nrcs-status">⏳ Cargando cursos desde nrcs.json...</div>
   <div class="form-grid">
+    <!-- TUTOR -->
     <div class="form-group">
       <label>NOMBRE TUTOR</label>
-      <input type="text" id="t2-tn" placeholder="Nombre completo del tutor" />
+      <select id="t2-tutor-sel" onchange="t2AutoTutor()">
+        <option value="">— Selecciona tutor —</option>
+        <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
+        <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
+        <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
+        <option value="DANITZA JANSEN">DANITZA JANSEN</option>
+        <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
+        <option value="PAULA PARDO">PAULA PARDO</option>
+        <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
+        <option value="BARBARA ROJAS">BARBARA ROJAS</option>
+        <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
+        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="NOEMI PAZ">NOEMI PAZ</option>
+        <option value="HECTOR TAPIA">HECTOR TAPIA</option>
+        <option value="CONSUELO PARGA">CONSUELO PARGA</option>
+        <option value="FRANCISCA INDA">FRANCISCA INDA</option>
+        <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
+        <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
+        <option value="POR DEFINIR">POR DEFINIR</option>
+      </select>
     </div>
     <div class="form-group">
-      <label>CORREO TUTOR</label>
-      <input type="text" id="t2-tc" placeholder="tutor@dominio.cl" />
+      <label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-tc" placeholder="Se autocompleta al elegir tutor" />
     </div>
     <div class="form-group">
-      <label>ANEXO TUTOR</label>
-      <input type="text" id="t2-ta" placeholder="Ej: 1234" />
+      <label>NOMBRE COMPLETO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-tn" placeholder="Se autocompleta al elegir tutor" />
+    </div>
+    <div class="form-group">
+      <label>ANEXO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
+      <input type="text" id="t2-ta" placeholder="Se autocompleta al elegir tutor" />
     </div>
     <div class="form-group">
       <label>NOMBRE DE PROGRAMA</label>
-      <input type="text" id="t2-pr" placeholder="Nombre del programa" />
+      <select id="t2-pr">
+        <option value="">— Selecciona programa —</option>
+      </select>
     </div>
+    <!-- BUSCADOR NRC INDUCCION -->
     <div class="form-group">
-      <label>NRC Y NOMBRE DE CURSO INDUCC</label>
-      <input type="text" id="t2-ni" placeholder="Ej: 12345 - Inducción Postgrado" />
+      <label>BUSCAR NRC INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta fechas)</span></label>
+      <input type="text" id="t2-nrc-search" placeholder="Escribe NRC, código o tutor..." oninput="t2BuscarNrc()" autocomplete="off" />
+      <div id="t2-nrc-dropdown" style="display:none;position:relative;z-index:60;">
+        <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+          <div id="t2-nrc-options"></div>
+        </div>
+      </div>
+      <input type="hidden" id="t2-ni" />
     </div>
+    <div class="form-group"><label>NRC Y NOMBRE DE CURSO INDUCC <span style="color:#95a3b8;font-weight:400;text-transform:none;">(editable)</span></label><input type="text" id="t2-ni-display" placeholder="Ej: 12345 - Inducción Postgrado" oninput="document.getElementById('t2-ni').value=this.value" /></div>
+    <div class="form-group"><label>NOMBRE PRIMER CURSO</label><input type="text" id="t2-c1" placeholder="Nombre del primer curso" /></div>
+    <div class="form-group"><label>NOMBRE SEGUNDO CURSO (opcional)</label><input type="text" id="t2-c2" placeholder="Opcional" /></div>
     <div class="form-group">
-      <label>NOMBRE PRIMER CURSO</label>
-      <input type="text" id="t2-c1" placeholder="Nombre del primer curso" />
-    </div>
-    <div class="form-group">
-      <label>NOMBRE SEGUNDO CURSO (opcional)</label>
-      <input type="text" id="t2-c2" placeholder="Opcional" />
-    </div>
-    <div class="form-group"></div>
-    <div class="form-group">
-      <label>FECHA INICIO INDUCCION</label>
+      <label>FECHA INICIO INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
       <input type="date" id="t2-fi" />
     </div>
     <div class="form-group">
-      <label>FECHA TERMINO INDUCCION</label>
+      <label>FECHA TERMINO INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label>
       <input type="date" id="t2-ff" />
     </div>
   </div>
-
-  <div class="btn-row">
-    <button class="btn primary" onclick="processTab2()">🪄 Construir Plantilla Exacta</button>
-  </div>
-
+  <div class="btn-row"><button class="btn primary" onclick="processTab2()">🪄 Construir Plantilla Exacta</button></div>
   <div id="t2-result"></div>
-
   <div id="t2-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab2()">📥 Descargar Excel</button>
     <button class="btn primary" onclick="sendToSharePoint()">📨 Enviar a SharePoint</button>
-    <button class="btn primary" onclick="sendToSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
-    <button class="btn primary" onclick="sendToSharePointPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
   </div>
   <div id="t2-sp-result"></div>
-  <div id="t2-sp-result-miguel"></div>
-  <div id="t2-sp-result-pablo-daniela"></div>
-
   <div id="t2-paso3" style="display:none; margin-top:1.2rem;">
     <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
       <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
       <div style="font-weight:700; font-size:1rem;">Enviar correos de bienvenida</div>
     </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío.</div>
     <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
       📧 Abrir app — Enviar correos de bienvenida
     </button>
   </div>
-
-  <div id="t2-paso3-miguel" style="display:none; margin-top:1.2rem;">
-    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
-      <div style="font-weight:700; font-size:1rem;">Enviar correos de bienvenida — Equipo Miguel</div>
-    </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
-      📧 Abrir app — Enviar correos Equipo Miguel
-    </button>
-  </div>
-
-  <div id="t2-paso3-pablo-daniela" style="display:none; margin-top:1.2rem;">
-    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
-      <div style="font-weight:700; font-size:1rem;">Enviar correos de bienvenida — Equipo Pablo_Daniela</div>
-    </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778796853828','_blank')">
-      📧 Abrir app — Enviar correos Equipo Pablo_Daniela
-    </button>
-  </div>
 </div>
 
-<!-- TAB 3 -->
+<!-- TAB 3: INVITACIÓN SINCRÓNICA -->
 <div class="tab-panel" id="tab2">
   <div class="section-title">Envío Invitación Sesión Sincrónica</div>
   <div class="section-sub">Sube la nómina original para generar las invitaciones.</div>
-
   <div class="form-group" style="max-width:600px">
     <label>📥 Sube la nómina original para invitación</label>
     <div class="file-drop" id="drop3">
@@ -427,141 +470,114 @@
       <div class="file-name" id="drop3-names"></div>
     </div>
   </div>
-
   <hr class="divider">
   <div style="font-weight:700; margin-bottom:1rem;">2. Ingresa los datos de la sesión</div>
-
   <div class="form-grid">
-    <div class="form-group">
-      <label>CURSO DE INDUCCION</label>
-      <input type="text" id="t3-curso" placeholder="Nombre del curso" />
+    <!-- BUSCADOR NRC INDUCCION -->
+    <div class="form-group full">
+      <label>BUSCAR CURSO DE INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta tutor y fecha)</span></label>
+      <input type="text" id="t3-nrc-search" placeholder="Escribe NRC, código o tutor..." oninput="t3BuscarNrc()" autocomplete="off" />
+      <div id="t3-nrc-dropdown" style="display:none;position:relative;z-index:60;">
+        <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+          <div id="t3-nrc-options"></div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label>FECHA INICIO CURSO DE INDUCCION</label>
-      <input type="date" id="t3-fechainicio" />
-    </div>
-    <div class="form-group">
-      <label>LINK SESION SINCRONICA</label>
-      <input type="text" id="t3-link" placeholder="https://..." />
-    </div>
-    <div class="form-group">
-      <label>fechacal</label>
-      <input type="date" id="t3-fechacal" />
-    </div>
-    <div class="form-group">
-      <label>FECHA SESION SINCRONICA</label>
-      <input type="date" id="t3-fechasesion" />
-    </div>
-    <div class="form-group">
-      <label>HORA SESION SINCRONICA</label>
-      <input type="time" id="t3-hora" />
-    </div>
-    <div class="form-group">
-      <label>CORREO TUTOR</label>
-      <input type="text" id="t3-correotutor" placeholder="tutor@dominio.cl" />
-    </div>
-    <div class="form-group">
-      <label>NOMBRE TUTOR</label>
-      <input type="text" id="t3-nombretutor" placeholder="Nombre completo" />
-    </div>
+    <div class="form-group"><label>CURSO DE INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(editable)</span></label><input type="text" id="t3-curso" placeholder="Se autocompleta al buscar NRC" /></div>
+    <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCION <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label><input type="date" id="t3-fechainicio" /></div>
+    <div class="form-group"><label>NOMBRE TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label><input type="text" id="t3-nombretutor" placeholder="Se autocompleta al buscar NRC" /></div>
+    <div class="form-group"><label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(autocompleta)</span></label><input type="text" id="t3-correotutor" placeholder="Se autocompleta al buscar NRC" /></div>
+    <div class="form-group"><label>LINK SESION SINCRONICA</label><input type="text" id="t3-link" placeholder="https://..." /></div>
+    <div class="form-group"><label>FECHA SESION SINCRONICA</label><input type="date" id="t3-fechasesion" /></div>
+    <div class="form-group"><label>HORA SESION SINCRONICA</label><input type="time" id="t3-hora" /></div>
+    <input type="hidden" id="t3-fechacal" value="" />
   </div>
-
-  <div class="btn-row">
-    <button class="btn primary" onclick="processTab3()">🪄 Construir Invitaciones</button>
-  </div>
-
+  <div class="btn-row"><button class="btn primary" onclick="processTab3()">🪄 Construir Invitaciones</button></div>
   <div id="t3-result"></div>
-
   <div id="t3-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab3()">📥 Descargar Excel Invitación</button>
     <button class="btn primary" onclick="sendToSharePointSync()">📨 Enviar a SharePoint</button>
-    <button class="btn primary" onclick="sendToSharePointSyncMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
-    <button class="btn primary" onclick="sendToSharePointSyncPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
   </div>
   <div id="t3-sp-result"></div>
-  <div id="t3-sp-result-miguel"></div>
-  <div id="t3-sp-result-pablo-daniela"></div>
-
   <div id="t3-paso3" style="display:none; margin-top:1.2rem;">
     <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
       <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
       <div style="font-weight:700; font-size:1rem;">Enviar invitaciones sincónicas</div>
     </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío.</div>
     <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
       📅 Abrir app — Enviar invitaciones sincónicas
     </button>
   </div>
-
-  <div id="t3-paso3-miguel" style="display:none; margin-top:1.2rem;">
-    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
-      <div style="font-weight:700; font-size:1rem;">Enviar invitaciones sincónicas — Equipo Miguel</div>
-    </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778851875517','_blank')">
-      📅 Abrir app — Enviar invitaciones Equipo Miguel
-    </button>
-  </div>
-
-  <div id="t3-paso3-pablo-daniela" style="display:none; margin-top:1.2rem;">
-    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
-      <div style="background:var(--line);color:#17202d;font-weight:800;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:6px;flex-shrink:0;">PASO 3</div>
-      <div style="font-weight:700; font-size:1rem;">Enviar invitaciones sincónicas — Equipo Pablo_Daniela</div>
-    </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" style="font-size:0.95rem; padding:0.6rem 1.4rem;" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778851991529','_blank')">
-      📅 Abrir app — Enviar invitaciones Equipo Pablo_Daniela
-    </button>
-  </div>
 </div>
 
-<!-- TAB 4 -->
+<!-- TAB 4: CALENDARIOS -->
 <div class="tab-panel" id="tab3">
   <div class="section-title">Formateador de Calendarios de Cursos</div>
   <div class="section-sub">Abre el Excel del calendario, copia el bloque de cursos incluyendo encabezados y pégalo abajo.</div>
-
   <div class="helper">💡 Puedes pegar múltiples bloques a la vez. Asegúrate de incluir la fila de encabezados (NRC, Fecha de Inicio, Nombre Asignatura, etc.).</div>
-
-  <div class="form-group">
-    <label>📋 Pega aquí el bloque del calendario:</label>
-    <textarea id="t4-texto" placeholder="Pega aquí el bloque copiado del Excel..." style="min-height:220px;"></textarea>
-  </div>
-
+  <div class="form-group"><label>📋 Pega aquí el bloque del calendario:</label><textarea id="t4-texto" placeholder="Pega aquí el bloque copiado del Excel..." style="min-height:220px;"></textarea></div>
   <hr class="divider">
   <div style="font-weight:700; margin-bottom:1rem;">2. Completa los campos manuales</div>
-
   <div class="form-grid">
+    <div class="form-group"><label>MATERIA (sin espacios, ej: MDL711)</label><input type="text" id="t4-materia" placeholder="Ej: MDL711" /></div>
+    <div class="form-group"><label>INTAKE O VERSION</label><input type="text" id="t4-intake" placeholder="Ej: V1" /></div>
     <div class="form-group">
-      <label>MATERIA (sin espacios, ej: MDL711)</label>
-      <input type="text" id="t4-materia" placeholder="Ej: MDL711" />
+      <label>NOMBRE DE PROGRAMA</label>
+      <select id="t4-programa">
+        <option value="">— Selecciona programa desde onboarding —</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label>INTAKE O VERSION</label>
-      <input type="text" id="t4-intake" placeholder="Ej: V1" />
-    </div>
-    <div class="form-group">
-      <label>NOMBRE DE PROGRAMA (vacío = usar el del calendario)</label>
-      <input type="text" id="t4-programa" placeholder="Opcional" />
-    </div>
-    <div class="form-group">
-      <label>FACULTAD (vacío = usar la del calendario)</label>
-      <input type="text" id="t4-facultad" placeholder="Opcional" />
-    </div>
+    <div class="form-group"><label>FACULTAD (vacío = usar la del calendario)</label><input type="text" id="t4-facultad" placeholder="Opcional" /></div>
     <div class="form-group">
       <label>NOMBRE TUTOR</label>
-      <input type="text" id="t4-tutor" placeholder="Nombre completo" />
+      <select id="t4-tutor" onchange="t4AutoCorreo()">
+        <option value="">— Selecciona tutor —</option>
+        <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
+        <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
+        <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
+        <option value="DANITZA JANSEN">DANITZA JANSEN</option>
+        <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
+        <option value="PAULA PARDO">PAULA PARDO</option>
+        <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
+        <option value="BARBARA ROJAS">BARBARA ROJAS</option>
+        <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
+        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
+        <option value="NOEMI PAZ">NOEMI PAZ</option>
+        <option value="CONSUELO PARGA">CONSUELO PARGA</option>
+        <option value="FRANCISCA INDA">FRANCISCA INDA</option>
+        <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
+        <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
+        <option value="CAROLINA MONSALVE">CAROLINA MONSALVE</option>
+        <option value="PATRICIO COLLAO">PATRICIO COLLAO</option>
+        <option value="FELIPE GARCIA">FELIPE GARCIA</option>
+        <option value="RITA GALVEZ">RITA GALVEZ</option>
+        <option value="MIGUEL ROSALES">MIGUEL ROSALES</option>
+        <option value="HECTOR TAPIA">HECTOR TAPIA</option>
+        <option value="PABLO ALDERETE">PABLO ALDERETE</option>
+        <option value="DANIELA CORNEJO">DANIELA CORNEJO</option>
+        <option value="POR DEFINIR">POR DEFINIR</option>
+      </select>
     </div>
     <div class="form-group">
-      <label>CORREO TUTOR</label>
-      <input type="text" id="t4-correotutor" placeholder="tutor@dominio.cl" />
+      <label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(se autocompleta)</span></label>
+      <input type="text" id="t4-correotutor" placeholder="Se autocompleta al elegir tutor" />
+    </div>
+    <div class="form-group full">
+      <label>COORDINADORES <span style="color:#95a3b8;font-weight:400;text-transform:none;">(seleccion multiple — Coordinadores_Emails_Texto)</span></label>
+      <div id="t4-coord-chips" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:2.4rem;background:#eef2f7;border:1px solid rgba(246,193,40,0.8);border-radius:8px;padding:0.4rem 0.6rem;align-items:center;cursor:pointer;" onclick="t4CoordToggle()">
+        <span id="t4-coord-placeholder" style="color:#888;font-size:0.88rem;">Haz clic para seleccionar coordinadores...</span>
+      </div>
+      <div id="t4-coord-dropdown" style="display:none;position:relative;z-index:50;">
+        <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+          <div id="t4-coord-options"></div>
+        </div>
+      </div>
+      <input type="hidden" id="t4-coord-value" />
     </div>
   </div>
-
-  <div class="btn-row">
-    <button class="btn primary" onclick="processTab4()">⚡ Procesar Calendario</button>
-  </div>
-
+  <div class="btn-row"><button class="btn primary" onclick="processTab4()">⚡ Procesar Calendario</button></div>
   <div id="t4-result"></div>
   <div id="t4-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab4()">📥 Descargar Excel</button>
@@ -570,13 +586,80 @@
   <div id="t4-sp-result"></div>
 </div>
 
+<!-- TAB 5: NOTIFICACIÓN CARPETAS CREADAS -->
+<div class="tab-panel" id="tab4">
+  <div class="section-title">Notificación · Carpetas Creadas en Teams</div>
+  <div class="section-sub">Genera el correo de aviso al coordinador/tutora con los vínculos a las carpetas del intake.</div>
+
+  <div class="carpetas-layout">
+    <div class="c-form-panel">
+      <div>
+        <span class="c-section-lbl">📋 Datos del correo</span>
+        <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:0.6rem;">
+          <div class="form-group">
+            <label>Nombre del coordinador / tutora</label>
+            <input type="text" id="c-coord" placeholder="Ej: Rita" />
+          </div>
+          <div class="form-group">
+            <label>Nombre del programa</label>
+            <select id="c-intake">
+              <option value="">— Selecciona programa —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <span class="c-section-lbl">📂 Carpetas en Teams</span>
+        <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
+        <button class="c-btn-add" onclick="cAdd()">＋ Agregar carpeta</button>
+      </div>
+      <div>
+        <span class="c-section-lbl">⚙️ Acciones</span>
+        <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;">
+          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">✉️ Generar correo</button>
+          <button class="btn" style="width:100%;justify-content:center;font-size:0.8rem;" onclick="cReset()">Limpiar formulario</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-preview-panel">
+      <div class="c-preview-bar">
+        <div>
+          <div class="c-preview-bar-title">Vista previa del correo</div>
+          <div class="c-preview-bar-sub">Listo para copiar y pegar en Outlook</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;">
+          <div class="c-tabs">
+            <button class="c-tab-btn active" onclick="cTab('preview',this)">🖼 Vista</button>
+            <button class="c-tab-btn" onclick="cTab('code',this)">💻 HTML</button>
+          </div>
+          <button class="c-btn-copy" id="c-copy-btn" onclick="cCopiar()">📋 Copiar correo</button>
+        </div>
+      </div>
+      <div class="c-preview-body" id="c-preview-body">
+        <div class="c-empty" id="c-empty">
+          <div class="ce-icon">📬</div>
+          <h3>Aún sin vista previa</h3>
+          <p>Completa el formulario y haz clic en <strong style="color:var(--line)">Generar correo</strong>.</p>
+        </div>
+        <div id="c-rendered" style="display:none;"></div>
+      </div>
+      <div class="c-code-area" id="c-code-area">
+        <pre id="c-code-pre"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="etop-toast" id="etop-toast">✅ Correo copiado — pega en Outlook con Ctrl+V</div>
+
 <script>
-// ─── STATE ────────────────────────────────────────────────────────────────────
+// ─── GLOBAL STATE ─────────────────────────────────────────────────────────────
 const state = {
-  t1Files: [], t1mFiles: [],
-  t2File: null, t3File: null,
-  t2Data: null, t3Data: null,
-  t1Mode: 'diario', t4Data: null
+  t1Files:[], t1mFiles:[], t1mAccumulated:[],
+  t2File:null, t3File:null, t2Data:null, t3Data:null,
+  t1Mode:'diario', t4Data:null
 };
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -585,968 +668,955 @@ function switchTab(idx, btn) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
 }
 
-// ─── CLEAR ────────────────────────────────────────────────────────────────────
 function clearAll() {
-  Object.assign(state, { t1Files:[], t1mFiles:[], t2File:null, t3File:null, t2Data:null, t3Data:null, t1Mode:'diario' });
-  document.querySelectorAll('input[type=text], input[type=date], input[type=time], textarea').forEach(el => el.value='');
-  ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=''; });
-  ['t2-actions','t3-actions','t2-paso3','t2-paso3-miguel','t2-paso3-pablo-daniela','t3-paso3','t3-paso3-miguel','t3-paso3-pablo-daniela'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-  ['t1-result','t2-result','t3-result','t2-sp-result','t2-sp-result-miguel','t2-sp-result-pablo-daniela','t3-sp-result','t3-sp-result-miguel','t3-sp-result-pablo-daniela'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
-  selectRadio(document.querySelector('#tab1-radio .radio-option'), 'tab1-mode', 'diario');
-  switchTab(0, document.querySelectorAll('.tab-btn')[0]);
+  Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'diario'});
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],input[type=url],textarea').forEach(el=>el.value='');
+  ['t2-pr','t4-programa','c-intake'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
+  ['t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  selectRadio(document.querySelector('#tab1-radio .radio-option'),'tab1-mode','diario');
+  switchTab(0,document.querySelectorAll('.tab-btn')[0]);
+  cReset();
 }
 
-// ─── RADIO ────────────────────────────────────────────────────────────────────
-function selectRadio(el, name, value) {
-  document.querySelectorAll(`[onclick*="${name}"]`).forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  state.t1Mode = value;
-  ['t1-diario','t1-manual','t1-texto'].forEach(id => {
-    const s = document.getElementById(id);
-    if(s) s.classList.remove('visible');
-  });
-  const map = { diario:'t1-diario', manual:'t1-manual', texto:'t1-texto' };
-  const target = document.getElementById(map[value]);
-  if(target) target.classList.add('visible');
+function clearAccumulated(){
+  if(!confirm('¿Eliminar todos los registros acumulados?'))return;
+  state.t1mAccumulated=[];
+  document.getElementById('t1-result').innerHTML='<div class="alert info">Registros acumulados eliminados.</div>';
+  document.getElementById('btn-clear-accum').style.display='none';
+}
+function deleteRow(idx){
+  if(!confirm('¿Eliminar este registro?'))return;
+  state.t1mAccumulated.splice(idx,1);renderAccumulatedTable();
+  if(!state.t1mAccumulated.length)document.getElementById('btn-clear-accum').style.display='none';
 }
 
-// ─── FILE HANDLING ────────────────────────────────────────────────────────────
-function handleFiles(input, dropId, stateKey) {
-  const files = Array.from(input.files);
-  const nameEl = document.getElementById(dropId+'-names');
-  if(nameEl) nameEl.textContent = files.map(f=>f.name).join(', ');
-  if(stateKey==='t1-files') state.t1Files = files;
-  else if(stateKey==='t1m-files') state.t1mFiles = files;
-  else if(stateKey==='t2-file') state.t2File = files[0]||null;
-  else if(stateKey==='t3-file') state.t3File = files[0]||null;
+function selectRadio(el,name,value){
+  document.querySelectorAll(`[onclick*="${name}"]`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');state.t1Mode=value;
+  ['t1-diario','t1-manual','t1-texto'].forEach(id=>{const s=document.getElementById(id);if(s)s.classList.remove('visible');});
+  const map={diario:'t1-diario',manual:'t1-manual',texto:'t1-texto'};
+  const t=document.getElementById(map[value]);if(t)t.classList.add('visible');
 }
 
-// ─── READ FILE ─────────────────────────────────────────────────────────────────
-async function readFileToRows(file, headerRow=true) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, {type:'array', cellDates:true});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        resolve(headerRow
-          ? XLSX.utils.sheet_to_json(ws, {defval:''})
-          : XLSX.utils.sheet_to_json(ws, {header:1, defval:''}));
-      } catch(err) { reject(err); }
-    };
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
-  });
+function handleFiles(input,dropId,stateKey){
+  const files=Array.from(input.files);
+  const nameEl=document.getElementById(dropId+'-names');if(nameEl)nameEl.textContent=files.map(f=>f.name).join(', ');
+  if(stateKey==='t1-files')state.t1Files=files;
+  else if(stateKey==='t1m-files')state.t1mFiles=files;
+  else if(stateKey==='t2-file')state.t2File=files[0]||null;
+  else if(stateKey==='t3-file')state.t3File=files[0]||null;
 }
 
-async function readCSVToRows(file, headerRow=true) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const wb = XLSX.read(e.target.result, {type:'string', cellDates:true});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        resolve(headerRow
-          ? XLSX.utils.sheet_to_json(ws, {defval:''})
-          : XLSX.utils.sheet_to_json(ws, {header:1, defval:''}));
-      } catch(err) { reject(err); }
-    };
-    reader.onerror = reject;
-    reader.readAsText(file);
-  });
+async function readFileToRows(file,hdr=true){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{try{const d=new Uint8Array(e.target.result),wb=XLSX.read(d,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];res(hdr?XLSX.utils.sheet_to_json(ws,{defval:''}):XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));}catch(e){rej(e);}};r.onerror=rej;r.readAsArrayBuffer(file);});}
+async function readCSVToRows(file,hdr=true){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'string',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];res(hdr?XLSX.utils.sheet_to_json(ws,{defval:''}):XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));}catch(e){rej(e);}};r.onerror=rej;r.readAsText(file);});}
+async function readFile(file,hdr=true){return file.name.toLowerCase().endsWith('.csv')?readCSVToRows(file,hdr):readFileToRows(file,hdr);}
+
+function formatDateDMY(s){if(!s)return'';const[y,m,d]=s.split('-');return`${d}-${m}-${y}`;}
+function formatDateSlash(s){if(!s)return'';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;}
+
+function renderTable(rows,containerEl){
+  if(!rows||!rows.length){containerEl.innerHTML='<div class="alert info">No se encontraron registros.</div>';return;}
+  const cols=Object.keys(rows[0]);
+  let html='<div class="table-wrap"><table><thead><tr>';
+  cols.forEach(c=>html+=`<th>${c}</th>`);
+  html+='</tr></thead><tbody>';
+  rows.slice(0,200).forEach(r=>{html+='<tr>';cols.forEach(c=>html+=`<td title="${String(r[c]).replace(/"/g,'&quot;')}">${r[c]??''}</td>`);html+='</tr>';});
+  html+='</tbody></table></div>';
+  if(rows.length>200)html+=`<div class="alert info mt05">Mostrando primeras 200 filas de ${rows.length}.</div>`;
+  containerEl.innerHTML=html;
 }
 
-async function readFile(file, headerRow=true) {
-  if(file.name.toLowerCase().endsWith('.csv')) return readCSVToRows(file, headerRow);
-  return readFileToRows(file, headerRow);
+function renderAccumulatedTable(){
+  const el=document.getElementById('t1-result');
+  if(!state.t1mAccumulated.length){el.innerHTML='<div class="alert info">No hay registros acumulados.</div>';return;}
+  const cols=Object.keys(state.t1mAccumulated[0]);
+  let html=`<div class="alert success">📊 Total acumulado: <span class="badge">${state.t1mAccumulated.length}</span> registros</div><div class="table-wrap"><table><thead><tr>`;
+  cols.forEach(c=>html+=`<th>${c}</th>`);html+='<th>Acciones</th></tr></thead><tbody>';
+  state.t1mAccumulated.slice(0,200).forEach((r,i)=>{html+='<tr>';cols.forEach(c=>html+=`<td>${r[c]??''}</td>`);html+=`<td><button class="btn-delete" onclick="deleteRow(${i})">🗑️</button></td></tr>`;});
+  html+='</tbody></table></div><div class="btn-row mt1"><button class="btn" onclick="downloadAccumulated()">📥 Descargar Excel</button></div>';
+  el.innerHTML=html;
 }
 
-// ─── DATE HELPERS ─────────────────────────────────────────────────────────────
-function normDate(val) {
-  if(!val) return '';
-  const s = String(val).trim();
-  if(!s || s==='Invalid Date') return '';
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-  const d = new Date(s);
-  if(!isNaN(d)) return d.toISOString().substring(0,10);
-  return s;
+function normCols(rows){return rows.map(r=>{const nr={};for(const k in r)nr[k.trim().toUpperCase()]=r[k];return nr;});}
+function anyToISO(val){
+  if(!val&&val!==0)return'';
+  if(val instanceof Date){if(isNaN(val))return'';return val.toISOString().substring(0,10);}
+  const s=String(val).replace('.0','').trim();if(!s||s==='NaN')return'';
+  if(/^\d{8}$/.test(s))return`${s.substring(0,4)}-${s.substring(4,6)}-${s.substring(6,8)}`;
+  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  const d=new Date(s);if(!isNaN(d))return d.toISOString().substring(0,10);return s;
+}
+function findCol(cols,...kws){for(const kw of kws){const f=cols.find(c=>c.toUpperCase().includes(kw.toUpperCase()));if(f)return f;}return null;}
+
+function exportXLSXConTabla(rows,filename){
+  if(!rows||!rows.length)return;const cols=Object.keys(rows[0]);const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Estudiantes');
+  function colLetter(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
+  const lastCol=colLetter(cols.length-1),lastRow=rows.length+1,tableRef='A1:'+lastCol+lastRow;
+  const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="TablaEstudiantes" displayName="TablaEstudiantes" ref="'+tableRef+'" totalsRowShown="0"><autoFilter ref="'+tableRef+'"/><tableColumns>'+cols.map((c,i)=>'<tableColumn id="'+(i+1)+'" name="'+c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')+'"/>').join('')+'</tableColumns><tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/></table>';
+  const wbout=XLSX.write(wb,{bookType:'xlsx',type:'binary',compression:true});
+  injectTableIntoXlsx(wbout,xml,'Estudiantes',tableRef).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();URL.revokeObjectURL(a.href);});
+}
+function downloadAccumulated(){if(!state.t1mAccumulated.length)return;const ts=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);exportXLSXConTabla(state.t1mAccumulated,'Estudiantes_Formateados_'+ts+'.xlsx');}
+
+async function injectTableIntoXlsx(wboutBinary,tableXml,sheetName,tableRef){
+  if(typeof JSZip==='undefined'){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+  const buf=new ArrayBuffer(wboutBinary.length),view=new Uint8Array(buf);for(let i=0;i<wboutBinary.length;i++)view[i]=wboutBinary.charCodeAt(i)&0xFF;
+  const zip=await JSZip.loadAsync(buf);zip.file('xl/tables/table1.xml',tableXml);
+  const sheetFile='xl/worksheets/sheet1.xml';let sheetXml=await zip.file(sheetFile).async('string');
+  if(!sheetXml.includes('tableParts')){sheetXml=sheetXml.replace('</worksheet>','<tableParts count="1"><tablePart r:id="rId99"/></tableParts></worksheet>');zip.file(sheetFile,sheetXml);}
+  const relsPath='xl/worksheets/_rels/sheet1.xml.rels';let relsXml='';const rf=zip.file(relsPath);
+  if(rf){relsXml=await rf.async('string');relsXml=relsXml.replace('</Relationships>','<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/></Relationships>');}
+  else{relsXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/></Relationships>';}
+  zip.file(relsPath,relsXml);
+  let ct=await zip.file('[Content_Types].xml').async('string');
+  if(!ct.includes('table1.xml')){ct=ct.replace('</Types>','<Override PartName="/xl/tables/table1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/></Types>');zip.file('[Content_Types].xml',ct);}
+  return await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
 }
 
-function formatDateDMY(isoStr) {
-  if(!isoStr) return '';
-  const [y,m,d] = isoStr.split('-');
-  return `${d}-${m}-${y}`;
-}
-
-function formatDateSlash(isoStr) {
-  if(!isoStr) return '';
-  const [y,m,d] = isoStr.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-// ─── RENDER TABLE ─────────────────────────────────────────────────────────────
-function renderTable(rows, containerEl) {
-  if(!rows || rows.length===0) { containerEl.innerHTML='<div class="alert info">No se encontraron registros.</div>'; return; }
-  const cols = Object.keys(rows[0]);
-  let html = '<div class="table-wrap"><table><thead><tr>';
-  cols.forEach(c => html += `<th>${c}</th>`);
-  html += '</tr></thead><tbody>';
-  rows.slice(0,200).forEach(r => {
-    html += '<tr>';
-    cols.forEach(c => html += `<td title="${String(r[c]).replace(/"/g,'&quot;')}">${r[c]??''}</td>`);
-    html += '</tr>';
-  });
-  html += '</tbody></table></div>';
-  if(rows.length>200) html += `<div class="alert info mt05">Mostrando primeras 200 filas de ${rows.length}.</div>`;
-  containerEl.innerHTML = html;
-}
-
-// ─── EXPORT XLSX ──────────────────────────────────────────────────────────────
-function exportXLSX(rows, filename) {
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
-  XLSX.writeFile(wb, filename);
-}
-
-function exportXLSXConTabla(rows, filename) {
-  if(!rows || !rows.length) return;
-  const cols = Object.keys(rows[0]);
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Estudiantes');
-  function colLetter(n) {
-    let s = ''; n++;
-    while(n > 0) { n--; s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26); }
-    return s;
-  }
-  const lastCol = colLetter(cols.length - 1);
-  const lastRow = rows.length + 1;
-  const tableRef = 'A1:' + lastCol + lastRow;
-  const tableXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
-    'id="1" name="TablaEstudiantes" displayName="TablaEstudiantes" ref="' + tableRef + '" totalsRowShown="0">' +
-    '<autoFilter ref="' + tableRef + '"/><tableColumns>' +
-    cols.map((c,i) => '<tableColumn id="' + (i+1) + '" name="' + c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') + '"/>').join('') +
-    '</tableColumns><tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/></table>';
-  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary', compression: true });
-  injectTableIntoXlsx(wbout, tableXml, 'Estudiantes', tableRef).then(blob => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-}
-
-async function injectTableIntoXlsx(wboutBinary, tableXml, sheetName, tableRef) {
-  if(typeof JSZip === 'undefined') {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
-  const buf = new ArrayBuffer(wboutBinary.length);
-  const view = new Uint8Array(buf);
-  for(let i=0; i<wboutBinary.length; i++) view[i] = wboutBinary.charCodeAt(i) & 0xFF;
-  const zip = await JSZip.loadAsync(buf);
-  zip.file('xl/tables/table1.xml', tableXml);
-  const sheetFile = 'xl/worksheets/sheet1.xml';
-  let sheetXml = await zip.file(sheetFile).async('string');
-  if(!sheetXml.includes('tableParts')) {
-    sheetXml = sheetXml.replace('</worksheet>', '<tableParts count="1"><tablePart r:id="rId99"/></tableParts></worksheet>');
-    zip.file(sheetFile, sheetXml);
-  }
-  const relsPath = 'xl/worksheets/_rels/sheet1.xml.rels';
-  let relsXml = '';
-  const relsFile = zip.file(relsPath);
-  if(relsFile) {
-    relsXml = await relsFile.async('string');
-    relsXml = relsXml.replace('</Relationships>',
-      '<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/></Relationships>');
-  } else {
-    relsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-      '<Relationship Id="rId99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table1.xml"/>' +
-      '</Relationships>';
-  }
-  zip.file(relsPath, relsXml);
-  let contentTypes = await zip.file('[Content_Types].xml').async('string');
-  if(!contentTypes.includes('table1.xml')) {
-    contentTypes = contentTypes.replace('</Types>',
-      '<Override PartName="/xl/tables/table1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml"/></Types>');
-    zip.file('[Content_Types].xml', contentTypes);
-  }
-  return await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-}
-
-// ─── NORMALIZE COLUMN NAMES ───────────────────────────────────────────────────
-function normCols(rows) {
-  return rows.map(r => {
-    const nr = {};
-    for(const k in r) nr[k.trim().toUpperCase()] = r[k];
-    return nr;
-  });
-}
-
-// ═══════════════════════════════ TAB 1 LOGIC ══════════════════════════════════
-
+// ═══════════════════════════════════════════════════════════════════════════════
+// parseWebTextBlocks — v2.0 (2025-07)
+// ═══════════════════════════════════════════════════════════════════════════════
 function parseWebTextBlocks(rawText) {
-  const filas = [];
-  const rutPorNrc = {};
-  let periodo='', nrc='', materia='', curso='', fechaInicio='', nombreCurso='';
-  const lineas = rawText.split('\n').map(l=>l.trim()).filter(Boolean);
-  for(let i=0; i<lineas.length; i++) {
-    const linea = lineas[i];
-    const upper = linea.toUpperCase();
-    if(upper.startsWith('NOMBRE:')) { nombreCurso = linea.split(':')[1].trim(); continue; }
-    if(upper.includes('CÓDIGO DE CURSO:') || upper.includes('CODIGO DE CURSO:')) {
-      const codigo = linea.split(':')[1].trim().replace(/\s/g,'');
-      const partes = codigo.split('.');
-      if(partes.length>=3) {
-        const materiaCompleta=partes[0], per=partes[1], n=partes[2];
-        periodo=per; nrc=n;
-        const match = materiaCompleta.match(/^([A-Za-z]+)(\d+)$/);
-        materia = match ? match[1].toUpperCase() : materiaCompleta.toUpperCase();
-        curso = match ? match[2].padStart(3,'0') : '';
-        if(!rutPorNrc[nrc]) rutPorNrc[nrc]=new Set();
+  const filas  = [];
+  const seen   = new Set();
+  const lines  = rawText.split('\n');
+  let currentPeriodo='',currentNrc='',currentNrcCod='',currentNombre='';
+  let inTable=false,colRut=-1,colNombre=-1,colEmail=-1,colRol=-1;
+  const RUT_RE=/^\d{7,9}-?[0-9Kk]$/i,PERIODO_RE=/^\d{6}$/;
+
+  for(let i=0;i<lines.length;i++){
+    const raw=lines[i],stripped=raw.trim();
+    if(!stripped)continue;
+    const parts=raw.split('\t'),isTabular=parts.length>=3;
+    if(!isTabular){
+      if(/^Inscripciones de Curso/i.test(stripped)){
+        currentPeriodo='';currentNrc='';currentNrcCod='';currentNombre='';
+        inTable=false;colRut=-1;colNombre=-1;colEmail=-1;colRol=-1;continue;
       }
-      continue;
-    }
-    if(upper.startsWith('INICIO:')) {
-      const fechaRaw = linea.split(':')[1].trim();
-      const p = fechaRaw.split('/');
-      fechaInicio = p.length===3 ? `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}` : fechaRaw;
-      continue;
-    }
-    const matchRut = linea.match(/^(\d{7,8}-?[0-9Kk])$/i);
-    if(!matchRut) continue;
-    const rutActual = matchRut[1].toUpperCase();
-    let emailEncontrado='', nombreEncontrado='';
-    for(let j=1; j<=4; j++) {
-      if(i+j>=lineas.length) break;
-      const futLine = lineas[i+j];
-      if(futLine.includes('@') && !emailEncontrado) {
-        emailEncontrado = futLine.toLowerCase();
-        nombreEncontrado = lineas[i+j-1].toUpperCase();
+      if(PERIODO_RE.test(stripped)){
+        const prev=(lines[i-1]||'').trim().toUpperCase();
+        if(prev==='PERIODO')currentPeriodo=stripped;
+        else if(prev==='NRC')currentNrc=stripped;
+        continue;
       }
-      if(futLine.toUpperCase()==='ESTUDIANTE' && emailEncontrado && nrc) {
-        if(!rutPorNrc[nrc]) rutPorNrc[nrc]=new Set();
-        if(!rutPorNrc[nrc].has(rutActual)) {
-          rutPorNrc[nrc].add(rutActual);
-          filas.push({ PERIODO:periodo, NRC_COD:`${nrc}_${materia}${curso}`, NOMBRE_CURSO:nombreCurso, FECHA_INICIO:fechaInicio, RUT:rutActual, NOMBRE:nombreEncontrado, CORREO_UNAB:emailEncontrado, Columna7:'' });
+      const mNom=stripped.match(/^NOMBRE:\s*(.+)$/i);
+      if(mNom){currentNombre=mNom[1].trim();inTable=false;continue;}
+      const mCod=stripped.match(/^C[ÓO]DIGO:\s*(.+)$/i);
+      if(mCod){
+        const partes=mCod[1].trim().split('.');
+        if(partes.length>=3){
+          const materiaNum=partes[0];
+          if(!currentPeriodo)currentPeriodo=partes[1];
+          if(!currentNrc)currentNrc=partes[2];
+          const mm=materiaNum.match(/^([A-Za-z]+)(\d+)$/);
+          currentNrcCod=mm?`${currentNrc}_${mm[1].toUpperCase()}${mm[2]}`:`${currentNrc}_${materiaNum.toUpperCase()}`;
         }
-        break;
+        inTable=false;continue;
       }
+      continue;
     }
+    const partsClean=parts.map(p=>p.trim()),partsUpper=partsClean.map(p=>p.toUpperCase());
+    const hasRut=partsUpper.some(p=>p==='RUT'),hasEmail=partsUpper.some(p=>p.includes('EMAIL')||p.includes('CORREO')),hasNombre=partsUpper.some(p=>p.includes('NOMBRE'));
+    if(hasRut&&(hasEmail||hasNombre)){
+      inTable=true;
+      colRut=partsUpper.findIndex(p=>p==='RUT');
+      colNombre=partsUpper.findIndex(p=>p.includes('NOMBRE'));
+      colEmail=partsUpper.findIndex(p=>p.includes('EMAIL')||p.includes('CORREO'));
+      colRol=partsUpper.findIndex(p=>p==='ROL');
+      if(colEmail===-1)colEmail=2;if(colNombre===-1)colNombre=1;if(colRut===-1)colRut=0;
+      continue;
+    }
+    if(!inTable)continue;
+    const rutVal=(colRut!==-1&&colRut<partsClean.length)?partsClean[colRut]:partsClean[0];
+    if(!RUT_RE.test(rutVal))continue;
+    let nombreVal=(colNombre!==-1&&colNombre<partsClean.length)?partsClean[colNombre]:'';
+    let emailVal=(colEmail!==-1&&colEmail<partsClean.length)?partsClean[colEmail]:'';
+    const rolVal=(colRol!==-1&&colRol<partsClean.length)?partsClean[colRol]:'';
+    if(!emailVal.includes('@'))emailVal=partsClean.find(p=>p.includes('@')&&p.includes('.'))||'';
+    if(rolVal&&!/ESTUDIANTE/i.test(rolVal))continue;
+    if(!emailVal||!emailVal.includes('@'))continue;
+    const key=`${rutVal.toUpperCase()}|${currentNrcCod}`;
+    if(seen.has(key))continue;seen.add(key);
+    filas.push({PERIODO:currentPeriodo,NRC_COD:currentNrcCod||`${currentNrc}_`,NOMBRE_CURSO:currentNombre,FECHA_INICIO:'',RUT:rutVal.toUpperCase(),NOMBRE:nombreVal.toUpperCase(),CORREO_UNAB:emailVal.toLowerCase(),Columna7:''});
   }
   return filas;
 }
 
-function anyToISO(val) {
-  if(!val && val!==0) return '';
-  if(val instanceof Date) { if(isNaN(val)) return ''; return val.toISOString().substring(0,10); }
-  const s = String(val).replace('.0','').trim();
-  if(!s || s==='NaN') return '';
-  if(/^\d{8}$/.test(s)) return `${s.substring(0,4)}-${s.substring(4,6)}-${s.substring(6,8)}`;
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
-  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-  const d = new Date(s);
-  if(!isNaN(d)) return d.toISOString().substring(0,10);
-  return s;
-}
-
-function findCol(cols, ...keywords) {
-  for(const kw of keywords) {
-    const found = cols.find(c => c.toUpperCase().includes(kw.toUpperCase()));
-    if(found) return found;
+async function processCSVManual(file,nrcCod,fechaInicio){
+  const rows=await readFile(file,true),filas=[];
+  for(const r of rows){
+    const ns=String(r['Nombre de sección']||r['Nombre de secci  n']||'').trim();
+    const rut=String(r['Identificación de SIS del estudiante']||r['Identificacion de SIS del estudiante']||'').trim();
+    const nombre=String(r['Nombre del estudiante']||'').trim();
+    const correo=String(r['Correo electrónico']||r['Correo electronico']||'').trim().toLowerCase();
+    if(!correo||!correo.includes('@')||!rut)continue;
+    let periodo='';if(ns){const m=ns.match(/^(\d{6})/);if(m)periodo=m[1];}
+    let nc='';if(ns&&ns.includes('|'))nc=ns.split('|')[1].trim();
+    filas.push({PERIODO:periodo,NRC_COD:nrcCod,NOMBRE_CURSO:nc,FECHA_INICIO:fechaInicio,RUT:rut,NOMBRE:nombre.toUpperCase(),CORREO_UNAB:correo,Columna7:''});
   }
-  return null;
+  return filas;
 }
 
-async function processTab1() {
-  const resultEl = document.getElementById('t1-result');
-  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Procesando...</div>';
-  try {
-    const mode = state.t1Mode;
-    let filas = [];
-    if(mode==='diario') {
-      const files = state.t1Files;
-      if(!files.length) { resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>'; return; }
-      const fechaFilter = document.getElementById('t1-fecha').value;
-      const nrcFilter = document.getElementById('t1-nrcs').value.trim().split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
-      for(const file of files) {
-        const rawRows = await readFile(file);
-        const rows = normCols(rawRows);
-        if(!rows.length) continue;
-        const cols = Object.keys(rows[0]);
-        const colRol      = findCol(cols, 'ROL');
-        const colFecha    = findCol(cols, 'FECHA_INICIO', 'FECHA INICIO', 'FECHAINICIO');
-        const colNrc      = findCol(cols, 'NRC');
-        const colMateria  = findCol(cols, 'MATERIA');
-        const colCurso    = findCol(cols, 'CURSO');
-        const colNomCurso = findCol(cols, 'NOMBRE_CURSO', 'NOMBRE CURSO');
-        const colPeriodo  = findCol(cols, 'PERIODO');
-        const colRut      = findCol(cols, 'RUT');
-        const colNombre   = cols.find(c => c.toUpperCase().includes('NOMBRE') && !c.toUpperCase().includes('CURSO') && !c.toUpperCase().includes('TUTOR') && !c.toUpperCase().includes('PROGRAMA'));
-        const colCorreoU  = findCol(cols, 'CORREO_UNAB', 'CORREO UNAB', 'CORREO');
-        const colCorreoP  = findCol(cols, 'CORREO_PERSONAL', 'CORREO PERSONAL', 'EMAIL_PERSONAL', 'EMAIL PERSONAL');
-        for(const r of rows) {
-          if(colRol && String(r[colRol]||'').toUpperCase().trim() !== 'ESTUDIANTE') continue;
-          if(fechaFilter && colFecha && r[colFecha]) { const fd = anyToISO(r[colFecha]); if(fd && fd !== fechaFilter) continue; }
-          let nrcCod = '';
-          if(colNrc && colMateria && colCurso) {
-            const nrcStr = String(r[colNrc]||'').replace('.0','').trim();
-            const matStr = String(r[colMateria]||'').trim();
-            const curStr = String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');
-            if(nrcStr) nrcCod = `${nrcStr}_${matStr}${curStr}`;
-          }
-          const ff = colFecha ? anyToISO(r[colFecha]) : '';
-          filas.push({
-            PERIODO: colPeriodo ? String(r[colPeriodo]||'').replace('.0','') : '',
-            NRC_COD: nrcCod,
-            NOMBRE_CURSO: colNomCurso ? String(r[colNomCurso]||'') : '',
-            FECHA_INICIO: ff,
-            RUT: colRut ? String(r[colRut]||'').replace('.0','') : '',
-            NOMBRE: colNombre ? String(r[colNombre]||'') : '',
-            CORREO_UNAB: colCorreoU ? String(r[colCorreoU]||'') : '',
-            Columna7: colCorreoP ? String(r[colCorreoP]||'') : ''
-          });
+async function processTab1(){
+  const resultEl=document.getElementById('t1-result');
+  resultEl.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando...</div>';
+  try{
+    const mode=state.t1Mode;let filas=[];
+    if(mode==='diario'){
+      if(!state.t1Files.length){resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>';return;}
+      const fechaF=document.getElementById('t1-fecha').value;
+      const nrcF=document.getElementById('t1-nrcs').value.trim().split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+      for(const file of state.t1Files){
+        const rawRows=await readFile(file),rows=normCols(rawRows);if(!rows.length)continue;
+        const cols=Object.keys(rows[0]);
+        const colRol=findCol(cols,'ROL'),colFecha=findCol(cols,'FECHA_INICIO','FECHA INICIO','FECHAINICIO'),colNrc=findCol(cols,'NRC'),colMateria=findCol(cols,'MATERIA'),colCurso=findCol(cols,'CURSO'),colNomCurso=findCol(cols,'NOMBRE_CURSO','NOMBRE CURSO'),colPeriodo=findCol(cols,'PERIODO'),colRut=findCol(cols,'RUT'),colNombre=cols.find(c=>c.toUpperCase().includes('NOMBRE')&&!c.toUpperCase().includes('CURSO')&&!c.toUpperCase().includes('TUTOR')&&!c.toUpperCase().includes('PROGRAMA')),colCorreoU=findCol(cols,'CORREO_UNAB','CORREO UNAB','CORREO'),colCorreoP=findCol(cols,'CORREO_PERSONAL','CORREO PERSONAL','EMAIL_PERSONAL','EMAIL PERSONAL');
+        for(const r of rows){
+          if(colRol&&String(r[colRol]||'').toUpperCase().trim()!=='ESTUDIANTE')continue;
+          if(fechaF&&colFecha&&r[colFecha]){const fd=anyToISO(r[colFecha]);if(fd&&fd!==fechaF)continue;}
+          let nrcCod='';
+          if(colNrc&&colMateria&&colCurso){const ns=String(r[colNrc]||'').replace('.0','').trim(),ms=String(r[colMateria]||'').trim(),cs=String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');if(ns)nrcCod=`${ns}_${ms}${cs}`;}
+          const ff=colFecha?anyToISO(r[colFecha]):'';
+          filas.push({PERIODO:colPeriodo?String(r[colPeriodo]||'').replace('.0',''):'',NRC_COD:nrcCod,NOMBRE_CURSO:colNomCurso?String(r[colNomCurso]||''):'',FECHA_INICIO:ff,RUT:colRut?String(r[colRut]||'').replace('.0',''):'',NOMBRE:colNombre?String(r[colNombre]||''):'',CORREO_UNAB:colCorreoU?String(r[colCorreoU]||''):'',Columna7:colCorreoP?String(r[colCorreoP]||''):''});
         }
       }
-      const seen=new Set();
-      filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
-      if(nrcFilter.length) filas = filas.filter(r=>nrcFilter.includes(r.NRC_COD?.toUpperCase()));
-    } else if(mode==='manual') {
-      const files = state.t1mFiles;
-      if(!files.length) { resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>'; return; }
-      for(const file of files) {
-        const rawRows = await readFile(file, false);
-        const rawText = rawRows.map(r=>r.filter(c=>String(c).trim()).join('\t')).join('\n');
-        filas.push(...parseWebTextBlocks(rawText));
-      }
-      const seen=new Set();
-      filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
-    } else {
-      const txt = document.getElementById('t1-rawtext').value;
-      if(!txt.trim()) { resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>'; return; }
-      filas = parseWebTextBlocks(txt);
-      const seen=new Set();
-      filas = filas.filter(r => { const k=JSON.stringify(r); if(seen.has(k)) return false; seen.add(k); return true; });
+      const seen=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seen.has(k))return false;seen.add(k);return true;});
+      if(nrcF.length)filas=filas.filter(r=>nrcF.includes(r.NRC_COD?.toUpperCase()));
+      if(!filas.length){resultEl.innerHTML='<div class="alert info">No se encontraron registros.</div>';return;}
+      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
+      const td=document.createElement('div');resultEl.appendChild(td);renderTable(filas,td);
+      const br=document.createElement('div');br.className='btn-row';const ts=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+      br.innerHTML='<button class="btn" onclick="exportXLSXConTabla(state.t1Data,\'Estudiantes_Formateados_'+ts+'.xlsx\')">✅ Descargar Excel</button>';resultEl.appendChild(br);
+    }else if(mode==='manual'){
+      const nrcCod=document.getElementById('t1m-nrccod').value.trim();
+      const fechaInicio=document.getElementById('t1m-fecha').value;
+      if(!nrcCod){resultEl.innerHTML='<div class="alert error">Debes ingresar el NRC_COD.</div>';return;}
+      if(!fechaInicio){resultEl.innerHTML='<div class="alert error">Debes ingresar la FECHA INICIO.</div>';return;}
+      if(!state.t1mFiles.length){resultEl.innerHTML='<div class="alert error">Debes subir un archivo CSV.</div>';return;}
+      const nf=await processCSVManual(state.t1mFiles[0],nrcCod,fechaInicio);
+      if(!nf.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros válidos.</div>';return;}
+      state.t1mAccumulated.push(...nf);renderAccumulatedTable();
+      document.getElementById('btn-clear-accum').style.display='inline-flex';
+      document.getElementById('t1m-nrccod').value='';document.getElementById('t1m-fecha').value=new Date().toISOString().substring(0,10);document.getElementById('drop1m-names').textContent='';state.t1mFiles=[];
+    }else{
+      const txt=document.getElementById('t1-rawtext').value;
+      if(!txt.trim()){resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>';return;}
+      filas=parseWebTextBlocks(txt);
+      const seenF=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seenF.has(k))return false;seenF.add(k);return true;});
+      if(!filas.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros. Verifica que hayas copiado la página completa incluyendo el encabezado del curso (NOMBRE/CÓDIGO).</div>';return;}
+      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros (solo Estudiantes).</div>`;
+      const td=document.createElement('div');resultEl.appendChild(td);renderTable(filas,td);
+      const br=document.createElement('div');br.className='btn-row';const ts2=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
+      br.innerHTML='<button class="btn" onclick="exportXLSXConTabla(state.t1Data,\'Estudiantes_Formateados_'+ts2+'.xlsx\')">✅ Descargar Excel</button>';resultEl.appendChild(br);
     }
-    if(!filas.length) { resultEl.innerHTML='<div class="alert info">No se encontraron registros con los criterios indicados.</div>'; return; }
-    state.t1Data = filas;
-    resultEl.innerHTML = `<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
-    const tableDiv = document.createElement('div');
-    resultEl.appendChild(tableDiv);
-    renderTable(filas, tableDiv);
-    const btnRow = document.createElement('div');
-    btnRow.className = 'btn-row';
-    const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-    const fname = (mode==='manual') ? 'Nomina.xlsx' : 'Estudiantes_Formateados_' + ts + '.xlsx';
-    const exportFn = (mode==='manual') ? 'exportXLSX' : 'exportXLSXConTabla';
-    btnRow.innerHTML = '<button class="btn" onclick="' + exportFn + '(state.t1Data, \'' + fname + '\')">✅ Descargar Excel</button>';
-    resultEl.appendChild(btnRow);
-  } catch(err) {
-    resultEl.innerHTML = `<div class="alert error">Error al procesar: ${err.message}</div>`;
-    console.error(err);
-  }
+  }catch(err){resultEl.innerHTML=`<div class="alert error">Error al procesar: ${err.message}</div>`;}
 }
 
-// ═══════════════════════════════ TAB 2 LOGIC ══════════════════════════════════
-
-// ─── DETECTOR: Nómina tipo "Alumno Potencial" (exportación CRM/Dynamics) ──────
-// Criterio: la fila de encabezados contiene el sufijo "(Alumno Potencial)"
-// Y tiene columnas RUT y DV separadas. Esto la distingue sin ambigüedad.
-function isAlumnoPotencialNomina(headerRow) {
-  const joined = headerRow.map(c => String(c||'')).join('|').toLowerCase();
-  return joined.includes('alumno potencial') && joined.includes('dv');
-}
-
-// Procesa nómina tipo "Alumno Potencial".
-// Construye RUT completo (RUT-DV), nombre desde tres columnas separadas
-// y extrae el correo desde la columna "Correo Electrónico".
-// Devuelve el mismo esquema de columnas de salida que la lógica genérica.
-function procesarAlumnoPotencial(rawRows, params) {
-  const { tn, tc, ta, pr, ni, c1, c2, fi, ff } = params;
-  const headers = rawRows[0].map(h => String(h||'').trim());
-
-  // Busca índice por coincidencia parcial, tolerante a espacios extra y mayúsculas
-  const findIdx = (...kws) => {
-    for(const kw of kws) {
-      const idx = headers.findIndex(h => h.toLowerCase().includes(kw.toLowerCase()));
-      if(idx !== -1) return idx;
-    }
-    return -1;
-  };
-
-  const idxRut    = findIdx('RUT (Alumno Potencial)');
-  const idxDv     = findIdx('DV (Alumno Potencial)');
-  const idxNombre = findIdx('Nombre (Alumno Potencial)');
-  const idxCorreo = findIdx('Correo Electrónico', 'Correo Electronico', 'correo electrónico');
-
-  const salida = [];
-
-  for(let i = 1; i < rawRows.length; i++) {
-    const row = rawRows[i];
-    // Saltar filas completamente vacías
-    if(!row || row.every(c => !String(c||'').trim())) continue;
-
-    // Correo: campo obligatorio
-    const correo = idxCorreo !== -1 ? String(row[idxCorreo]||'').trim().toLowerCase() : '';
-    if(!correo || !correo.includes('@')) continue;
-
-    // RUT + DV → "12345678-9"
-    const rutBase = idxRut !== -1 ? String(row[idxRut]||'').replace('.0','').trim() : '';
-    const dvVal   = idxDv  !== -1 ? String(row[idxDv] ||'').replace('.0','').trim().toUpperCase() : '';
-    const rut = (rutBase && dvVal) ? `${rutBase}-${dvVal}` : rutBase;
-
-    // Nombre completo: la columna "Nombre (Alumno Potencial)" ya trae nombre + apellidos completos
-    const nombreRaw = idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '';
-    const nombre = (nombreRaw && nombreRaw.toLowerCase() !== 'nan') ? nombreRaw.toUpperCase() : '';
-
-    const fila = {
-      'Columna1':                     salida.length + 1,
-      'NOMBRES':                       nombre,
-      'Rut o ID':                      rut,
-      'CORREO':                        correo,
-      'NOMBRE TUTOR':                  tn,
-      'CORREO TUTOR':                  tc,
-      'ANEXO TUTOR':                   ta,
-      'NOMBRE DE PROGRAMA':            pr,
-      'NRC Y NOMBRE DE CURSO INDUCC':  ni,
-      'NOMBRE PRIMER CURSO':           c1,
-      'FECHA INICIO INDUCCION':        fi,
-      'FECHA TERMINO INDUCCION':       ff,
-      'FECHA_INICIO_CALCULADA':        fi,
-      'FECHA FIN CALCULADA':           ff,
-      'Columna2':                      'Pendiente'
-    };
-    if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
-    salida.push(fila);
+function isAlumnoPotencialNomina(hRow){const j=hRow.map(c=>String(c||'')).join('|').toLowerCase();return j.includes('alumno potencial')&&j.includes('dv');}
+function procesarAlumnoPotencial(rawRows,p){
+  const{tn,tc,ta,pr,ni,c1,c2,fi,ff}=p,headers=rawRows[0].map(h=>String(h||'').trim());
+  const fi2=i=>headers.findIndex(h=>h.toLowerCase().includes(i.toLowerCase()));
+  const iRut=headers.findIndex(h=>h.toLowerCase().includes('rut (alumno')),iDv=headers.findIndex(h=>h.toLowerCase().includes('dv (alumno')),iNom=headers.findIndex(h=>h.toLowerCase().includes('nombre (alumno')),iCor=fi2('correo electrónico');
+  const salida=[];
+  for(let i=1;i<rawRows.length;i++){
+    const row=rawRows[i];if(!row||row.every(c=>!String(c||'').trim()))continue;
+    const correo=iCor!==-1?String(row[iCor]||'').trim().toLowerCase():'';if(!correo||!correo.includes('@'))continue;
+    const rutBase=iRut!==-1?String(row[iRut]||'').replace('.0','').trim():'',dvVal=iDv!==-1?String(row[iDv]||'').replace('.0','').trim().toUpperCase():'';
+    const rut=(rutBase&&dvVal)?`${rutBase}-${dvVal}`:rutBase;
+    const nRaw=iNom!==-1?String(row[iNom]||'').trim():'',nombre=(nRaw&&nRaw.toLowerCase()!=='nan')?nRaw.toUpperCase():'';
+    const fila={'Columna1':salida.length+1,'NOMBRES':nombre,'Rut o ID':rut,'CORREO':correo,'NOMBRE TUTOR':tn,'CORREO TUTOR':tc,'ANEXO TUTOR':ta,'NOMBRE DE PROGRAMA':pr,'NRC Y NOMBRE DE CURSO INDUCC':ni,'NOMBRE PRIMER CURSO':c1,'FECHA INICIO INDUCCION':fi,'FECHA TERMINO INDUCCION':ff,'FECHA_INICIO_CALCULADA':fi,'FECHA FIN CALCULADA':ff,'Columna2':'Pendiente'};
+    if(c2)fila['NOMBRE SEGUNDO CURSO']=c2;salida.push(fila);
   }
   return salida;
 }
 
-async function processTab2() {
-  const resultEl = document.getElementById('t2-result');
-  const actionsEl = document.getElementById('t2-actions');
-  actionsEl.style.display='none';
-  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Construyendo plantilla...</div>';
-
-  if(!state.t2File) { resultEl.innerHTML='<div class="alert error">Sube la nómina original primero.</div>'; return; }
-
-  try {
-    // Leer siempre como array crudo (sin header automático) para poder detectar el tipo
-    const rawRows = await readFile(state.t2File, false);
-
-    // Campos de inducción, comunes a todos los formatos
-    const tn = document.getElementById('t2-tn').value;
-    const tc = document.getElementById('t2-tc').value;
-    const ta = document.getElementById('t2-ta').value;
-    const pr = document.getElementById('t2-pr').value;
-    const ni = document.getElementById('t2-ni').value;
-    const c1 = document.getElementById('t2-c1').value;
-    const c2 = document.getElementById('t2-c2').value.trim();
-    const fi = document.getElementById('t2-fi').value;
-    const ff = document.getElementById('t2-ff').value;
-    const params = { tn, tc, ta, pr, ni, c1, c2, fi, ff };
-
-    let salida = [];
-
-    // ── DETECCIÓN DE TIPO ────────────────────────────────────────────────────
-    const firstRow = rawRows[0] || [];
-
-    if(isAlumnoPotencialNomina(firstRow)) {
-      // RAMAL A: Nómina CRM / Alumno Potencial (exportación Dynamics)
-      salida = procesarAlumnoPotencial(rawRows, params);
-
-    } else {
-      // RAMAL B: Lógica genérica original — sin ninguna modificación
-      let hIdx=-1;
-      for(let i=0; i<Math.min(20,rawRows.length); i++) {
-        const rowStr = rawRows[i].join(' ').toUpperCase();
-        if((rowStr.includes('RUT')||rowStr.includes('ID')) && (rowStr.includes('CORREO')||rowStr.includes('EMAIL')||rowStr.includes('MAIL'))) {
-          hIdx=i; break;
-        }
-      }
-
-      const headers = hIdx!==-1 ? rawRows[hIdx].map(h=>String(h).toUpperCase().trim()) : rawRows[0].map((_,i)=>`C${i}`);
-      const dataRows = rawRows.slice(hIdx+1);
-      const seenH=new Set(), finalHeaders=[];
-      for(const h of headers) {
-        finalHeaders.push(seenH.has(h) ? h+'_R' : h);
-        seenH.add(h);
-      }
-
-      const emailRe = /[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-      const rutRe = /\b(\d{7,8}-?[0-9Kk])\b/i;
-
-      for(const rawRow of dataRows) {
-        const r = {};
-        finalHeaders.forEach((h,i) => r[h] = String(rawRow[i]??''));
-        const rowStr = Object.values(r).join(' ');
-        if(!rowStr.includes('@')) continue;
-
-        const emails = rowStr.match(emailRe)||[];
-        let correoPersonal = emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';
-        if(!correoPersonal && emails.length) correoPersonal = emails[0].toLowerCase();
-        if(!correoPersonal) continue;
-        correoPersonal = correoPersonal.toLowerCase();
-
-        const rutCol = finalHeaders.find(h=>h.includes('RUT')||h.includes('ID'));
-        let rut = '';
-        if(rutCol && r[rutCol]) {
-          const v = String(r[rutCol]).replace('.0','').trim().toUpperCase();
-          if(/^\d{7,9}-?[0-9Kk]$/i.test(v)) rut=v;
-        }
-        if(!rut) { const m=rowStr.match(rutRe); if(m) rut=m[1].toUpperCase(); }
-
-        const nombreCol = finalHeaders.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR'));
-        const apellidoCol = finalHeaders.find(h=>h.includes('APELLIDO'));
-        const partes = [];
-        if(nombreCol && r[nombreCol] && r[nombreCol].toLowerCase()!=='nan') partes.push(r[nombreCol].trim());
-        if(apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase()!=='nan') partes.push(r[apellidoCol].trim());
-        const nombre = partes.join(' ').trim().toUpperCase() || '';
-
-        const fila = {
-          'Columna1': salida.length+1,
-          'NOMBRES': nombre,
-          'Rut o ID': rut,
-          'CORREO': correoPersonal,
-          'NOMBRE TUTOR': tn,
-          'CORREO TUTOR': tc,
-          'ANEXO TUTOR': ta,
-          'NOMBRE DE PROGRAMA': pr,
-          'NRC Y NOMBRE DE CURSO INDUCC': ni,
-          'NOMBRE PRIMER CURSO': c1,
-          'FECHA INICIO INDUCCION': fi,
-          'FECHA TERMINO INDUCCION': ff,
-          'FECHA_INICIO_CALCULADA': fi,
-          'FECHA FIN CALCULADA': ff,
-          'Columna2': 'Pendiente'
-        };
-        if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
-        salida.push(fila);
+async function processTab2(){
+  const re=document.getElementById('t2-result'),ae=document.getElementById('t2-actions');ae.style.display='none';
+  re.innerHTML='<div class="alert info"><span class="spinner"></span> Construyendo plantilla...</div>';
+  if(!state.t2File){re.innerHTML='<div class="alert error">Sube la nómina original primero.</div>';return;}
+  try{
+    const rawRows=await readFile(state.t2File,false);
+    const tn=document.getElementById('t2-tn').value||document.getElementById('t2-tutor-sel').value,tc=document.getElementById('t2-tc').value,ta=document.getElementById('t2-ta').value,pr=document.getElementById('t2-pr').value,ni=document.getElementById('t2-ni').value||document.getElementById('t2-ni-display').value,c1=document.getElementById('t2-c1').value,c2=document.getElementById('t2-c2').value.trim(),fi=document.getElementById('t2-fi').value,ff=document.getElementById('t2-ff').value;
+    let salida=[];
+    if(isAlumnoPotencialNomina(rawRows[0]||[])){salida=procesarAlumnoPotencial(rawRows,{tn,tc,ta,pr,ni,c1,c2,fi,ff});}
+    else{
+      let hIdx=-1;for(let i=0;i<Math.min(20,rawRows.length);i++){const rs=rawRows[i].join(' ').toUpperCase();if((rs.includes('RUT')||rs.includes('ID'))&&(rs.includes('CORREO')||rs.includes('EMAIL')||rs.includes('MAIL'))){hIdx=i;break;}}
+      const headers=hIdx!==-1?rawRows[hIdx].map(h=>String(h).toUpperCase().trim()):rawRows[0].map((_,i)=>`C${i}`);
+      const dataRows=rawRows.slice(hIdx+1);const seenH=new Set(),fH=[];for(const h of headers){fH.push(seenH.has(h)?h+'_R':h);seenH.add(h);}
+      const emailRe=/[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g,rutRe=/\b(\d{7,8}-?[0-9Kk])\b/i;
+      for(const rr of dataRows){
+        const r={};fH.forEach((h,i)=>r[h]=String(rr[i]??''));const rs=Object.values(r).join(' ');if(!rs.includes('@'))continue;
+        const emails=rs.match(emailRe)||[];let cp=emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';if(!cp&&emails.length)cp=emails[0].toLowerCase();if(!cp)continue;cp=cp.toLowerCase();
+        const rc=fH.find(h=>h.includes('RUT')||h.includes('ID'));let rut='';if(rc&&r[rc]){const v=String(r[rc]).replace('.0','').trim().toUpperCase();if(/^\d{7,9}-?[0-9Kk]$/i.test(v))rut=v;}if(!rut){const m=rs.match(rutRe);if(m)rut=m[1].toUpperCase();}
+        const nc=fH.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR')),ac=fH.find(h=>h.includes('APELLIDO'));const pt=[];if(nc&&r[nc]&&r[nc].toLowerCase()!=='nan')pt.push(r[nc].trim());if(ac&&r[ac]&&r[ac].toLowerCase()!=='nan')pt.push(r[ac].trim());const nombre=pt.join(' ').trim().toUpperCase()||'';
+        const fila={'Columna1':salida.length+1,'NOMBRES':nombre,'Rut o ID':rut,'CORREO':cp,'NOMBRE TUTOR':tn,'CORREO TUTOR':tc,'ANEXO TUTOR':ta,'NOMBRE DE PROGRAMA':pr,'NRC Y NOMBRE DE CURSO INDUCC':ni,'NOMBRE PRIMER CURSO':c1,'FECHA INICIO INDUCCION':fi,'FECHA TERMINO INDUCCION':ff,'FECHA_INICIO_CALCULADA':fi,'FECHA FIN CALCULADA':ff,'Columna2':'Pendiente'};
+        if(c2)fila['NOMBRE SEGUNDO CURSO']=c2;salida.push(fila);
       }
     }
-    // ── FIN DETECCIÓN ────────────────────────────────────────────────────────
-
-    if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos en el archivo.</div>'; return; }
-
-    state.t2Data = salida;
-    resultEl.innerHTML = `<div class="alert success">🎉 Plantilla generada con éxito. <span class="badge">${salida.length}</span> registros.</div>`;
-    const tableDiv = document.createElement('div');
-    resultEl.appendChild(tableDiv);
-    renderTable(salida, tableDiv);
-    actionsEl.style.display='flex';
-
-  } catch(err) {
-    resultEl.innerHTML = `<div class="alert error">Error: ${err.message}</div>`;
-    console.error(err);
-  }
+    if(!salida.length){re.innerHTML='<div class="alert info">No se encontraron correos válidos.</div>';return;}
+    state.t2Data=salida;re.innerHTML=`<div class="alert success">🎉 Plantilla generada. <span class="badge">${salida.length}</span> registros.</div>`;
+    const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
+  }catch(err){re.innerHTML=`<div class="alert error">Error: ${err.message}</div>`;}
+}
+function downloadTab2(){if(!state.t2Data)return;exportXLSXConTabla(state.t2Data,'Nomina_SharePoint_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx');}
+async function sendToSharePoint(){
+  if(!state.t2Data)return;const sr=document.getElementById('t2-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t2Data)});
+  if(res.ok||res.status===202){sr.innerHTML='<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';document.getElementById('t2-paso3').style.display='block';}else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
+  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
 }
 
-function downloadTab2() {
-  if(!state.t2Data) return;
-  exportXLSX(state.t2Data, 'Nomina_SharePoint.xlsx');
-}
-
-async function sendToSharePoint() {
-  if(!state.t2Data) return;
-  const spResult = document.getElementById('t2-sp-result');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t2Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
-      document.getElementById('t2-paso3').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+function formatSyncDisplay(ds,ts){const dias=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'],meses=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'],d=new Date(ds+'T00:00:00'),di=(d.getDay()+6)%7;return`${dias[di]} ${String(d.getDate()).padStart(2,'0')} DE ${meses[d.getMonth()]} ${ts} HRS`;}
+async function processTab3(){
+  const re=document.getElementById('t3-result'),ae=document.getElementById('t3-actions');ae.style.display='none';
+  re.innerHTML='<div class="alert info"><span class="spinner"></span> Construyendo invitaciones...</div>';
+  if(!state.t3File){re.innerHTML='<div class="alert error">Sube la nómina original primero.</div>';return;}
+  try{
+    const rawRows=await readFile(state.t3File,false);let hIdx=-1;
+    for(let i=0;i<Math.min(20,rawRows.length);i++){const rs=rawRows[i].join(' ').toUpperCase();if((rs.includes('RUT')||rs.includes('ID'))&&(rs.includes('CORREO')||rs.includes('EMAIL')||rs.includes('MAIL'))){hIdx=i;break;}}
+    const headers=hIdx!==-1?rawRows[hIdx].map(h=>String(h).toUpperCase().trim()):rawRows[0].map((_,i)=>`C${i}`);
+    const dataRows=rawRows.slice(hIdx+1);const seenH=new Set(),fH=[];for(const h of headers){fH.push(seenH.has(h)?h+'_R':h);seenH.add(h);}
+    const curso=document.getElementById('t3-curso').value,fIni=document.getElementById('t3-fechainicio').value,link=document.getElementById('t3-link').value,fcal=document.getElementById('t3-fechacal').value,fSes=document.getElementById('t3-fechasesion').value,hora=document.getElementById('t3-hora').value,cTut=document.getElementById('t3-correotutor').value,nTut=document.getElementById('t3-nombretutor').value;
+    const emailRe=/[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g,salida=[];
+    for(const rr of dataRows){
+      const r={};fH.forEach((h,i)=>r[h]=String(rr[i]??''));const rs=Object.values(r).join(' ');if(!rs.includes('@'))continue;
+      const emails=rs.match(emailRe)||[];let ce=emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';if(!ce&&emails.length)ce=emails[0].toLowerCase();if(!ce)continue;ce=ce.toLowerCase();
+      const nc=fH.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR')),ac=fH.find(h=>h.includes('APELLIDO'));const pt=[];if(nc&&r[nc]&&r[nc].toLowerCase()!=='nan')pt.push(r[nc].trim());if(ac&&r[ac]&&r[ac].toLowerCase()!=='nan')pt.push(r[ac].trim());const nombre=pt.join(' ').trim().toUpperCase();
+      salida.push({'NOMBRE ESTUDIANTE':nombre,'CORREO ESTUDIANTE':ce,'CURSO DE INDUCCION':curso,'FECHA INICIO CURSO DE INDUCCION':fIni?formatDateDMY(fIni):'','FECHA Y HORA SESION SINCRONICA':fSes?formatSyncDisplay(fSes,hora):'','FORMATO FECHA HORA':fSes?`${fSes} ${hora}`:'','LINK SESION SINCRONICA':link,'CORREO TUTOR':cTut,'NOMBRE TUTOR':nTut.toUpperCase(),'fechacal':fcal?formatDateSlash(fcal):''});
     }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
+    if(!salida.length){re.innerHTML='<div class="alert info">No se encontraron correos válidos.</div>';return;}
+    state.t3Data=salida;re.innerHTML=`<div class="alert success">🎉 Plantilla de invitación generada. <span class="badge">${salida.length}</span> registros.</div>`;
+    const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
+  }catch(err){re.innerHTML=`<div class="alert error">Error: ${err.message}</div>`;}
+}
+function downloadTab3(){if(!state.t3Data)return;exportXLSXConTabla(state.t3Data,'Envio_invitacion_sesion_sincronica_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx');}
+async function sendToSharePointSync(){
+  if(!state.t3Data)return;const sr=document.getElementById('t3-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/911641e897164b58afde2903d140469b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bCmCw-jpQFCyzSAmKB_zgB6ekd13ogiiWfZbpsNHdG4",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t3Data)});
+  if(res.ok||res.status===202){sr.innerHTML='<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';document.getElementById('t3-paso3').style.display='block';}else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
+  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
 }
 
-async function sendToSharePointMiguel() {
-  if(!state.t2Data) return;
-  const spResult = document.getElementById('t2-sp-result-miguel');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t2Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
-      document.getElementById('t2-paso3-miguel').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+function calDetectarHeader(cols){
+  const cu=cols.map(c=>(c||'').trim().toLowerCase()),hits={};
+  const KEYS={nrc:['nrc'],codigo:['código asignatura','codigo asignatura','codigo curso','código curso'],nombre:['nombre asignatura','nombre del curso','nombre curso','asignatura'],inicio:['fecha de inicio','fecha inicio','inicio'],termino:['fecha de término','fecha de termino','fecha término','término','termino','fecha_fin','fecha fin'],periodo:['período','periodo'],profesor:['nombre profesor','profesor'],facultad:['facultad']};
+  for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw))){if(!(campo in hits))hits[campo]=i;}}}
+  return Object.keys(hits).length>=2?hits:null;
+}
+function calFmtFecha(v){if(!v)return'';const s=String(v).trim().replace(/\.+$/,'').trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// parsearTextoCalendario
+// Cambio v2025-07: NRC vacío → TMP-<CODIGO>-<YYYYMMDDTHHMM>-<SEQ>
+// Globalmente único: timestamp fijo por ejecución + secuencial local.
+// Sin columnas adicionales. Estructura del objeto idéntica a la versión anterior.
+// ═══════════════════════════════════════════════════════════════════════════════
+function parsearTextoCalendario(texto){
+  const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];
+  let headerMap=null,mF='',mP='',mPer='';
+  // Timestamp fijo para todo el procesamiento: YYYYMMDDTHHMM
+  const now=new Date();
+  const ts=now.getFullYear().toString()
+    +(now.getMonth()+1).toString().padStart(2,'0')
+    +now.getDate().toString().padStart(2,'0')
+    +'T'
+    +now.getHours().toString().padStart(2,'0')
+    +now.getMinutes().toString().padStart(2,'0');
+  // Contador secuencial local para desambiguar dentro del mismo procesamiento
+  let tmpSeq=0;
+
+  for(const linea of lineas){
+    const cols=linea.split('\t'),cs=cols.map(c=>c.trim()),ne=cs.filter(Boolean);if(!ne.length)continue;const c0=cs[0].toLowerCase();
+    if(c0==='facultad'){const v=cs.slice(1).find(Boolean)||'';if(v)mF=v;}
+    if(c0.includes('nombre de programa')||c0.includes('nombre del programa')){const v=cs.slice(1).find(Boolean)||'';if(v)mP=v;}
+    if(c0.startsWith('período')||c0.startsWith('periodo')){const v=cs.slice(1).find(c=>/^\d{6}$/.test(c))||'';if(v)mPer=v;}
+    if(ne.length===1&&ne[0].length>30&&/magíster|master|mba|diplomado|ingeniería|educación|salud/i.test(ne[0])&&!/\d{2}[\/\-]\d{2}[\/\-]\d{4}/.test(ne[0]))mP=ne[0];
+    const hmap=calDetectarHeader(cs);if(hmap){headerMap=hmap;continue;}if(!headerMap)continue;
+    const ni=headerMap.nrc;if(ni===undefined)continue;
+    const nv=(ni<cs.length)?cs[ni]:'';
+    const get=(c,d)=>{const i=headerMap[c];return(i!==undefined&&i<cs.length)?cs[i]:(d||'');};
+    let codigo=get('codigo').replace(/\s+/g,'').toUpperCase(),nombre=get('nombre');
+    const inicio=calFmtFecha(get('inicio')),termino=calFmtFecha(get('termino')),periodo=get('periodo')||mPer;let profesor=get('profesor').trim();const facultad=get('facultad')||mF;
+    if(!codigo&&nombre){const mm=nombre.match(/^([A-Z]{2,6}\d{3,4}[A-Z]?\d?)\s+(.+)$/i);if(mm){codigo=mm[1].replace(/\s+/g,'').toUpperCase();nombre=mm[2].trim();}}
+    if(!codigo&&/INDUCC/i.test(nombre))codigo='INDUCCION';
+    if(!profesor||/^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor))profesor='POR DEFINIR';
+    if(!nombre&&!inicio)continue;
+    // ── Validar que inicio sea fecha real YYYY-MM-DD ────────────────────────
+    // "Períodos en que se dictan" y textos similares quedan en la col Inicio
+    // cuando se copian desde Excel → calFmtFecha los devuelve tal cual (no ISO).
+    // Solo aceptar si el resultado es YYYY-MM-DD estricto.
+    const FECHA_ISO=/^\d{4}-\d{2}-\d{2}$/;
+    if(!FECHA_ISO.test(inicio))continue;   // no es fecha → fila basura → skip
+    // ── NRC: real o temporal globalmente único ──────────────────────────────
+    let nrcFinal='';
+    if(NRC_PAT.test(nv)){
+      nrcFinal=nv;
+    }else{
+      // inicio válido pero NRC vacío → curso real sin NRC asignado aún
+      tmpSeq++;
+      const base=(codigo||nombre.replace(/[^A-Z0-9]/gi,'').toUpperCase().substring(0,6)||'CURSO');
+      nrcFinal='TMP-'+base+'-'+ts+'-'+String(tmpSeq).padStart(2,'0');
     }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-async function sendToSharePointPabloDaniela() {
-  if(!state.t2Data) return;
-  const spResult = document.getElementById('t2-sp-result-pablo-daniela');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Pablo_Daniela...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d040109474f04cebbc90300640607f30/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=35S4lnBFfc3aPPnEcX0P2g0DDpPMxCPvBeyLNZXjq7c";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t2Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
-      document.getElementById('t2-paso3-pablo-daniela').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-// ═══════════════════════════════ TAB 3 LOGIC ══════════════════════════════════
-
-function formatSyncDisplay(dateStr, timeStr) {
-  const dias = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-  const meses = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-  const d = new Date(dateStr+'T00:00:00');
-  const dayIdx = (d.getDay()+6)%7;
-  return `${dias[dayIdx]} ${String(d.getDate()).padStart(2,'0')} DE ${meses[d.getMonth()]} ${timeStr} HRS`;
-}
-
-async function processTab3() {
-  const resultEl = document.getElementById('t3-result');
-  const actionsEl = document.getElementById('t3-actions');
-  actionsEl.style.display='none';
-  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Construyendo invitaciones...</div>';
-  if(!state.t3File) { resultEl.innerHTML='<div class="alert error">Sube la nómina original primero.</div>'; return; }
-  try {
-    const rawRows = await readFile(state.t3File, false);
-    let hIdx=-1;
-    for(let i=0; i<Math.min(20,rawRows.length); i++) {
-      const rowStr = rawRows[i].join(' ').toUpperCase();
-      if((rowStr.includes('RUT')||rowStr.includes('ID')) && (rowStr.includes('CORREO')||rowStr.includes('EMAIL')||rowStr.includes('MAIL'))) {
-        hIdx=i; break;
-      }
-    }
-    const headers = hIdx!==-1 ? rawRows[hIdx].map(h=>String(h).toUpperCase().trim()) : rawRows[0].map((_,i)=>`C${i}`);
-    const dataRows = rawRows.slice(hIdx+1);
-    const seenH=new Set(), finalHeaders=[];
-    for(const h of headers) { finalHeaders.push(seenH.has(h) ? h+'_R' : h); seenH.add(h); }
-
-    const curso       = document.getElementById('t3-curso').value;
-    const fechaInicio = document.getElementById('t3-fechainicio').value;
-    const link        = document.getElementById('t3-link').value;
-    const fechacal    = document.getElementById('t3-fechacal').value;
-    const fechaSesion = document.getElementById('t3-fechasesion').value;
-    const hora        = document.getElementById('t3-hora').value;
-    const correoTutor = document.getElementById('t3-correotutor').value;
-    const nombreTutor = document.getElementById('t3-nombretutor').value;
-
-    const emailRe = /[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-    const salida = [];
-
-    for(const rawRow of dataRows) {
-      const r = {};
-      finalHeaders.forEach((h,i) => r[h] = String(rawRow[i]??''));
-      const rowStr = Object.values(r).join(' ');
-      if(!rowStr.includes('@')) continue;
-      const emails = rowStr.match(emailRe)||[];
-      let correoEst = emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';
-      if(!correoEst && emails.length) correoEst = emails[0].toLowerCase();
-      if(!correoEst) continue;
-      correoEst = correoEst.toLowerCase();
-      const nombreCol = finalHeaders.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR'));
-      const apellidoCol = finalHeaders.find(h=>h.includes('APELLIDO'));
-      const partes = [];
-      if(nombreCol && r[nombreCol] && r[nombreCol].toLowerCase()!=='nan') partes.push(r[nombreCol].trim());
-      if(apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase()!=='nan') partes.push(r[apellidoCol].trim());
-      const nombre = partes.join(' ').trim().toUpperCase();
-      const fechaHoraDisplay = fechaSesion ? formatSyncDisplay(fechaSesion, hora) : '';
-      const formatoFechaHora = fechaSesion ? `${fechaSesion} ${hora}` : '';
-      const fechaInicioDMY = fechaInicio ? formatDateDMY(fechaInicio) : '';
-      const fechacalSlash  = fechacal    ? formatDateSlash(fechacal)  : '';
-      salida.push({
-        'NOMBRE ESTUDIANTE': nombre, 'CORREO ESTUDIANTE': correoEst,
-        'CURSO DE INDUCCION': curso, 'FECHA INICIO CURSO DE INDUCCION': fechaInicioDMY,
-        'FECHA Y HORA SESION SINCRONICA': fechaHoraDisplay, 'FORMATO FECHA HORA': formatoFechaHora,
-        'LINK SESION SINCRONICA': link, 'CORREO TUTOR': correoTutor,
-        'NOMBRE TUTOR': nombreTutor.toUpperCase(), 'fechacal': fechacalSlash
-      });
-    }
-    if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos en el archivo.</div>'; return; }
-    state.t3Data = salida;
-    resultEl.innerHTML = `<div class="alert success">🎉 Plantilla de invitación generada. <span class="badge">${salida.length}</span> registros.</div>`;
-    const tableDiv = document.createElement('div');
-    resultEl.appendChild(tableDiv);
-    renderTable(salida, tableDiv);
-    actionsEl.style.display='flex';
-  } catch(err) {
-    resultEl.innerHTML = `<div class="alert error">Error: ${err.message}</div>`;
-    console.error(err);
-  }
-}
-
-function downloadTab3() {
-  if(!state.t3Data) return;
-  exportXLSX(state.t3Data, 'Envio_invitacion_sesion_sincronica.xlsx');
-}
-
-async function sendToSharePointSync() {
-  if(!state.t3Data) return;
-  const spResult = document.getElementById('t3-sp-result');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/911641e897164b58afde2903d140469b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bCmCw-jpQFCyzSAmKB_zgB6ekd13ogiiWfZbpsNHdG4";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t3Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
-      document.getElementById('t3-paso3').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-async function sendToSharePointSyncMiguel() {
-  if(!state.t3Data) return;
-  const spResult = document.getElementById('t3-sp-result-miguel');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a0010a554134443592b005cf135db887/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RVyavbkhPInRmD_POUHsGcxIv7yMPfK_Pi71MwAJtD8";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t3Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
-      document.getElementById('t3-paso3-miguel').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-async function sendToSharePointSyncPabloDaniela() {
-  if(!state.t3Data) return;
-  const spResult = document.getElementById('t3-sp-result-pablo-daniela');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Pablo_Daniela...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5fc640bd7b3f44b194924957fc56aacd/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zIeGofhqV5O6UT-ANXxR3TevwMhwiu708HXspmm1QPA";
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t3Data)
-    });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
-      document.getElementById('t3-paso3-pablo-daniela').style.display = 'block';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
-  }
-}
-
-// ═══════════════════════════════ TAB 4 LOGIC ══════════════════════════════════
-
-function calDetectarHeader(cols) {
-  const cu = cols.map(c => (c||'').trim().toLowerCase());
-  const hits = {};
-  const KEYS = {
-    nrc:      ['nrc'],
-    codigo:   ['código asignatura','codigo asignatura','codigo curso','código curso'],
-    nombre:   ['nombre asignatura','nombre del curso','nombre curso','asignatura'],
-    inicio:   ['fecha de inicio','fecha inicio','inicio'],
-    termino:  ['fecha de término','fecha de termino','fecha término','término','termino','fecha_fin','fecha fin'],
-    periodo:  ['período','periodo'],
-    profesor: ['nombre profesor','profesor'],
-    facultad: ['facultad'],
-  };
-  for(const [campo, kws] of Object.entries(KEYS)) {
-    for(let i=0; i<cu.length; i++) {
-      if(kws.some(kw => cu[i]===kw || cu[i].startsWith(kw))) {
-        if(!(campo in hits)) hits[campo]=i;
-      }
-    }
-  }
-  return Object.keys(hits).length >= 2 ? hits : null;
-}
-
-function calFmtFecha(v) {
-  if(!v) return '';
-  const s = String(v).trim();
-  if(!s) return '';
-  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
-  return s;
-}
-
-function parsearTextoCalendario(texto) {
-  const NRC_PAT = /^\d{4,5}$/;
-  const lineas = texto.split('\n');
-  const resultados = [];
-  let headerMap = null;
-  let metaFacultad = '', metaPrograma = '', metaPeriodo = '';
-  for(const linea of lineas) {
-    const cols = linea.split('\t');
-    const cs = cols.map(c => c.trim());
-    const nonempty = cs.filter(Boolean);
-    if(!nonempty.length) continue;
-    const c0 = cs[0].toLowerCase();
-    if(c0 === 'facultad') { const v = cs.slice(1).find(Boolean)||''; if(v) metaFacultad=v; }
-    if(c0.includes('nombre de programa')||c0.includes('nombre del programa')) { const v = cs.slice(1).find(Boolean)||''; if(v) metaPrograma=v; }
-    if(c0.startsWith('período')||c0.startsWith('periodo')) { const v = cs.slice(1).find(c=>/^\d{6}$/.test(c))||''; if(v) metaPeriodo=v; }
-    if(nonempty.length===1 && nonempty[0].length>30 && /magíster|master|mba|diplomado|ingeniería|educación|salud/i.test(nonempty[0]) && !/\d{2}[\/\-]\d{2}[\/\-]\d{4}/.test(nonempty[0])) { metaPrograma = nonempty[0]; }
-    const hmap = calDetectarHeader(cs);
-    if(hmap) { headerMap = hmap; continue; }
-    if(!headerMap) continue;
-    const nrcIdx = headerMap.nrc;
-    if(nrcIdx === undefined || nrcIdx >= cs.length) continue;
-    const nrcVal = cs[nrcIdx];
-    if(!NRC_PAT.test(nrcVal)) continue;
-    const get = (campo, def) => { const idx = headerMap[campo]; return (idx !== undefined && idx < cs.length) ? cs[idx] : (def||''); };
-    let codigo = get('codigo').replace(/\s+/g,'').toUpperCase();
-    let nombre = get('nombre');
-    const inicio  = calFmtFecha(get('inicio'));
-    const termino = calFmtFecha(get('termino'));
-    const periodo = get('periodo') || metaPeriodo;
-    let profesor  = get('profesor').trim();
-    const facultad = get('facultad') || metaFacultad;
-    if(!codigo && nombre) { const mm = nombre.match(/^([A-Z]{2,6}\d{3,4}[A-Z]?\d?)\s+(.+)$/i); if(mm) { codigo = mm[1].replace(/\s+/g,'').toUpperCase(); nombre = mm[2].trim(); } }
-    if(!codigo && /INDUCC/i.test(nombre)) codigo = 'INDUCCION';
-    if(!profesor || /^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor)) profesor = 'POR DEFINIR';
-    if(!nombre && !inicio) continue;
-    resultados.push({ NRC: nrcVal, PERIODO: periodo, FACULTAD: facultad, 'CODIGO CURSO': codigo, 'NOMBRE CURSO': nombre, 'FECHA DE INICIO': inicio, 'FECHA FIN': termino, PROFESOR: profesor, _programa: metaPrograma });
+    resultados.push({NRC:nrcFinal,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,PROFESOR:profesor,_programa:mP});
   }
   return resultados;
 }
 
-async function processTab4() {
-  const resultEl = document.getElementById('t4-result');
-  const actionsEl = document.getElementById('t4-actions');
-  actionsEl.style.display = 'none';
-  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
-  const texto = document.getElementById('t4-texto').value;
-  if(!texto.trim()) { resultEl.innerHTML='<div class="alert error">Pega el bloque del calendario primero.</div>'; return; }
-  try {
-    const filas = parsearTextoCalendario(texto);
-    if(!filas.length) { resultEl.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya la fila de encabezados (NRC, Fecha de Inicio, Nombre Asignatura, etc.).</div>'; return; }
-    const materia     = document.getElementById('t4-materia').value.trim();
-    const intake      = document.getElementById('t4-intake').value.trim();
-    const programa    = document.getElementById('t4-programa').value.trim();
-    const facultad    = document.getElementById('t4-facultad').value.trim();
-    const tutor       = document.getElementById('t4-tutor').value.trim();
-    const correoTutor = document.getElementById('t4-correotutor').value.trim();
-    const salida = filas.map(f => ({
-      'NRC': f.NRC, 'PERIODO': f.PERIODO, 'FACULTAD': facultad || f.FACULTAD,
-      'MATERIA': materia, 'CODIGO CURSO': f['CODIGO CURSO'], 'NOMBRE CURSO': f['NOMBRE CURSO'],
-      'FECHA DE INICIO': f['FECHA DE INICIO'], 'FECHA FIN': f['FECHA FIN'],
-      'INTAKE O VERSION': intake, 'NOMBRE TUTOR': tutor, 'CORREO TUTOR': correoTutor,
-      'PROFESOR': f.PROFESOR, 'NOMBRE_PROGRAMA': programa || f._programa
-    }));
-    state.t4Data = salida;
-    resultEl.innerHTML = '<div class="alert success">🎉 ' + salida.length + ' cursos procesados.</div>';
-    const tableDiv = document.createElement('div');
-    resultEl.appendChild(tableDiv);
-    renderTable(salida, tableDiv);
-    actionsEl.style.display = 'flex';
-  } catch(err) {
-    resultEl.innerHTML = '<div class="alert error">Error al procesar: ' + err.message + '</div>';
-    console.error(err);
-  }
+async function processTab4(){
+  const re=document.getElementById('t4-result'),ae=document.getElementById('t4-actions');ae.style.display='none';
+  re.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
+  const texto=document.getElementById('t4-texto').value;if(!texto.trim()){re.innerHTML='<div class="alert error">Pega el bloque del calendario primero.</div>';return;}
+  try{
+    const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
+    const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
+    const coordEmails=document.getElementById('t4-coord-value').value;
+    // Formato Claims para columnas de usuario SharePoint: i:0#.f|membership|correo
+    const tutorClaims=cTut?'i:0#.f|membership|'+cTut:'';
+    const coordClaims=coordEmails?coordEmails.split(';').filter(Boolean).map(c=>'i:0#.f|membership|'+c).join(';'):'';
+    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'Correo_Tutor_a':cTut,'Coordinadores_Emails_Texto':coordEmails,'Tutor_Claims':tutorClaims,'Coordinadores_Claims':coordClaims,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
+    state.t4Data=salida;re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados.</div>';
+    const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
+  }catch(err){re.innerHTML='<div class="alert error">Error: '+err.message+'</div>';}
+}
+function downloadTab4(){
+  if(!state.t4Data)return;const cols=Object.keys(state.t4Data[0]),ws=XLSX.utils.json_to_sheet(state.t4Data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios');
+  function colLetter(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
+  const lastCol=colLetter(cols.length-1),lastRow=state.t4Data.length+1,tableRef='A1:'+lastCol+lastRow;
+  const tn='Calendarios_a_base';
+  const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="'+tn+'" displayName="'+tn+'" ref="'+tableRef+'" totalsRowShown="0"><autoFilter ref="'+tableRef+'"/><tableColumns>'+cols.map((c,i)=>'<tableColumn id="'+(i+1)+'" name="'+c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')+'"/>').join('')+'</tableColumns><tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/></table>';
+  const wbout=XLSX.write(wb,{bookType:'xlsx',type:'binary',compression:true});
+  injectTableIntoXlsx(wbout,xml,'Calendarios',tableRef).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Calendarios_a_base_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx';a.click();URL.revokeObjectURL(a.href);});
+}
+async function sendToSharePointCal(){
+  if(!state.t4Data)return;const sr=document.getElementById('t4-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0c6b8c2435624545bb76f5137f3f9f7c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dz1BzpFg1R-ku-OF2KCpRJ0uyeAX9Uot-aQ70f_0QNI",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t4Data)});
+  if(res.ok||res.status===202)sr.innerHTML='<div class="alert success">✅ ¡Éxito! Calendario enviado a SharePoint.</div>';else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
+  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
 }
 
-function downloadTab4() {
-  if(!state.t4Data) return;
-  const ts = new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-  exportXLSXConTablaNombre(state.t4Data, 'Calendarios_a_base_' + ts + '.xlsx', 'Calendarios_a_base');
+// ═══ TAB 5: CARPETAS CREADAS ══════════════════════════════════════════════════
+let cCount=0, cHTML='';
+
+function cAdd(){
+  cCount++;
+  const cont=document.getElementById('c-carpetas');
+  const div=document.createElement('div');div.className='c-carpeta-item';div.id=`ci-${cCount}`;
+  div.innerHTML=`
+    <div class="c-item-hdr">
+      <span class="c-num-badge">CARPETA ${cCount}</span>
+      <button class="c-btn-rm" onclick="cRemove(${cCount})">✕ Quitar</button>
+    </div>
+    <div class="form-group">
+      <label>Nombre de la carpeta</label>
+      <input type="text" id="cn-${cCount}" placeholder="Ej: MOL_INTAKE_27.10.202583_SECC01" />
+    </div>
+    <div class="form-group">
+      <label>URL en Teams</label>
+      <input type="url" id="cu-${cCount}" placeholder="https://unabportal365.sharepoint.com/..." />
+    </div>`;
+  cont.appendChild(div);cRenum();
 }
 
-function exportXLSXConTablaNombre(rows, filename, tableName) {
-  if(!rows || !rows.length) return;
-  const cols = Object.keys(rows[0]);
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Calendarios');
-  function colLetter(n) { let s = ''; n++; while(n > 0) { n--; s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26); } return s; }
-  const lastCol = colLetter(cols.length - 1);
-  const lastRow = rows.length + 1;
-  const tableRef = 'A1:' + lastCol + lastRow;
-  const tableXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="' + tableName + '" displayName="' + tableName + '" ref="' + tableRef + '" totalsRowShown="0">' +
-    '<autoFilter ref="' + tableRef + '"/><tableColumns>' +
-    cols.map((c,i) => '<tableColumn id="' + (i+1) + '" name="' + c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') + '"/>').join('') +
-    '</tableColumns><tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/></table>';
-  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary', compression: true });
-  injectTableIntoXlsx(wbout, tableXml, 'Calendarios', tableRef).then(blob => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(a.href);
+function cRemove(id){const el=document.getElementById(`ci-${id}`);if(el)el.remove();cRenum();}
+
+function cRenum(){
+  document.querySelectorAll('.c-carpeta-item').forEach((row,i)=>{
+    const b=row.querySelector('.c-num-badge');if(b)b.textContent=`CARPETA ${i+1}`;
   });
 }
 
-async function sendToSharePointCal() {
-  if(!state.t4Data) return;
-  const spResult = document.getElementById('t4-sp-result');
-  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0c6b8c2435624545bb76f5137f3f9f7c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dz1BzpFg1R-ku-OF2KCpRJ0uyeAX9Uot-aQ70f_0QNI";
+function cGetCarpetas(){
+  const rows=document.querySelectorAll('.c-carpeta-item');const out=[];
+  rows.forEach(row=>{
+    const id=row.id.split('-')[1];
+    const nombre=document.getElementById(`cn-${id}`)?.value.trim();
+    const url=document.getElementById(`cu-${id}`)?.value.trim();
+    if(nombre||url)out.push({nombre:nombre||'—',url:url||'#'});
+  });
+  return out;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function cBuildEmail(coord,intake,carpetas){
+  const LOGO='https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png';
+  const cRows=carpetas.map(c=>`
+    <tr>
+      <td style="padding:5px 0;">
+        <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+          <tr>
+            <td style="background:#F0F4FA;border-left:5px solid #0097A7;padding:11px 16px;font-family:'Segoe UI',Arial,sans-serif;">
+              <span style="font-size:15px;margin-right:6px;">📁</span>
+              <a href="${esc(c.url)}" style="color:#0097A7;font-size:14px;font-weight:600;text-decoration:underline;word-break:break-all;">${esc(c.nombre)}</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;background:#ffffff;">
+<table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;background:#ffffff;">
+  <tr>
+    <td style="background:#1B3A6B;padding:18px 32px;">
+      <table cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="vertical-align:middle;width:1%;padding-right:16px;white-space:nowrap;">
+            <img src="${LOGO}" alt="ETOP" height="52" style="display:block;border:0;height:52px;" />
+          </td>
+          <td style="vertical-align:middle;">
+            <span style="color:#ffffff;font-size:12px;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;letter-spacing:0.5px;display:block;">Equipo de Tutoría Online de Postgrado</span>
+            <span style="color:rgba(255,255,255,0.65);font-size:10.5px;font-family:'Segoe UI',Arial,sans-serif;letter-spacing:0.3px;">Universidad Andrés Bello · UNAB Online</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr><td style="background:#0097A7;height:4px;font-size:0;">&nbsp;</td></tr>
+  <tr>
+    <td style="padding:32px 32px 28px;background:#ffffff;">
+      <p style="font-size:15px;color:#1A2035;margin:0 0 14px;font-family:'Segoe UI',Arial,sans-serif;">
+        Estimado(a) Coordinador(a): <strong>${esc(coord)}</strong>
+      </p>
+      <p style="font-size:14px;color:#3D4A66;line-height:1.7;margin:0 0 26px;font-family:'Segoe UI',Arial,sans-serif;">
+        Junto con saludar, te comento que el calendario ya quedó ingresado en la base de calendarios
+        y las carpetas del programa <strong style="color:#1A2035;">${esc(intake)}</strong> han sido creadas en Teams.
+      </p>
+      <p style="font-size:13.5px;font-weight:700;color:#1B3A6B;text-decoration:underline;margin:0 0 12px;font-family:'Segoe UI',Arial,sans-serif;">
+        Vínculo a la carpeta en Teams:
+      </p>
+      <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:28px;">
+        ${cRows}
+      </table>
+      <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+        <tr>
+          <td style="background:#FFFBEC;border-left:5px solid #C8A951;padding:16px 20px;">
+            <p style="font-size:13.5px;font-weight:700;color:#1B3A6B;text-decoration:underline;margin:0 0 12px;font-family:'Segoe UI',Arial,sans-serif;">
+              Favor solicito:
+            </p>
+            <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tr>
+                <td style="width:22px;padding:5px 6px 5px 0;vertical-align:top;font-size:13px;color:#0097A7;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;">✔</td>
+                <td style="font-size:14px;color:#3D4A66;padding:5px 0;line-height:1.5;font-family:'Segoe UI',Arial,sans-serif;">Respaldar nómina y calendarios del Intake.</td>
+              </tr>
+              <tr>
+                <td style="width:22px;padding:5px 6px 5px 0;vertical-align:top;font-size:13px;color:#0097A7;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;">✔</td>
+                <td style="font-size:14px;color:#3D4A66;padding:5px 0;line-height:1.5;font-family:'Segoe UI',Arial,sans-serif;">Respaldar envío de correos de bienvenida.</td>
+              </tr>
+              <tr>
+                <td style="width:22px;padding:5px 6px 5px 0;vertical-align:top;font-size:13px;color:#0097A7;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;">✔</td>
+                <td style="font-size:14px;color:#3D4A66;padding:5px 0;line-height:1.5;font-family:'Segoe UI',Arial,sans-serif;">Respaldar envío de invitación sincrónica.</td>
+              </tr>
+              <tr>
+                <td style="width:22px;padding:5px 6px 5px 0;vertical-align:top;font-size:13px;color:#0097A7;font-weight:700;font-family:'Segoe UI',Arial,sans-serif;">✔</td>
+                <td style="font-size:14px;color:#3D4A66;padding:5px 0;line-height:1.5;font-family:'Segoe UI',Arial,sans-serif;">Respaldar QA2 confeccionados con el formulario automatizado.</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+}
+
+function cGenerar(){
+  const coord=document.getElementById('c-coord').value.trim();
+  const intake=document.getElementById('c-intake').value.trim();
+  const carpetas=cGetCarpetas();
+  if(!coord){alert('Ingresa el nombre del coordinador/tutora.');return;}
+  if(!intake){alert('Ingresa el nombre del programa/intake.');return;}
+  if(!carpetas.length){alert('Agrega al menos una carpeta.');return;}
+  cHTML=cBuildEmail(coord,intake,carpetas);
+  const rendered=document.getElementById('c-rendered');
+  rendered.innerHTML=`<div class="c-email-box">${cHTML}</div>`;
+  rendered.style.display='block';
+  document.getElementById('c-empty').style.display='none';
+  document.getElementById('c-code-pre').textContent=cHTML;
+}
+
+function cTab(tab,btn){
+  document.querySelectorAll('.c-tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.getElementById('c-preview-body').style.display=tab==='preview'?'block':'none';
+  document.getElementById('c-code-area').style.display=tab==='code'?'block':'none';
+}
+
+function cCopiar(){
+  if(!cHTML){alert('Primero genera el correo.');return;}
+  const btn=document.getElementById('c-copy-btn');
+  const toast=document.getElementById('etop-toast');
+  const showOk=()=>{
+    btn.textContent='✅ Copiado';btn.classList.add('copied');toast.classList.add('show');
+    setTimeout(()=>{btn.innerHTML='📋 Copiar correo';btn.classList.remove('copied');toast.classList.remove('show');},2600);
+  };
+  try{
+    const blob=new Blob([cHTML],{type:'text/html'});
+    const item=new ClipboardItem({'text/html':blob});
+    navigator.clipboard.write([item]).then(showOk).catch(()=>{navigator.clipboard.writeText(cHTML).then(showOk);});
+  }catch(e){navigator.clipboard.writeText(cHTML).then(showOk);}
+}
+
+function cReset(){
+  const coord=document.getElementById('c-coord');if(coord)coord.value='';
+  const intake=document.getElementById('c-intake');if(intake)intake.value='';
+  const cont=document.getElementById('c-carpetas');if(cont)cont.innerHTML='';
+  cCount=0;cHTML='';
+  const r=document.getElementById('c-rendered');if(r){r.style.display='none';r.innerHTML='';}
+  const e=document.getElementById('c-empty');if(e)e.style.display='flex';
+  const cp=document.getElementById('c-code-pre');if(cp)cp.textContent='';
+  const pb=document.getElementById('c-preview-body');if(pb)pb.style.display='block';
+  const ca=document.getElementById('c-code-area');if(ca)ca.style.display='none';
+  document.querySelectorAll('.c-tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  cAdd();cAdd();
+}
+
+// ─── MAPA TUTORES COMPLETO (Tab 2 y Tab 4) ───────────────────────────────────
+const TUTORES_MAP = {
+  'HANS NOVAKOVIC':          {correo:'tutoriaonline45@unab.cl', nombre:'Hans Novakovic',                           anexo:'600 585 8550 Anexo 7261'},
+  'KIMBERLY JORQUERA':       {correo:'tutoriaonline52@unab.cl', nombre:'Kimberly Jorquera Sepúlveda',              anexo:'600 585 8550 Anexo 7284'},
+  'MARTA GONZALEZ':          {correo:'marta.gonzalez@unab.cl',  nombre:'Marta Teresa Gonzalez Luque',              anexo:'600 585 8550 Anexo 5216'},
+  'DANITZA JANSEN':          {correo:'danitza.jansen@unab.cl',  nombre:'Danitza Alejandra Jansen Jara',            anexo:'600 585 8550 Anexo 5866'},
+  'SYLVIA VALENZUELA':       {correo:'sylvia.valenzuela@unab.cl',nombre:'Sylvia Valenzuela Herrera',               anexo:'600 585 8550 Anexo 5873'},
+  'PAULA PARDO':             {correo:'tutoriaonline82@unab.cl', nombre:'Paula Natalia Pardo Gaete',                anexo:'600 585 8550 Anexo 1285'},
+  'MARIA FERNANDA GONZALEZ': {correo:'tutoriaonline41@unab.cl', nombre:'María Fernanda González Valenzuela',       anexo:'600 585 8550 Anexo 5644'},
+  'BARBARA ROJAS':           {correo:'barbara.rojas.c@unab.cl', nombre:'Barbara Belen Rojas Castro',               anexo:'600 585 8550 Anexo 7260'},
+  'CONSTANZA CONTRERAS':     {correo:'tutoriaonline56@unab.cl', nombre:'Constanza Contreras Palma',                anexo:'600 585 8550 Anexo 8201'},
+  'CARLA PENA':              {correo:'tutoriaonline54@unab.cl', nombre:'Carla Peña',                               anexo:'600 585 8550 Anexo 7361'},
+  'NOEMI PAZ':               {correo:'tutoriaonline08@unab.cl', nombre:'Noemí Paz',                                anexo:'600 585 8550 Anexo 1288'},
+  'HECTOR TAPIA':            {correo:'tutoriaonline23@unab.cl', nombre:'Héctor Tapia Ruminado',                    anexo:'600 585 8550 Anexo 5685'},
+  'CONSUELO PARGA':          {correo:'tutoriaonline70@unab.cl', nombre:'Consuelo Parga',                           anexo:'600 585 8550 Anexo 1273'},
+  'FRANCISCA INDA':          {correo:'tutoriaonline75@unab.cl', nombre:'Francisca Inda',                           anexo:'600 585 8550 Anexo 1278'},
+  'JAVIERA ROJAS':           {correo:'tutoriaonline76@unab.cl', nombre:'Javiera Rojas',                            anexo:'600 585 8550 Anexo 1279'},
+  'ALYSON HERNANDEZ':        {correo:'tutoriaonline72@unab.cl', nombre:'Alyson Francisca Hernández Valenzuela',    anexo:'600 585 8550 Anexo 5245'},
+  'CAROLINA MONSALVE':       {correo:'carolina.monsalve.g@unab.cl', nombre:'Carolina Monsalve',                   anexo:'600 585 8550 Anexo 0000'},
+  'PATRICIO COLLAO':         {correo:'patricio.collao@unab.cl', nombre:'Patricio Alejandro Collao Farfan',         anexo:'600 585 8550 Anexo 0000'},
+  'FELIPE GARCIA':           {correo:'felipe.garcia@unab.cl',   nombre:'Felipe Garcia Cornejo',                   anexo:'600 585 8550 Anexo 0000'},
+  'RITA GALVEZ':             {correo:'rita.galvez@unab.cl',     nombre:'Rita Gálvez',                             anexo:'600 585 8550 Anexo 0000'},
+  'MIGUEL ROSALES':          {correo:'tutoriaonline16@unab.cl', nombre:'Miguel Rosales Salazar',                   anexo:'600 585 8550 Anexo 0000'},
+  'PABLO ALDERETE':          {correo:'tutoriaonline47@unab.cl', nombre:'Pablo Alderete',                           anexo:'600 585 8550 Anexo 0000'},
+  'DANIELA CORNEJO':         {correo:'tutoriaonline36@unab.cl', nombre:'Daniela Cornejo',                          anexo:'600 585 8550 Anexo 0000'},
+  'POR DEFINIR':             {correo:'pordefinir@unab.cl',      nombre:'Por Definir',                             anexo:'600 585 8550'}
+};
+
+// ─── FUNCIONES TAB 2 — AUTOCOMPLETE TUTOR Y BUSCADOR NRC ─────────────────────
+let t2NrcsData = [];
+let programasUnicos = [];
+
+async function t2CargarNrcs(){
+  const statusEl = document.getElementById('t2-nrcs-status');
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.t4Data)
+    const [rNrcs, rOnb] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now()),
+      fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t='+Date.now())
+    ]);
+
+    if(!rNrcs.ok) throw new Error('No fue posible cargar nrcs.json');
+    if(!rOnb.ok) throw new Error('No fue posible cargar nrcs_onboarding.json');
+
+    const nrcsRaw = await rNrcs.json();
+    const onbRaw = await rOnb.json();
+
+    const nrcs = Array.isArray(nrcsRaw) ? nrcsRaw : (nrcsRaw.value || []);
+    const onboarding = Array.isArray(onbRaw) ? onbRaw : (onbRaw.value || []);
+
+    const obtenerPrograma = obj => String(
+      obj?.['nombre programa'] ??
+      obj?.['nombre_programa'] ??
+      obj?.['NOMBRE_PROGRAMA'] ??
+      obj?.programa ??
+      ''
+    ).trim();
+
+    const mapaOnboarding = new Map();
+    onboarding.forEach(item => {
+      const nrc = String(item?.nrc ?? item?.NRC ?? '').trim();
+      if(nrc) mapaOnboarding.set(nrc, item);
     });
-    if(res.ok || res.status===202) {
-      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Calendario enviado a SharePoint.</div>';
-    } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
-    }
-  } catch(err) {
-    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+
+    t2NrcsData = nrcs.map(item => {
+      const nrc = String(item?.nrc ?? item?.NRC ?? '').trim();
+      const extra = mapaOnboarding.get(nrc) || {};
+      return {
+        ...item,
+        programa: obtenerPrograma(extra) || obtenerPrograma(item)
+      };
+    });
+
+    const unicos = new Map();
+    onboarding.forEach(item => {
+      const programa = obtenerPrograma(item);
+      if(!programa) return;
+      const clave = programa.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+      if(!unicos.has(clave)) unicos.set(clave, programa);
+    });
+
+    programasUnicos = [...unicos.values()].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+    cargarSelectProgramas();
+
+    if(statusEl) statusEl.innerHTML = '✅ <strong>'+t2NrcsData.length+'</strong> cursos y <strong>'+programasUnicos.length+'</strong> programas únicos cargados.';
+    setTimeout(()=>{if(statusEl)statusEl.style.display='none';}, 3500);
+  } catch(e) {
+    console.error(e);
+    if(statusEl) statusEl.innerHTML = '⚠️ No se pudieron cargar los programas desde GitHub.';
   }
 }
 
-// ─── INIT DATES ───────────────────────────────────────────────────────────────
-(function initDates() {
-  const today = new Date().toISOString().substring(0,10);
-  ['t1-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = today;
+function cargarSelectProgramas(){
+  const configuracion = [
+    {id:'t2-pr', texto:'— Selecciona programa —'},
+    {id:'t4-programa', texto:'— Selecciona programa desde onboarding —'},
+    {id:'c-intake', texto:'— Selecciona programa —'}
+  ];
+
+  configuracion.forEach(cfg => {
+    const select = document.getElementById(cfg.id);
+    if(!select) return;
+    const valorActual = select.value;
+    select.innerHTML = '';
+
+    const vacio = document.createElement('option');
+    vacio.value = '';
+    vacio.textContent = cfg.texto;
+    select.appendChild(vacio);
+
+    programasUnicos.forEach(programa => {
+      const opcion = document.createElement('option');
+      opcion.value = programa;
+      opcion.textContent = programa;
+      select.appendChild(opcion);
+    });
+
+    if(programasUnicos.includes(valorActual)) select.value = valorActual;
   });
+}
+
+function t2AutoTutor(){
+  const key = document.getElementById('t2-tutor-sel').value;
+  const t = TUTORES_MAP[key];
+  if(t){
+    document.getElementById('t2-tn').value = t.nombre;
+    document.getElementById('t2-tc').value = t.correo;
+    document.getElementById('t2-ta').value = t.anexo;
+  } else {
+    document.getElementById('t2-tn').value = '';
+    document.getElementById('t2-tc').value = '';
+    document.getElementById('t2-ta').value = '';
+  }
+}
+
+function t2BuscarNrc(){
+  const q = document.getElementById('t2-nrc-search').value.trim().toLowerCase();
+  const dd = document.getElementById('t2-nrc-dropdown');
+  const opts = document.getElementById('t2-nrc-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = t2NrcsData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r.tutor||'').toLowerCase().includes(q) ||
+    (r.facultad||'').toLowerCase().includes(q)
+  ).slice(0, 30);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:0.5rem 0.9rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    div.innerHTML = '<span style="color:#f6c128;font-size:0.78rem;font-weight:700;font-family:IBM Plex Mono,monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#95a3b8;font-size:0.72rem;">'+r.tutor+' · '+r.facultad
+      +' · Inicio: '+(r['fecha inicio']||'—')+' · Fin: '+(r['fecha fin']||'—')+'</span>';
+    div.onclick = ()=>t2SeleccionarNrc(r);
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+function t2SeleccionarNrc(r){
+  document.getElementById('t2-nrc-search').value = r.nrc;
+  document.getElementById('t2-ni').value = r.nrc;
+  document.getElementById('t2-ni-display').value = r.nrc;
+  if(r['fecha inicio']) document.getElementById('t2-fi').value = r['fecha inicio'];
+  if(r['fecha fin'])    document.getElementById('t2-ff').value = r['fecha fin'];
+  if(r.programa && programasUnicos.includes(r.programa)) document.getElementById('t2-pr').value = r.programa;
+  // Autocompletar tutor si coincide
+  if(r.tutor && TUTORES_MAP[r.tutor.toUpperCase()]){
+    const key = r.tutor.toUpperCase();
+    document.getElementById('t2-tutor-sel').value = key;
+    t2AutoTutor();
+  }
+  document.getElementById('t2-nrc-dropdown').style.display = 'none';
+}
+
+// Cerrar dropdowns NRC al clic fuera
+document.addEventListener('click', function(e){
+  [['t2-nrc-search','t2-nrc-dropdown'],['t3-nrc-search','t3-nrc-dropdown']].forEach(([inpId,ddId])=>{
+    const inp=document.getElementById(inpId);
+    const dd=document.getElementById(ddId);
+    if(inp&&dd&&!inp.contains(e.target)&&!dd.contains(e.target)) dd.style.display='none';
+  });
+});
+
+// ─── FUNCIONES TAB 3 — BUSCADOR NRC SINCRÓNICA ───────────────────────────────
+function t3BuscarNrc(){
+  const q=document.getElementById('t3-nrc-search').value.trim().toLowerCase();
+  const dd=document.getElementById('t3-nrc-dropdown');
+  const opts=document.getElementById('t3-nrc-options');
+  if(!q||q.length<2){dd.style.display='none';return;}
+  const resultados=t2NrcsData.filter(r=>
+    (r.nrc||'').toLowerCase().includes(q)||
+    (r.tutor||'').toLowerCase().includes(q)||
+    (r.facultad||'').toLowerCase().includes(q)
+  ).slice(0,30);
+  if(!resultados.length){dd.style.display='none';return;}
+  opts.innerHTML='';
+  resultados.forEach(r=>{
+    const div=document.createElement('div');
+    div.style.cssText='padding:0.5rem 0.9rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter=()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave=()=>div.style.background='transparent';
+    div.innerHTML='<span style="color:#f6c128;font-size:0.78rem;font-weight:700;font-family:IBM Plex Mono,monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#95a3b8;font-size:0.72rem;">'+r.tutor+' · '+r.facultad
+      +' · Inicio: '+(r['fecha inicio']||'—')+'</span>';
+    div.onclick=()=>t3SeleccionarNrc(r);
+    opts.appendChild(div);
+  });
+  dd.style.display='block';
+}
+
+function t3SeleccionarNrc(r){
+  document.getElementById('t3-nrc-search').value=r.nrc;
+  document.getElementById('t3-curso').value=r.nrc;
+  if(r['fecha inicio']) document.getElementById('t3-fechainicio').value=r['fecha inicio'];
+  // Autocomplete tutor
+  const key=(r.tutor||'').toUpperCase();
+  const t=TUTORES_MAP[key];
+  if(t){
+    document.getElementById('t3-nombretutor').value=t.nombre;
+    document.getElementById('t3-correotutor').value=t.correo;
+  } else if(r.tutor){
+    document.getElementById('t3-nombretutor').value=r.tutor;
+  }
+  document.getElementById('t3-nrc-dropdown').style.display='none';
+}
+
+// ─── TUTORES Y COORDINADORES TAB 4 ───────────────────────────────────────────
+// T4_TUTORES usa TUTORES_MAP definido arriba
+const T4_TUTORES = Object.fromEntries(Object.entries(TUTORES_MAP).map(([k,v])=>[k,v.correo]));
+
+const T4_COORDINADORES = [
+  {nombre:'CAROLINA MONSALVE', correo:'carolina.monsalve.g@unab.cl'},
+  {nombre:'PATRICIO COLLAO',   correo:'patricio.collao@unab.cl'},
+  {nombre:'FELIPE GARCIA',     correo:'felipe.garcia@unab.cl'},
+  {nombre:'RITA GALVEZ',       correo:'rita.galvez@unab.cl'},
+  {nombre:'MIGUEL ROSALES',    correo:'tutoriaonline16@unab.cl'},
+  {nombre:'HECTOR TAPIA',      correo:'tutoriaonline23@unab.cl'},
+  {nombre:'PABLO ALDERETE',    correo:'tutoriaonline47@unab.cl'},
+  {nombre:'DANIELA CORNEJO',   correo:'tutoriaonline36@unab.cl'}
+];
+
+// Set de coordinadores seleccionados (correos)
+const t4CoordSel = new Set();
+
+function t4AutoCorreo(){
+  const sel=document.getElementById('t4-tutor').value;
+  const correo=T4_TUTORES[sel]||'';
+  document.getElementById('t4-correotutor').value=correo;
+}
+
+function t4CoordToggle(){
+  const dd=document.getElementById('t4-coord-dropdown');
+  dd.style.display=dd.style.display==='none'?'block':'none';
+}
+
+function t4CoordInit(){
+  const cont=document.getElementById('t4-coord-options');
+  cont.innerHTML='';
+  T4_COORDINADORES.forEach(c=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:0.6rem;padding:0.55rem 1rem;cursor:pointer;transition:background 0.1s;';
+    row.onmouseenter=()=>row.style.background='rgba(246,193,40,0.08)';
+    row.onmouseleave=()=>row.style.background='transparent';
+    const chk=document.createElement('div');
+    chk.id='t4chk-'+c.correo.replace(/[@.]/g,'_');
+    chk.style.cssText='width:16px;height:16px;border-radius:4px;border:2px solid #95a3b8;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;';
+    const lbl=document.createElement('div');
+    lbl.innerHTML='<span style="color:#fff;font-size:0.88rem;font-weight:600;">'+c.nombre+'</span><br><span style="color:#95a3b8;font-size:0.75rem;">'+c.correo+'</span>';
+    row.appendChild(chk);row.appendChild(lbl);
+    row.onclick=()=>t4CoordToggleItem(c, chk);
+    cont.appendChild(row);
+  });
+  // Cerrar al hacer clic fuera
+  document.addEventListener('click', function t4Outside(e){
+    const chips=document.getElementById('t4-coord-chips');
+    const dd=document.getElementById('t4-coord-dropdown');
+    if(chips&&dd&&!chips.contains(e.target)&&!dd.contains(e.target)){
+      dd.style.display='none';
+    }
+  });
+}
+
+function t4CoordToggleItem(c, chkEl){
+  if(t4CoordSel.has(c.correo)){
+    t4CoordSel.delete(c.correo);
+    chkEl.style.background='transparent';
+    chkEl.style.borderColor='#95a3b8';
+    chkEl.innerHTML='';
+  }else{
+    t4CoordSel.add(c.correo);
+    chkEl.style.background='#f6c128';
+    chkEl.style.borderColor='#f6c128';
+    chkEl.innerHTML='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#17202d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  t4CoordRenderChips();
+}
+
+function t4CoordRenderChips(){
+  const chips=document.getElementById('t4-coord-chips');
+  const ph=document.getElementById('t4-coord-placeholder');
+  // Limpiar chips anteriores (mantener placeholder)
+  Array.from(chips.children).forEach(ch=>{if(ch.id!=='t4-coord-placeholder')ch.remove();});
+  if(t4CoordSel.size===0){
+    ph.style.display='';
+    document.getElementById('t4-coord-value').value='';
+    return;
+  }
+  ph.style.display='none';
+  const selArr=T4_COORDINADORES.filter(c=>t4CoordSel.has(c.correo));
+  selArr.forEach(c=>{
+    const chip=document.createElement('span');
+    chip.style.cssText='background:rgba(246,193,40,0.18);border:1px solid rgba(246,193,40,0.5);color:#f6c128;font-size:0.75rem;font-weight:700;padding:0.18rem 0.55rem;border-radius:20px;display:inline-flex;align-items:center;gap:0.35rem;white-space:nowrap;';
+    chip.dataset.correo=c.correo;
+    chip.innerHTML=c.nombre+' <span style="cursor:pointer;font-size:0.9rem;line-height:1;">×</span>';
+    chip.querySelector('span').addEventListener('click',function(e){e.stopPropagation();t4CoordRemove(c.correo);});
+    chips.insertBefore(chip, ph);
+  });
+  // Valor hidden: correos separados por ;
+  document.getElementById('t4-coord-value').value=selArr.map(c=>c.correo).join(';');
+}
+
+function t4CoordRemove(correo){
+  t4CoordSel.delete(correo);
+  // Desmarcar checkbox
+  const id='t4chk-'+correo.replace(/[@.]/g,'_');
+  const chk=document.getElementById(id);
+  if(chk){chk.style.background='transparent';chk.style.borderColor='#95a3b8';chk.innerHTML='';}
+  t4CoordRenderChips();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(function init(){
+  const today=new Date().toISOString().substring(0,10);
+  ['t1-fecha','t1m-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value=today;
+  });
+  cAdd();cAdd();
+  t4CoordInit();
+  t2CargarNrcs();
 })();
 </script>
 </body>
