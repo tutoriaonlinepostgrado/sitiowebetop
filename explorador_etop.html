@@ -330,8 +330,14 @@ let statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
 const esc=v=>String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const goTo=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
-function parseFecha(v){if(!v)return null;const s=String(v).trim(),d=new Date(s);if(!isNaN(d))return new Date(d.getFullYear(),d.getMonth(),d.getDate());const m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null;}
-const fmtF=v=>{const d=parseFecha(v);if(!d)return'—';return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function parseFecha(v){
+    if(!v) return null;
+
+    const [y,m,d] = String(v).trim().split("-").map(Number);
+
+    return new Date(y, m-1, d);
+}
+  const fmtF=v=>{const d=parseFecha(v);if(!d)return'—';return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});}
 const badge=e=>{const k=(e||'').replace(/\s/g,'-');return`<span class="badge badge-${k}">${esc(e)||'—'}</span>`;};
 function hl(text,q){if(!q)return esc(text);const i=norm(text).indexOf(norm(q));if(i<0)return esc(text);return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));}
 function buildUrls(nrc,intake,per,itemId){
