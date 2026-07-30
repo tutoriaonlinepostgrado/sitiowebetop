@@ -289,15 +289,19 @@
     </div>
     <div class="form-group">
       <label>NOMBRE DE PROGRAMA</label>
-      <select id="programa">
-        <option value="">— Se autocompleta al elegir curso —</option>
-      </select>
+      <input type="text" id="programa-search" placeholder="Escribe el nombre del programa..." oninput="buscarPrograma()" autocomplete="off" />
+      <div id="programa-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="programa-options"></div>
+      </div>
+      <input type="hidden" id="programa" />
     </div>
     <div class="form-group">
       <label>NRC Y NOMBRE DE CURSO INDUCC</label>
-      <select id="nrc-induccion" onchange="seleccionarCursoInduccion()">
-        <option value="">— Selecciona curso de inducción —</option>
-      </select>
+      <input type="text" id="nrc-induccion-search" placeholder="Escribe NRC o nombre..." oninput="buscarCursoInduccion()" autocomplete="off" />
+      <div id="nrc-induccion-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="nrc-induccion-options"></div>
+      </div>
+      <input type="hidden" id="nrc-induccion" />
     </div>
     <div class="form-group">
       <label>NOMBRE PRIMER CURSO</label>
@@ -377,6 +381,7 @@
 let nominaFile = null;
 let datosFinales = null;
 let nrcsObCache = [];
+let programasUnicos = [];
 
 const TUTORES = {
   "HANS NOVAKOVIC": {correo:"tutoriaonline45@unab.cl", anexo:"7261"},
@@ -424,66 +429,157 @@ function fechaISO(valor) {
 }
 
 function cargarCursosInduccion() {
-  const selectCurso = document.getElementById('nrc-induccion');
-  const selectPrograma = document.getElementById('programa');
-
-  selectCurso.innerHTML = '<option value="">— Selecciona curso de inducción —</option>';
-  selectPrograma.innerHTML = '<option value="">— Se autocompleta al elegir curso —</option>';
-
   const programas = new Map();
 
-  nrcsObCache
-    .map((item, index) => {
-      const nrc = campo(item, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']);
-      const nombreCurso = campo(item, ['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
-      const programa = campo(item, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']);
-      const fechaInicio = fechaISO(campo(item, ['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
-      const fechaFin = fechaISO(campo(item, ['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN']));
-      return {index, nrc, nombreCurso, programa, fechaInicio, fechaFin};
-    })
-    .filter(x => x.nrc && x.nombreCurso)
-    .sort((a,b) => `${a.nrc} ${a.nombreCurso}`.localeCompare(`${b.nrc} ${b.nombreCurso}`,'es',{sensitivity:'base'}))
-    .forEach(curso => {
-      const option = document.createElement('option');
-      option.value = String(curso.index);
-      option.textContent = `${curso.nrc} — ${curso.nombreCurso}`;
-      option.dataset.nrc = curso.nrc;
-      option.dataset.nombreCurso = curso.nombreCurso;
-      option.dataset.programa = curso.programa;
-      option.dataset.fechaInicio = curso.fechaInicio;
-      option.dataset.fechaFin = curso.fechaFin;
-      selectCurso.appendChild(option);
+  nrcsObCache.forEach(item => {
+    const programa = campo(item, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']);
+    if (!programa) return;
 
-      if (curso.programa) {
-        const key = curso.programa.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
-        if (!programas.has(key)) programas.set(key, curso.programa);
-      }
-    });
+    const key = programa
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/\s+/g,' ')
+      .trim();
 
-  [...programas.values()]
-    .sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}))
-    .forEach(programa => {
-      const option = document.createElement('option');
-      option.value = programa;
-      option.textContent = programa;
-      selectPrograma.appendChild(option);
-    });
+    if (!programas.has(key)) programas.set(key, programa);
+  });
+
+  programasUnicos = [...programas.values()]
+    .sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
 }
 
-function seleccionarCursoInduccion() {
-  const select = document.getElementById('nrc-induccion');
-  const option = select.options[select.selectedIndex];
+function buscarPrograma() {
+  const input = document.getElementById('programa-search');
+  const hidden = document.getElementById('programa');
+  const dd = document.getElementById('programa-dropdown');
+  const opts = document.getElementById('programa-options');
+  const q = input.value.trim().toLowerCase();
 
-  if (!option || !option.value) {
-    document.getElementById('programa').value = '';
+  hidden.value = '';
+
+  if(!q || q.length < 2) {
+    dd.style.display = 'none';
+    return;
+  }
+
+  const resultados = programasUnicos
+    .filter(programa => programa.toLowerCase().includes(q))
+    .slice(0,25);
+
+  if(!resultados.length) {
+    opts.innerHTML = '<div style="padding:10px 12px;color:#666;font-size:0.82rem;">Sin resultados</div>';
+    dd.style.display = 'block';
+    return;
+  }
+
+  opts.innerHTML = '';
+
+  resultados.forEach(programa => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = () => div.style.background = '#dbeafe';
+    div.onmouseleave = () => div.style.background = 'transparent';
+    div.innerHTML = '<span style="color:#1e293b;font-size:0.82rem;">' + programa + '</span>';
+    div.onclick = () => {
+      seleccionarPrograma(programa);
+      dd.style.display = 'none';
+    };
+    opts.appendChild(div);
+  });
+
+  dd.style.display = 'block';
+}
+
+function seleccionarPrograma(programa) {
+  document.getElementById('programa-search').value = programa || '';
+  document.getElementById('programa').value = programa || '';
+}
+
+
+function buscarCursoInduccion() {
+  const q = document.getElementById('nrc-induccion-search').value.trim().toLowerCase();
+  const dd = document.getElementById('nrc-induccion-dropdown');
+  const opts = document.getElementById('nrc-induccion-options');
+
+  document.getElementById('nrc-induccion').value = '';
+
+  if(!q || q.length < 2) {
+    dd.style.display = 'none';
+    return;
+  }
+
+  const resultados = nrcsObCache
+    .map(item => ({
+      original: item,
+      nrc: campo(item, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),
+      nombreCurso: campo(item, ['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']),
+      programa: campo(item, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']),
+      fechaInicio: fechaISO(campo(item, ['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO'])),
+      fechaFin: fechaISO(campo(item, ['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN'])),
+      intake: campo(item, ['intake','INTAKE','intake o version','INTAKE O VERSION'])
+    }))
+    .filter(r =>
+      r.nrc &&
+      r.nombreCurso &&
+      (
+        r.nrc.toLowerCase().includes(q) ||
+        r.nombreCurso.toLowerCase().includes(q) ||
+        r.programa.toLowerCase().includes(q)
+      )
+    )
+    .slice(0,25);
+
+  if(!resultados.length) {
+    opts.innerHTML = '<div style="padding:10px 12px;color:#666;font-size:0.82rem;">Sin resultados</div>';
+    dd.style.display = 'block';
+    return;
+  }
+
+  opts.innerHTML = '';
+
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = () => div.style.background = '#dbeafe';
+    div.onmouseleave = () => div.style.background = 'transparent';
+
+    div.innerHTML =
+      '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">' + r.nrc + '</span>' +
+      '<br><span style="color:#1e293b;font-size:0.82rem;">' + r.nombreCurso + '</span>' +
+      (r.programa ? '<br><span style="color:#64748b;font-size:0.72rem;">' + r.programa + '</span>' : '');
+
+    div.onclick = () => {
+      seleccionarCursoInduccion(r);
+      dd.style.display = 'none';
+    };
+
+    opts.appendChild(div);
+  });
+
+  dd.style.display = 'block';
+}
+
+
+function seleccionarCursoInduccion(curso) {
+  if (!curso) {
+    document.getElementById('nrc-induccion-search').value = '';
+    document.getElementById('nrc-induccion').value = '';
+    seleccionarPrograma('');
     document.getElementById('fecha-inicio').value = '';
     document.getElementById('fecha-fin').value = '';
     return;
   }
 
-  document.getElementById('programa').value = option.dataset.programa || '';
-  document.getElementById('fecha-inicio').value = option.dataset.fechaInicio || '';
-  document.getElementById('fecha-fin').value = option.dataset.fechaFin || '';
+  const textoCurso = `${curso.nrc} — ${curso.nombreCurso}`;
+
+  document.getElementById('nrc-induccion-search').value = textoCurso;
+  document.getElementById('nrc-induccion').value = textoCurso;
+  seleccionarPrograma(curso.programa || '');
+  document.getElementById('fecha-inicio').value = curso.fechaInicio || '';
+  document.getElementById('fecha-fin').value = curso.fechaFin || '';
+
+  if(!intakeActivo && curso.intake) intakeActivo = curso.intake;
 }
 
 function handleFile(input) {
@@ -526,8 +622,7 @@ async function procesarNomina() {
     const tc = document.getElementById('correo-tutor').value;
     const ta = document.getElementById('anexo-tutor').value;
     const pr = document.getElementById('programa').value;
-    const niSelect = document.getElementById('nrc-induccion');
-    const ni = niSelect.selectedIndex > 0 ? niSelect.options[niSelect.selectedIndex].textContent : '';
+    const ni = document.getElementById('nrc-induccion').value;
     const c1 = document.getElementById('curso1').value;
     const c2 = document.getElementById('curso2').value.trim();
     const fi = document.getElementById('fecha-inicio').value;
@@ -783,6 +878,14 @@ document.addEventListener('click', function(e){
   const inp = document.getElementById('curso1-search');
   const dd  = document.getElementById('curso1-dropdown');
   if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+
+  const inpInd = document.getElementById('nrc-induccion-search');
+  const ddInd  = document.getElementById('nrc-induccion-dropdown');
+  if(inpInd && ddInd && !inpInd.contains(e.target) && !ddInd.contains(e.target)) ddInd.style.display='none';
+
+  const inpProg = document.getElementById('programa-search');
+  const ddProg  = document.getElementById('programa-dropdown');
+  if(inpProg && ddProg && !inpProg.contains(e.target) && !ddProg.contains(e.target)) ddProg.style.display='none';
 });
 async function cargarNrcsOb() {
   try {
@@ -793,7 +896,8 @@ async function cargarNrcsOb() {
     cargarCursosInduccion();
   } catch(e) {
     console.error(e);
-    document.getElementById('nrc-induccion').innerHTML = '<option value="">⚠️ No se pudo cargar onboarding</option>';
+    document.getElementById('nrc-induccion-search').placeholder = '⚠️ No se pudo cargar onboarding';
+    document.getElementById('programa-search').placeholder = '⚠️ No se pudieron cargar programas';
   }
 }
 
@@ -816,6 +920,7 @@ window.onload = async function() {
     set('nombre-tutor', p.get('nombreTutor'));
     autocompletarTutor();
   }
+  if(p.get('nombrePrograma')) seleccionarPrograma(p.get('nombrePrograma'));
 
   const fi = toISO(p.get('fechaInicio'));
   const ff = toISO(p.get('fechaFin'));
@@ -830,18 +935,20 @@ window.onload = async function() {
   intakeActivo = p.get('intake') || '';
 
   if(nrcParam) {
-    const selectCurso = document.getElementById('nrc-induccion');
-    const opcion = [...selectCurso.options].find(opt => opt.dataset.nrc === nrcParam);
-    if(opcion) {
-      selectCurso.value = opcion.value;
-      seleccionarCursoInduccion();
-    }
-
     const ob = nrcsObCache.find(x =>
       campo(x, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']) === nrcParam
     );
-    if(ob && !intakeActivo) {
-      intakeActivo = campo(ob, ['intake','INTAKE','intake o version','INTAKE O VERSION']);
+
+    if(ob) {
+      const curso = {
+        nrc: campo(ob, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),
+        nombreCurso: campo(ob, ['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']),
+        programa: campo(ob, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']),
+        fechaInicio: fechaISO(campo(ob, ['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO'])),
+        fechaFin: fechaISO(campo(ob, ['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN'])),
+        intake: campo(ob, ['intake','INTAKE','intake o version','INTAKE O VERSION'])
+      };
+      seleccionarCursoInduccion(curso);
     }
   }
 };
