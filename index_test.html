@@ -128,6 +128,23 @@
     .course-banner-progress-bar { height:2px; background:rgba(255,255,255,.06); overflow:hidden; }
     .course-banner-progress-fill { height:100%; background:linear-gradient(90deg,#4ade80,#60a5fa); width:0%; }
 
+    .top-course-banner {
+        height:110px;
+        display:flex;
+        flex-direction:column;
+    }
+    .top-course-banner .course-banner-track-outer {
+        flex:1;
+        height:auto;
+    }
+    .top-course-banner .course-banner-slide {
+        padding:0 18px;
+        gap:14px;
+    }
+    .top-course-banner .course-slide-meta {
+        min-width:120px;
+    }
+
     /* ── Eventos UNAB ── */
     .eventos-unab-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
     .evento-unab-card { display:flex; gap:9px; align-items:flex-start; padding:9px; border-radius:9px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.025); text-decoration:none; transition:all .18s; min-width:0; }
@@ -232,16 +249,44 @@
 
             <!-- PORTADA PRINCIPAL -->
             <div class="col-span-12 flex flex-col gap-3 overflow-hidden">
-                <!-- BANNER -->
-                <div class="banner-hero flex-shrink-0" style="height:110px;">
-                    <div class="banner-bg-accent"></div>
-                    <div class="banner-side-photo"></div>
-                    <div class="banner-side-fade"></div>
-                    <div class="banner-overlay"></div>
-                    <div class="banner-content" style="padding:0 24px; max-width:60%;">
-                        <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
-                        <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
-                        <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
+                <!-- FRANJA SUPERIOR: PORTAL + BANNER DE CURSOS -->
+                <div class="grid grid-cols-12 gap-3 flex-shrink-0" style="height:110px;">
+                    <!-- PORTAL ETOP -->
+                    <div class="col-span-6 banner-hero" style="height:110px;">
+                        <div class="banner-bg-accent"></div>
+                        <div class="banner-side-photo"></div>
+                        <div class="banner-side-fade"></div>
+                        <div class="banner-overlay"></div>
+                        <div class="banner-content" style="padding:0 24px; max-width:56%;">
+                            <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
+                            <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
+                            <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
+                        </div>
+                    </div>
+
+                    <!-- BANNER DINÁMICO DE CURSOS -->
+                    <div class="col-span-6">
+                        <div class="course-banner-wrap top-course-banner" id="course-banner">
+                            <div class="course-banner-header">
+                                <div class="course-banner-dot"></div>
+                                <span class="course-banner-label">Próximos inicios de cursos</span>
+                                <span class="course-banner-counter" id="course-ctr">0 / 0</span>
+                            </div>
+                            <div class="course-banner-track-outer">
+                                <div class="course-banner-track" id="course-track">
+                                    <div class="course-banner-slide">
+                                        <div class="course-slide-icon">⏳</div>
+                                        <div class="course-slide-body">
+                                            <div class="course-slide-programa">Cargando próximos inicios...</div>
+                                            <div class="course-slide-nrc">Consultando información de cursos</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-banner-progress-bar">
+                                <div class="course-banner-progress-fill" id="course-prog"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -268,31 +313,8 @@
                         </iframe>
                     </section>
 
-                    <!-- CENTRO: PRÓXIMOS INICIOS + NOVEDADES + EVENTOS -->
+                    <!-- CENTRO: NOVEDADES + EVENTOS -->
                     <section class="col-span-5 glass-panel rounded-xl p-4 flex flex-col overflow-y-auto custom-scrollbar" style="min-height:0;">
-
-                        <!-- BANNER DINÁMICO: mezcla nrcs.json + nrcs_onboarding.json -->
-                        <div class="course-banner-wrap mb-3" id="course-banner">
-                            <div class="course-banner-header">
-                                <div class="course-banner-dot"></div>
-                                <span class="course-banner-label">Próximos inicios de cursos</span>
-                                <span class="course-banner-counter" id="course-ctr">0 / 0</span>
-                            </div>
-                            <div class="course-banner-track-outer">
-                                <div class="course-banner-track" id="course-track">
-                                    <div class="course-banner-slide">
-                                        <div class="course-slide-icon">⏳</div>
-                                        <div class="course-slide-body">
-                                            <div class="course-slide-programa">Cargando próximos inicios...</div>
-                                            <div class="course-slide-nrc">Consultando información de cursos</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="course-banner-progress-bar">
-                                <div class="course-banner-progress-fill" id="course-prog"></div>
-                            </div>
-                        </div>
 
                         <!-- NOVEDADES Y NOTICIAS ETOP -->
                         <div class="flex items-center justify-between mb-3 flex-shrink-0">
