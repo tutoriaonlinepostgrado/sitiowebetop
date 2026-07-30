@@ -183,6 +183,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .td-curso{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .td-fecha{font-family:var(--mono);font-size:10px}
 .td-intake{font-family:var(--mono);font-size:10px;color:#c4b5fd}
+.td-intake a{color:#c4b5fd;text-decoration:none;font-weight:600}
+.td-intake a:hover{text-decoration:underline;color:#ddd6fe}
 .td-actions{white-space:nowrap}
 .table-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:4px;background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:#7dd3fc;text-decoration:none;font-size:9px;font-weight:700}
 .table-btn:hover{background:rgba(14,165,233,.24)}
@@ -605,7 +607,10 @@ function renderDir(filtro=''){
       const tutorHtml=ct
         ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
         : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
-      return`<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${esc(c.intake)||'—'}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
+      const intakeHtml=c.urls.urlI
+        ? `<a href="${esc(c.urls.urlI)}" target="_blank" rel="noopener noreferrer" title="Abrir lista filtrada por este intake">${esc(c.intake)||'—'}</a>`
+        : (esc(c.intake)||'—');
+      return`<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
     }).join('');
     return`<div class="prog-card" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
