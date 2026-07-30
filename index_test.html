@@ -578,38 +578,52 @@ function escaparHTML(valor='') {
 
 async function cargarBannerCursos() {
     const track = document.getElementById('course-track');
-    const ctr = document.getElementById('course-ctr');
-    const prog = document.getElementById('course-prog');
+    const ctr   = document.getElementById('course-ctr');
+    const prog  = document.getElementById('course-prog');
     if (!track || !ctr || !prog) return;
 
     try {
         const [rNrcs, rOnboarding] = await Promise.allSettled([
-            fetch(NRCS_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs.json HTTP '+r.status); return r.json(); }),
-            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs_onboarding.json HTTP '+r.status); return r.json(); })
+            fetch(NRCS_JSON           + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs HTTP '+r.status); return r.json(); }),
+            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('onboarding HTTP '+r.status); return r.json(); })
         ]);
 
-        const base = rNrcs.status === 'fulfilled' ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value || [])) : [];
+        const base       = rNrcs.status       === 'fulfilled' ? (Array.isArray(rNrcs.value)       ? rNrcs.value       : (rNrcs.value.value       || [])) : [];
         const onboarding = rOnboarding.status === 'fulfilled' ? (Array.isArray(rOnboarding.value) ? rOnboarding.value : (rOnboarding.value.value || [])) : [];
 
-        const hoy = new Date();
-        const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        const limite = new Date(inicioHoy); limite.setDate(limite.getDate() + 14);
-        const vistos = new Set();
+        // Mapa de lookup: nrc → datos de onboarding
+        const lookup = {};
+        onboarding.forEach(item => {
+            if (item.nrc) lookup[item.nrc] = item;
+        });
 
-        const cursos = [
-            ...base.map(x => normalizarCurso(x, 'nrcs')),
-            ...onboarding.map(x => normalizarCurso(x, 'onboarding'))
-        ]
-        .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
-        .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
-        .sort((a,b) => a.fecha - b.fecha)
-        .filter(x => {
-            const clave = `${x.nrc}|${x.fecha.toISOString().slice(0,10)}|${x.curso}`.toLowerCase();
-            if (vistos.has(clave)) return false;
-            vistos.add(clave);
-            return true;
-        })
-        .slice(0, 10);
+        const hoy      = new Date();
+        const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        const limite   = new Date(inicioHoy); limite.setDate(limite.getDate() + 14);
+        const vistos   = new Set();
+
+        const cursos = base
+            .map(item => {
+                const extra       = lookup[item.nrc] || {};
+                const fechaTexto  = item['fecha inicio'] || item['fecha_inicio'] || '';
+                const fecha       = parseFechaCurso(fechaTexto);
+                const programa    = extra['nombre programa'] || extra['nombre_programa'] || item.facultad || 'Sin programa';
+                const curso       = extra['nombre curso']   || extra['nombre_curso']    || item['codigo curso'] || '';
+                const tutor       = item.tutor || 'Por asignar';
+                const nrc         = item.nrc   || '';
+                const estado      = (item.estado || '').toUpperCase();
+                return { fecha, fechaTexto, programa, curso, tutor, nrc, estado };
+            })
+            .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
+            .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
+            .sort((a, b) => a.fecha - b.fecha)
+            .filter(x => {
+                const clave = `${x.nrc}|${x.fecha.toISOString().slice(0,10)}`.toLowerCase();
+                if (vistos.has(clave)) return false;
+                vistos.add(clave);
+                return true;
+            })
+            .slice(0, 10);
 
         if (!cursos.length) {
             track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">📅</div><div class="course-slide-body"><div class="course-slide-programa">No hay inicios programados para los próximos 14 días</div><div class="course-slide-nrc">La información se actualizará automáticamente desde GitHub</div></div></div>`;
@@ -634,13 +648,13 @@ async function cargarBannerCursos() {
         }).join('');
 
         iniciarRotacionCursos(cursos.length);
-    } catch (e) {
+
+    } catch(e) {
         console.error('Error cargando banner de cursos:', e);
         track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">⚠️</div><div class="course-slide-body"><div class="course-slide-programa">No fue posible cargar los próximos inicios</div><div class="course-slide-nrc">Revisa la ubicación y estructura de los archivos JSON</div></div></div>`;
         ctr.textContent = '0 / 0';
     }
 }
-
 function iniciarRotacionCursos(total) {
     const track = document.getElementById('course-track');
     const ctr = document.getElementById('course-ctr');
