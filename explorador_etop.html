@@ -89,7 +89,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 
 /* ══ STATS ══ */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
+.stat-card:hover{transform:translateY(-2px);border-color:rgba(250,204,21,.35);background:rgba(30,41,59,.92)}
+.stat-card.active{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(250,204,21,.12)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .s-total::before{background:var(--yellow)}.s-activo::before{background:#4ade80}.s-cierre::before{background:#fbbf24}
 .s-prep::before{background:#60a5fa}.s-tutores::before{background:#a78bfa}.s-prog::before{background:#f472b6}
@@ -101,6 +103,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
 .chart-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
 .bar-list{display:flex;flex-direction:column;gap:8px}
+.bar-item{cursor:pointer;padding:5px 7px;border-radius:6px;transition:background .15s}
+.bar-item:hover,.bar-item.active{background:rgba(250,204,21,.07)}
 .bar-header{display:flex;justify-content:space-between;margin-bottom:4px}
 .bar-name{font-size:11px;color:var(--text-muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}
 .bar-val{font-size:11px;font-weight:700;color:var(--text)}
@@ -108,7 +112,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
 .donut-wrap{display:flex;align-items:center;gap:20px}
 .donut-legend{flex:1;display:flex;flex-direction:column;gap:8px}
-.legend-item{display:flex;align-items:center;gap:8px}
+.legend-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 7px;border-radius:6px;transition:background .15s}
+.legend-item:hover,.legend-item.active{background:rgba(250,204,21,.07)}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .legend-name{font-size:11px;color:var(--text-muted);flex:1}
 .legend-val{font-size:12px;font-weight:700;color:var(--text)}
@@ -163,6 +168,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .td-nrc a:hover{text-decoration:underline}
 .td-curso{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .td-fecha{font-family:var(--mono);font-size:10px}
+.td-intake{font-family:var(--mono);font-size:10px;color:#c4b5fd}
+.td-actions{white-space:nowrap}
+.table-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:4px;background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:#7dd3fc;text-decoration:none;font-size:9px;font-weight:700}
+.table-btn:hover{background:rgba(14,165,233,.24)}
+.active-filter-note{display:none;align-items:center;gap:8px;margin-bottom:14px;padding:9px 12px;border-radius:7px;background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.18);font-size:11px;color:var(--text-muted)}
+.active-filter-note.show{display:flex}
+.active-filter-note strong{color:var(--yellow)}
+.active-filter-note button{margin-left:auto;border:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:5px;padding:3px 8px;cursor:pointer}
 .td-empty{text-align:center;padding:20px;color:var(--text-dim);font-style:italic;font-size:12px}
 
 /* LOADING */
@@ -231,10 +244,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <!-- DIRECTORIO -->
 <div id="sec-dir" class="section">
   <div class="section-label">📚 Directorio de programas</div>
+  <div class="active-filter-note" id="activeFilterNote">
+    Filtro estadístico: <strong id="activeFilterText">—</strong>
+    <button type="button" onclick="clearStatFilter()">Quitar filtro</button>
+  </div>
   <div class="dir-search-wrap">
     <span class="dir-search-ico">🔍</span>
     <input class="dir-search" id="dirSearch" type="text"
-      placeholder="Filtrar programas…" oninput="filtrarDir(this.value)">
+      placeholder="Buscar programa, intake, NRC, curso, tutor, facultad o estado…" oninput="filtrarDir(this.value)">
   </div>
   <div class="prog-list" id="progList">
     <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
@@ -251,7 +268,11 @@ const ONB_URL='https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboar
 const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION'];
 const PAL=['#60a5fa','#4ade80','#fbbf24','#f472b6','#a78bfa','#34d399','#fb923c','#e879f9'];
 
+/* Completar con los nombres del Excel de tutores activos. */
+const TUTORES_ACTIVOS = [];
+
 let all=[],progMap={},cardIdx={},sugList=[],sugSel=-1,timer=null;
+let statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
 
 /* ── UTILS ─────────────────────────────── */
 const esc=v=>String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -267,11 +288,15 @@ function buildUrls(nrc,intake,per){
   const ng=(nrc.match(/_/g)||[]).length,lu=nrc.lastIndexOf('_');
   const vN=lu>0?nrc.slice(0,lu):nrc,vP=lu>0?nrc.slice(lu+1):'';
   const urlSP=ng===0||!nrc?'#':base+'?env=Embedded&FilterField1=NRC_COD&FilterValue1='+vN.replace(/_/g,'%5F')+'&FilterField2=PERIODO_x002a_&FilterValue2='+vP+vid;
-  const urlI=intake?'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList&isDlg=1&iframed=1&FilterField1=field_8&FilterValue1='+encodeURIComponent(intake):null;
+  const listaNrc='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx';
+  const vistaNrc='viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList';
+  const urlI=intake?listaNrc+'?'+vistaNrc+'&FilterField1=field_8&FilterValue1='+encodeURIComponent(intake):null;
+  const urlNrcTutor=nrc?listaNrc+'?'+vistaNrc+'&FilterField1=NRC_COD_CAL&FilterValue1='+encodeURIComponent(nrc):null;
   const ns=nrc.indexOf('_'),nso=ns>0?nrc.slice(0,ns):nrc,pc=vP||per||'';
   const urlC=nso&&pc?'https://lms.unab.cl/int-canvas/?term_code='+pc+'&periodo='+pc+'&nrc='+nso+'&nrc_code='+nso+'&crn='+nso+'&NRC='+nso:null;
-  return{urlSP,urlI,urlC};
+  return{urlSP,urlI,urlNrcTutor,urlC};
 }
+
 function icon(p){const n=norm(p);if(n.includes('salud'))return'🏥';if(n.includes('educa')||n.includes('docencia'))return'📚';if(n.includes('ingen')||n.includes('logis')||n.includes('operaciones'))return'⚙️';if(n.includes('gobierno')||n.includes('publica')||n.includes('juridic'))return'🏛️';if(n.includes('mba')||n.includes('administrac'))return'💼';return'🎓';}
 
 /* ── CARGA ─────────────────────────────── */
@@ -291,7 +316,12 @@ async function cargar(){
       const per=nrc.split('_').pop()||'';
       const prog=(ex['nombre programa']||ex['nombre_programa']||item.facultad||'—').trim();
       const cur=(ex['nombre curso']||ex['nombre_curso']||'—').trim();
-      return{nrc,programa:prog,curso:cur,codigoCurso:(ex['codigo curso']||'').trim(),intake:(ex.intake||'').trim(),estado:(item.estado||'').toUpperCase().trim(),facultad:(item.facultad||'—').trim(),tutor:(item.tutor||'Por asignar').trim(),fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),urls:buildUrls(nrc,ex.intake||'',per),_s:norm([nrc,prog,cur,item.tutor||'',item.facultad||'',ex['codigo curso']||'',ex.intake||''].join(' '))};
+      const intake=(ex.intake||ex['INTAKE O VERSION']||ex['intake o version']||ex['intake_version']||item.intake||item['INTAKE O VERSION']||'').trim();
+      const codigo=(ex['codigo curso']||ex['codigo_curso']||item['codigo curso']||'').trim();
+      const tutor=(item.tutor||item['NOMBRE TUTOR']||'Por asignar').trim();
+      const facultad=(item.facultad||'—').trim();
+      const estado=(item.estado||'').toUpperCase().trim();
+      return{nrc,programa:prog,curso:cur,codigoCurso:codigo,intake,estado,facultad,tutor,fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),urls:buildUrls(nrc,intake,per),_s:norm([nrc,prog,cur,tutor,facultad,codigo,intake,estado].join(' '))};
     });
     document.getElementById('navTotal').textContent=all.length.toLocaleString('es-CL');
     document.getElementById('footerTs').textContent='Actualizado: '+new Date().toLocaleString('es-CL');
@@ -374,11 +404,12 @@ document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').
 function renderCards(q){
   const c=document.getElementById('searchResults'),qn=norm(q);
   if(!qn||qn.length<2){c.innerHTML='';return;}
-  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return(a.fechaObj?.getTime()||0)-(b.fechaObj?.getTime()||0);}).slice(0,12);
+  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return(b.fechaObj?.getTime()||0)-(a.fechaObj?.getTime()||0);}).slice(0,20);
   if(!found.length){c.innerHTML=`<div class="search-empty">Sin resultados para <strong>${esc(q)}</strong></div>`;return;}
   c.innerHTML=found.map(x=>{
-    const{urlSP,urlC}=x.urls;
+    const{urlSP,urlNrcTutor,urlC}=x.urls;
     const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
+    const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank">🗂 NRC Tutor Actual</a>`:'';
     const bC=urlC?`<a class="rc-btn rc-btn-canvas" href="${esc(urlC)}" target="_blank">🖥 Canvas</a><a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank">🔗 Int-CVS</a>`:'';
     return`<div class="result-card">
       <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc)}</div><div class="rc-programa">${esc(x.programa)}</div><div class="rc-curso">${esc(x.curso)}</div></div><div>${badge(x.estado)}</div></div>
@@ -388,54 +419,97 @@ function renderCards(q){
         <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${fmtF(x.fechaFin)}</div></div>
         <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad)}</div></div>
         <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso)||'—'}</div></div>
+        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${esc(x.intake)||'—'}</div></div>
         <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${esc(x.estado)}</div></div>
       </div>
-      ${bSP||bC?`<div class="rc-links">${bSP}${bC}</div>`:''}
+      ${bSP||bN||bC?`<div class="rc-links">${bSP}${bN}${bC}</div>`:''}
     </div>`;
   }).join('');
 }
 
 /* ── STATS ─────────────────────────────── */
+function tutorEsActivo(nombre){
+  if(!nombre||nombre==='Por asignar')return false;
+  if(!TUTORES_ACTIVOS.length)return true;
+  const n=norm(nombre);
+  return TUTORES_ACTIVOS.some(t=>norm(t)===n);
+}
+
+function setStatFilter(tipo,valor='',label=''){
+  statFilter={tipo,valor,label:label||valor||'Todos los NRC'};
+  document.getElementById('activeFilterText').textContent=statFilter.label;
+  document.getElementById('activeFilterNote').classList.toggle('show',tipo!=='ALL');
+  renderDir(document.getElementById('dirSearch').value);
+  goTo('sec-dir');
+}
+
+function clearStatFilter(){
+  statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
+  document.getElementById('activeFilterNote').classList.remove('show');
+  renderDir(document.getElementById('dirSearch').value);
+}
+
 function renderStats(){
   const tot=all.length,act=all.filter(c=>c.estado==='ACTIVO').length,cie=all.filter(c=>c.estado==='EN CIERRE').length,pre=all.filter(c=>c.estado==='PREPARACION').length,cer=all.filter(c=>c.estado==='CERRADO').length;
-  const tut=new Set(all.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar')).size,prg=new Set(all.map(c=>c.programa)).size;
+  const tut=[...new Set(all.map(c=>c.tutor).filter(tutorEsActivo))].length,prg=new Set(all.map(c=>c.programa)).size;
   document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card s-total"><div class="stat-num">${tot.toLocaleString('es-CL')}</div><div class="stat-label">Total NRC</div><div class="stat-sub">en todos los estados</div></div>
-    <div class="stat-card s-activo"><div class="stat-num">${act}</div><div class="stat-label">Activos</div><div class="stat-sub">${((act/tot)*100).toFixed(1)}% del total</div></div>
-    <div class="stat-card s-cierre"><div class="stat-num">${cie}</div><div class="stat-label">En Cierre</div><div class="stat-sub">${((cie/tot)*100).toFixed(1)}% del total</div></div>
-    <div class="stat-card s-prep"><div class="stat-num">${pre}</div><div class="stat-label">En Preparación</div><div class="stat-sub">${((pre/tot)*100).toFixed(1)}% del total</div></div>
-    <div class="stat-card s-tutores"><div class="stat-num">${tut}</div><div class="stat-label">Tutores activos</div><div class="stat-sub">con NRC asignados</div></div>
-    <div class="stat-card s-prog"><div class="stat-num">${prg}</div><div class="stat-label">Programas</div><div class="stat-sub">distintos en el sistema</div></div>`;
+    <div class="stat-card s-total" onclick="setStatFilter('ALL','','Todos los NRC')"><div class="stat-num">${tot.toLocaleString('es-CL')}</div><div class="stat-label">Total NRC</div><div class="stat-sub">clic para mostrar todos</div></div>
+    <div class="stat-card s-activo" onclick="setStatFilter('ESTADO','ACTIVO','Cursos activos')"><div class="stat-num">${act}</div><div class="stat-label">Activos</div><div class="stat-sub">${tot?((act/tot)*100).toFixed(1):'0.0'}% del total</div></div>
+    <div class="stat-card s-cierre" onclick="setStatFilter('ESTADO','EN CIERRE','Cursos en cierre')"><div class="stat-num">${cie}</div><div class="stat-label">En Cierre</div><div class="stat-sub">${tot?((cie/tot)*100).toFixed(1):'0.0'}% del total</div></div>
+    <div class="stat-card s-prep" onclick="setStatFilter('ESTADO','PREPARACION','Cursos en preparación')"><div class="stat-num">${pre}</div><div class="stat-label">En Preparación</div><div class="stat-sub">${tot?((pre/tot)*100).toFixed(1):'0.0'}% del total</div></div>
+    <div class="stat-card s-tutores" onclick="setStatFilter('TUTOR_ACTIVO','','Cursos de tutores activos')"><div class="stat-num">${tut}</div><div class="stat-label">Tutores activos</div><div class="stat-sub">${TUTORES_ACTIVOS.length?'según nómina cargada':'con NRC asignados'}</div></div>
+    <div class="stat-card s-prog" onclick="setStatFilter('PROGRAMAS','','Directorio de programas')"><div class="stat-num">${prg}</div><div class="stat-label">Programas</div><div class="stat-sub">clic para abrir directorio</div></div>`;
   const fm={};all.filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado)).forEach(c=>{fm[c.facultad]=(fm[c.facultad]||0)+1;});
   const fs=Object.entries(fm).sort((a,b)=>b[1]-a[1]),mx=fs[0]?.[1]||1;
-  document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`<div class="bar-item"><div class="bar-header"><span class="bar-name" title="${esc(f)}">${esc(f)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join('');
-  const est=[{l:'Activo',v:act,c:'#4ade80'},{l:'En Cierre',v:cie,c:'#fbbf24'},{l:'Preparación',v:pre,c:'#60a5fa'},{l:'Cerrado',v:cer,c:'#475569'}].filter(e=>e.v>0);
+  document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`<div class="bar-item" onclick="setStatFilter('FACULTAD','${esc(f)}','Facultad: ${esc(f)}')"><div class="bar-header"><span class="bar-name" title="${esc(f)}">${esc(f)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join('');
+  const est=[{l:'Activo',k:'ACTIVO',v:act,c:'#4ade80'},{l:'En Cierre',k:'EN CIERRE',v:cie,c:'#fbbf24'},{l:'Preparación',k:'PREPARACION',v:pre,c:'#60a5fa'},{l:'Cerrado',k:'CERRADO',v:cer,c:'#475569'}].filter(e=>e.v>0);
   const r=36,cx=50,cy=50,ci=2*Math.PI*r;let off=0,p='';
-  est.forEach(e=>{const pc=e.v/tot,da=pc*ci,ga=ci-da;p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}" stroke-dashoffset="${(-off*ci).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pc;});
+  est.forEach(e=>{const pc=tot?e.v/tot:0,da=pc*ci,ga=ci-da;p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}" stroke-dashoffset="${(-off*ci).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pc;});
   document.getElementById('donutSvg').innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>${p}<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${tot}</text>`;
-  document.getElementById('donutLegend').innerHTML=est.map(e=>`<div class="legend-item"><div class="legend-dot" style="background:${e.c}"></div><span class="legend-name">${esc(e.l)}</span><span class="legend-val">${e.v}</span></div>`).join('');
+  document.getElementById('donutLegend').innerHTML=est.map(e=>`<div class="legend-item" onclick="setStatFilter('ESTADO','${esc(e.k)}','Estado: ${esc(e.l)}')"><div class="legend-dot" style="background:${e.c}"></div><span class="legend-name">${esc(e.l)}</span><span class="legend-val">${e.v}</span></div>`).join('');
   document.getElementById('chartsRow').style.display='grid';
 }
 
+
 /* ── DIRECTORIO ────────────────────────── */
+function cursoCumpleFiltroEstadistico(c){
+  if(statFilter.tipo==='ALL'||statFilter.tipo==='PROGRAMAS')return true;
+  if(statFilter.tipo==='ESTADO')return c.estado===statFilter.valor;
+  if(statFilter.tipo==='FACULTAD')return c.facultad===statFilter.valor;
+  if(statFilter.tipo==='TUTOR_ACTIVO')return tutorEsActivo(c.tutor);
+  return true;
+}
+
+function coincideBusquedaFlexible(c,terminos){
+  if(!terminos.length)return true;
+  const bolsa=norm([c.programa,c.intake,c.nrc,c.curso,c.codigoCurso,c.tutor,c.facultad,c.estado].join(' '));
+  return terminos.every(t=>bolsa.includes(t));
+}
+
 function renderDir(filtro=''){
   progMap={};cardIdx={};
-  all.filter(c=>ESTADOS_DIR.includes(c.estado)).forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
-  let progs=Object.keys(progMap).sort();
-  if(filtro){const qn=norm(filtro);progs=progs.filter(p=>norm(p).includes(qn));}
-  if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin programas que coincidan.</div>';return;}
+  const terminos=norm(filtro).split(/\s+/).filter(Boolean);
+  all.filter(c=>ESTADOS_DIR.includes(c.estado))
+    .filter(c=>cursoCumpleFiltroEstadistico(c))
+    .filter(c=>coincideBusquedaFlexible(c,terminos))
+    .forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
+  const progs=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'));
+  if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin cursos que coincidan con la búsqueda y los filtros activos.</div>';return;}
   document.getElementById('progList').innerHTML=progs.map((prog,idx)=>{
     cardIdx[prog]=idx;
     const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length;
     const tuts=[...new Set(cs.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))];
-    const pills=(ac?`<span class="prog-pill pill-a" onclick="filterPill(event,${idx},'ACTIVO')" title="Ver solo activos">${ac} activo${ac!==1?'s':''}</span>`:'')+
-      (ci?`<span class="prog-pill pill-c" onclick="filterPill(event,${idx},'EN CIERRE')" title="Ver solo en cierre">${ci} en cierre</span>`:'')+
-      (pr?`<span class="prog-pill pill-p" onclick="filterPill(event,${idx},'PREPARACION')" title="Ver solo preparación">${pr} preparación</span>`:'')+
-      `<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'ALL')" title="Ver todos">Todos</span>`;
+    const intakes=[...new Set(cs.map(c=>c.intake).filter(Boolean))].sort((a,b)=>b.localeCompare(a,'es',{numeric:true}));
+    const pills=(ac?`<span class="prog-pill pill-a" onclick="filterPill(event,${idx},'ACTIVO')">${ac} activo${ac!==1?'s':''}</span>`:'')+
+      (ci?`<span class="prog-pill pill-c" onclick="filterPill(event,${idx},'EN CIERRE')">${ci} en cierre</span>`:'')+
+      (pr?`<span class="prog-pill pill-p" onclick="filterPill(event,${idx},'PREPARACION')">${pr} preparación</span>`:'')+
+      `<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'ALL')">Todos</span>`;
     const tutH=tuts.length?tuts.map(t=>`<span class="tutor-tag">${esc(t)}</span>`).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
-    const rows=[...cs].sort((a,b)=>(a.fechaObj?.getTime()||0)-(b.fechaObj?.getTime()||0)).map(c=>{
-      const{urlSP}=c.urls,lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
-      return`<tr data-est="${esc(c.estado)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${esc(c.tutor)}</td></tr>`;
+    const rows=[...cs].sort((a,b)=>(b.fechaObj?.getTime()||0)-(a.fechaObj?.getTime()||0)).map(c=>{
+      const{urlSP,urlNrcTutor}=c.urls;
+      const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
+      const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir ↗</a>`:'—';
+      return`<tr data-est="${esc(c.estado)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${esc(c.intake)||'—'}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${esc(c.tutor)}</td><td class="td-actions">${acceso}</td></tr>`;
     }).join('');
     return`<div class="prog-card" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
@@ -448,12 +522,15 @@ function renderDir(filtro=''){
           Mostrando: <span class="filter-bar-label" id="flabel-${idx}">—</span>
           <span class="filter-bar-count" id="fcount-${idx}"></span>
         </div>
-        <table class="nrc-table"><thead><tr><th>NRC</th><th>Curso</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Tutor</th></tr></thead>
-        <tbody id="tbody-${idx}">${rows}</tbody></table>
+        <div style="overflow-x:auto">
+          <table class="nrc-table"><thead><tr><th>NRC</th><th>Curso</th><th>Intake / Versión</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Tutor</th><th>NRC Tutor Actual</th></tr></thead>
+          <tbody id="tbody-${idx}">${rows}</tbody></table>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
+
 
 function toggleCard(idx,e){if(e.target.closest('.prog-pill'))return;document.getElementById('prog-'+idx).classList.toggle('open');}
 
@@ -474,7 +551,7 @@ function filterPill(e,idx,estado){
   else{bar.style.display='flex';document.getElementById('flabel-'+idx).textContent=estado;document.getElementById('fcount-'+idx).textContent=vis+' NRC';}
   // fila vacía
   const prev=document.getElementById('empty-'+idx);if(prev)prev.remove();
-  if(vis===0){const tr=document.createElement('tr');tr.id='empty-'+idx;tr.innerHTML=`<td colspan="6" class="td-empty">Sin cursos con estado "${estado}"</td>`;document.getElementById('tbody-'+idx).appendChild(tr);}
+  if(vis===0){const tr=document.createElement('tr');tr.id='empty-'+idx;tr.innerHTML=`<td colspan="8" class="td-empty">Sin cursos con estado "${estado}"</td>`;document.getElementById('tbody-'+idx).appendChild(tr);}
 }
 
 function filtrarDir(v){renderDir(v);}
