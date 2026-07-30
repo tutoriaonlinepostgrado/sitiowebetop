@@ -6,874 +6,480 @@
 <title>Explorador ETOP · Cursos y Programas</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --yellow:#facc15;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --font:'Inter',system-ui,sans-serif;--mono:'Consolas','SF Mono',monospace;--radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
 
-:root {
-    --bg:        #0f172a;
-    --surface:   #1e293b;
-    --surface2:  #273549;
-    --surface3:  #1a2744;
-    --border:    rgba(255,255,255,0.07);
-    --border2:   rgba(255,255,255,0.12);
-    --yellow:    #facc15;
-    --text:      #e2e8f0;
-    --text-muted:#94a3b8;
-    --text-dim:  #64748b;
-    --font:      'Inter', system-ui, sans-serif;
-    --mono:      'Consolas', 'SF Mono', monospace;
-    --radius:    10px;
-}
+/* NAV */
+.topnav{position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:pdot 2s infinite}
+@keyframes pdot{0%{box-shadow:0 0 0 0 rgba(250,204,21,.45)}70%{box-shadow:0 0 0 6px rgba(250,204,21,0)}100%{box-shadow:0 0 0 0 rgba(250,204,21,0)}}
+.nav-title{font-size:14px;font-weight:700}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;color:var(--text-muted);text-decoration:none;cursor:pointer;border:none;background:none;transition:all .15s}
+.nav-link:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.nav-stat{font-size:11px;color:var(--text-dim)}
+.nav-stat span{color:var(--yellow);font-weight:700}
 
-html { scroll-behavior: smooth; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-}
+/* SECTIONS */
+.section{padding:32px 24px;max-width:1200px;margin:0 auto}
+.section+.section{border-top:1px solid var(--border)}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── NAV ── */
-.topnav {
-    position: sticky; top: 0; z-index: 200;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px;
-    height: 52px;
-    background: rgba(15,23,42,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border2);
-}
-.nav-brand { display: flex; align-items: center; gap: 10px; }
-.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 0 rgba(250,204,21,.5); animation: pdot 2s infinite; }
-@keyframes pdot { 0%{box-shadow:0 0 0 0 rgba(250,204,21,.45)} 70%{box-shadow:0 0 0 6px rgba(250,204,21,0)} 100%{box-shadow:0 0 0 0 rgba(250,204,21,0)} }
-.nav-title { font-size: 14px; font-weight: 700; color: var(--text); }
-.nav-links { display: flex; gap: 4px; }
-.nav-link {
-    padding: 5px 12px; border-radius: 6px;
-    font-size: 12px; font-weight: 500; color: var(--text-muted);
-    text-decoration: none; cursor: pointer; border: none; background: none;
-    transition: all .15s;
-}
-.nav-link:hover { background: rgba(255,255,255,.06); color: var(--text); }
-.nav-stat { font-size: 11px; color: var(--text-dim); }
-.nav-stat span { color: var(--yellow); font-weight: 700; }
+/* BADGE */
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.badge-ACTIVO{background:rgba(74,222,128,.15);color:#4ade80;border:.5px solid rgba(74,222,128,.3)}
+.badge-EN-CIERRE{background:rgba(251,191,36,.12);color:#fbbf24;border:.5px solid rgba(251,191,36,.25)}
+.badge-PREPARACION{background:rgba(96,165,250,.12);color:#60a5fa;border:.5px solid rgba(96,165,250,.25)}
+.badge-CERRADO{background:rgba(100,116,139,.1);color:#64748b;border:.5px solid rgba(100,116,139,.2)}
 
-/* ── SECTIONS ── */
-.section { padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
-.section + .section { border-top: 1px solid var(--border); }
-.section-label {
-    font-size: 10px; font-weight: 700; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--text-dim);
-    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
-}
-.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+/* ══ BUSCADOR ══ */
+.search-hero{text-align:center;padding:40px 24px 28px}
+.search-hero h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.search-hero h1 span{color:var(--yellow)}
+.search-hero p{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+.search-wrap{position:relative;max-width:640px;margin:0 auto}
+.search-input{width:100%;background:var(--surface);border:1.5px solid var(--border2);color:var(--text);border-radius:12px;padding:14px 44px 14px 48px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
+.search-input:focus{border-color:rgba(250,204,21,.5);box-shadow:0 0 0 3px rgba(250,204,21,.08)}
+.search-input::placeholder{color:var(--text-dim)}
+.search-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.search-clear{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:none;color:var(--text-muted);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:13px;display:none;align-items:center;justify-content:center;transition:background .15s}
+.search-clear:hover{background:rgba(255,255,255,.15)}
+.search-clear.visible{display:flex}
 
-/* ══════════════════════════════════════
-   SECCIÓN 1 · BUSCADOR
-══════════════════════════════════════ */
-.search-hero { text-align: center; padding: 40px 24px 28px; }
-.search-hero h1 {
-    font-size: 26px; font-weight: 800; color: var(--text);
-    letter-spacing: -.5px; margin-bottom: 6px;
-}
-.search-hero h1 span { color: var(--yellow); }
-.search-hero p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+/* SUGGESTIONS */
+.sug-box{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 16px 40px rgba(0,0,0,.5);z-index:400;display:none;max-height:400px;overflow-y:auto}
+.sug-box.open{display:block;animation:fadeUp .15s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.sug-group{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:8px 14px 4px;border-top:1px solid var(--border)}
+.sug-group:first-child{border-top:none}
+.sug-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background .1s}
+.sug-item:hover,.sug-item.active{background:rgba(250,204,21,.08)}
+.sug-icon{font-size:14px;flex-shrink:0;width:20px;text-align:center}
+.sug-main{font-size:12px;font-weight:500;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sug-main mark{background:transparent;color:var(--yellow);font-weight:700}
+.sug-sub{font-size:10px;color:var(--text-dim);flex-shrink:0}
+.sug-empty{padding:16px 14px;text-align:center;color:var(--text-dim);font-size:12px}
 
-.search-wrap { position: relative; max-width: 640px; margin: 0 auto; }
-.search-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1.5px solid var(--border2);
-    color: var(--text);
-    border-radius: 12px;
-    padding: 14px 20px 14px 48px;
-    font-size: 15px; font-family: var(--font);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-}
-.search-input:focus {
-    border-color: rgba(250,204,21,.5);
-    box-shadow: 0 0 0 3px rgba(250,204,21,.08);
-}
-.search-input::placeholder { color: var(--text-dim); }
-.search-ico {
-    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-    font-size: 18px; pointer-events: none;
-}
-.search-clear {
-    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,.08); border: none; color: var(--text-muted);
-    border-radius: 50%; width: 22px; height: 22px; cursor: pointer;
-    font-size: 13px; display: none; align-items: center; justify-content: center;
-    transition: background .15s;
-}
-.search-clear:hover { background: rgba(255,255,255,.15); }
-.search-clear.visible { display: flex; }
+/* RESULT CARDS */
+.search-results{max-width:640px;margin:14px auto 0}
+.result-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;transition:border-color .15s;animation:fadeUp .18s ease}
+.result-card:hover{border-color:rgba(250,204,21,.3)}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.rc-nrc{font-family:var(--mono);font-size:12px;font-weight:700;color:#60a5fa}
+.rc-programa{font-size:12px;font-weight:600;color:var(--text);margin-top:2px}
+.rc-curso{font-size:11px;color:var(--text-muted);margin-top:2px}
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.rc-item-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:2px}
+.rc-item-val{font-size:11px;font-weight:600;color:var(--text-muted)}
+.rc-links{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.rc-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:5px;text-decoration:none;transition:opacity .15s}
+.rc-btn:hover{opacity:.8}
+.rc-btn-sp{background:#0ea5e9;color:#fff}
+.rc-btn-canvas{background:#0e7490;color:#fff}
+.rc-btn-intcvs{background:#d97706;color:#fff}
+.search-empty{text-align:center;padding:32px 20px;color:var(--text-dim);font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
 
-/* RESULTADOS */
-.search-results { max-width: 640px; margin: 14px auto 0; }
-.result-card {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    margin-bottom: 10px;
-    transition: border-color .15s;
-    animation: fadeSlide .18s ease;
-}
-.result-card:hover { border-color: rgba(250,204,21,.3); }
-@keyframes fadeSlide { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+/* ══ STATS ══ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.s-total::before{background:var(--yellow)}.s-activo::before{background:#4ade80}.s-cierre::before{background:#fbbf24}
+.s-prep::before{background:#60a5fa}.s-tutores::before{background:#a78bfa}.s-prog::before{background:#f472b6}
+.stat-num{font-size:32px;font-weight:800;line-height:1;color:var(--text);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.stat-label{font-size:11px;font-weight:600;color:var(--text-muted)}
+.stat-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.charts-row{grid-template-columns:1fr}}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.chart-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.bar-list{display:flex;flex-direction:column;gap:8px}
+.bar-header{display:flex;justify-content:space-between;margin-bottom:4px}
+.bar-name{font-size:11px;color:var(--text-muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}
+.bar-val{font-size:11px;font-weight:700;color:var(--text)}
+.bar-track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px}
+.legend-item{display:flex;align-items:center;gap:8px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-name{font-size:11px;color:var(--text-muted);flex:1}
+.legend-val{font-size:12px;font-weight:700;color:var(--text)}
 
-.rc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-.rc-nrc { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #60a5fa; }
-.rc-programa { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 2px; }
-.rc-curso { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+/* ══ DIRECTORIO ══ */
+.dir-search-wrap{position:relative;max-width:380px;margin-bottom:18px}
+.dir-search{width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px 8px 34px;font-size:12px;font-family:var(--font);outline:none;transition:border-color .15s}
+.dir-search:focus{border-color:rgba(250,204,21,.4)}
+.dir-search::placeholder{color:var(--text-dim)}
+.dir-search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.prog-list{display:flex;flex-direction:column;gap:8px}
+.prog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.prog-card:hover{border-color:var(--border2)}
+.prog-card.highlight{border-color:rgba(250,204,21,.6);box-shadow:0 0 0 2px rgba(250,204,21,.12)}
+.prog-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;gap:12px;transition:background .15s}
+.prog-header:hover{background:rgba(255,255,255,.03)}
+.prog-header-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.prog-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.15)}
+.prog-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.prog-meta{font-size:10px;color:var(--text-dim);margin-top:2px}
+.prog-pills{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
 
-.rc-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 8px; margin-top: 10px;
-}
-.rc-item { }
-.rc-item-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: 2px; }
-.rc-item-val { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+/* Pills interactivos */
+.prog-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none}
+.prog-pill:hover{transform:translateY(-1px)}
+.pill-a{background:rgba(74,222,128,.12);color:#4ade80;border-color:rgba(74,222,128,.2)}
+.pill-a:hover,.pill-a.active{background:rgba(74,222,128,.28);border-color:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.2)}
+.pill-c{background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.2)}
+.pill-c:hover,.pill-c.active{background:rgba(251,191,36,.25);border-color:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,.2)}
+.pill-p{background:rgba(96,165,250,.1);color:#60a5fa;border-color:rgba(96,165,250,.2)}
+.pill-p:hover,.pill-p.active{background:rgba(96,165,250,.25);border-color:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.2)}
+.pill-all{background:rgba(255,255,255,.05);color:var(--text-muted);border-color:rgba(255,255,255,.1)}
+.pill-all:hover,.pill-all.active{background:rgba(255,255,255,.12);color:var(--text);border-color:rgba(255,255,255,.3)}
 
-.rc-links { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-.rc-btn {
-    font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 5px;
-    text-decoration: none; transition: opacity .15s;
-}
-.rc-btn:hover { opacity: .8; }
-.rc-btn-sp     { background: #0ea5e9; color: #fff; }
-.rc-btn-canvas { background: #0e7490; color: #fff; }
-.rc-btn-intcvs { background: #d97706; color: #fff; }
+.prog-chevron{color:var(--text-dim);font-size:14px;flex-shrink:0;transition:transform .2s}
+.prog-card.open .prog-chevron{transform:rotate(180deg);color:var(--yellow)}
+.prog-body{display:none;border-top:1px solid var(--border)}
+.prog-card.open .prog-body{display:block}
+.prog-tutores{padding:10px 18px;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.prog-tutores strong{color:var(--text-muted);font-weight:600}
+.tutor-tag{background:rgba(167,139,250,.1);color:#a78bfa;border:.5px solid rgba(167,139,250,.2);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.filter-bar{padding:7px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);display:none;align-items:center;gap:6px;font-size:10px;color:var(--text-dim)}
+.filter-bar-label{font-weight:600;color:var(--text-muted)}
+.filter-bar-count{margin-left:auto;font-weight:700;color:var(--yellow)}
+.nrc-table{width:100%;border-collapse:collapse}
+.nrc-table th{padding:7px 18px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
+.nrc-table td{padding:7px 18px;font-size:11px;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.03)}
+.nrc-table tr:last-child td{border-bottom:none}
+.nrc-table tr:hover td{background:rgba(255,255,255,.02)}
+.td-nrc{font-family:var(--mono);font-weight:700;color:#60a5fa;font-size:11px}
+.td-nrc a{color:inherit;text-decoration:none}
+.td-nrc a:hover{text-decoration:underline}
+.td-curso{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-fecha{font-family:var(--mono);font-size:10px}
+.td-empty{text-align:center;padding:20px;color:var(--text-dim);font-style:italic;font-size:12px}
 
-.badge {
-    display: inline-block; font-size: 10px; font-weight: 700;
-    padding: 2px 8px; border-radius: 4px; white-space: nowrap;
-}
-.badge-ACTIVO      { background:rgba(74,222,128,.15);  color:#4ade80; border:.5px solid rgba(74,222,128,.3); }
-.badge-EN-CIERRE   { background:rgba(251,191,36,.12);  color:#fbbf24; border:.5px solid rgba(251,191,36,.25); }
-.badge-PREPARACION { background:rgba(96,165,250,.12);  color:#60a5fa; border:.5px solid rgba(96,165,250,.25); }
-.badge-CERRADO     { background:rgba(100,116,139,.1);  color:#64748b; border:.5px solid rgba(100,116,139,.2); }
-
-.search-empty {
-    text-align: center; padding: 32px 20px;
-    color: var(--text-dim); font-size: 13px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius);
-}
-
-/* ══════════════════════════════════════
-   SECCIÓN 2 · ESTADÍSTICAS
-══════════════════════════════════════ */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px; margin-bottom: 24px;
-}
-.stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    position: relative; overflow: hidden;
-    transition: border-color .15s;
-}
-.stat-card:hover { border-color: var(--border2); }
-.stat-card::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-}
-.stat-card.s-total::before  { background: var(--yellow); }
-.stat-card.s-activo::before { background: #4ade80; }
-.stat-card.s-cierre::before { background: #fbbf24; }
-.stat-card.s-prep::before   { background: #60a5fa; }
-.stat-card.s-tutores::before{ background: #a78bfa; }
-.stat-card.s-programas::before{ background: #f472b6; }
-
-.stat-num {
-    font-size: 32px; font-weight: 800; line-height: 1;
-    color: var(--text); margin-bottom: 4px;
-    font-variant-numeric: tabular-nums;
-}
-.stat-label { font-size: 11px; font-weight: 600; color: var(--text-muted); }
-.stat-sub   { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-
-/* CHARTS */
-.charts-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-@media (max-width: 700px) { .charts-row { grid-template-columns: 1fr; } }
-
-.chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-}
-.chart-title {
-    font-size: 11px; font-weight: 700; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: .08em;
-    margin-bottom: 14px;
-}
-
-/* Bar chart */
-.bar-list { display: flex; flex-direction: column; gap: 8px; }
-.bar-item { }
-.bar-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
-.bar-name { font-size: 11px; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
-.bar-val  { font-size: 11px; font-weight: 700; color: var(--text); }
-.bar-track { height: 6px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
-.bar-fill  { height: 100%; border-radius: 3px; transition: width .6s ease; }
-
-/* Donut */
-.donut-wrap { display: flex; align-items: center; gap: 20px; }
-.donut-svg  { flex-shrink: 0; }
-.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-.legend-item { display: flex; align-items: center; gap: 8px; }
-.legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.legend-name { font-size: 11px; color: var(--text-muted); flex: 1; }
-.legend-val  { font-size: 12px; font-weight: 700; color: var(--text); }
-
-/* ══════════════════════════════════════
-   SECCIÓN 3 · DIRECTORIO
-══════════════════════════════════════ */
-.dir-search-wrap { position: relative; max-width: 380px; margin-bottom: 18px; }
-.dir-search {
-    width: 100%; background: var(--surface); border: 1px solid var(--border2);
-    color: var(--text); border-radius: 8px; padding: 8px 12px 8px 34px;
-    font-size: 12px; font-family: var(--font); outline: none; transition: border-color .15s;
-}
-.dir-search:focus { border-color: rgba(250,204,21,.4); }
-.dir-search::placeholder { color: var(--text-dim); }
-.dir-search-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
-
-.prog-list { display: flex; flex-direction: column; gap: 8px; }
-
-.prog-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color .15s;
-}
-.prog-card:hover { border-color: var(--border2); }
-
-.prog-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px; cursor: pointer; gap: 12px;
-    transition: background .15s;
-}
-.prog-header:hover { background: rgba(255,255,255,.03); }
-.prog-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.prog-icon {
-    width: 36px; height: 36px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; flex-shrink: 0;
-    background: rgba(250,204,21,.08);
-    border: 1px solid rgba(250,204,21,.15);
-}
-.prog-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.prog-meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-
-.prog-pills { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
-.prog-pill {
-    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
-    white-space: nowrap;
-}
-.pill-a { background:rgba(74,222,128,.12);  color:#4ade80; }
-.pill-c { background:rgba(251,191,36,.1);   color:#fbbf24; }
-.pill-p { background:rgba(96,165,250,.1);   color:#60a5fa; }
-
-.prog-chevron {
-    color: var(--text-dim); font-size: 14px; flex-shrink: 0;
-    transition: transform .2s;
-}
-.prog-card.open .prog-chevron { transform: rotate(180deg); color: var(--yellow); }
-
-/* Expanded body */
-.prog-body { display: none; border-top: 1px solid var(--border); }
-.prog-card.open .prog-body { display: block; }
-
-.prog-tutores {
-    padding: 10px 18px 10px;
-    font-size: 11px; color: var(--text-dim);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-}
-.prog-tutores strong { color: var(--text-muted); font-weight: 600; }
-.tutor-tag {
-    background: rgba(167,139,250,.1); color: #a78bfa;
-    border: .5px solid rgba(167,139,250,.2);
-    padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
-}
-
-.nrc-table { width: 100%; border-collapse: collapse; }
-.nrc-table th {
-    padding: 7px 18px; text-align: left;
-    font-size: 9px; font-weight: 700; letter-spacing: .08em;
-    text-transform: uppercase; color: var(--text-dim);
-    background: rgba(0,0,0,.2);
-    border-bottom: 1px solid var(--border);
-}
-.nrc-table td {
-    padding: 7px 18px;
-    font-size: 11px; color: var(--text-muted);
-    border-bottom: 1px solid rgba(255,255,255,.03);
-}
-.nrc-table tr:last-child td { border-bottom: none; }
-.nrc-table tr:hover td { background: rgba(255,255,255,.02); }
-
-.td-nrc { font-family: var(--mono); font-weight: 700; color: #60a5fa; font-size: 11px; }
-.td-nrc a { color: inherit; text-decoration: none; }
-.td-nrc a:hover { text-decoration: underline; }
-.td-curso { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.td-fecha { font-family: var(--mono); font-size: 10px; }
-.td-tutor { font-size: 10px; }
-
-/* ── LOADING / EMPTY ── */
-.loading-state {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 60px 20px; gap: 14px; color: var(--text-dim);
-}
-.spinner {
-    width: 32px; height: 32px;
-    border: 3px solid rgba(250,204,21,.15);
-    border-top-color: var(--yellow);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 10px; }
-
-/* ── FOOTER ── */
-.page-footer {
-    text-align: center; padding: 24px;
-    font-size: 11px; color: var(--text-dim);
-    border-top: 1px solid var(--border);
-}
-.page-footer span { color: var(--yellow); }
+/* LOADING */
+.loading-state{display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:14px;color:var(--text-dim)}
+.spinner{width:32px;height:32px;border:3px solid rgba(250,204,21,.15);border-top-color:var(--yellow);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px}
+.page-footer{text-align:center;padding:24px;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border)}
+.page-footer span{color:var(--yellow)}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="topnav">
-    <div class="nav-brand">
-        <div class="nav-dot"></div>
-        <span class="nav-title">Explorador ETOP</span>
-    </div>
-    <div class="nav-links">
-        <button class="nav-link" onclick="document.getElementById('sec-buscar').scrollIntoView({behavior:'smooth'})">🔍 Buscar</button>
-        <button class="nav-link" onclick="document.getElementById('sec-stats').scrollIntoView({behavior:'smooth'})">📊 Estadísticas</button>
-        <button class="nav-link" onclick="document.getElementById('sec-dir').scrollIntoView({behavior:'smooth'})">📚 Directorio</button>
-    </div>
-    <div class="nav-stat">Total: <span id="navTotal">—</span> cursos</div>
+  <div class="nav-brand"><div class="nav-dot"></div><span class="nav-title">Explorador ETOP</span></div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="goTo('sec-buscar')">🔍 Buscar</button>
+    <button class="nav-link" onclick="goTo('sec-stats')">📊 Estadísticas</button>
+    <button class="nav-link" onclick="goTo('sec-dir')">📚 Directorio</button>
+  </div>
+  <div class="nav-stat">Total: <span id="navTotal">—</span> NRC</div>
 </nav>
 
-<!-- ═══ SECCIÓN 1: BUSCADOR ═══ -->
+<!-- BUSCADOR -->
 <div id="sec-buscar">
-    <div class="search-hero">
-        <h1>Busca cualquier <span>NRC</span> o programa</h1>
-        <p>Escribe un NRC, nombre de curso, programa, tutor o facultad</p>
-        <div class="search-wrap">
-            <span class="search-ico">🔍</span>
-            <input class="search-input" id="globalSearch" type="text"
-                placeholder="Ej: 1875, Gestión de Calidad, Paula Pardo…"
-                oninput="onGlobalSearch(this.value)" autocomplete="off">
-            <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
-        </div>
+  <div class="search-hero">
+    <h1>Busca cualquier <span>NRC</span> o programa</h1>
+    <p>Escribe un NRC, nombre de curso, programa, tutor o facultad — con sugerencias automáticas agrupadas</p>
+    <div class="search-wrap" id="searchWrap">
+      <span class="search-ico">🔍</span>
+      <input class="search-input" id="globalSearch" type="text"
+        placeholder="Ej: 1875, Gestión de Calidad, Paula Pardo, Salud Pública…"
+        oninput="onInput(this.value)" onkeydown="onKey(event)" autocomplete="off">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+      <div class="sug-box" id="sugBox"></div>
     </div>
-    <div class="section" style="padding-top:0">
-        <div class="search-results" id="searchResults"></div>
-    </div>
+  </div>
+  <div class="section" style="padding-top:0">
+    <div class="search-results" id="searchResults"></div>
+  </div>
 </div>
 
-<!-- ═══ SECCIÓN 2: ESTADÍSTICAS ═══ -->
+<!-- ESTADÍSTICAS -->
 <div id="sec-stats" class="section">
-    <div class="section-label">📊 Estadísticas generales</div>
-
-    <div class="stats-grid" id="statsGrid">
-        <div class="loading-state" style="grid-column:1/-1;padding:32px">
-            <div class="spinner"></div>
-            <span>Cargando estadísticas…</span>
-        </div>
+  <div class="section-label">📊 Estadísticas generales</div>
+  <div class="stats-grid" id="statsGrid">
+    <div class="loading-state" style="grid-column:1/-1;padding:32px"><div class="spinner"></div><span>Cargando…</span></div>
+  </div>
+  <div class="charts-row" id="chartsRow" style="display:none">
+    <div class="chart-card">
+      <div class="chart-title">Cursos activos + en cierre por facultad</div>
+      <div class="bar-list" id="barFacultad"></div>
     </div>
-
-    <div class="charts-row" id="chartsRow" style="display:none">
-        <!-- Barras por facultad -->
-        <div class="chart-card">
-            <div class="chart-title">Cursos activos por facultad</div>
-            <div class="bar-list" id="barFacultad"></div>
-        </div>
-        <!-- Donut por estado -->
-        <div class="chart-card">
-            <div class="chart-title">Distribución por estado</div>
-            <div class="donut-wrap">
-                <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100" id="donutSvg"></svg>
-                <div class="donut-legend" id="donutLegend"></div>
-            </div>
-        </div>
+    <div class="chart-card">
+      <div class="chart-title">Distribución por estado</div>
+      <div class="donut-wrap">
+        <svg width="100" height="100" viewBox="0 0 100 100" id="donutSvg" flex-shrink="0"></svg>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- ═══ SECCIÓN 3: DIRECTORIO ═══ -->
+<!-- DIRECTORIO -->
 <div id="sec-dir" class="section">
-    <div class="section-label">📚 Directorio de programas</div>
-    <div class="dir-search-wrap">
-        <span class="dir-search-ico">🔍</span>
-        <input class="dir-search" id="dirSearch" type="text"
-            placeholder="Filtrar programas…" oninput="filtrarDirectorio(this.value)">
-    </div>
-    <div class="prog-list" id="progList">
-        <div class="loading-state">
-            <div class="spinner"></div>
-            <span>Cargando directorio…</span>
-        </div>
-    </div>
+  <div class="section-label">📚 Directorio de programas</div>
+  <div class="dir-search-wrap">
+    <span class="dir-search-ico">🔍</span>
+    <input class="dir-search" id="dirSearch" type="text"
+      placeholder="Filtrar programas…" oninput="filtrarDir(this.value)">
+  </div>
+  <div class="prog-list" id="progList">
+    <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
+  </div>
 </div>
 
 <footer class="page-footer">
-    Portal ETOP · Universidad Andrés Bello · Datos actualizados desde <span>GitHub Pages</span>
-    &nbsp;·&nbsp; <span id="footerTs">—</span>
+  Portal ETOP · Universidad Andrés Bello · Datos desde <span>GitHub Pages</span> &nbsp;·&nbsp; <span id="footerTs">—</span>
 </footer>
 
 <script>
-// ════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════
-const NRCS_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
-const ONB_URL  = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
+const NRCS_URL='https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
+const ONB_URL='https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
+const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION'];
+const PAL=['#60a5fa','#4ade80','#fbbf24','#f472b6','#a78bfa','#34d399','#fb923c','#e879f9'];
 
-const ESTADOS_DIRECTORIO = ['ACTIVO','EN CIERRE','PREPARACION'];
-const COLORES_ESTADO = {
-    'ACTIVO':      '#4ade80',
-    'EN CIERRE':   '#fbbf24',
-    'PREPARACION': '#60a5fa',
-    'CERRADO':     '#64748b'
-};
+let all=[],progMap={},cardIdx={},sugList=[],sugSel=-1,timer=null;
 
-let allCursos   = [];   // dataset completo enriquecido
-let programaMap = {};   // programa → cursos[]
-let searchTimer = null;
-
-// ════════════════════════════════════════
-// UTILIDADES
-// ════════════════════════════════════════
-function esc(v) {
-    return String(v||'').replace(/[&<>'"]/g,
-        c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+/* ── UTILS ─────────────────────────────── */
+const esc=v=>String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const goTo=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+function parseFecha(v){if(!v)return null;const s=String(v).trim(),d=new Date(s);if(!isNaN(d))return new Date(d.getFullYear(),d.getMonth(),d.getDate());const m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);return null;}
+const fmtF=v=>{const d=parseFecha(v);if(!d)return'—';return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});}
+const badge=e=>{const k=(e||'').replace(/\s/g,'-');return`<span class="badge badge-${k}">${esc(e)||'—'}</span>`;};
+function hl(text,q){if(!q)return esc(text);const i=norm(text).indexOf(norm(q));if(i<0)return esc(text);return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));}
+function buildUrls(nrc,intake,per){
+  const base='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx';
+  const vid='&viewid=1f85f1c7%2D089f%2D47d6%2D8635%2Da2cc761fecc3';
+  const ng=(nrc.match(/_/g)||[]).length,lu=nrc.lastIndexOf('_');
+  const vN=lu>0?nrc.slice(0,lu):nrc,vP=lu>0?nrc.slice(lu+1):'';
+  const urlSP=ng===0||!nrc?'#':base+'?env=Embedded&FilterField1=NRC_COD&FilterValue1='+vN.replace(/_/g,'%5F')+'&FilterField2=PERIODO_x002a_&FilterValue2='+vP+vid;
+  const urlI=intake?'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList&isDlg=1&iframed=1&FilterField1=field_8&FilterValue1='+encodeURIComponent(intake):null;
+  const ns=nrc.indexOf('_'),nso=ns>0?nrc.slice(0,ns):nrc,pc=vP||per||'';
+  const urlC=nso&&pc?'https://lms.unab.cl/int-canvas/?term_code='+pc+'&periodo='+pc+'&nrc='+nso+'&nrc_code='+nso+'&crn='+nso+'&NRC='+nso:null;
+  return{urlSP,urlI,urlC};
 }
-function parseFecha(v) {
-    if (!v) return null;
-    const s = String(v).trim();
-    const d = new Date(s);
-    if (!isNaN(d)) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    const m = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
-    if (m) return new Date(+m[3], +m[2]-1, +m[1]);
-    return null;
-}
-function fmtFecha(v) {
-    const d = parseFecha(v);
-    if (!d) return '—';
-    return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-}
-function buildUrls(nrc, intake, periodo) {
-    const baseURL = "https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx";
-    const viewID  = "&viewid=1f85f1c7%2D089f%2D47d6%2D8635%2Da2cc761fecc3";
-    const numG    = (nrc.match(/_/g)||[]).length;
-    const lastU   = nrc.lastIndexOf('_');
-    const valNRC  = lastU > 0 ? nrc.substring(0, lastU) : nrc;
-    const valPer  = lastU > 0 ? nrc.substring(lastU+1) : '';
-    const nrcCodG = valNRC.replace(/_/g,'%5F');
-    const urlSP   = numG === 0 || !nrc ? '#' :
-        baseURL + '?env=Embedded&FilterField1=NRC_COD&FilterValue1=' + nrcCodG +
-        '&FilterField2=PERIODO_x002a_&FilterValue2=' + valPer + viewID;
-    const urlIntake = intake ?
-        "https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx" +
-        "?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList&isDlg=1&iframed=1" +
-        "&FilterField1=field_8&FilterValue1=" + encodeURIComponent(intake) : null;
-    const primerG  = nrc.indexOf('_');
-    const nrcSolo  = primerG > 0 ? nrc.substring(0, primerG) : nrc;
-    const perC     = valPer || periodo || '';
-    const urlCanvas = nrcSolo && perC ?
-        "https://lms.unab.cl/int-canvas/?term_code="+perC+"&periodo="+perC+
-        "&nrc="+nrcSolo+"&nrc_code="+nrcSolo+"&crn="+nrcSolo+"&NRC="+nrcSolo : null;
-    return { urlSP, urlIntake, urlCanvas };
-}
-function badgeEstado(e) {
-    const k = (e||'').replace(/\s/g,'-');
-    return `<span class="badge badge-${k}">${esc(e)||'—'}</span>`;
-}
+function icon(p){const n=norm(p);if(n.includes('salud'))return'🏥';if(n.includes('educa')||n.includes('docencia'))return'📚';if(n.includes('ingen')||n.includes('logis')||n.includes('operaciones'))return'⚙️';if(n.includes('gobierno')||n.includes('publica')||n.includes('juridic'))return'🏛️';if(n.includes('mba')||n.includes('administrac'))return'💼';return'🎓';}
 
-// ════════════════════════════════════════
-// CARGA DE DATOS
-// ════════════════════════════════════════
-async function cargarDatos() {
-    try {
-        const [rN, rO] = await Promise.allSettled([
-            fetch(NRCS_URL + '?t=' + Date.now()).then(r=>r.json()),
-            fetch(ONB_URL  + '?t=' + Date.now()).then(r=>r.json())
-        ]);
-        const base = rN.status==='fulfilled'
-            ? (Array.isArray(rN.value)?rN.value:(rN.value.value||[])) : [];
-        const onb  = rO.status==='fulfilled'
-            ? (Array.isArray(rO.value)?rO.value:(rO.value.value||[])) : [];
-
-        const lookup = {};
-        onb.forEach(x => { if (x.nrc) lookup[x.nrc] = x; });
-
-        allCursos = base.map(item => {
-            const ex  = lookup[item.nrc] || {};
-            const nrc = item.nrc || '';
-            const fi  = item['fecha inicio'] || item['fecha_inicio'] || '';
-            const ff  = item['fecha fin']    || item['fecha_fin']    || '';
-            const per = nrc.split('_').pop() || '';
-            return {
-                nrc,
-                programa:    (ex['nombre programa'] || ex['nombre_programa'] || item.facultad || '—').trim(),
-                curso:       (ex['nombre curso']    || ex['nombre_curso']    || '—').trim(),
-                codigoCurso: (ex['codigo curso']    || ex['codigo_curso']    || '').trim(),
-                intake:      (ex.intake             || '').trim(),
-                estado:      (item.estado           || '').toUpperCase().trim(),
-                facultad:    (item.facultad         || '—').trim(),
-                tutor:       (item.tutor            || 'Por asignar').trim(),
-                fechaInicio: fi,
-                fechaFin:    ff,
-                fechaObj:    parseFecha(fi),
-                urls:        buildUrls(nrc, ex.intake||'', per),
-                _search:     [nrc, ex['nombre programa']||'', ex['nombre curso']||'',
-                              item.tutor||'', item.facultad||'', ex['codigo curso']||'',
-                              ex.intake||''].join(' ').toLowerCase()
-            };
-        });
-
-        document.getElementById('navTotal').textContent =
-            allCursos.length.toLocaleString('es-CL');
-        document.getElementById('footerTs').textContent =
-            'Actualizado: ' + new Date().toLocaleString('es-CL');
-
-        renderStats();
-        renderDirectorio();
-
-    } catch(e) {
-        console.error(e);
-    }
-}
-
-// ════════════════════════════════════════
-// SECCIÓN 1 · BUSCADOR
-// ════════════════════════════════════════
-function onGlobalSearch(val) {
-    clearTimeout(searchTimer);
-    const btn = document.getElementById('searchClear');
-    btn.classList.toggle('visible', val.length > 0);
-    searchTimer = setTimeout(() => renderSearchResults(val), 180);
-}
-function clearSearch() {
-    document.getElementById('globalSearch').value = '';
-    document.getElementById('searchClear').classList.remove('visible');
-    document.getElementById('searchResults').innerHTML = '';
-}
-function renderSearchResults(q) {
-    const container = document.getElementById('searchResults');
-    q = (q||'').toLowerCase().trim();
-    if (!q || q.length < 2) { container.innerHTML = ''; return; }
-
-    const found = allCursos
-        .filter(c => c._search.includes(q))
-        .sort((a,b) => {
-            // priorizar coincidencia exacta de NRC
-            const aNrc = a.nrc.toLowerCase().includes(q) ? 0 : 1;
-            const bNrc = b.nrc.toLowerCase().includes(q) ? 0 : 1;
-            if (aNrc !== bNrc) return aNrc - bNrc;
-            return (a.fechaObj?.getTime()||0) - (b.fechaObj?.getTime()||0);
-        })
-        .slice(0, 12);
-
-    if (!found.length) {
-        container.innerHTML = `<div class="search-empty">Sin resultados para <strong>${esc(q)}</strong></div>`;
-        return;
-    }
-
-    container.innerHTML = found.map(c => {
-        const { urlSP, urlCanvas } = c.urls;
-        const btnSP = urlSP && urlSP !== '#'
-            ? `<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>` : '';
-        const btnC  = urlCanvas
-            ? `<a class="rc-btn rc-btn-canvas" href="${esc(urlCanvas)}" target="_blank">🖥 Canvas</a>
-               <a class="rc-btn rc-btn-intcvs" href="${esc(urlCanvas)}" target="_blank">🔗 Int-CVS</a>` : '';
-        return `
-        <div class="result-card">
-            <div class="rc-top">
-                <div>
-                    <div class="rc-nrc">${esc(c.nrc)}</div>
-                    <div class="rc-programa">${esc(c.programa)}</div>
-                    <div class="rc-curso">${esc(c.curso)}</div>
-                </div>
-                <div>${badgeEstado(c.estado)}</div>
-            </div>
-            <div class="rc-grid">
-                <div class="rc-item">
-                    <div class="rc-item-label">Tutor</div>
-                    <div class="rc-item-val">${esc(c.tutor)}</div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-item-label">Inicio</div>
-                    <div class="rc-item-val">${fmtFecha(c.fechaInicio)}</div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-item-label">Fin</div>
-                    <div class="rc-item-val">${fmtFecha(c.fechaFin)}</div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-item-label">Facultad</div>
-                    <div class="rc-item-val">${esc(c.facultad)}</div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-item-label">Código</div>
-                    <div class="rc-item-val">${esc(c.codigoCurso)||'—'}</div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-item-label">Intake</div>
-                    <div class="rc-item-val" title="${esc(c.intake)}"
-                        style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px">
-                        ${esc(c.intake)||'—'}
-                    </div>
-                </div>
-            </div>
-            ${btnSP||btnC ? `<div class="rc-links">${btnSP}${btnC}</div>` : ''}
-        </div>`;
-    }).join('');
-}
-
-// ════════════════════════════════════════
-// SECCIÓN 2 · ESTADÍSTICAS
-// ════════════════════════════════════════
-function renderStats() {
-    const total    = allCursos.length;
-    const activos  = allCursos.filter(c=>c.estado==='ACTIVO').length;
-    const cierre   = allCursos.filter(c=>c.estado==='EN CIERRE').length;
-    const prep     = allCursos.filter(c=>c.estado==='PREPARACION').length;
-    const cerrados = allCursos.filter(c=>c.estado==='CERRADO').length;
-    const tutores  = new Set(allCursos.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar')).size;
-    const programas= new Set(allCursos.map(c=>c.programa)).size;
-
-    document.getElementById('statsGrid').innerHTML = `
-        <div class="stat-card s-total">
-            <div class="stat-num">${total.toLocaleString('es-CL')}</div>
-            <div class="stat-label">Total NRC</div>
-            <div class="stat-sub">en todos los estados</div>
-        </div>
-        <div class="stat-card s-activo">
-            <div class="stat-num">${activos}</div>
-            <div class="stat-label">Activos</div>
-            <div class="stat-sub">${((activos/total)*100).toFixed(1)}% del total</div>
-        </div>
-        <div class="stat-card s-cierre">
-            <div class="stat-num">${cierre}</div>
-            <div class="stat-label">En Cierre</div>
-            <div class="stat-sub">${((cierre/total)*100).toFixed(1)}% del total</div>
-        </div>
-        <div class="stat-card s-prep">
-            <div class="stat-num">${prep}</div>
-            <div class="stat-label">En Preparación</div>
-            <div class="stat-sub">${((prep/total)*100).toFixed(1)}% del total</div>
-        </div>
-        <div class="stat-card s-tutores">
-            <div class="stat-num">${tutores}</div>
-            <div class="stat-label">Tutores activos</div>
-            <div class="stat-sub">con NRC asignados</div>
-        </div>
-        <div class="stat-card s-programas">
-            <div class="stat-num">${programas}</div>
-            <div class="stat-label">Programas</div>
-            <div class="stat-sub">distintos en el sistema</div>
-        </div>`;
-
-    // Barras por facultad (solo activos + en cierre)
-    const facMap = {};
-    allCursos
-        .filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado))
-        .forEach(c=>{ facMap[c.facultad] = (facMap[c.facultad]||0)+1; });
-    const facSorted = Object.entries(facMap).sort((a,b)=>b[1]-a[1]);
-    const maxFac = facSorted[0]?.[1] || 1;
-    const PALETA = ['#60a5fa','#4ade80','#fbbf24','#f472b6','#a78bfa','#34d399','#fb923c','#e879f9'];
-    document.getElementById('barFacultad').innerHTML = facSorted.map(([f,n],i)=>`
-        <div class="bar-item">
-            <div class="bar-header">
-                <span class="bar-name" title="${esc(f)}">${esc(f)}</span>
-                <span class="bar-val">${n}</span>
-            </div>
-            <div class="bar-track">
-                <div class="bar-fill" style="width:${(n/maxFac*100).toFixed(1)}%;background:${PALETA[i%PALETA.length]}"></div>
-            </div>
-        </div>`).join('');
-
-    // Donut
-    const estados = [
-        {label:'Activo',      val:activos,  color:'#4ade80'},
-        {label:'En Cierre',   val:cierre,   color:'#fbbf24'},
-        {label:'Preparación', val:prep,     color:'#60a5fa'},
-        {label:'Cerrado',     val:cerrados, color:'#475569'},
-    ].filter(e=>e.val>0);
-    renderDonut(estados, total);
-
-    document.getElementById('chartsRow').style.display = 'grid';
-}
-
-function renderDonut(estados, total) {
-    const r = 36; const cx = 50; const cy = 50;
-    const circum = 2 * Math.PI * r;
-    let offset = 0;
-    let paths  = '';
-    estados.forEach(e => {
-        const pct   = e.val / total;
-        const dash  = pct * circum;
-        const gap   = circum - dash;
-        paths += `<circle cx="${cx}" cy="${cy}" r="${r}"
-            fill="none" stroke="${e.color}" stroke-width="14"
-            stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
-            stroke-dashoffset="${(-offset * circum).toFixed(2)}"
-            transform="rotate(-90 ${cx} ${cy})"/>`;
-        offset += pct;
+/* ── CARGA ─────────────────────────────── */
+async function cargar(){
+  try{
+    const [rN,rO]=await Promise.allSettled([
+      fetch(NRCS_URL+'?t='+Date.now()).then(r=>r.json()),
+      fetch(ONB_URL+'?t='+Date.now()).then(r=>r.json())
+    ]);
+    const base=rN.status==='fulfilled'?(Array.isArray(rN.value)?rN.value:(rN.value.value||[])):[];
+    const onb=rO.status==='fulfilled'?(Array.isArray(rO.value)?rO.value:(rO.value.value||[])):[];
+    const lk={};onb.forEach(x=>{if(x.nrc)lk[x.nrc]=x;});
+    all=base.map(item=>{
+      const ex=lk[item.nrc]||{},nrc=item.nrc||'';
+      const fi=item['fecha inicio']||item['fecha_inicio']||'';
+      const ff=item['fecha fin']||item['fecha_fin']||'';
+      const per=nrc.split('_').pop()||'';
+      const prog=(ex['nombre programa']||ex['nombre_programa']||item.facultad||'—').trim();
+      const cur=(ex['nombre curso']||ex['nombre_curso']||'—').trim();
+      return{nrc,programa:prog,curso:cur,codigoCurso:(ex['codigo curso']||'').trim(),intake:(ex.intake||'').trim(),estado:(item.estado||'').toUpperCase().trim(),facultad:(item.facultad||'—').trim(),tutor:(item.tutor||'Por asignar').trim(),fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),urls:buildUrls(nrc,ex.intake||'',per),_s:norm([nrc,prog,cur,item.tutor||'',item.facultad||'',ex['codigo curso']||'',ex.intake||''].join(' '))};
     });
-    document.getElementById('donutSvg').innerHTML =
-        `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>` +
-        paths +
-        `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
-            fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${total}</text>`;
-
-    document.getElementById('donutLegend').innerHTML = estados.map(e=>`
-        <div class="legend-item">
-            <div class="legend-dot" style="background:${e.color}"></div>
-            <span class="legend-name">${esc(e.label)}</span>
-            <span class="legend-val">${e.val}</span>
-        </div>`).join('');
+    document.getElementById('navTotal').textContent=all.length.toLocaleString('es-CL');
+    document.getElementById('footerTs').textContent='Actualizado: '+new Date().toLocaleString('es-CL');
+    renderStats();renderDir();
+  }catch(e){console.error(e);}
 }
 
-// ════════════════════════════════════════
-// SECCIÓN 3 · DIRECTORIO
-// ════════════════════════════════════════
-function renderDirectorio(filtro='') {
-    // Agrupar por programa, solo estados relevantes
-    programaMap = {};
-    allCursos
-        .filter(c => ESTADOS_DIRECTORIO.includes(c.estado))
-        .forEach(c => {
-            if (!programaMap[c.programa]) programaMap[c.programa] = [];
-            programaMap[c.programa].push(c);
-        });
+/* ── BUSCADOR ──────────────────────────── */
+function onInput(v){
+  clearTimeout(timer);
+  document.getElementById('searchClear').classList.toggle('visible',v.length>0);
+  if(v.length<2){closeSug();document.getElementById('searchResults').innerHTML='';return;}
+  timer=setTimeout(()=>{renderSug(v);renderCards(v);},160);
+}
+function onKey(e){
+  const items=document.querySelectorAll('#sugBox .sug-item');
+  if(e.key==='ArrowDown'){e.preventDefault();sugSel=Math.min(sugSel+1,items.length-1);hlSug(items);}
+  else if(e.key==='ArrowUp'){e.preventDefault();sugSel=Math.max(sugSel-1,-1);hlSug(items);}
+  else if(e.key==='Enter'&&sugSel>=0){e.preventDefault();pickSug(sugSel);}
+  else if(e.key==='Escape')closeSug();
+}
+function hlSug(items){items.forEach((el,i)=>el.classList.toggle('active',i===sugSel));}
 
-    let programas = Object.keys(programaMap).sort();
-    if (filtro) {
-        const q = filtro.toLowerCase();
-        programas = programas.filter(p => p.toLowerCase().includes(q));
+function renderSug(q){
+  const box=document.getElementById('sugBox'),qn=norm(q);
+  const progs=[...new Set(all.map(c=>c.programa))].filter(p=>norm(p).includes(qn)).slice(0,5);
+  const tuts=[...new Set(all.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))].filter(t=>norm(t).includes(qn)).slice(0,4);
+  const facs=[...new Set(all.map(c=>c.facultad))].filter(f=>norm(f).includes(qn)).slice(0,3);
+  const curs=[...new Set(all.map(c=>c.curso))].filter(c=>c!=='—'&&norm(c).includes(qn)).slice(0,4);
+  const nrcs=all.filter(c=>norm(c.nrc).includes(qn)).slice(0,4);
+  sugList=[];let html='';
+  if(nrcs.length){
+    html+='<div class="sug-group">🔢 NRC</div>';
+    nrcs.forEach(c=>{const i=sugList.length;sugList.push({type:'nrc',value:c.nrc,data:c});html+=`<div class="sug-item" onmousedown="pickSug(${i})"><span class="sug-icon">📋</span><span class="sug-main">${hl(c.nrc,q)}</span><span class="sug-sub">${esc(c.estado)}</span></div>`;});
+  }
+  if(progs.length){
+    html+='<div class="sug-group">📚 Programas</div>';
+    progs.forEach(p=>{const cnt=all.filter(c=>c.programa===p).length,i=sugList.length;sugList.push({type:'programa',value:p});html+=`<div class="sug-item" onmousedown="pickSug(${i})"><span class="sug-icon">🎓</span><span class="sug-main">${hl(p,q)}</span><span class="sug-sub">${cnt} NRC</span></div>`;});
+  }
+  if(tuts.length){
+    html+='<div class="sug-group">👤 Tutores</div>';
+    tuts.forEach(t=>{const cnt=all.filter(c=>c.tutor===t).length,i=sugList.length;sugList.push({type:'tutor',value:t});html+=`<div class="sug-item" onmousedown="pickSug(${i})"><span class="sug-icon">👤</span><span class="sug-main">${hl(t,q)}</span><span class="sug-sub">${cnt} cursos</span></div>`;});
+  }
+  if(curs.length){
+    html+='<div class="sug-group">📖 Cursos</div>';
+    curs.forEach(c=>{const i=sugList.length;sugList.push({type:'curso',value:c});html+=`<div class="sug-item" onmousedown="pickSug(${i})"><span class="sug-icon">📖</span><span class="sug-main">${hl(c,q)}</span></div>`;});
+  }
+  if(facs.length){
+    html+='<div class="sug-group">🏛️ Facultades</div>';
+    facs.forEach(f=>{const cnt=all.filter(c=>c.facultad===f).length,i=sugList.length;sugList.push({type:'facultad',value:f});html+=`<div class="sug-item" onmousedown="pickSug(${i})"><span class="sug-icon">🏛️</span><span class="sug-main">${hl(f,q)}</span><span class="sug-sub">${cnt} cursos</span></div>`;});
+  }
+  if(!html)html='<div class="sug-empty">Sin sugerencias para "'+esc(q)+'"</div>';
+  box.innerHTML=html;box.classList.add('open');sugSel=-1;
+}
+
+function pickSug(i){
+  const s=sugList[i];if(!s)return;
+  document.getElementById('globalSearch').value=s.value;
+  document.getElementById('searchClear').classList.add('visible');
+  closeSug();renderCards(s.value);
+  if(s.type==='programa'){
+    const ci=cardIdx[s.value];
+    if(ci!==undefined){
+      setTimeout(()=>{
+        const card=document.getElementById('prog-'+ci);
+        if(card){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          if(!card.classList.contains('open'))card.classList.add('open');
+          card.classList.add('highlight');
+          setTimeout(()=>card.classList.remove('highlight'),2200);
+        }
+      },350);
     }
+  }
+}
+function closeSug(){document.getElementById('sugBox').classList.remove('open');sugSel=-1;sugList=[];}
+function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
+document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
-    if (!programas.length) {
-        document.getElementById('progList').innerHTML =
-            `<div class="search-empty">Sin programas que coincidan.</div>`;
-        return;
-    }
+function renderCards(q){
+  const c=document.getElementById('searchResults'),qn=norm(q);
+  if(!qn||qn.length<2){c.innerHTML='';return;}
+  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return(a.fechaObj?.getTime()||0)-(b.fechaObj?.getTime()||0);}).slice(0,12);
+  if(!found.length){c.innerHTML=`<div class="search-empty">Sin resultados para <strong>${esc(q)}</strong></div>`;return;}
+  c.innerHTML=found.map(x=>{
+    const{urlSP,urlC}=x.urls;
+    const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
+    const bC=urlC?`<a class="rc-btn rc-btn-canvas" href="${esc(urlC)}" target="_blank">🖥 Canvas</a><a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank">🔗 Int-CVS</a>`:'';
+    return`<div class="result-card">
+      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc)}</div><div class="rc-programa">${esc(x.programa)}</div><div class="rc-curso">${esc(x.curso)}</div></div><div>${badge(x.estado)}</div></div>
+      <div class="rc-grid">
+        <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${esc(x.tutor)}</div></div>
+        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${fmtF(x.fechaInicio)}</div></div>
+        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${fmtF(x.fechaFin)}</div></div>
+        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad)}</div></div>
+        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso)||'—'}</div></div>
+        <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${esc(x.estado)}</div></div>
+      </div>
+      ${bSP||bC?`<div class="rc-links">${bSP}${bC}</div>`:''}
+    </div>`;
+  }).join('');
+}
 
-    document.getElementById('progList').innerHTML = programas.map((prog, idx) => {
-        const cursos  = programaMap[prog];
-        const activos = cursos.filter(c=>c.estado==='ACTIVO').length;
-        const cierre  = cursos.filter(c=>c.estado==='EN CIERRE').length;
-        const prep    = cursos.filter(c=>c.estado==='PREPARACION').length;
-        const tutores = [...new Set(cursos.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))];
-        const icon    = prog.toLowerCase().includes('salud') ? '🏥'
-                      : prog.toLowerCase().includes('educa') ? '📚'
-                      : prog.toLowerCase().includes('ingen') ? '⚙️'
-                      : prog.toLowerCase().includes('gestión pública')||prog.toLowerCase().includes('gobierno') ? '🏛️'
-                      : prog.toLowerCase().includes('logis') ? '📦'
-                      : prog.toLowerCase().includes('mba')   ? '💼'
-                      : '🎓';
-        const pillsHTML =
-            (activos ? `<span class="prog-pill pill-a">${activos} activo${activos!==1?'s':''}</span>` : '') +
-            (cierre  ? `<span class="prog-pill pill-c">${cierre} en cierre</span>` : '') +
-            (prep    ? `<span class="prog-pill pill-p">${prep} preparación</span>` : '');
+/* ── STATS ─────────────────────────────── */
+function renderStats(){
+  const tot=all.length,act=all.filter(c=>c.estado==='ACTIVO').length,cie=all.filter(c=>c.estado==='EN CIERRE').length,pre=all.filter(c=>c.estado==='PREPARACION').length,cer=all.filter(c=>c.estado==='CERRADO').length;
+  const tut=new Set(all.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar')).size,prg=new Set(all.map(c=>c.programa)).size;
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card s-total"><div class="stat-num">${tot.toLocaleString('es-CL')}</div><div class="stat-label">Total NRC</div><div class="stat-sub">en todos los estados</div></div>
+    <div class="stat-card s-activo"><div class="stat-num">${act}</div><div class="stat-label">Activos</div><div class="stat-sub">${((act/tot)*100).toFixed(1)}% del total</div></div>
+    <div class="stat-card s-cierre"><div class="stat-num">${cie}</div><div class="stat-label">En Cierre</div><div class="stat-sub">${((cie/tot)*100).toFixed(1)}% del total</div></div>
+    <div class="stat-card s-prep"><div class="stat-num">${pre}</div><div class="stat-label">En Preparación</div><div class="stat-sub">${((pre/tot)*100).toFixed(1)}% del total</div></div>
+    <div class="stat-card s-tutores"><div class="stat-num">${tut}</div><div class="stat-label">Tutores activos</div><div class="stat-sub">con NRC asignados</div></div>
+    <div class="stat-card s-prog"><div class="stat-num">${prg}</div><div class="stat-label">Programas</div><div class="stat-sub">distintos en el sistema</div></div>`;
+  const fm={};all.filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado)).forEach(c=>{fm[c.facultad]=(fm[c.facultad]||0)+1;});
+  const fs=Object.entries(fm).sort((a,b)=>b[1]-a[1]),mx=fs[0]?.[1]||1;
+  document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`<div class="bar-item"><div class="bar-header"><span class="bar-name" title="${esc(f)}">${esc(f)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join('');
+  const est=[{l:'Activo',v:act,c:'#4ade80'},{l:'En Cierre',v:cie,c:'#fbbf24'},{l:'Preparación',v:pre,c:'#60a5fa'},{l:'Cerrado',v:cer,c:'#475569'}].filter(e=>e.v>0);
+  const r=36,cx=50,cy=50,ci=2*Math.PI*r;let off=0,p='';
+  est.forEach(e=>{const pc=e.v/tot,da=pc*ci,ga=ci-da;p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}" stroke-dashoffset="${(-off*ci).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pc;});
+  document.getElementById('donutSvg').innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>${p}<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${tot}</text>`;
+  document.getElementById('donutLegend').innerHTML=est.map(e=>`<div class="legend-item"><div class="legend-dot" style="background:${e.c}"></div><span class="legend-name">${esc(e.l)}</span><span class="legend-val">${e.v}</span></div>`).join('');
+  document.getElementById('chartsRow').style.display='grid';
+}
 
-        const tutoresHTML = tutores.length
-            ? tutores.map(t=>`<span class="tutor-tag">${esc(t)}</span>`).join('')
-            : '<span style="color:var(--text-dim)">Sin asignar</span>';
-
-        // Filas de NRC
-        const cursosOrdenados = [...cursos].sort((a,b)=>(a.fechaObj?.getTime()||0)-(b.fechaObj?.getTime()||0));
-        const filasHTML = cursosOrdenados.map(c => {
-            const { urlSP } = c.urls;
-            const linkNrc = urlSP && urlSP !== '#'
-                ? `<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`
-                : esc(c.nrc);
-            return `<tr>
-                <td class="td-nrc">${linkNrc}</td>
-                <td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td>
-                <td>${badgeEstado(c.estado)}</td>
-                <td class="td-fecha">${fmtFecha(c.fechaInicio)}</td>
-                <td class="td-fecha">${fmtFecha(c.fechaFin)}</td>
-                <td class="td-tutor">${esc(c.tutor)}</td>
-            </tr>`;
-        }).join('');
-
-        return `
-        <div class="prog-card" id="prog-${idx}">
-            <div class="prog-header" onclick="toggleProg(${idx})">
-                <div class="prog-header-left">
-                    <div class="prog-icon">${icon}</div>
-                    <div>
-                        <div class="prog-name">${esc(prog)}</div>
-                        <div class="prog-meta">${cursos.length} NRC en el sistema</div>
-                    </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px">
-                    <div class="prog-pills">${pillsHTML}</div>
-                    <span class="prog-chevron">▾</span>
-                </div>
-            </div>
-            <div class="prog-body">
-                <div class="prog-tutores">
-                    <strong>Tutores:</strong> ${tutoresHTML}
-                </div>
-                <table class="nrc-table">
-                    <thead>
-                        <tr>
-                            <th>NRC</th>
-                            <th>Curso</th>
-                            <th>Estado</th>
-                            <th>Inicio</th>
-                            <th>Fin</th>
-                            <th>Tutor</th>
-                        </tr>
-                    </thead>
-                    <tbody>${filasHTML}</tbody>
-                </table>
-            </div>
-        </div>`;
+/* ── DIRECTORIO ────────────────────────── */
+function renderDir(filtro=''){
+  progMap={};cardIdx={};
+  all.filter(c=>ESTADOS_DIR.includes(c.estado)).forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
+  let progs=Object.keys(progMap).sort();
+  if(filtro){const qn=norm(filtro);progs=progs.filter(p=>norm(p).includes(qn));}
+  if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin programas que coincidan.</div>';return;}
+  document.getElementById('progList').innerHTML=progs.map((prog,idx)=>{
+    cardIdx[prog]=idx;
+    const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length;
+    const tuts=[...new Set(cs.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))];
+    const pills=(ac?`<span class="prog-pill pill-a" onclick="filterPill(event,${idx},'ACTIVO')" title="Ver solo activos">${ac} activo${ac!==1?'s':''}</span>`:'')+
+      (ci?`<span class="prog-pill pill-c" onclick="filterPill(event,${idx},'EN CIERRE')" title="Ver solo en cierre">${ci} en cierre</span>`:'')+
+      (pr?`<span class="prog-pill pill-p" onclick="filterPill(event,${idx},'PREPARACION')" title="Ver solo preparación">${pr} preparación</span>`:'')+
+      `<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'ALL')" title="Ver todos">Todos</span>`;
+    const tutH=tuts.length?tuts.map(t=>`<span class="tutor-tag">${esc(t)}</span>`).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
+    const rows=[...cs].sort((a,b)=>(a.fechaObj?.getTime()||0)-(b.fechaObj?.getTime()||0)).map(c=>{
+      const{urlSP}=c.urls,lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
+      return`<tr data-est="${esc(c.estado)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${esc(c.tutor)}</td></tr>`;
     }).join('');
+    return`<div class="prog-card" id="prog-${idx}">
+      <div class="prog-header" onclick="toggleCard(${idx},event)">
+        <div class="prog-header-left"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-chevron">▾</span></div>
+      </div>
+      <div class="prog-body">
+        <div class="prog-tutores"><strong>Tutores:</strong>${tutH}</div>
+        <div class="filter-bar" id="fbar-${idx}">
+          Mostrando: <span class="filter-bar-label" id="flabel-${idx}">—</span>
+          <span class="filter-bar-count" id="fcount-${idx}"></span>
+        </div>
+        <table class="nrc-table"><thead><tr><th>NRC</th><th>Curso</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Tutor</th></tr></thead>
+        <tbody id="tbody-${idx}">${rows}</tbody></table>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function toggleProg(idx) {
-    const card = document.getElementById('prog-'+idx);
-    card.classList.toggle('open');
+function toggleCard(idx,e){if(e.target.closest('.prog-pill'))return;document.getElementById('prog-'+idx).classList.toggle('open');}
+
+function filterPill(e,idx,estado){
+  e.stopPropagation();
+  const card=document.getElementById('prog-'+idx);
+  if(!card.classList.contains('open'))card.classList.add('open');
+  // marcar pill activo
+  document.querySelectorAll(`#pills-${idx} .prog-pill`).forEach(p=>p.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  // filtrar filas
+  const rows=document.querySelectorAll(`#tbody-${idx} tr[data-est]`);
+  let vis=0;
+  rows.forEach(tr=>{const show=estado==='ALL'||tr.dataset.est===estado;tr.style.display=show?'':'none';if(show)vis++;});
+  // barra de filtro
+  const bar=document.getElementById('fbar-'+idx);
+  if(estado==='ALL'){bar.style.display='none';}
+  else{bar.style.display='flex';document.getElementById('flabel-'+idx).textContent=estado;document.getElementById('fcount-'+idx).textContent=vis+' NRC';}
+  // fila vacía
+  const prev=document.getElementById('empty-'+idx);if(prev)prev.remove();
+  if(vis===0){const tr=document.createElement('tr');tr.id='empty-'+idx;tr.innerHTML=`<td colspan="6" class="td-empty">Sin cursos con estado "${estado}"</td>`;document.getElementById('tbody-'+idx).appendChild(tr);}
 }
 
-function filtrarDirectorio(val) {
-    renderDirectorio(val);
-}
+function filtrarDir(v){renderDir(v);}
 
-// ════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════
-cargarDatos();
+cargar();
 </script>
 </body>
 </html>
