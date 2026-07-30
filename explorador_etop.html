@@ -338,13 +338,20 @@ function buildUrls(nrc,intake,per,itemId){
 
   const listaNrc='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL';
   const vistaNrc='Vista_version.aspx?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList';
-  const urlI=intake?listaNrc+'/'+vistaNrc+'&FilterField1=field_8&FilterValue1='+encodeURIComponent(intake):null;
+  const urlI=intake
+    ? listaNrc+'/Vista_version.aspx'
+      +'?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b'
+      +'&env=WebViewList'
+      +'&isDlg=1&iframed=1&isfromSharePointTeams=true'
+      +'&FilterField1=field_8'
+      +'&FilterValue1='+encodeURIComponent(intake)
+    : null;
 
   // Cuando el JSON incluye el ID de SharePoint abre directamente el formulario de edición.
   // Si no viene el ID, mantiene como respaldo la vista filtrada por NRC_COD_CAL.
   const urlNrcTutor=itemId
-    ? listaNrc+'/EditForm.aspx?ID='+encodeURIComponent(itemId)
-    : (nrc?listaNrc+'/'+vistaNrc+'&FilterField1=NRC_COD_CAL&FilterValue1='+encodeURIComponent(nrc):null);
+    ? listaNrc+'/DispForm.aspx?ID='+encodeURIComponent(itemId)
+    : null;
 
   const ns=nrc.indexOf('_'),nso=ns>0?nrc.slice(0,ns):nrc,pc=vP||per||'';
   const urlC=nso&&pc?'https://lms.unab.cl/int-canvas/?term_code='+pc+'&periodo='+pc+'&nrc='+nso+'&nrc_code='+nso+'&crn='+nso+'&NRC='+nso:null;
@@ -489,7 +496,7 @@ function renderCards(q){
         <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${fmtF(x.fechaFin)}</div></div>
         <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad)}</div></div>
         <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso)||'—'}</div></div>
-        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${esc(x.intake)||'—'}</div></div>
+        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${x.urls.urlI?`<a href="${esc(x.urls.urlI)}" target="_blank" style="color:#c4b5fd;text-decoration:none">${esc(x.intake)||'—'}</a>`:(esc(x.intake)||'—')}</div></div>
         <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${esc(x.estado)}</div></div>
       </div>
       ${bSP||bN||bC?`<div class="rc-links">${bSP}${bN}${bC}</div>`:''}
@@ -588,12 +595,17 @@ function renderDir(filtro=''){
     const rows=[...cs].sort((a,b)=>(b.fechaObj?.getTime()||0)-(a.fechaObj?.getTime()||0)).map(c=>{
       const{urlSP,urlNrcTutor}=c.urls;
       const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
-      const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Editar ↗</a>`:'—';
+      const acceso=urlNrcTutor
+        ? `<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir ficha ↗</a>`
+        : '<span title="El JSON no contiene el ID del elemento de SharePoint">Sin ID</span>';
       const ct=contactoTutor(c.tutor);
       const tutorHtml=ct
         ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
         : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
-      return`<tr data-est="${esc(c.estado)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${esc(c.intake)||'—'}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
+      const intakeHtml=c.urls.urlI
+        ? `<a href="${esc(c.urls.urlI)}" target="_blank" style="color:#c4b5fd;text-decoration:none">${esc(c.intake)||'—'}</a>`
+        : (esc(c.intake)||'—');
+      return`<tr data-est="${esc(c.estado)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
     }).join('');
     return`<div class="prog-card" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
