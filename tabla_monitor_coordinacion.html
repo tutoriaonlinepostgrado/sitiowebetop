@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monitor de Cursos · ETOP Coordinación</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:        #0f172a;
+    --surface:   #1e293b;
+    --surface2:  #273549;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --yellow:    #facc15;
+    --yellow-dim:#ca9e0f;
+    --text:      #e2e8f0;
+    --text-muted:#94a3b8;
+    --text-dim:  #64748b;
+    --row-odd:   #1e293b;
+    --row-even:  #192336;
+    --row-hover: #273549;
+    --font:      'Inter', system-ui, sans-serif;
+    --mono:      'Consolas', 'SF Mono', monospace;
+}
+
+html, body { height: 100%; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(250,204,21,0.1);
+    border: 1px solid rgba(250,204,21,0.25);
+    border-radius: 6px;
+    padding: 4px 10px;
+}
+.header-badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 0 0 rgba(250,204,21,0.5);
+    animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+    0%  { box-shadow: 0 0 0 0   rgba(250,204,21,0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(250,204,21,0); }
+    100%{ box-shadow: 0 0 0 0   rgba(250,204,21,0); }
+}
+.header-badge span { font-size: 11px; font-weight: 700; color: var(--yellow); letter-spacing: .08em; text-transform: uppercase; }
+.page-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.page-sub   { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+.search-box {
+    position: relative; flex: 1; min-width: 200px; max-width: 320px;
+}
+.search-box input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 7px 10px 7px 32px;
+    font-size: 12px;
+    font-family: var(--font);
+    outline: none;
+    transition: border-color .15s;
+}
+.search-box input:focus { border-color: rgba(250,204,21,0.4); }
+.search-box input::placeholder { color: var(--text-dim); }
+.search-icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 14px; pointer-events: none;
+}
+.filter-select {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-family: var(--font);
+    outline: none;
+    cursor: pointer;
+}
+.filter-select:focus { border-color: rgba(250,204,21,0.4); }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.count-pill {
+    background: rgba(250,204,21,0.1);
+    border: 1px solid rgba(250,204,21,0.2);
+    color: var(--yellow);
+    font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap;
+}
+.btn-refresh {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    color: var(--text-muted);
+    border-radius: 7px;
+    padding: 6px 12px;
+    font-size: 12px; font-family: var(--font);
+    cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; gap: 5px;
+}
+.btn-refresh:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.btn-refresh.spinning svg { animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TABLE WRAPPER ── */
+.table-outer {
+    overflow: auto;
+    height: calc(100vh - 130px);
+    -webkit-overflow-scrolling: touch;
+}
+.table-outer::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-outer::-webkit-scrollbar-track { background: transparent; }
+.table-outer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.table-outer::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead th {
+    position: sticky; top: 0; z-index: 10;
+    padding: 9px 10px;
+    text-align: left;
+    font-size: 10px; font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    white-space: nowrap;
+    background: #0f172a;
+    border-bottom: 1px solid rgba(250,204,21,0.2);
+    cursor: pointer;
+    user-select: none;
+    transition: color .15s;
+}
+thead th:hover { color: var(--yellow); }
+thead th.sorted-asc::after  { content: ' ↑'; color: var(--yellow); }
+thead th.sorted-desc::after { content: ' ↓'; color: var(--yellow); }
+thead th:not([data-col])    { cursor: default; }
+
+tbody tr { transition: background .05s; }
+tbody tr:nth-child(odd)  td { background: var(--row-odd); }
+tbody tr:nth-child(even) td { background: var(--row-even); }
+tbody tr:hover td { background: var(--row-hover) !important; }
+
+td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    white-space: nowrap;
+    vertical-align: middle;
+    font-size: 12px;
+    color: var(--text);
+}
+
+/* ── CELL STYLES ── */
+.cell-nrc a {
+    color: #60a5fa;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 700;
+    text-decoration: none;
+}
+.cell-nrc a:hover { color: #93c5fd; text-decoration: underline; }
+
+.cell-intake a {
+    color: #a5b4fc;
+    font-size: 11px; font-weight: 600;
+    text-decoration: none;
+    max-width: 200px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+.cell-intake a:hover { color: #c7d2fe; }
+
+.cell-programa {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.cell-curso {
+    font-size: 11px; font-weight: 600;
+    font-family: var(--mono);
+    color: #e2e8f0;
+}
+
+.cell-tutor { font-size: 11px; color: var(--text-muted); min-width: 120px; }
+
+.badge-estado {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px;
+    white-space: nowrap;
+}
+.badge-ACTIVO      { background: rgba(74,222,128,.15);  color: #4ade80; border: .5px solid rgba(74,222,128,.3); }
+.badge-EN-CIERRE   { background: rgba(251,191,36,.12);  color: #fbbf24; border: .5px solid rgba(251,191,36,.25); }
+.badge-PREPARACION { background: rgba(96,165,250,.12);  color: #60a5fa; border: .5px solid rgba(96,165,250,.25); }
+.badge-CERRADO     { background: rgba(100,116,139,.1);  color: #64748b; border: .5px solid rgba(100,116,139,.2); }
+.badge-default     { background: rgba(100,116,139,.1);  color: #94a3b8; border: .5px solid rgba(100,116,139,.2); }
+
+.cell-fecha { font-size: 11px; font-family: var(--mono); color: var(--text-muted); }
+
+.cell-facultad {
+    font-size: 10px; font-weight: 700;
+    color: #c4b5fd;
+    background: rgba(124,77,255,0.08);
+    border: .5px solid rgba(124,77,255,0.2);
+    padding: 2px 6px; border-radius: 4px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.btn-url {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity .15s;
+}
+.btn-url:hover { opacity: .8; }
+.btn-sp      { background: #0ea5e9; color: #fff; }
+.btn-canvas  { background: #0e7490; color: #fff; }
+.btn-intcvs  { background: #d97706; color: #fff; }
+.btn-intake  { background: #7c3aed; color: #fff; }
+.na-text { color: var(--text-dim); font-size: 10px; font-weight: 600; }
+
+/* ── EMPTY / LOADING ── */
+.state-row td {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+.spinner {
+    width: 28px; height: 28px;
+    border: 3px solid rgba(250,204,21,0.15);
+    border-top-color: var(--yellow);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin: 0 auto 12px;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 6px 20px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--text-dim);
+    z-index: 50;
+}
+.footer-update { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+    <div class="header-left">
+        <div class="header-badge">
+            <div class="dot"></div>
+            <span>ETOP · Coordinación</span>
+        </div>
+        <div>
+            <div class="page-title">Monitor de Cursos</div>
+            <div class="page-sub">Vista de coordinación · datos desde GitHub</div>
+        </div>
+    </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" placeholder="Buscar NRC, programa, curso, tutor…" oninput="aplicarFiltros()">
+    </div>
+    <select class="filter-select" id="filtroEstado" onchange="aplicarFiltros()">
+        <option value="">Todos los estados</option>
+        <option value="ACTIVO">Activo</option>
+        <option value="EN CIERRE">En Cierre</option>
+        <option value="PREPARACION">Preparación</option>
+        <option value="CERRADO">Cerrado</option>
+    </select>
+    <select class="filter-select" id="filtroFacultad" onchange="aplicarFiltros()">
+        <option value="">Todas las facultades</option>
+    </select>
+    <select class="filter-select" id="filtroTutor" onchange="aplicarFiltros()">
+        <option value="">Todos los tutores</option>
+    </select>
+    <div class="toolbar-right">
+        <span class="count-pill" id="countPill">— cursos</span>
+        <button class="btn-refresh" id="btnRefresh" onclick="cargarDatos()">
+            <svg id="iconRefresh" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+            Actualizar
+        </button>
+    </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-outer">
+    <table id="tabla">
+        <thead>
+            <tr>
+                <th data-col="nrc">NRC</th>
+                <th data-col="programa">Programa</th>
+                <th data-col="curso">Curso</th>
+                <th data-col="intake">Intake / Versión</th>
+                <th data-col="estado">Estado</th>
+                <th data-col="facultad">Facultad</th>
+                <th data-col="tutor">Tutor</th>
+                <th data-col="fechaInicio">Inicio</th>
+                <th data-col="fechaFin">Fin</th>
+                <th>SP</th>
+                <th>Canvas</th>
+                <th>Int-CVS</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            <tr class="state-row">
+                <td colspan="12">
+                    <div class="spinner"></div>
+                    Cargando datos…
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+    <span>Portal ETOP · Universidad Andrés Bello</span>
+    <span class="footer-update" id="footerUpdate">—</span>
+</footer>
+
+<script>
+const NRCS_JSON       = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
+const ONBOARDING_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
+
+let allData   = [];
+let sortCol   = 'fechaInicio';
+let sortDir   = 'asc';
+
+// ── UTILIDADES ──────────────────────────────────────────────
+function parseFecha(val) {
+    if (!val) return null;
+    const s = String(val).trim();
+    const d = new Date(s);
+    if (!isNaN(d)) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const m = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+    if (m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+    return null;
+}
+function fmtFecha(val) {
+    const d = parseFecha(val);
+    if (!d) return '—';
+    return d.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+function esc(v) {
+    return String(v||'').replace(/[&<>'"]/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])
+    );
+}
+function buildUrls(nrc, intake, periodo) {
+    // SP Base Semáforo
+    const baseURL = "https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx";
+    const viewID  = "&viewid=1f85f1c7%2D089f%2D47d6%2D8635%2Da2cc761fecc3";
+    const numG    = (nrc.match(/_/g)||[]).length;
+    const conArroba = nrc.replace(/_(?=[^_]*$)/, '@');
+    const posCorte  = conArroba.indexOf('@');
+    const valNRC    = posCorte > 0 ? nrc.substring(0, posCorte) : '';
+    const valPer    = posCorte > 0 ? nrc.substring(posCorte + 1) : '';
+    const nrcCodG   = valNRC.replace(/_/g, '%5F');
+    const urlSP = numG === 0 || !nrc ? '#' :
+        baseURL + '?env=Embedded' +
+        '&FilterField1=NRC_COD&FilterValue1=' + nrcCodG +
+        '&FilterField2=PERIODO_x002a_&FilterValue2=' + valPer + viewID;
+
+    // Intake view
+    const urlIntake = intake ?
+        "https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx" +
+        "?viewid=f4c009bb%2D0552%2D43a5%2D9718%2D9c1d37d8f98b&env=WebViewList&isDlg=1&iframed=1&isfromSharePointTeams=true" +
+        "&FilterField1=field_8&FilterValue1=" + encodeURIComponent(intake) : null;
+
+    // Canvas Global
+    const primerG   = nrc.indexOf('_');
+    const nrcSolo   = primerG > 0 ? nrc.substring(0, primerG) : nrc;
+    const perCanvas = valPer || periodo || '';
+    const urlCanvas = nrcSolo && perCanvas ?
+        "https://lms.unab.cl/int-canvas/?term_code=" + perCanvas +
+        "&periodo=" + perCanvas + "&nrc=" + nrcSolo +
+        "&nrc_code=" + nrcSolo + "&crn=" + nrcSolo + "&NRC=" + nrcSolo : null;
+
+    return { urlSP, urlIntake, urlCanvas };
+}
+
+// ── CARGA DE DATOS ──────────────────────────────────────────
+async function cargarDatos() {
+    const btn  = document.getElementById('btnRefresh');
+    const icon = document.getElementById('iconRefresh');
+    btn.classList.add('spinning');
+
+    try {
+        const [rNrcs, rOnb] = await Promise.allSettled([
+            fetch(NRCS_JSON       + '?t=' + Date.now()).then(r => r.json()),
+            fetch(ONBOARDING_JSON + '?t=' + Date.now()).then(r => r.json())
+        ]);
+
+        const base = rNrcs.status === 'fulfilled'
+            ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value||[]))
+            : [];
+        const onb  = rOnb.status  === 'fulfilled'
+            ? (Array.isArray(rOnb.value)  ? rOnb.value  : (rOnb.value.value||[]))
+            : [];
+
+        // Lookup por nrc
+        const lookup = {};
+        onb.forEach(x => { if (x.nrc) lookup[x.nrc] = x; });
+
+        allData = base.map(item => {
+            const ex = lookup[item.nrc] || {};
+            const nrc         = item.nrc || '';
+            const fechaInicio = item['fecha inicio'] || item['fecha_inicio'] || '';
+            const fechaFin    = item['fecha fin']    || item['fecha_fin']    || '';
+            const periodo     = (nrc.split('_').pop() || '');
+            const urls        = buildUrls(nrc, ex.intake || '', periodo);
+            return {
+                nrc,
+                programa:     ex['nombre programa']  || ex['nombre_programa']  || item.facultad || '—',
+                curso:        ex['nombre curso']     || ex['nombre_curso']     || ex['codigo curso'] || '—',
+                codigoCurso:  ex['codigo curso']     || ex['codigo_curso']     || '',
+                intake:       ex.intake              || '—',
+                estado:       (item.estado           || '').toUpperCase(),
+                facultad:     item.facultad          || '—',
+                tutor:        item.tutor             || 'Por asignar',
+                fechaInicio,
+                fechaFin,
+                fechaInicioObj: parseFecha(fechaInicio),
+                urls
+            };
+        });
+
+        poblarFiltros();
+        aplicarFiltros();
+
+        document.getElementById('footerUpdate').textContent =
+            'Última actualización: ' + new Date().toLocaleString('es-CL');
+
+    } catch(e) {
+        console.error(e);
+        document.getElementById('tbody').innerHTML =
+            `<tr class="state-row"><td colspan="12">⚠️ Error al cargar los datos. Revisa la consola.</td></tr>`;
+    } finally {
+        btn.classList.remove('spinning');
+    }
+}
+
+// ── FILTROS ─────────────────────────────────────────────────
+function poblarFiltros() {
+    const facultades = [...new Set(allData.map(d => d.facultad).filter(Boolean))].sort();
+    const tutores    = [...new Set(allData.map(d => d.tutor).filter(Boolean))].sort();
+
+    const selFac = document.getElementById('filtroFacultad');
+    const selTut = document.getElementById('filtroTutor');
+    const facVal = selFac.value;
+    const tutVal = selTut.value;
+
+    selFac.innerHTML = '<option value="">Todas las facultades</option>' +
+        facultades.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+    selTut.innerHTML = '<option value="">Todos los tutores</option>' +
+        tutores.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+
+    if (facVal) selFac.value = facVal;
+    if (tutVal) selTut.value = tutVal;
+}
+
+function aplicarFiltros() {
+    const q       = (document.getElementById('search').value || '').toLowerCase().trim();
+    const estado  = document.getElementById('filtroEstado').value;
+    const facultad= document.getElementById('filtroFacultad').value;
+    const tutor   = document.getElementById('filtroTutor').value;
+
+    let filtered = allData.filter(d => {
+        if (estado   && d.estado   !== estado)   return false;
+        if (facultad && d.facultad !== facultad) return false;
+        if (tutor    && d.tutor    !== tutor)    return false;
+        if (q) {
+            const hay = [d.nrc, d.programa, d.curso, d.codigoCurso, d.tutor, d.intake, d.facultad]
+                .join(' ').toLowerCase();
+            if (!hay.includes(q)) return false;
+        }
+        return true;
+    });
+
+    // Ordenar
+    filtered.sort((a, b) => {
+        let va = a[sortCol], vb = b[sortCol];
+        if (sortCol === 'fechaInicio' || sortCol === 'fechaFin') {
+            va = a.fechaInicioObj?.getTime() || 0;
+            vb = b.fechaInicioObj?.getTime() || 0;
+        }
+        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+        if (va > vb) return sortDir === 'asc' ?  1 : -1;
+        return 0;
+    });
+
+    renderTabla(filtered);
+    document.getElementById('countPill').textContent =
+        filtered.length.toLocaleString('es-CL') + ' curso' + (filtered.length !== 1 ? 's' : '');
+}
+
+// ── RENDER ──────────────────────────────────────────────────
+function badgeEstado(e) {
+    const key = e.replace(/\s/g, '-');
+    return `<span class="badge-estado badge-${key}">${esc(e)||'—'}</span>`;
+}
+
+function renderTabla(rows) {
+    const tbody = document.getElementById('tbody');
+    if (!rows.length) {
+        tbody.innerHTML = `<tr class="state-row"><td colspan="12">Sin resultados para los filtros aplicados.</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = rows.map(d => {
+        const { urlSP, urlIntake, urlCanvas } = d.urls;
+        const btnSP     = urlSP && urlSP !== '#'
+            ? `<a class="btn-url btn-sp"     href="${esc(urlSP)}"     target="_blank">SP</a>`
+            : `<span class="na-text">—</span>`;
+        const btnCanvas = urlCanvas
+            ? `<a class="btn-url btn-canvas"  href="${esc(urlCanvas)}"  target="_blank">Canvas</a>`
+            : `<span class="na-text">—</span>`;
+        const btnIntCvs = urlCanvas
+            ? `<a class="btn-url btn-intcvs"  href="${esc(urlCanvas)}"  target="_blank">Int-CVS</a>`
+            : `<span class="na-text">—</span>`;
+
+        return `<tr>
+            <td class="cell-nrc">
+                <a href="${esc(urlSP)}" target="_blank" title="${esc(d.nrc)}">${esc(d.nrc)}</a>
+            </td>
+            <td class="cell-programa" title="${esc(d.programa)}">${esc(d.programa)}</td>
+            <td class="cell-curso" title="${esc(d.curso)}">${esc(d.curso)}</td>
+            <td class="cell-intake" title="${esc(d.intake)}">
+                ${urlIntake
+                    ? `<a class="btn-url btn-intake" href="${esc(urlIntake)}" target="_blank" title="${esc(d.intake)}">${esc(d.intake)}</a>`
+                    : `<span style="font-size:11px;color:var(--text-muted)">${esc(d.intake)}</span>`
+                }
+            </td>
+            <td>${badgeEstado(d.estado)}</td>
+            <td><span class="cell-facultad">${esc(d.facultad)}</span></td>
+            <td class="cell-tutor">${esc(d.tutor)}</td>
+            <td class="cell-fecha">${fmtFecha(d.fechaInicio)}</td>
+            <td class="cell-fecha">${fmtFecha(d.fechaFin)}</td>
+            <td>${btnSP}</td>
+            <td>${btnCanvas}</td>
+            <td>${btnIntCvs}</td>
+        </tr>`;
+    }).join('');
+}
+
+// ── ORDENAMIENTO ────────────────────────────────────────────
+document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        if (sortCol === col) {
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortCol = col;
+            sortDir = 'asc';
+        }
+        document.querySelectorAll('thead th').forEach(h => {
+            h.classList.remove('sorted-asc','sorted-desc');
+        });
+        th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        aplicarFiltros();
+    });
+});
+
+// ── INIT ────────────────────────────────────────────────────
+cargarDatos();
+</script>
+</body>
+</html>
