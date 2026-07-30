@@ -547,7 +547,7 @@ function parseFechaCurso(valor) {
 }
 
 function normalizarCurso(item, origen) {
-    const fechaTexto = valorCampo(item, ['fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
+    const fechaTexto = valorCampo(item, ['fecha inicio','fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
     const fecha = parseFechaCurso(fechaTexto);
     const programa = valorCampo(item, ['nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA','NombrePrograma','nombrePrograma','INTAKE O VERSION','intake'], 'Programa sin especificar');
     const curso = valorCampo(item, ['nombre_curso','NOMBRE_CURSO','NOMBRE_CURSO**','curso','CURSO','NombreCurso','nombreCurso','field_5','materia'], 'Curso sin especificar');
