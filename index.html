@@ -103,6 +103,58 @@
     .header-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:9999px; border:1px solid rgba(255,255,255,0.10); }
     .header-message { min-width:0; max-width:420px; }
     .header-message #mensaje-dia { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ── Banner dinámico de próximos inicios ── */
+    .course-banner-wrap { background:#141b2d; border-radius:12px; overflow:hidden; border:0.5px solid rgba(255,255,255,0.1); flex-shrink:0; }
+    .course-banner-header { display:flex; align-items:center; gap:8px; padding:9px 14px 7px; border-bottom:0.5px solid rgba(255,255,255,0.08); }
+    .course-banner-dot { width:8px; height:8px; border-radius:50%; background:#4ade80; box-shadow:0 0 0 0 rgba(74,222,128,.55); animation:course-dot-pulse 2s infinite; }
+    @keyframes course-dot-pulse { 0%{box-shadow:0 0 0 0 rgba(74,222,128,.45)} 70%{box-shadow:0 0 0 7px rgba(74,222,128,0)} 100%{box-shadow:0 0 0 0 rgba(74,222,128,0)} }
+    .course-banner-label { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#94a3b8; }
+    .course-banner-counter { margin-left:auto; font-size:10px; color:#475569; font-family:monospace; }
+    .course-banner-track-outer { overflow:hidden; height:78px; }
+    .course-banner-track { display:flex; height:100%; transition:transform .55s cubic-bezier(.4,0,.2,1); }
+    .course-banner-slide { min-width:100%; display:flex; align-items:center; padding:0 16px; gap:12px; box-sizing:border-box; }
+    .course-slide-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:19px; background:rgba(74,222,128,0.1); }
+    .course-slide-body { flex:1; min-width:0; }
+    .course-slide-programa { font-size:12px; font-weight:600; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .course-slide-nrc { font-size:10px; color:#64748b; margin-top:3px; font-family:monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .course-slide-meta { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; max-width:34%; }
+    .course-badge-fecha { font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+    .course-badge-hoy    { background:rgba(74,222,128,.15);  color:#4ade80; border:.5px solid rgba(74,222,128,.3); }
+    .course-badge-prox3  { background:rgba(251,191,36,.12);  color:#fbbf24; border:.5px solid rgba(251,191,36,.25); }
+    .course-badge-prox7  { background:rgba(96,165,250,.12);  color:#60a5fa; border:.5px solid rgba(96,165,250,.25); }
+    .course-badge-prox14 { background:rgba(167,139,250,.12); color:#a78bfa; border:.5px solid rgba(167,139,250,.25); }
+    .course-slide-tutor { font-size:9px; color:#64748b; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .course-banner-progress-bar { height:2px; background:rgba(255,255,255,.06); overflow:hidden; }
+    .course-banner-progress-fill { height:100%; background:linear-gradient(90deg,#4ade80,#60a5fa); width:0%; }
+
+    .top-course-banner {
+        height:110px;
+        display:flex;
+        flex-direction:column;
+    }
+    .top-course-banner .course-banner-track-outer {
+        flex:1;
+        height:auto;
+    }
+    .top-course-banner .course-banner-slide {
+        padding:0 18px;
+        gap:14px;
+    }
+    .top-course-banner .course-slide-meta {
+        min-width:120px;
+    }
+
+    /* ── Eventos UNAB ── */
+    .eventos-unab-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .evento-unab-card { display:flex; gap:9px; align-items:flex-start; padding:9px; border-radius:9px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.025); text-decoration:none; transition:all .18s; min-width:0; }
+    .evento-unab-card:hover { border-color:rgba(250,204,21,.30); background:rgba(250,204,21,.045); transform:translateY(-1px); }
+    .evento-unab-date { width:36px; min-width:36px; border-radius:8px; overflow:hidden; text-align:center; border:1px solid rgba(96,165,250,.20); background:rgba(59,130,246,.09); }
+    .evento-unab-day { display:block; color:#e2e8f0; font-size:14px; font-weight:800; line-height:19px; padding-top:3px; }
+    .evento-unab-month { display:block; color:#60a5fa; font-size:7px; font-weight:800; letter-spacing:.08em; padding:1px 0 4px; text-transform:uppercase; }
+    .evento-unab-title { color:#e2e8f0; font-size:9px; font-weight:600; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .evento-unab-meta { color:#64748b; font-size:8px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
@@ -195,114 +247,191 @@
         <!-- VISTA NORMAL -->
         <div id="vista-normal" class="grid grid-cols-12 gap-6 overflow-hidden" style="grid-row:1;grid-column:1;">
 
-            <!-- COLUMNA IZQUIERDA (8 cols) -->
-            <div class="col-span-8 flex flex-col gap-3 overflow-hidden">
-                <!-- BANNER -->
-                <div class="banner-hero flex-shrink-0" style="height:110px;">
-                    <div class="banner-bg-accent"></div>
-                    <div class="banner-side-photo"></div>
-                    <div class="banner-side-fade"></div>
-                    <div class="banner-overlay"></div>
-                    <div class="banner-content" style="padding:0 24px; max-width:60%;">
-                        <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
-                        <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
-                        <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
+            <!-- PORTADA PRINCIPAL -->
+            <div class="col-span-12 flex flex-col gap-3 overflow-hidden">
+                <!-- FRANJA SUPERIOR: PORTAL + BANNER DE CURSOS -->
+                <div class="grid grid-cols-12 gap-3 flex-shrink-0" style="height:110px;">
+                    <!-- PORTAL ETOP -->
+                    <div class="col-span-6 banner-hero" style="height:110px;">
+                        <div class="banner-bg-accent"></div>
+                        <div class="banner-side-photo"></div>
+                        <div class="banner-side-fade"></div>
+                        <div class="banner-overlay"></div>
+                        <div class="banner-content" style="padding:0 24px; max-width:56%;">
+                            <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
+                            <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
+                            <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
+                        </div>
+                    </div>
+
+                    <!-- BANNER DINÁMICO DE CURSOS -->
+                    <div class="col-span-6">
+                        <div class="course-banner-wrap top-course-banner" id="course-banner">
+                            <div class="course-banner-header">
+                                <div class="course-banner-dot"></div>
+                                <span class="course-banner-label">Próximos inicios de cursos</span>
+                                <span class="course-banner-counter" id="course-ctr">0 / 0</span>
+                            </div>
+                            <div class="course-banner-track-outer">
+                                <div class="course-banner-track" id="course-track">
+                                    <div class="course-banner-slide">
+                                        <div class="course-slide-icon">⏳</div>
+                                        <div class="course-slide-body">
+                                            <div class="course-slide-programa">Cargando próximos inicios...</div>
+                                            <div class="course-slide-nrc">Consultando información de cursos</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-banner-progress-bar">
+                                <div class="course-banner-progress-fill" id="course-prog"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex gap-3 flex-1 overflow-hidden">
-                    <!-- VIVA ENGAGE -->
-                    <div class="glass-panel rounded-xl overflow-hidden flex flex-col" style="width:46%;flex-shrink:0;">
-                        <iframe name="embed-feed" title="Viva Engage"
-                            src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"
-                            style="border:0;overflow:hidden;width:100%;height:100%;min-height:400px;flex:1;"></iframe>
-                    </div>
+                <!-- CONTENIDO PRINCIPAL: VIVA / NOTICIAS / INDICADORES + MANUAL -->
+                <div class="grid grid-cols-12 gap-3 flex-1 overflow-hidden" style="min-height:0;">
 
-                    <div id="ann-grid" style="display:none;"></div>
-
-                    <!-- COLUMNA DERECHA INTERNA: GRÁFICO + IFRAME PBI -->
-                    <div class="flex flex-col gap-3 flex-1 overflow-hidden">
-
-                        <!-- GRÁFICO BARRAS POR FACULTAD desde nrcs.json -->
-                        <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
-                            <div class="px-3 pt-2 pb-1 flex items-center justify-between" style="flex-shrink:0;">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm text-[#facc15]">bar_chart</span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cursos por Facultad</span>
+                    <!-- IZQUIERDA: VIVA ENGAGE -->
+                    <section class="col-span-4 glass-panel rounded-xl overflow-hidden flex flex-col" style="min-height:0;">
+                        <div class="px-4 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#facc15] text-lg">forum</span>
+                                <div>
+                                    <h2 class="text-[11px] font-bold text-white uppercase tracking-wider">Viva Engage</h2>
+                                    <p class="text-[9px] text-slate-500">Comunidad y comunicación del equipo</p>
                                 </div>
-                                    <div id="chart-legend" class="flex items-center gap-3" style="font-size:9px;color:#64748b;"></div>
                             </div>
-                            <div style="height:calc(100% - 32px);padding:4px 8px 8px;">
+                            <span class="text-[8px] font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded-full">EN LÍNEA</span>
+                        </div>
+                        <iframe
+                            name="embed-feed"
+                            title="Viva Engage"
+                            src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"
+                            style="border:0;overflow:hidden;width:100%;height:100%;min-height:0;flex:1;display:block;">
+                        </iframe>
+                    </section>
+
+                    <!-- CENTRO: NOVEDADES + EVENTOS -->
+                    <section class="col-span-5 glass-panel rounded-xl p-4 flex flex-col overflow-y-auto custom-scrollbar" style="min-height:0;">
+
+                        <!-- NOVEDADES Y NOTICIAS ETOP -->
+                        <div class="flex items-center justify-between mb-3 flex-shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#facc15] text-lg">newspaper</span>
+                                <div>
+                                    <h2 class="text-[11px] font-bold text-white uppercase tracking-wider">Novedades y Noticias ETOP</h2>
+                                    <p class="text-[9px] text-slate-500">Información destacada y actualizaciones del equipo</p>
+                                </div>
+                            </div>
+                            <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
+                               class="text-[9px] text-[#facc15] hover:text-yellow-300 transition-colors whitespace-nowrap">Ver noticias UNAB ↗</a>
+                        </div>
+
+                        <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
+                           class="block rounded-xl overflow-hidden border border-white/10 hover:border-[#facc15]/40 transition-all mb-3 flex-shrink-0"
+                           style="background:linear-gradient(135deg,rgba(5,102,217,0.28),rgba(124,77,255,0.14));">
+                            <div class="p-3 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(59,130,246,0.18);">
+                                    <span class="material-symbols-outlined text-blue-300 text-xl">campaign</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[8px] font-bold uppercase tracking-wider text-[#1f2940] bg-[#facc15] px-2 py-0.5 rounded">Destacada</span>
+                                        <span class="text-[8px] text-slate-400">Actualidad institucional</span>
+                                    </div>
+                                    <p class="text-[11px] font-semibold text-white leading-snug">Últimas noticias de la Universidad Andrés Bello</p>
+                                </div>
+                                <span class="material-symbols-outlined text-slate-500 text-base">arrow_outward</span>
+                            </div>
+                        </a>
+
+                        <div class="flex items-center justify-between mb-2 flex-shrink-0">
+                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.18em]">Últimas publicaciones</span>
+                            <span class="text-[8px] text-slate-600">SharePoint ETOP</span>
+                        </div>
+                        <div id="ann-grid" class="grid gap-2 flex-shrink-0" style="min-height:0;"></div>
+
+                        <!-- EVENTOS UNAB -->
+                        <div class="flex items-center justify-between mt-4 mb-2 pt-3 border-t border-white/5 flex-shrink-0">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#facc15] text-base">event</span>
+                                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.18em]">Eventos UNAB</span>
+                            </div>
+                            <a href="https://agenda.unab.cl/" target="_blank" rel="noopener noreferrer" class="text-[8px] text-[#facc15] hover:text-yellow-300">Ver agenda completa ↗</a>
+                        </div>
+                        <div id="eventos-unab" class="eventos-unab-grid flex-shrink-0">
+                            <div class="col-span-2 rounded-lg border border-white/5 p-3 text-center">
+                                <span class="material-symbols-outlined text-[#facc15] animate-pulse text-lg">sync</span>
+                                <p class="text-[9px] text-slate-500 mt-1">Cargando eventos UNAB...</p>
+                            </div>
+                        </div>
+
+                        <!-- ACCESOS RÁPIDOS -->
+                        <div class="grid grid-cols-3 gap-2 pt-3 mt-3 border-t border-white/5 flex-shrink-0">
+                            <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
+                               class="rounded-lg p-2 text-center border border-white/5 hover:border-violet-400/30 transition-all" style="background:rgba(124,77,255,0.10);">
+                                <span class="material-symbols-outlined text-violet-400 text-xl block mb-1">language</span>
+                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Noticias<br>UNAB</span>
+                            </a>
+                            <a href="https://www.facebook.com/groups/878663466860906" target="_blank" rel="noopener noreferrer"
+                               class="rounded-lg p-2 text-center border border-white/5 hover:border-blue-400/30 transition-all" style="background:rgba(37,99,235,0.10);">
+                                <span class="text-blue-400 text-xl font-extrabold block mb-1" style="line-height:24px;">f</span>
+                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Grupo<br>Facebook</span>
+                            </a>
+                            <a href="#" title="Reemplazar # por la URL de Intranet UNAB"
+                               class="rounded-lg p-2 text-center border border-white/5 hover:border-cyan-400/30 transition-all" style="background:rgba(6,182,212,0.10);">
+                                <span class="material-symbols-outlined text-cyan-400 text-xl block mb-1">account_balance</span>
+                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Intranet<br>UNAB</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- DERECHA: MANUAL ARRIBA + GRÁFICO ABAJO -->
+                    <aside class="col-span-3 flex flex-col gap-3 overflow-hidden" style="min-height:0;">
+
+                        <!-- MANUAL DE APOYO: 35% -->
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col" style="height:35%;min-height:170px;">
+                            <div class="px-3 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#facc15] text-base">play_circle</span>
+                                    <div>
+                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Manual de Apoyo</h3>
+                                        <p class="text-[8px] text-slate-500">Apoyo estudiantil y orientaciones</p>
+                                    </div>
+                                </div>
+                                <span class="material-symbols-outlined text-slate-600 text-sm">open_in_full</span>
+                            </div>
+                            <div style="flex:1;min-height:0;overflow:hidden;background:#0f172a;">
+                                <iframe
+                                    src="https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/embed.aspx?UniqueId=a92a8c30-61cc-4cce-bfc0-4cc9adf79103&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create"
+                                    style="width:100%;height:100%;border:none;display:block;"
+                                    allowfullscreen
+                                    title="Manual de Apoyo Estudiantil">
+                                </iframe>
+                            </div>
+                        </section>
+
+                        <!-- CURSOS POR FACULTAD: 65% -->
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
+                            <div class="px-3 pt-3 pb-1 flex items-start justify-between gap-2 flex-shrink-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
+                                    <div>
+                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Cursos por Facultad</h3>
+                                        <p class="text-[8px] text-slate-500">Estado actual de los NRC</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
+                            <div style="flex:1;min-height:0;padding:4px 8px 10px;">
                                 <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
                             </div>
-                        </div>
-
-                        <!-- IFRAME POWER BI página 4a3046f9033c652229fd -->
-                        <div class="rounded-xl flex-1 overflow-hidden" style="min-height:0;border:1px solid rgba(250,204,21,0.15);position:relative;background:#1f2940;">
-                            <iframe
-                                src="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=4a3046f9033c652229fd&navContentPaneEnabled=false&filterPaneEnabled=false"
-                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;display:block;"
-                                allowfullscreen title="Dashboard Tutor ETOP">
-                            </iframe>
-                        </div>
-                    </div>
+                        </section>
+                    </aside>
                 </div>
             </div>
-
-            <!-- COLUMNA DERECHA (4 cols) -->
-            <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
-
-                <!-- VIDEO MANUAL DE APOYO — 50% del espacio -->
-                <div class="glass-panel rounded-xl overflow-hidden flex-1" style="min-height:0;">
-                    <div class="px-3 pt-2 flex items-center gap-2" style="flex-shrink:0;">
-                        <span class="material-symbols-outlined text-sm text-[#facc15]">play_circle</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Manual de Apoyo Estudiantil</span>
-                    </div>
-                    <div style="height:calc(100% - 26px);overflow:hidden;">
-                        <iframe
-                            src="https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/embed.aspx?UniqueId=a92a8c30-61cc-4cce-bfc0-4cc9adf79103&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create"
-                            style="width:100%;height:100%;border:none;display:block;"
-                            allowfullscreen title="Manual de Apoyo Estudiantil">
-                        </iframe>
-                    </div>
-                </div>
-
-                <!-- CANALES DEL EQUIPO — 50% del espacio -->
-                <div class="glass-panel rounded-xl p-4 flex-1 flex flex-col overflow-hidden" style="min-height:0;">
-                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Canales del Equipo</h4>
-                    <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
-                        <a href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Medicina</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Ed. y Cs. Sociales Innovado</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=tBMSF9&id=%2Fsites%2Factasynrc%2DECONOMA%5FINNOVADO%2FDocumentos%20compartidos%2FECONOM%C3%8DA%5FINNOVADO" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Economía Innovado</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=Jobu49&id=%2Fsites%2Factasynrc%2DINGENIERIA%2FDocumentos%20compartidos%2FINGENIERIA" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Ingeniería</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=2zYXgS&id=%2Fsites%2Factasynrc%2DENFERMERIA%5FINNOVADO%2FDocumentos%20compartidos%2FENFERMERIA%5FINNOVADO" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Enfermería Innovado</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES?csf=1&web" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Ed. y Cs. Sociales</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                        <a href="https://unabportal365.sharepoint.com/sites/actasynrc-CIENCIAS_DE_LA_REHABILITACIN/Documentos%20compartidos/Forms/AllItems.aspx?csf=1&web=1&e=ubsBcK&id=%2Fsites%2Factasynrc%2DCIENCIAS%5FDE%5FLA%5FREHABILITACIN%2FDocumentos%20compartidos%2FCIENCIAS%20%5FDE%5FLA%20%5FREHABILITACI%C3%93N" target="_blank" class="canal-quick">
-                            <div class="canal-left"><div class="canal-badge"><span>T</span></div><span class="canal-nombre">Cs. de la Rehabilitación</span></div>
-                            <span class="canal-arrow">↗</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- FIN VISTA NORMAL -->
 
         <!-- VISTA QA2 -->
@@ -366,10 +495,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const FLOW_LEER  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/033d4b3364af4f0394cabafbbf59c300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LEoBoI-3mLGoahjIBsuu7r32jhnFp1RlrgVtDTjB9V0';
+const FLOW_NOTICIAS = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3c4be34d940843a0aefc9c9c28b3f16b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=P_ZTHBe5wWsRwBtyLfTMFbK28FYOUmlB96hFoCvBOio';
 const FLOW_CREAR = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/879689098af34bea90d8edcc323c335d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xKKyWbfkMX0sYeZo3wE-IsDDhTqsZc_v1Q1EuByaU4k';
 const ADMIN_PASS = 'etop2025';
 const STORAGE_KEY = 'etop_anuncios_leidos';
 const NRCS_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
+const NRCS_ONBOARDING_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
+const AGENDA_UNAB_URL = 'https://agenda.unab.cl/';
+const AGENDA_PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(AGENDA_UNAB_URL);
 const URL_QA2_GESTION     = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7d74430bab11d80e0097&navContentPaneEnabled=false&filterPaneEnabled=false';
 const URL_QA2_CONSOLIDADO = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=5bab0bb006ec70b06518&navContentPaneEnabled=false&filterPaneEnabled=false';
 const MENSAJES = [
@@ -410,6 +543,250 @@ const TIPO_CONFIG = {
     logro:   { label:'🏆 Logro',   color:'#22c55e' },
     urgente: { label:'🚨 Urgente', color:'#ef4444' }
 };
+
+
+// ── BANNER DINÁMICO DE PRÓXIMOS INICIOS ──
+let courseBannerTimer = null;
+let courseProgressTimer = null;
+
+function valorCampo(obj, nombres, defecto='') {
+    for (const nombre of nombres) {
+        const valor = obj?.[nombre];
+        if (valor !== undefined && valor !== null && String(valor).trim() !== '') return String(valor).trim();
+    }
+    return defecto;
+}
+
+function parseFechaCurso(valor) {
+    if (!valor) return null;
+    if (valor instanceof Date && !isNaN(valor)) return valor;
+    const texto = String(valor).trim();
+    const iso = new Date(texto);
+    if (!isNaN(iso)) return new Date(iso.getFullYear(), iso.getMonth(), iso.getDate());
+    const m = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    return null;
+}
+
+function normalizarCurso(item, origen) {
+    const fechaTexto = valorCampo(item, ['fecha inicio','fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
+    const fecha = parseFechaCurso(fechaTexto);
+    const programa = valorCampo(item, ['nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA','NombrePrograma','nombrePrograma','INTAKE O VERSION','intake'], 'Programa sin especificar');
+    const curso = valorCampo(item, ['nombre_curso','NOMBRE_CURSO','NOMBRE_CURSO**','curso','CURSO','NombreCurso','nombreCurso','field_5','materia'], 'Curso sin especificar');
+    const tutor = valorCampo(item, ['nombre_tutor','NOMBRE_TUTOR','NOMBRE TUTOR','tutor','TUTOR','Tutor','tutor_nombre'], 'Por asignar');
+    const nrc = valorCampo(item, ['nrc','NRC','NRC_COD_CAL','nrc_cod_cal','codigo_nrc','CODIGO_NRC','NRC_COD'], '—');
+    const estado = valorCampo(item, ['estado','ESTADO','ESTADO_CAL','estado_cal'], '').toUpperCase();
+    return { fecha, fechaTexto, programa, curso, tutor, nrc, estado, origen };
+}
+
+function diasDesdeHoy(fecha) {
+    const hoy = new Date();
+    const base = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    return Math.round((fecha - base) / 86400000);
+}
+
+function badgeInicio(fecha) {
+    const dias = diasDesdeHoy(fecha);
+    if (dias === 0) return { clase:'course-badge-hoy', texto:'Hoy' };
+    if (dias === 1) return { clase:'course-badge-prox3', texto:'Mañana' };
+    if (dias <= 3) return { clase:'course-badge-prox3', texto:`En ${dias} días` };
+    if (dias <= 7) return { clase:'course-badge-prox7', texto:`En ${dias} días` };
+    return { clase:'course-badge-prox14', texto:fecha.toLocaleDateString('es-CL',{day:'2-digit',month:'short'}) };
+}
+
+function escaparHTML(valor='') {
+    return String(valor).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+async function cargarBannerCursos() {
+    const track = document.getElementById('course-track');
+    const ctr   = document.getElementById('course-ctr');
+    const prog  = document.getElementById('course-prog');
+    if (!track || !ctr || !prog) return;
+
+    try {
+        const [rNrcs, rOnboarding] = await Promise.allSettled([
+            fetch(NRCS_JSON           + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs HTTP '+r.status); return r.json(); }),
+            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('onboarding HTTP '+r.status); return r.json(); })
+        ]);
+
+        const base       = rNrcs.status       === 'fulfilled' ? (Array.isArray(rNrcs.value)       ? rNrcs.value       : (rNrcs.value.value       || [])) : [];
+        const onboarding = rOnboarding.status === 'fulfilled' ? (Array.isArray(rOnboarding.value) ? rOnboarding.value : (rOnboarding.value.value || [])) : [];
+
+        // Mapa de lookup: nrc → datos de onboarding
+        const lookup = {};
+        onboarding.forEach(item => {
+            if (item.nrc) lookup[item.nrc] = item;
+        });
+
+        const hoy      = new Date();
+        const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        const limite   = new Date(inicioHoy); limite.setDate(limite.getDate() + 14);
+        const vistos   = new Set();
+
+        const cursos = base
+            .map(item => {
+                const extra       = lookup[item.nrc] || {};
+                const fechaTexto  = item['fecha inicio'] || item['fecha_inicio'] || '';
+                const fecha       = parseFechaCurso(fechaTexto);
+                const programa    = extra['nombre programa'] || extra['nombre_programa'] || item.facultad || 'Sin programa';
+                const curso       = extra['nombre curso']   || extra['nombre_curso']    || item['codigo curso'] || '';
+                const tutor       = item.tutor || 'Por asignar';
+                const nrc         = item.nrc   || '';
+                const estado      = (item.estado || '').toUpperCase();
+                return { fecha, fechaTexto, programa, curso, tutor, nrc, estado };
+            })
+            .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
+            .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
+            .sort((a, b) => a.fecha - b.fecha)
+            .filter(x => {
+                const clave = `${x.nrc}|${x.fecha.toISOString().slice(0,10)}`.toLowerCase();
+                if (vistos.has(clave)) return false;
+                vistos.add(clave);
+                return true;
+            })
+            .slice(0, 15);
+
+        if (!cursos.length) {
+            track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">📅</div><div class="course-slide-body"><div class="course-slide-programa">No hay inicios programados para los próximos 14 días</div><div class="course-slide-nrc">La información se actualizará automáticamente desde GitHub</div></div></div>`;
+            ctr.textContent = '0 / 0';
+            prog.style.width = '0%';
+            return;
+        }
+
+        track.innerHTML = cursos.map(c => {
+            const badge = badgeInicio(c.fecha);
+            return `<div class="course-banner-slide">
+                <div class="course-slide-icon">📅</div>
+                <div class="course-slide-body">
+                    <div class="course-slide-programa" title="${escaparHTML(c.programa)}">${escaparHTML(c.programa)}</div>
+                    <div class="course-slide-nrc" title="NRC ${escaparHTML(c.nrc)} · ${escaparHTML(c.curso)}">NRC ${escaparHTML(c.nrc)} · ${escaparHTML(c.curso)}</div>
+                </div>
+                <div class="course-slide-meta">
+                    <span class="course-badge-fecha ${badge.clase}">${badge.texto}</span>
+                    <span class="course-slide-tutor" title="Tutor: ${escaparHTML(c.tutor)}">Tutor: ${escaparHTML(c.tutor)}</span>
+                </div>
+            </div>`;
+        }).join('');
+
+        iniciarRotacionCursos(cursos.length);
+
+    } catch(e) {
+        console.error('Error cargando banner de cursos:', e);
+        track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">⚠️</div><div class="course-slide-body"><div class="course-slide-programa">No fue posible cargar los próximos inicios</div><div class="course-slide-nrc">Revisa la ubicación y estructura de los archivos JSON</div></div></div>`;
+        ctr.textContent = '0 / 0';
+    }
+}
+function iniciarRotacionCursos(total) {
+    const track = document.getElementById('course-track');
+    const ctr = document.getElementById('course-ctr');
+    const prog = document.getElementById('course-prog');
+    const duracion = 4500;
+    let actual = 0;
+
+    clearInterval(courseBannerTimer);
+    clearInterval(courseProgressTimer);
+
+    function irA(indice) {
+        actual = indice;
+        track.style.transform = `translateX(-${actual * 100}%)`;
+        ctr.textContent = `${actual + 1} / ${total}`;
+    }
+    function progreso() {
+        let transcurrido = 0;
+        clearInterval(courseProgressTimer);
+        prog.style.transition = 'none';
+        prog.style.width = '0%';
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                prog.style.transition = 'width .1s linear';
+                courseProgressTimer = setInterval(() => {
+                    transcurrido += 100;
+                    prog.style.width = Math.min((transcurrido / duracion) * 100, 100) + '%';
+                }, 100);
+            });
+        });
+    }
+    irA(0);
+    progreso();
+    if (total > 1) courseBannerTimer = setInterval(() => { irA((actual + 1) % total); progreso(); }, duracion);
+}
+
+// ── EVENTOS UNAB DESDE AGENDA.UNAB.CL ──
+function extraerFechaEvento(texto) {
+    const meses = {enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
+    const limpio = String(texto || '').replace(/\s+/g,' ').trim();
+    let m = limpio.match(/(?:Fecha:\s*)?([A-Za-zÁÉÍÓÚáéíóú]+)\s+(\d{1,2})(?:\s+@?\s*(\d{1,2}:\d{2}))?/i);
+    if (!m) m = limpio.match(/(\d{1,2})\s+([A-Za-zÁÉÍÓÚáéíóú]+)(?:\s+(\d{1,2}:\d{2}))?/i);
+    if (!m) return {fecha:null, texto:limpio};
+    const mesTexto = (isNaN(Number(m[1])) ? m[1] : m[2]).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const dia = Number(isNaN(Number(m[1])) ? m[2] : m[1]);
+    const hora = m[3] || '';
+    const mes = meses[mesTexto];
+    if (mes === undefined) return {fecha:null, texto:limpio};
+    const ahora = new Date();
+    let fecha = new Date(ahora.getFullYear(), mes, dia);
+    if (fecha < new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() - 45)) fecha.setFullYear(ahora.getFullYear() + 1);
+    return {fecha, texto:hora ? `${dia} ${mesTexto} · ${hora} hrs` : `${dia} ${mesTexto}`};
+}
+
+async function cargarEventosUNAB() {
+    const cont = document.getElementById('eventos-unab');
+    if (!cont) return;
+    try {
+        const r = await fetch(AGENDA_PROXY_URL + '&t=' + Date.now());
+        if (!r.ok) throw new Error('Agenda HTTP ' + r.status);
+        const html = await r.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const candidatos = [...doc.querySelectorAll('article, .evento, .event, .event-item, .card-event, .item-evento, .post-item')];
+        const encontrados = [];
+        const vistos = new Set();
+
+        function agregarDesdeNodo(nodo) {
+            const h = nodo.querySelector('h1,h2,h3,h4,h5') || nodo.matches('h1,h2,h3,h4,h5') && nodo;
+            if (!h) return;
+            const titulo = h.textContent.replace(/\s+/g,' ').trim();
+            if (!titulo || titulo.length < 8 || vistos.has(titulo.toLowerCase())) return;
+            const enlaceNodo = h.closest('a') || nodo.querySelector('a[href]');
+            const href = enlaceNodo?.getAttribute('href') || AGENDA_UNAB_URL;
+            const url = new URL(href, AGENDA_UNAB_URL).href;
+            const textoNodo = nodo.textContent.replace(/\s+/g,' ').trim();
+            const fechaInfo = extraerFechaEvento(textoNodo);
+            vistos.add(titulo.toLowerCase());
+            encontrados.push({titulo, url, fecha:fechaInfo.fecha, fechaTexto:fechaInfo.texto});
+        }
+
+        candidatos.forEach(agregarDesdeNodo);
+        if (!encontrados.length) {
+            [...doc.querySelectorAll('h3,h4')].forEach(h => agregarDesdeNodo(h.closest('a,div,li,section,article') || h));
+        }
+
+        const hoy = new Date();
+        const base = new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+        const eventos = encontrados
+            .filter(e => !e.fecha || e.fecha >= base)
+            .sort((a,b) => (a.fecha?.getTime() || Infinity) - (b.fecha?.getTime() || Infinity))
+            .slice(0,4);
+
+        if (!eventos.length) throw new Error('No se encontraron eventos en la estructura actual');
+
+        cont.innerHTML = eventos.map(e => {
+            const fecha = e.fecha;
+            const dia = fecha ? String(fecha.getDate()).padStart(2,'0') : '—';
+            const mes = fecha ? fecha.toLocaleDateString('es-CL',{month:'short'}).replace('.','') : 'Agenda';
+            return `<a class="evento-unab-card" href="${escaparHTML(e.url)}" target="_blank" rel="noopener noreferrer">
+                <div class="evento-unab-date"><span class="evento-unab-day">${dia}</span><span class="evento-unab-month">${escaparHTML(mes)}</span></div>
+                <div class="min-w-0"><div class="evento-unab-title">${escaparHTML(e.titulo)}</div><div class="evento-unab-meta">${escaparHTML(e.fechaTexto || 'Agenda UNAB')}</div></div>
+            </a>`;
+        }).join('');
+    } catch(e) {
+        console.warn('No fue posible leer Agenda UNAB:', e);
+        cont.innerHTML = `<a href="${AGENDA_UNAB_URL}" target="_blank" rel="noopener noreferrer" class="col-span-2 evento-unab-card">
+            <div class="evento-unab-date"><span class="evento-unab-day">UNAB</span><span class="evento-unab-month">Agenda</span></div>
+            <div class="min-w-0"><div class="evento-unab-title">Consulta los próximos eventos de la Universidad Andrés Bello</div><div class="evento-unab-meta">Abrir agenda completa ↗</div></div>
+        </a>`;
+    }
+}
 
 // ── GRÁFICO FACULTADES ──
 async function cargarGrafico() {
@@ -534,43 +911,118 @@ function ocultarQA2() {
 function getLeidosIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
 function marcarLeido(id) { const l=getLeidosIds(); if(!l.includes(id)){l.push(id);localStorage.setItem(STORAGE_KEY,JSON.stringify(l));} }
 async function cargarAnuncios() {
+    const grid = document.getElementById('ann-grid');
+    if (!grid) return;
+
+    grid.innerHTML = `
+        <div class="flex items-center justify-center h-full min-h-[120px]">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-[#facc15] animate-pulse">sync</span>
+                <p class="text-[10px] text-slate-500 mt-1">Cargando novedades...</p>
+            </div>
+        </div>`;
+
     try {
-        const r = await fetch(FLOW_LEER, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({}) });
-        if (!r.ok) throw new Error('HTTP '+r.status);
-        const texto = await r.text();
-        let items;
-        try { const d = JSON.parse(texto); items = Array.isArray(d) ? d : (d.value||[]); } catch { throw new Error('JSON inválido'); }
-        const grid = document.getElementById('ann-grid');
-        if (!items.length) { grid.innerHTML = ''; return; }
-        const leidos = getLeidosIds();
+        if (!FLOW_NOTICIAS || FLOW_NOTICIAS.includes('PEGA_AQUI')) {
+            throw new Error('Falta configurar FLOW_NOTICIAS');
+        }
+
+        const r = await fetch(FLOW_NOTICIAS, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+
+        const data = await r.json();
+        const items = Array.isArray(data) ? data : (data.value || []);
+
         grid.innerHTML = '';
-        items.slice(0,4).forEach(item => {
-            const id = String(item.ID||item.Id||'');
-            const tipoRaw = (item.TipoAnuncio?.Value||item.TipoAnuncio||'aviso').toLowerCase();
-            const cfg = TIPO_CONFIG[tipoRaw] || TIPO_CONFIG.aviso;
-            const esNuevo = !leidos.includes(id);
-            const fecha = item.FechaPublicacion ? new Date(item.FechaPublicacion).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '';
-            const tituloItem = item.Title || item.Titulo || 'Sin título';
-            const cuerpoTexto = (item.Cuerpo||'').replace(/<[^>]*>/g,'').trim();
-            const card = document.createElement('div');
-            card.className = 'glass-panel rounded-lg p-4 border-l-4 cursor-pointer relative flex-shrink-0';
-            card.style.borderLeftColor = cfg.color;
-            card.innerHTML = `
-                ${esNuevo ? `<span class="ann-new-badge absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full">Nuevo</span>` : ''}
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[9px] font-bold uppercase tracking-widest" style="color:${cfg.color}">${cfg.label}</span>
-                    <span class="text-[9px] text-slate-500">${fecha}</span>
-                </div>
-                <h3 class="font-bold text-white text-xs mb-1.5 leading-snug">${tituloItem}</h3>
-                <p class="text-slate-400 text-[11px] leading-relaxed">${cuerpoTexto}</p>
-                <div class="mt-2 pt-2 border-t border-white/5">
-                    <span class="text-[9px] text-slate-600">${item.Autor||'ETOP'}</span>
+
+        if (!items.length) {
+            grid.innerHTML = `
+                <div class="rounded-lg border border-white/5 p-4 text-center">
+                    <span class="material-symbols-outlined text-slate-600 text-2xl">newspaper</span>
+                    <p class="text-[10px] text-slate-500 mt-1">No hay novedades publicadas.</p>
                 </div>`;
-            card.addEventListener('click', () => { marcarLeido(id); card.querySelector('.ann-new-badge')?.remove(); });
+            return;
+        }
+
+        const ordenadas = [...items].sort((a, b) => {
+            const destacadaA = Boolean(a.Destacada ?? a.DestacadaPortal);
+            const destacadaB = Boolean(b.Destacada ?? b.DestacadaPortal);
+            if (destacadaA !== destacadaB) return destacadaB - destacadaA;
+
+            const fechaA = new Date(a.Fecha || a.Modified || a.FirstPublishedDate || 0).getTime();
+            const fechaB = new Date(b.Fecha || b.Modified || b.FirstPublishedDate || 0).getTime();
+            return fechaB - fechaA;
+        });
+
+        ordenadas.slice(0, 4).forEach((item, index) => {
+            const id = String(item.ID || item.Id || index);
+            const titulo = item.Titulo || item.Title || 'Novedad ETOP';
+            const resumen = item.Resumen || item.Description || '';
+            const categoria = item.Categoria || item.CategoriaPortal || 'ETOP';
+            const destacada = Boolean(item.Destacada ?? item.DestacadaPortal);
+            const url = item.URL || item.PaginaURL || item['{Link}'] || '#';
+            const imagen = item.Imagen || item.BannerImageUrl || '';
+            const autor = item.Autor || 'Equipo ETOP';
+            const fechaRaw = item.Fecha || item.Modified || item.FirstPublishedDate;
+            const fecha = fechaRaw
+                ? new Date(fechaRaw).toLocaleDateString('es-CL', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                })
+                : '';
+
+            const card = document.createElement('a');
+            card.href = url;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+            card.className = 'block rounded-lg overflow-hidden border border-white/10 hover:border-[#facc15]/35 transition-all flex-shrink-0';
+            card.style.background = destacada
+                ? 'linear-gradient(135deg,rgba(250,204,21,0.10),rgba(59,130,246,0.10))'
+                : 'rgba(255,255,255,0.025)';
+
+            card.innerHTML = `
+                <div class="flex min-h-[92px]">
+                    ${imagen ? `
+                        <div class="w-[34%] flex-shrink-0 bg-slate-900 overflow-hidden">
+                            <img src="${imagen}" alt="" loading="lazy"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.closest('div').style.display='none'">
+                        </div>` : ''}
+                    <div class="p-3 flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 mb-1.5">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                ${destacada ? `
+                                    <span class="text-[7px] font-bold uppercase tracking-wider text-[#1f2940] bg-[#facc15] px-1.5 py-0.5 rounded">Destacada</span>` : ''}
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-blue-300 bg-blue-500/10 px-1.5 py-0.5 rounded truncate">${categoria}</span>
+                            </div>
+                            <span class="text-[8px] text-slate-500 whitespace-nowrap">${fecha}</span>
+                        </div>
+                        <h3 class="text-[11px] font-semibold text-white leading-snug line-clamp-2">${titulo}</h3>
+                        ${resumen ? `<p class="text-[9px] text-slate-400 leading-relaxed mt-1 line-clamp-2">${resumen}</p>` : ''}
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[8px] text-slate-600 truncate">${autor}</span>
+                            <span class="text-[8px] text-[#facc15] font-semibold">Leer más ↗</span>
+                        </div>
+                    </div>
+                </div>`;
+
+            card.addEventListener('click', () => marcarLeido(id));
             grid.appendChild(card);
         });
-    } catch(e) {
-        document.getElementById('ann-grid').innerHTML = '';
+    } catch (e) {
+        console.error('Error cargando novedades SharePoint:', e);
+        grid.innerHTML = `
+            <div class="rounded-lg border border-red-400/10 bg-red-500/5 p-4 text-center">
+                <span class="material-symbols-outlined text-red-400 text-xl">cloud_off</span>
+                <p class="text-[10px] text-red-300 mt-1">No fue posible cargar las novedades.</p>
+                <p class="text-[8px] text-slate-600 mt-1">Revisa la URL del flujo y sus permisos.</p>
+            </div>`;
     }
 }
 function abrirAdmin() { document.getElementById('admin-overlay').classList.add('open'); }
@@ -616,7 +1068,9 @@ async function publicarAnuncio() {
 function setStatus(id,msg,tipo){const el=document.getElementById(id);el.textContent=msg;el.className='status-msg '+tipo;}
 
 getMensajeDelDia();
+cargarBannerCursos();
 cargarAnuncios();
+cargarEventosUNAB();
 cargarGrafico();
 </script>
 </body>
