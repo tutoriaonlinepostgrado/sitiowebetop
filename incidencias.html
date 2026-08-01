@@ -1,67 +1,92 @@
-<script>
-async function cargarDatos() {
-  const [respCursos, respIncidencias] = await Promise.all([
-    fetch("./nrcs.json"),
-    fetch("./incidencias.json")
-  ]);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incidencias ETOP</title>
+</head>
 
-  if (!respCursos.ok) {
-    throw new Error(`Error cargando nrcs.json: ${respCursos.status}`);
-  }
+<body>
+  <main>
+    <h1>Incidencias ETOP</h1>
+    <p id="estadoCarga">Cargando datos...</p>
+  </main>
 
-  if (!respIncidencias.ok) {
-    throw new Error(
-      `Error cargando incidencias.json: ${respIncidencias.status}`
-    );
-  }
+  <script>
+    async function cargarDatos() {
+      const [respCursos, respIncidencias] = await Promise.all([
+        fetch("./nrcs.json"),
+        fetch("./incidencias.json")
+      ]);
 
-  const cursos = await respCursos.json();
-  const incidencias = await respIncidencias.json();
+      if (!respCursos.ok) {
+        throw new Error(`Error cargando nrcs.json: ${respCursos.status}`);
+      }
 
-  const incidenciasPorCurso = new Map();
+      if (!respIncidencias.ok) {
+        throw new Error(
+          `Error cargando incidencias.json: ${respIncidencias.status}`
+        );
+      }
 
-  for (const incidencia of incidencias) {
-    const clave = String(incidencia.cursoId ?? "");
+      const cursos = await respCursos.json();
+      const incidencias = await respIncidencias.json();
 
-    if (!clave) continue;
+      const incidenciasPorCurso = new Map();
 
-    if (!incidenciasPorCurso.has(clave)) {
-      incidenciasPorCurso.set(clave, []);
+      for (const incidencia of incidencias) {
+        const clave = String(incidencia.cursoId ?? "");
+
+        if (!clave) continue;
+
+        if (!incidenciasPorCurso.has(clave)) {
+          incidenciasPorCurso.set(clave, []);
+        }
+
+        incidenciasPorCurso.get(clave).push(incidencia);
+      }
+
+      const cursosConIncidencias = cursos.map(curso => {
+        const registros =
+          incidenciasPorCurso.get(String(curso.id)) ?? [];
+
+        const conIncidencia = registros.filter(
+          item => item.qaIncidencias === "CON INCIDENCIA"
+        );
+
+        return {
+          ...curso,
+          incidencias: registros,
+          totalRegistrosQA2: registros.length,
+          totalConIncidencia: conIncidencia.length,
+          totalSinIncidencia: registros.filter(
+            item => item.qaIncidencias === "SIN INCIDENCIA"
+          ).length,
+          pendientes: conIncidencia.filter(
+            item => item.estadoIncidencia === "PENDIENTE"
+          ).length,
+          corregidas: conIncidencia.filter(
+            item => item.estadoIncidencia === "CORREGIDA"
+          ).length,
+          derivadas: conIncidencia.filter(
+            item => item.estadoIncidencia === "DERIVADO"
+          ).length
+        };
+      });
+
+      document.getElementById("estadoCarga").textContent =
+        `${cursos.length.toLocaleString("es-CL")} cursos y ` +
+        `${incidencias.length.toLocaleString("es-CL")} registros QA2 cargados`;
+
+      console.log("Cursos relacionados:", cursosConIncidencias);
     }
 
-    incidenciasPorCurso.get(clave).push(incidencia);
-  }
+    cargarDatos().catch(error => {
+      console.error(error);
 
-  const cursosConIncidencias = cursos.map(curso => {
-    const lista = incidenciasPorCurso.get(String(curso.id)) ?? [];
-
-    return {
-      ...curso,
-      incidencias: lista,
-      totalRegistrosQA2: lista.length,
-      totalConIncidencia: lista.filter(
-        item => item.qaIncidencias === "CON INCIDENCIA"
-      ).length,
-      totalSinIncidencia: lista.filter(
-        item => item.qaIncidencias === "SIN INCIDENCIA"
-      ).length,
-      pendientes: lista.filter(
-        item =>
-          item.qaIncidencias === "CON INCIDENCIA" &&
-          item.estadoIncidencia === "PENDIENTE"
-      ).length,
-      corregidas: lista.filter(
-        item =>
-          item.qaIncidencias === "CON INCIDENCIA" &&
-          item.estadoIncidencia === "CORREGIDA"
-      ).length
-    };
-  });
-
-  console.log(cursosConIncidencias);
-}
-
-cargarDatos().catch(error => {
-  console.error(error);
-});
-</script>
+      document.getElementById("estadoCarga").textContent =
+        `Error al cargar los datos: ${error.message}`;
+    });
+  </script>
+</body>
+</html>
