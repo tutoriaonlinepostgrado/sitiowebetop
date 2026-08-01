@@ -250,7 +250,7 @@ const POWER_APPS_URL=
 const DERIVAR_URL=BASE+'derivar_incidencia_qa2.html';
 const CONSOLIDADO_MASTER_URL=''; // Pega aquí la URL real cuando la tengas.
 const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
-const SP_LIST='https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/listform.aspx?PageType=4&ListId=278fb864-93ed-4550-8fe2-3c69487c6243&ID=';
+const SP_VIEW='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/AllItems.aspx?viewid=407aa7f0-48a8-461d-9547-327d154dcc70&env=WebViewList';
 
 let all=[],filtered=[],page=1,pageSize=50,renderTimer=null,statMode='';
 const $=id=>document.getElementById(id);
@@ -264,7 +264,13 @@ const focusSearch=()=>{go('filtros');setTimeout(()=>$('q')?.focus(),300)};
 function parseDate(v){if(!v)return null;const [y,m,d]=String(v).split('-').map(Number);return y&&m&&d?new Date(y,m-1,d):null}
 function fmtDate(v){const d=parseDate(v);return d?d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'}
 function chipState(v){const s=upper(v)||'—';return `<span class="chip chip-state">${esc(s)}</span>`}
-function editUrl(id){return SP_LIST+encodeURIComponent(id)}
+function sharePointCursoUrl(nrc){
+  const sep=SP_VIEW.includes('?')?'&':'?';
+  return SP_VIEW+sep+
+    'FilterField1=NRC_COD'+
+    '&FilterValue1='+encodeURIComponent(nrc)+
+    '&FilterType1=Text';
+}
 function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(()=>renderAll(),150)}
 function cleanArray(v){return Array.isArray(v)?v:(v?.value||[])}
 
@@ -287,8 +293,9 @@ function openPowerApp(nrc,curso){
   const url=POWER_APPS_URL+'&nrc='+encodeURIComponent(nrc);
   openDrawer('Gestión de incidencias (Power Apps)',nrc+' · '+curso,url);
 }
-function openSharePoint(id,nrc){
-  openDrawer('Editar incidencia en SharePoint',nrc+' · ID '+id,editUrl(id));
+function openSharePointCurso(nrc,curso){
+  const url=sharePointCursoUrl(nrc);
+  openDrawer('Incidencias del curso en SharePoint',nrc+' · '+curso,url);
 }
 function buildDeriveUrl(c){
   const rows=c.pendientes;
@@ -523,6 +530,7 @@ function renderCourse(c){
         ${canvas?`<a class="btn btn-primary" href="${esc(canvas)}" target="_blank" rel="noopener">↗ Ir a Canvas</a>`:''}
         <a class="btn btn-yellow" href="${esc(deriveUrl)}" target="_blank" rel="noopener" ${c.pendientes.length?'':'aria-disabled="true"'}>✉ Derivar incidencia${c.pendientes.length>1?' ('+c.pendientes.length+')':''}</a>
         <a class="btn btn-primary" href="${esc(masterUrl||'#')}" target="_blank" rel="noopener" ${masterUrl?'':'aria-disabled="true" title="Falta configurar CONSOLIDADO_MASTER_URL"'}>▣ Consolidado Master</a>
+        <button class="btn" onclick="event.stopPropagation();openSharePointCurso('${esc(c.nrc)}','${esc(c.curso)}')">✏ SharePoint</button>
         <button class="btn btn-purple" onclick="event.stopPropagation();openPowerApp('${esc(c.nrc)}','${esc(c.curso)}')">✎ Gestionar</button>
         <button class="btn" onclick="event.stopPropagation();copyNrc('${esc(c.nrc)}')">⧉ Copiar NRC</button>
       </div>
@@ -537,7 +545,7 @@ function renderTable(c,rows){
       <thead>
         <tr>
           <th># ID</th><th>Estado</th><th>Tipo QA</th><th>Categoría</th>
-          <th>Descripción incidencia</th><th>Solución</th><th>Evidencia</th><th>Acciones</th>
+          <th>Descripción incidencia</th><th>Solución</th><th>Adjuntos / evidencia</th>
         </tr>
       </thead>
       <tbody>
@@ -551,8 +559,10 @@ function renderRow(c,i){
   const st=upper(i.estadoIncidencia)||'—';
   const cls=st==='PENDIENTE'?'chip-amber':st==='CORREGIDA'?'chip-green':st==='DERIVADO'?'chip-purple':'chip-state';
   const evidence=i.urlEvidencia
-    ?`<a class="link-ico" href="${esc(i.urlEvidencia)}" target="_blank" rel="noopener" title="Abrir evidencia">📎</a>`
-    :bool(i.tieneAdjuntos)?'<span title="Existe adjunto, pero el JSON no contiene su URL">📎</span>':'—';
+    ? `<a class="link-ico" href="${esc(i.urlEvidencia)}" target="_blank" rel="noopener" title="Abrir archivo de evidencia">🔍</a>`
+    : bool(i.tieneAdjuntos)
+      ? `<span class="link-ico" title="El registro indica que tiene adjuntos, pero no incluye URL de evidencia">📎</span>`
+      : '—';
 
   return `<tr>
     <td class="idcell">#${esc(i.idIncidencia||i.id||'—')}</td>
@@ -562,9 +572,6 @@ function renderRow(c,i){
     <td class="text-cell">${esc(i.descripcionIncidencia||'—')}</td>
     <td class="text-cell sol-cell">${esc(i.descripcionSolucion||'—')}</td>
     <td class="center">${evidence}</td>
-    <td class="center">
-      <button class="link-ico" onclick="openSharePoint('${esc(i.id)}','${esc(c.nrc)}')" title="Editar en SharePoint">✏️</button>
-    </td>
   </tr>`;
 }
 
