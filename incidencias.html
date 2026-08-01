@@ -1,279 +1,578 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Incidencias ETOP</title>
-  <style>
-    :root{
-      --bg:#0b1220;--panel:#111a2b;--panel2:#172236;--line:#263551;
-      --text:#eef4ff;--muted:#98a7bf;--blue:#2f80ed;--green:#20b26b;
-      --yellow:#b87900;--radius:14px
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
-    button,input,select{font:inherit}
-    .page{width:min(1500px,calc(100% - 32px));margin:auto;padding:28px 0 48px}
-    .topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px}
-    h1{margin:0 0 6px}.subtitle,#estadoCarga{margin:0;color:var(--muted)}
-    .toolbar{display:grid;grid-template-columns:1fr 220px;gap:12px;margin-bottom:16px}
-    .field{width:100%;height:46px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
-    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-    .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
-    .kpi span{display:block;color:var(--muted);font-size:.85rem;margin-bottom:7px}.kpi strong{font-size:1.65rem}
-    .courses{display:grid;gap:12px}.course{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-    .course summary{list-style:none;cursor:pointer;padding:18px}.course summary::-webkit-details-marker{display:none}
-    .course-head{display:grid;grid-template-columns:minmax(260px,1.4fr) repeat(3,minmax(90px,.45fr)) auto;gap:14px;align-items:center}
-    .course-title{font-weight:750;overflow-wrap:anywhere}.course-meta{color:var(--muted);font-size:.86rem;margin-top:5px}
-    .count{text-align:center}.count span{display:block;color:var(--muted);font-size:.76rem}.count strong{font-size:1.15rem}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    .btn{border:0;border-radius:9px;padding:10px 13px;cursor:pointer;text-decoration:none;color:#fff;background:var(--blue);font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-    .btn.secondary{background:#34445f}.btn.warning{background:var(--yellow)}
-    .incidences{border-top:1px solid var(--line);padding:0 18px 18px;overflow-x:auto}
-    table{width:100%;min-width:920px;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-    th{color:var(--muted);font-size:.76rem;text-transform:uppercase}td{font-size:.9rem}
-    .badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:.76rem;font-weight:800}
-    .pending{background:#4b3a12;color:#ffd879}.corrected{background:#123e2b;color:#72e5ad}.derived{background:#15365f;color:#8cbcff}.other{background:#263247;color:#cad3e0}
-    .empty{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius)}
-    .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);opacity:0;pointer-events:none;transition:.2s;z-index:1000}
-    .drawer-backdrop.open{opacity:1;pointer-events:auto}
-    .drawer{position:absolute;top:0;right:0;width:min(920px,96vw);height:100%;background:#fff;transform:translateX(100%);transition:.2s;display:flex;flex-direction:column}
-    .drawer-backdrop.open .drawer{transform:translateX(0)}
-    .drawer-header{min-height:62px;padding:12px 16px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
-    .drawer-title strong,.drawer-title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drawer-title span{color:var(--muted);font-size:.8rem;margin-top:3px}
-    .drawer-tools{display:flex;gap:8px;flex-shrink:0}.drawer iframe{width:100%;height:100%;border:0;background:#fff}
-    @media(max-width:950px){.toolbar,.kpis{grid-template-columns:1fr 1fr}.course-head{grid-template-columns:1fr 1fr 1fr}.course-main,.actions{grid-column:1/-1}.actions{justify-content:flex-start}}
-    @media(max-width:620px){.page{width:calc(100% - 20px)}.toolbar,.kpis{grid-template-columns:1fr}.course-head{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Incidencias ETOP · Consolidado QA2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08111f;--surface:#111b2d;--surface2:#0d1728;--surface3:#17243a;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+  --yellow:#facc15;--text:#e5edf8;--muted:#9aa9bf;--dim:#64748b;
+  --blue:#60a5fa;--green:#4ade80;--amber:#fbbf24;--red:#f87171;
+  --purple:#c084fc;--orange:#fb923c;--font:'Inter',system-ui,sans-serif;
+  --mono:'Consolas','SF Mono',monospace;--radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#07101d 0,#0b1525 100%);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+a{color:inherit}
+.topnav{position:sticky;top:0;z-index:300;display:grid;grid-template-columns:220px 1fr auto;align-items:center;height:60px;background:rgba(7,16,29,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border2)}
+.nav-brand{height:100%;display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--border)}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 5px rgba(250,204,21,.08)}
+.nav-title{font-size:15px;font-weight:800}
+.nav-links{display:flex;height:100%;align-items:center;padding-left:16px;gap:4px}
+.nav-link{height:100%;padding:0 18px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;font-weight:600}
+.nav-link:hover,.nav-link.active{color:var(--text);border-bottom-color:var(--yellow)}
+.nav-stat{padding:0 20px;font-size:11px;color:var(--muted)}.nav-stat span{color:var(--yellow);font-weight:800}
+.shell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 60px)}
+.sidebar{position:sticky;top:60px;align-self:start;height:calc(100vh - 60px);padding:18px 14px;background:rgba(10,20,35,.86);border-right:1px solid var(--border);overflow:auto}
+.sidebar-title{font-size:12px;font-weight:800;letter-spacing:.05em;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.control{width:100%;height:38px;background:rgba(15,23,42,.82);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:0 10px;outline:none}
+.control:focus{border-color:rgba(250,204,21,.5);box-shadow:0 0 0 3px rgba(250,204,21,.07)}
+.control option{background:#111827}
+.check{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin:10px 0}
+.check input{accent-color:var(--yellow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border2);border-radius:7px;padding:8px 11px;background:rgba(255,255,255,.05);color:var(--muted);cursor:pointer;text-decoration:none;font-size:11px;font-weight:800}
+.btn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.btn-primary{background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.35);color:#bfdbfe}
+.btn-yellow{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.35);color:#fde68a}
+.btn-purple{background:rgba(192,132,252,.16);border-color:rgba(192,132,252,.35);color:#e9d5ff}
+.btn-danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:#fecaca}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.38;pointer-events:none}
+.full{width:100%}
+.content{min-width:0;padding:18px 18px 32px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.stat{background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;transition:.15s}
+.stat:hover{transform:translateY(-2px);border-color:rgba(250,204,21,.28)}
+.stat.active{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(250,204,21,.08)}
+.stat::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent,var(--yellow))}
+.stat-num{font-size:28px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+.stat-label{font-size:10px;color:var(--muted);font-weight:700;margin-top:6px;text-transform:uppercase}
+.stat-sub{font-size:9px;color:var(--dim);margin-top:2px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
+.results-meta{color:var(--muted);font-size:11px}.results-meta strong{color:var(--yellow)}
+.toolbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.page-size{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px}
+.page-size select{height:34px}
+.acc-list{display:flex;flex-direction:column;gap:8px}
+.acc{background:linear-gradient(180deg,var(--surface),#0f1a2b);border:1px solid var(--border2);border-left:3px solid var(--acc,#64748b);border-radius:var(--radius);overflow:hidden}
+.acc-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 15px;cursor:pointer;transition:background .15s}
+.acc-head:hover{background:rgba(255,255,255,.025)}
+.acc-left{min-width:0;flex:1}
+.acc-title-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.acc-nrc{font-family:var(--mono);font-size:12px;font-weight:800;color:#dbeafe}
+.acc-course{font-size:11px;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:5px;font-size:9px;font-weight:800;border:1px solid transparent;white-space:nowrap}
+.chip-date{background:rgba(96,165,250,.1);color:#bfdbfe;border-color:rgba(96,165,250,.22)}
+.chip-state{background:rgba(100,116,139,.12);color:#cbd5e1;border-color:rgba(100,116,139,.25)}
+.chip-green{background:rgba(74,222,128,.12);color:#86efac;border-color:rgba(74,222,128,.25)}
+.chip-red{background:rgba(248,113,113,.13);color:#fca5a5;border-color:rgba(248,113,113,.28)}
+.chip-amber{background:rgba(251,191,36,.12);color:#fde68a;border-color:rgba(251,191,36,.25)}
+.chip-purple{background:rgba(192,132,252,.12);color:#e9d5ff;border-color:rgba(192,132,252,.24)}
+.chev{font-size:16px;color:var(--dim);transition:transform .2s}.acc.open .chev{transform:rotate(180deg);color:var(--yellow)}
+.acc-body{display:none;border-top:1px solid var(--border);background:rgba(5,12,22,.28)}.acc.open .acc-body{display:block}
+.course-actions{display:flex;gap:7px;flex-wrap:wrap;padding:10px 13px;border-bottom:1px solid var(--border)}
+.table-wrap{overflow:auto}
+.inc-table{width:100%;border-collapse:collapse;min-width:1140px}
+.inc-table th{position:sticky;top:0;background:#172033;padding:8px 10px;text-align:left;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border2)}
+.inc-table td{padding:8px 10px;font-size:10px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.inc-table tr:hover td{background:rgba(255,255,255,.02)}
+.idcell{font-family:var(--mono);font-weight:700;color:#93c5fd!important;white-space:nowrap}
+.text-cell{max-width:330px;min-width:230px;white-space:pre-wrap;overflow-wrap:anywhere}
+.sol-cell{color:#86efac!important}.center{text-align:center}.link-ico{font-size:15px;text-decoration:none;cursor:pointer;background:none;border:0}
+.empty-panel{padding:16px;color:var(--muted);font-size:11px}.empty-green{color:#86efac}.empty-gray{color:var(--dim)}
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px}
+.page-btn{min-width:34px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer}
+.page-btn:hover:not(:disabled),.page-btn.active{background:rgba(250,204,21,.13);border-color:rgba(250,204,21,.4);color:#fde68a}
+.page-btn:disabled{opacity:.35;cursor:not-allowed}.page-info{font-size:10px;color:var(--dim)}
+.loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:55px 20px;color:var(--dim)}
+.spinner{width:32px;height:32px;border-radius:50%;border:3px solid rgba(250,204,21,.15);border-top-color:var(--yellow);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{padding:18px;border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.08);color:#fecaca;border-radius:8px}
+.footer{text-align:center;padding:22px;color:var(--dim);font-size:10px;border-top:1px solid var(--border)}
+.footer span{color:var(--yellow)}
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.64);opacity:0;pointer-events:none;transition:.2s;z-index:1000}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.drawer{position:absolute;top:0;right:0;width:min(900px,96vw);height:100%;background:#fff;transform:translateX(100%);transition:.2s;display:flex;flex-direction:column}
+.drawer-backdrop.open .drawer{transform:translateX(0)}
+.drawer-header{min-height:62px;padding:12px 14px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.drawer-title strong,.drawer-title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-title span{color:#94a3b8;font-size:10px;margin-top:3px}
+.drawer-tools{display:flex;gap:8px;flex-shrink:0}
+.drawer iframe{width:100%;height:100%;border:0;background:#fff}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.shell{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:760px){.topnav{grid-template-columns:1fr auto}.nav-links{display:none}.shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}.content{padding:12px}.stats-grid{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
+</style>
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
-      <div><h1>Incidencias ETOP</h1><p class="subtitle">Revisión, derivación y gestión de incidencias QA2.</p></div>
-      <p id="estadoCarga">Cargando datos...</p>
+<nav class="topnav">
+  <div class="nav-brand"><span class="nav-dot"></span><span class="nav-title">Incidencias ETOP</span></div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="focusSearch()">⌕ Buscar</button>
+    <button class="nav-link" onclick="go('indicadores')">⌁ Indicadores</button>
+    <button class="nav-link active" onclick="go('consolidado')">▣ Consolidado</button>
+  </div>
+  <div class="nav-stat">Última actualización: <span id="updated">—</span></div>
+</nav>
+
+<div class="shell">
+  <aside class="sidebar" id="filtros">
+    <div class="sidebar-title">⚲ FILTROS</div>
+
+    <div class="field">
+      <label>Búsqueda general</label>
+      <input id="q" class="control" placeholder="NRC, curso, tutor…" oninput="scheduleRender()"/>
     </div>
 
-    <section class="toolbar">
-      <input id="buscador" class="field" type="search" placeholder="Buscar por NRC, tutor, facultad o categoría...">
-      <select id="filtroEstado" class="field">
-        <option value="">Todos los estados</option>
-        <option value="PENDIENTE">Pendientes</option>
-        <option value="CORREGIDA">Corregidas</option>
-        <option value="DERIVADO">Derivadas</option>
+    <div class="field">
+      <label>Facultad</label>
+      <select id="fFacultad" class="control" onchange="renderAll()"><option value="">Todas</option></select>
+    </div>
+
+    <div class="field">
+      <label>Estado del curso</label>
+      <select id="fEstadoCurso" class="control" onchange="renderAll()"><option value="">Todos</option></select>
+    </div>
+
+    <div class="field">
+      <label>Estado QA2</label>
+      <select id="fQa" class="control" onchange="renderAll()">
+        <option value="">Todos</option>
+        <option value="CON INCIDENCIA">Con incidencia</option>
+        <option value="SIN INCIDENCIA">Sin incidencia</option>
+        <option value="SIN REGISTRO">QA2 pendiente</option>
       </select>
+    </div>
+
+    <div class="field">
+      <label>Estado incidencia</label>
+      <select id="fEstadoInc" class="control" onchange="renderAll()"><option value="">Todos</option></select>
+    </div>
+
+    <div class="field">
+      <label>Tipo de QA</label>
+      <select id="fTipoQa" class="control" onchange="renderAll()"><option value="">Todos</option></select>
+    </div>
+
+    <div class="field">
+      <label>Categoría</label>
+      <select id="fCategoria" class="control" onchange="renderAll()"><option value="">Todas</option></select>
+    </div>
+
+    <div class="field">
+      <label>Tutor</label>
+      <select id="fTutor" class="control" onchange="renderAll()"><option value="">Todos</option></select>
+    </div>
+
+    <label class="check"><input id="onlyInc" type="checkbox" onchange="renderAll()"> Solo con incidencia</label>
+    <label class="check"><input id="onlyPendQa" type="checkbox" onchange="renderAll()"> Solo pendientes QA2</label>
+
+    <button class="btn full" onclick="clearFilters()">↻ Limpiar filtros</button>
+  </aside>
+
+  <main class="content">
+    <section id="indicadores">
+      <div id="stats" class="stats-grid">
+        <div class="loading" style="grid-column:1/-1"><span class="spinner"></span><span>Cargando datos…</span></div>
+      </div>
     </section>
 
-    <section class="kpis">
-      <article class="kpi"><span>Cursos con QA2</span><strong id="kpiCursos">0</strong></article>
-      <article class="kpi"><span>Con incidencia</span><strong id="kpiIncidencias">0</strong></article>
-      <article class="kpi"><span>Pendientes</span><strong id="kpiPendientes">0</strong></article>
-      <article class="kpi"><span>Corregidas</span><strong id="kpiCorregidas">0</strong></article>
-    </section>
-
-    <section id="listaCursos" class="courses"></section>
-  </main>
-
-  <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true">
-    <aside class="drawer">
-      <header class="drawer-header">
-        <div class="drawer-title"><strong id="drawerCurso">Gestión QA2</strong><span id="drawerNrc"></span></div>
-        <div class="drawer-tools">
-          <a id="abrirAppNuevaPestana" class="btn secondary" href="#" target="_blank" rel="noopener">Abrir aparte</a>
-          <button id="cerrarDrawer" class="btn" type="button">Cerrar</button>
+    <section id="consolidado">
+      <div class="toolbar">
+        <div class="results-meta" id="meta">Cargando…</div>
+        <div class="toolbar-actions">
+          <label class="page-size">Filas por página
+            <select id="pageSizeSelect" class="control" onchange="changePageSize(Number(this.value))">
+              <option value="20">20</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+          <button class="btn" onclick="openVisible(true)">▾ Expandir</button>
+          <button class="btn" onclick="openVisible(false)">▴ Contraer</button>
         </div>
-      </header>
-      <iframe id="powerAppsFrame" title="Power Apps Gestión QA2" allow="clipboard-read; clipboard-write"></iframe>
-    </aside>
-  </div>
+      </div>
 
-  <script>
-    const POWER_APPS_URL =
-      "https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/c71f7c75-4561-43ed-8824-0f1cb74d1967" +
-      "?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2" +
-      "&hint=e935542a-ea92-4f60-8f3e-4c805f2ddd64&source=iframe";
+      <div id="list" class="acc-list">
+        <div class="loading"><span class="spinner"></span><span>Cargando cursos e incidencias…</span></div>
+      </div>
+      <div id="pagination" class="pagination"></div>
+    </section>
+  </main>
+</div>
 
-    const DERIVAR_URL = "./derivar_incidencia_qa2.html";
-    let datosCursos = [], filtroTexto = "", filtroEstado = "";
+<footer class="footer">
+  Portal ETOP · Datos desde <span>nrcs.json</span>, <span>nrcs_onboarding.json</span> e <span>incidencias.json</span>
+</footer>
 
-    const $ = id => document.getElementById(id);
-    const normalizar = v => String(v ?? "").trim();
-    const mayus = v => normalizar(v).toUpperCase();
-    const escapar = v => normalizar(v)
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+<div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true">
+  <aside class="drawer">
+    <header class="drawer-header">
+      <div class="drawer-title">
+        <strong id="drawerTitle">Gestión</strong>
+        <span id="drawerSubtitle"></span>
+      </div>
+      <div class="drawer-tools">
+        <a id="drawerOpenNew" class="btn" href="#" target="_blank" rel="noopener">Abrir aparte</a>
+        <button class="btn btn-danger" onclick="closeDrawer()">Cerrar</button>
+      </div>
+    </header>
+    <iframe id="drawerFrame" title="Panel de gestión" allow="clipboard-read; clipboard-write"></iframe>
+  </aside>
+</div>
 
-    function crearUrlPowerApps(nrc){
-      return `${POWER_APPS_URL}&nrc=${encodeURIComponent(normalizar(nrc))}`;
+<script>
+const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const URLS={cursos:BASE+'nrcs.json',onboarding:BASE+'nrcs_onboarding.json',incidencias:BASE+'incidencias.json'};
+
+const POWER_APPS_URL=
+  'https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/c71f7c75-4561-43ed-8824-0f1cb74d1967'+
+  '?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2'+
+  '&hint=e935542a-ea92-4f60-8f3e-4c805f2ddd64&source=iframe';
+
+const DERIVAR_URL=BASE+'derivar_incidencia_qa2.html';
+const CONSOLIDADO_MASTER_URL=''; // Pega aquí la URL real cuando la tengas.
+const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
+const SP_LIST='https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/listform.aspx?PageType=4&ListId=278fb864-93ed-4550-8fe2-3c69487c6243&ID=';
+
+let all=[],filtered=[],page=1,pageSize=50,renderTimer=null,statMode='';
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const norm=v=>String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const upper=v=>String(v??'').toUpperCase().trim();
+const bool=v=>v===true||String(v).toLowerCase()==='true';
+const go=id=>$(id)?.scrollIntoView({behavior:'smooth'});
+const focusSearch=()=>{go('filtros');setTimeout(()=>$('q')?.focus(),300)};
+
+function parseDate(v){if(!v)return null;const [y,m,d]=String(v).split('-').map(Number);return y&&m&&d?new Date(y,m-1,d):null}
+function fmtDate(v){const d=parseDate(v);return d?d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'}
+function chipState(v){const s=upper(v)||'—';return `<span class="chip chip-state">${esc(s)}</span>`}
+function editUrl(id){return SP_LIST+encodeURIComponent(id)}
+function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(()=>renderAll(),150)}
+function cleanArray(v){return Array.isArray(v)?v:(v?.value||[])}
+
+function openDrawer(title,subtitle,url){
+  $('drawerTitle').textContent=title;
+  $('drawerSubtitle').textContent=subtitle||'';
+  $('drawerFrame').src=url;
+  $('drawerOpenNew').href=url;
+  $('drawerBackdrop').classList.add('open');
+  $('drawerBackdrop').setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(){
+  $('drawerBackdrop').classList.remove('open');
+  $('drawerBackdrop').setAttribute('aria-hidden','true');
+  $('drawerFrame').src='about:blank';
+  document.body.style.overflow='';
+}
+function openPowerApp(nrc,curso){
+  const url=POWER_APPS_URL+'&nrc='+encodeURIComponent(nrc);
+  openDrawer('Gestión de incidencias (Power Apps)',nrc+' · '+curso,url);
+}
+function openSharePoint(id,nrc){
+  openDrawer('Editar incidencia en SharePoint',nrc+' · ID '+id,editUrl(id));
+}
+function buildDeriveUrl(c){
+  const rows=c.pendientes;
+  const serial=rows.map(i=>[
+    i.idIncidencia||i.id||'',
+    i.categoria||'',
+    i.semanaUnidad||i.semana||'',
+    i.descripcionIncidencia||'',
+    i.urlEvidencia||''
+  ].map(v=>String(v).trim()).join('~')).join('|');
+
+  const params=new URLSearchParams({
+    nrc:c.nrc||'',
+    nombre_curso:c.curso||'',
+    fecha_inicio:c['fecha inicio']||'',
+    url_adjunto:rows.find(i=>i.urlEvidencia)?.urlEvidencia||'',
+    incidencias:serial
+  });
+  return DERIVAR_URL+'?'+params.toString();
+}
+function buildMasterUrl(c){
+  if(!CONSOLIDADO_MASTER_URL)return '';
+  const sep=CONSOLIDADO_MASTER_URL.includes('?')?'&':'?';
+  return CONSOLIDADO_MASTER_URL+sep+'nrc='+encodeURIComponent(c.nrc);
+}
+
+async function load(){
+  try{
+    const stamp='?t='+Date.now();
+    const [rc,ro,ri]=await Promise.all([
+      fetch(URLS.cursos+stamp),
+      fetch(URLS.onboarding+stamp),
+      fetch(URLS.incidencias+stamp)
+    ]);
+    if(!rc.ok||!ro.ok||!ri.ok)throw new Error(`Error de carga: cursos ${rc.status}, onboarding ${ro.status}, incidencias ${ri.status}`);
+    const cursos=cleanArray(await rc.json()),onb=cleanArray(await ro.json()),incs=cleanArray(await ri.json());
+
+    const onbMap=new Map(onb.filter(x=>x.nrc).map(x=>[String(x.nrc),x]));
+    const incMap=new Map();
+    for(const i of incs){
+      const k=String(i.cursoId??'');
+      if(!k)continue;
+      if(!incMap.has(k))incMap.set(k,[]);
+      incMap.get(k).push(i);
     }
 
-    function crearUrlDerivacion(curso){
-      const pendientes = curso.incidencias.filter(i =>
-        mayus(i.qaIncidencias) === "CON INCIDENCIA" &&
-        mayus(i.estadoIncidencia) === "PENDIENTE"
-      );
+    all=cursos.map(c=>{
+      const ex=onbMap.get(String(c.nrc))||{};
+      const registros=incMap.get(String(c.id))||[];
+      const con=registros.filter(x=>upper(x.qaIncidencias)==='CON INCIDENCIA');
+      const sin=registros.filter(x=>upper(x.qaIncidencias)==='SIN INCIDENCIA');
+      const pendientes=con.filter(x=>upper(x.estadoIncidencia)==='PENDIENTE');
+      const corregidas=con.filter(x=>upper(x.estadoIncidencia)==='CORREGIDA');
+      const derivadas=con.filter(x=>upper(x.estadoIncidencia)==='DERIVADO');
+      const curso=String(ex['nombre curso']||ex['nombre_curso']||ex.curso||'—').trim();
+      const programa=String(ex['nombre programa']||ex['nombre_programa']||c.facultad||'—').trim();
+      const tutor=String(c.tutor||'Por asignar').trim();
+      const facultad=String(c.facultad||'—').trim();
+      const estado=upper(c.estado);
+      const search=[
+        c.nrc,curso,programa,tutor,facultad,estado,
+        ...registros.flatMap(i=>[
+          i.categoria,i.estadoIncidencia,i.qaIncidencias,i.tipoQA,
+          i.descripcionIncidencia,i.descripcionSolucion
+        ])
+      ].join(' ');
 
-      const serializadas = pendientes.map(i => [
-        normalizar(i.idIncidencia ?? i.id),
-        normalizar(i.categoria),
-        normalizar(i.semanaUnidad ?? i.semana ?? ""),
-        normalizar(i.descripcionIncidencia),
-        normalizar(i.urlEvidencia)
-      ].join("~")).join("|");
+      return{
+        ...c,curso,programa,tutor,facultad,estado,registros,con,sin,
+        pendientes,corregidas,derivadas,_s:norm(search)
+      };
+    }).sort((a,b)=>(parseDate(b['fecha inicio'])||0)-(parseDate(a['fecha inicio'])||0));
 
-      const p = new URLSearchParams({
-        nrc: normalizar(curso.nrc),
-        nombre_curso: normalizar(curso.nombreCurso ?? curso.nombre ?? curso.curso ?? ""),
-        fecha_inicio: normalizar(curso["fecha inicio"] ?? curso.fechaInicio),
-        url_adjunto: normalizar(pendientes.find(i => normalizar(i.urlEvidencia))?.urlEvidencia),
-        incidencias: serializadas
-      });
+    populateFilters();
+    $('updated').textContent=new Date().toLocaleString('es-CL');
+    renderAll();
+  }catch(e){
+    console.error(e);
+    $('list').innerHTML=`<div class="error"><strong>No se pudieron cargar los datos.</strong><br>${esc(e.message)}</div>`;
+    $('stats').innerHTML='';
+  }
+}
 
-      return `${DERIVAR_URL}?${p.toString()}`;
-    }
+function fillSelect(id,values){
+  const s=$(id);
+  values.forEach(v=>{
+    const o=document.createElement('option');
+    o.value=v;o.textContent=v;s.appendChild(o);
+  });
+}
+function populateFilters(){
+  fillSelect('fFacultad',[...new Set(all.map(x=>x.facultad).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')));
+  fillSelect('fEstadoCurso',[...new Set(all.map(x=>x.estado).filter(Boolean))].sort());
+  fillSelect('fTutor',[...new Set(all.map(x=>x.tutor).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')));
+  fillSelect('fEstadoInc',[...new Set(all.flatMap(x=>x.con.map(i=>upper(i.estadoIncidencia))).filter(Boolean))].sort());
+  fillSelect('fTipoQa',[...new Set(all.flatMap(x=>x.registros.map(i=>upper(i.tipoQA))).filter(Boolean))].sort());
+  fillSelect('fCategoria',[...new Set(all.flatMap(x=>x.registros.map(i=>String(i.categoria||'').trim())).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')));
+}
 
-    function abrirGestion(curso){
-      const url = crearUrlPowerApps(curso.nrc);
-      $("drawerCurso").textContent = curso.nombreCurso ?? curso.nombre ?? curso.curso ?? "Gestión QA2";
-      $("drawerNrc").textContent = normalizar(curso.nrc);
-      $("powerAppsFrame").src = url;
-      $("abrirAppNuevaPestana").href = url;
-      $("drawerBackdrop").classList.add("open");
-      document.body.style.overflow = "hidden";
-    }
+function applyFilters(){
+  const q=norm($('q').value);
+  const fac=$('fFacultad').value;
+  const ec=$('fEstadoCurso').value;
+  const qa=$('fQa').value;
+  const ei=$('fEstadoInc').value;
+  const tipo=$('fTipoQa').value;
+  const cat=$('fCategoria').value;
+  const tutor=$('fTutor').value;
+  const onlyInc=$('onlyInc').checked;
+  const onlyPendQa=$('onlyPendQa').checked;
 
-    function cerrarGestion(){
-      $("drawerBackdrop").classList.remove("open");
-      $("powerAppsFrame").src = "about:blank";
-      document.body.style.overflow = "";
-    }
+  filtered=all.filter(c=>{
+    if(q&&!c._s.includes(q))return false;
+    if(fac&&c.facultad!==fac)return false;
+    if(ec&&c.estado!==ec)return false;
+    if(tutor&&c.tutor!==tutor)return false;
+    if(qa==='CON INCIDENCIA'&&c.con.length===0)return false;
+    if(qa==='SIN INCIDENCIA'&&c.sin.length===0)return false;
+    if(qa==='SIN REGISTRO'&&c.registros.length>0)return false;
+    if(ei&&!c.con.some(i=>upper(i.estadoIncidencia)===ei))return false;
+    if(tipo&&!c.registros.some(i=>upper(i.tipoQA)===tipo))return false;
+    if(cat&&!c.registros.some(i=>String(i.categoria||'').trim()===cat))return false;
+    if(onlyInc&&c.con.length===0)return false;
+    if(onlyPendQa&&c.registros.length>0)return false;
 
-    function claseEstado(v){
-      v = mayus(v);
-      if(v === "PENDIENTE") return "pending";
-      if(v === "CORREGIDA") return "corrected";
-      if(v === "DERIVADO") return "derived";
-      return "other";
-    }
+    if(statMode==='CON'&&c.con.length===0)return false;
+    if(statMode==='SIN'&&c.sin.length===0)return false;
+    if(statMode==='PENDQA'&&c.registros.length>0)return false;
+    if(statMode==='PENDINC'&&c.pendientes.length===0)return false;
+    if(statMode==='CORR'&&c.corregidas.length===0)return false;
+    if(statMode==='DER'&&c.derivadas.length===0)return false;
+    return true;
+  });
+}
 
-    function coincide(curso){
-      const texto = mayus([
-        curso.nrc, curso.tutor, curso.facultad, curso.estado,
-        ...curso.incidencias.map(i => [i.categoria,i.estadoIncidencia,i.tipoQA,i.descripcionIncidencia].join(" "))
-      ].join(" "));
-      return (!filtroTexto || texto.includes(mayus(filtroTexto))) &&
-             (!filtroEstado || curso.incidencias.some(i => mayus(i.estadoIncidencia) === filtroEstado));
-    }
+function renderAll(){page=1;applyFilters();renderStats();renderPage()}
+function renderStats(){
+  const total=filtered.length;
+  const con=filtered.filter(x=>x.con.length).length;
+  const sin=filtered.filter(x=>x.sin.length).length;
+  const pendQa=filtered.filter(x=>!x.registros.length).length;
+  const pendInc=filtered.reduce((n,x)=>n+x.pendientes.length,0);
+  const corr=filtered.reduce((n,x)=>n+x.corregidas.length,0);
+  const der=filtered.reduce((n,x)=>n+x.derivadas.length,0);
 
-    function renderizar(){
-      const cursos = datosCursos.filter(coincide);
-      $("kpiCursos").textContent = cursos.length.toLocaleString("es-CL");
-      $("kpiIncidencias").textContent = cursos.reduce((a,c)=>a+c.totalConIncidencia,0).toLocaleString("es-CL");
-      $("kpiPendientes").textContent = cursos.reduce((a,c)=>a+c.pendientes,0).toLocaleString("es-CL");
-      $("kpiCorregidas").textContent = cursos.reduce((a,c)=>a+c.corregidas,0).toLocaleString("es-CL");
+  const cards=[
+    ['','Total NRC',total,'Cursos','--blue'],
+    ['CON','Con incidencia',con,'NRC afectados','--red'],
+    ['SIN','Sin incidencia',sin,'NRC revisados','--green'],
+    ['PENDQA','QA2 pendiente',pendQa,'Sin revisión','--amber'],
+    ['PENDINC','Incidencias pendientes',pendInc,'En revisión','--red'],
+    ['CORR','Corregidas',corr,'Resueltas','--green'],
+    ['DER','Derivadas',der,'A otras áreas','--orange']
+  ];
 
-      if(!cursos.length){
-        $("listaCursos").innerHTML = '<div class="empty">No se encontraron cursos.</div>';
-        return;
-      }
+  $('stats').innerHTML=cards.map(([mode,label,num,sub,color])=>
+    `<div class="stat ${statMode===mode?'active':''}" style="--accent:var(${color})" onclick="setStat('${mode}')">
+      <div class="stat-num">${num.toLocaleString('es-CL')}</div>
+      <div class="stat-label">${label}</div>
+      <div class="stat-sub">${sub}</div>
+    </div>`
+  ).join('');
+}
+function setStat(mode){statMode=statMode===mode?'':mode;applyFilters();page=1;renderStats();renderPage()}
+function clearFilters(){
+  ['q','fFacultad','fEstadoCurso','fQa','fEstadoInc','fTipoQa','fCategoria','fTutor'].forEach(id=>$(id).value='');
+  $('onlyInc').checked=false;$('onlyPendQa').checked=false;statMode='';renderAll();
+}
+function changePageSize(n){pageSize=n;page=1;renderPage()}
 
-      $("listaCursos").innerHTML = cursos.map(curso => {
-        const filas = curso.incidencias.map(i => `
-          <tr>
-            <td>${escapar(i.idIncidencia ?? i.id)}</td>
-            <td>${escapar(i.tipoQA)}</td>
-            <td>${escapar(i.categoria)}</td>
-            <td><span class="badge ${claseEstado(i.estadoIncidencia)}">${escapar(i.estadoIncidencia || "SIN ESTADO")}</span></td>
-            <td>${escapar(i.descripcionIncidencia)}</td>
-            <td>${escapar(i.descripcionSolucion)}</td>
-            <td>${i.urlEvidencia ? `<a class="btn secondary" href="${escapar(i.urlEvidencia)}" target="_blank" rel="noopener">Evidencia</a>` : ""}</td>
-          </tr>`).join("");
+function renderPage(){
+  const pages=Math.max(1,Math.ceil(filtered.length/pageSize));
+  if(page>pages)page=pages;
+  const start=(page-1)*pageSize,end=Math.min(start+pageSize,filtered.length),slice=filtered.slice(start,end);
+  $('meta').innerHTML=`CURSOS (<strong>${filtered.length.toLocaleString('es-CL')}</strong>) · Mostrando <strong>${filtered.length?start+1:0}–${end}</strong>`;
+  $('list').innerHTML=slice.length?slice.map(renderCourse).join(''):`<div class="empty-panel empty-gray">No hay cursos que coincidan con los filtros.</div>`;
+  renderPagination(pages);
+}
 
-        const derivar = crearUrlDerivacion(curso);
-        const habilitado = curso.pendientes > 0;
+function renderCourse(c){
+  const cnt=c.con.length,hasSin=c.sin.length>0,noReg=c.registros.length===0;
+  const accent=cnt?'#f87171':hasSin?'#4ade80':'#facc15';
 
-        return `
-          <details class="course">
-            <summary>
-              <div class="course-head">
-                <div class="course-main">
-                  <div class="course-title">${escapar(curso.nrc)}</div>
-                  <div class="course-meta">${escapar(curso.facultad)} · ${escapar(curso.tutor)} · ${escapar(curso.estado)}</div>
-                </div>
-                <div class="count"><span>Incidencias</span><strong>${curso.totalConIncidencia}</strong></div>
-                <div class="count"><span>Pendientes</span><strong>${curso.pendientes}</strong></div>
-                <div class="count"><span>Corregidas</span><strong>${curso.corregidas}</strong></div>
-                <div class="actions">
-                  <a class="btn warning" href="${escapar(derivar)}" target="_blank" rel="noopener"
-                     ${habilitado ? "" : 'aria-disabled="true" tabindex="-1" style="pointer-events:none;opacity:.45"'}>
-                    Derivar incidencia
-                  </a>
-                  <button class="btn" type="button" data-action="gestionar" data-id="${escapar(curso.id)}">Gestionar</button>
-                </div>
-              </div>
-            </summary>
-            <div class="incidences">
-              <table>
-                <thead><tr><th>ID</th><th>Tipo QA</th><th>Categoría</th><th>Estado</th><th>Descripción incidencia</th><th>Descripción solución</th><th>Evidencia</th></tr></thead>
-                <tbody>${filas || '<tr><td colspan="7">Sin registros QA2.</td></tr>'}</tbody>
-              </table>
-            </div>
-          </details>`;
-      }).join("");
-    }
+  const mainBadge=cnt
+    ?`<span class="chip chip-red">CON ${cnt} INCIDENCIA${cnt===1?'':'S'}</span>`
+    :hasSin
+      ?`<span class="chip chip-green">SIN INCIDENCIAS</span>`
+      :`<span class="chip chip-amber">QA2 PENDIENTE</span>`;
 
-    async function cargarDatos(){
-      const [rc,ri] = await Promise.all([
-        fetch("./nrcs.json",{cache:"no-store"}),
-        fetch("./incidencias.json",{cache:"no-store"})
-      ]);
-      if(!rc.ok) throw new Error(`Error cargando nrcs.json: ${rc.status}`);
-      if(!ri.ok) throw new Error(`Error cargando incidencias.json: ${ri.status}`);
+  const counters=[
+    c.pendientes.length?`<span class="chip chip-amber">${c.pendientes.length} pendiente${c.pendientes.length===1?'':'s'}</span>`:'',
+    c.corregidas.length?`<span class="chip chip-green">${c.corregidas.length} corregida${c.corregidas.length===1?'':'s'}</span>`:'',
+    c.derivadas.length?`<span class="chip chip-purple">${c.derivadas.length} derivada${c.derivadas.length===1?'':'s'}</span>`:''
+  ].join('');
 
-      const cursos = await rc.json(), incidencias = await ri.json(), mapa = new Map();
+  const body=cnt
+    ?renderTable(c,c.con)
+    :hasSin
+      ?`<div class="empty-panel empty-green">✅ QA2 revisado — Sin incidencias registradas.</div>`
+      :`<div class="empty-panel empty-gray">⏳ QA2 aún no realizado para este NRC.</div>`;
 
-      for(const i of incidencias){
-        const clave = normalizar(i.cursoId);
-        if(!clave) continue;
-        if(!mapa.has(clave)) mapa.set(clave,[]);
-        mapa.get(clave).push(i);
-      }
+  const canvas=c.registros.find(x=>x.urlCanvas)?.urlCanvas||'';
+  const deriveUrl=buildDeriveUrl(c);
+  const masterUrl=buildMasterUrl(c);
 
-      datosCursos = cursos.map(curso => {
-        const registros = mapa.get(normalizar(curso.id)) ?? [];
-        const conInc = registros.filter(i => mayus(i.qaIncidencias) === "CON INCIDENCIA");
-        return {
-          ...curso, incidencias:registros,
-          totalRegistrosQA2:registros.length,
-          totalConIncidencia:conInc.length,
-          pendientes:conInc.filter(i=>mayus(i.estadoIncidencia)==="PENDIENTE").length,
-          corregidas:conInc.filter(i=>mayus(i.estadoIncidencia)==="CORREGIDA").length,
-          derivadas:conInc.filter(i=>mayus(i.estadoIncidencia)==="DERIVADO").length
-        };
-      }).filter(c=>c.totalRegistrosQA2>0)
-        .sort((a,b)=>b.pendientes-a.pendientes || normalizar(a.nrc).localeCompare(normalizar(b.nrc),"es"));
+  return `<article class="acc" data-id="${esc(c.id)}" style="--acc:${accent}">
+    <div class="acc-head" onclick="toggleAcc(this)">
+      <div class="acc-left">
+        <div class="acc-title-line">
+          <span class="acc-nrc">${esc(c.nrc)}</span>${mainBadge}${counters}
+        </div>
+        <div class="acc-course">Curso: ${esc(c.curso)} · Tutor: ${esc(c.tutor)} · Facultad: ${esc(c.facultad)}</div>
+        <div class="meta-row">
+          <span class="chip chip-date">📅 ${fmtDate(c['fecha inicio'])} – ${fmtDate(c['fecha fin'])}</span>
+          ${chipState(c.estado)}
+          <span class="chip chip-state">🏛 ${esc(c.facultad)}</span>
+        </div>
+      </div>
+      <span class="chev">▼</span>
+    </div>
 
-      $("estadoCarga").textContent =
-        `${cursos.length.toLocaleString("es-CL")} cursos y ${incidencias.length.toLocaleString("es-CL")} registros QA2 cargados`;
-      renderizar();
-    }
+    <div class="acc-body">
+      <div class="course-actions">
+        <a class="btn btn-primary" href="${FORM_QA2+encodeURIComponent(c.id)}" target="_blank" rel="noopener">📋 Completar QA2</a>
+        ${canvas?`<a class="btn btn-primary" href="${esc(canvas)}" target="_blank" rel="noopener">↗ Ir a Canvas</a>`:''}
+        <a class="btn btn-yellow" href="${esc(deriveUrl)}" target="_blank" rel="noopener" ${c.pendientes.length?'':'aria-disabled="true"'}>✉ Derivar incidencia${c.pendientes.length>1?' ('+c.pendientes.length+')':''}</a>
+        <a class="btn btn-primary" href="${esc(masterUrl||'#')}" target="_blank" rel="noopener" ${masterUrl?'':'aria-disabled="true" title="Falta configurar CONSOLIDADO_MASTER_URL"'}>▣ Consolidado Master</a>
+        <button class="btn btn-purple" onclick="event.stopPropagation();openPowerApp('${esc(c.nrc)}','${esc(c.curso)}')">✎ Gestionar</button>
+        <button class="btn" onclick="event.stopPropagation();copyNrc('${esc(c.nrc)}')">⧉ Copiar NRC</button>
+      </div>
+      ${body}
+    </div>
+  </article>`;
+}
 
-    $("buscador").addEventListener("input",e=>{filtroTexto=e.target.value;renderizar()});
-    $("filtroEstado").addEventListener("change",e=>{filtroEstado=e.target.value;renderizar()});
-    $("listaCursos").addEventListener("click",e=>{
-      const b=e.target.closest('[data-action="gestionar"]');
-      if(!b) return;
-      const curso=datosCursos.find(c=>normalizar(c.id)===normalizar(b.dataset.id));
-      if(curso) abrirGestion(curso);
-    });
-    $("cerrarDrawer").addEventListener("click",cerrarGestion);
-    $("drawerBackdrop").addEventListener("click",e=>{if(e.target===$("drawerBackdrop")) cerrarGestion()});
-    document.addEventListener("keydown",e=>{if(e.key==="Escape") cerrarGestion()});
+function renderTable(c,rows){
+  return `<div class="table-wrap">
+    <table class="inc-table">
+      <thead>
+        <tr>
+          <th># ID</th><th>Estado</th><th>Tipo QA</th><th>Categoría</th>
+          <th>Descripción incidencia</th><th>Solución</th><th>Evidencia</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.sort((a,b)=>String(a.idIncidencia||a.id).localeCompare(String(b.idIncidencia||b.id),'es')).map(i=>renderRow(c,i)).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
 
-    cargarDatos().catch(error=>{
-      console.error(error);
-      $("estadoCarga").textContent=`Error al cargar los datos: ${error.message}`;
-      $("listaCursos").innerHTML=`<div class="empty">${escapar(error.message)}</div>`;
-    });
-  </script>
+function renderRow(c,i){
+  const st=upper(i.estadoIncidencia)||'—';
+  const cls=st==='PENDIENTE'?'chip-amber':st==='CORREGIDA'?'chip-green':st==='DERIVADO'?'chip-purple':'chip-state';
+  const evidence=i.urlEvidencia
+    ?`<a class="link-ico" href="${esc(i.urlEvidencia)}" target="_blank" rel="noopener" title="Abrir evidencia">📎</a>`
+    :bool(i.tieneAdjuntos)?'<span title="Existe adjunto, pero el JSON no contiene su URL">📎</span>':'—';
+
+  return `<tr>
+    <td class="idcell">#${esc(i.idIncidencia||i.id||'—')}</td>
+    <td><span class="chip ${cls}">${esc(st)}</span></td>
+    <td>${esc(i.tipoQA||'—')}</td>
+    <td>${esc(i.categoria||'—')}</td>
+    <td class="text-cell">${esc(i.descripcionIncidencia||'—')}</td>
+    <td class="text-cell sol-cell">${esc(i.descripcionSolucion||'—')}</td>
+    <td class="center">${evidence}</td>
+    <td class="center">
+      <button class="link-ico" onclick="openSharePoint('${esc(i.id)}','${esc(c.nrc)}')" title="Editar en SharePoint">✏️</button>
+    </td>
+  </tr>`;
+}
+
+function toggleAcc(head){head.closest('.acc').classList.toggle('open')}
+function openVisible(open){document.querySelectorAll('.acc').forEach(x=>x.classList.toggle('open',open))}
+function copyNrc(v){navigator.clipboard?.writeText(v)}
+function renderPagination(pages){
+  if(pages<=1){$('pagination').innerHTML='';return}
+  const nums=[],lo=Math.max(1,page-2),hi=Math.min(pages,page+2);
+  for(let i=lo;i<=hi;i++)nums.push(i);
+
+  $('pagination').innerHTML=
+    `<button class="page-btn" ${page===1?'disabled':''} onclick="setPage(${page-1})">‹</button>`+
+    `${lo>1?`<button class="page-btn" onclick="setPage(1)">1</button>${lo>2?'<span class="page-info">…</span>':''}`:''}`+
+    `${nums.map(n=>`<button class="page-btn ${n===page?'active':''}" onclick="setPage(${n})">${n}</button>`).join('')}`+
+    `${hi<pages?`${hi<pages-1?'<span class="page-info">…</span>':''}<button class="page-btn" onclick="setPage(${pages})">${pages}</button>`:''}`+
+    `<button class="page-btn" ${page===pages?'disabled':''} onclick="setPage(${page+1})">›</button>`+
+    `<span class="page-info">Página ${page} de ${pages}</span>`;
+}
+function setPage(n){page=n;renderPage();go('consolidado')}
+
+$('drawerBackdrop').addEventListener('click',e=>{if(e.target===$('drawerBackdrop'))closeDrawer()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+load();
+</script>
 </body>
 </html>
