@@ -250,7 +250,7 @@ const POWER_APPS_URL=
 const DERIVAR_URL=BASE+'derivar_incidencia_qa2.html';
 const CONSOLIDADO_MASTER_URL=''; // Pega aquí la URL real cuando la tengas.
 const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
-const SP_VIEW='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/AllItems.aspx?viewid=407aa7f0-48a8-461d-9547-327d154dcc70&env=WebViewList';
+const SP_VIEW='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/AllItems.aspx?viewid=407aa7f0-48a8-461d-9547-327d154dcc70';
 
 let all=[],filtered=[],page=1,pageSize=50,renderTimer=null,statMode='';
 const $=id=>document.getElementById(id);
@@ -267,9 +267,8 @@ function chipState(v){const s=upper(v)||'—';return `<span class="chip chip-sta
 function sharePointCursoUrl(nrc){
   const sep=SP_VIEW.includes('?')?'&':'?';
   return SP_VIEW+sep+
-    'FilterField1=NRC_COD'+
-    '&FilterValue1='+encodeURIComponent(nrc)+
-    '&FilterType1=Text';
+    'FilterField1=Title'+
+    '&FilterValue1='+encodeURIComponent(nrc);
 }
 function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(()=>renderAll(),150)}
 function cleanArray(v){return Array.isArray(v)?v:(v?.value||[])}
@@ -293,10 +292,7 @@ function openPowerApp(nrc,curso){
   const url=POWER_APPS_URL+'&nrc='+encodeURIComponent(nrc);
   openDrawer('Gestión de incidencias (Power Apps)',nrc+' · '+curso,url);
 }
-function openSharePointCurso(nrc,curso){
-  const url=sharePointCursoUrl(nrc);
-  openDrawer('Incidencias del curso en SharePoint',nrc+' · '+curso,url);
-}
+
 function buildDeriveUrl(c){
   const rows=c.pendientes;
   const serial=rows.map(i=>[
@@ -530,7 +526,7 @@ function renderCourse(c){
         ${canvas?`<a class="btn btn-primary" href="${esc(canvas)}" target="_blank" rel="noopener">↗ Ir a Canvas</a>`:''}
         <a class="btn btn-yellow" href="${esc(deriveUrl)}" target="_blank" rel="noopener" ${c.pendientes.length?'':'aria-disabled="true"'}>✉ Derivar incidencia${c.pendientes.length>1?' ('+c.pendientes.length+')':''}</a>
         <a class="btn btn-primary" href="${esc(masterUrl||'#')}" target="_blank" rel="noopener" ${masterUrl?'':'aria-disabled="true" title="Falta configurar CONSOLIDADO_MASTER_URL"'}>▣ Consolidado Master</a>
-        <button class="btn" onclick="event.stopPropagation();openSharePointCurso('${esc(c.nrc)}','${esc(c.curso)}')">✏ SharePoint</button>
+        <a class="btn" href="${esc(sharePointCursoUrl(c.nrc))}" target="_blank" rel="noopener">✏ SharePoint</a>
         <button class="btn btn-purple" onclick="event.stopPropagation();openPowerApp('${esc(c.nrc)}','${esc(c.curso)}')">✎ Gestionar</button>
         <button class="btn" onclick="event.stopPropagation();copyNrc('${esc(c.nrc)}')">⧉ Copiar NRC</button>
       </div>
