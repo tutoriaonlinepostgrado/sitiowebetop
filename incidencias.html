@@ -142,6 +142,16 @@ a{color:inherit}
     </div>
 
     <div class="field">
+      <label>Fecha de inicio desde</label>
+      <input id="fFechaDesde" class="control" type="date" onchange="renderAll()"/>
+    </div>
+
+    <div class="field">
+      <label>Fecha de inicio hasta</label>
+      <input id="fFechaHasta" class="control" type="date" onchange="renderAll()"/>
+    </div>
+
+    <div class="field">
       <label>Estado QA2</label>
       <select id="fQa" class="control" onchange="renderAll()">
         <option value="">Todos</option>
@@ -382,6 +392,8 @@ function applyFilters(){
   const q=norm($('q').value);
   const fac=$('fFacultad').value;
   const ec=$('fEstadoCurso').value;
+  const fechaDesde=$('fFechaDesde').value;
+  const fechaHasta=$('fFechaHasta').value;
   const qa=$('fQa').value;
   const ei=$('fEstadoInc').value;
   const tipo=$('fTipoQa').value;
@@ -394,6 +406,11 @@ function applyFilters(){
     if(q&&!c._s.includes(q))return false;
     if(fac&&c.facultad!==fac)return false;
     if(ec&&c.estado!==ec)return false;
+
+    const fechaInicio=String(c['fecha inicio']||'').trim();
+    if(fechaDesde&&(!fechaInicio||fechaInicio<fechaDesde))return false;
+    if(fechaHasta&&(!fechaInicio||fechaInicio>fechaHasta))return false;
+
     if(tutor&&c.tutor!==tutor)return false;
     if(qa==='CON INCIDENCIA'&&c.con.length===0)return false;
     if(qa==='SIN INCIDENCIA'&&c.sin.length===0)return false;
@@ -444,7 +461,7 @@ function renderStats(){
 }
 function setStat(mode){statMode=statMode===mode?'':mode;applyFilters();page=1;renderStats();renderPage()}
 function clearFilters(){
-  ['q','fFacultad','fEstadoCurso','fQa','fEstadoInc','fTipoQa','fCategoria','fTutor'].forEach(id=>$(id).value='');
+  ['q','fFacultad','fEstadoCurso','fFechaDesde','fFechaHasta','fQa','fEstadoInc','fTipoQa','fCategoria','fTutor'].forEach(id=>$(id).value='');
   $('onlyInc').checked=false;$('onlyPendQa').checked=false;statMode='';renderAll();
 }
 function changePageSize(n){pageSize=n;page=1;renderPage()}
