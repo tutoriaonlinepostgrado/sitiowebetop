@@ -1,0 +1,67 @@
+<script>
+async function cargarDatos() {
+  const [respCursos, respIncidencias] = await Promise.all([
+    fetch("./nrcs.json"),
+    fetch("./incidencias.json")
+  ]);
+
+  if (!respCursos.ok) {
+    throw new Error(`Error cargando nrcs.json: ${respCursos.status}`);
+  }
+
+  if (!respIncidencias.ok) {
+    throw new Error(
+      `Error cargando incidencias.json: ${respIncidencias.status}`
+    );
+  }
+
+  const cursos = await respCursos.json();
+  const incidencias = await respIncidencias.json();
+
+  const incidenciasPorCurso = new Map();
+
+  for (const incidencia of incidencias) {
+    const clave = String(incidencia.cursoId ?? "");
+
+    if (!clave) continue;
+
+    if (!incidenciasPorCurso.has(clave)) {
+      incidenciasPorCurso.set(clave, []);
+    }
+
+    incidenciasPorCurso.get(clave).push(incidencia);
+  }
+
+  const cursosConIncidencias = cursos.map(curso => {
+    const lista = incidenciasPorCurso.get(String(curso.id)) ?? [];
+
+    return {
+      ...curso,
+      incidencias: lista,
+      totalRegistrosQA2: lista.length,
+      totalConIncidencia: lista.filter(
+        item => item.qaIncidencias === "CON INCIDENCIA"
+      ).length,
+      totalSinIncidencia: lista.filter(
+        item => item.qaIncidencias === "SIN INCIDENCIA"
+      ).length,
+      pendientes: lista.filter(
+        item =>
+          item.qaIncidencias === "CON INCIDENCIA" &&
+          item.estadoIncidencia === "PENDIENTE"
+      ).length,
+      corregidas: lista.filter(
+        item =>
+          item.qaIncidencias === "CON INCIDENCIA" &&
+          item.estadoIncidencia === "CORREGIDA"
+      ).length
+    };
+  });
+
+  console.log(cursosConIncidencias);
+}
+
+cargarDatos().catch(error => {
+  console.error(error);
+});
+</script>
