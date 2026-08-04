@@ -101,10 +101,10 @@ a{color:inherit}
 .drawer-backdrop.open{opacity:1;pointer-events:auto}
 .drawer{position:absolute;top:0;right:0;width:min(480px,100vw);height:100%;background:#f3f4f6;transform:translateX(100%);transition:.2s;display:flex;flex-direction:column}
 .drawer-backdrop.open .drawer{transform:translateX(0)}
-.drawer-header{min-height:62px;padding:12px 14px;background:#222C3F;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.drawer-title strong,.drawer-title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-header{min-height:58px;padding:9px 8px 9px 12px;background:#222C3F;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;overflow:hidden}
+.drawer-title{min-width:0;flex:1}.drawer-title strong,.drawer-title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drawer-title span{color:var(--muted);font-size:10px;margin-top:3px}
-.drawer-tools{display:flex;gap:8px;flex-shrink:0}
+.drawer-tools{display:flex;gap:6px;flex-shrink:0}.drawer-tools .btn{padding:6px 8px;font-size:10px;white-space:nowrap}
 .drawer iframe{width:100%;height:100%;border:0;background:#f3f4f6}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
 @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.shell{grid-template-columns:210px minmax(0,1fr)}}
@@ -115,6 +115,7 @@ a{color:inherit}
 <nav class="topnav">
   <div class="nav-brand"><span class="nav-dot"></span><span class="nav-title">Incidencias ETOP</span></div>
   <div class="nav-links">
+    <a class="nav-link" href="index.html" title="Volver al Portal ETOP">← Portal</a>
     <button class="nav-link" onclick="focusSearch()">⌕ Buscar</button>
     <button class="nav-link" onclick="go('indicadores')">⌁ Indicadores</button>
     <button class="nav-link active" onclick="go('consolidado')">▣ Consolidado</button>
