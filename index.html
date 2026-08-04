@@ -128,23 +128,6 @@
     .course-banner-progress-bar { height:2px; background:rgba(255,255,255,.06); overflow:hidden; }
     .course-banner-progress-fill { height:100%; background:linear-gradient(90deg,#4ade80,#60a5fa); width:0%; }
 
-    .top-course-banner {
-        height:110px;
-        display:flex;
-        flex-direction:column;
-    }
-    .top-course-banner .course-banner-track-outer {
-        flex:1;
-        height:auto;
-    }
-    .top-course-banner .course-banner-slide {
-        padding:0 18px;
-        gap:14px;
-    }
-    .top-course-banner .course-slide-meta {
-        min-width:120px;
-    }
-
     /* ── Eventos UNAB ── */
     .eventos-unab-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
     .evento-unab-card { display:flex; gap:9px; align-items:flex-start; padding:9px; border-radius:9px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.025); text-decoration:none; transition:all .18s; min-width:0; }
@@ -192,23 +175,9 @@
             <a href="gestion_coordinacion.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">account_balance</span>Coordinación
             </a>
-            <div class="nav-group">
-                <button id="btn-qa2-trigger" onclick="toggleQA2Menu()" class="nav-group-trigger">
-                    <div class="trigger-left">
-                        <span class="material-symbols-outlined">bug_report</span>
-                        <span>Gestión QA2</span>
-                    </div>
-                    <span class="material-symbols-outlined chevron">expand_more</span>
-                </button>
-                <div id="qa2-submenu" class="nav-submenu">
-                    <button onclick="mostrarVistaQA2('gestion')" id="sub-gestion" class="nav-subitem">
-                        <span class="material-symbols-outlined">manage_search</span>Gestión de QA2
-                    </button>
-                    <button onclick="mostrarVistaQA2('consolidado')" id="sub-consolidado" class="nav-subitem">
-                        <span class="material-symbols-outlined">table_chart</span>Consolidado Incidencias
-                    </button>
-                </div>
-            </div>
+            <a href="incidencias.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
+                <span class="material-symbols-outlined">bug_report</span>Incidencias ETOP
+            </a>
             <a href="comunicaciones_etop.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
                 <span class="material-symbols-outlined">campaign</span>Comunicaciones
             </a>
@@ -249,44 +218,16 @@
 
             <!-- PORTADA PRINCIPAL -->
             <div class="col-span-12 flex flex-col gap-3 overflow-hidden">
-                <!-- FRANJA SUPERIOR: PORTAL + BANNER DE CURSOS -->
-                <div class="grid grid-cols-12 gap-3 flex-shrink-0" style="height:110px;">
-                    <!-- PORTAL ETOP -->
-                    <div class="col-span-6 banner-hero" style="height:110px;">
-                        <div class="banner-bg-accent"></div>
-                        <div class="banner-side-photo"></div>
-                        <div class="banner-side-fade"></div>
-                        <div class="banner-overlay"></div>
-                        <div class="banner-content" style="padding:0 24px; max-width:56%;">
-                            <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
-                            <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
-                            <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
-                        </div>
-                    </div>
-
-                    <!-- BANNER DINÁMICO DE CURSOS -->
-                    <div class="col-span-6">
-                        <div class="course-banner-wrap top-course-banner" id="course-banner">
-                            <div class="course-banner-header">
-                                <div class="course-banner-dot"></div>
-                                <span class="course-banner-label">Próximos inicios de cursos</span>
-                                <span class="course-banner-counter" id="course-ctr">0 / 0</span>
-                            </div>
-                            <div class="course-banner-track-outer">
-                                <div class="course-banner-track" id="course-track">
-                                    <div class="course-banner-slide">
-                                        <div class="course-slide-icon">⏳</div>
-                                        <div class="course-slide-body">
-                                            <div class="course-slide-programa">Cargando próximos inicios...</div>
-                                            <div class="course-slide-nrc">Consultando información de cursos</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="course-banner-progress-bar">
-                                <div class="course-banner-progress-fill" id="course-prog"></div>
-                            </div>
-                        </div>
+                <!-- BANNER -->
+                <div class="banner-hero flex-shrink-0" style="height:110px;">
+                    <div class="banner-bg-accent"></div>
+                    <div class="banner-side-photo"></div>
+                    <div class="banner-side-fade"></div>
+                    <div class="banner-overlay"></div>
+                    <div class="banner-content" style="padding:0 24px; max-width:60%;">
+                        <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
+                        <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
+                        <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
                     </div>
                 </div>
 
@@ -313,8 +254,31 @@
                         </iframe>
                     </section>
 
-                    <!-- CENTRO: NOVEDADES + EVENTOS -->
+                    <!-- CENTRO: PRÓXIMOS INICIOS + NOVEDADES + EVENTOS -->
                     <section class="col-span-5 glass-panel rounded-xl p-4 flex flex-col overflow-y-auto custom-scrollbar" style="min-height:0;">
+
+                        <!-- BANNER DINÁMICO: mezcla nrcs.json + nrcs_onboarding.json -->
+                        <div class="course-banner-wrap mb-3" id="course-banner">
+                            <div class="course-banner-header">
+                                <div class="course-banner-dot"></div>
+                                <span class="course-banner-label">Próximos inicios de cursos</span>
+                                <span class="course-banner-counter" id="course-ctr">0 / 0</span>
+                            </div>
+                            <div class="course-banner-track-outer">
+                                <div class="course-banner-track" id="course-track">
+                                    <div class="course-banner-slide">
+                                        <div class="course-slide-icon">⏳</div>
+                                        <div class="course-slide-body">
+                                            <div class="course-slide-programa">Cargando próximos inicios...</div>
+                                            <div class="course-slide-nrc">Consultando información de cursos</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-banner-progress-bar">
+                                <div class="course-banner-progress-fill" id="course-prog"></div>
+                            </div>
+                        </div>
 
                         <!-- NOVEDADES Y NOTICIAS ETOP -->
                         <div class="flex items-center justify-between mb-3 flex-shrink-0">
@@ -388,11 +352,28 @@
                         </div>
                     </section>
 
-                    <!-- DERECHA: MANUAL ARRIBA + GRÁFICO ABAJO -->
+                    <!-- DERECHA: GRÁFICO + MANUAL -->
                     <aside class="col-span-3 flex flex-col gap-3 overflow-hidden" style="min-height:0;">
 
-                        <!-- MANUAL DE APOYO: 35% -->
+                        <!-- CURSOS POR FACULTAD: 35% -->
                         <section class="glass-panel rounded-xl overflow-hidden flex flex-col" style="height:35%;min-height:170px;">
+                            <div class="px-3 pt-3 pb-1 flex items-start justify-between gap-2 flex-shrink-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
+                                    <div>
+                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Cursos por Facultad</h3>
+                                        <p class="text-[8px] text-slate-500">Estado actual de los NRC</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
+                            <div style="flex:1;min-height:0;padding:2px 8px 8px;">
+                                <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
+                            </div>
+                        </section>
+
+                        <!-- MANUAL DE APOYO: 65% -->
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
                             <div class="px-3 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">play_circle</span>
@@ -410,23 +391,6 @@
                                     allowfullscreen
                                     title="Manual de Apoyo Estudiantil">
                                 </iframe>
-                            </div>
-                        </section>
-
-                        <!-- CURSOS POR FACULTAD: 65% -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
-                            <div class="px-3 pt-3 pb-1 flex items-start justify-between gap-2 flex-shrink-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
-                                    <div>
-                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Cursos por Facultad</h3>
-                                        <p class="text-[8px] text-slate-500">Estado actual de los NRC</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
-                            <div style="flex:1;min-height:0;padding:4px 8px 10px;">
-                                <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
                             </div>
                         </section>
                     </aside>
@@ -560,31 +524,16 @@ function valorCampo(obj, nombres, defecto='') {
 function parseFechaCurso(valor) {
     if (!valor) return null;
     if (valor instanceof Date && !isNaN(valor)) return valor;
-
     const texto = String(valor).trim();
-
-    // Fechas ISO sin hora (YYYY-MM-DD): crear la fecha en horario local
-    // para evitar que el navegador la convierta a UTC y muestre un día menos.
-    const isoLocal = texto.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:$|T)/);
-    if (isoLocal) {
-        return new Date(
-            Number(isoLocal[1]),
-            Number(isoLocal[2]) - 1,
-            Number(isoLocal[3])
-        );
-    }
-
+    const iso = new Date(texto);
+    if (!isNaN(iso)) return new Date(iso.getFullYear(), iso.getMonth(), iso.getDate());
     const m = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
     if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-
-    const fecha = new Date(texto);
-    if (!isNaN(fecha)) return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
-
     return null;
 }
 
 function normalizarCurso(item, origen) {
-    const fechaTexto = valorCampo(item, ['fecha inicio','fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
+    const fechaTexto = valorCampo(item, ['fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
     const fecha = parseFechaCurso(fechaTexto);
     const programa = valorCampo(item, ['nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA','NombrePrograma','nombrePrograma','INTAKE O VERSION','intake'], 'Programa sin especificar');
     const curso = valorCampo(item, ['nombre_curso','NOMBRE_CURSO','NOMBRE_CURSO**','curso','CURSO','NombreCurso','nombreCurso','field_5','materia'], 'Curso sin especificar');
@@ -615,52 +564,38 @@ function escaparHTML(valor='') {
 
 async function cargarBannerCursos() {
     const track = document.getElementById('course-track');
-    const ctr   = document.getElementById('course-ctr');
-    const prog  = document.getElementById('course-prog');
+    const ctr = document.getElementById('course-ctr');
+    const prog = document.getElementById('course-prog');
     if (!track || !ctr || !prog) return;
 
     try {
         const [rNrcs, rOnboarding] = await Promise.allSettled([
-            fetch(NRCS_JSON           + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs HTTP '+r.status); return r.json(); }),
-            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('onboarding HTTP '+r.status); return r.json(); })
+            fetch(NRCS_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs.json HTTP '+r.status); return r.json(); }),
+            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs_onboarding.json HTTP '+r.status); return r.json(); })
         ]);
 
-        const base       = rNrcs.status       === 'fulfilled' ? (Array.isArray(rNrcs.value)       ? rNrcs.value       : (rNrcs.value.value       || [])) : [];
+        const base = rNrcs.status === 'fulfilled' ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value || [])) : [];
         const onboarding = rOnboarding.status === 'fulfilled' ? (Array.isArray(rOnboarding.value) ? rOnboarding.value : (rOnboarding.value.value || [])) : [];
 
-        // Mapa de lookup: nrc → datos de onboarding
-        const lookup = {};
-        onboarding.forEach(item => {
-            if (item.nrc) lookup[item.nrc] = item;
-        });
-
-        const hoy      = new Date();
+        const hoy = new Date();
         const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        const limite   = new Date(inicioHoy); limite.setDate(limite.getDate() + 14);
-        const vistos   = new Set();
+        const limite = new Date(inicioHoy); limite.setDate(limite.getDate() + 14);
+        const vistos = new Set();
 
-        const cursos = base
-            .map(item => {
-                const extra       = lookup[item.nrc] || {};
-                const fechaTexto  = item['fecha inicio'] || item['fecha_inicio'] || '';
-                const fecha       = parseFechaCurso(fechaTexto);
-                const programa    = extra['nombre programa'] || extra['nombre_programa'] || item.facultad || 'Sin programa';
-                const curso       = extra['nombre curso']   || extra['nombre_curso']    || item['codigo curso'] || '';
-                const tutor       = item.tutor || 'Por asignar';
-                const nrc         = item.nrc   || '';
-                const estado      = (item.estado || '').toUpperCase();
-                return { fecha, fechaTexto, programa, curso, tutor, nrc, estado };
-            })
-            .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
-            .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
-            .sort((a, b) => a.fecha - b.fecha)
-            .filter(x => {
-                const clave = `${x.nrc}|${x.fecha.toISOString().slice(0,10)}`.toLowerCase();
-                if (vistos.has(clave)) return false;
-                vistos.add(clave);
-                return true;
-            })
-            .slice(0, 15);
+        const cursos = [
+            ...base.map(x => normalizarCurso(x, 'nrcs')),
+            ...onboarding.map(x => normalizarCurso(x, 'onboarding'))
+        ]
+        .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
+        .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
+        .sort((a,b) => a.fecha - b.fecha)
+        .filter(x => {
+            const clave = `${x.nrc}|${x.fecha.toISOString().slice(0,10)}|${x.curso}`.toLowerCase();
+            if (vistos.has(clave)) return false;
+            vistos.add(clave);
+            return true;
+        })
+        .slice(0, 10);
 
         if (!cursos.length) {
             track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">📅</div><div class="course-slide-body"><div class="course-slide-programa">No hay inicios programados para los próximos 14 días</div><div class="course-slide-nrc">La información se actualizará automáticamente desde GitHub</div></div></div>`;
@@ -685,13 +620,13 @@ async function cargarBannerCursos() {
         }).join('');
 
         iniciarRotacionCursos(cursos.length);
-
-    } catch(e) {
+    } catch (e) {
         console.error('Error cargando banner de cursos:', e);
         track.innerHTML = `<div class="course-banner-slide"><div class="course-slide-icon">⚠️</div><div class="course-slide-body"><div class="course-slide-programa">No fue posible cargar los próximos inicios</div><div class="course-slide-nrc">Revisa la ubicación y estructura de los archivos JSON</div></div></div>`;
         ctr.textContent = '0 / 0';
     }
 }
+
 function iniciarRotacionCursos(total) {
     const track = document.getElementById('course-track');
     const ctr = document.getElementById('course-ctr');
