@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'nrcs.json'
+      - 'nrcs_onboarding.json'
+      - 'incidencias.json'
   workflow_dispatch:
 
 permissions:
