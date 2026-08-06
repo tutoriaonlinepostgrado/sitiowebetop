@@ -75,6 +75,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
 .rc-nrc{font-family:var(--mono);font-size:12px;font-weight:700;color:#60a5fa}
 .rc-programa{font-size:12px;font-weight:600;color:var(--text);margin-top:2px}
+.dir-jump{border:0;background:none;padding:0;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;text-align:left}
+.dir-jump:hover{color:var(--yellow);text-decoration:underline}
 .rc-curso{font-size:11px;color:var(--text-muted);margin-top:2px}
 .rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px 18px;margin-top:12px}
 .rc-item-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:2px}
@@ -487,35 +489,44 @@ function renderSug(q){
   box.innerHTML=html;box.classList.add('open');sugSel=-1;
 }
 
+function navegarDirectorio(valor,tipo){
+  const dir=document.getElementById('dirSearch');
+  dir.value=valor;
+  clearStatFilter();
+  renderDir(valor);
+  goTo('sec-dir');
+
+  setTimeout(()=>{
+    const cards=[...document.querySelectorAll('.prog-card')];
+
+    if(tipo==='programa'){
+      const objetivo=cards.find(card=>{
+        const nombre=card.querySelector('.prog-name')?.textContent||'';
+        return norm(nombre)===norm(valor);
+      });
+      if(objetivo){
+        objetivo.classList.add('open','highlight');
+        objetivo.scrollIntoView({behavior:'smooth',block:'center'});
+        setTimeout(()=>objetivo.classList.remove('highlight'),2200);
+      }
+      return;
+    }
+
+    if(tipo==='intake'){
+      cards.forEach(card=>card.classList.add('open'));
+      const primero=cards[0];
+      if(primero)primero.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  },120);
+}
+
 function pickSug(i){
   const s=sugList[i];if(!s)return;
   document.getElementById('globalSearch').value=s.value;
   document.getElementById('searchClear').classList.add('visible');
   closeSug();renderCards(s.value);
-  if(s.type==='programa'){
-    const ci=cardIdx[s.value];
-    if(ci!==undefined){
-      setTimeout(()=>{
-        const card=document.getElementById('prog-'+ci);
-        if(card){
-          card.scrollIntoView({behavior:'smooth',block:'center'});
-          if(!card.classList.contains('open'))card.classList.add('open');
-          card.classList.add('highlight');
-          setTimeout(()=>card.classList.remove('highlight'),2200);
-        }
-      },350);
-    }
-  }
-  if(s.type==='intake'){
-    const dir=document.getElementById('dirSearch');
-    dir.value=s.value;
-    clearStatFilter();
-    renderDir(s.value);
-    goTo('sec-dir');
-    setTimeout(()=>{
-      document.querySelectorAll('.prog-card').forEach(card=>card.classList.add('open'));
-    },120);
-  }
+  if(s.type==='programa')navegarDirectorio(s.value,'programa');
+  if(s.type==='intake')navegarDirectorio(s.value,'intake');
 }
 function closeSug(){document.getElementById('sugBox').classList.remove('open');sugSel=-1;sugList=[];}
 function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
@@ -532,14 +543,14 @@ function renderCards(q){
     const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank">🗂 NRC Tutor Actual</a>`:'';
     const bC=urlC?`<a class="rc-btn rc-btn-canvas" href="${esc(urlC)}" target="_blank">🖥 Canvas</a><a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank">🔗 Int-CVS</a>`:'';
     return`<div class="result-card">
-      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc)}</div><div class="rc-programa">${esc(x.programa)}</div><div class="rc-curso">${esc(x.curso)}</div></div><div>${badge(x.estado)}</div></div>
+      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc)}</div><div class="rc-programa"><button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(x.programa)}','programa')">${esc(x.programa)}</button></div><div class="rc-curso">${esc(x.curso)}</div></div><div>${badge(x.estado)}</div></div>
       <div class="rc-grid">
         <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${esc(x.tutor)}</div></div>
         <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${fmtF(x.fechaInicio)}</div></div>
         <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${fmtF(x.fechaFin)}</div></div>
         <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad)}</div></div>
         <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso)||'—'}</div></div>
-        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${esc(x.intake)||'—'}</div></div>
+        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${x.intake?`<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(x.intake)}','intake')">${esc(x.intake)}</button>`:'—'}</div></div>
         <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${esc(x.estado)}</div></div>
       </div>
       ${bSP||bN||bC?`<div class="rc-links">${bSP}${bN}${bC}</div>`:''}
@@ -697,9 +708,9 @@ function renderDir(filtro=''){
       const tutorHtml=ct
         ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
         : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
-      const intakeHtml=c.urls.urlI
-        ? `<a href="${esc(c.urls.urlI)}" target="_blank" rel="noopener noreferrer" title="Abrir lista filtrada por este intake">${esc(c.intake)||'—'}</a>`
-        : (esc(c.intake)||'—');
+      const intakeHtml=c.intake
+        ? `<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(c.intake)}','intake')" title="Mostrar todos los cursos de este intake">${esc(c.intake)}</button>`
+        : '—';
       return`<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
     }).join('');
     return`<div class="prog-card" id="prog-${idx}">
