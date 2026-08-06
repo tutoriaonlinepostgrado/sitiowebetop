@@ -228,11 +228,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <div id="sec-buscar">
   <div class="search-hero">
     <h1>Busca cualquier <span>NRC</span> o programa</h1>
-    <p>Escribe un NRC, nombre de curso, programa, tutor o facultad — con sugerencias automáticas agrupadas</p>
+    <p>Escribe un NRC, curso, programa, tutor, facultad o fecha de inicio — por ejemplo 10-08-2026</p>
     <div class="search-wrap" id="searchWrap">
       <span class="search-ico">🔍</span>
       <input class="search-input" id="globalSearch" type="text"
-        placeholder="Ej: 1875, Gestión de Calidad, Paula Pardo, Salud Pública…"
+        placeholder="Ej: 1875, Gestión de Calidad, Paula Pardo o 10-08-2026…"
         oninput="onInput(this.value)" onkeydown="onKey(event)" autocomplete="off">
       <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
       <div class="sug-box" id="sugBox"></div>
@@ -351,6 +351,14 @@ let statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
 /* ── UTILS ─────────────────────────────── */
 const esc=v=>String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const fechaBusqueda=v=>{
+  const d=parseFecha(v);
+  if(!d)return String(v||'');
+  const dd=String(d.getDate()).padStart(2,'0');
+  const mm=String(d.getMonth()+1).padStart(2,'0');
+  const yyyy=d.getFullYear();
+  return `${v} ${dd}-${mm}-${yyyy} ${dd}/${mm}/${yyyy}`;
+};
 const goTo=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 function parseFecha(v){
     if(!v) return null;
@@ -408,7 +416,7 @@ async function cargar(){
       const fi=item['fecha inicio']||item['fecha_inicio']||'';
       const ff=item['fecha fin']||item['fecha_fin']||'';
       const per=nrc.split('_').pop()||'';
-      const prog=(ex['nombre programa']||ex['nombre_programa']||item.facultad||'—').trim();
+      const prog=(ex['nombre programa']||ex['nombre_programa']||'').trim();
       const cur=(ex['nombre curso']||ex['nombre_curso']||'—').trim();
       const intake=(ex.intake||ex['INTAKE O VERSION']||ex['intake o version']||ex['intake_version']||item.intake||item['INTAKE O VERSION']||'').trim();
       const codigo=(ex['codigo curso']||ex['codigo_curso']||item['codigo curso']||'').trim();
@@ -418,7 +426,7 @@ async function cargar(){
       const itemId=
         item.id||item.ID||item.Id||item.itemId||item['Item ID']||item['ID elemento']||
         ex.id||ex.ID||ex.Id||ex.itemId||ex['Item ID']||ex['ID elemento']||'';
-      return{nrc,programa:prog,curso:cur,codigoCurso:codigo,intake,estado,facultad,tutor,fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),itemId,urls:buildUrls(nrc,intake,per,itemId),_s:norm([nrc,prog,cur,tutor,facultad,codigo,intake,estado].join(' '))};
+      return{nrc,programa:prog||'—',curso:cur,codigoCurso:codigo,intake,estado,facultad,tutor,fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),itemId,urls:buildUrls(nrc,intake,per,itemId),_s:norm([nrc,prog,cur,tutor,facultad,codigo,intake,estado,fechaBusqueda(fi),fechaBusqueda(ff)].join(' '))};
     });
     document.getElementById('navTotal').textContent=all.length.toLocaleString('es-CL');
     document.getElementById('footerTs').textContent='Actualizado: '+new Date().toLocaleString('es-CL');
@@ -658,12 +666,13 @@ function renderDir(filtro=''){
   progMap={};cardIdx={};
   const terminos=norm(filtro).split(/\s+/).filter(Boolean);
   all.filter(c=>ESTADOS_DIR.includes(c.estado))
+    .filter(c=>c.programa&&c.programa!=='—')
     .filter(c=>cursoCumpleFiltroEstadistico(c))
     .filter(c=>cursoCumpleFiltroFecha(c))
     .filter(c=>coincideBusquedaFlexible(c,terminos))
     .forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
   const progs=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'));
-  if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin cursos que coincidan con la búsqueda y los filtros activos.</div>';return;}
+  if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin programas que coincidan con la búsqueda y los filtros activos.</div>';return;}
   document.getElementById('progList').innerHTML=progs.map((prog,idx)=>{
     cardIdx[prog]=idx;
     const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length,ce=cs.filter(c=>c.estado==='CERRADO').length;
