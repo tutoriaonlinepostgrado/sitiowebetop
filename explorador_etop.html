@@ -119,11 +119,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .legend-val{font-size:12px;font-weight:700;color:var(--text)}
 
 /* ══ DIRECTORIO ══ */
-.dir-search-wrap{position:relative;max-width:380px;margin-bottom:18px}
+.dir-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.dir-search-wrap{position:relative;flex:1;min-width:300px;max-width:520px;margin-bottom:0}
 .dir-search{width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px 8px 34px;font-size:12px;font-family:var(--font);outline:none;transition:border-color .15s}
 .dir-search:focus{border-color:rgba(250,204,21,.4)}
 .dir-search::placeholder{color:var(--text-dim)}
 .dir-search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.dir-date-field{display:flex;flex-direction:column;gap:5px}
+.dir-date-field label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
+.dir-date-field input{height:34px;min-width:145px;padding:6px 9px;border-radius:7px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:var(--font);outline:none}
+.dir-date-field input:focus{border-color:rgba(250,204,21,.45)}
+.dir-date-clear{height:34px;padding:0 12px;border-radius:7px;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--text-muted);cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600}
+.dir-date-clear:hover{color:var(--text);border-color:rgba(250,204,21,.35)}
 .prog-list{display:flex;flex-direction:column;gap:8px}
 .prog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s,box-shadow .2s}
 .prog-card:hover{border-color:var(--border2)}
@@ -264,10 +271,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
     Filtro estadístico: <strong id="activeFilterText">—</strong>
     <button type="button" onclick="clearStatFilter()">Quitar filtro</button>
   </div>
-  <div class="dir-search-wrap">
-    <span class="dir-search-ico">🔍</span>
-    <input class="dir-search" id="dirSearch" type="text"
-      placeholder="Buscar programa, intake, NRC, curso, tutor, facultad o estado…" oninput="filtrarDir(this.value)">
+  <div class="dir-filter-bar">
+    <div class="dir-search-wrap">
+      <span class="dir-search-ico">🔍</span>
+      <input class="dir-search" id="dirSearch" type="text"
+        placeholder="Buscar programa, intake, NRC, curso, tutor, facultad o estado…"
+        oninput="filtrarDir(this.value)">
+    </div>
+
+    <div class="dir-date-field">
+      <label for="fechaInicioDesde">Inicio desde</label>
+      <input type="date" id="fechaInicioDesde" onchange="aplicarFiltroFecha()">
+    </div>
+
+    <div class="dir-date-field">
+      <label for="fechaInicioHasta">Inicio hasta</label>
+      <input type="date" id="fechaInicioHasta" onchange="aplicarFiltroFecha()">
+    </div>
+
+    <button type="button" class="dir-date-clear" onclick="limpiarFiltroFecha()">Limpiar fechas</button>
   </div>
   <div class="prog-list" id="progList">
     <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
@@ -281,7 +303,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <script>
 const NRCS_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json';
 const ONB_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json';
-const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION'];
+const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION','CERRADO'];
 const PAL=['#60a5fa','#4ade80','#fbbf24','#f472b6','#a78bfa','#34d399','#fb923c','#e879f9'];
 
 /* Completar con los nombres del Excel de tutores activos. */
@@ -494,7 +516,7 @@ document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').
 function renderCards(q){
   const c=document.getElementById('searchResults'),qn=norm(q);
   if(!qn||qn.length<2){c.innerHTML='';return;}
-  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return(b.fechaObj?.getTime()||0)-(a.fechaObj?.getTime()||0);}).slice(0,20);
+  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return compararCursosOperativamente(a,b);}).slice(0,20);
   if(!found.length){c.innerHTML=`<div class="search-empty">Sin resultados para <strong>${esc(q)}</strong></div>`;return;}
   c.innerHTML=found.map(x=>{
     const{urlSP,urlNrcTutor,urlC}=x.urls;
@@ -581,23 +603,76 @@ function coincideBusquedaFlexible(c,terminos){
   return terminos.every(t=>bolsa.includes(t));
 }
 
+function aplicarFiltroFecha(){
+  renderDir(document.getElementById('dirSearch').value);
+}
+
+function limpiarFiltroFecha(){
+  document.getElementById('fechaInicioDesde').value='';
+  document.getElementById('fechaInicioHasta').value='';
+  renderDir(document.getElementById('dirSearch').value);
+}
+
+function cursoCumpleFiltroFecha(curso){
+  const desdeValor=document.getElementById('fechaInicioDesde')?.value||'';
+  const hastaValor=document.getElementById('fechaInicioHasta')?.value||'';
+
+  if(!desdeValor&&!hastaValor)return true;
+  if(!curso.fechaObj)return false;
+
+  const fecha=curso.fechaObj.getTime();
+
+  if(desdeValor){
+    const desde=new Date(desdeValor+'T00:00:00').getTime();
+    if(fecha<desde)return false;
+  }
+
+  if(hastaValor){
+    const hasta=new Date(hastaValor+'T23:59:59').getTime();
+    if(fecha>hasta)return false;
+  }
+
+  return true;
+}
+
+function compararCursosOperativamente(a,b){
+  const prioridad={
+    'ACTIVO':0,
+    'EN CIERRE':1,
+    'PREPARACION':2,
+    'CERRADO':3
+  };
+
+  const prioridadA=prioridad[a.estado]??9;
+  const prioridadB=prioridad[b.estado]??9;
+
+  if(prioridadA!==prioridadB)return prioridadA-prioridadB;
+
+  const fechaA=a.fechaObj?.getTime()||0;
+  const fechaB=b.fechaObj?.getTime()||0;
+
+  return a.estado==='PREPARACION' ? fechaA-fechaB : fechaB-fechaA;
+}
+
 function renderDir(filtro=''){
   progMap={};cardIdx={};
   const terminos=norm(filtro).split(/\s+/).filter(Boolean);
   all.filter(c=>ESTADOS_DIR.includes(c.estado))
     .filter(c=>cursoCumpleFiltroEstadistico(c))
+    .filter(c=>cursoCumpleFiltroFecha(c))
     .filter(c=>coincideBusquedaFlexible(c,terminos))
     .forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
   const progs=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'));
   if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin cursos que coincidan con la búsqueda y los filtros activos.</div>';return;}
   document.getElementById('progList').innerHTML=progs.map((prog,idx)=>{
     cardIdx[prog]=idx;
-    const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length;
+    const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length,ce=cs.filter(c=>c.estado==='CERRADO').length;
     const tuts=[...new Set(cs.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))];
     const intakes=[...new Set(cs.map(c=>c.intake).filter(Boolean))].sort((a,b)=>b.localeCompare(a,'es',{numeric:true}));
     const pills=(ac?`<span class="prog-pill pill-a" onclick="filterPill(event,${idx},'ACTIVO')">${ac} activo${ac!==1?'s':''}</span>`:'')+
       (ci?`<span class="prog-pill pill-c" onclick="filterPill(event,${idx},'EN CIERRE')">${ci} en cierre</span>`:'')+
       (pr?`<span class="prog-pill pill-p" onclick="filterPill(event,${idx},'PREPARACION')">${pr} preparación</span>`:'')+
+      (ce?`<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'CERRADO')">${ce} cerrado${ce!==1?'s':''}</span>`:'')+
       `<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'ALL')">Todos</span>`;
     const tutH=tuts.length?tuts.map(t=>{
       const ct=contactoTutor(t);
@@ -605,7 +680,7 @@ function renderDir(filtro=''){
         ? `<span class="tutor-contact" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')"><span class="tutor-contact-name">${esc(t)}</span><span class="tutor-contact-detail">${esc(ct.correo)} · Anexo ${esc(ct.anexo)}</span></span>`
         : `<span class="tutor-tag" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')">${esc(t)}</span>`;
     }).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
-    const rows=[...cs].sort((a,b)=>(b.fechaObj?.getTime()||0)-(a.fechaObj?.getTime()||0)).map(c=>{
+    const rows=[...cs].sort(compararCursosOperativamente).map(c=>{
       const{urlSP,urlNrcTutor}=c.urls;
       const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
       const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir curso ↗</a>`:'—';
