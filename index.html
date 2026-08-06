@@ -523,17 +523,44 @@ function valorCampo(obj, nombres, defecto='') {
 
 function parseFechaCurso(valor) {
     if (!valor) return null;
-    if (valor instanceof Date && !isNaN(valor)) return valor;
+    if (valor instanceof Date && !isNaN(valor)) {
+        return new Date(valor.getFullYear(), valor.getMonth(), valor.getDate());
+    }
+
     const texto = String(valor).trim();
-    const iso = new Date(texto);
-    if (!isNaN(iso)) return new Date(iso.getFullYear(), iso.getMonth(), iso.getDate());
-    const m = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
-    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-    return null;
+
+    // Evita que YYYY-MM-DD sea interpretado como UTC y cambie un día
+    // según la zona horaria del navegador.
+    const isoLocal = texto.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (isoLocal) {
+        return new Date(
+            Number(isoLocal[1]),
+            Number(isoLocal[2]) - 1,
+            Number(isoLocal[3])
+        );
+    }
+
+    const latino = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+    if (latino) {
+        return new Date(
+            Number(latino[3]),
+            Number(latino[2]) - 1,
+            Number(latino[1])
+        );
+    }
+
+    const fecha = new Date(texto);
+    return isNaN(fecha)
+        ? null
+        : new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
 }
 
 function normalizarCurso(item, origen) {
-    const fechaTexto = valorCampo(item, ['fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
+    const fechaTexto = valorCampo(item, [
+        'fecha inicio','FECHA INICIO','Fecha inicio',
+        'fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio',
+        'inicio','INICIO','field_6','FINICIO_Nomina'
+    ]);
     const fecha = parseFechaCurso(fechaTexto);
     const programa = valorCampo(item, ['nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA','NombrePrograma','nombrePrograma','INTAKE O VERSION','intake'], 'Programa sin especificar');
     const curso = valorCampo(item, ['nombre_curso','NOMBRE_CURSO','NOMBRE_CURSO**','curso','CURSO','NombreCurso','nombreCurso','field_5','materia'], 'Curso sin especificar');
