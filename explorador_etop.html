@@ -100,68 +100,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .stat-num{font-size:32px;font-weight:800;line-height:1;color:var(--text);margin-bottom:4px;font-variant-numeric:tabular-nums}
 .stat-label{font-size:11px;font-weight:600;color:var(--text-muted)}
 .stat-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
-.charts-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-@media(max-width:700px){.charts-row{grid-template-columns:1fr}}
+.charts-row{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:16px;align-items:stretch}
+@media(max-width:850px){.charts-row{grid-template-columns:1fr}}
+@media(max-width:520px){
+  .donut-wrap{flex-direction:column;gap:12px;min-height:auto}
+  .donut-svg{width:150px;height:150px;flex-basis:150px}
+  .donut-legend{width:100%;max-width:none}
+}
+
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
 .chart-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
 .bar-list{display:flex;flex-direction:column;gap:8px}
 
-/* Programa: gráfico vertical, responsive y bajo el donut */
-.chart-programas-full{grid-column:1/-1}
-.program-bar-chart{
-  display:flex;
-  align-items:stretch;
-  gap:8px;
-  min-height:270px;
-  overflow-x:auto;
-  padding:10px 4px 4px;
-}
-.program-col{
-  flex:1 0 74px;
-  min-width:74px;
-  max-width:125px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-end;
-  gap:6px;
-  padding:5px 4px;
-  border-radius:7px;
-  cursor:pointer;
-  transition:background .15s;
-}
-.program-col:hover,.program-col.active{background:rgba(250,204,21,.07)}
-.program-col-value{font-size:11px;font-weight:800;color:var(--text)}
-.program-col-track{
-  width:min(44px,70%);
-  height:180px;
-  background:rgba(255,255,255,.055);
-  border-radius:6px 6px 3px 3px;
-  display:flex;
-  align-items:flex-end;
-  overflow:hidden;
-}
-.program-col-fill{
-  width:100%;
-  min-height:3px;
-  border-radius:6px 6px 3px 3px;
-  transition:height .45s ease;
-}
-.program-col-label{
-  width:100%;
-  min-height:48px;
-  font-size:9px;
-  line-height:1.25;
-  color:var(--text-muted);
-  text-align:center;
-  overflow-wrap:anywhere;
-}
-@media(max-width:700px){
-  .program-bar-chart{min-height:240px}
-  .program-col{flex-basis:64px;min-width:64px}
-  .program-col-track{height:145px}
-  .program-col-label{font-size:8px}
-}
 .td-actions-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:190px}
 .table-btn-int{background:rgba(250,204,21,.09);border-color:rgba(250,204,21,.28);color:#fde68a}
 .table-btn-int:hover{background:rgba(250,204,21,.18)}
@@ -173,8 +123,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .bar-val{font-size:11px;font-weight:700;color:var(--text)}
 .bar-track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
-.donut-wrap{display:flex;align-items:center;gap:20px}
-.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px}
+.donut-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  min-height:230px;
+  padding:8px 4px;
+}
+.donut-svg{
+  width:170px;
+  height:170px;
+  flex:0 0 170px;
+}
+.donut-legend{
+  min-width:145px;
+  max-width:220px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
 .legend-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 7px;border-radius:6px;transition:background .15s}
 .legend-item:hover,.legend-item.active{background:rgba(250,204,21,.07)}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -364,15 +332,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
       <div class="bar-list" id="barFacultad"></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Distribución por estado</div>
+      <div class="chart-title">Cursos por estado</div>
       <div class="donut-wrap">
-        <svg width="100" height="100" viewBox="0 0 100 100" id="donutSvg" flex-shrink="0"></svg>
+        <svg class="donut-svg" viewBox="0 0 100 100" id="donutSvg" aria-label="Distribución de cursos por estado"></svg>
         <div class="donut-legend" id="donutLegend"></div>
       </div>
-    </div>
-    <div class="chart-card chart-programas-full">
-      <div class="chart-title">Cantidad de cursos por programa</div>
-      <div class="program-bar-chart" id="barProgramas"></div>
     </div>
   </div>
 </div>
@@ -941,7 +905,6 @@ function cursosParaEstadistica(excluirTipo=''){
     if(statFilter.tipo===excluirTipo)return true;
     if(statFilter.tipo==='ESTADO')return c.estado===statFilter.valor;
     if(statFilter.tipo==='FACULTAD')return c.facultad===statFilter.valor;
-    if(statFilter.tipo==='PROGRAMA')return c.programa===statFilter.valor;
     if(statFilter.tipo==='TUTOR_ACTIVO')return tutorEsActivo(c.tutor);
     return true;
   });
@@ -1018,11 +981,11 @@ function renderStats(){
     {l:'Cerrado',k:'CERRADO',v:baseEstado.filter(c=>c.estado==='CERRADO').length,c:'#475569'}
   ].filter(e=>e.v>0);
 
-  const r=36,cx=50,cy=50,ci=2*Math.PI*r;
+  const r=34,cx=50,cy=50,ci=2*Math.PI*r;
   let off=0,p='';
   estados.forEach(e=>{
     const pc=estTotal?e.v/estTotal:0,da=pc*ci,ga=ci-da;
-    p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14"
+    p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="16"
       stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}"
       stroke-dashoffset="${(-off*ci).toFixed(2)}"
       transform="rotate(-90 ${cx} ${cy})"/>`;
@@ -1030,10 +993,10 @@ function renderStats(){
   });
 
   document.getElementById('donutSvg').innerHTML=`
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="16"/>
     ${p}
     <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
-      fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${estTotal}</text>`;
+      fill="#e2e8f0" font-size="15" font-weight="800" font-family="Inter,sans-serif">${estTotal}</text>`;
 
   document.getElementById('donutLegend').innerHTML=estados.map(e=>`
     <div class="legend-item ${statFilter.tipo==='ESTADO'&&statFilter.valor===e.k?'active':''}"
@@ -1043,31 +1006,6 @@ function renderStats(){
       <span class="legend-val">${e.v}</span>
     </div>`).join('');
 
-  // PROGRAMAS: gráfico vertical y cruzado.
-  // Ej.: al seleccionar Facultad INGE, aquí aparecen SOLO programas INGE.
-  const baseProg=cursosParaEstadistica('PROGRAMA');
-  const pm={};
-  baseProg.filter(c=>c.programa&&c.programa!=='—').forEach(c=>{
-    pm[c.programa]=(pm[c.programa]||0)+1;
-  });
-  const ps=Object.entries(pm).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'es'));
-  const pmx=ps[0]?.[1]||1;
-
-  document.getElementById('barProgramas').innerHTML=ps.length
-    ? ps.map(([programa,n],i)=>{
-        const pct=(n/pmx*100).toFixed(1);
-        return `<div class="program-col ${statFilter.tipo==='PROGRAMA'&&statFilter.valor===programa?'active':''}"
-          onclick="setStatFilter('PROGRAMA','${esc(programa)}','Programa: ${esc(programa)}')"
-          title="${esc(programa)} · ${n} curso${n===1?'':'s'}">
-          <div class="program-col-value">${n}</div>
-          <div class="program-col-track">
-            <div class="program-col-fill" style="height:${pct}%;background:${PAL[(i+2)%PAL.length]}"></div>
-          </div>
-          <div class="program-col-label">${esc(programa)}</div>
-        </div>`;
-      }).join('')
-    : '<div class="search-empty" style="width:100%">Sin programas para el filtro seleccionado.</div>';
-
   document.getElementById('chartsRow').style.display='grid';
 }
 
@@ -1076,7 +1014,6 @@ function cursoCumpleFiltroEstadistico(c){
   if(statFilter.tipo==='ALL'||statFilter.tipo==='PROGRAMAS')return true;
   if(statFilter.tipo==='ESTADO')return c.estado===statFilter.valor;
   if(statFilter.tipo==='FACULTAD')return c.facultad===statFilter.valor;
-  if(statFilter.tipo==='PROGRAMA')return c.programa===statFilter.valor;
   if(statFilter.tipo==='TUTOR_ACTIVO')return tutorEsActivo(c.tutor);
   return true;
 }
