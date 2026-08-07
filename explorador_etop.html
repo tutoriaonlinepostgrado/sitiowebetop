@@ -181,6 +181,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .filter-bar{padding:7px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);display:none;align-items:center;gap:6px;font-size:10px;color:var(--text-dim)}
 .filter-bar-label{font-weight:600;color:var(--text-muted)}
 .filter-bar-count{margin-left:auto;font-weight:700;color:var(--yellow)}
+
+.list-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 18px;background:rgba(15,23,42,.45);border-bottom:1px solid var(--border)}
+.list-toolbar-label{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em}
+.list-toolbar select,.list-toolbar button{height:30px;border:1px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text-muted);font:600 10px var(--font);padding:0 9px;outline:none}
+.list-toolbar select:focus{border-color:rgba(250,204,21,.45)}
+.list-toolbar button{cursor:pointer;background:rgba(255,255,255,.04)}
+.list-toolbar button:hover{color:var(--text);border-color:rgba(250,204,21,.35)}
+.nrc-table th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+.nrc-table th.sortable:hover{color:var(--yellow)}
+.sort-ind{margin-left:4px;color:var(--yellow);font-size:9px}
+.filter-row th{padding:5px 8px;background:rgba(15,23,42,.42)}
+.col-filter{width:100%;min-width:90px;height:28px;border:1px solid var(--border);border-radius:5px;background:#172033;color:var(--text-muted);font:500 9px var(--font);padding:0 6px;outline:none}
+.col-filter:focus{border-color:rgba(250,204,21,.4)}
+.group-row td{background:rgba(250,204,21,.055)!important;color:var(--yellow)!important;font-weight:700!important;border-top:1px solid rgba(250,204,21,.18);border-bottom:1px solid rgba(250,204,21,.12)!important;cursor:pointer}
+.group-row:hover td{background:rgba(250,204,21,.09)!important}
+.group-chevron{display:inline-block;width:16px}
+.group-count{color:var(--text-dim);font-weight:600;margin-left:6px}
+.group-hidden{display:none!important}
+
 .nrc-table{width:100%;border-collapse:collapse}
 .nrc-table th{padding:7px 18px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
 .nrc-table td{padding:7px 18px;font-size:11px;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.03)}
@@ -925,6 +944,157 @@ function compararCursosOperativamente(a,b){
   return a.estado==='PREPARACION' ? fechaA-fechaB : fechaB-fechaA;
 }
 
+
+const dirViewState={};
+
+function getDirState(idx){
+  if(!dirViewState[idx]){
+    dirViewState[idx]={
+      groupBy:'',
+      sortKey:'fechaInicio',
+      sortDir:'desc',
+      filters:{nrc:'',curso:'',intake:'',estado:'',fechaInicio:'',fechaFin:'',tutor:''},
+      collapsed:{}
+    };
+  }
+  return dirViewState[idx];
+}
+
+function valorCurso(c,key){
+  if(key==='nrc')return c.nrc||'';
+  if(key==='curso')return c.curso||'';
+  if(key==='intake')return c.intake||'';
+  if(key==='estado')return c.estado||'';
+  if(key==='fechaInicio')return c.fechaInicio||'';
+  if(key==='fechaFin')return c.fechaFin||'';
+  if(key==='tutor')return c.tutor||'';
+  return '';
+}
+
+function compararValores(a,b,key){
+  if(key==='fechaInicio'||key==='fechaFin'){
+    const da=parseFecha(a),db=parseFecha(b);
+    const ta=da?.getTime()||0,tb=db?.getTime()||0;
+    return ta-tb;
+  }
+  return String(a||'').localeCompare(String(b||''),'es',{numeric:true,sensitivity:'base'});
+}
+
+function opcionesFiltro(cs,key){
+  return [...new Set(cs.map(c=>valorCurso(c,key)).filter(Boolean))]
+    .sort((a,b)=>compararValores(a,b,key));
+}
+
+function renderSelectFiltro(idx,key,cs,placeholder){
+  const st=getDirState(idx);
+  const vals=opcionesFiltro(cs,key);
+  return `<select class="col-filter" onchange="setDirColumnFilter(${idx},'${key}',this.value)">
+    <option value="">${placeholder}</option>
+    ${vals.map(v=>`<option value="${esc(v)}" ${st.filters[key]===v?'selected':''}>${esc(v)}</option>`).join('')}
+  </select>`;
+}
+
+function setDirGroup(idx,value){
+  const st=getDirState(idx);
+  st.groupBy=value;
+  st.collapsed={};
+  refreshDirTable(idx);
+}
+
+function setDirSort(idx,key){
+  const st=getDirState(idx);
+  if(st.sortKey===key)st.sortDir=st.sortDir==='asc'?'desc':'asc';
+  else{st.sortKey=key;st.sortDir='asc';}
+  refreshDirTable(idx);
+}
+
+function setDirColumnFilter(idx,key,value){
+  const st=getDirState(idx);
+  st.filters[key]=value;
+  refreshDirTable(idx);
+}
+
+function clearDirView(idx){
+  dirViewState[idx]={
+    groupBy:'',
+    sortKey:'fechaInicio',
+    sortDir:'desc',
+    filters:{nrc:'',curso:'',intake:'',estado:'',fechaInicio:'',fechaFin:'',tutor:''},
+    collapsed:{}
+  };
+  refreshDirTable(idx);
+}
+
+function toggleDirGroup(idx,groupKey){
+  const st=getDirState(idx);
+  st.collapsed[groupKey]=!st.collapsed[groupKey];
+  refreshDirTable(idx);
+}
+
+function cursoPasaFiltrosTabla(c,st){
+  return Object.entries(st.filters).every(([key,val])=>!val||valorCurso(c,key)===val);
+}
+
+function sortCursosTabla(cs,st){
+  return [...cs].sort((a,b)=>{
+    const cmp=compararValores(valorCurso(a,st.sortKey),valorCurso(b,st.sortKey),st.sortKey);
+    return st.sortDir==='asc'?cmp:-cmp;
+  });
+}
+
+function renderFilaCurso(c){
+  const{urlSP,urlNrcTutor}=c.urls;
+  const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
+  const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir curso ↗</a>`:'—';
+  const ct=contactoTutor(c.tutor);
+  const tutorHtml=ct
+    ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
+    : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
+  const intakeHtml=c.intake
+    ? `<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(c.intake)}','intake')" title="Mostrar todos los cursos de este intake">${esc(c.intake)}</button>`
+    : '—';
+  return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
+}
+
+function renderDirTableBody(idx,cs){
+  const st=getDirState(idx);
+  const filtered=sortCursosTabla(cs.filter(c=>cursoPasaFiltrosTabla(c,st)),st);
+  if(!filtered.length)return `<tr><td colspan="8" class="td-empty">Sin cursos para los filtros seleccionados.</td></tr>`;
+
+  if(!st.groupBy)return filtered.map(renderFilaCurso).join('');
+
+  const grupos={};
+  filtered.forEach(c=>{
+    let g=valorCurso(c,st.groupBy)||'Sin valor';
+    if(st.groupBy==='fechaInicio')g=fmtF(c.fechaInicio);
+    if(!grupos[g])grupos[g]=[];
+    grupos[g].push(c);
+  });
+
+  const groupNames=Object.keys(grupos).sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+  return groupNames.map(g=>{
+    const key=encodeURIComponent(g);
+    const collapsed=!!st.collapsed[key];
+    const arrow=collapsed?'▸':'▾';
+    const rows=collapsed?'':grupos[g].map(renderFilaCurso).join('');
+    return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
+  }).join('');
+}
+
+function refreshDirTable(idx){
+  const cs=progMap[Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'))[idx]]||[];
+  const body=document.getElementById('tbody-'+idx);
+  if(body)body.innerHTML=renderDirTableBody(idx,cs);
+  const st=getDirState(idx);
+  const groupSel=document.getElementById('group-'+idx);
+  if(groupSel)groupSel.value=st.groupBy;
+  document.querySelectorAll(`#prog-${idx} th.sortable`).forEach(th=>{
+    const key=th.dataset.key;
+    const ind=th.querySelector('.sort-ind');
+    if(ind)ind.textContent=st.sortKey===key?(st.sortDir==='asc'?'▲':'▼'):'';
+  });
+}
+
 function renderDir(filtro=''){
   progMap={};cardIdx={};
   const terminos=norm(filtro).split(/\s+/).filter(Boolean);
@@ -952,19 +1122,7 @@ function renderDir(filtro=''){
         ? `<span class="tutor-contact" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')"><span class="tutor-contact-name">${esc(t)}</span><span class="tutor-contact-detail">${esc(ct.correo)} · Anexo ${esc(ct.anexo)}</span></span>`
         : `<span class="tutor-tag" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')">${esc(t)}</span>`;
     }).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
-    const rows=[...cs].sort(compararCursosOperativamente).map(c=>{
-      const{urlSP,urlNrcTutor}=c.urls;
-      const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
-      const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir curso ↗</a>`:'—';
-      const ct=contactoTutor(c.tutor);
-      const tutorHtml=ct
-        ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
-        : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
-      const intakeHtml=c.intake
-        ? `<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(c.intake)}','intake')" title="Mostrar todos los cursos de este intake">${esc(c.intake)}</button>`
-        : '—';
-      return`<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
-    }).join('');
+    const rows=renderDirTableBody(idx,cs);
     return`<div class="prog-card" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
         <div class="prog-header-left"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
@@ -976,9 +1134,43 @@ function renderDir(filtro=''){
           Mostrando: <span class="filter-bar-label" id="flabel-${idx}">—</span>
           <span class="filter-bar-count" id="fcount-${idx}"></span>
         </div>
+        <div class="list-toolbar">
+          <span class="list-toolbar-label">Vista</span>
+          <select id="group-${idx}" onchange="setDirGroup(${idx},this.value)">
+            <option value="">Sin agrupar</option>
+            <option value="estado">Agrupar por Estado</option>
+            <option value="tutor">Agrupar por Tutor</option>
+            <option value="intake">Agrupar por Intake / Versión</option>
+            <option value="fechaInicio">Agrupar por Inicio</option>
+          </select>
+          <button type="button" onclick="clearDirView(${idx})">Limpiar vista</button>
+        </div>
         <div style="overflow-x:auto">
-          <table class="nrc-table"><thead><tr><th>NRC</th><th>Curso</th><th>Intake / Versión</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Tutor</th><th>NRC Tutor Actual</th></tr></thead>
-          <tbody id="tbody-${idx}">${rows}</tbody></table>
+          <table class="nrc-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-key="nrc" onclick="setDirSort(${idx},'nrc')">NRC <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="curso" onclick="setDirSort(${idx},'curso')">Curso <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="intake" onclick="setDirSort(${idx},'intake')">Intake / Versión <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="estado" onclick="setDirSort(${idx},'estado')">Estado <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="fechaInicio" onclick="setDirSort(${idx},'fechaInicio')">Inicio <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="fechaFin" onclick="setDirSort(${idx},'fechaFin')">Fin <span class="sort-ind"></span></th>
+                <th class="sortable" data-key="tutor" onclick="setDirSort(${idx},'tutor')">Tutor <span class="sort-ind"></span></th>
+                <th>NRC Tutor Actual</th>
+              </tr>
+              <tr class="filter-row">
+                <th>${renderSelectFiltro(idx,'nrc',cs,'Todos')}</th>
+                <th>${renderSelectFiltro(idx,'curso',cs,'Todos')}</th>
+                <th>${renderSelectFiltro(idx,'intake',cs,'Todos')}</th>
+                <th>${renderSelectFiltro(idx,'estado',cs,'Todos')}</th>
+                <th>${renderSelectFiltro(idx,'fechaInicio',cs,'Todas')}</th>
+                <th>${renderSelectFiltro(idx,'fechaFin',cs,'Todas')}</th>
+                <th>${renderSelectFiltro(idx,'tutor',cs,'Todos')}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-${idx}">${rows}</tbody>
+          </table>
         </div>
       </div>
     </div>`;
