@@ -201,11 +201,8 @@
                     <span class="material-symbols-outlined chevron">expand_more</span>
                 </button>
                 <div id="qa2-submenu" class="nav-submenu">
-                    <button onclick="mostrarVistaQA2('gestion')" id="sub-gestion" class="nav-subitem">
-                        <span class="material-symbols-outlined">manage_search</span>Gestión de QA2
-                    </button>
-                    <button onclick="mostrarVistaQA2('consolidado')" id="sub-consolidado" class="nav-subitem">
-                        <span class="material-symbols-outlined">table_chart</span>Consolidado Incidencias
+                    <button onclick="mostrarVistaQA2()" id="sub-incidencias" class="nav-subitem">
+                        <span class="material-symbols-outlined">report_problem</span>Incidencias
                     </button>
                 </div>
             </div>
@@ -439,14 +436,14 @@
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0;">
                 <div style="display:flex;align-items:center;gap:8px;">
                     <span class="material-symbols-outlined" style="color:#facc15;" id="qa2-vista-icono">bug_report</span>
-                    <span style="font-size:13px;font-weight:600;color:#facc15;" id="qa2-vista-titulo">Gestión QA2</span>
+                    <span style="font-size:13px;font-weight:600;color:#facc15;" id="qa2-vista-titulo">Incidencias</span>
                 </div>
                 <button onclick="ocultarQA2()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;">
                     <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Volver
                 </button>
             </div>
             <div class="glass-panel rounded-xl overflow-hidden" style="flex:1;min-height:0;">
-                <iframe id="iframe-qa2" src="" style="width:100%;height:100%;border:none;display:block;" allowfullscreen title="Gestión QA2"></iframe>
+                <iframe id="iframe-qa2" src="" style="width:100%;height:100%;border:none;display:block;" allowfullscreen title="Incidencias"></iframe>
             </div>
         </div>
     </main>
@@ -503,8 +500,7 @@ const NRCS_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.js
 const NRCS_ONBOARDING_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
 const AGENDA_UNAB_URL = 'https://agenda.unab.cl/';
 const AGENDA_PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(AGENDA_UNAB_URL);
-const URL_QA2_GESTION     = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7d74430bab11d80e0097&navContentPaneEnabled=false&filterPaneEnabled=false';
-const URL_QA2_CONSOLIDADO = 'https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=5bab0bb006ec70b06518&navContentPaneEnabled=false&filterPaneEnabled=false';
+const URL_QA2_INCIDENCIAS = 'incidencias.html';
 const MENSAJES = [
     "El acompañamiento genuino marca la diferencia en la vida de un estudiante.",
     "Cada contacto a tiempo puede cambiar el rumbo académico de alguien.",
@@ -880,33 +876,30 @@ function toggleQA2Menu() {
     trigger.classList.toggle('open', !isOpen);
     submenu.classList.toggle('open', !isOpen);
 }
-function mostrarVistaQA2(tipo) {
+function mostrarVistaQA2() {
     const vistaNormal = document.getElementById('vista-normal');
     const vistaQA2    = document.getElementById('vista-qa2');
     const iframe      = document.getElementById('iframe-qa2');
     const titulo      = document.getElementById('qa2-vista-titulo');
     const icono       = document.getElementById('qa2-vista-icono');
-    if (tipo === 'consolidado') {
-        iframe.src = URL_QA2_CONSOLIDADO; titulo.textContent = 'Consolidado Incidencias'; icono.textContent = 'table_chart';
-        document.getElementById('sub-gestion').classList.remove('active');
-        document.getElementById('sub-consolidado').classList.add('active');
-    } else {
-        iframe.src = URL_QA2_GESTION; titulo.textContent = 'Gestión de QA2'; icono.textContent = 'manage_search';
-        document.getElementById('sub-consolidado').classList.remove('active');
-        document.getElementById('sub-gestion').classList.add('active');
-    }
+
+    iframe.src = URL_QA2_INCIDENCIAS;
+    titulo.textContent = 'Incidencias';
+    icono.textContent = 'report_problem';
+
+    document.getElementById('sub-incidencias').classList.add('active');
     document.getElementById('btn-qa2-trigger').classList.add('open','active');
     document.getElementById('qa2-submenu').classList.add('open');
+
     vistaNormal.style.display = 'none';
-    vistaQA2.style.display    = 'flex';
+    vistaQA2.style.display = 'flex';
 }
 function ocultarQA2() {
     document.getElementById('vista-qa2').style.display  = 'none';
     document.getElementById('vista-normal').style.display = 'grid';
     document.getElementById('btn-qa2-trigger').classList.remove('open','active');
     document.getElementById('qa2-submenu').classList.remove('open');
-    document.getElementById('sub-gestion').classList.remove('active');
-    document.getElementById('sub-consolidado').classList.remove('active');
+    document.getElementById('sub-incidencias').classList.remove('active');
 }
 function getLeidosIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
 function marcarLeido(id) { const l=getLeidosIds(); if(!l.includes(id)){l.push(id);localStorage.setItem(STORAGE_KEY,JSON.stringify(l));} }
