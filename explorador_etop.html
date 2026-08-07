@@ -100,11 +100,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .stat-num{font-size:32px;font-weight:800;line-height:1;color:var(--text);margin-bottom:4px;font-variant-numeric:tabular-nums}
 .stat-label{font-size:11px;font-weight:600;color:var(--text-muted)}
 .stat-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.charts-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 @media(max-width:700px){.charts-row{grid-template-columns:1fr}}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
 .chart-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
 .bar-list{display:flex;flex-direction:column;gap:8px}
+
+.bar-list-programas{max-height:430px;overflow:auto;padding-right:4px}
+.td-actions-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:190px}
+.table-btn-int{background:rgba(250,204,21,.09);border-color:rgba(250,204,21,.28);color:#fde68a}
+.table-btn-int:hover{background:rgba(250,204,21,.18)}
+
 .bar-item{cursor:pointer;padding:5px 7px;border-radius:6px;transition:background .15s}
 .bar-item:hover,.bar-item.active{background:rgba(250,204,21,.07)}
 .bar-header{display:flex;justify-content:space-between;margin-bottom:4px}
@@ -308,6 +314,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
         <svg width="100" height="100" viewBox="0 0 100 100" id="donutSvg" flex-shrink="0"></svg>
         <div class="donut-legend" id="donutLegend"></div>
       </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Cantidad de cursos por programa</div>
+      <div class="bar-list bar-list-programas" id="barProgramas"></div>
     </div>
   </div>
 </div>
@@ -869,6 +879,12 @@ function renderStats(){
   const fm={};all.filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado)).forEach(c=>{fm[c.facultad]=(fm[c.facultad]||0)+1;});
   const fs=Object.entries(fm).sort((a,b)=>b[1]-a[1]),mx=fs[0]?.[1]||1;
   document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`<div class="bar-item" onclick="setStatFilter('FACULTAD','${esc(f)}','Facultad: ${esc(f)}')"><div class="bar-header"><span class="bar-name" title="${esc(f)}">${esc(f)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join('');
+  const pm={};
+  all.filter(c=>c.programa&&c.programa!=='—').forEach(c=>{pm[c.programa]=(pm[c.programa]||0)+1;});
+  const ps=Object.entries(pm).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'es')),pmx=ps[0]?.[1]||1;
+  document.getElementById('barProgramas').innerHTML=ps.length
+    ? ps.map(([p,n],i)=>`<div class="bar-item" onclick="setStatFilter('PROGRAMA','${esc(p)}','Programa: ${esc(p)}')"><div class="bar-header"><span class="bar-name" title="${esc(p)}">${esc(p)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/pmx*100).toFixed(1)}%;background:${PAL[(i+2)%PAL.length]}"></div></div></div>`).join('')
+    : '<div class="search-empty">Sin programas disponibles.</div>';
   const est=[{l:'Activo',k:'ACTIVO',v:act,c:'#4ade80'},{l:'En Cierre',k:'EN CIERRE',v:cie,c:'#fbbf24'},{l:'Preparación',k:'PREPARACION',v:pre,c:'#60a5fa'},{l:'Cerrado',k:'CERRADO',v:cer,c:'#475569'}].filter(e=>e.v>0);
   const r=36,cx=50,cy=50,ci=2*Math.PI*r;let off=0,p='';
   est.forEach(e=>{const pc=tot?e.v/tot:0,da=pc*ci,ga=ci-da;p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}" stroke-dashoffset="${(-off*ci).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pc;});
@@ -883,6 +899,7 @@ function cursoCumpleFiltroEstadistico(c){
   if(statFilter.tipo==='ALL'||statFilter.tipo==='PROGRAMAS')return true;
   if(statFilter.tipo==='ESTADO')return c.estado===statFilter.valor;
   if(statFilter.tipo==='FACULTAD')return c.facultad===statFilter.valor;
+  if(statFilter.tipo==='PROGRAMA')return c.programa===statFilter.valor;
   if(statFilter.tipo==='TUTOR_ACTIVO')return tutorEsActivo(c.tutor);
   return true;
 }
@@ -1043,17 +1060,44 @@ function sortCursosTabla(cs,st){
 }
 
 function renderFilaCurso(c){
-  const{urlSP,urlNrcTutor}=c.urls;
-  const lnk=urlSP&&urlSP!=='#'?`<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`:esc(c.nrc);
-  const acceso=urlNrcTutor?`<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir curso ↗</a>`:'—';
-  const ct=contactoTutor(c.tutor);
-  const tutorHtml=ct
-    ? `<div class="tutor-cell-name">${esc(c.tutor)}</div><div class="tutor-cell-detail">${esc(ct.correo)}<br>Anexo ${esc(ct.anexo)}</div>`
-    : `<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
-  const intakeHtml=c.intake
-    ? `<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(c.intake)}','intake')" title="Mostrar todos los cursos de este intake">${esc(c.intake)}</button>`
+  const{urlSP,urlI,urlNrcTutor,urlC}=c.urls;
+
+  const lnk=urlSP&&urlSP!=='#'
+    ? `<a href="${esc(urlSP)}" target="_blank">${esc(c.nrc)}</a>`
+    : esc(c.nrc);
+
+  const abrirCurso=urlNrcTutor
+    ? `<a class="table-btn" href="${esc(urlNrcTutor)}" target="_blank">Abrir curso ↗</a>`
+    : '';
+
+  const webIntegracion=urlC
+    ? `<a class="table-btn table-btn-int" href="${esc(urlC)}" target="_blank">web_integracion ↗</a>`
+    : '';
+
+  const acciones=(abrirCurso||webIntegracion)
+    ? `<div class="td-actions-group">${abrirCurso}${webIntegracion}</div>`
     : '—';
-  return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}"><td class="td-nrc">${lnk}</td><td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td><td class="td-intake">${intakeHtml}</td><td>${badge(c.estado)}</td><td class="td-fecha">${fmtF(c.fechaInicio)}</td><td class="td-fecha">${fmtF(c.fechaFin)}</td><td>${tutorHtml}</td><td class="td-actions">${acceso}</td></tr>`;
+
+  // En la tabla del directorio dejamos solo el nombre del tutor.
+  const tutorHtml=`<div class="tutor-cell-name">${esc(c.tutor)}</div>`;
+
+  // El intake vuelve a abrir la vista de NRC_TUTOR_ACTUAL filtrada por ese intake.
+  const intakeHtml=c.intake
+    ? (urlI
+        ? `<a class="dir-jump" href="${esc(urlI)}" target="_blank" rel="noopener" title="Abrir lista filtrada por este intake">${esc(c.intake)}</a>`
+        : esc(c.intake))
+    : '—';
+
+  return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}">
+    <td class="td-nrc">${lnk}</td>
+    <td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td>
+    <td class="td-intake">${intakeHtml}</td>
+    <td>${badge(c.estado)}</td>
+    <td class="td-fecha">${fmtF(c.fechaInicio)}</td>
+    <td class="td-fecha">${fmtF(c.fechaFin)}</td>
+    <td>${tutorHtml}</td>
+    <td class="td-actions">${acciones}</td>
+  </tr>`;
 }
 
 function renderDirTableBody(idx,cs){
@@ -1156,7 +1200,7 @@ function renderDir(filtro=''){
                 <th class="sortable" data-key="fechaInicio" onclick="setDirSort(${idx},'fechaInicio')">Inicio <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="fechaFin" onclick="setDirSort(${idx},'fechaFin')">Fin <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="tutor" onclick="setDirSort(${idx},'tutor')">Tutor <span class="sort-ind"></span></th>
-                <th>NRC Tutor Actual</th>
+                <th>Accesos</th>
               </tr>
               <tr class="filter-row">
                 <th>${renderSelectFiltro(idx,'nrc',cs,'Todos')}</th>
