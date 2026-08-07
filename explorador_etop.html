@@ -480,7 +480,6 @@ function toolRenderTable(rows,containerEl){
   html+='</tbody></table></div>';containerEl.innerHTML=html;
 }
 const NRCS_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json';
-const ONB_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json';
 const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION','CERRADO'];
 const PAL=['#60a5fa','#4ade80','#fbbf24','#f472b6','#a78bfa','#34d399','#fb923c','#e879f9'];
 
@@ -582,34 +581,111 @@ function icon(p){const n=norm(p);if(n.includes('salud'))return'🏥';if(n.includ
 /* ── CARGA ─────────────────────────────── */
 async function cargar(){
   try{
-    const [rN,rO]=await Promise.allSettled([
-      fetch(NRCS_URL+'?t='+Date.now()).then(r=>r.json()),
-      fetch(ONB_URL+'?t='+Date.now()).then(r=>r.json())
-    ]);
-    const base=rN.status==='fulfilled'?(Array.isArray(rN.value)?rN.value:(rN.value.value||[])):[];
-    const onb=rO.status==='fulfilled'?(Array.isArray(rO.value)?rO.value:(rO.value.value||[])):[];
-    const lk={};onb.forEach(x=>{if(x.nrc)lk[x.nrc]=x;});
+    const r=await fetch(NRCS_URL+'?t='+Date.now());
+    if(!r.ok)throw new Error('No se pudo cargar nrcs.json: HTTP '+r.status);
+
+    const data=await r.json();
+    const base=Array.isArray(data)?data:(data.value||[]);
+
     all=base.map(item=>{
-      const ex=lk[item.nrc]||{},nrc=item.nrc||'';
-      const fi=item['fecha inicio']||item['fecha_inicio']||'';
-      const ff=item['fecha fin']||item['fecha_fin']||'';
-      const per=nrc.split('_').pop()||'';
-      const prog=(ex['nombre programa']||ex['nombre_programa']||'').trim();
-      const cur=(ex['nombre curso']||ex['nombre_curso']||'—').trim();
-      const intake=(ex.intake||ex['INTAKE O VERSION']||ex['intake o version']||ex['intake_version']||item.intake||item['INTAKE O VERSION']||'').trim();
-      const codigo=(ex['codigo curso']||ex['codigo_curso']||item['codigo curso']||'').trim();
-      const tutor=(item.tutor||item['NOMBRE TUTOR']||'Por asignar').trim();
-      const facultad=(item.facultad||'—').trim();
-      const estado=(item.estado||'').toUpperCase().trim();
+      const nrc=String(item.nrc||'').trim();
+      const fi=String(item['fecha inicio']||item['fecha_inicio']||'').trim();
+      const ff=String(item['fecha fin']||item['fecha_fin']||'').trim();
+
+      const periodo=String(
+        item.periodo||
+        item.PERIODO||
+        nrc.split('_').pop()||
+        ''
+      ).trim();
+
+      const prog=String(
+        item['nombre programa']||
+        item['nombre_programa']||
+        item.NOMBRE_PROGRAMA||
+        ''
+      ).trim();
+
+      const cur=String(
+        item['nombre curso']||
+        item['nombre_curso']||
+        item.NOMBRE_CURSO||
+        '—'
+      ).trim();
+
+      const intake=String(
+        item.intake||
+        item['INTAKE O VERSION']||
+        item['intake o version']||
+        item['intake_version']||
+        ''
+      ).trim();
+
+      const codigo=String(
+        item['codigo curso']||
+        item['codigo_curso']||
+        item.CODIGO_CURSO||
+        ''
+      ).trim();
+
+      const materia=String(
+        item.materia||
+        item.MATERIA||
+        ''
+      ).trim();
+
+      const tutor=String(
+        item.tutor||
+        item['NOMBRE TUTOR']||
+        'Por asignar'
+      ).trim();
+
+      const facultad=String(item.facultad||item.FACULTAD||'—').trim();
+      const estado=String(item.estado||item.ESTADO||'').toUpperCase().trim();
+
       const itemId=
-        item.id||item.ID||item.Id||item.itemId||item['Item ID']||item['ID elemento']||
-        ex.id||ex.ID||ex.Id||ex.itemId||ex['Item ID']||ex['ID elemento']||'';
-      return{nrc,programa:prog||'—',curso:cur,codigoCurso:codigo,intake,estado,facultad,tutor,fechaInicio:fi,fechaFin:ff,fechaObj:parseFecha(fi),itemId,urls:buildUrls(nrc,intake,per,itemId),_s:norm([nrc,prog,cur,tutor,facultad,codigo,intake,estado,fechaBusqueda(fi),fechaBusqueda(ff)].join(' '))};
+        item.id||item.ID||item.Id||item.itemId||
+        item['Item ID']||item['ID elemento']||'';
+
+      return{
+        nrc,
+        programa:prog||'—',
+        curso:cur,
+        codigoCurso:codigo,
+        materia,
+        intake,
+        periodo,
+        estado,
+        facultad,
+        tutor,
+        fechaInicio:fi,
+        fechaFin:ff,
+        fechaObj:parseFecha(fi),
+        itemId,
+        urls:buildUrls(nrc,intake,periodo,itemId),
+        _s:norm([
+          nrc,prog,cur,codigo,materia,intake,periodo,
+          tutor,facultad,estado,
+          fechaBusqueda(fi),fechaBusqueda(ff)
+        ].join(' '))
+      };
     });
+
     document.getElementById('navTotal').textContent=all.length.toLocaleString('es-CL');
     document.getElementById('footerTs').textContent='Actualizado: '+new Date().toLocaleString('es-CL');
-    renderStats();renderDir();
-  }catch(e){console.error(e);}
+
+    renderStats();
+    renderDir();
+
+  }catch(e){
+    console.error(e);
+    const msg='No se pudieron cargar los cursos desde nrcs.json.';
+    const lista=document.getElementById('progList');
+    if(lista)lista.innerHTML='<div class="search-empty">'+msg+'</div>';
+    const stats=document.getElementById('statsGrid');
+    if(stats)stats.innerHTML='<div class="search-empty" style="grid-column:1/-1">'+msg+'</div>';
+    document.getElementById('navTotal').textContent='0';
+  }
 }
 
 /* ── BUSCADOR ──────────────────────────── */
@@ -1121,7 +1197,6 @@ function cGetCarpetas(){
   return out;
 }
 
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function cBuildEmail(coord,intake,carpetas){
   const LOGO='https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png';
@@ -1391,25 +1466,77 @@ function t4CoordRemove(correo){
 }
 
 
-const T4_ONB_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json';
-const T4_NRCS_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json';
-function t4Pick(obj,keys){for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null&&String(obj[k]).trim())return String(obj[k]).trim();}return '';}
-function t4Unique(items,keys){return [...new Set(items.map(x=>t4Pick(x,keys)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));}
-function t4FillList(id,values){const dl=document.getElementById(id);if(dl)dl.innerHTML=values.map(v=>`<option value="${esc(v)}"></option>`).join('');}
+function t4Pick(obj,keys){
+  for(const k of keys){
+    if(obj&&obj[k]!==undefined&&obj[k]!==null&&String(obj[k]).trim()){
+      return String(obj[k]).trim();
+    }
+  }
+  return '';
+}
+
+function t4Unique(items,keys){
+  return [...new Set(items.map(x=>t4Pick(x,keys)).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+}
+
+function t4FillList(id,values){
+  const dl=document.getElementById(id);
+  if(dl)dl.innerHTML=values.map(v=>`<option value="${esc(v)}"></option>`).join('');
+}
+
 async function t4CargarCatalogos(){
   try{
-    const [onbR,nrcR]=await Promise.all([fetch(T4_ONB_URL+'?t='+Date.now()).then(r=>r.json()),fetch(T4_NRCS_URL+'?t='+Date.now()).then(r=>r.json())]);
-    const onb=Array.isArray(onbR)?onbR:(onbR.value||[]),nrc=Array.isArray(nrcR)?nrcR:(nrcR.value||[]);
-    t4FillList('t4-programa-list',t4Unique(onb,['nombre programa','nombre_programa','NOMBRE PROGRAMA','NOMBRE_PROGRAMA']));
-    t4FillList('t4-materia-list',t4Unique(onb,['materia','MATERIA']));
-    t4FillList('t4-facultad-list',t4Unique(nrc,['facultad','FACULTAD']));
-  }catch(e){console.warn('Catálogos Calendarios:',e);}
+    // Si cargar() ya llenó "all", aprovechamos esos datos.
+    // Si aún no, leemos la MISMA fuente única: nrcs.json.
+    let baseRaw=[];
+
+    if(all.length){
+      baseRaw=all.map(c=>({
+        'nombre programa':c.programa,
+        'materia':c.materia,
+        'facultad':c.facultad
+      }));
+    }else{
+      const r=await fetch(NRCS_URL+'?t='+Date.now());
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const data=await r.json();
+      baseRaw=Array.isArray(data)?data:(data.value||[]);
+    }
+
+    t4FillList(
+      't4-programa-list',
+      t4Unique(baseRaw,['nombre programa','nombre_programa','NOMBRE_PROGRAMA'])
+    );
+
+    t4FillList(
+      't4-materia-list',
+      t4Unique(baseRaw,['materia','MATERIA'])
+    );
+
+    t4FillList(
+      't4-facultad-list',
+      t4Unique(baseRaw,['facultad','FACULTAD'])
+    );
+
+  }catch(e){
+    console.warn('Catálogos Calendarios:',e);
+  }
 }
-function initIntegratedTools(){t4CoordInit();t4CargarCatalogos();cAdd();cAdd();}
-initIntegratedTools();
 
+function initIntegratedTools(){
+  t4CoordInit();
+  cAdd();
+  cAdd();
+}
 
-cargar();
+async function iniciarExplorador(){
+  initIntegratedTools();
+  await cargar();
+  await t4CargarCatalogos();
+}
+
+iniciarExplorador();
 </script>
 </body>
 </html>
