@@ -8,18 +8,19 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#20293A;--surface:#273246;--surface2:#2D394E;--surface3:#354258;
-  --border:rgba(203,213,225,.11);--border2:rgba(203,213,225,.18);
-  --yellow:#FACC15;--text:#E7EBF1;--muted:#ADB7C6;--dim:#7F8A9C;
-  --blue:#60A5FA;--green:#34D399;--amber:#FACC15;--red:#EF4444;
-  --purple:#A78BFA;--orange:#FB923C;--font:'Inter',system-ui,sans-serif;
+  --bg:#0f172a;--surface:#1e293b;--surface2:#243247;--surface3:#2a3a50;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --yellow:#facc15;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --muted:var(--text-muted);--dim:var(--text-dim);
+  --blue:#60a5fa;--green:#4ade80;--amber:#fbbf24;--red:#f87171;
+  --purple:#a78bfa;--orange:#fb923c;--font:'Inter',system-ui,sans-serif;
   --mono:'Consolas','SF Mono',monospace;--radius:10px;
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit}
 a{color:inherit}
-.topnav{position:sticky;top:0;z-index:300;display:grid;grid-template-columns:220px 1fr auto;align-items:center;height:60px;background:rgba(34,44,63,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border2)}
+.topnav{position:sticky;top:0;z-index:300;display:grid;grid-template-columns:220px 1fr auto;align-items:center;height:60px;background:rgba(15,23,42,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border2)}
 .nav-brand{height:100%;display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--border)}
 .nav-dot{width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 5px rgba(250,204,21,.08)}
 .nav-title{font-size:15px;font-weight:800}
@@ -28,7 +29,7 @@ a{color:inherit}
 .nav-link:hover,.nav-link.active{color:var(--text);border-bottom-color:var(--yellow)}
 .nav-stat{padding:0 20px;font-size:11px;color:var(--muted)}.nav-stat span{color:var(--yellow);font-weight:800}
 .shell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 60px)}
-.sidebar{position:sticky;top:60px;align-self:start;height:calc(100vh - 60px);padding:18px 14px;background:rgba(34,44,63,.94);border-right:1px solid var(--border);overflow:auto}
+.sidebar{position:sticky;top:60px;align-self:start;height:calc(100vh - 60px);padding:18px 14px;background:rgba(15,23,42,.94);border-right:1px solid var(--border);overflow:auto}
 .sidebar-title{color:#D7DEE8;font-size:12px;font-weight:800;letter-spacing:.05em;margin-bottom:16px}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
@@ -45,7 +46,7 @@ a{color:inherit}
 .btn-danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:#F3C0C0}
 .btn:disabled,.btn[aria-disabled="true"]{opacity:.38;pointer-events:none}
 .full{width:100%}
-.content{min-width:0;padding:18px 18px 32px;background:rgba(32,41,58,.35)}
+.content{min-width:0;padding:18px 18px 32px;background:transparent}
 .stats-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin-bottom:12px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;transition:.15s}
 .stat:hover{transform:translateY(-2px);border-color:rgba(250,204,21,.28)}
@@ -101,7 +102,7 @@ a{color:inherit}
 .drawer-backdrop.open{opacity:1;pointer-events:auto}
 .drawer{position:absolute;top:0;right:0;width:min(305px,100vw);height:100%;background:#f3f4f6;transform:translateX(100%);transition:.2s;display:flex;flex-direction:column}
 .drawer-backdrop.open .drawer{transform:translateX(0)}
-.drawer-header{min-height:78px;padding:8px 8px 7px;background:#222C3F;color:#fff;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;overflow:hidden}
+.drawer-header{min-height:78px;padding:8px 8px 7px;background:#0f172a;color:#fff;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;overflow:hidden}
 .drawer-title{min-width:0;flex:1 1 100%}.drawer-title strong,.drawer-title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drawer-title span{color:var(--muted);font-size:10px;margin-top:3px}
 .drawer-tools{display:flex;gap:6px;flex:1 1 100%;justify-content:flex-end}.drawer-tools .btn{padding:5px 8px;font-size:9px;white-space:nowrap}
@@ -220,7 +221,7 @@ a{color:inherit}
 </div>
 
 <footer class="footer">
-  Portal ETOP · Datos desde <span>nrcs.json</span>, <span>nrcs_onboarding.json</span> e <span>incidencias.json</span>
+  Portal ETOP · Datos desde <span>nrcs.json</span> e <span>incidencias.json</span>
 </footer>
 
 <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true">
@@ -243,7 +244,6 @@ a{color:inherit}
 const BASE='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/';
 const URLS={
   cursos:BASE+'nrcs.json',
-  onboarding:BASE+'nrcs_onboarding.json',
   incidencias:BASE+'incidencias.json'
 };
 const POWER_APPS_URL=
@@ -276,6 +276,36 @@ function sharePointCursoUrl(nrc){
 }
 function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(()=>renderAll(),150)}
 function cleanArray(v){return Array.isArray(v)?v:(v?.value||[])}
+
+function timeCurso(c){
+  const d=parseDate(c?.['fecha inicio']);
+  return d&&!Number.isNaN(d.getTime())?d.getTime():null;
+}
+
+function compareCursosOperativos(a,b){
+  const prioridad={'ACTIVO':0,'EN CIERRE':1,'PREPARACION':2,'CERRADO':3};
+  const pa=prioridad[a.estado]??9,pb=prioridad[b.estado]??9;
+  if(pa!==pb)return pa-pb;
+
+  const ta=timeCurso(a),tb=timeCurso(b);
+  if(ta===null&&tb===null)return String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true});
+  if(ta===null)return 1;
+  if(tb===null)return -1;
+
+  if(a.estado==='PREPARACION'){
+    const hoy=new Date();
+    hoy.setHours(0,0,0,0);
+    const now=hoy.getTime();
+    const aFuture=ta>=now,bFuture=tb>=now;
+
+    // Primero próximos inicios; después cualquier preparación antigua rezagada.
+    if(aFuture!==bFuture)return aFuture?-1:1;
+    return aFuture ? ta-tb : tb-ta;
+  }
+
+  // ACTIVO / EN CIERRE / CERRADO: primero los más recientes.
+  return tb-ta;
+}
 
 function openDrawer(title,subtitle,url){
   $('drawerTitle').textContent=title;
@@ -325,38 +355,66 @@ function buildMasterUrl(c){
 async function load(){
   try{
     const stamp='?t='+Date.now();
-    const [rc,ro,ri]=await Promise.all([
+    const [rc,ri]=await Promise.all([
       fetch(URLS.cursos+stamp),
-      fetch(URLS.onboarding+stamp),
       fetch(URLS.incidencias+stamp)
     ]);
-    if(!rc.ok||!ro.ok||!ri.ok)throw new Error(`Error de carga: cursos ${rc.status}, onboarding ${ro.status}, incidencias ${ri.status}`);
-    const cursos=cleanArray(await rc.json()),onb=cleanArray(await ro.json()),incs=cleanArray(await ri.json());
 
-    const onbMap=new Map(onb.filter(x=>x.nrc).map(x=>[String(x.nrc),x]));
+    if(!rc.ok||!ri.ok){
+      throw new Error(`Error de carga: nrcs.json ${rc.status}, incidencias.json ${ri.status}`);
+    }
+
+    const cursos=cleanArray(await rc.json());
+    const incs=cleanArray(await ri.json());
+
+    // incidencias.json se cruza únicamente con el ID del curso en nrcs.json
     const incMap=new Map();
     for(const i of incs){
-      const k=String(i.cursoId??'');
+      const k=String(i.cursoId??'').trim();
       if(!k)continue;
       if(!incMap.has(k))incMap.set(k,[]);
       incMap.get(k).push(i);
     }
 
     all=cursos.map(c=>{
-      const ex=onbMap.get(String(c.nrc))||{};
-      const registros=incMap.get(String(c.id))||[];
+      const registros=incMap.get(String(c.id??c.ID??'').trim())||[];
       const con=registros.filter(x=>upper(x.qaIncidencias)==='CON INCIDENCIA');
       const sin=registros.filter(x=>upper(x.qaIncidencias)==='SIN INCIDENCIA');
       const pendientes=con.filter(x=>upper(x.estadoIncidencia)==='PENDIENTE');
       const corregidas=con.filter(x=>upper(x.estadoIncidencia)==='CORREGIDA');
       const derivadas=con.filter(x=>upper(x.estadoIncidencia)==='DERIVADO');
-      const curso=String(ex['nombre curso']||ex['nombre_curso']||ex.curso||'—').trim();
-      const programa=String(ex['nombre programa']||ex['nombre_programa']||c.facultad||'—').trim();
-      const tutor=String(c.tutor||'Por asignar').trim();
-      const facultad=String(c.facultad||'—').trim();
-      const estado=upper(c.estado);
+
+      const curso=String(
+        c['nombre curso']||
+        c['nombre_curso']||
+        c.NOMBRE_CURSO||
+        '—'
+      ).trim();
+
+      const programa=String(
+        c['nombre programa']||
+        c['nombre_programa']||
+        c.NOMBRE_PROGRAMA||
+        '—'
+      ).trim();
+
+      const codigoCurso=String(
+        c['codigo curso']||
+        c['codigo_curso']||
+        c.CODIGO_CURSO||
+        ''
+      ).trim();
+
+      const materia=String(c.materia||c.MATERIA||'').trim();
+      const intake=String(c.intake||c['INTAKE O VERSION']||'').trim();
+      const periodo=String(c.periodo||c.PERIODO||'').trim();
+      const tutor=String(c.tutor||c['NOMBRE TUTOR']||'Por asignar').trim();
+      const facultad=String(c.facultad||c.FACULTAD||'—').trim();
+      const estado=upper(c.estado||c.ESTADO);
+
       const search=[
-        c.nrc,curso,programa,tutor,facultad,estado,
+        c.nrc,curso,programa,codigoCurso,materia,intake,periodo,
+        tutor,facultad,estado,c['fecha inicio'],c['fecha fin'],
         ...registros.flatMap(i=>[
           i.categoria,i.estadoIncidencia,i.qaIncidencias,i.tipoQA,
           i.descripcionIncidencia,i.descripcionSolucion
@@ -364,14 +422,17 @@ async function load(){
       ].join(' ');
 
       return{
-        ...c,curso,programa,tutor,facultad,estado,registros,con,sin,
+        ...c,
+        curso,programa,codigoCurso,materia,intake,periodo,
+        tutor,facultad,estado,registros,con,sin,
         pendientes,corregidas,derivadas,_s:norm(search)
       };
-    }).sort((a,b)=>(parseDate(b['fecha inicio'])||0)-(parseDate(a['fecha inicio'])||0));
+    }).sort(compareCursosOperativos);
 
     populateFilters();
     $('updated').textContent=new Date().toLocaleString('es-CL');
     renderAll();
+
   }catch(e){
     console.error(e);
     $('list').innerHTML=`<div class="error"><strong>No se pudieron cargar los datos.</strong><br>${esc(e.message)}</div>`;
@@ -435,7 +496,7 @@ function applyFilters(){
     if(statMode==='CORR'&&c.corregidas.length===0)return false;
     if(statMode==='DER'&&c.derivadas.length===0)return false;
     return true;
-  });
+  }).sort(compareCursosOperativos);
 }
 
 function renderAll(){page=1;applyFilters();renderStats();renderPage()}
@@ -477,7 +538,8 @@ function renderPage(){
   const pages=Math.max(1,Math.ceil(filtered.length/pageSize));
   if(page>pages)page=pages;
   const start=(page-1)*pageSize,end=Math.min(start+pageSize,filtered.length),slice=filtered.slice(start,end);
-  $('meta').innerHTML=`CURSOS (<strong>${filtered.length.toLocaleString('es-CL')}</strong>) · Mostrando <strong>${filtered.length?start+1:0}–${end}</strong>`;
+  const ordenTxt=$('fEstadoCurso').value==='PREPARACION'?' · Orden: próximos inicios primero':'';
+  $('meta').innerHTML=`CURSOS (<strong>${filtered.length.toLocaleString('es-CL')}</strong>) · Mostrando <strong>${filtered.length?start+1:0}–${end}</strong>${ordenTxt}`;
   $('list').innerHTML=slice.length?slice.map(renderCourse).join(''):`<div class="empty-panel empty-gray">No hay cursos que coincidan con los filtros.</div>`;
   renderPagination(pages);
 }
@@ -514,11 +576,13 @@ function renderCourse(c){
         <div class="acc-title-line">
           <span class="acc-nrc">${esc(c.nrc)}</span>${mainBadge}${counters}
         </div>
-        <div class="acc-course">Curso: ${esc(c.curso)} · Tutor: ${esc(c.tutor)} · Facultad: ${esc(c.facultad)}</div>
+        <div class="acc-course">Curso: ${esc(c.curso)} · Programa: ${esc(c.programa)} · Tutor: ${esc(c.tutor)} · Facultad: ${esc(c.facultad)}</div>
         <div class="meta-row">
           <span class="chip chip-date">📅 ${fmtDate(c['fecha inicio'])} – ${fmtDate(c['fecha fin'])}</span>
           ${chipState(c.estado)}
           <span class="chip chip-state">🏛 ${esc(c.facultad)}</span>
+          ${c.intake?`<span class="chip chip-state">◫ ${esc(c.intake)}</span>`:''}
+          ${c.materia?`<span class="chip chip-state">⌁ ${esc(c.materia)}</span>`:''}
         </div>
       </div>
       <span class="chev">▼</span>
