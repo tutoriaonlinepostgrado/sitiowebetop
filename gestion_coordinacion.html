@@ -206,8 +206,7 @@
             </div>
             <div class="collapsible-body" id="body-calidad">
                 <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">📅 Calendarios</button>
-                <button class="menu-btn" onclick="cargar('INCIDENCIAS_MASTER', this)">⚠️ Incidencias por Master</button>
-                <button class="menu-btn" onclick="cargar('INCIDENCIAS_NRC', this)">⚠️ Incidencias por NRC</button>
+                <button class="menu-btn" onclick="cargar('INCIDENCIAS', this)">⚠️ Incidencias</button>
             </div>
 
             <div class="menu-category">Herramientas</div>
@@ -284,8 +283,8 @@
     /* ========================================================
        MAPA DE REPORTES
        Solo los reportes Power BI (powerbi.com/reportEmbed)
-       reciben filtros OData. Los RDL (rdlEmbed) se cargan sin
-       filtro porque no soportan el parámetro &filter=
+       reciben filtros OData. Los RDL y las páginas HTML locales
+       se cargan sin parámetro &filter=
     ======================================================== */
     const misReportes = {
         'BASE_COORDINACION': {
@@ -321,17 +320,13 @@
             url: "https://app.powerbi.com/rdlEmbed?reportId=a0026236-1552-4a2d-bdc8-ee487be7de93&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
             tipo: 'rdl'
         },
-        'INCIDENCIAS_MASTER': {
-            url: "https://app.powerbi.com/rdlEmbed?reportId=42ddd2bd-2af5-4354-9c11-4f9f20c0805c&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-            tipo: 'rdl'
-        },
-        'INCIDENCIAS_NRC': {
-            url: "https://app.powerbi.com/rdlEmbed?reportId=eda17000-5679-49f5-bc46-41cfff1bcb95&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
-            tipo: 'rdl'
-        },
         'BASE_SEGUIMIENTO': {
             url: "https://app.powerbi.com/rdlEmbed?reportId=72cf6f52-dfa3-4cba-92f4-6a8c5c8ccf8e&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi",
             tipo: 'rdl'
+        },
+        'INCIDENCIAS': {
+            url: "incidencias.html",
+            tipo: 'local'
         }
     };
 
@@ -344,8 +339,7 @@
         'CALENDARIOS': 'Calendarios',
         'CURSOS_INICIAR': 'Cursos Por Iniciar',
         'REPORTE_NRC': 'Reporte por NRC',
-        'INCIDENCIAS_MASTER': 'Incidencias por Master',
-        'INCIDENCIAS_NRC': 'Incidencias por NRC',
+        'INCIDENCIAS': 'Incidencias',
         'BASE_SEGUIMIENTO': 'Estado Base Seguimiento'
     };
 
@@ -584,7 +578,7 @@
     /* ========================================================
        CONSTRUCCIÓN DE URL OData
        Tabla semántica: NRC_TUTOR_ACTUAL
-       Solo para reportes tipo 'pbi'. Los RDL quedan sin filtro.
+       Solo para reportes tipo 'pbi'. RDL y páginas locales quedan sin filtro.
     ======================================================== */
     function sanitizar(v) {
         // Escapa comillas simples dentro del valor OData
@@ -593,7 +587,7 @@
 
     function buildURLFiltrada() {
         const cfg = misReportes[claveActual];
-        if (!cfg || cfg.tipo === 'rdl') return cfg ? cfg.url : '';
+        if (!cfg || cfg.tipo !== 'pbi') return cfg ? cfg.url : '';
 
         const f = getFiltrosActivos();
         const condiciones = [];
