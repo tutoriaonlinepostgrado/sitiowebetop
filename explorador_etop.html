@@ -106,7 +106,62 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .chart-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
 .bar-list{display:flex;flex-direction:column;gap:8px}
 
-.bar-list-programas{max-height:430px;overflow:auto;padding-right:4px}
+/* Programa: gráfico vertical, responsive y bajo el donut */
+.chart-programas-full{grid-column:1/-1}
+.program-bar-chart{
+  display:flex;
+  align-items:stretch;
+  gap:8px;
+  min-height:270px;
+  overflow-x:auto;
+  padding:10px 4px 4px;
+}
+.program-col{
+  flex:1 0 74px;
+  min-width:74px;
+  max-width:125px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  padding:5px 4px;
+  border-radius:7px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.program-col:hover,.program-col.active{background:rgba(250,204,21,.07)}
+.program-col-value{font-size:11px;font-weight:800;color:var(--text)}
+.program-col-track{
+  width:min(44px,70%);
+  height:180px;
+  background:rgba(255,255,255,.055);
+  border-radius:6px 6px 3px 3px;
+  display:flex;
+  align-items:flex-end;
+  overflow:hidden;
+}
+.program-col-fill{
+  width:100%;
+  min-height:3px;
+  border-radius:6px 6px 3px 3px;
+  transition:height .45s ease;
+}
+.program-col-label{
+  width:100%;
+  min-height:48px;
+  font-size:9px;
+  line-height:1.25;
+  color:var(--text-muted);
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+@media(max-width:700px){
+  .program-bar-chart{min-height:240px}
+  .program-col{flex-basis:64px;min-width:64px}
+  .program-col-track{height:145px}
+  .program-col-label{font-size:8px}
+}
 .td-actions-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:190px}
 .table-btn-int{background:rgba(250,204,21,.09);border-color:rgba(250,204,21,.28);color:#fde68a}
 .table-btn-int:hover{background:rgba(250,204,21,.18)}
@@ -315,9 +370,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
         <div class="donut-legend" id="donutLegend"></div>
       </div>
     </div>
-    <div class="chart-card">
+    <div class="chart-card chart-programas-full">
       <div class="chart-title">Cantidad de cursos por programa</div>
-      <div class="bar-list bar-list-programas" id="barProgramas"></div>
+      <div class="program-bar-chart" id="barProgramas"></div>
     </div>
   </div>
 </div>
@@ -853,46 +908,168 @@ function contactoTutor(nombre){
 }
 
 function setStatFilter(tipo,valor='',label=''){
-  statFilter={tipo,valor,label:label||valor||'Todos los NRC'};
+  // Segundo clic sobre el mismo elemento quita el filtro, similar a un segmentador.
+  if(statFilter.tipo===tipo&&statFilter.valor===valor&&tipo!=='ALL'){
+    statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
+  }else{
+    statFilter={tipo,valor,label:label||valor||'Todos los NRC'};
+  }
+
   document.getElementById('activeFilterText').textContent=statFilter.label;
-  document.getElementById('activeFilterNote').classList.toggle('show',tipo!=='ALL');
+  document.getElementById('activeFilterNote').classList.toggle('show',statFilter.tipo!=='ALL');
+
+  renderStats();
   renderDir(document.getElementById('dirSearch').value);
-  goTo('sec-dir');
+
+  // Las visualizaciones se cruzan en la propia sección Estadísticas.
+  // No bajamos automáticamente al Directorio al seleccionar una barra.
+  goTo('sec-stats');
 }
 
 function clearStatFilter(){
   statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
   document.getElementById('activeFilterNote').classList.remove('show');
+  renderStats();
   renderDir(document.getElementById('dirSearch').value);
 }
 
-function renderStats(){
-  const tot=all.length,act=all.filter(c=>c.estado==='ACTIVO').length,cie=all.filter(c=>c.estado==='EN CIERRE').length,pre=all.filter(c=>c.estado==='PREPARACION').length,cer=all.filter(c=>c.estado==='CERRADO').length;
-  const tut=[...new Set(all.map(c=>c.tutor).filter(tutorEsActivo))].length,prg=new Set(all.map(c=>c.programa)).size;
-  document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card s-total" onclick="setStatFilter('ALL','','Todos los NRC')"><div class="stat-num">${tot.toLocaleString('es-CL')}</div><div class="stat-label">Total NRC</div><div class="stat-sub">clic para mostrar todos</div></div>
-    <div class="stat-card s-activo" onclick="setStatFilter('ESTADO','ACTIVO','Cursos activos')"><div class="stat-num">${act}</div><div class="stat-label">Activos</div><div class="stat-sub">${tot?((act/tot)*100).toFixed(1):'0.0'}% del total</div></div>
-    <div class="stat-card s-cierre" onclick="setStatFilter('ESTADO','EN CIERRE','Cursos en cierre')"><div class="stat-num">${cie}</div><div class="stat-label">En Cierre</div><div class="stat-sub">${tot?((cie/tot)*100).toFixed(1):'0.0'}% del total</div></div>
-    <div class="stat-card s-prep" onclick="setStatFilter('ESTADO','PREPARACION','Cursos en preparación')"><div class="stat-num">${pre}</div><div class="stat-label">En Preparación</div><div class="stat-sub">${tot?((pre/tot)*100).toFixed(1):'0.0'}% del total</div></div>
-    <div class="stat-card s-tutores" onclick="setStatFilter('TUTOR_ACTIVO','','Cursos de tutores activos')"><div class="stat-num">${tut}</div><div class="stat-label">Tutores activos</div><div class="stat-sub">${TUTORES_ACTIVOS.length?'según nómina cargada':'con NRC asignados'}</div></div>
-    <div class="stat-card s-prog" onclick="setStatFilter('PROGRAMAS','','Directorio de programas')"><div class="stat-num">${prg}</div><div class="stat-label">Programas</div><div class="stat-sub">clic para abrir directorio</div></div>`;
-  const fm={};all.filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado)).forEach(c=>{fm[c.facultad]=(fm[c.facultad]||0)+1;});
-  const fs=Object.entries(fm).sort((a,b)=>b[1]-a[1]),mx=fs[0]?.[1]||1;
-  document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`<div class="bar-item" onclick="setStatFilter('FACULTAD','${esc(f)}','Facultad: ${esc(f)}')"><div class="bar-header"><span class="bar-name" title="${esc(f)}">${esc(f)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join('');
-  const pm={};
-  all.filter(c=>c.programa&&c.programa!=='—').forEach(c=>{pm[c.programa]=(pm[c.programa]||0)+1;});
-  const ps=Object.entries(pm).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'es')),pmx=ps[0]?.[1]||1;
-  document.getElementById('barProgramas').innerHTML=ps.length
-    ? ps.map(([p,n],i)=>`<div class="bar-item" onclick="setStatFilter('PROGRAMA','${esc(p)}','Programa: ${esc(p)}')"><div class="bar-header"><span class="bar-name" title="${esc(p)}">${esc(p)}</span><span class="bar-val">${n}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(n/pmx*100).toFixed(1)}%;background:${PAL[(i+2)%PAL.length]}"></div></div></div>`).join('')
-    : '<div class="search-empty">Sin programas disponibles.</div>';
-  const est=[{l:'Activo',k:'ACTIVO',v:act,c:'#4ade80'},{l:'En Cierre',k:'EN CIERRE',v:cie,c:'#fbbf24'},{l:'Preparación',k:'PREPARACION',v:pre,c:'#60a5fa'},{l:'Cerrado',k:'CERRADO',v:cer,c:'#475569'}].filter(e=>e.v>0);
-  const r=36,cx=50,cy=50,ci=2*Math.PI*r;let off=0,p='';
-  est.forEach(e=>{const pc=tot?e.v/tot:0,da=pc*ci,ga=ci-da;p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14" stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}" stroke-dashoffset="${(-off*ci).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=pc;});
-  document.getElementById('donutSvg').innerHTML=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>${p}<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${tot}</text>`;
-  document.getElementById('donutLegend').innerHTML=est.map(e=>`<div class="legend-item" onclick="setStatFilter('ESTADO','${esc(e.k)}','Estado: ${esc(e.l)}')"><div class="legend-dot" style="background:${e.c}"></div><span class="legend-name">${esc(e.l)}</span><span class="legend-val">${e.v}</span></div>`).join('');
-  document.getElementById('chartsRow').style.display='grid';
+
+function cursosParaEstadistica(excluirTipo=''){
+  if(!statFilter||statFilter.tipo==='ALL'||statFilter.tipo==='PROGRAMAS')return all;
+
+  return all.filter(c=>{
+    if(statFilter.tipo===excluirTipo)return true;
+    if(statFilter.tipo==='ESTADO')return c.estado===statFilter.valor;
+    if(statFilter.tipo==='FACULTAD')return c.facultad===statFilter.valor;
+    if(statFilter.tipo==='PROGRAMA')return c.programa===statFilter.valor;
+    if(statFilter.tipo==='TUTOR_ACTIVO')return tutorEsActivo(c.tutor);
+    return true;
+  });
 }
 
+function renderStats(){
+  // Las tarjetas KPI reaccionan al filtro activo.
+  const baseKpi=cursosParaEstadistica();
+  const tot=baseKpi.length;
+  const act=baseKpi.filter(c=>c.estado==='ACTIVO').length;
+  const cie=baseKpi.filter(c=>c.estado==='EN CIERRE').length;
+  const pre=baseKpi.filter(c=>c.estado==='PREPARACION').length;
+  const cer=baseKpi.filter(c=>c.estado==='CERRADO').length;
+  const tut=[...new Set(baseKpi.map(c=>c.tutor).filter(tutorEsActivo))].length;
+  const prg=new Set(baseKpi.map(c=>c.programa).filter(p=>p&&p!=='—')).size;
+
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card s-total" onclick="setStatFilter('ALL','','Todos los NRC')">
+      <div class="stat-num">${tot.toLocaleString('es-CL')}</div>
+      <div class="stat-label">Total NRC</div>
+      <div class="stat-sub">${statFilter.tipo==='ALL'?'clic para mostrar todos':'según filtro seleccionado'}</div>
+    </div>
+    <div class="stat-card s-activo" onclick="setStatFilter('ESTADO','ACTIVO','Cursos activos')">
+      <div class="stat-num">${act}</div><div class="stat-label">Activos</div>
+      <div class="stat-sub">${tot?((act/tot)*100).toFixed(1):'0.0'}% del filtro</div>
+    </div>
+    <div class="stat-card s-cierre" onclick="setStatFilter('ESTADO','EN CIERRE','Cursos en cierre')">
+      <div class="stat-num">${cie}</div><div class="stat-label">En Cierre</div>
+      <div class="stat-sub">${tot?((cie/tot)*100).toFixed(1):'0.0'}% del filtro</div>
+    </div>
+    <div class="stat-card s-prep" onclick="setStatFilter('ESTADO','PREPARACION','Cursos en preparación')">
+      <div class="stat-num">${pre}</div><div class="stat-label">En Preparación</div>
+      <div class="stat-sub">${tot?((pre/tot)*100).toFixed(1):'0.0'}% del filtro</div>
+    </div>
+    <div class="stat-card s-tutores" onclick="setStatFilter('TUTOR_ACTIVO','','Cursos de tutores activos')">
+      <div class="stat-num">${tut}</div><div class="stat-label">Tutores activos</div>
+      <div class="stat-sub">según selección actual</div>
+    </div>
+    <div class="stat-card s-prog" onclick="setStatFilter('PROGRAMAS','','Directorio de programas')">
+      <div class="stat-num">${prg}</div><div class="stat-label">Programas</div>
+      <div class="stat-sub">según selección actual</div>
+    </div>`;
+
+  // FACULTAD:
+  // si el filtro activo es Programa/Estado, Facultad reacciona a ese filtro.
+  // si Facultad está seleccionada, mantenemos todas las facultades visibles
+  // para poder cambiar de selección sin quitar primero el filtro.
+  const baseFac=cursosParaEstadistica('FACULTAD');
+  const fm={};
+  baseFac.filter(c=>['ACTIVO','EN CIERRE'].includes(c.estado)).forEach(c=>{
+    fm[c.facultad]=(fm[c.facultad]||0)+1;
+  });
+  const fs=Object.entries(fm).sort((a,b)=>b[1]-a[1]),mx=fs[0]?.[1]||1;
+
+  document.getElementById('barFacultad').innerHTML=fs.map(([f,n],i)=>`
+    <div class="bar-item ${statFilter.tipo==='FACULTAD'&&statFilter.valor===f?'active':''}"
+         onclick="setStatFilter('FACULTAD','${esc(f)}','Facultad: ${esc(f)}')">
+      <div class="bar-header">
+        <span class="bar-name" title="${esc(f)}">${esc(f)}</span>
+        <span class="bar-val">${n}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(n/mx*100).toFixed(1)}%;background:${PAL[i%PAL.length]}"></div>
+      </div>
+    </div>`).join('');
+
+  // DONUT: siempre responde al filtro activo (ej. Facultad).
+  const baseEstado=cursosParaEstadistica('ESTADO');
+  const estTotal=baseEstado.length;
+  const estados=[
+    {l:'Activo',k:'ACTIVO',v:baseEstado.filter(c=>c.estado==='ACTIVO').length,c:'#4ade80'},
+    {l:'En Cierre',k:'EN CIERRE',v:baseEstado.filter(c=>c.estado==='EN CIERRE').length,c:'#fbbf24'},
+    {l:'Preparación',k:'PREPARACION',v:baseEstado.filter(c=>c.estado==='PREPARACION').length,c:'#60a5fa'},
+    {l:'Cerrado',k:'CERRADO',v:baseEstado.filter(c=>c.estado==='CERRADO').length,c:'#475569'}
+  ].filter(e=>e.v>0);
+
+  const r=36,cx=50,cy=50,ci=2*Math.PI*r;
+  let off=0,p='';
+  estados.forEach(e=>{
+    const pc=estTotal?e.v/estTotal:0,da=pc*ci,ga=ci-da;
+    p+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${e.c}" stroke-width="14"
+      stroke-dasharray="${da.toFixed(2)} ${ga.toFixed(2)}"
+      stroke-dashoffset="${(-off*ci).toFixed(2)}"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
+    off+=pc;
+  });
+
+  document.getElementById('donutSvg').innerHTML=`
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="14"/>
+    ${p}
+    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
+      fill="#e2e8f0" font-size="13" font-weight="800" font-family="Inter,sans-serif">${estTotal}</text>`;
+
+  document.getElementById('donutLegend').innerHTML=estados.map(e=>`
+    <div class="legend-item ${statFilter.tipo==='ESTADO'&&statFilter.valor===e.k?'active':''}"
+         onclick="setStatFilter('ESTADO','${esc(e.k)}','Estado: ${esc(e.l)}')">
+      <div class="legend-dot" style="background:${e.c}"></div>
+      <span class="legend-name">${esc(e.l)}</span>
+      <span class="legend-val">${e.v}</span>
+    </div>`).join('');
+
+  // PROGRAMAS: gráfico vertical y cruzado.
+  // Ej.: al seleccionar Facultad INGE, aquí aparecen SOLO programas INGE.
+  const baseProg=cursosParaEstadistica('PROGRAMA');
+  const pm={};
+  baseProg.filter(c=>c.programa&&c.programa!=='—').forEach(c=>{
+    pm[c.programa]=(pm[c.programa]||0)+1;
+  });
+  const ps=Object.entries(pm).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'es'));
+  const pmx=ps[0]?.[1]||1;
+
+  document.getElementById('barProgramas').innerHTML=ps.length
+    ? ps.map(([programa,n],i)=>{
+        const pct=(n/pmx*100).toFixed(1);
+        return `<div class="program-col ${statFilter.tipo==='PROGRAMA'&&statFilter.valor===programa?'active':''}"
+          onclick="setStatFilter('PROGRAMA','${esc(programa)}','Programa: ${esc(programa)}')"
+          title="${esc(programa)} · ${n} curso${n===1?'':'s'}">
+          <div class="program-col-value">${n}</div>
+          <div class="program-col-track">
+            <div class="program-col-fill" style="height:${pct}%;background:${PAL[(i+2)%PAL.length]}"></div>
+          </div>
+          <div class="program-col-label">${esc(programa)}</div>
+        </div>`;
+      }).join('')
+    : '<div class="search-empty" style="width:100%">Sin programas para el filtro seleccionado.</div>';
+
+  document.getElementById('chartsRow').style.display='grid';
+}
 
 /* ── DIRECTORIO ────────────────────────── */
 function cursoCumpleFiltroEstadistico(c){
