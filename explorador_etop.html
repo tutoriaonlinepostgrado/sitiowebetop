@@ -16,7 +16,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
 
 /* NAV */
-.topnav{position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;min-height:52px;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);flex-wrap:wrap}
+.topnav{position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 24px;min-height:52px;flex-wrap:wrap;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2)}
 .nav-brand{display:flex;align-items:center;gap:10px}
 .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:pdot 2s infinite}
 @keyframes pdot{0%{box-shadow:0 0 0 0 rgba(250,204,21,.45)}70%{box-shadow:0 0 0 6px rgba(250,204,21,0)}100%{box-shadow:0 0 0 0 rgba(250,204,21,0)}}
@@ -210,6 +210,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px}
+.tool-panel{display:none;max-width:1500px;margin:0 auto;padding:18px 24px 30px}
+.tool-panel.active{display:block}
+.tool-frame{width:100%;min-height:1100px;border:1px solid var(--border2);border-radius:12px;background:var(--surface)}
+.explorer-main.hidden{display:none}
 .page-footer{text-align:center;padding:24px;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border)}
 .page-footer span{color:var(--yellow)}
 </style>
@@ -219,15 +223,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <nav class="topnav">
   <div class="nav-brand"><div class="nav-dot"></div><span class="nav-title">Explorador ETOP</span></div>
   <div class="nav-links">
-    <button class="nav-link" onclick="goTo('sec-buscar')">🔍 Buscar</button>
-    <button class="nav-link" onclick="goTo('sec-stats')">📊 Estadísticas</button>
-    <button class="nav-link" onclick="goTo('sec-dir')">📚 Directorio</button>
-    <a class="nav-link" href="centro_herramientas_etop.html?tab=3">📅 Formateador Calendarios</a>
-    <a class="nav-link" href="centro_herramientas_etop.html?tab=4">📂 Carpetas Creadas</a>
+    <button class="nav-link" onclick="mostrarSeccionExplorador('cursos','sec-buscar')">🔍 Buscar</button>
+    <button class="nav-link" onclick="mostrarSeccionExplorador('cursos','sec-stats')">📊 Estadísticas</button>
+    <button class="nav-link" onclick="mostrarSeccionExplorador('cursos','sec-dir')">📚 Directorio</button>
+    <button class="nav-link" onclick="mostrarSeccionExplorador('calendarios')">📅 Formateador Calendarios</button>
+    <button class="nav-link" onclick="mostrarSeccionExplorador('carpetas')">📂 Carpetas Creadas</button>
   </div>
   <div class="nav-stat">Total: <span id="navTotal">—</span> NRC</div>
 </nav>
 
+<div id="explorer-main" class="explorer-main">
 <!-- BUSCADOR -->
 <div id="sec-buscar">
   <div class="search-hero">
@@ -300,11 +305,41 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
   </div>
 </div>
 
+</div>
+
+<div id="panel-calendarios" class="tool-panel">
+  <iframe class="tool-frame"
+    src="centro_herramientas_etop.html?embed=1&tab=3"
+    title="Formateador de Calendarios"></iframe>
+</div>
+
+<div id="panel-carpetas" class="tool-panel">
+  <iframe class="tool-frame"
+    src="centro_herramientas_etop.html?embed=1&tab=4"
+    title="Notificación Carpetas Creadas"></iframe>
+</div>
+
 <footer class="page-footer">
   Portal ETOP · Universidad Andrés Bello · Datos desde <span>GitHub Pages</span> &nbsp;·&nbsp; <span id="footerTs">—</span>
 </footer>
 
 <script>
+function mostrarSeccionExplorador(tipo,destino=''){
+  const main=document.getElementById('explorer-main');
+  const cal=document.getElementById('panel-calendarios');
+  const car=document.getElementById('panel-carpetas');
+
+  main.classList.toggle('hidden',tipo!=='cursos');
+  cal.classList.toggle('active',tipo==='calendarios');
+  car.classList.toggle('active',tipo==='carpetas');
+
+  if(tipo==='cursos'&&destino){
+    setTimeout(()=>goTo(destino),50);
+  }else{
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
 const NRCS_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json';
 const ONB_URL='https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json';
 const ESTADOS_DIR=['ACTIVO','EN CIERRE','PREPARACION','CERRADO'];
