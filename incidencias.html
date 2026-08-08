@@ -110,11 +110,68 @@ a{color:inherit}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
 @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.shell{grid-template-columns:210px minmax(0,1fr)}}
 @media(max-width:760px){.topnav{grid-template-columns:1fr auto}.nav-links{display:none}.shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}.content{padding:12px}.stats-grid{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
+
+/* ── Panel de filtros colapsable ── */
+.shell{transition:grid-template-columns .24s ease}
+.sidebar{
+  transition:width .24s ease,padding .24s ease,opacity .18s ease,border-color .18s ease;
+}
+.shell.filters-collapsed{grid-template-columns:0 minmax(0,1fr)}
+.shell.filters-collapsed .sidebar{
+  width:0;
+  padding-left:0;
+  padding-right:0;
+  border-right-color:transparent;
+  overflow:hidden;
+  opacity:0;
+  pointer-events:none;
+}
+.nav-filter-toggle{
+  width:32px;height:32px;border-radius:7px;border:1px solid rgba(250,204,21,.22);
+  background:rgba(250,204,21,.07);color:var(--yellow);cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;
+}
+.nav-filter-toggle:hover{background:rgba(250,204,21,.13);border-color:rgba(250,204,21,.42)}
+
+/* ── Indicadores colapsables ── */
+.indicadores-panel{
+  background:transparent;
+  margin-bottom:12px;
+}
+.indicadores-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:10px;
+}
+.indicadores-title{
+  display:flex;align-items:center;gap:8px;color:var(--text);font-size:11px;
+  font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+}
+.indicadores-toggle{
+  border:1px solid var(--border2);background:rgba(255,255,255,.035);
+  color:var(--muted);border-radius:7px;padding:6px 10px;cursor:pointer;
+  font-size:10px;font-weight:800;
+}
+.indicadores-toggle:hover{color:var(--yellow);border-color:rgba(250,204,21,.35)}
+.indicadores-content{
+  overflow:hidden;
+  max-height:900px;
+  opacity:1;
+  transition:max-height .24s ease,opacity .18s ease,margin .24s ease;
+}
+.indicadores-panel.collapsed .indicadores-content{
+  max-height:0;
+  opacity:0;
+  margin:0;
+}
+
 </style>
 </head>
 <body>
 <nav class="topnav">
-  <div class="nav-brand"><span class="nav-dot"></span><span class="nav-title">Incidencias ETOP</span></div>
+  <div class="nav-brand">
+    <button id="btnFiltros" class="nav-filter-toggle" type="button" onclick="toggleFiltros()" title="Ocultar filtros" aria-label="Mostrar u ocultar filtros" aria-expanded="true">☰</button>
+    <span class="nav-dot"></span><span class="nav-title">Incidencias ETOP</span>
+  </div>
   <div class="nav-links">
     <a class="nav-link" href="index.html" title="Volver al Portal ETOP">← Portal</a>
     <button class="nav-link" onclick="focusSearch()">⌕ Buscar</button>
@@ -124,7 +181,7 @@ a{color:inherit}
   <div class="nav-stat">Última actualización: <span id="updated">—</span></div>
 </nav>
 
-<div class="shell">
+<div class="shell" id="appShell">
   <aside class="sidebar" id="filtros">
     <div class="sidebar-title">⚲ FILTROS</div>
 
@@ -190,9 +247,15 @@ a{color:inherit}
   </aside>
 
   <main class="content">
-    <section id="indicadores">
-      <div id="stats" class="stats-grid">
-        <div class="loading" style="grid-column:1/-1"><span class="spinner"></span><span>Cargando datos…</span></div>
+    <section id="indicadores" class="indicadores-panel">
+      <div class="indicadores-header">
+        <div class="indicadores-title">⌁ Indicadores</div>
+        <button id="btnIndicadores" class="indicadores-toggle" type="button" onclick="toggleIndicadores()" aria-expanded="true">▴ Ocultar indicadores</button>
+      </div>
+      <div class="indicadores-content">
+        <div id="stats" class="stats-grid">
+          <div class="loading" style="grid-column:1/-1"><span class="spinner"></span><span>Cargando datos…</span></div>
+        </div>
       </div>
     </section>
 
@@ -305,6 +368,26 @@ function compareCursosOperativos(a,b){
 
   // ACTIVO / EN CIERRE / CERRADO: primero los más recientes.
   return tb-ta;
+}
+
+function toggleFiltros(){
+  const shell=$('appShell');
+  const btn=$('btnFiltros');
+  if(!shell||!btn)return;
+
+  const oculto=shell.classList.toggle('filters-collapsed');
+  btn.setAttribute('aria-expanded',String(!oculto));
+  btn.title=oculto?'Mostrar filtros':'Ocultar filtros';
+}
+
+function toggleIndicadores(){
+  const panel=$('indicadores');
+  const btn=$('btnIndicadores');
+  if(!panel||!btn)return;
+
+  const cerrado=panel.classList.toggle('collapsed');
+  btn.setAttribute('aria-expanded',String(!cerrado));
+  btn.textContent=cerrado?'▾ Mostrar indicadores':'▴ Ocultar indicadores';
 }
 
 function openDrawer(title,subtitle,url){
