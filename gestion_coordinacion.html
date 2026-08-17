@@ -592,22 +592,23 @@
         const f = getFiltrosActivos();
         const condiciones = [];
 
-        if (f.nrc) {
-            // NRC confirmado → filtro exacto, tiene prioridad sobre todo
-            condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
-        } else {
-            // Dropdowns — la FECHA no se envía al iframe (es solo para cross-filter entre selects)
-            if (f.facultad) condiciones.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizar(f.facultad)}'`);
-            if (f.tutor)    condiciones.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizar(f.tutor)}'`);
-            if (f.tipo)     condiciones.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizar(f.tipo)}'`);
-            if (f.estado)   condiciones.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizar(f.estado)}'`);
-            // f.fecha → NO va al iframe; su único rol es acotar los demás selects (cross-filter)
-        }
+        // Estos son los nombres EXACTOS del modelo semántico de Power BI.
+        // Los nombres internos de SharePoint no se utilizan en esta URL.
+        if (f.facultad) condiciones.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizar(f.facultad)}'`);
+        if (f.tutor)    condiciones.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizar(f.tutor)}'`);
+        if (f.tipo)     condiciones.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizar(f.tipo)}'`);
+        if (f.estado)   condiciones.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizar(f.estado)}'`);
+        if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
 
         if (condiciones.length === 0) return cfg.url;
 
         const filtro = condiciones.join(' and ');
-        return cfg.url + '&filter=' + encodeURIComponent(filtro);
+
+        // URLSearchParams codifica correctamente el filtro sin dañar la URL
+        // base del reporte. Los segmentadores nativos de Power BI siguen activos.
+        const url = new URL(cfg.url);
+        url.searchParams.set('filter', filtro);
+        return url.toString();
     }
 
     /* ========================================================
