@@ -404,22 +404,34 @@
     });
 
     // ── OData / iframe ────────────────────────────────────
+    function sanitizarFiltro(valor) {
+        return String(valor || '').replace(/'/g, "''");
+    }
+
     function buildURLFiltrada(clave) {
         const cfg = urlsBase[clave];
         if (!cfg) return misReportes[clave];
-        const base = 'https://app.powerbi.com/reportEmbed'
-            + '?reportId=' + cfg.reportId
-            + '&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13'
-            + '&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2'
-            + '&autoAuth=true&pageName=' + cfg.page
-            + '&navContentPaneEnabled=false&filterPaneEnabled=false';
+
+        const url = new URL('https://app.powerbi.com/reportEmbed');
+        url.searchParams.set('reportId', cfg.reportId);
+        url.searchParams.set('groupId', '308deb6f-aa2f-4c21-b5fb-33b977c17e13');
+        url.searchParams.set('ctid', '8fbed393-d03b-49f8-be79-cd5e1f590fb2');
+        url.searchParams.set('autoAuth', 'true');
+        url.searchParams.set('pageName', cfg.page);
+        url.searchParams.set('navContentPaneEnabled', 'false');
+        url.searchParams.set('filterPaneEnabled', 'false');
+
         const fx = [];
-        if (BUSQUEDA.facultad) fx.push("NRC_TUTOR_ACTUAL/FACULTAD eq '" + BUSQUEDA.facultad + "'");
-        if (BUSQUEDA.tutor)    fx.push("NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '" + BUSQUEDA.tutor + "'");
-        if (BUSQUEDA.tipo)     fx.push("NRC_TUTOR_ACTUAL/TIPO_NRC eq '" + BUSQUEDA.tipo + "'");
-        if (BUSQUEDA.nrc)      fx.push("NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '" + BUSQUEDA.nrc + "'");
-        if (BUSQUEDA.rut && cfg.filtroRut) fx.push("consolidado_esudiantes/RUT eq '" + BUSQUEDA.rut + "'");
-        return fx.length ? base + '&filter=' + encodeURIComponent(fx.join(' and ')) : base;
+        if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
+        if (BUSQUEDA.tutor)    fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
+        if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
+        if (BUSQUEDA.nrc)      fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
+        if (BUSQUEDA.rut && cfg.filtroRut) {
+            fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
+        }
+
+        if (fx.length) url.searchParams.set('filter', fx.join(' and '));
+        return url.toString();
     }
 
     function actualizarIframe() {
