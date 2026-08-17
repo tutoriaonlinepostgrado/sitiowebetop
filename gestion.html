@@ -331,6 +331,18 @@
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
+    // Tutores activos: controla únicamente las opciones del desplegable.
+    // No elimina ni oculta cursos históricos del catálogo o de Power BI.
+    const TUTORES_ACTIVOS = new Set(["HANS NOVAKOVIC","KIMBERLY JORQUERA","MARTA GONZALEZ","DANITZA JANSEN","SYLVIA VALENZUELA","PAULA PARDO","MARIA FERNANDA GONZALEZ","BARBARA ROJAS","CONSTANZA CONTRERAS","CARLA PENA","NOEMI PAZ","HECTOR TAPIA","CONSUELO PARGA","FRANCISCA INDA","JAVIERA ROJAS","ALYSON HERNANDEZ"]);
+    function claveTutorActivo(valor) {
+        return String(valor || '')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ').trim().toUpperCase();
+    }
+    function esTutorActivo(valor) {
+        return TUTORES_ACTIVOS.has(claveTutorActivo(valor));
+    }
+
     // ── NRC dropdown custom ───────────────────────────────
     let nrcConfirmado = '';
     let nrcDropIdx = -1;
@@ -455,7 +467,9 @@
         const valorActual = sel.value;
         const placeholder = sel.options[0].text.replace(' ⏳','');
         if (!catalogoNRC.length) return;
-        const vals = [...new Set(nrcsFiltrados(excluir).map(n => (n[campo]||'').trim()).filter(Boolean))].sort();
+        let vals = [...new Set(nrcsFiltrados(excluir).map(n => (n[campo]||'').trim()).filter(Boolean))];
+        if (campo === 'tutor') vals = vals.filter(esTutorActivo);
+        vals.sort();
         sel.innerHTML = '<option value="">' + placeholder + '</option>';
         vals.forEach(function(v) { const o = document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
         sel.value = vals.includes(valorActual) ? valorActual : '';
