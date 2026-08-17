@@ -343,6 +343,18 @@
         'BASE_SEGUIMIENTO': 'Estado Base Seguimiento'
     };
 
+    // Tutores activos: controla únicamente las opciones del desplegable.
+    // No elimina ni oculta cursos históricos del catálogo o de Power BI.
+    const TUTORES_ACTIVOS = new Set(["HANS NOVAKOVIC","KIMBERLY JORQUERA","MARTA GONZALEZ","DANITZA JANSEN","SYLVIA VALENZUELA","PAULA PARDO","MARIA FERNANDA GONZALEZ","BARBARA ROJAS","CONSTANZA CONTRERAS","CARLA PENA","NOEMI PAZ","HECTOR TAPIA","CONSUELO PARGA","FRANCISCA INDA","JAVIERA ROJAS","ALYSON HERNANDEZ"]);
+    function claveTutorActivo(valor) {
+        return String(valor || '')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ').trim().toUpperCase();
+    }
+    function esTutorActivo(valor) {
+        return TUTORES_ACTIVOS.has(claveTutorActivo(valor));
+    }
+
     /* ── estado global ── */
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
@@ -382,7 +394,7 @@
     ======================================================== */
     function poblarSelects(arr) {
         const facultades  = [...new Set(arr.map(x => x.facultad).filter(Boolean))].sort();
-        const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean))].sort();
+        const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean).filter(esTutorActivo))].sort();
         const tipos       = [...new Set(arr.map(x => x.tipo).filter(Boolean))].sort();
         const estados     = [...new Set(arr.map(x => x.estado).filter(Boolean))].sort();
         const nrcs        = [...new Set(arr.map(x => x.nrc).filter(Boolean))].sort();
@@ -540,7 +552,7 @@
         const subset = nrcsFiltrados(excluir);
         let vals;
         if (campo === 'tutor') {
-            vals = [...new Set(subset.map(x => x.tutor).filter(Boolean))].sort();
+            vals = [...new Set(subset.map(x => x.tutor).filter(Boolean).filter(esTutorActivo))].sort();
         } else {
             vals = [...new Set(subset.map(x => x[campo]).filter(Boolean))].sort();
         }
