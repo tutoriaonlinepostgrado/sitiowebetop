@@ -296,7 +296,7 @@
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CALENDARIOS':        "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=d54429931a6e1ad00200&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'CALENDARIOS':        "calendarios.html",
         'CORREOS':            "onboarding_correos.html",
         'INVITACIONES':       "onboarding_invitaciones.html",
         'PRESENTACION':       "presentacion_tutorial_innovado.html",
@@ -309,7 +309,7 @@
         'CURSOS_ACTIVOS':     { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'9df5f2db687d901b71b9', filtroRut:false },
         'CURSOS_PREPARACION': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'75dcbe8308cd22de087d', filtroRut:false },
         'CURSOS_CIERRE':      { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'ab4e8f37a94c688a5869', filtroRut:false },
-        'CALENDARIOS':        { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'d54429931a6e1ad00200', filtroRut:false }
+        'CALENDARIOS':        { local:true, filtroRut:false }
     };
 
     const titulos = {
@@ -423,6 +423,15 @@
     function buildURLFiltrada(clave) {
         const cfg = urlsBase[clave];
         if (!cfg) return misReportes[clave];
+
+        if (cfg.local) {
+            const url = new URL(misReportes[clave], window.location.href);
+            if (BUSQUEDA.facultad) url.searchParams.set('facultad', BUSQUEDA.facultad);
+            if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
+            if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
+            if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
+            return url.toString();
+        }
 
         const url = new URL('https://app.powerbi.com/reportEmbed');
         url.searchParams.set('reportId', cfg.reportId);
