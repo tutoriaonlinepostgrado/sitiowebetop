@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendarios ETOP</title>
+  <style>
+    :root{--bg:#1f2940;--panel:#26334d;--line:#354158;--accent:#7892b5;--text:#f1f5f9;--muted:#94a3b8}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    body{padding:8px;-webkit-font-smoothing:antialiased}.header{display:flex;justify-content:space-between;align-items:center;gap:20px;border:1px solid #e2e8f0;border-radius:6px;padding:8px 12px;margin-bottom:8px}
+    .header-grid{display:grid;grid-template-columns:max-content minmax(100px,1fr) max-content minmax(100px,1fr);gap:4px 20px;font-size:10px;flex:1}.h-label{color:var(--muted);font-weight:700}.h-value{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.h-value.up{text-transform:uppercase}.h-value.green{color:#10b981}.h-value.code{color:#d6e3f3;font-family:monospace;font-weight:700}
+    .logo{height:45px;object-fit:contain;max-width:170px}.summary{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:2px solid rgba(120,146,181,.18);padding:6px 0 8px;margin-bottom:4px}.summary-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px}.summary-title{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#e8edf5}.summary-sub{font-size:8px;color:var(--muted);margin-top:1px}.kpis{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.kpi{background:var(--panel);border:1px solid rgba(120,146,181,.18);border-radius:6px;padding:4px 12px;text-align:center;min-width:80px}.kpi-v{font-size:16px;font-weight:700;font-family:monospace;line-height:1.1}.kpi-l{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.kpi.total{border-color:rgba(120,146,181,.32);text-align:right}.search-row{display:flex;gap:6px;align-items:center;justify-content:flex-end}.search-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}#search{font:10px "Segoe UI",sans-serif;padding:4px 8px;border:1px solid rgba(120,146,181,.18);border-radius:5px;width:250px;outline:none;color:var(--text);background:var(--bg)}#search:focus{border-color:var(--accent)}#count{font-size:10px;color:var(--muted);margin-left:4px}
+    .table-wrap{overflow:auto;max-height:calc(100vh - 190px)}table{width:100%;border-collapse:collapse;min-width:1180px}thead{position:sticky;top:0;z-index:2}th{padding:6px;font-size:8px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,.85);text-align:left;white-space:nowrap;background:var(--bg);border-bottom:2px solid var(--accent);border-right:1px solid rgba(255,255,255,.06)}td{padding:5px 6px;font-size:10px;white-space:nowrap;border-bottom:1px solid var(--line)}tr{background:var(--bg)}tbody tr:hover{background:var(--panel)}tr.closed{background:#26334d}.nrc{background:#2b3953;border-left:2px solid var(--accent);padding:3px 6px;border-radius:2px;color:#d6e3f3;font-weight:600}.badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px}.prep{background:#fef3c7;color:#f59e0b}.active{background:#d1fae5;color:#10b981}.closing{background:#ffedd5;color:#f97316}.closed-b{background:#3a2b38;color:#ef4444}.unknown{background:#26334d;color:#94a3b8}.course{max-width:240px;overflow:hidden;text-overflow:ellipsis}.tutor{max-width:160px;overflow:hidden;text-overflow:ellipsis}.date{font-family:monospace}.center{text-align:center}.actions{display:flex;gap:4px;justify-content:center}.action{display:inline-flex;align-items:center;justify-content:center;width:24px;height:22px;border-radius:5px;text-decoration:none;background:#2b3953;border:1px solid rgba(120,146,181,.22);font-size:12px}.action:hover{border-color:#d6e3f3;background:#354563}.action.disabled{opacity:.22;pointer-events:none}.empty{padding:40px;text-align:center;color:var(--muted);font-size:13px}.error{padding:30px;text-align:center;background:#252c3d;border:2px dashed #86505a;border-radius:8px;margin:15px;color:#d7a8b0}
+    @media(max-width:850px){.header-grid{grid-template-columns:max-content 1fr}.logo{display:none}.table-wrap{max-height:calc(100vh - 240px)}#search{width:170px}}
+  </style>
+</head>
+<body>
+  <section class="header">
+    <div class="header-grid">
+      <div class="h-label">👤 TUTOR/A</div><div class="h-value up" id="h-tutor">—</div>
+      <div class="h-label">📚 PROGRAMA</div><div class="h-value" id="h-programa">—</div>
+      <div class="h-label">📧 CORREO</div><div class="h-value" id="h-correo">—</div>
+      <div class="h-label">💻 TIPO NRC</div><div class="h-value green" id="h-tipo">—</div>
+      <div class="h-label">🏷️ INTAKE</div><div class="h-value code" id="h-intake">—</div>
+      <div class="h-label">🏛️ FACULTAD</div><div class="h-value" id="h-facultad">—</div>
+    </div>
+    <img class="logo" src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo ETOP">
+  </section>
+
+  <section class="summary">
+    <div class="summary-row">
+      <div><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-v" style="color:#9bafc8" id="k-prep">0</div><div class="kpi-l">Prep.</div></div>
+        <div class="kpi"><div class="kpi-v" style="color:#75b79c" id="k-active">0</div><div class="kpi-l">Activos</div></div>
+        <div class="kpi"><div class="kpi-v" style="color:#c8a06e" id="k-closing">0</div><div class="kpi-l">Cierre</div></div>
+        <div class="kpi"><div class="kpi-v" style="color:#c88995" id="k-closed">0</div><div class="kpi-l">Cerrados</div></div>
+        <div class="kpi total"><div class="kpi-l">Total</div><div class="kpi-v" style="color:#d6e3f3" id="k-total">0</div></div>
+      </div>
+    </div>
+    <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span></div>
+  </section>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>NRC_COD_CAL</th><th>Estado</th><th>Nombre curso</th><th>Facultad</th><th>F. inicio ↑</th><th>F. fin</th><th class="center">Semanas</th><th>Tutor/a</th><th>Tipo</th><th>Periodo</th><th class="center">Acciones</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="11" class="empty">Cargando calendarios…</td></tr></tbody>
+    </table>
+  </div>
+
+  <script>
+    const SP_BASE='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=';
+    const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+    const EMAILS={
+      'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
+    };
+    const q=new URLSearchParams(location.search);let courses=[];let incidents=[];
+    const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const uniq=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))];
+    const selected=(arr,key,multi,empty='No disponible')=>{const v=uniq(arr,key);return v.length===1?v[0]:(v.length>1?multi:empty)};
+    const dateValue=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(d.getTime())?null:d};
+    const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
+    const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
+    function filterCourses(data){return data.filter(x=>(!q.get('facultad')||norm(x.facultad)===norm(q.get('facultad')))&&(!q.get('tutor')||norm(x.tutor)===norm(q.get('tutor')))&&(!q.get('tipo')||norm(x.tipo)===norm(q.get('tipo')))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function updateHeader(){
+      const tutor=selected(courses,'tutor','Varios / No definido');
+      document.getElementById('h-tutor').textContent=tutor;
+      document.getElementById('h-programa').textContent=selected(courses,'nombre programa','Múltiples programas');
+      document.getElementById('h-correo').textContent=uniq(courses,'tutor').length===1?(EMAILS[norm(tutor)]||'No disponible'):'No disponible';
+      document.getElementById('h-tipo').textContent=selected(courses,'tipo','Varios');
+      document.getElementById('h-intake').textContent=selected(courses,'intake','Múltiples versiones');
+      document.getElementById('h-facultad').textContent=selected(courses,'facultad','Varias');
+    }
+    function badge(state){const s=norm(state);if(s==='PREPARACION')return['PREP','prep'];if(s==='ACTIVO')return['ACTIVO','active'];if(s==='EN CIERRE')return['CIERRE','closing'];if(s==='CERRADO')return['CERRADO','closed-b'];return[state||'—','unknown'];}
+    function action(url,title,icon,enabled=true){return `<a class="action${enabled?'':' disabled'}" ${enabled?`href="${esc(url)}" target="_blank" rel="noopener"`:''} title="${esc(title)}">${icon}</a>`;}
+    function buildIncidentMaps(){const byCourse=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!byCourse.has(k))byCourse.set(k,[]);byCourse.get(k).push(i)});return byCourse;}
+    function render(){
+      const byCourse=buildIncidentMaps();const body=document.getElementById('rows');
+      courses.sort((a,b)=>(dateValue(a['fecha inicio'])?.getTime()||Infinity)-(dateValue(b['fecha inicio'])?.getTime()||Infinity));
+      updateHeader();updateKPIs();
+      if(courses.length>3000){body.innerHTML=`<tr><td colspan="11"><div class="error"><div style="font-size:35px;margin-bottom:5px">⚠️</div><strong>Demasiados registros (${courses.length.toLocaleString('es-CL')})</strong><div style="font-size:12px;color:#bfc8d5;margin-top:8px">Utiliza los filtros superiores de Gestión para acotar los resultados.</div></div></td></tr>`;document.getElementById('count').textContent='';return;}
+      if(!courses.length){body.innerHTML='<tr><td colspan="11" class="empty">No hay cursos para los filtros seleccionados.</td></tr>';updateHeader();updateKPIs();return;}
+      body.innerHTML=courses.map(x=>{const b=badge(x.estado);const inc=byCourse.get(String(x.id))||[];const canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'';const hasInc=inc.some(i=>norm(i.qaIncidencias)==='CON INCIDENCIA'||(norm(i.estadoIncidencia)!=='NO APLICA'&&norm(i.estadoIncidencia)!=='SIN INCIDENCIA'));const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',fechaInicio:x['fecha inicio']||'',fechaFin:x['fecha fin']||''});const actions=[action(SP_BASE+x.id,'Ver curso en base calendarios','📋'),action(canvas,'Ver el curso en Canvas','🖥',!!canvas),action(BASE+'presentacion_tutorial_innovado.html?'+p,'Presentación Tutorial','📊'),action(BASE+'comunicaciones_etop.html','Hub Comunicaciones','✉️'),action(BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||''),'Ver incidencias','⚠',hasInc)].join('');return `<tr class="${norm(x.estado)==='CERRADO'?'closed':''}" data-search="${esc(norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')))}"><td><span class="nrc">${esc(x.nrc||'—')}</span></td><td><span class="badge ${b[1]}">${esc(b[0])}</span></td><td class="course" title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</td><td>${esc(x.facultad||'—')}</td><td class="date">${fmtDate(x['fecha inicio'])}</td><td class="date">${fmtDate(x['fecha fin'])}</td><td class="center">${weeks(x['fecha inicio'],x['fecha fin'])}</td><td class="tutor" title="${esc(x.tutor||'')}">${esc(x.tutor||'—')}</td><td>${esc(x.tipo||'—')}</td><td>${esc(x.periodo||'—')}</td><td><div class="actions">${actions}</div></td></tr>`}).join('');applySearch();
+    }
+    function updateKPIs(){const count=s=>courses.filter(x=>norm(x.estado)===s).length;const n=courses.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos en listado`;}
+    function applySearch(){const s=norm(document.getElementById('search').value);const rows=[...document.querySelectorAll('#rows tr[data-search]')];let visible=0;rows.forEach(r=>{const ok=!s||r.dataset.search.includes(s);r.style.display=ok?'':'none';if(ok)visible++});document.getElementById('count').textContent=`${visible} de ${rows.length} cursos`;}
+    document.getElementById('search').addEventListener('input',applySearch);
+    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'})]).then(async([nr,ir])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');courses=filterCourses(await nr.json());incidents=ir.ok?await ir.json():[];render();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
+  </script>
+</body>
+</html>
