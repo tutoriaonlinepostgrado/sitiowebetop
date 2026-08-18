@@ -514,7 +514,22 @@ async function load(){
 
     populateFilters();
     $('updated').textContent=new Date().toLocaleString('es-CL');
+
+    // Permite abrir esta página directamente desde el Explorador con ?nrc=XXXX.
+    const nrcDirecto=new URLSearchParams(window.location.search).get('nrc')?.trim()||'';
+    if(nrcDirecto)$('q').value=nrcDirecto;
     renderAll();
+
+    if(nrcDirecto){
+      requestAnimationFrame(()=>{
+        const objetivo=[...document.querySelectorAll('.acc')]
+          .find(card=>norm(card.dataset.nrc)===norm(nrcDirecto));
+        if(objetivo){
+          objetivo.classList.add('open');
+          objetivo.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      });
+    }
 
   }catch(e){
     console.error(e);
@@ -653,7 +668,7 @@ function renderCourse(c){
   const deriveUrl=buildDeriveUrl(c);
   const masterUrl=buildMasterUrl(c);
 
-  return `<article class="acc" data-id="${esc(c.id)}" style="--acc:${accent}">
+  return `<article class="acc" data-id="${esc(c.id)}" data-nrc="${esc(c.nrc)}" style="--acc:${accent}">
     <div class="acc-head" onclick="toggleAcc(this)">
       <div class="acc-left">
         <div class="acc-title-line">
