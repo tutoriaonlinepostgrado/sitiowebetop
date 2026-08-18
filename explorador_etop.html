@@ -24,6 +24,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .nav-links{display:flex;gap:4px}
 .nav-link{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;color:var(--text-muted);text-decoration:none;cursor:pointer;border:none;background:none;transition:all .15s}
 .nav-link:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.nav-link.active{background:rgba(250,204,21,.12);color:var(--yellow)}
 .nav-stat{font-size:11px;color:var(--text-dim)}
 .nav-stat span{color:var(--yellow);font-weight:700}
 
@@ -45,6 +46,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .search-hero h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
 .search-hero h1 span{color:var(--yellow)}
 .search-hero p{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+.search-guide{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:-12px auto 22px;color:var(--text-dim);font-size:10px}.search-guide span{padding:3px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025)}
 .search-wrap{position:relative;max-width:980px;margin:0 auto}
 .search-input{width:100%;background:var(--surface);border:1.5px solid var(--border2);color:var(--text);border-radius:12px;padding:14px 44px 14px 48px;font-size:15px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
 .search-input:focus{border-color:rgba(250,204,21,.5);box-shadow:0 0 0 3px rgba(250,204,21,.08)}
@@ -194,6 +196,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .pill-all:hover,.pill-all.active{background:rgba(255,255,255,.12);color:var(--text);border-color:rgba(255,255,255,.3)}
 
 .prog-chevron{color:var(--text-dim);font-size:14px;flex-shrink:0;transition:transform .2s}
+.prog-open-label{font-size:10px;font-weight:700;color:var(--yellow);padding:4px 8px;border:1px solid rgba(250,204,21,.22);border-radius:5px;white-space:nowrap}
 .prog-card.open .prog-chevron{transform:rotate(180deg);color:var(--yellow)}
 .prog-body{display:none;border-top:1px solid var(--border)}
 .prog-card.open .prog-body{display:block}
@@ -256,6 +259,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .active-filter-note.show{display:flex}
 .active-filter-note strong{color:var(--yellow)}
 .active-filter-note button{margin-left:auto;border:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:5px;padding:3px 8px;cursor:pointer}
+.simple-dir-note{font-size:11px;color:var(--text-dim);margin:-8px 0 14px}.simple-dir-note strong{color:var(--text-muted)}
 .td-empty{text-align:center;padding:20px;color:var(--text-dim);font-style:italic;font-size:12px}
 
 /* LOADING */
@@ -317,10 +321,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
   <div class="nav-brand"><div class="nav-dot"></div><span class="nav-title">Explorador ETOP</span></div>
   <div class="nav-links">
     <button class="nav-link top-tab active" onclick="showExplorerView('courses','sec-buscar',this)">🔍 Buscar</button>
-    <button class="nav-link top-tab" onclick="showExplorerView('courses','sec-stats',this)">📊 Estadísticas</button>
     <button class="nav-link top-tab" onclick="showExplorerView('courses','sec-dir',this)">📚 Directorio</button>
-    <button class="nav-link top-tab" onclick="showExplorerView('calendar','',this)">📅 Formateador Calendarios</button>
-    <button class="nav-link top-tab" onclick="showExplorerView('folders','',this)">📂 Carpetas Creadas</button>
   </div>
   <div class="nav-stat">Total: <span id="navTotal">—</span> NRC</div>
 </nav>
@@ -330,7 +331,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <div id="sec-buscar">
   <div class="search-hero">
     <h1>Busca cualquier <span>NRC</span> o programa</h1>
-    <p>Escribe un NRC, curso, programa, tutor, facultad o fecha de inicio — por ejemplo 10-08-2026</p>
+    <p>Escribe lo que conoces del curso. El Explorador encontrará las coincidencias y mostrará sus accesos.</p>
+    <div class="search-guide"><span>NRC</span><span>Curso</span><span>Programa</span><span>Tutor</span><span>Intake</span><span>Fecha</span></div>
     <div class="search-wrap" id="searchWrap">
       <span class="search-ico">🔍</span>
       <input class="search-input" id="globalSearch" type="text"
@@ -346,7 +348,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 </div>
 
 <!-- ESTADÍSTICAS -->
-<div id="sec-stats" class="section">
+<div id="sec-stats" class="section" style="display:none">
   <div class="section-label">📊 Estadísticas generales</div>
   <div class="stats-grid" id="statsGrid">
     <div class="loading-state" style="grid-column:1/-1;padding:32px"><div class="spinner"></div><span>Cargando…</span></div>
@@ -369,6 +371,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <!-- DIRECTORIO -->
 <div id="sec-dir" class="section">
   <div class="section-label">📚 Directorio de programas</div>
+  <div class="simple-dir-note"><strong>Busca un programa</strong> y selecciona “Ver cursos”. Dentro de la tabla puedes ordenar cualquier columna.</div>
   <div class="active-filter-note" id="activeFilterNote">
     Filtro estadístico: <strong id="activeFilterText">—</strong>
     <button type="button" onclick="clearStatFilter()">Quitar filtro</button>
@@ -381,17 +384,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
         oninput="filtrarDir(this.value)">
     </div>
 
-    <div class="dir-date-field">
-      <label for="fechaInicioDesde">Inicio desde</label>
-      <input type="date" id="fechaInicioDesde" onchange="aplicarFiltroFecha()">
-    </div>
-
-    <div class="dir-date-field">
-      <label for="fechaInicioHasta">Inicio hasta</label>
-      <input type="date" id="fechaInicioHasta" onchange="aplicarFiltroFecha()">
-    </div>
-
-    <button type="button" class="dir-date-clear" onclick="limpiarFiltroFecha()">Limpiar fechas</button>
+    <input type="date" id="fechaInicioDesde" hidden>
+    <input type="date" id="fechaInicioHasta" hidden>
   </div>
   <div class="prog-list" id="progList">
     <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
@@ -900,15 +894,14 @@ function renderCards(q){
     const bIntegracion=urlC?`<a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank" rel="noopener">🔗 Verificar curso en web de integración</a>`:'';
     const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="incidencias.html?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
     return`<div class="result-card">
-      <div class="rc-top"><div><div class="rc-nrc">${filtroTarjeta(x.nrc,'nrc')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${filtroTarjeta(x.curso,'curso')}</div></div><div><button type="button" class="rc-filter-badge" data-valor="${esc(encodeURIComponent(String(x.estado||'')))}" title="Filtrar directorio por estado" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'estado')">${badge(x.estado)}</button></div></div>
+      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc||'—')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${esc(x.curso||'—')}</div></div><div><button type="button" class="rc-filter-badge" data-valor="${esc(encodeURIComponent(String(x.estado||'')))}" title="Ver cursos con este estado" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'estado')">${badge(x.estado)}</button></div></div>
       <div class="rc-grid">
         <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${filtroTarjeta(x.tutor,'tutor')}</div></div>
-        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${filtroTarjeta(fmtF(x.fechaInicio),'fecha')}</div></div>
-        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${filtroTarjeta(fmtF(x.fechaFin),'fecha')}</div></div>
-        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${filtroTarjeta(x.facultad,'facultad')}</div></div>
-        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${filtroTarjeta(x.codigoCurso,'codigo')}</div></div>
+        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${esc(fmtF(x.fechaInicio))}</div></div>
+        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${esc(fmtF(x.fechaFin))}</div></div>
+        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad||'—')}</div></div>
+        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso||'—')}</div></div>
         <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
-        <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${filtroTarjeta(x.estado,'estado')}</div></div>
       </div>
       ${bSP||bN||bCanvas||bIntegracion||bI?`<div class="rc-links">${bSP}${bN}${bCanvas}${bIntegracion}${bI}</div>`:''}
     </div>`;
@@ -1342,24 +1335,13 @@ function renderDir(filtro=''){
     return`<div class="prog-card" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
         <div class="prog-header-left"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-chevron">▾</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-open-label">Ver cursos</span><span class="prog-chevron">▾</span></div>
       </div>
       <div class="prog-body">
         <div class="prog-tutores"><strong>Tutores:</strong>${tutH}</div>
         <div class="filter-bar" id="fbar-${idx}">
           Mostrando: <span class="filter-bar-label" id="flabel-${idx}">—</span>
           <span class="filter-bar-count" id="fcount-${idx}"></span>
-        </div>
-        <div class="list-toolbar">
-          <span class="list-toolbar-label">Vista</span>
-          <select id="group-${idx}" onchange="setDirGroup(${idx},this.value)">
-            <option value="">Sin agrupar</option>
-            <option value="estado">Agrupar por Estado</option>
-            <option value="tutor">Agrupar por Tutor</option>
-            <option value="intake">Agrupar por Intake / Versión</option>
-            <option value="fechaInicio">Agrupar por Inicio</option>
-          </select>
-          <button type="button" onclick="clearDirView(${idx})">Limpiar vista</button>
         </div>
         <div style="overflow-x:auto">
           <table class="nrc-table">
@@ -1373,16 +1355,6 @@ function renderDir(filtro=''){
                 <th class="sortable" data-key="fechaFin" onclick="setDirSort(${idx},'fechaFin')">Fin <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="tutor" onclick="setDirSort(${idx},'tutor')">Tutor <span class="sort-ind"></span></th>
                 <th>Accesos</th>
-              </tr>
-              <tr class="filter-row">
-                <th>${renderSelectFiltro(idx,'nrc',cs,'Todos')}</th>
-                <th>${renderSelectFiltro(idx,'curso',cs,'Todos')}</th>
-                <th>${renderSelectFiltro(idx,'intake',cs,'Todos')}</th>
-                <th>${renderSelectFiltro(idx,'estado',cs,'Todos')}</th>
-                <th>${renderSelectFiltro(idx,'fechaInicio',cs,'Todas')}</th>
-                <th>${renderSelectFiltro(idx,'fechaFin',cs,'Todas')}</th>
-                <th>${renderSelectFiltro(idx,'tutor',cs,'Todos')}</th>
-                <th></th>
               </tr>
             </thead>
             <tbody id="tbody-${idx}">${rows}</tbody>
@@ -1558,10 +1530,7 @@ function downloadTab4(){
   injectTableIntoXlsx(wbout,xml,'Calendarios',tableRef).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Calendarios_a_base_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx';a.click();URL.revokeObjectURL(a.href);});
 }
 async function sendToSharePointCal(){
-  if(!toolState.t4Data)return;const sr=document.getElementById('t4-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0c6b8c2435624545bb76f5137f3f9f7c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dz1BzpFg1R-ku-OF2KCpRJ0uyeAX9Uot-aQ70f_0QNI",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(toolState.t4Data)});
-  if(res.ok||res.status===202)sr.innerHTML='<div class="alert success">✅ ¡Éxito! Calendario enviado a SharePoint.</div>';else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
-  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
+  return;
 }
 
 let cCount=0, cHTML='';
