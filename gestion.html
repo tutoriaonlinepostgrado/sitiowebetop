@@ -170,7 +170,7 @@
             <div class="top-bar-sep"></div>
             <div class="top-bar-search">
                 <!-- FACULTAD -->
-                <select class="fsel-topbar" id="sel-facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
+                <select class="fsel-topbar" id="sel-facultad" data-filtro="facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
                     <option value="">Facultad ⏳</option>
                     <option value="ARDI">ARDI</option>
                     <option value="CSRE">CSRE</option>
@@ -186,7 +186,7 @@
                     <option value="VRP">VRP</option>
                 </select>
                 <!-- TUTOR -->
-                <select class="fsel-topbar" id="sel-tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
+                <select class="fsel-topbar" id="sel-tutor" data-filtro="tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
                     <option value="">Tutor ⏳</option>
                     <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
                     <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
@@ -212,14 +212,18 @@
                     <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
                 </select>
                 <!-- TIPO NRC -->
-                <select class="fsel-topbar" id="sel-tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
+                <select class="fsel-topbar" id="sel-tipo" data-filtro="tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
                     <option value="">Tipo NRC ⏳</option>
                     <option value="100%ONLINE">100%ONLINE</option>
                     <option value="SEMIPRES">SEMIPRES</option>
                 </select>
+                <!-- INTAKE / VERSION: visible únicamente en Calendarios -->
+                <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="display:none;max-width:175px">
+                    <option value="">Intake/Versión ⏳</option>
+                </select>
                 <div class="top-bar-sep"></div>
                 <!-- NRC dropdown custom -->
-                <div class="search-group">
+                <div class="search-group" data-filtro="nrc">
                     <span class="search-group-label">NRC</span>
                     <div class="nrc-pill-wrap" id="nrc-pill-wrap">
                         <span class="nrc-pill-icon">⌗</span>
@@ -233,7 +237,7 @@
                     </div>
                 </div>
                 <!-- RUT -->
-                <div class="search-group">
+                <div class="search-group" data-filtro="rut">
                     <span class="search-group-label">RUT</span>
                     <div class="search-pill-wrap">
                         <span class="search-pill-icon">◈</span>
@@ -309,6 +313,7 @@
         'CURSOS_ACTIVOS':     { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'9df5f2db687d901b71b9', filtroRut:false },
         'CURSOS_PREPARACION': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'75dcbe8308cd22de087d', filtroRut:false },
         'CURSOS_CIERRE':      { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'ab4e8f37a94c688a5869', filtroRut:false },
+        'FICHA_ESTUDIANTE':   { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'0961bca799ff83e065db', filtroRut:true  },
         'CALENDARIOS':        { local:true, filtroRut:false }
     };
 
@@ -327,7 +332,7 @@
     };
 
     // ── Estado ────────────────────────────────────────────
-    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null };
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null };
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
@@ -429,6 +434,7 @@
             if (BUSQUEDA.facultad) url.searchParams.set('facultad', BUSQUEDA.facultad);
             if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
+            if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
             return url.toString();
         }
@@ -461,12 +467,16 @@
 
     // ── Cross-filter selects ──────────────────────────────
     const eqCI = (a,b) => (a||'').toUpperCase() === (b||'').toUpperCase();
+    function filtroVisible(campo) {
+        return (FILTROS_POR_VISTA[vistaActual] || []).includes(campo);
+    }
     function nrcsFiltrados(excluir) {
         return catalogoNRC.filter(function(n) {
-            if (excluir !== 'facultad' && BUSQUEDA.facultad && !eqCI(n.facultad, BUSQUEDA.facultad)) return false;
-            if (excluir !== 'tutor'    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
-            if (excluir !== 'tipo'     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
-            if (excluir !== 'nrc'      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
+            if (excluir !== 'facultad' && filtroVisible('facultad') && BUSQUEDA.facultad && !eqCI(n.facultad, BUSQUEDA.facultad)) return false;
+            if (excluir !== 'tutor'    && filtroVisible('tutor')    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
+            if (excluir !== 'tipo'     && filtroVisible('tipo')     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
+            if (excluir !== 'intake'   && filtroVisible('intake')   && BUSQUEDA.intake   && !eqCI(n.intake,   BUSQUEDA.intake))   return false;
+            if (excluir !== 'nrc'      && filtroVisible('nrc')      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
             return true;
         });
     }
@@ -489,6 +499,7 @@
         reconstruirSelect('sel-facultad','facultad','facultad');
         reconstruirSelect('sel-tutor','tutor','tutor');
         reconstruirSelect('sel-tipo','tipo','tipo');
+        reconstruirSelect('sel-intake','intake','intake');
     }
 
     // ── Aplicar filtro ────────────────────────────────────
@@ -501,13 +512,14 @@
 
     // ── Limpiar ───────────────────────────────────────────
     function limpiarBusqueda() {
-        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null;
+        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null;
         nrcConfirmado='';
         document.getElementById('input-nrc').value='';
         document.getElementById('input-rut').value='';
         document.getElementById('sel-facultad').value='';
         document.getElementById('sel-tutor').value='';
         document.getElementById('sel-tipo').value='';
+        document.getElementById('sel-intake').value='';
         ocultarNRCDropdown();
         sincronizarFiltros();
         actualizarBadge();
@@ -517,11 +529,12 @@
     // ── Badge ─────────────────────────────────────────────
     function actualizarBadge() {
         const p=[];
-        if (BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
-        if (BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
-        if (BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
-        if (BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
-        if (BUSQUEDA.rut)      p.push('RUT: '+BUSQUEDA.rut);
+        if (filtroVisible('facultad') && BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
+        if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
+        if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
+        if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
+        if (filtroVisible('nrc')      && BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
+        if (filtroVisible('rut')      && BUSQUEDA.rut)      p.push('RUT: '+BUSQUEDA.rut);
         const badge=document.getElementById('filter-badge'), clear=document.getElementById('btn-clear-filter');
         if (p.length) { document.getElementById('badge-txt').textContent=p.join(' · '); badge.classList.add('on'); clear.classList.add('on'); }
         else { badge.classList.remove('on'); clear.classList.remove('on'); }
@@ -533,14 +546,14 @@
             const resp = await fetch('nrcs.json', { cache:'no-store' });
             if (!resp.ok) throw new Error('no ok');
             catalogoNRC = await resp.json();
-            ['sel-facultad','sel-tutor','sel-tipo'].forEach(function(id) {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
             });
             sincronizarFiltros();
         } catch(err) {
-            ['sel-facultad','sel-tutor','sel-tipo'].forEach(function(id) {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
@@ -626,8 +639,34 @@
     }
 
     // ── Navegación: reportes Power BI ────────────────────
+    const FILTROS_POR_VISTA = {
+        'DASHBOARD':          ['facultad','tutor','tipo','nrc','rut'],
+        'NOMINA_ESTUDIANTES': ['facultad','tutor','tipo','nrc','rut'],
+        'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','nrc'],
+        'CURSOS_PREPARACION': ['facultad','tutor','tipo','nrc'],
+        'CURSOS_CIERRE':      ['facultad','tutor','tipo','nrc'],
+        'FICHA_ESTUDIANTE':   ['rut'],
+        'CALENDARIOS':        ['facultad','tutor','tipo','intake','nrc'],
+        'CORREOS':            ['nrc'],
+        'INVITACIONES':       ['nrc'],
+        'PRESENTACION':       ['nrc'],
+        'CIERRE':             ['nrc']
+    };
+
+    function configurarFiltros(clave) {
+        const visibles = FILTROS_POR_VISTA[clave] || [];
+        document.querySelectorAll('[data-filtro]').forEach(function(el) {
+            el.style.display = visibles.includes(el.dataset.filtro) ? '' : 'none';
+        });
+        const hayFiltros = visibles.length > 0;
+        document.querySelector('.top-bar-search').style.display = hayFiltros ? 'flex' : 'none';
+        if (catalogoNRC.length) sincronizarFiltros();
+        actualizarBadge();
+    }
+
     function cargar(clave, btn) {
         vistaActual = clave;
+        configurarFiltros(clave);
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
         document.getElementById('visor').src = urlsBase[clave] ? buildURLFiltrada(clave) : misReportes[clave];
@@ -640,6 +679,7 @@
     // ── Navegación: páginas de onboarding (GitHub Pages) ──
     function cargarOnboarding(clave, btn) {
         vistaActual = clave;
+        configurarFiltros(clave);
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
 
@@ -705,6 +745,7 @@
 
     function mostrarCanales(btn) {
         vistaActual = null;
+        configurarFiltros(null);
         document.getElementById('visor').style.display = 'none';
         document.getElementById('canal-splash').classList.add('visible');
         document.querySelectorAll('.menu-btn,.canal-btn').forEach(b => b.classList.remove('active'));
