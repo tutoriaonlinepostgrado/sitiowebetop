@@ -77,6 +77,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .rc-programa{font-size:12px;font-weight:600;color:var(--text);margin-top:2px}
 .dir-jump{border:0;background:none;padding:0;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;text-align:left}
 .dir-jump:hover{color:var(--yellow);text-decoration:underline}
+.rc-filter-value{border:0;background:none;padding:0;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;text-align:left;border-radius:3px}
+.rc-filter-value:hover{color:var(--yellow);text-decoration:underline}
+.rc-filter-value:focus-visible{outline:1px solid var(--yellow);outline-offset:3px}
+.rc-filter-badge{border:0;background:none;padding:0;cursor:pointer;border-radius:5px}
+.rc-filter-badge:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.rc-filter-badge:focus-visible{outline:1px solid var(--yellow);outline-offset:3px}
 .rc-curso{font-size:11px;color:var(--text-muted);margin-top:2px}
 .rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px 18px;margin-top:12px}
 .rc-item-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:2px}
@@ -841,6 +847,13 @@ function closeSug(){document.getElementById('sugBox').classList.remove('open');s
 function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
 document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
+function filtroTarjeta(valor,tipo='dato',texto=null){
+  if(valor===undefined||valor===null||String(valor).trim()==='')return '—';
+  const codificado=encodeURIComponent(String(valor));
+  const visible=texto===null?String(valor):String(texto);
+  return `<button type="button" class="rc-filter-value" data-valor="${esc(codificado)}" title="Filtrar directorio por ${esc(visible)}" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'${tipo}')">${esc(visible)}</button>`;
+}
+
 function renderCards(q){
   const c=document.getElementById('searchResults'),qn=norm(q);
   if(!qn||qn.length<2){c.innerHTML='';return;}
@@ -852,15 +865,15 @@ function renderCards(q){
     const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank">🗂 NRC Tutor Actual</a>`:'';
     const bC=urlC?`<a class="rc-btn rc-btn-canvas" href="${esc(urlC)}" target="_blank">🖥 Canvas</a><a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank">🔗 Int-CVS</a>`:'';
     return`<div class="result-card">
-      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc)}</div><div class="rc-programa"><button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(x.programa)}','programa')">${esc(x.programa)}</button></div><div class="rc-curso">${esc(x.curso)}</div></div><div>${badge(x.estado)}</div></div>
+      <div class="rc-top"><div><div class="rc-nrc">${filtroTarjeta(x.nrc,'nrc')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${filtroTarjeta(x.curso,'curso')}</div></div><div><button type="button" class="rc-filter-badge" data-valor="${esc(encodeURIComponent(String(x.estado||'')))}" title="Filtrar directorio por estado" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'estado')">${badge(x.estado)}</button></div></div>
       <div class="rc-grid">
-        <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${esc(x.tutor)}</div></div>
-        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${fmtF(x.fechaInicio)}</div></div>
-        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${fmtF(x.fechaFin)}</div></div>
-        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad)}</div></div>
-        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso)||'—'}</div></div>
-        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${x.intake?`<button type="button" class="dir-jump" onclick="navegarDirectorio('${esc(x.intake)}','intake')">${esc(x.intake)}</button>`:'—'}</div></div>
-        <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${esc(x.estado)}</div></div>
+        <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${filtroTarjeta(x.tutor,'tutor')}</div></div>
+        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${filtroTarjeta(fmtF(x.fechaInicio),'fecha')}</div></div>
+        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${filtroTarjeta(fmtF(x.fechaFin),'fecha')}</div></div>
+        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${filtroTarjeta(x.facultad,'facultad')}</div></div>
+        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${filtroTarjeta(x.codigoCurso,'codigo')}</div></div>
+        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
+        <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${filtroTarjeta(x.estado,'estado')}</div></div>
       </div>
       ${bSP||bN||bC?`<div class="rc-links">${bSP}${bN}${bC}</div>`:''}
     </div>`;
@@ -1029,7 +1042,7 @@ function cursoCumpleFiltroEstadistico(c){
 
 function coincideBusquedaFlexible(c,terminos){
   if(!terminos.length)return true;
-  const bolsa=norm([c.programa,c.intake,c.nrc,c.curso,c.codigoCurso,c.tutor,c.facultad,c.estado].join(' '));
+  const bolsa=norm([c.programa,c.intake,c.nrc,c.curso,c.codigoCurso,c.tutor,c.facultad,c.estado,c.fechaInicio,c.fechaFin,fmtF(c.fechaInicio),fmtF(c.fechaFin)].join(' '));
   return terminos.every(t=>bolsa.includes(t));
 }
 
