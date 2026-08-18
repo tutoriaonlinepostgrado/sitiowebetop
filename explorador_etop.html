@@ -93,6 +93,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .rc-btn-sp{background:#0ea5e9;color:#fff}
 .rc-btn-canvas{background:#0e7490;color:#fff}
 .rc-btn-intcvs{background:#d97706;color:#fff}
+.rc-btn-inc{background:#7c3aed;color:#fff}
 .search-empty{text-align:center;padding:32px 20px;color:var(--text-dim);font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
 
 /* ══ STATS ══ */
@@ -647,11 +648,35 @@ function icon(p){const n=norm(p);if(n.includes('salud'))return'🏥';if(n.includ
 /* ── CARGA ─────────────────────────────── */
 async function cargar(){
   try{
-    const r=await fetch(NRCS_URL+'?t='+Date.now());
-    if(!r.ok)throw new Error('No se pudo cargar nrcs.json: HTTP '+r.status);
+    const marca='?t='+Date.now();
+    const [rCursos,rIncidencias]=await Promise.all([
+      fetch(NRCS_URL+marca),
+      fetch('incidencias.json'+marca)
+    ]);
+    if(!rCursos.ok)throw new Error('No se pudo cargar nrcs.json: HTTP '+rCursos.status);
 
-    const data=await r.json();
+    const data=await rCursos.json();
     const base=Array.isArray(data)?data:(data.value||[]);
+    let incidencias=[];
+    if(rIncidencias.ok){
+      const dataInc=await rIncidencias.json();
+      incidencias=Array.isArray(dataInc)?dataInc:(dataInc.value||[]);
+    }else{
+      console.warn('No se pudo cargar incidencias.json: HTTP '+rIncidencias.status);
+    }
+
+    // El cruce se realiza por ID del curso: nrcs.json[id] ↔ incidencias.json[cursoId].
+    const canvasPorCurso=new Map();
+    const cursosConIncidencias=new Set();
+    incidencias.forEach(inc=>{
+      const cursoId=String(inc.cursoId??'').trim();
+      if(!cursoId)return;
+      const urlCanvas=String(inc.urlCanvas||'').trim();
+      if(urlCanvas&&!canvasPorCurso.has(cursoId))canvasPorCurso.set(cursoId,urlCanvas);
+      if(String(inc.qaIncidencias||'').trim().toUpperCase()==='CON INCIDENCIA'){
+        cursosConIncidencias.add(cursoId);
+      }
+    });
 
     all=base.map(item=>{
       const nrc=String(item.nrc||'').trim();
@@ -712,6 +737,9 @@ async function cargar(){
       const itemId=
         item.id||item.ID||item.Id||item.itemId||
         item['Item ID']||item['ID elemento']||'';
+      const claveCurso=String(itemId).trim();
+      const urlCanvas=canvasPorCurso.get(claveCurso)||'';
+      const tieneIncidencias=cursosConIncidencias.has(claveCurso);
 
       return{
         nrc,
@@ -728,6 +756,8 @@ async function cargar(){
         fechaFin:ff,
         fechaObj:parseFecha(fi),
         itemId,
+        urlCanvas,
+        tieneIncidencias,
         urls:buildUrls(nrc,intake,periodo,itemId),
         _s:norm([
           nrc,prog,cur,codigo,materia,intake,periodo,
@@ -865,8 +895,10 @@ function renderCards(q){
   c.innerHTML=found.map(x=>{
     const{urlSP,urlNrcTutor,urlC}=x.urls;
     const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
-    const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank">🗂 NRC Tutor Actual</a>`:'';
-    const bC=urlC?`<a class="rc-btn rc-btn-canvas" href="${esc(urlC)}" target="_blank">🖥 Canvas</a><a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank">🔗 Int-CVS</a>`:'';
+    const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank" rel="noopener">🗂 Ver el curso en base calendarios</a>`:'';
+    const bCanvas=x.urlCanvas?`<a class="rc-btn rc-btn-canvas" href="${esc(x.urlCanvas)}" target="_blank" rel="noopener">🖥 Ver el curso en Canvas</a>`:'';
+    const bIntegracion=urlC?`<a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank" rel="noopener">🔗 Verificar curso en web de integración</a>`:'';
+    const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="incidencias.html?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
     return`<div class="result-card">
       <div class="rc-top"><div><div class="rc-nrc">${filtroTarjeta(x.nrc,'nrc')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${filtroTarjeta(x.curso,'curso')}</div></div><div><button type="button" class="rc-filter-badge" data-valor="${esc(encodeURIComponent(String(x.estado||'')))}" title="Filtrar directorio por estado" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'estado')">${badge(x.estado)}</button></div></div>
       <div class="rc-grid">
@@ -878,7 +910,7 @@ function renderCards(q){
         <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
         <div><div class="rc-item-label">Estado</div><div class="rc-item-val">${filtroTarjeta(x.estado,'estado')}</div></div>
       </div>
-      ${bSP||bN||bC?`<div class="rc-links">${bSP}${bN}${bC}</div>`:''}
+      ${bSP||bN||bCanvas||bIntegracion||bI?`<div class="rc-links">${bSP}${bN}${bCanvas}${bIntegracion}${bI}</div>`:''}
     </div>`;
   }).join('');
 }
