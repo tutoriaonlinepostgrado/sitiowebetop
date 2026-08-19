@@ -422,7 +422,11 @@
 
     // ── OData / iframe ────────────────────────────────────
     function sanitizarFiltro(valor) {
-        return String(valor || '').replace(/'/g, "''");
+        return String(valor || '')
+            .replace(/'/g, "''")
+            // El % debe llegar como "%25" al parser OData de Power BI.
+            // URLSearchParams aplicará la segunda capa de codificación (%2525).
+            .replace(/%/g, '%25');
     }
 
     function buildURLFiltrada(clave) {
