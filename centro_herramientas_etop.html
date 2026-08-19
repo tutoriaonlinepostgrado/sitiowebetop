@@ -513,12 +513,15 @@
   <div class="helper">💡 Puedes pegar múltiples bloques a la vez. Asegúrate de incluir la fila de encabezados (NRC, Fecha de Inicio, Nombre Asignatura, etc.).</div>
   <div class="form-group"><label>📋 Pega aquí el bloque del calendario:</label><textarea id="t4-texto" placeholder="Pega aquí el bloque copiado del Excel..." style="min-height:220px;"></textarea></div>
   <hr class="divider">
-  <div style="font-weight:700; margin-bottom:1rem;">2. Completa los campos manuales</div>
+  <div style="font-weight:700; margin-bottom:0.35rem;">2. Identifica el programa y genera la versión</div>
+  <div class="helper" id="t4-catalogos-status">⏳ Cargando opciones oficiales desde nrcs.json...</div>
   <div class="form-grid">
-    <div class="form-group"><label>MATERIA (sin espacios, ej: MDL711)</label><input type="text" id="t4-materia" placeholder="Ej: MDL711" /></div>
-    <div class="form-group"><label>INTAKE O VERSION</label><input type="text" id="t4-intake" placeholder="Ej: V1" /></div>
-    <div class="form-group"><label>NOMBRE DE PROGRAMA (vacío = usar el del calendario)</label><input type="text" id="t4-programa" placeholder="Opcional" /></div>
-    <div class="form-group"><label>FACULTAD (vacío = usar la del calendario)</label><input type="text" id="t4-facultad" placeholder="Opcional" /></div>
+    <div class="form-group"><label>NOMBRE DE PROGRAMA</label><select id="t4-programa" onchange="t4ProgramaCambio()"><option value="">— Selecciona programa —</option></select></div>
+    <div class="form-group"><label>MATERIA</label><select id="t4-materia" onchange="t4ProponerIntake()"><option value="">— Selecciona materia —</option></select></div>
+    <div class="form-group"><label>FACULTAD</label><select id="t4-facultad"><option value="">— Selecciona facultad —</option></select></div>
+    <div class="form-group"><label>NÚMERO DE VERSIÓN</label><input type="number" id="t4-version-num" min="1" step="1" placeholder="Ej: 1" oninput="t4ProponerIntake()" /></div>
+    <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCIÓN</label><input type="date" id="t4-fecha-induccion" onchange="t4ProponerIntake()" /></div>
+    <div class="form-group"><label>INTAKE O VERSIÓN PROPUESTO (EDITABLE)</label><input type="text" id="t4-intake" placeholder="Ej: MAG_MAPS_VERSION_01_18.08.2026" /></div>
     <div class="form-group">
       <label>NOMBRE TUTOR</label>
       <select id="t4-tutor" onchange="t4AutoCorreo()">
@@ -658,12 +661,13 @@ function switchTab(idx, btn) {
 
 function clearAll() {
   Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'diario'});
-  document.querySelectorAll('input[type=text],input[type=date],input[type=time],input[type=url],textarea').forEach(el=>el.value='');
+  document.querySelectorAll('input[type=text],input[type=number],input[type=date],input[type=time],input[type=url],textarea').forEach(el=>el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
   ['t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
   selectRadio(document.querySelector('#tab1-radio .radio-option'),'tab1-mode','diario');
   switchTab(0,document.querySelectorAll('.tab-btn')[0]);
+  ['t4-programa','t4-materia','t4-facultad'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   cReset();
 }
 
@@ -854,6 +858,7 @@ async function processTab1(){
     const mode=state.t1Mode;let filas=[];
     if(mode==='diario'){
       if(!state.t1Files.length){resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>';return;}
+      let omitidasSinFecha=0;
       const fechaF=document.getElementById('t1-fecha').value;
       const nrcF=document.getElementById('t1-nrcs').value.trim().split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
       for(const file of state.t1Files){
@@ -865,27 +870,15 @@ async function processTab1(){
           if(fechaF&&colFecha&&r[colFecha]){const fd=anyToISO(r[colFecha]);if(fd&&fd!==fechaF)continue;}
           let nrcCod='';
           if(colNrc&&colMateria&&colCurso){const ns=String(r[colNrc]||'').replace('.0','').trim(),ms=String(r[colMateria]||'').trim(),cs=String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');if(ns)nrcCod=`${ns}_${ms}${cs}`;}
-const ff = colFecha ? anyToISO(r[colFecha]) : '';
-
-// Si FECHA INICIO está vacía, no incorporar la fila.
-if (!ff) continue;
-
-filas.push({
-  PERIODO: colPeriodo ? String(r[colPeriodo] || '').replace('.0', '') : '',
-  NRC_COD: nrcCod,
-  NOMBRE_CURSO: colNomCurso ? String(r[colNomCurso] || '') : '',
-  FECHA_INICIO: ff,
-  RUT: colRut ? String(r[colRut] || '').replace('.0', '') : '',
-  NOMBRE: colNombre ? String(r[colNombre] || '') : '',
-  CORREO_UNAB: colCorreoU ? String(r[colCorreoU] || '') : '',
-  Columna7: colCorreoP ? String(r[colCorreoP] || '') : ''
-});
+          const ff=colFecha?anyToISO(r[colFecha]):'';
+          if(!ff){omitidasSinFecha++;continue;}
+          filas.push({PERIODO:colPeriodo?String(r[colPeriodo]||'').replace('.0',''):'',NRC_COD:nrcCod,NOMBRE_CURSO:colNomCurso?String(r[colNomCurso]||''):'',FECHA_INICIO:ff,RUT:colRut?String(r[colRut]||'').replace('.0',''):'',NOMBRE:colNombre?String(r[colNombre]||''):'',CORREO_UNAB:colCorreoU?String(r[colCorreoU]||''):'',Columna7:colCorreoP?String(r[colCorreoP]||''):''});
         }
       }
       const seen=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seen.has(k))return false;seen.add(k);return true;});
       if(nrcF.length)filas=filas.filter(r=>nrcF.includes(r.NRC_COD?.toUpperCase()));
       if(!filas.length){resultEl.innerHTML='<div class="alert info">No se encontraron registros.</div>';return;}
-      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.</div>`;
+      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.${omitidasSinFecha?` Se omitieron ${omitidasSinFecha} fila${omitidasSinFecha===1?'':'s'} sin FECHA INICIO.`:''}</div>`;
       const td=document.createElement('div');resultEl.appendChild(td);renderTable(filas,td);
       const br=document.createElement('div');br.className='btn-row';const ts=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
       br.innerHTML='<button class="btn" onclick="exportXLSXConTabla(state.t1Data,\'Estudiantes_Formateados_'+ts+'.xlsx\')">✅ Descargar Excel</button>';resultEl.appendChild(br);
@@ -1071,6 +1064,7 @@ async function processTab4(){
   try{
     const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
     const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
+    if(!programa||!materia||!facultad||!intake){re.innerHTML='<div class="alert error">Selecciona Programa, Materia y Facultad, y completa el Intake o Versión antes de procesar.</div>';return;}
     const coordEmails=document.getElementById('t4-coord-value').value;
     // Formato Claims para columnas de usuario SharePoint: i:0#.f|membership|correo
     const tutorClaims=cTut?'i:0#.f|membership|'+cTut:'';
@@ -1313,6 +1307,7 @@ async function t2CargarNrcs(){
     const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json');
     t2NrcsData = await r.json();
     if(statusEl) statusEl.innerHTML = '✅ <strong>'+t2NrcsData.length+'</strong> cursos cargados desde nrcs.json';
+    t4CargarCatalogos();
     setTimeout(()=>{if(statusEl)statusEl.style.display='none';}, 3000);
   } catch(e) {
     if(statusEl) statusEl.innerHTML = '⚠️ No se pudo cargar nrcs.json — ingresa los datos manualmente.';
@@ -1440,6 +1435,65 @@ const T4_COORDINADORES = [
   {nombre:'PABLO ALDERETE',    correo:'tutoriaonline47@unab.cl'},
   {nombre:'DANIELA CORNEJO',   correo:'tutoriaonline36@unab.cl'}
 ];
+
+function t4Normalizar(v){
+  return String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+}
+
+function t4Unicos(filas,campo){
+  return [...new Set(filas.map(r=>String(r[campo]||'').trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+}
+
+function t4LlenarSelect(id,valores,placeholder,conservar){
+  const sel=document.getElementById(id);if(!sel)return;
+  const previo=conservar?sel.value:'';
+  sel.innerHTML='<option value="">— '+placeholder+' —</option>'+valores.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
+  if(previo&&valores.includes(previo))sel.value=previo;
+}
+
+function t4CargarCatalogos(){
+  const estado=document.getElementById('t4-catalogos-status');
+  if(!Array.isArray(t2NrcsData)||!t2NrcsData.length){
+    if(estado)estado.textContent='⚠️ No fue posible cargar las opciones desde nrcs.json.';
+    return;
+  }
+  t4LlenarSelect('t4-programa',t4Unicos(t2NrcsData,'nombre programa'),'Selecciona programa',true);
+  t4ProgramaCambio(true);
+  if(estado)estado.innerHTML='✅ Opciones cargadas desde la base vigente. Programa, Materia y Facultad quedarán vinculados.';
+}
+
+function t4ProgramaCambio(conservar){
+  const programa=document.getElementById('t4-programa').value;
+  const clave=t4Normalizar(programa);
+  const relacionadas=clave?t2NrcsData.filter(r=>t4Normalizar(r['nombre programa'])===clave):t2NrcsData;
+  t4LlenarSelect('t4-materia',t4Unicos(relacionadas,'materia'),'Selecciona materia',!!conservar);
+  t4LlenarSelect('t4-facultad',t4Unicos(relacionadas,'facultad'),'Selecciona facultad',!!conservar);
+  const facultades=t4Unicos(relacionadas,'facultad');
+  if(facultades.length===1)document.getElementById('t4-facultad').value=facultades[0];
+  const materias=t4Unicos(relacionadas,'materia');
+  if(materias.length===1)document.getElementById('t4-materia').value=materias[0];
+  t4ProponerIntake();
+}
+
+function t4PrefijoPrograma(programa){
+  const p=t4Normalizar(programa);
+  if(p.includes('MAGISTER')||p.includes('MASTER'))return 'MAG';
+  if(p.includes('DIPLOMADO'))return 'DIP';
+  if(p.includes('POSTITULO'))return 'POST';
+  if(p.includes('ESPECIALIDAD'))return 'ESP';
+  return 'PROG';
+}
+
+function t4ProponerIntake(){
+  const programa=document.getElementById('t4-programa').value;
+  const materia=t4Normalizar(document.getElementById('t4-materia').value).replace(/[^A-Z0-9]/g,'');
+  const numero=String(document.getElementById('t4-version-num').value||'').replace(/\D/g,'');
+  const fecha=document.getElementById('t4-fecha-induccion').value;
+  if(!programa||!materia||!numero||!fecha)return;
+  const [yyyy,mm,dd]=fecha.split('-');
+  document.getElementById('t4-intake').value=t4PrefijoPrograma(programa)+'_'+materia+'_VERSION_'+numero.padStart(2,'0')+'_'+dd+'.'+mm+'.'+yyyy;
+}
 
 // Set de coordinadores seleccionados (correos)
 const t4CoordSel = new Set();
