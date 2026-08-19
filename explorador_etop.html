@@ -1119,10 +1119,18 @@ function compararCursosOperativamente(a,b){
 
   if(prioridadA!==prioridadB)return prioridadA-prioridadB;
 
-  const fechaA=a.fechaObj?.getTime()||0;
-  const fechaB=b.fechaObj?.getTime()||0;
+  const inicioA=parseFecha(a.fechaInicio)?.getTime()||0;
+  const inicioB=parseFecha(b.fechaInicio)?.getTime()||0;
+  const finA=parseFecha(a.fechaFin)?.getTime()||inicioA;
+  const finB=parseFecha(b.fechaFin)?.getTime()||inicioB;
 
-  return a.estado==='PREPARACION' ? fechaA-fechaB : fechaB-fechaA;
+  // Orden operativo: lo que requiere atención ahora aparece primero.
+  // Activos: primero los que terminan antes.
+  if(a.estado==='ACTIVO')return finA-finB;
+  // Preparación: primero los que comienzan antes.
+  if(a.estado==='PREPARACION')return inicioA-inicioB;
+  // En cierre y cerrados: primero los más recientes; el histórico queda al final.
+  return finB-finA;
 }
 
 
@@ -1132,8 +1140,8 @@ function getDirState(idx){
   if(!dirViewState[idx]){
     dirViewState[idx]={
       groupBy:'',
-      sortKey:'fechaInicio',
-      sortDir:'desc',
+      sortKey:'operativo',
+      sortDir:'asc',
       filters:{nrc:'',curso:'',intake:'',estado:'',fechaInicio:'',fechaFin:'',tutor:''},
       collapsed:{}
     };
@@ -1199,8 +1207,8 @@ function setDirColumnFilter(idx,key,value){
 function clearDirView(idx){
   dirViewState[idx]={
     groupBy:'',
-    sortKey:'fechaInicio',
-    sortDir:'desc',
+    sortKey:'operativo',
+    sortDir:'asc',
     filters:{nrc:'',curso:'',intake:'',estado:'',fechaInicio:'',fechaFin:'',tutor:''},
     collapsed:{}
   };
@@ -1218,6 +1226,7 @@ function cursoPasaFiltrosTabla(c,st){
 }
 
 function sortCursosTabla(cs,st){
+  if(st.sortKey==='operativo')return [...cs].sort(compararCursosOperativamente);
   return [...cs].sort((a,b)=>{
     const cmp=compararValores(valorCurso(a,st.sortKey),valorCurso(b,st.sortKey),st.sortKey);
     return st.sortDir==='asc'?cmp:-cmp;
