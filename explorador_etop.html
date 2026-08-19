@@ -248,6 +248,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .td-nrc a{color:inherit;text-decoration:none}
 .td-nrc a:hover{text-decoration:underline}
 .td-curso{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.course-select{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0;background:none;padding:0;color:#cbd5e1;font:600 11px var(--font);cursor:pointer;text-align:left}
+.course-select:hover{color:var(--yellow);text-decoration:underline}
+.course-select:focus-visible{outline:1px solid var(--yellow);outline-offset:3px;border-radius:2px}
 .td-fecha{font-family:var(--mono);font-size:10px}
 .td-intake{font-family:var(--mono);font-size:10px;color:#c4b5fd}
 .td-intake a{color:#c4b5fd;text-decoration:none;font-weight:600}
@@ -320,7 +323,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 <nav class="topnav">
   <div class="nav-brand"><div class="nav-dot"></div><span class="nav-title">Explorador ETOP</span></div>
   <div class="nav-links">
-    <button class="nav-link top-tab active" onclick="showExplorerView('courses','sec-buscar',this)">🔍 Buscar</button>
+    <button class="nav-link top-tab active" id="tabBuscar" onclick="showExplorerView('courses','sec-buscar',this)">🔍 Buscar</button>
     <button class="nav-link top-tab" onclick="showExplorerView('courses','sec-dir',this)">📚 Directorio</button>
   </div>
   <div class="nav-stat">Total: <span id="navTotal">—</span> NRC</div>
@@ -874,6 +877,16 @@ function closeSug(){document.getElementById('sugBox').classList.remove('open');s
 function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
 document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
+function seleccionarCursoDesdeDirectorio(nrc){
+  const input=document.getElementById('globalSearch');
+  input.value=nrc;
+  document.getElementById('searchClear').classList.add('visible');
+  closeSug();
+  renderCards(nrc);
+  showExplorerView('courses','sec-buscar',document.getElementById('tabBuscar'));
+  setTimeout(()=>document.getElementById('searchResults')?.scrollIntoView({behavior:'smooth',block:'start'}),180);
+}
+
 function filtroTarjeta(valor,tipo='dato',texto=null){
   if(valor===undefined||valor===null||String(valor).trim()==='')return '—';
   const codificado=encodeURIComponent(String(valor));
@@ -1264,7 +1277,7 @@ function renderFilaCurso(c){
 
   return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}">
     <td class="td-nrc">${lnk}</td>
-    <td class="td-curso" title="${esc(c.curso)}">${esc(c.curso)}</td>
+    <td class="td-curso" title="Abrir tarjeta de ${esc(c.curso)}"><button type="button" class="course-select" data-nrc="${esc(encodeURIComponent(c.nrc))}" onclick="seleccionarCursoDesdeDirectorio(decodeURIComponent(this.dataset.nrc))">${esc(c.curso)}</button></td>
     <td class="td-intake">${intakeHtml}</td>
     <td>${badge(c.estado)}</td>
     <td class="td-fecha">${fmtF(c.fechaInicio)}</td>
