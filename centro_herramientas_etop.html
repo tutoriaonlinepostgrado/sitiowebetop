@@ -865,8 +865,21 @@ async function processTab1(){
           if(fechaF&&colFecha&&r[colFecha]){const fd=anyToISO(r[colFecha]);if(fd&&fd!==fechaF)continue;}
           let nrcCod='';
           if(colNrc&&colMateria&&colCurso){const ns=String(r[colNrc]||'').replace('.0','').trim(),ms=String(r[colMateria]||'').trim(),cs=String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');if(ns)nrcCod=`${ns}_${ms}${cs}`;}
-          const ff=colFecha?anyToISO(r[colFecha]):'';
-          filas.push({PERIODO:colPeriodo?String(r[colPeriodo]||'').replace('.0',''):'',NRC_COD:nrcCod,NOMBRE_CURSO:colNomCurso?String(r[colNomCurso]||''):'',FECHA_INICIO:ff,RUT:colRut?String(r[colRut]||'').replace('.0',''):'',NOMBRE:colNombre?String(r[colNombre]||''):'',CORREO_UNAB:colCorreoU?String(r[colCorreoU]||''):'',Columna7:colCorreoP?String(r[colCorreoP]||''):''});
+const ff = colFecha ? anyToISO(r[colFecha]) : '';
+
+// Si FECHA INICIO está vacía, no incorporar la fila.
+if (!ff) continue;
+
+filas.push({
+  PERIODO: colPeriodo ? String(r[colPeriodo] || '').replace('.0', '') : '',
+  NRC_COD: nrcCod,
+  NOMBRE_CURSO: colNomCurso ? String(r[colNomCurso] || '') : '',
+  FECHA_INICIO: ff,
+  RUT: colRut ? String(r[colRut] || '').replace('.0', '') : '',
+  NOMBRE: colNombre ? String(r[colNombre] || '') : '',
+  CORREO_UNAB: colCorreoU ? String(r[colCorreoU] || '') : '',
+  Columna7: colCorreoP ? String(r[colCorreoP] || '') : ''
+});
         }
       }
       const seen=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seen.has(k))return false;seen.add(k);return true;});
