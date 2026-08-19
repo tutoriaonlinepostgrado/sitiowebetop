@@ -59,6 +59,7 @@
   }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--text); border-bottom-color: var(--line); }
+  .retired-tool { display:none !important; }
 
   .tab-panel { display: none; padding: 1.8rem 2rem; }
   .tab-panel.active { display: block; }
@@ -285,8 +286,6 @@
 
 <div class="tabs-nav">
   <button class="tab-btn active" onclick="switchTab(0, this)">📋 Formateador Nóminas SharePoint</button>
-  <button class="tab-btn" onclick="switchTab(1, this)">📧 Generador Correos Bienvenida</button>
-  <button class="tab-btn" onclick="switchTab(2, this)">📨 Envío Invitación Sesión Sincrónica</button>
   <button class="tab-btn" onclick="switchTab(3, this)">📅 Formateador Calendarios</button>
   <button class="tab-btn" onclick="switchTab(4, this)">📂 Notificación Carpetas Creadas</button>
 </div>
@@ -359,7 +358,7 @@
 </div>
 
 <!-- TAB 2: CORREOS BIENVENIDA -->
-<div class="tab-panel" id="tab1">
+<div class="retired-tool" id="tab1" aria-hidden="true">
   <div class="section-title">Generador de Base para Correos de Bienvenida</div>
   <div class="section-sub">Sube la nómina original y completa los datos de la inducción.</div>
   <div class="form-group" style="max-width:600px">
@@ -454,7 +453,7 @@
 </div>
 
 <!-- TAB 3: INVITACIÓN SINCRÓNICA -->
-<div class="tab-panel" id="tab2">
+<div class="retired-tool" id="tab2" aria-hidden="true">
   <div class="section-title">Envío Invitación Sesión Sincrónica</div>
   <div class="section-sub">Sube la nómina original para generar las invitaciones.</div>
   <div class="form-group" style="max-width:600px">
@@ -519,6 +518,7 @@
     <div class="form-group"><label>NOMBRE DE PROGRAMA</label><select id="t4-programa" onchange="t4ProgramaCambio()"><option value="">— Selecciona programa —</option></select></div>
     <div class="form-group"><label>MATERIA</label><select id="t4-materia" onchange="t4ProponerIntake()"><option value="">— Selecciona materia —</option></select></div>
     <div class="form-group"><label>FACULTAD</label><select id="t4-facultad"><option value="">— Selecciona facultad —</option></select></div>
+    <div class="form-group"><label>TIPO DE PROGRAMA</label><select id="t4-tipo"><option value="">— Selecciona tipo —</option><option value="100%ONLINE">100%ONLINE</option><option value="SEMIPRES">SEMIPRES</option></select></div>
     <div class="form-group"><label>NÚMERO DE VERSIÓN</label><input type="number" id="t4-version-num" min="1" step="1" placeholder="Ej: 1" oninput="t4ProponerIntake()" /></div>
     <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCIÓN</label><input type="date" id="t4-fecha-induccion" onchange="t4ProponerIntake()" /></div>
     <div class="form-group"><label>INTAKE O VERSIÓN PROPUESTO (EDITABLE)</label><input type="text" id="t4-intake" placeholder="Ej: MAG_MAPS_VERSION_01_18.08.2026" /></div>
@@ -558,7 +558,7 @@
       <input type="text" id="t4-correotutor" placeholder="Se autocompleta al elegir tutor" />
     </div>
     <div class="form-group full">
-      <label>COORDINADORES <span style="color:#95a3b8;font-weight:400;text-transform:none;">(seleccion multiple — Coordinadores_Emails_Texto)</span></label>
+      <label>COORDINADORES <span style="color:#95a3b8;font-weight:400;text-transform:none;">(selección múltiple — columna COORDINADION)</span></label>
       <div id="t4-coord-chips" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:2.4rem;background:#eef2f7;border:1px solid rgba(246,193,40,0.8);border-radius:8px;padding:0.4rem 0.6rem;align-items:center;cursor:pointer;" onclick="t4CoordToggle()">
         <span id="t4-coord-placeholder" style="color:#888;font-size:0.88rem;">Haz clic para seleccionar coordinadores...</span>
       </div>
@@ -574,9 +574,7 @@
   <div id="t4-result"></div>
   <div id="t4-actions" style="display:none" class="btn-row">
     <button class="btn" onclick="downloadTab4()">📥 Descargar Excel</button>
-    <button class="btn primary" onclick="sendToSharePointCal()">📨 Enviar a SharePoint</button>
   </div>
-  <div id="t4-sp-result"></div>
 </div>
 
 <!-- TAB 5: NOTIFICACIÓN CARPETAS CREADAS -->
@@ -655,8 +653,8 @@ const state = {
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(idx, btn) {
-  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id==='tab'+idx));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b===btn));
 }
 
 function clearAll() {
@@ -667,7 +665,8 @@ function clearAll() {
   ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
   selectRadio(document.querySelector('#tab1-radio .radio-option'),'tab1-mode','diario');
   switchTab(0,document.querySelectorAll('.tab-btn')[0]);
-  ['t4-programa','t4-materia','t4-facultad'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['t4-programa','t4-materia','t4-facultad','t4-tipo','t4-tutor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  t4CoordSel.clear();t4CoordRenderChips();
   cReset();
 }
 
@@ -954,12 +953,6 @@ async function processTab2(){
   }catch(err){re.innerHTML=`<div class="alert error">Error: ${err.message}</div>`;}
 }
 function downloadTab2(){if(!state.t2Data)return;exportXLSXConTabla(state.t2Data,'Nomina_SharePoint_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx');}
-async function sendToSharePoint(){
-  if(!state.t2Data)return;const sr=document.getElementById('t2-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t2Data)});
-  if(res.ok||res.status===202){sr.innerHTML='<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';document.getElementById('t2-paso3').style.display='block';}else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
-  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
-}
 
 function formatSyncDisplay(ds,ts){const dias=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'],meses=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'],d=new Date(ds+'T00:00:00'),di=(d.getDay()+6)%7;return`${dias[di]} ${String(d.getDate()).padStart(2,'0')} DE ${meses[d.getMonth()]} ${ts} HRS`;}
 async function processTab3(){
@@ -985,12 +978,6 @@ async function processTab3(){
   }catch(err){re.innerHTML=`<div class="alert error">Error: ${err.message}</div>`;}
 }
 function downloadTab3(){if(!state.t3Data)return;exportXLSXConTabla(state.t3Data,'Envio_invitacion_sesion_sincronica_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx');}
-async function sendToSharePointSync(){
-  if(!state.t3Data)return;const sr=document.getElementById('t3-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/911641e897164b58afde2903d140469b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bCmCw-jpQFCyzSAmKB_zgB6ekd13ogiiWfZbpsNHdG4",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t3Data)});
-  if(res.ok||res.status===202){sr.innerHTML='<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';document.getElementById('t3-paso3').style.display='block';}else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
-  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
-}
 
 function calDetectarHeader(cols){
   const cu=cols.map(c=>(c||'').trim().toLowerCase()),hits={};
@@ -1063,13 +1050,14 @@ async function processTab4(){
   const texto=document.getElementById('t4-texto').value;if(!texto.trim()){re.innerHTML='<div class="alert error">Pega el bloque del calendario primero.</div>';return;}
   try{
     const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
-    const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
-    if(!programa||!materia||!facultad||!intake){re.innerHTML='<div class="alert error">Selecciona Programa, Materia y Facultad, y completa el Intake o Versión antes de procesar.</div>';return;}
+    const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tipo=document.getElementById('t4-tipo').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
+    if(!programa||!materia||!facultad||!tipo||!intake){re.innerHTML='<div class="alert error">Selecciona Programa, Materia, Facultad y Tipo de programa, y completa el Intake o Versión antes de procesar.</div>';return;}
     const coordEmails=document.getElementById('t4-coord-value').value;
+    if(!coordEmails){re.innerHTML='<div class="alert error">Selecciona al menos un coordinador para completar la columna COORDINADION.</div>';return;}
     // Formato Claims para columnas de usuario SharePoint: i:0#.f|membership|correo
     const tutorClaims=cTut?'i:0#.f|membership|'+cTut:'';
     const coordClaims=coordEmails?coordEmails.split(';').filter(Boolean).map(c=>'i:0#.f|membership|'+c).join(';'):'';
-    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'Correo_Tutor_a':cTut,'Coordinadores_Emails_Texto':coordEmails,'Tutor_Claims':tutorClaims,'Coordinadores_Claims':coordClaims,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
+    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'TIPO_NRC':tipo,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'Correo_Tutor_a':cTut,'COORDINADION':coordEmails,'Coordinadores_Emails_Texto':coordEmails,'Tutor_Claims':tutorClaims,'Coordinadores_Claims':coordClaims,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
     state.t4Data=salida;re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados.</div>';
     const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
   }catch(err){re.innerHTML='<div class="alert error">Error: '+err.message+'</div>';}
@@ -1083,13 +1071,6 @@ function downloadTab4(){
   const wbout=XLSX.write(wb,{bookType:'xlsx',type:'binary',compression:true});
   injectTableIntoXlsx(wbout,xml,'Calendarios',tableRef).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Calendarios_a_base_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx';a.click();URL.revokeObjectURL(a.href);});
 }
-async function sendToSharePointCal(){
-  if(!state.t4Data)return;const sr=document.getElementById('t4-sp-result');sr.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
-  try{const res=await fetch("https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0c6b8c2435624545bb76f5137f3f9f7c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dz1BzpFg1R-ku-OF2KCpRJ0uyeAX9Uot-aQ70f_0QNI",{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state.t4Data)});
-  if(res.ok||res.status===202)sr.innerHTML='<div class="alert success">✅ ¡Éxito! Calendario enviado a SharePoint.</div>';else sr.innerHTML='<div class="alert error">Error '+res.status+'</div>';}
-  catch(err){sr.innerHTML='<div class="alert error">Error de red: '+err.message+'</div>';}
-}
-
 // ═══ TAB 5: CARPETAS CREADAS ══════════════════════════════════════════════════
 let cCount=0, cHTML='';
 
