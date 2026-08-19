@@ -48,6 +48,8 @@
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         .titulo-vista { font-size: 13px; font-weight: 600; color: white; flex-shrink: 0; margin-right: 4px; white-space: nowrap; }
         .separator-bar { width: 1px; height: 24px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+        .abrir-canal { display:none; margin-left:auto; padding:6px 11px; border:1px solid rgba(255,215,0,.4); border-radius:7px; color:var(--amarillo-top); text-decoration:none; font-size:11px; font-weight:700; white-space:nowrap; }
+        .abrir-canal:hover { background:rgba(255,215,0,.09); border-color:var(--amarillo-top); }
 
         /* ── FILTROS ── */
         .filtros-wrapper { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; flex: 1; }
@@ -193,6 +195,9 @@
             <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">📅 Calendarios</button>
             <button class="menu-btn" onclick="cargar('INCIDENCIAS', this)">⚠️ Incidencias</button>
 
+            <div class="menu-category">Canales del Equipo</div>
+            <button class="menu-btn" onclick="cargarCanalEducacion(this)">🟣 Educación y Cs. Sociales Innovado</button>
+
             <div class="menu-category">Herramientas</div>
             <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn">
                 ⚡ Centro de Herramientas ETOP ↗️
@@ -257,6 +262,7 @@
                 <div class="badge-activo" id="badge-activo">🔍 <span id="badge-txt"></span></div>
                 <button class="btn-limpiar" id="btn-limpiar" onclick="limpiarTodo()">✕ Limpiar</button>
             </div>
+            <a id="abrir-canal" class="abrir-canal" href="#" target="_blank" rel="noopener">↗ Abrir en SharePoint</a>
         </div>
 
         <iframe id="visor" title="Reporte" allowFullScreen="true"></iframe>
@@ -647,10 +653,26 @@
 
     function cargar(clave, btn) {
         claveActual = clave;
+        document.querySelector('.filtros-wrapper').style.display = 'flex';
+        document.getElementById('abrir-canal').style.display = 'none';
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
         document.getElementById('titulo-vista').textContent = titulosVista[clave] || 'Vista de Reporte';
+        if (window.innerWidth < 800) toggleSidebar();
+    }
+
+    function cargarCanalEducacion(btn) {
+        const url = 'https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB';
+        claveActual = 'CANAL_EDUCACION_INNOVADO';
+        document.querySelector('.filtros-wrapper').style.display = 'none';
+        const abrir = document.getElementById('abrir-canal');
+        abrir.href = url;
+        abrir.style.display = 'inline-flex';
+        document.getElementById('visor').src = url;
+        document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('titulo-vista').textContent = '🟣 Educación y Cs. Sociales Innovado';
         if (window.innerWidth < 800) toggleSidebar();
     }
 
