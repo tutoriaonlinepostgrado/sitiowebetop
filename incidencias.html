@@ -46,15 +46,14 @@ a{color:inherit}
 .btn-danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:#F3C0C0}
 .btn:disabled,.btn[aria-disabled="true"]{opacity:.38;pointer-events:none}
 .full{width:100%}
-.content{min-width:0;padding:18px 18px 32px;background:transparent}
-.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin-bottom:12px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;transition:.15s}
-.stat:hover{transform:translateY(-2px);border-color:rgba(250,204,21,.28)}
+.content{min-width:0;padding:14px 18px 32px;background:transparent}
+.stats-grid{display:grid;grid-template-columns:repeat(7,minmax(105px,1fr));gap:8px;margin-bottom:8px}
+.stat{min-height:62px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;position:relative;overflow:hidden;cursor:pointer;transition:.15s}
+.stat:hover{transform:translateY(-1px);border-color:rgba(250,204,21,.25)}
 .stat.active{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(250,204,21,.08)}
 .stat::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent,var(--yellow))}
-.stat-num{font-size:28px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
-.stat-label{font-size:10px;color:var(--muted);font-weight:700;margin-top:6px;text-transform:uppercase}
-.stat-sub{font-size:9px;color:var(--dim);margin-top:2px}
+.stat-num{font-size:21px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums;color:#D7DEE8}
+.stat-label{font-size:9px;line-height:1.2;color:var(--muted);font-weight:700;margin-top:5px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
 .results-meta{color:var(--muted);font-size:11px}.results-meta strong{color:var(--yellow)}
 .toolbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -108,6 +107,7 @@ a{color:inherit}
 .drawer-tools{display:flex;gap:6px;flex:1 1 100%;justify-content:flex-end}.drawer-tools .btn{padding:5px 8px;font-size:9px;white-space:nowrap}
 .drawer iframe{width:100%;height:100%;border:0;background:#f3f4f6}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+@media(max-width:1500px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.shell{grid-template-columns:210px minmax(0,1fr)}}
 @media(max-width:760px){.topnav{grid-template-columns:1fr auto}.nav-links{display:none}.shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}.content{padding:12px}.stats-grid{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
 
@@ -136,20 +136,22 @@ a{color:inherit}
 /* ── Indicadores colapsables ── */
 .indicadores-panel{
   background:transparent;
-  margin-bottom:12px;
+  margin-bottom:6px;
 }
 .indicadores-header{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin-bottom:10px;
+  margin-bottom:7px;
 }
 .indicadores-title{
   display:flex;align-items:center;gap:8px;color:var(--text);font-size:11px;
   font-weight:800;text-transform:uppercase;letter-spacing:.07em;
 }
+.active-summary{font-size:9px;color:var(--yellow);font-weight:700;text-transform:none;letter-spacing:0;padding:3px 7px;border-radius:10px;background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.16)}
+.active-summary:empty{display:none}
 .indicadores-toggle{
   border:1px solid var(--border2);background:rgba(255,255,255,.035);
-  color:var(--muted);border-radius:7px;padding:6px 10px;cursor:pointer;
-  font-size:10px;font-weight:800;
+  color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer;
+  font-size:9px;font-weight:800;
 }
 .indicadores-toggle:hover{color:var(--yellow);border-color:rgba(250,204,21,.35)}
 .indicadores-content{
@@ -175,7 +177,6 @@ a{color:inherit}
   <div class="nav-links">
     <a class="nav-link" href="index.html" title="Volver al Portal ETOP">← Portal</a>
     <button class="nav-link" onclick="focusSearch()">⌕ Buscar</button>
-    <button class="nav-link" onclick="go('indicadores')">⌁ Indicadores</button>
     <button class="nav-link active" onclick="go('consolidado')">▣ Consolidado</button>
   </div>
   <div class="nav-stat">Última actualización: <span id="updated">—</span></div>
@@ -249,8 +250,8 @@ a{color:inherit}
   <main class="content">
     <section id="indicadores" class="indicadores-panel">
       <div class="indicadores-header">
-        <div class="indicadores-title">⌁ Indicadores</div>
-        <button id="btnIndicadores" class="indicadores-toggle" type="button" onclick="toggleIndicadores()" aria-expanded="true">▴ Ocultar indicadores</button>
+        <div class="indicadores-title">⌁ Resumen <span id="statActive" class="active-summary"></span></div>
+        <button id="btnIndicadores" class="indicadores-toggle" type="button" onclick="toggleIndicadores()" aria-expanded="true">▴ Ocultar resumen</button>
       </div>
       <div class="indicadores-content">
         <div id="stats" class="stats-grid">
@@ -387,7 +388,7 @@ function toggleIndicadores(){
 
   const cerrado=panel.classList.toggle('collapsed');
   btn.setAttribute('aria-expanded',String(!cerrado));
-  btn.textContent=cerrado?'▾ Mostrar indicadores':'▴ Ocultar indicadores';
+  btn.textContent=cerrado?'▾ Mostrar resumen':'▴ Ocultar resumen';
 }
 
 function openDrawer(title,subtitle,url){
@@ -617,11 +618,13 @@ function renderStats(){
     ['DER','Derivadas',der,'A otras áreas','--orange']
   ];
 
+  const activeLabels={CON:'Con incidencia',SIN:'Sin incidencia',PENDQA:'QA2 pendiente',PENDINC:'Incidencias pendientes',CORR:'Corregidas',DER:'Derivadas'};
+  $('statActive').textContent=statMode?`Filtro: ${activeLabels[statMode]||statMode}`:'';
+
   $('stats').innerHTML=cards.map(([mode,label,num,sub,color])=>
     `<div class="stat ${statMode===mode?'active':''}" style="--accent:var(${color})" onclick="setStat('${mode}')">
       <div class="stat-num">${num.toLocaleString('es-CL')}</div>
       <div class="stat-label">${label}</div>
-      <div class="stat-sub">${sub}</div>
     </div>`
   ).join('');
 }
