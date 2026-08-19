@@ -458,7 +458,11 @@
         }
 
         if (fx.length) url.searchParams.set('filter', fx.join(' and '));
-        return url.toString();
+
+        // Power BI espera la expresión OData con espacios URL-encoded como %20.
+        // URLSearchParams los convierte en "+", lo que puede hacer que el informe
+        // ignore silenciosamente todos los filtros y muestre el conjunto completo.
+        return url.toString().replace(/\+/g, '%20');
     }
 
     function actualizarIframe() {
