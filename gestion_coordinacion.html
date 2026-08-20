@@ -186,7 +186,6 @@
             <button class="menu-btn active" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
             <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
-            <button class="menu-btn" onclick="cargar('RESUMEN_SEMAFORO', this)">📈 Resumen Semáforo</button>
 
             <div class="menu-category">Seguimiento Operativo</div>
             <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">🚀 Cursos por iniciar</button>
@@ -196,9 +195,6 @@
             <div class="menu-category">Herramientas</div>
             <a href="centro_herramientas_etop.html" target="_blank" class="menu-btn">
                 ⚡ Centro de Herramientas ETOP ↗️
-            </a>
-            <a href="pantalladividida.html" target="_blank" class="menu-btn">
-                🗂️ Asistente de Carga (Pop-up) ↗️
             </a>
 
             <div class="menu-category"> </div>
@@ -287,12 +283,8 @@
             url: "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=92a9ea4e356075d5089e&navContentPaneEnabled=false&filterPaneEnabled=false",
             tipo: 'pbi'
         },
-        'RESUMEN_SEMAFORO': {
-            url: "https://app.powerbi.com/reportEmbed?reportId=f32734ec-3c94-43fa-a8fb-8d8eebbcf11a&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=13a801ce8ba0312ed355&navContentPaneEnabled=false&filterPaneEnabled=false",
-            tipo: 'pbi'
-        },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-claro2",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-claro3",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -310,7 +302,6 @@
         'DASHBOARD_MACRO': 'Dashboard Macro Facultades',
         'REPORTE_INDUCCION': 'Reporte Inducción',
         'CARGA_TUTORIAL': 'Carga Tutorial',
-        'RESUMEN_SEMAFORO': 'Resumen Semáforo',
         'CALENDARIOS': 'Calendarios',
         'CURSOS_INICIAR': 'Cursos por iniciar',
         'INCIDENCIAS': 'Incidencias'
@@ -572,9 +563,25 @@
 
     function buildURLFiltrada() {
         const cfg = misReportes[claveActual];
-        if (!cfg || cfg.tipo !== 'pbi') return cfg ? cfg.url : '';
+        if (!cfg) return '';
 
         const f = getFiltrosActivos();
+
+        // Las páginas HTML locales reciben sus filtros como parámetros URL.
+        if (cfg.tipo === 'local') {
+            const urlLocal = new URL(cfg.url, window.location.href);
+            if (claveActual === 'CALENDARIOS') {
+                if (f.facultad) urlLocal.searchParams.set('facultad', f.facultad);
+                if (f.tutor)    urlLocal.searchParams.set('tutor', f.tutor);
+                if (f.tipo)     urlLocal.searchParams.set('tipo', f.tipo);
+                if (f.estado)   urlLocal.searchParams.set('estado', f.estado);
+                if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
+            }
+            return urlLocal.toString();
+        }
+
+        if (cfg.tipo !== 'pbi') return cfg.url;
+
         const condiciones = [];
 
         // Estos son los nombres EXACTOS del modelo semántico de Power BI.
