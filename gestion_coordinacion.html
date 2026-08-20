@@ -80,6 +80,10 @@
         .multi-opcion:hover { background:rgba(255,215,0,.12); }
         .multi-opcion input { margin-top:2px; accent-color:#ffd700; }
         .multi-vacio { padding:10px 6px; color:#a3a3a3; font-size:12px; }
+        .date-filter-wrap { display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border:1px solid rgba(255,215,0,.42); border-radius:20px; background:rgba(255,255,255,.1); color:#ffd700; flex-shrink:0; }
+        .date-filter-label { font-size:11px; font-weight:700; white-space:nowrap; }
+        .date-filter-input { width:118px; padding:0; border:0; border-radius:0; background:transparent; color:#fff; font-size:11px; color-scheme:dark; }
+        .date-filter-input:focus { width:118px; border:0; background:transparent; box-shadow:none; }
 
         /* pill NRC */
         .pill-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
@@ -231,8 +235,9 @@
                 <div class="multi-filtro" id="mf-tipo"></div>
                 <div class="multi-filtro" id="mf-estado"></div>
                 <div class="multi-filtro oculto" id="mf-intake"></div>
-                <div class="pill-wrap oculto" id="fecha-inicio-wrap">
-                    <input type="date" id="filtro-fecha-inicio" class="pill-input" title="Fecha de inicio" onchange="sincronizarFiltros('fechaInicio')" style="width:135px">
+                <div class="date-filter-wrap oculto" id="fecha-inicio-wrap" title="Filtrar calendarios por fecha de inicio">
+                    <span class="date-filter-label">📅 Fecha de inicio</span>
+                    <input type="date" id="filtro-fecha-inicio" class="date-filter-input" aria-label="Fecha de inicio" onchange="sincronizarFiltros('fechaInicio')">
                 </div>
 
                 <div class="separator-bar"></div>
