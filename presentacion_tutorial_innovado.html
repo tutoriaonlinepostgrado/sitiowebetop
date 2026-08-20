@@ -8,26 +8,19 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
 .tbr{display:flex;gap:10px;align-items:center;}
 .auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
-.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
-.btn-outlook:hover{background:rgba(255,255,255,0.2);}
 .btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
 .btn-copiar:hover{background:#facc15;}
 .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
 .toast.show{display:block;}
-/* Campos editables */
 .campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
 .campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
 .campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
-/* Tabla de actividades editable */
-
-.ew{padding:20px;max-width:990px;margin:0 auto;}
+.ew{padding:20px;max-width:840px;margin:0;}
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
-
 <div class="tb">
   <div class="tbl">
     <span class="badge">📊 Presentación</span>
@@ -50,28 +43,21 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         <button onclick="setApertura('calido',this)" id="ap-calido" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;white-space:nowrap;">Cálido</button>
       </div>
     </div>
-    <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
-    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
+    <button class="btn-copiar" onclick="copiarYAbrirOutlook()">📋 Copiar y abrir Outlook</button>
   </div>
 </div>
-
 <div class="ew" id="email-content">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+<table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;max-width:800px;margin:12px 0;background:#fff;border:0;font-family:Arial,sans-serif;">
 <tbody>
-  <tr><td style="padding:40px 60px 20px 60px;">
-    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+  <tr><td style="padding:24px 38px 12px 38px;">
+    <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="160" style="display:block;border:0;width:160px;height:auto;">
   </td></tr>
-  <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
-
-    <!-- BLOQUE APERTURA — editable y reemplazable por setApertura() -->
+  <tr><td style="padding:0 38px 32px 38px;color:#333;font-size:15px;line-height:1.7;text-align:justify;">
     <div id="bloque-apertura" style="position:relative;">
-
-      <!-- Hint editable -->
       <div id="apertura-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:#F0FDF4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;">
         <span style="font-size:11px;">✏️</span>
         <span style="font-size:10px;color:#166534;font-weight:500;">Este párrafo es editable — haz clic en cualquier parte para ajustarlo. Usa los botones de <strong>Apertura</strong> para cambiar el estilo.</span>
       </div>
-
       <div id="apertura-texto" contenteditable="true"
         style="outline:none;border:1.5px dashed #86efac;border-radius:8px;padding:10px 14px;background:#F0FDF4;font-size:16px;line-height:1.8;color:#333;cursor:text;"
         onfocus="this.style.borderColor='#16a34a';this.style.background='#dcfce7';"
@@ -80,46 +66,32 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
       </div>
     </div>
-
     <p>Como parte del proceso de programación antes de la impartición, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
-
-    <!-- CRONOGRAMA — subir imagen -->
     <div id="cronograma-wrap" style="margin:16px 0;">
-      <!-- Zona de carga — se oculta después de subir imagen -->
       <div id="zona-upload" style="border:2px dashed #185FA5;border-radius:8px;padding:24px;text-align:center;background:#EFF6FF;cursor:pointer;" onclick="document.getElementById('input-imagen').click()">
         <div style="font-size:32px;margin-bottom:8px;">🖼️</div>
         <div style="font-size:13px;font-weight:600;color:#185FA5;margin-bottom:4px;">Haz clic para subir la imagen del cronograma</div>
         <div style="font-size:11px;color:#64748b;">PNG, JPG o GIF — la imagen se insertará en el correo</div>
         <input type="file" id="input-imagen" accept="image/*" style="display:none" onchange="cargarImagen(event)">
       </div>
-      <!-- Imagen cargada -->
       <div id="zona-imagen" style="display:none;">
         <img id="img-cronograma" src="" alt="Cronograma de actividades" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
         <br>
         <button onclick="cambiarImagen()" style="margin-top:8px;font-size:11px;padding:4px 10px;background:#EFF6FF;border:1px solid #185FA5;color:#185FA5;border-radius:5px;cursor:pointer;">🔄 Cambiar imagen</button>
       </div>
     </div>
-
-    <!-- PÁRRAFO GRUPOS — solo en tipo Ajustado -->
     <p id="p-grupos" style="background:#FFF8E1;border-left:3px solid #F59E0B;padding:10px 14px;border-radius:4px;font-size:15px;">
       Con respecto a las actividades grupales de las semanas <span class="campo" contenteditable="true" data-placeholder="N° SEMANAS GRUPALES (ej: 2, 3, 6 y 7)"></span>, según la programación del curso, los grupos serán constituidos por máximo <span class="campo" contenteditable="true" data-placeholder="N° MÁXIMO INTEGRANTES (ej: 2)"></span> estudiantes, estas indicaciones ya se encuentran configuradas en la plataforma.
     </p>
-
     <p id="p-autoinscripcion">Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su colaboración en motivar a los estudiantes a realizar este paso de manera oportuna.</p>
-
-  <p>Adicionalmente, le sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecte. <span id="span-conoce" class="campo" contenteditable="true" data-placeholder="Texto adicional (editable)">Asimismo, le recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.</span> Estoy a su disposición para asistirle en este proceso.</p>
-
-    <p>Si requiere orientación sobre el uso de la plataforma, puede acceder al siguiente enlace: <a href="https://canvasunab.unab.cl/inicio-docentes/" style="color:#0056b3;">https://canvasunab.unab.cl/inicio-docentes/</a> o contactar a los canales de soporte disponibles.</p>
-
+    <p>Adicionalmente, le sugiero revisar su curso en la plataforma antes de su inicio y reportarme cualquier duda, inquietud o inconveniente que detecte. <span id="span-conoce" class="campo" contenteditable="true" data-placeholder="Texto adicional (editable)">Asimismo, le recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.</span> Estoy a su disposición para asistirles en este proceso.</p>
+    <p>Si requiere orientación sobre el uso de la plataforma, puede <a href="https://canvasunab.unab.cl/inicio-docentes/" style="color:#0056b3;">acceder al portal de apoyo docente</a> o contactar a los canales de soporte disponibles.</p>
     <p>Quedo atenta/o a cualquier consulta o información adicional que necesite.</p>
-
   </td></tr>
 </tbody>
 </table>
 </div>
-
 <script>
-// ── AUTOCOMPLETAR DESDE URL ──
 const params = new URLSearchParams(window.location.search);
 const mapa = {
   nombre_tutor: params.get('nombreTutor'),
@@ -131,7 +103,6 @@ const mapa = {
   dia_inicio:   params.get('diaInicio'),
   dia_fin:      params.get('diaFin')
 };
-
 let hayDatos = false;
 document.querySelectorAll('.campo[data-campo]').forEach(el => {
   const val = mapa[el.getAttribute('data-campo')];
@@ -143,7 +114,6 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
 
-// ── GESTIÓN DE IMAGEN CRONOGRAMA ──
 function cargarImagen(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -155,19 +125,20 @@ function cargarImagen(event) {
   };
   reader.readAsDataURL(file);
 }
-
 function cambiarImagen() {
   document.getElementById('input-imagen').click();
 }
-
-// ── COPIAR CORREO ──
 async function copiarCorreo() {
   document.getElementById('zona-upload').style.display = 'none';
   const contenido = document.getElementById('email-content').cloneNode(true);
-
+  const zonaUploadCopia = contenido.querySelector('#zona-upload');
+  if (zonaUploadCopia) zonaUploadCopia.remove();
+  const zonaImagenCopia = contenido.querySelector('#zona-imagen');
+  if (zonaImagenCopia) {
+    zonaImagenCopia.querySelectorAll('button, br').forEach(el => el.remove());
+  }
   const hint = contenido.querySelector('#apertura-hint');
   if (hint) hint.remove();
-
   const aperturaDiv = contenido.querySelector('#apertura-texto');
   if (aperturaDiv) {
     aperturaDiv.style.border = 'none';
@@ -175,7 +146,6 @@ async function copiarCorreo() {
     aperturaDiv.style.padding = '0';
     aperturaDiv.removeAttribute('contenteditable');
   }
-
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
     el.style.cssText = 'font-weight:bold;color:#333;';
@@ -184,18 +154,14 @@ async function copiarCorreo() {
   contenido.querySelectorAll('[contenteditable]').forEach(el => {
     el.removeAttribute('contenteditable');
   });
-  
   const ctrl = contenido.querySelector('#tabla-controls');
   if (ctrl) ctrl.remove();
-  
   contenido.querySelectorAll('p').forEach(p => {
     if (p.style.background) p.style.background = '';
     if (p.style.borderLeft) p.style.borderLeft = '';
     p.style.padding = '';
   });
-
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
-
   try {
     const blob = new Blob([htmlFinal], {type: 'text/html'});
     const item = new ClipboardItem({'text/html': blob});
@@ -222,7 +188,6 @@ async function copiarCorreo() {
   }
   if(document.getElementById('zona-imagen').style.display === 'none') document.getElementById('zona-upload').style.display = 'flex';
 }
-
 function mostrarToast(msg, error=false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -230,28 +195,23 @@ function mostrarToast(msg, error=false) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 4000);
 }
-
-// ── RECONSTRUCTOR DE CAMPOS (NUEVA FUNCIÓN) ──
+async function copiarYAbrirOutlook() {
+  await copiarCorreo();
+  abrirOutlook();
+}
 function buildSpan(campo, ph) {
   let el = document.querySelector('[data-campo="'+campo+'"]');
   let val = "";
-  
-  // 1. Obtener valor actual del DOM (si el usuario lo editó manualmente antes de cambiar la apertura)
   if (el) {
     val = el.textContent.trim();
     if (val === el.getAttribute('data-placeholder')) val = "";
   }
-  
-  // 2. Si el DOM está vacío, fallback al mapa de la URL de Power BI
   if (!val && typeof mapa !== 'undefined' && mapa[campo]) {
     val = decodeURIComponent(mapa[campo]);
   }
-
   let cls = val ? 'campo auto-filled' : 'campo';
   return '<span class="'+cls+'" contenteditable="true" data-campo="'+campo+'" data-placeholder="'+ph+'">'+val+'</span>';
 }
-
-// ── TEMPLATES DE APERTURA (ACTUALIZADO) ──
 function getAperturaHTML(estilo) {
   var nt  = buildSpan('nombre_tutor', 'NOMBRE TUTOR/A');
   var nc  = buildSpan('nombre_curso', 'NOMBRE ASIGNATURA');
@@ -262,27 +222,22 @@ function getAperturaHTML(estilo) {
   var df  = buildSpan('dia_fin', 'DÍA');
   var ff  = buildSpan('fecha_fin', 'DD-MM-YYYY');
   var nd  = buildSpan('nombre_docente', 'NOMBRE DOCENTE');
-
   var templates = {
     primera:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
       '<p style="margin:0;">Junto con saludar, mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>',
-
     reencuentro:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
       '<p style="margin:0;">Junto con saludar, me comunico para informarle que nuevamente seré el/la Tutor/a de Acompañamiento a cargo de la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, comenzando el '+di+' '+fi+' hasta el '+df+' '+ff+' en la plataforma Canvas.</p>',
-
     personal:
       '<p style="margin:0 0 12px 0;">Estimado/a '+nd+',</p>' +
       '<p style="margin:0;">Junto con saludar, me presento: mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en plataforma Canvas, según el calendario del programa.</p>',
-
     calido:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente '+nd+',</p>' +
       '<p style="margin:0;">Junto con saludar y esperando que se encuentre bien, es de mi agrado informar que seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>'
   };
   return templates[estilo] || templates.primera;
 }
-
 function setApertura(estilo, btn) {
   ['ap-primera','ap-reencuentro','ap-personal','ap-calido'].forEach(function(id) {
     var b = document.getElementById(id);
@@ -291,13 +246,10 @@ function setApertura(estilo, btn) {
     b.style.color = '#cbd5e1';
   });
   if (btn) { btn.style.background = '#4ade80'; btn.style.color = '#052e16'; }
-
   var bloque = document.getElementById('apertura-texto');
   if (!bloque) return;
-
   bloque.innerHTML = getAperturaHTML(estilo);
 }
-
 function setTipo(tipo, btn) {
   ['btn-ajustado','btn-general','btn-individual'].forEach(id => {
     const b = document.getElementById(id);
@@ -306,39 +258,37 @@ function setTipo(tipo, btn) {
   });
   btn.style.background = '#ffd700';
   btn.style.color = '#0F2463';
-
-  const pGrupos       = document.getElementById('p-grupos');
-  const pAutoInsc     = document.getElementById('p-autoinscripcion');
-  const spanConoce    = document.getElementById('span-conoce');
-
+  const pGrupos = document.getElementById('p-grupos');
+  const pAutoInsc = document.getElementById('p-autoinscripcion');
+  const spanConoce = document.getElementById('span-conoce');
   if(tipo === 'ajustado'){
-    pGrupos.style.display      = '';
-    pAutoInsc.style.display    = '';
+    pGrupos.style.display = '';
+    pAutoInsc.style.display = '';
     if(spanConoce){
       spanConoce.textContent = 'Asimismo, le recomiendo completar y mantener actualizada la información del apartado «Conoce a tu docente» en la página de inicio, ya que será visible para las y los estudiantes durante la impartición.';
       spanConoce.style.display = '';
     }
   } else if(tipo === 'general'){
-    pGrupos.style.display      = '';
-    pAutoInsc.style.display    = '';
+    pGrupos.style.display = '';
+    pAutoInsc.style.display = '';
     if(spanConoce){
       spanConoce.textContent = '';
       spanConoce.style.display = 'none';
     }
   } else if(tipo === 'individual'){
-    pGrupos.style.display      = 'none';
-    pAutoInsc.style.display    = 'none';
+    pGrupos.style.display = 'none';
+    pAutoInsc.style.display = 'none';
     if(spanConoce){
       spanConoce.textContent = '';
       spanConoce.style.display = 'none';
     }
   }
 }
-
-// ── ABRIR OUTLOOK ──
 function abrirOutlook() {
   const nrc = params.get('nrc') ? decodeURIComponent(params.get('nrc')) : '';
-  const asunto = encodeURIComponent('Presentación Tutora de Acompañamiento — ' + nrc);
+  const nombreCurso = params.get('nombreCurso') ? decodeURIComponent(params.get('nombreCurso')) : '';
+  const asuntoTexto = 'Bienvenida y Presentación Equipo Tutorial Curso "' + nombreCurso + '" ' + nrc;
+  const asunto = encodeURIComponent(asuntoTexto.trim());
   window.open('mailto:?subject=' + asunto, '_blank');
 }
 </script>
