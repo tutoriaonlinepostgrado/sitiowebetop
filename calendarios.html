@@ -79,10 +79,11 @@
     const uniq=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))];
     const selected=(arr,key,multi,empty='No disponible')=>{const v=uniq(arr,key);return v.length===1?v[0]:(v.length>1?multi:empty)};
     const dateValue=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(d.getTime())?null:d};
+    const dateISO=v=>{const d=dateValue(v);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''};
     const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
     const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
     const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
-    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake');return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechaInicio=q.get('fechaInicio')||'';return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechaInicio||dateISO(x['fecha inicio'])===fechaInicio)&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
     function updateHeader(){
       const tutor=selected(courses,'tutor','Varios / No definido');
       document.getElementById('h-tutor').textContent=tutor;
