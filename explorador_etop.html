@@ -55,6 +55,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .search-clear{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:none;color:var(--text-muted);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:13px;display:none;align-items:center;justify-content:center;transition:background .15s}
 .search-clear:hover{background:rgba(255,255,255,.15)}
 .search-clear.visible{display:flex}
+.search-filters{max-width:980px;margin:10px auto 0;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.search-filter{height:36px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);padding:0 11px;font:500 12px var(--font);outline:none;min-width:210px}
+.search-filter:focus{border-color:#c6a000;box-shadow:0 0 0 3px rgba(198,160,0,.1)}
+.search-filter-label{display:flex;align-items:center;gap:7px;color:var(--text-muted);font-size:11px;font-weight:600}
+.search-filter-clear{height:36px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#475569;padding:0 12px;font:600 11px var(--font);cursor:pointer}
+.search-filter-clear:hover{background:#f1f5f9}
 
 /* SUGGESTIONS */
 .sug-box{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 16px 40px rgba(0,0,0,.5);z-index:400;display:none;max-height:400px;overflow-y:auto}
@@ -262,6 +268,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .active-filter-note.show{display:flex}
 .active-filter-note strong{color:var(--yellow)}
 .active-filter-note button{margin-left:auto;border:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:5px;padding:3px 8px;cursor:pointer}
+
+/* Tema claro ETOP: conserva navegación institucional y reduce la fatiga visual */
+:root{--bg:#eef3f8;--surface:#ffffff;--border:#dbe4ee;--border2:#cbd7e4;--yellow:#b88a00;--text:#24364b;--text-muted:#586b82;--text-dim:#7b8da2}
+body{background:#eef3f8;color:var(--text)}
+.topnav{background:#1f2940;border-bottom:3px solid #d6aa00;color:#fff}.nav-title{color:#fff}.nav-link{color:#c7d2e0}.nav-link:hover{background:rgba(255,255,255,.1);color:#fff}.nav-link.active{background:rgba(255,215,0,.14);color:#ffd700}.nav-stat{color:#a9b8ca}.nav-stat span{color:#ffd700}
+.search-hero{background:linear-gradient(180deg,#f7f9fc 0%,#eef3f8 100%)}
+.search-input,.dir-search,.col-filter{background:#fff;color:#334155;border-color:#cbd7e4}.search-input::placeholder,.dir-search::placeholder{color:#8a99aa}
+.search-guide span{background:#fff;border-color:#d5dfe9}.sug-box{background:#fff;border-color:#cbd7e4;box-shadow:0 14px 34px rgba(30,50,75,.16)}.sug-item:hover,.sug-item.active{background:#fff8dc}
+.result-card,.stat-card,.chart-card,.prog-card,.search-empty{background:#fff;border-color:#d7e1eb;box-shadow:0 2px 8px rgba(36,54,75,.045)}
+.stat-card:hover{background:#fbfcfe}.badge-CERRADO{background:#edf1f5;color:#66788b;border-color:#d4dde6}.simple-dir-note{background:#f7f9fc!important;border-color:#d7e1eb!important;color:#586b82!important}
+.filter-bar,.filter-row th{background:#f1f5f9}.active-filter-note{background:#fff8dc;border-color:#ead68a}.active-filter-note button{background:#e9eef4;color:#475569}
+.list-toolbar,.nrc-table th{background:#f1f5f9;color:#52667d}.nrc-table td{border-color:#e4ebf2;color:#41556c}.nrc-table tr:hover td{background:#f8fafc}
+.prog-table th{background:#f2f6fa!important;color:#52667d!important}.prog-table td{border-color:#e4ebf2!important;color:#41556c!important}.prog-table tr:hover td{background:#f8fafc!important}
+.tool-section-title,.tool-section-sub,.helper,.form-group label{color:var(--text)}.explorer-tool-view input,.explorer-tool-view select,.explorer-tool-view textarea{background:#fff!important;color:#334155!important;border-color:#cbd7e4!important}.explorer-tool-view .tool-table th{background:#eef3f8;color:#52667d}.c-carpeta-item,.c-preview-bar{background:#f7f9fc}.btn-volver-arriba{background:#1f2940;color:#ffd700}
 .simple-dir-note{font-size:11px;color:var(--text-dim);margin:-8px 0 14px}.simple-dir-note strong{color:var(--text-muted)}
 .td-empty{text-align:center;padding:20px;color:var(--text-dim);font-style:italic;font-size:12px}
 
@@ -343,6 +363,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
         oninput="onInput(this.value)" onkeydown="onKey(event)" autocomplete="off">
       <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
       <div class="sug-box" id="sugBox"></div>
+    </div>
+    <div class="search-filters">
+      <label class="search-filter-label">Código o materia
+        <input class="search-filter" id="courseCodeFilter" type="text" placeholder="Ej.: UNI, UNI118, MAPS015" oninput="aplicarFiltrosBusqueda()">
+      </label>
+      <label class="search-filter-label">Fecha de inicio
+        <input class="search-filter" id="startDateFilter" type="date" onchange="aplicarFiltrosBusqueda()">
+      </label>
+      <button class="search-filter-clear" type="button" onclick="clearSearch()">Limpiar filtros</button>
     </div>
   </div>
   <div class="section" style="padding-top:0">
@@ -603,11 +632,15 @@ const fechaBusqueda=v=>{
 const goTo=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 function parseFecha(v){
     if(!v) return null;
-
-    const [y,m,d] = String(v).trim().split("-").map(Number);
-
-    return new Date(y, m-1, d);
+    const s=String(v).trim();
+    let y,m,d;
+    if(/^\d{4}-\d{1,2}-\d{1,2}/.test(s)){[y,m,d]=s.slice(0,10).split('-').map(Number);}
+    else if(/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/.test(s)){[d,m,y]=s.split(/[\/\-]/).map(Number);}
+    else return null;
+    const fecha=new Date(y,m-1,d);
+    return Number.isNaN(fecha.getTime())?null:fecha;
 }
+const fechaISO=v=>{const d=parseFecha(v);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:'';};
   const fmtF=v=>{const d=parseFecha(v);if(!d)return'—';return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});}
 const badge=e=>{const k=(e||'').replace(/\s/g,'-');return`<span class="badge badge-${k}">${esc(e)||'—'}</span>`;};
 function hl(text,q){if(!q)return esc(text);const i=norm(text).indexOf(norm(q));if(i<0)return esc(text);return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));}
@@ -785,9 +818,10 @@ async function cargar(){
 function onInput(v){
   clearTimeout(timer);
   document.getElementById('searchClear').classList.toggle('visible',v.length>0);
-  if(v.length<2){closeSug();document.getElementById('searchResults').innerHTML='';return;}
-  timer=setTimeout(()=>{renderSug(v);renderCards(v);},160);
+  if(v.length<2)closeSug();
+  timer=setTimeout(()=>{if(v.length>=2)renderSug(v);renderCards(v);},160);
 }
+function aplicarFiltrosBusqueda(){closeSug();renderCards(document.getElementById('globalSearch').value);}
 function onKey(e){
   const items=document.querySelectorAll('#sugBox .sug-item');
   if(e.key==='ArrowDown'){e.preventDefault();sugSel=Math.min(sugSel+1,items.length-1);hlSug(items);}
@@ -874,7 +908,7 @@ function pickSug(i){
   if(s.type==='intake')navegarDirectorio(s.value,'intake');
 }
 function closeSug(){document.getElementById('sugBox').classList.remove('open');sugSel=-1;sugList=[];}
-function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
+function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('courseCodeFilter').value='';document.getElementById('startDateFilter').value='';document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();}
 document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
 function seleccionarCursoDesdeDirectorio(nrc){
@@ -895,11 +929,19 @@ function filtroTarjeta(valor,tipo='dato',texto=null){
 }
 
 function renderCards(q){
-  const c=document.getElementById('searchResults'),qn=norm(q);
-  if(!qn||qn.length<2){c.innerHTML='';return;}
-  const found=all.filter(x=>x._s.includes(qn)).sort((a,b)=>{const an=norm(a.nrc).startsWith(qn)?0:1,bn=norm(b.nrc).startsWith(qn)?0:1;if(an!==bn)return an-bn;return compararCursosOperativamente(a,b);}).slice(0,20);
-  if(!found.length){c.innerHTML=`<div class="search-empty">Sin resultados para <strong>${esc(q)}</strong></div>`;return;}
-  c.innerHTML=found.map(x=>{
+  const c=document.getElementById('searchResults');
+  const terminos=norm(q).split(/\s+/).filter(Boolean);
+  const codigo=norm(document.getElementById('courseCodeFilter')?.value||'').trim();
+  const fecha=document.getElementById('startDateFilter')?.value||'';
+  if(!terminos.length&&!codigo&&!fecha){c.innerHTML='';return;}
+  const encontrados=all.filter(x=>terminos.every(t=>x._s.includes(t)))
+    .filter(x=>!codigo||norm([x.codigoCurso,x.materia,x.nrc].join(' ')).includes(codigo))
+    .filter(x=>!fecha||fechaISO(x.fechaInicio)===fecha)
+    .sort((a,b)=>compararCursosOperativamente(a,b));
+  if(!encontrados.length){c.innerHTML='<div class="search-empty">Sin resultados para la combinación de filtros seleccionada.</div>';return;}
+  const limite=250,found=encontrados.slice(0,limite);
+  const resumen=`<div class="search-empty" style="padding:10px 14px;margin-bottom:10px;text-align:left"><strong>${encontrados.length.toLocaleString('es-CL')}</strong> curso${encontrados.length===1?'':'s'} encontrado${encontrados.length===1?'':'s'}${encontrados.length>limite?` · se muestran los primeros ${limite}`:''}</div>`;
+  c.innerHTML=resumen+found.map(x=>{
     const{urlSP,urlNrcTutor,urlC}=x.urls;
     const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
     const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank" rel="noopener">🗂 Ver el curso en base calendarios</a>`:'';
