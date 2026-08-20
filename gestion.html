@@ -77,7 +77,7 @@
         .fsel-topbar:hover, .fsel-topbar:focus { border-color: rgba(255,215,0,0.3); color: #ffd700; background-color: rgba(255,255,255,0.07); }
         .fsel-topbar:disabled { opacity: 0.5; cursor: not-allowed; }
         .fsel-topbar option { background: #1e293b; color: #f1f5f9; }
-        .fecha-multi-wrap{position:relative}.fecha-multi-btn{max-width:145px;min-width:115px}.fecha-multi-panel{display:none;position:absolute;top:34px;left:0;width:210px;max-height:285px;overflow:auto;padding:8px;background:#182238;border:1px solid rgba(255,215,0,.35);border-radius:8px;box-shadow:0 10px 26px rgba(0,0,0,.45);z-index:10000}.fecha-multi-wrap.open .fecha-multi-panel{display:block}.fecha-multi-op{display:flex;align-items:center;gap:7px;padding:6px;color:#e2e8f0;font-size:11px;cursor:pointer;border-radius:5px}.fecha-multi-op:hover{background:rgba(255,215,0,.1)}.fecha-multi-op input{accent-color:#ffd700}
+        .fecha-multi-wrap{display:flex;align-items:center;gap:5px;min-width:0}.fecha-multi-input{height:28px;width:128px;padding:0 7px;border:1px solid rgba(255,215,0,.3);border-radius:6px;background:rgba(255,255,255,.05);color:#cbd5e1;font:500 10px 'Segoe UI',sans-serif;color-scheme:dark;outline:none}.fecha-multi-input:focus{border-color:rgba(255,215,0,.7)}.fecha-chips{display:flex;align-items:center;gap:4px;max-width:290px;overflow-x:auto;scrollbar-width:thin}.fecha-chip{display:inline-flex;align-items:center;gap:4px;height:25px;padding:0 7px;border:1px solid rgba(255,215,0,.3);border-radius:13px;background:rgba(255,215,0,.08);color:#e2e8f0;font-size:9px;font-weight:700;white-space:nowrap}.fecha-chip button{border:0;background:none;color:#ffd700;font-size:13px;line-height:1;cursor:pointer;padding:0}.fecha-chip-clear{height:25px;border:0;background:none;color:#94a3b8;font-size:9px;cursor:pointer;white-space:nowrap}.fecha-chip-clear:hover{color:#ffd700}
         /* Pills RUT */
         .search-group { display: flex; align-items: center; gap: 6px; }
         .search-group-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,215,0,0.35); white-space: nowrap; flex-shrink: 0; user-select: none; }
@@ -222,7 +222,7 @@
                 <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="display:none;max-width:175px">
                     <option value="">Intake/Versión ⏳</option>
                 </select>
-                <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio" style="display:none"><button type="button" class="fsel-topbar fecha-multi-btn" id="fecha-multi-btn" onclick="toggleFechasGestion(event)">Fecha de inicio</button><div class="fecha-multi-panel" id="fecha-multi-panel"></div></div>
+                <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio" style="display:none"><input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)"><div class="fecha-chips" id="fecha-multi-chips"></div></div>
                 <div class="top-bar-sep"></div>
                 <!-- NRC dropdown custom -->
                 <div class="search-group" data-filtro="nrc">
@@ -514,15 +514,15 @@
         renderFechasGestion();
     }
 
-    function toggleFechasGestion(e){e.stopPropagation();document.getElementById('fecha-multi-wrap').classList.toggle('open');}
     function renderFechasGestion(){
         if(!catalogoNRC.length)return;
         const vals=[...new Set(nrcsFiltrados('fechaInicio').map(n=>fechaISO(n['fecha inicio'])).filter(Boolean))].sort();
         BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(v=>vals.includes(v));
-        document.getElementById('fecha-multi-btn').textContent=BUSQUEDA.fechaInicio.length?`Fecha inicio (${BUSQUEDA.fechaInicio.length})`:'Fecha de inicio';
-        document.getElementById('fecha-multi-panel').innerHTML=vals.map(v=>`<label class="fecha-multi-op"><input type="checkbox" ${BUSQUEDA.fechaInicio.includes(v)?'checked':''} onchange="cambiarFechaGestion('${v}',this.checked)"><span>${v.split('-').reverse().join('-')}</span></label>`).join('')||'<div class="fecha-multi-op">Sin fechas disponibles</div>';
+        document.getElementById('fecha-multi-chips').innerHTML=BUSQUEDA.fechaInicio.slice().sort().map(v=>`<span class="fecha-chip">${v.split('-').reverse().join('-')}<button type="button" title="Quitar fecha" onclick="quitarFechaGestion('${v}')">×</button></span>`).join('')+(BUSQUEDA.fechaInicio.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasGestion()">Limpiar</button>':'');
     }
-    function cambiarFechaGestion(v,marcado){if(marcado){if(!BUSQUEDA.fechaInicio.includes(v))BUSQUEDA.fechaInicio.push(v);}else BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe();}
+    function agregarFechaGestion(v){if(v&&!BUSQUEDA.fechaInicio.includes(v))BUSQUEDA.fechaInicio.push(v);document.getElementById('fecha-multi-input').value='';sincronizarFiltros();actualizarBadge();actualizarIframe();}
+    function quitarFechaGestion(v){BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe();}
+    function limpiarFechasGestion(){BUSQUEDA.fechaInicio=[];sincronizarFiltros();actualizarBadge();actualizarIframe();}
 
     // ── Aplicar filtro ────────────────────────────────────
     function aplicarBusqueda(campo, valor) {
