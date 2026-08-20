@@ -729,7 +729,17 @@
                 });
 
                 // Parámetros adicionales según el tipo de correo
-                if (clave === 'PRESENTACION') {
+                if (clave === 'CORREOS') {
+                    // Bienvenida necesita el programa oficial y el NRC + nombre
+                    // completo del curso de inducción.
+                    const programa = nd['nombre programa'] || '';
+                    const nombreInduccion = nd['nombre curso'] || '';
+                    if (programa) p.set('nombrePrograma', programa);
+                    p.set('nombreCurso', nombreInduccion
+                        ? `${BUSQUEDA.nrc} — ${nombreInduccion}`
+                        : BUSQUEDA.nrc);
+
+                } else if (clave === 'PRESENTACION') {
                     // Presentación Tutorial necesita: nombreCurso, duracion, diaInicio, diaFin
                     const duracion  = calcularSemanas(fi, ff);
                     const diaInicio = diaSemana(fi);
