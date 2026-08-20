@@ -20,14 +20,14 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit}
 a{color:inherit}
-.topnav{position:sticky;top:0;z-index:300;display:grid;grid-template-columns:220px 1fr auto;align-items:center;height:60px;background:rgba(15,23,42,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border2)}
-.nav-brand{height:100%;display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--border)}
+.topnav{position:sticky;top:0;z-index:300;display:grid;grid-template-columns:240px minmax(360px,1fr) 230px;align-items:center;height:58px;background:rgba(15,23,42,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border2)}
+.nav-brand{height:100%;display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--border);white-space:nowrap}
 .nav-dot{width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 5px rgba(250,204,21,.08)}
-.nav-title{font-size:15px;font-weight:800}
-.nav-links{display:flex;height:100%;align-items:center;padding-left:16px;gap:4px}
-.nav-link{height:100%;padding:0 18px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;font-weight:600}
+.nav-title{font-size:14px;font-weight:800;white-space:nowrap}
+.nav-links{display:flex;height:100%;align-items:center;padding-left:10px;gap:2px}
+.nav-link{height:100%;display:inline-flex;align-items:center;padding:0 16px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;font-weight:600;text-decoration:none;white-space:nowrap}
 .nav-link:hover,.nav-link.active{color:var(--text);border-bottom-color:var(--yellow)}
-.nav-stat{padding:0 20px;font-size:11px;color:var(--muted)}.nav-stat span{color:var(--yellow);font-weight:800}
+.nav-stat{padding:0 18px;font-size:10px;color:var(--muted);text-align:right;white-space:nowrap}.nav-stat span{color:var(--yellow);font-weight:800}
 .shell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 60px)}
 .sidebar{position:sticky;top:60px;align-self:start;height:calc(100vh - 60px);padding:18px 14px;background:rgba(15,23,42,.94);border-right:1px solid var(--border);overflow:auto}
 .sidebar-title{color:#D7DEE8;font-size:12px;font-weight:800;letter-spacing:.05em;margin-bottom:16px}
@@ -109,7 +109,7 @@ a{color:inherit}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
 @media(max-width:1500px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.shell{grid-template-columns:210px minmax(0,1fr)}}
-@media(max-width:760px){.topnav{grid-template-columns:1fr auto}.nav-links{display:none}.shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}.content{padding:12px}.stats-grid{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
+@media(max-width:900px){.topnav{grid-template-columns:1fr auto}.nav-links{display:none}.nav-stat{padding-right:12px}.shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}.content{padding:12px}.stats-grid{grid-template-columns:1fr 1fr}.drawer{width:100vw}}
 
 /* ── Panel de filtros colapsable ── */
 .shell{transition:grid-template-columns .24s ease}
@@ -179,7 +179,7 @@ a{color:inherit}
     <button class="nav-link" onclick="focusSearch()">⌕ Buscar</button>
     <button class="nav-link active" onclick="go('consolidado')">▣ Consolidado</button>
   </div>
-  <div class="nav-stat">Última actualización: <span id="updated">—</span></div>
+  <div class="nav-stat">Fecha de consulta: <span id="updated">—</span></div>
 </nav>
 
 <div class="shell" id="appShell">
@@ -315,7 +315,7 @@ const POWER_APPS_URL=
   '?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2'+
   '&hint=e935542a-ea92-4f60-8f3e-4c805f2ddd64&source=iframe';
 
-const DERIVAR_URL=BASE+'derivar_incidencia_qa2.html';
+const DERIVAR_URL='derivar_incidencia_qa2.html';
 const CONSOLIDADO_MASTER_URL=''; // Pega aquí la URL real cuando la tengas.
 const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
 const SP_VIEW='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/AllItems.aspx?viewid=407aa7f0-48a8-461d-9547-327d154dcc70&env=WebViewList';
@@ -514,7 +514,7 @@ async function load(){
     }).sort(compareCursosOperativos);
 
     populateFilters();
-    $('updated').textContent=new Date().toLocaleString('es-CL');
+    $('updated').textContent=new Date().toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
 
     // Permite abrir esta página directamente desde el Explorador con ?nrc=XXXX.
     const nrcDirecto=new URLSearchParams(window.location.search).get('nrc')?.trim()||'';
