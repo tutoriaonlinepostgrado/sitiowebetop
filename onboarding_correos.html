@@ -62,7 +62,7 @@
     color: var(--text);
   }
 
-  input[type="text"], input[type="date"], textarea, select {
+  input[type="text"], input[type="date"], textarea {
     background: var(--input-bg);
     color: var(--input-text);
     border: 1px solid rgba(246,193,40,0.8);
@@ -74,7 +74,7 @@
     transition: border-color 0.15s, box-shadow 0.15s;
     width: 100%;
   }
-  input:focus, textarea:focus, select:focus {
+  input:focus, textarea:focus {
     border-color: var(--line);
     box-shadow: 0 0 0 2px rgba(246,193,40,0.15);
   }
@@ -259,61 +259,40 @@
   <div class="form-grid">
     <div class="form-group">
       <label>NOMBRE TUTOR</label>
-      <select id="nombre-tutor" onchange="autocompletarTutor()">
-        <option value="">— Selecciona tutor —</option>
-        <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
-        <option value="KIMBERLY JORQUERA">KIMBERLY JORQUERA</option>
-        <option value="MARTA GONZALEZ">MARTA GONZALEZ</option>
-        <option value="DANITZA JANSEN">DANITZA JANSEN</option>
-        <option value="SYLVIA VALENZUELA">SYLVIA VALENZUELA</option>
-        <option value="PAULA PARDO">PAULA PARDO</option>
-        <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
-        <option value="BARBARA ROJAS">BARBARA ROJAS</option>
-        <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
-        <option value="CARLA PEÑA">CARLA PEÑA</option>
-        <option value="NOEMI PAZ">NOEMI PAZ</option>
-        <option value="HECTOR TAPIA">HECTOR TAPIA</option>
-        <option value="CONSUELO PARGA">CONSUELO PARGA</option>
-        <option value="FRANCISCA INDA">FRANCISCA INDA</option>
-        <option value="JAVIERA ROJAS">JAVIERA ROJAS</option>
-        <option value="ALYSON HERNANDEZ">ALYSON HERNANDEZ</option>
-      </select>
+      <input type="text" id="nombre-tutor" placeholder="Nombre completo del tutor" />
     </div>
     <div class="form-group">
       <label>CORREO TUTOR</label>
-      <input type="text" id="correo-tutor" placeholder="Se autocompleta al elegir tutor" readonly />
+      <input type="text" id="correo-tutor" placeholder="tutor@dominio.cl" />
     </div>
     <div class="form-group">
       <label>ANEXO TUTOR</label>
-      <input type="text" id="anexo-tutor" placeholder="Se autocompleta al elegir tutor" readonly />
+      <input type="text" id="anexo-tutor" placeholder="Ej: 1234" />
     </div>
     <div class="form-group">
       <label>NOMBRE DE PROGRAMA</label>
-      <input type="text" id="programa-search" placeholder="Escribe el nombre del programa..." oninput="buscarPrograma()" autocomplete="off" />
-      <div id="programa-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
-        <div id="programa-options"></div>
-      </div>
-      <input type="hidden" id="programa" />
+      <input type="text" id="programa" list="programas-list" placeholder="Escribe o selecciona el nombre oficial" autocomplete="off" />
+      <datalist id="programas-list"></datalist>
     </div>
     <div class="form-group">
       <label>NRC Y NOMBRE DE CURSO INDUCC</label>
-      <input type="text" id="nrc-induccion-search" placeholder="Escribe NRC o nombre..." oninput="buscarCursoInduccion()" autocomplete="off" />
-      <div id="nrc-induccion-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
-        <div id="nrc-induccion-options"></div>
-      </div>
-      <input type="hidden" id="nrc-induccion" />
+      <input type="text" id="nrc-induccion" placeholder="Ej: 12345 - Inducción Postgrado" />
     </div>
     <div class="form-group">
-      <label>NOMBRE PRIMER CURSO</label>
-      <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre..." oninput="buscarCurso1()" autocomplete="off" />
+      <label>NOMBRE PRIMER CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(busca por NRC)</span></label>
+      <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso1')" autocomplete="off" />
       <div id="curso1-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
         <div id="curso1-options"></div>
       </div>
       <input type="hidden" id="curso1" />
     </div>
     <div class="form-group">
-      <label>NOMBRE SEGUNDO CURSO (opcional)</label>
-      <input type="text" id="curso2" placeholder="Opcional" />
+      <label>NOMBRE SEGUNDO CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(opcional — busca por NRC)</span></label>
+      <input type="text" id="curso2-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso2')" autocomplete="off" />
+      <div id="curso2-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="curso2-options"></div>
+      </div>
+      <input type="hidden" id="curso2" />
     </div>
     <div class="form-group"></div>
     <div class="form-group">
@@ -380,207 +359,6 @@
 <script>
 let nominaFile = null;
 let datosFinales = null;
-let nrcsObCache = [];
-let programasUnicos = [];
-
-const TUTORES = {
-  "HANS NOVAKOVIC": {correo:"tutoriaonline45@unab.cl", anexo:"7261"},
-  "KIMBERLY JORQUERA": {correo:"tutoriaonline52@unab.cl", anexo:"7284"},
-  "MARTA GONZALEZ": {correo:"marta.gonzalez@unab.cl", anexo:"5216"},
-  "DANITZA JANSEN": {correo:"danitza.jansen@unab.cl", anexo:"5866"},
-  "SYLVIA VALENZUELA": {correo:"sylvia.valenzuela@unab.cl", anexo:"5873"},
-  "PAULA PARDO": {correo:"tutoriaonline82@unab.cl", anexo:"1285"},
-  "MARIA FERNANDA GONZALEZ": {correo:"tutoriaonline41@unab.cl", anexo:"5644"},
-  "BARBARA ROJAS": {correo:"barbara.rojas.c@unab.cl", anexo:"7260"},
-  "CONSTANZA CONTRERAS": {correo:"tutoriaonline56@unab.cl", anexo:"8201"},
-  "CARLA PEÑA": {correo:"tutoriaonline54@unab.cl", anexo:"7361"},
-  "NOEMI PAZ": {correo:"tutoriaonline08@unab.cl", anexo:"1288"},
-  "HECTOR TAPIA": {correo:"tutoriaonline23@unab.cl", anexo:"5685"},
-  "CONSUELO PARGA": {correo:"tutoriaonline70@unab.cl", anexo:"1273"},
-  "FRANCISCA INDA": {correo:"tutoriaonline75@unab.cl", anexo:"1278"},
-  "JAVIERA ROJAS": {correo:"tutoriaonline76@unab.cl", anexo:"1279"},
-  "ALYSON HERNANDEZ": {correo:"tutoriaonline72@unab.cl", anexo:"5245"}
-};
-
-function autocompletarTutor() {
-  const nombre = document.getElementById('nombre-tutor').value;
-  const tutor = TUTORES[nombre] || {correo:'', anexo:''};
-  document.getElementById('correo-tutor').value = tutor.correo;
-  document.getElementById('anexo-tutor').value = tutor.anexo;
-}
-
-function campo(obj, nombres) {
-  for (const nombre of nombres) {
-    if (obj && obj[nombre] !== undefined && obj[nombre] !== null && String(obj[nombre]).trim() !== '') {
-      return String(obj[nombre]).trim();
-    }
-  }
-  return '';
-}
-
-function fechaISO(valor) {
-  if (!valor) return '';
-  const s = String(valor).trim();
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
-  const m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
-  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-  const d = new Date(s);
-  return isNaN(d) ? '' : d.toISOString().substring(0,10);
-}
-
-function cargarCursosInduccion() {
-  const programas = new Map();
-
-  nrcsObCache.forEach(item => {
-    const programa = campo(item, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']);
-    if (!programa) return;
-
-    const key = programa
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g,'')
-      .toLowerCase()
-      .replace(/\s+/g,' ')
-      .trim();
-
-    if (!programas.has(key)) programas.set(key, programa);
-  });
-
-  programasUnicos = [...programas.values()]
-    .sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
-}
-
-function buscarPrograma() {
-  const input = document.getElementById('programa-search');
-  const hidden = document.getElementById('programa');
-  const dd = document.getElementById('programa-dropdown');
-  const opts = document.getElementById('programa-options');
-  const q = input.value.trim().toLowerCase();
-
-  hidden.value = '';
-
-  if(!q || q.length < 2) {
-    dd.style.display = 'none';
-    return;
-  }
-
-  const resultados = programasUnicos
-    .filter(programa => programa.toLowerCase().includes(q))
-    .slice(0,25);
-
-  if(!resultados.length) {
-    opts.innerHTML = '<div style="padding:10px 12px;color:#666;font-size:0.82rem;">Sin resultados</div>';
-    dd.style.display = 'block';
-    return;
-  }
-
-  opts.innerHTML = '';
-
-  resultados.forEach(programa => {
-    const div = document.createElement('div');
-    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
-    div.onmouseenter = () => div.style.background = '#dbeafe';
-    div.onmouseleave = () => div.style.background = 'transparent';
-    div.innerHTML = '<span style="color:#1e293b;font-size:0.82rem;">' + programa + '</span>';
-    div.onclick = () => {
-      seleccionarPrograma(programa);
-      dd.style.display = 'none';
-    };
-    opts.appendChild(div);
-  });
-
-  dd.style.display = 'block';
-}
-
-function seleccionarPrograma(programa) {
-  document.getElementById('programa-search').value = programa || '';
-  document.getElementById('programa').value = programa || '';
-}
-
-
-function buscarCursoInduccion() {
-  const q = document.getElementById('nrc-induccion-search').value.trim().toLowerCase();
-  const dd = document.getElementById('nrc-induccion-dropdown');
-  const opts = document.getElementById('nrc-induccion-options');
-
-  document.getElementById('nrc-induccion').value = '';
-
-  if(!q || q.length < 2) {
-    dd.style.display = 'none';
-    return;
-  }
-
-  const resultados = nrcsObCache
-    .map(item => ({
-      original: item,
-      nrc: campo(item, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),
-      nombreCurso: campo(item, ['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']),
-      programa: campo(item, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']),
-      fechaInicio: fechaISO(campo(item, ['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO'])),
-      fechaFin: fechaISO(campo(item, ['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN'])),
-      intake: campo(item, ['intake','INTAKE','intake o version','INTAKE O VERSION'])
-    }))
-    .filter(r =>
-      r.nrc &&
-      r.nombreCurso &&
-      (
-        r.nrc.toLowerCase().includes(q) ||
-        r.nombreCurso.toLowerCase().includes(q) ||
-        r.programa.toLowerCase().includes(q)
-      )
-    )
-    .slice(0,25);
-
-  if(!resultados.length) {
-    opts.innerHTML = '<div style="padding:10px 12px;color:#666;font-size:0.82rem;">Sin resultados</div>';
-    dd.style.display = 'block';
-    return;
-  }
-
-  opts.innerHTML = '';
-
-  resultados.forEach(r => {
-    const div = document.createElement('div');
-    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
-    div.onmouseenter = () => div.style.background = '#dbeafe';
-    div.onmouseleave = () => div.style.background = 'transparent';
-
-    div.innerHTML =
-      '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">' + r.nrc + '</span>' +
-      '<br><span style="color:#1e293b;font-size:0.82rem;">' + r.nombreCurso + '</span>' +
-      (r.programa ? '<br><span style="color:#64748b;font-size:0.72rem;">' + r.programa + '</span>' : '');
-
-    div.onclick = () => {
-      seleccionarCursoInduccion(r);
-      dd.style.display = 'none';
-    };
-
-    opts.appendChild(div);
-  });
-
-  dd.style.display = 'block';
-}
-
-
-function seleccionarCursoInduccion(curso) {
-  if (!curso) {
-    document.getElementById('nrc-induccion-search').value = '';
-    document.getElementById('nrc-induccion').value = '';
-    seleccionarPrograma('');
-    document.getElementById('fecha-inicio').value = '';
-    document.getElementById('fecha-fin').value = '';
-    return;
-  }
-
-  const textoCurso = `${curso.nrc} — ${curso.nombreCurso}`;
-
-  document.getElementById('nrc-induccion-search').value = textoCurso;
-  document.getElementById('nrc-induccion').value = textoCurso;
-  seleccionarPrograma(curso.programa || '');
-  document.getElementById('fecha-inicio').value = curso.fechaInicio || '';
-  document.getElementById('fecha-fin').value = curso.fechaFin || '';
-
-  if(!intakeActivo && curso.intake) intakeActivo = curso.intake;
-}
 
 function handleFile(input) {
   nominaFile = input.files[0];
@@ -621,12 +399,14 @@ async function procesarNomina() {
     const tn = document.getElementById('nombre-tutor').value;
     const tc = document.getElementById('correo-tutor').value;
     const ta = document.getElementById('anexo-tutor').value;
-    const pr = document.getElementById('programa').value;
+    const pr = document.getElementById('programa').value.trim();
     const ni = document.getElementById('nrc-induccion').value;
     const c1 = document.getElementById('curso1').value;
     const c2 = document.getElementById('curso2').value.trim();
     const fi = document.getElementById('fecha-inicio').value;
     const ff = document.getElementById('fecha-fin').value;
+
+    if(!pr) { resultEl.innerHTML='<div class="alert error">Ingresa o selecciona el nombre del programa antes de construir la plantilla.</div>'; return; }
 
     let salida = [];
     const firstRow = rawRows[0] || [];
@@ -689,6 +469,10 @@ async function procesarNomina() {
     }
 
     if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos en el archivo.</div>'; return; }
+
+    // Garantía final: el programa escrito debe quedar en todas las filas,
+    // independientemente del formato de la nómina de origen.
+    salida.forEach(fila => { fila['NOMBRE DE PROGRAMA'] = pr; });
 
     datosFinales = salida;
     resultEl.innerHTML = `<div class="alert success">🎉 Plantilla generada con éxito. <span class="badge">${salida.length}</span> registros.</div>`;
@@ -838,119 +622,90 @@ async function enviarSharePointPabloDaniela() {
   }
 }
 
-let intakeActivo = '';
+// ── DATOS NRC PARA BUSCADOR DE CURSOS ──
+let nrcsObData = [];
+async function cargarNrcsOb(){
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
+    nrcsObData = await r.json();
+  } catch(e) { console.warn('No se pudo cargar nrcs_onboarding.json'); }
+}
 
-function buscarCurso1() {
-  const q = document.getElementById('curso1-search').value.trim().toLowerCase();
-  const dd = document.getElementById('curso1-dropdown');
-  const opts = document.getElementById('curso1-options');
+async function cargarProgramas(){
+  try {
+    const r = await fetch('nrcs.json', {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const datos = await r.json();
+    const programas = [...new Set(datos.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,'es'));
+    document.getElementById('programas-list').innerHTML = programas
+      .map(p=>`<option value="${p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"></option>`).join('');
+  } catch(e) {
+    console.warn('No se pudo cargar el catálogo de programas; el campo seguirá permitiendo escritura manual.');
+  }
+}
+
+function buscarCurso(campo) {
+  const q = document.getElementById(campo+'-search').value.trim().toLowerCase();
+  const dd = document.getElementById(campo+'-dropdown');
+  const opts = document.getElementById(campo+'-options');
   if(!q || q.length < 2){ dd.style.display='none'; return; }
-
-  // Filtrar por intake activo Y por query
-  const resultados = nrcsObCache.filter(r => {
-    if(intakeActivo && (r.intake||'') !== intakeActivo) return false;
-    return (r.nrc||'').toLowerCase().includes(q) ||
-           (r['nombre curso']||'').toLowerCase().includes(q);
-  }).slice(0, 25);
-
+  const resultados = nrcsObData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r['nombre curso']||'').toLowerCase().includes(q)
+  ).slice(0, 25);
   if(!resultados.length){ dd.style.display='none'; return; }
   opts.innerHTML = '';
   resultados.forEach(r => {
     const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
     div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
     div.onmouseenter = ()=>div.style.background='#dbeafe';
     div.onmouseleave = ()=>div.style.background='transparent';
-    const nombre = r['nombre curso'] || '';
     div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
       +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
-    div.onclick = () => {
-      document.getElementById('curso1-search').value = nombre;
-      document.getElementById('curso1').value = nombre;
-      dd.style.display = 'none';
-    };
+    div.onclick = () => seleccionarCurso(campo, r.nrc, nombre);
     opts.appendChild(div);
   });
   dd.style.display = 'block';
 }
 
-// Cerrar dropdown al clic fuera
-document.addEventListener('click', function(e){
-  const inp = document.getElementById('curso1-search');
-  const dd  = document.getElementById('curso1-dropdown');
-  if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
-
-  const inpInd = document.getElementById('nrc-induccion-search');
-  const ddInd  = document.getElementById('nrc-induccion-dropdown');
-  if(inpInd && ddInd && !inpInd.contains(e.target) && !ddInd.contains(e.target)) ddInd.style.display='none';
-
-  const inpProg = document.getElementById('programa-search');
-  const ddProg  = document.getElementById('programa-dropdown');
-  if(inpProg && ddProg && !inpProg.contains(e.target) && !ddProg.contains(e.target)) ddProg.style.display='none';
-});
-async function cargarNrcsOb() {
-  try {
-    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json?t=' + Date.now());
-    if(!r.ok) throw new Error('No fue posible cargar nrcs_onboarding.json');
-    const data = await r.json();
-    nrcsObCache = Array.isArray(data) ? data : (data.value || []);
-    cargarCursosInduccion();
-  } catch(e) {
-    console.error(e);
-    document.getElementById('nrc-induccion-search').placeholder = '⚠️ No se pudo cargar onboarding';
-    document.getElementById('programa-search').placeholder = '⚠️ No se pudieron cargar programas';
-  }
+function seleccionarCurso(campo, nrc, nombre) {
+  document.getElementById(campo+'-search').value = nombre;
+  document.getElementById(campo).value = nombre;
+  document.getElementById(campo+'-dropdown').style.display = 'none';
 }
 
-window.onload = async function() {
+// Cerrar dropdowns al clic fuera
+document.addEventListener('click', function(e){
+  ['curso1','curso2'].forEach(c => {
+    const inp = document.getElementById(c+'-search');
+    const dd  = document.getElementById(c+'-dropdown');
+    if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+  });
+});
+
+window.onload = function() {
+  cargarNrcsOb();
+  cargarProgramas();
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
   document.getElementById('fecha-fin').value = today;
 
-  // ── PRE-LLENADO DESDE URL PARAMS (gestion.html o comunicaciones_etop.html) ──
+  // ── PRE-LLENADO DESDE CONTEXTO NRC (comunicaciones_etop.html) ──
   const p = new URLSearchParams(window.location.search);
-  const toISO = v => {
-    if(!v) return '';
-    if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10);
-    const m = v.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
-    return m ? m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0') : '';
-  };
   const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
-
-  if(p.get('nombreTutor')) {
-    set('nombre-tutor', p.get('nombreTutor'));
-    autocompletarTutor();
-  }
-  if(p.get('nombrePrograma')) seleccionarPrograma(p.get('nombrePrograma'));
-
-  const fi = toISO(p.get('fechaInicio'));
-  const ff = toISO(p.get('fechaFin'));
-  if(fi) document.getElementById('fecha-inicio').value = fi;
-  if(ff) document.getElementById('fecha-fin').value   = ff;
-
-  // Cargar nrcs_onboarding siempre para el buscador de curso1
-  const nrcParam = p.get('nrc');
-  await cargarNrcsOb();
-
-  // Guardar intake activo para filtrar buscador de curso1
-  intakeActivo = p.get('intake') || '';
-
-  if(nrcParam) {
-    const ob = nrcsObCache.find(x =>
-      campo(x, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']) === nrcParam
-    );
-
-    if(ob) {
-      const curso = {
-        nrc: campo(ob, ['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),
-        nombreCurso: campo(ob, ['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']),
-        programa: campo(ob, ['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa']),
-        fechaInicio: fechaISO(campo(ob, ['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO'])),
-        fechaFin: fechaISO(campo(ob, ['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN'])),
-        intake: campo(ob, ['intake','INTAKE','intake o version','INTAKE O VERSION'])
-      };
-      seleccionarCursoInduccion(curso);
-    }
-  }
+  const toISO = v => { if(!v) return ''; if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10); const m=v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/); return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''; };
+  set('nombre-tutor',  p.get('nombreTutor'));
+  set('correo-tutor',  p.get('correoTutor'));
+  set('anexo-tutor',   p.get('anexoTutor'));
+  set('programa',      p.get('nombrePrograma'));
+  set('nrc-induccion', p.get('nombreCurso'));
+  const fi = toISO(p.get('fechaInicio')); if(fi) document.getElementById('fecha-inicio').value = fi;
+  const ff = toISO(p.get('fechaFin'));    if(ff) document.getElementById('fecha-fin').value   = ff;
 };
 </script>
 </body>
