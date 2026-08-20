@@ -166,6 +166,80 @@ a{color:inherit}
   margin:0;
 }
 
+/* ── Tema ETOP claro: superficies de trabajo descansadas ── */
+:root{
+  --bg:#eef2f7;
+  --surface:#ffffff;
+  --surface2:#f8fafc;
+  --surface3:#e7edf5;
+  --border:#d7e0ea;
+  --border2:#c7d2df;
+  --yellow:#d6a900;
+  --text:#334155;
+  --text-muted:#64748b;
+  --text-dim:#7b8da1;
+  --muted:var(--text-muted);
+  --dim:var(--text-dim);
+  --blue:#3578b8;
+  --green:#27815e;
+  --amber:#a87500;
+  --red:#c24141;
+  --purple:#7557a8;
+  --orange:#b7652d;
+}
+body{background:var(--bg);color:var(--text)}
+.topnav{background:#172033;color:#e8edf4;border-bottom:3px solid var(--yellow);box-shadow:0 2px 10px rgba(15,23,42,.12)}
+.nav-brand{border-right-color:rgba(255,255,255,.09)}
+.nav-title{color:#f1f5f9}
+.nav-link{color:#aeb9c8}
+.nav-link:hover,.nav-link.active{color:#fff}
+.nav-stat{color:#aeb9c8}.nav-stat span{color:#f0d55d}
+.sidebar{background:#e4eaf2;border-right-color:#cbd5e1}
+.sidebar-title{color:#475569}
+.field label{color:#64748b}
+.control{background:#fff;border-color:#cbd5e1;color:#334155}
+.control option{background:#fff;color:#334155}
+.control:focus{border-color:#c6a000;box-shadow:0 0 0 3px rgba(214,169,0,.12)}
+.check{color:#64748b}
+.content{background:var(--bg)}
+.indicadores-title{color:#475569}
+.active-summary{color:#806600;background:#fff7d6;border-color:#ead88c}
+.indicadores-toggle,.btn{background:#fff;border-color:#cbd5e1;color:#52657a}
+.indicadores-toggle:hover,.btn:hover{background:#f8fafc;color:#334155;border-color:#aebdcd}
+.stat{background:#fff;border-color:#d7e0ea;box-shadow:0 2px 8px rgba(51,65,85,.045)}
+.stat:hover{border-color:#c7ad49;box-shadow:0 4px 12px rgba(51,65,85,.07)}
+.stat.active{border-color:#d6a900;box-shadow:0 0 0 2px rgba(214,169,0,.12)}
+.stat-num{color:#334155}
+.stat-label,.results-meta,.page-size{color:#64748b}
+.results-meta strong{color:#806600}
+.acc{background:#fff;border-color:#d7e0ea;box-shadow:0 3px 10px rgba(51,65,85,.045)}
+.acc-head:hover{background:#f8fafc}
+.acc-nrc{color:#263548}
+.acc-course{color:#58708b}
+.acc-body{background:#f8fafc;border-top-color:#d7e0ea}
+.course-actions{background:#f3f6fa;border-bottom-color:#d7e0ea}
+.btn-primary{background:#e9f2fc;border-color:#b9d3ef;color:#285f96}
+.btn-yellow{background:#fff7d8;border-color:#e4cd78;color:#7a6100}
+.btn-purple{background:#f0eaf8;border-color:#d1c1e5;color:#63478d}
+.btn-danger{background:#fae9e9;border-color:#e8b9b9;color:#a33d3d}
+.chip-date{background:#edf3f8;color:#52657a;border-color:#d5e0ea}
+.chip-state{background:#edf1f5;color:#526173;border-color:#d4dde7}
+.chip-green{background:#e8f5ef;color:#276b52;border-color:#b9dfcf}
+.chip-red{background:#fae6e6;color:#a33535;border-color:#efbcbc}
+.chip-amber{background:#fff4ce;color:#806100;border-color:#ead38b}
+.chip-purple{background:#f0eaf8;color:#63478d;border-color:#d1c1e5}
+.inc-table th{background:#e7edf5;color:#65778b;border-bottom-color:#cbd5e1}
+.inc-table td{color:#52657a;border-bottom-color:#e5ebf1}
+.inc-table tr:hover td{background:#f2f6fa}
+.idcell{color:#345577!important}
+.sol-cell{color:#27815e!important}
+.empty-panel,.loading{color:#64748b}
+.empty-green{color:#27815e}.empty-gray{color:#7b8da1}
+.page-btn{background:#fff;border-color:#cbd5e1;color:#64748b}
+.page-btn:hover:not(:disabled),.page-btn.active{background:#fff7d8;border-color:#d6bd58;color:#725b00}
+.footer{color:#64748b;border-top-color:#d7e0ea}.footer span{color:#806600}
+::-webkit-scrollbar-thumb{background:#b9c5d2}
+
 </style>
 </head>
 <body>
@@ -315,6 +389,8 @@ const POWER_APPS_URL=
   '?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2'+
   '&hint=e935542a-ea92-4f60-8f3e-4c805f2ddd64&source=iframe';
 
+// El generador debe abrirse desde GitHub Pages. raw.githubusercontent.com
+// entrega los HTML como texto plano y por eso mostraba el código fuente.
 const DERIVAR_URL='https://tutoriaonlinepostgrado.github.io/sitiowebetop/derivar_incidencia_qa2.html';
 const CONSOLIDADO_MASTER_URL=''; // Pega aquí la URL real cuando la tengas.
 const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
@@ -514,7 +590,10 @@ async function load(){
     }).sort(compareCursosOperativos);
 
     populateFilters();
-    $('updated').textContent=new Date().toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+    // Esta fecha indica cuándo se consultaron los JSON. No inventa una hora de actualización.
+    $('updated').textContent=new Date().toLocaleDateString('es-CL',{
+      day:'2-digit',month:'2-digit',year:'numeric'
+    });
 
     // Permite abrir esta página directamente desde el Explorador con ?nrc=XXXX.
     const nrcDirecto=new URLSearchParams(window.location.search).get('nrc')?.trim()||'';
