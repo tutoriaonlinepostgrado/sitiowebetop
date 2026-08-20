@@ -233,6 +233,11 @@
                     <option value="">⏳ Estado</option>
                 </select>
 
+                <!-- Intake o versión: se muestra en Calendarios -->
+                <select class="filtro-select" id="sel-intake" onchange="sincronizarFiltros('intake')" disabled title="Intake o versión" style="display:none;max-width:190px;">
+                    <option value="">⏳ Intake o versión</option>
+                </select>
+
                 <div class="separator-bar"></div>
 
                 <!-- Pill NRC con dropdown custom (filtra por "contiene") -->
@@ -339,7 +344,7 @@
         } catch (e) {
             console.warn('nrcs.json no disponible:', e.message);
             // deja controles deshabilitados con texto de error
-            ['sel-facultad','sel-tutor','sel-tipo','sel-estado'].forEach(id => {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(id => {
                 const el = document.getElementById(id);
                 el.innerHTML = '<option value="">⚠️ Sin datos</option>';
             });
@@ -348,7 +353,7 @@
     }
 
     function habilitarControles() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','pill-nrc'].forEach(id => {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake','pill-nrc'].forEach(id => {
             document.getElementById(id).disabled = false;
         });
     }
@@ -361,12 +366,14 @@
         const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean).filter(esTutorActivo))].sort();
         const tipos       = [...new Set(arr.map(x => x.tipo).filter(Boolean))].sort();
         const estados     = [...new Set(arr.map(x => x.estado).filter(Boolean))].sort();
+        const intakes     = [...new Set(arr.map(x => x.intake).filter(Boolean))].sort();
         const nrcs        = [...new Set(arr.map(x => x.nrc).filter(Boolean))].sort();
 
         llenarSelect('sel-facultad', facultades, '— Facultad —');
         llenarSelect('sel-tutor',    tutores,    '— Tutor —');
         llenarSelect('sel-tipo',     tipos,      '— Tipo —');
         llenarSelect('sel-estado',   estados,    '— Estado —');
+        llenarSelect('sel-intake',   intakes,    '— Intake o versión —');
         llenarDatalist(nrcs);
     }
 
@@ -492,6 +499,7 @@
             tutor    : document.getElementById('sel-tutor').value,
             tipo     : document.getElementById('sel-tipo').value,
             estado   : document.getElementById('sel-estado').value,
+            intake   : document.getElementById('sel-intake').value,
             nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
@@ -505,6 +513,7 @@
             if (excluir !== 'tutor'    && f.tutor    && x.tutor !== f.tutor)                  return false;
             if (excluir !== 'tipo'     && f.tipo     && x.tipo !== f.tipo)                    return false;
             if (excluir !== 'estado'   && f.estado   && x.estado !== f.estado)                return false;
+            if (excluir !== 'intake'   && f.intake   && x.intake !== f.intake)                return false;
             if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
@@ -537,6 +546,7 @@
         if (cambiado !== 'tutor')    reconstruirSelect('sel-tutor',    'tutor',    '— Tutor —',    'tutor');
         if (cambiado !== 'tipo')     reconstruirSelect('sel-tipo',     'tipo',     '— Tipo —',     'tipo');
         if (cambiado !== 'estado')   reconstruirSelect('sel-estado',   'estado',   '— Estado —',   'estado');
+        if (cambiado !== 'intake')   reconstruirSelect('sel-intake',   'intake',   '— Intake o versión —', 'intake');
 
         // actualizar lista de NRCs disponibles según subconjunto activo
         const nrcsActivos = [...new Set(nrcsFiltrados(null).map(x => x.nrc).filter(Boolean))].sort();
@@ -575,6 +585,7 @@
                 if (f.tutor)    urlLocal.searchParams.set('tutor', f.tutor);
                 if (f.tipo)     urlLocal.searchParams.set('tipo', f.tipo);
                 if (f.estado)   urlLocal.searchParams.set('estado', f.estado);
+                if (f.intake)   urlLocal.searchParams.set('intake', f.intake);
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
             }
             return urlLocal.toString();
@@ -613,6 +624,7 @@
         if (f.tutor)    partes.push(f.tutor);
         if (f.tipo)     partes.push(f.tipo);
         if (f.estado)   partes.push(f.estado);
+        if (f.intake)   partes.push(f.intake);
         if (f.nrc)      partes.push('NRC: ' + f.nrc);
 
         const badge   = document.getElementById('badge-activo');
@@ -633,7 +645,7 @@
        LIMPIAR TODO
     ======================================================== */
     function limpiarTodo() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado'].forEach(id => {
+        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(id => {
             document.getElementById(id).value = '';
         });
         document.getElementById('pill-nrc').value = '';
@@ -654,6 +666,7 @@
 
     function cargar(clave, btn) {
         claveActual = clave;
+        document.getElementById('sel-intake').style.display = clave === 'CALENDARIOS' ? '' : 'none';
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
