@@ -508,9 +508,14 @@
 <!-- TAB 4: CALENDARIOS -->
 <div class="tab-panel" id="tab3">
   <div class="section-title">Formateador de Calendarios de Cursos</div>
-  <div class="section-sub">Abre el Excel del calendario, copia el bloque de cursos incluyendo encabezados y pégalo abajo.</div>
-  <div class="helper">💡 Puedes pegar múltiples bloques a la vez. Asegúrate de incluir la fila de encabezados (NRC, Fecha de Inicio, Nombre Asignatura, etc.).</div>
-  <div class="form-group"><label>📋 Pega aquí el bloque del calendario:</label><textarea id="t4-texto" placeholder="Pega aquí el bloque copiado del Excel..." style="min-height:220px;"></textarea></div>
+  <div class="section-sub">Sube el Excel del calendario o copia el bloque de cursos incluyendo sus encabezados.</div>
+  <div class="helper">💡 El sistema reconoce variantes como Código de curso, Código asignatura, Abreviada, Nombre de curso, Nombre asignatura, Profesor, Docente, Inicio, Fecha de inicio, Fin y Fecha de término.</div>
+  <div class="form-group">
+    <label>📂 Subir calendario en Excel</label>
+    <input id="t4-archivo" type="file" accept=".xlsx,.xls,.csv" onchange="t4CargarExcel(this)" />
+    <div class="helper" id="t4-archivo-status">Se buscará automáticamente la hoja que contenga los encabezados del calendario.</div>
+  </div>
+  <div class="form-group"><label>📋 O pega aquí el bloque del calendario:</label><textarea id="t4-texto" placeholder="Pega aquí el bloque copiado del Excel..." style="min-height:220px;"></textarea></div>
   <hr class="divider">
   <div style="font-weight:700; margin-bottom:0.35rem;">2. Identifica el programa y genera la versión</div>
   <div class="helper" id="t4-catalogos-status">⏳ Cargando opciones oficiales desde nrcs.json...</div>
@@ -980,11 +985,48 @@ async function processTab3(){
 }
 function downloadTab3(){if(!state.t3Data)return;exportXLSXConTabla(state.t3Data,'Envio_invitacion_sesion_sincronica_'+new Date().toISOString().replace(/[-:T]/g,'').substring(0,14)+'.xlsx');}
 
+function calNormalizarEncabezado(v){
+  return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_./\\-]+/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
 function calDetectarHeader(cols){
-  const cu=cols.map(c=>(c||'').trim().toLowerCase()),hits={};
-  const KEYS={nrc:['nrc'],codigo:['código asignatura','codigo asignatura','codigo curso','código curso'],nombre:['nombre asignatura','nombre del curso','nombre curso','asignatura'],inicio:['fecha de inicio','fecha inicio','inicio'],termino:['fecha de término','fecha de termino','fecha término','término','termino','fecha_fin','fecha fin'],periodo:['período','periodo'],profesor:['nombre profesor','profesor'],facultad:['facultad']};
-  for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw))){if(!(campo in hits))hits[campo]=i;}}}
+  const cu=cols.map(calNormalizarEncabezado),hits={};
+  const KEYS={
+    nrc:['nrc','numero nrc','nrc curso'],
+    codigo:['codigo de curso','codigo curso','codigo de asignatura','codigo asignatura','cod asignatura','abreviada','abreviatura','sigla','materia'],
+    nombre:['nombre de curso','nombre del curso','nombre curso','nombre de asignatura','nombre asignatura','asignatura','curso'],
+    inicio:['fecha de inicio','fecha inicio','inicio de curso','inicio curso','inicio','desde'],
+    termino:['fecha de termino','fecha termino','fecha de fin','fecha fin','termino de curso','termino curso','termino','fin','hasta'],
+    periodo:['periodo'],
+    profesor:['nombre de profesor','nombre profesor','profesor','docente','academico','relator'],
+    facultad:['facultad']
+  };
+  for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw+' '))){if(!(campo in hits))hits[campo]=i;}}}
   return Object.keys(hits).length>=2?hits:null;
+}
+function calValorATexto(v){
+  if(v instanceof Date&&!isNaN(v))return String(v.getDate()).padStart(2,'0')+'-'+String(v.getMonth()+1).padStart(2,'0')+'-'+v.getFullYear();
+  return String(v??'').replace(/[\t\r\n]+/g,' ').trim();
+}
+async function t4CargarExcel(input){
+  const file=input.files&&input.files[0],status=document.getElementById('t4-archivo-status'),texto=document.getElementById('t4-texto');
+  if(!file)return;
+  status.innerHTML='<span class="spinner"></span> Leyendo archivo...';
+  try{
+    const buffer=await file.arrayBuffer(),wb=XLSX.read(buffer,{type:'array',cellDates:true});
+    let seleccion=null;
+    for(const nombreHoja of wb.SheetNames){
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[nombreHoja],{header:1,defval:'',raw:true});
+      const headerIndex=rows.findIndex(r=>Array.isArray(r)&&calDetectarHeader(r));
+      if(headerIndex>=0){seleccion={nombreHoja,rows:rows.slice(headerIndex)};break;}
+    }
+    if(!seleccion)throw new Error('No se encontró una hoja con encabezados reconocibles.');
+    texto.value=seleccion.rows.map(r=>r.map(calValorATexto).join('\t')).join('\n');
+    const mapa=calDetectarHeader(seleccion.rows[0])||{},detectados=Object.keys(mapa).map(k=>k.toUpperCase()).join(', ');
+    status.innerHTML='✅ Archivo cargado · Hoja: <strong>'+seleccion.nombreHoja+'</strong> · Campos detectados: '+detectados+'.';
+  }catch(err){
+    status.innerHTML='<span style="color:#b42318;">No se pudo leer el archivo: '+err.message+'</span>';
+    input.value='';
+  }
 }
 function calFmtFecha(v){if(!v)return'';const s=String(v).trim().replace(/\.+$/,'').trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
 
@@ -1048,7 +1090,7 @@ function parsearTextoCalendario(texto){
 async function processTab4(){
   const re=document.getElementById('t4-result'),ae=document.getElementById('t4-actions');ae.style.display='none';
   re.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
-  const texto=document.getElementById('t4-texto').value;if(!texto.trim()){re.innerHTML='<div class="alert error">Pega el bloque del calendario primero.</div>';return;}
+  const texto=document.getElementById('t4-texto').value;if(!texto.trim()){re.innerHTML='<div class="alert error">Sube el Excel o pega el bloque del calendario primero.</div>';return;}
   try{
     const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
     const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tipo=document.getElementById('t4-tipo').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
