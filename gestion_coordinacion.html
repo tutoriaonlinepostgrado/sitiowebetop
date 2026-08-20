@@ -68,7 +68,7 @@
         .filtro-select option { background-color: #1f2940; color: #e0e0e0; }
         .filtro-select:disabled { opacity: 0.4; cursor: not-allowed; }
         .multi-filtro { position: relative; flex-shrink: 0; }
-        .multi-filtro.oculto { display: none; }
+        .multi-filtro.oculto, .oculto { display: none !important; }
         .multi-btn { max-width: 175px; min-width: 105px; height: 28px; display:flex; align-items:center; justify-content:space-between; gap:8px; white-space:nowrap; overflow:hidden; }
         .multi-btn span { overflow:hidden; text-overflow:ellipsis; }
         .multi-panel { position:absolute; top:calc(100% + 5px); left:0; z-index:10000; display:none; width:270px; max-height:330px; padding:8px; background:#1a2540; border:1px solid rgba(255,215,0,.38); border-radius:10px; box-shadow:0 10px 28px rgba(0,0,0,.48); }
@@ -231,6 +231,9 @@
                 <div class="multi-filtro" id="mf-tipo"></div>
                 <div class="multi-filtro" id="mf-estado"></div>
                 <div class="multi-filtro oculto" id="mf-intake"></div>
+                <div class="pill-wrap oculto" id="fecha-inicio-wrap">
+                    <input type="date" id="filtro-fecha-inicio" class="pill-input" title="Fecha de inicio" onchange="sincronizarFiltros('fechaInicio')" style="width:135px">
+                </div>
 
                 <div class="separator-bar"></div>
 
@@ -283,7 +286,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifiltro1",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-fechainicio1",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -512,6 +515,7 @@
             tipo     : [...seleccionMulti.tipo],
             estado   : [...seleccionMulti.estado],
             intake   : [...seleccionMulti.intake],
+            fechaInicio : document.getElementById('filtro-fecha-inicio').value,
             nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
@@ -526,6 +530,7 @@
             if (excluir !== 'tipo'     && f.tipo.length     && !f.tipo.includes(x.tipo)) return false;
             if (excluir !== 'estado'   && f.estado.length   && !f.estado.includes(x.estado)) return false;
             if (excluir !== 'intake'   && f.intake.length   && !f.intake.includes(x.intake)) return false;
+            if (excluir !== 'fechaInicio' && f.fechaInicio && fechaISO(x['fecha inicio']) !== f.fechaInicio) return false;
             if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
@@ -557,6 +562,12 @@
         // Escapa comillas simples dentro del valor OData
         return v.replace(/'/g, "''");
     }
+    function fechaISO(v) {
+        const m=String(v||'').trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+        const d=String(v||'').trim().match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+        return d ? `${d[3]}-${d[2].padStart(2,'0')}-${d[1].padStart(2,'0')}` : '';
+    }
     function condicionMultiple(columna, valores) {
         return '(' + valores.map(v => `${columna} eq '${sanitizar(v)}'`).join(' or ') + ')';
     }
@@ -576,6 +587,7 @@
                 if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
+                if (f.fechaInicio)     urlLocal.searchParams.set('fechaInicio', f.fechaInicio);
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
             }
             return urlLocal.toString();
@@ -611,6 +623,7 @@
         const f = getFiltrosActivos();
         const partes = [];
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? f[c][0] : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
+        if (f.fechaInicio) partes.push('Inicio: ' + f.fechaInicio.split('-').reverse().join('-'));
         if (f.nrc)      partes.push('NRC: ' + f.nrc);
 
         const badge   = document.getElementById('badge-activo');
@@ -633,6 +646,7 @@
     function limpiarTodo() {
         CAMPOS_MULTI.forEach(c => seleccionMulti[c].clear());
         document.getElementById('pill-nrc').value = '';
+        document.getElementById('filtro-fecha-inicio').value = '';
         nrcConfirmado = '';
         ocultarDropdownNRC();
         poblarFiltros();
@@ -651,6 +665,7 @@
     function cargar(clave, btn) {
         claveActual = clave;
         document.getElementById('mf-intake').classList.toggle('oculto', clave !== 'CALENDARIOS');
+        document.getElementById('fecha-inicio-wrap').classList.toggle('oculto', clave !== 'CALENDARIOS');
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
