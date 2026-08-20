@@ -235,10 +235,7 @@
                 <div class="multi-filtro" id="mf-tipo"></div>
                 <div class="multi-filtro" id="mf-estado"></div>
                 <div class="multi-filtro oculto" id="mf-intake"></div>
-                <div class="date-filter-wrap oculto" id="fecha-inicio-wrap" title="Filtrar calendarios por fecha de inicio">
-                    <span class="date-filter-label">📅 Fecha de inicio</span>
-                    <input type="date" id="filtro-fecha-inicio" class="date-filter-input" aria-label="Fecha de inicio" onchange="sincronizarFiltros('fechaInicio')">
-                </div>
+                <div class="multi-filtro oculto" id="mf-fechaInicio"></div>
 
                 <div class="separator-bar"></div>
 
@@ -291,7 +288,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-fechainicio1",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -330,8 +327,8 @@
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
     let nrcConfirmado = '';   // NRC seleccionado que se envía al iframe (distinto del texto parcial del input)
-    const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake'];
-    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión' };
+    const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake','fechaInicio'];
+    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
 
     const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
@@ -363,7 +360,7 @@
     ======================================================== */
     function valoresCampo(campo) {
         const subset = nrcsFiltrados(campo);
-        return [...new Set(subset.map(x => x[campo]).filter(Boolean).filter(v => campo !== 'tutor' || esTutorActivo(v)))].sort((a,b) => a.localeCompare(b,'es'));
+        return [...new Set(subset.map(x => campo === 'fechaInicio' ? fechaISO(x['fecha inicio']) : x[campo]).filter(Boolean).filter(v => campo !== 'tutor' || esTutorActivo(v)))].sort((a,b) => a.localeCompare(b,'es'));
     }
 
     function poblarFiltros() {
@@ -379,11 +376,12 @@
         const elegidos = seleccionMulti[campo];
         [...elegidos].forEach(v => { if (!valores.includes(v)) elegidos.delete(v); });
         const n = elegidos.size;
-        const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? [...elegidos][0] : `${ETIQUETAS_MULTI[campo]} (${n})`;
+        const mostrarValor=v=>campo==='fechaInicio'?v.split('-').reverse().join('-'):v;
+        const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? mostrarValor([...elegidos][0]) : `${ETIQUETAS_MULTI[campo]} (${n})`;
         const buscable = campo === 'tutor' || campo === 'intake';
         host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
           <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
-          <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${elegidos.has(v)?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(v)}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
+          <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${elegidos.has(v)?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
         if (abierto) host.classList.add('abierto');
         if (busqueda) filtrarOpcionesMulti(campo,busqueda);
     }
@@ -520,7 +518,7 @@
             tipo     : [...seleccionMulti.tipo],
             estado   : [...seleccionMulti.estado],
             intake   : [...seleccionMulti.intake],
-            fechaInicio : document.getElementById('filtro-fecha-inicio').value,
+            fechaInicio : [...seleccionMulti.fechaInicio],
             nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
@@ -535,7 +533,7 @@
             if (excluir !== 'tipo'     && f.tipo.length     && !f.tipo.includes(x.tipo)) return false;
             if (excluir !== 'estado'   && f.estado.length   && !f.estado.includes(x.estado)) return false;
             if (excluir !== 'intake'   && f.intake.length   && !f.intake.includes(x.intake)) return false;
-            if (excluir !== 'fechaInicio' && f.fechaInicio && fechaISO(x['fecha inicio']) !== f.fechaInicio) return false;
+            if (excluir !== 'fechaInicio' && f.fechaInicio.length && !f.fechaInicio.includes(fechaISO(x['fecha inicio']))) return false;
             if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
@@ -592,7 +590,7 @@
                 if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
-                if (f.fechaInicio)     urlLocal.searchParams.set('fechaInicio', f.fechaInicio);
+                if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
             }
             return urlLocal.toString();
@@ -627,8 +625,7 @@
     function actualizarBadge() {
         const f = getFiltrosActivos();
         const partes = [];
-        CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? f[c][0] : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
-        if (f.fechaInicio) partes.push('Inicio: ' + f.fechaInicio.split('-').reverse().join('-'));
+        CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
         if (f.nrc)      partes.push('NRC: ' + f.nrc);
 
         const badge   = document.getElementById('badge-activo');
@@ -651,7 +648,6 @@
     function limpiarTodo() {
         CAMPOS_MULTI.forEach(c => seleccionMulti[c].clear());
         document.getElementById('pill-nrc').value = '';
-        document.getElementById('filtro-fecha-inicio').value = '';
         nrcConfirmado = '';
         ocultarDropdownNRC();
         poblarFiltros();
@@ -670,7 +666,7 @@
     function cargar(clave, btn) {
         claveActual = clave;
         document.getElementById('mf-intake').classList.toggle('oculto', clave !== 'CALENDARIOS');
-        document.getElementById('fecha-inicio-wrap').classList.toggle('oculto', clave !== 'CALENDARIOS');
+        document.getElementById('mf-fechaInicio').classList.toggle('oculto', clave !== 'CALENDARIOS');
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
