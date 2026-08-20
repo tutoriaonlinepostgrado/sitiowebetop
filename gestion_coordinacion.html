@@ -67,6 +67,19 @@
         .filtro-select:hover, .filtro-select:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); color: #fff; }
         .filtro-select option { background-color: #1f2940; color: #e0e0e0; }
         .filtro-select:disabled { opacity: 0.4; cursor: not-allowed; }
+        .multi-filtro { position: relative; flex-shrink: 0; }
+        .multi-filtro.oculto { display: none; }
+        .multi-btn { max-width: 175px; min-width: 105px; height: 28px; display:flex; align-items:center; justify-content:space-between; gap:8px; white-space:nowrap; overflow:hidden; }
+        .multi-btn span { overflow:hidden; text-overflow:ellipsis; }
+        .multi-panel { position:absolute; top:calc(100% + 5px); left:0; z-index:10000; display:none; width:270px; max-height:330px; padding:8px; background:#1a2540; border:1px solid rgba(255,215,0,.38); border-radius:10px; box-shadow:0 10px 28px rgba(0,0,0,.48); }
+        .multi-filtro.abierto .multi-panel { display:block; }
+        .multi-search { width:100%; box-sizing:border-box; margin-bottom:7px; padding:7px 9px; border:1px solid rgba(255,255,255,.18); border-radius:7px; background:#111a2e; color:#fff; outline:none; }
+        .multi-search:focus { border-color:rgba(255,215,0,.7); }
+        .multi-opciones { max-height:245px; overflow:auto; }
+        .multi-opcion { display:flex; align-items:flex-start; gap:8px; padding:7px 6px; color:#e5e7eb; font-size:12px; border-radius:6px; cursor:pointer; }
+        .multi-opcion:hover { background:rgba(255,215,0,.12); }
+        .multi-opcion input { margin-top:2px; accent-color:#ffd700; }
+        .multi-vacio { padding:10px 6px; color:#a3a3a3; font-size:12px; }
 
         /* pill NRC */
         .pill-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
@@ -213,30 +226,11 @@
             <div class="separator-bar"></div>
 
             <div class="filtros-wrapper">
-                <!-- Facultad -->
-                <select class="filtro-select" id="sel-facultad" onchange="sincronizarFiltros('facultad')" disabled title="Facultad">
-                    <option value="">⏳ Facultad</option>
-                </select>
-
-                <!-- Tutor -->
-                <select class="filtro-select" id="sel-tutor" onchange="sincronizarFiltros('tutor')" disabled title="Tutor">
-                    <option value="">⏳ Tutor</option>
-                </select>
-
-                <!-- Tipo NRC -->
-                <select class="filtro-select" id="sel-tipo" onchange="sincronizarFiltros('tipo')" disabled title="Tipo NRC">
-                    <option value="">⏳ Tipo</option>
-                </select>
-
-                <!-- Estado CAL -->
-                <select class="filtro-select" id="sel-estado" onchange="sincronizarFiltros('estado')" disabled title="Estado">
-                    <option value="">⏳ Estado</option>
-                </select>
-
-                <!-- Intake o versión: se muestra en Calendarios -->
-                <select class="filtro-select" id="sel-intake" onchange="sincronizarFiltros('intake')" disabled title="Intake o versión" style="display:none;max-width:190px;">
-                    <option value="">⏳ Intake o versión</option>
-                </select>
+                <div class="multi-filtro" id="mf-facultad"></div>
+                <div class="multi-filtro" id="mf-tutor"></div>
+                <div class="multi-filtro" id="mf-tipo"></div>
+                <div class="multi-filtro" id="mf-estado"></div>
+                <div class="multi-filtro oculto" id="mf-intake"></div>
 
                 <div class="separator-bar"></div>
 
@@ -289,7 +283,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-claro3",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifiltro1",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -328,6 +322,9 @@
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
     let nrcConfirmado = '';   // NRC seleccionado que se envía al iframe (distinto del texto parcial del input)
+    const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake'];
+    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión' };
+    const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
 
     const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
 
@@ -339,52 +336,67 @@
             const r = await fetch(NRCS_JSON_URL, { cache: 'no-store' });
             if (!r.ok) throw new Error('HTTP ' + r.status);
             nrcsData = await r.json();
-            poblarSelects(nrcsData);
+            poblarFiltros();
             habilitarControles();
         } catch (e) {
             console.warn('nrcs.json no disponible:', e.message);
             // deja controles deshabilitados con texto de error
-            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(id => {
-                const el = document.getElementById(id);
-                el.innerHTML = '<option value="">⚠️ Sin datos</option>';
-            });
+            CAMPOS_MULTI.forEach(c => document.getElementById('mf-' + c).innerHTML = '<button class="filtro-select multi-btn" disabled>⚠️ Sin datos</button>');
             document.getElementById('pill-nrc').placeholder = '⚠️ Sin datos';
         }
     }
 
     function habilitarControles() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake','pill-nrc'].forEach(id => {
-            document.getElementById(id).disabled = false;
-        });
+        document.getElementById('pill-nrc').disabled = false;
     }
 
     /* ========================================================
        POBLAR SELECTS desde array de NRCs
     ======================================================== */
-    function poblarSelects(arr) {
-        const facultades  = [...new Set(arr.map(x => x.facultad).filter(Boolean))].sort();
-        const tutores     = [...new Set(arr.map(x => x.tutor).filter(Boolean).filter(esTutorActivo))].sort();
-        const tipos       = [...new Set(arr.map(x => x.tipo).filter(Boolean))].sort();
-        const estados     = [...new Set(arr.map(x => x.estado).filter(Boolean))].sort();
-        const intakes     = [...new Set(arr.map(x => x.intake).filter(Boolean))].sort();
-        const nrcs        = [...new Set(arr.map(x => x.nrc).filter(Boolean))].sort();
-
-        llenarSelect('sel-facultad', facultades, '— Facultad —');
-        llenarSelect('sel-tutor',    tutores,    '— Tutor —');
-        llenarSelect('sel-tipo',     tipos,      '— Tipo —');
-        llenarSelect('sel-estado',   estados,    '— Estado —');
-        llenarSelect('sel-intake',   intakes,    '— Intake o versión —');
-        llenarDatalist(nrcs);
+    function valoresCampo(campo) {
+        const subset = nrcsFiltrados(campo);
+        return [...new Set(subset.map(x => x[campo]).filter(Boolean).filter(v => campo !== 'tutor' || esTutorActivo(v)))].sort((a,b) => a.localeCompare(b,'es'));
     }
 
-    function llenarSelect(id, valores, placeholder) {
-        const el = document.getElementById(id);
-        el.innerHTML = `<option value="">${placeholder}</option>`;
-        valores.forEach(v => {
-            const o = document.createElement('option');
-            o.value = v; o.textContent = v;
-            el.appendChild(o);
-        });
+    function poblarFiltros() {
+        CAMPOS_MULTI.forEach(renderMulti);
+        llenarDatalist([...new Set(nrcsData.map(x => x.nrc).filter(Boolean))].sort());
+    }
+
+    function renderMulti(campo) {
+        const host = document.getElementById('mf-' + campo);
+        const abierto = host.classList.contains('abierto');
+        const busqueda = host.querySelector('.multi-search')?.value || '';
+        const valores = valoresCampo(campo);
+        const elegidos = seleccionMulti[campo];
+        [...elegidos].forEach(v => { if (!valores.includes(v)) elegidos.delete(v); });
+        const n = elegidos.size;
+        const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? [...elegidos][0] : `${ETIQUETAS_MULTI[campo]} (${n})`;
+        const buscable = campo === 'tutor' || campo === 'intake';
+        host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
+          <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
+          <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${elegidos.has(v)?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(v)}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
+        if (abierto) host.classList.add('abierto');
+        if (busqueda) filtrarOpcionesMulti(campo,busqueda);
+    }
+
+    function toggleMulti(campo, e) {
+        e.stopPropagation();
+        const host = document.getElementById('mf-' + campo);
+        const abrir = !host.classList.contains('abierto');
+        document.querySelectorAll('.multi-filtro').forEach(x => x.classList.remove('abierto'));
+        if (abrir) { host.classList.add('abierto'); setTimeout(() => host.querySelector('.multi-search')?.focus(),0); }
+    }
+
+    function filtrarOpcionesMulti(campo, texto) {
+        const q = texto.trim().toLowerCase();
+        document.querySelectorAll(`#mf-${campo} .multi-opcion`).forEach(x => x.style.display = x.dataset.texto.includes(q) ? '' : 'none');
+    }
+
+    function cambiarMulti(campo, valorCodificado, marcado) {
+        const valor = decodeURIComponent(valorCodificado);
+        marcado ? seleccionMulti[campo].add(valor) : seleccionMulti[campo].delete(valor);
+        sincronizarFiltros(campo);
     }
 
 
@@ -495,11 +507,11 @@
     ======================================================== */
     function getFiltrosActivos() {
         return {
-            facultad : document.getElementById('sel-facultad').value,
-            tutor    : document.getElementById('sel-tutor').value,
-            tipo     : document.getElementById('sel-tipo').value,
-            estado   : document.getElementById('sel-estado').value,
-            intake   : document.getElementById('sel-intake').value,
+            facultad : [...seleccionMulti.facultad],
+            tutor    : [...seleccionMulti.tutor],
+            tipo     : [...seleccionMulti.tipo],
+            estado   : [...seleccionMulti.estado],
+            intake   : [...seleccionMulti.intake],
             nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
         };
     }
@@ -509,44 +521,18 @@
         // Para el cross-filter de los dropdowns usamos el NRC confirmado (coincidencia exacta).
         // El texto parcial del input NO restringe los demás selects.
         return nrcsData.filter(x => {
-            if (excluir !== 'facultad' && f.facultad && x.facultad !== f.facultad)           return false;
-            if (excluir !== 'tutor'    && f.tutor    && x.tutor !== f.tutor)                  return false;
-            if (excluir !== 'tipo'     && f.tipo     && x.tipo !== f.tipo)                    return false;
-            if (excluir !== 'estado'   && f.estado   && x.estado !== f.estado)                return false;
-            if (excluir !== 'intake'   && f.intake   && x.intake !== f.intake)                return false;
+            if (excluir !== 'facultad' && f.facultad.length && !f.facultad.includes(x.facultad)) return false;
+            if (excluir !== 'tutor'    && f.tutor.length    && !f.tutor.includes(x.tutor)) return false;
+            if (excluir !== 'tipo'     && f.tipo.length     && !f.tipo.includes(x.tipo)) return false;
+            if (excluir !== 'estado'   && f.estado.length   && !f.estado.includes(x.estado)) return false;
+            if (excluir !== 'intake'   && f.intake.length   && !f.intake.includes(x.intake)) return false;
             if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
             return true;
         });
     }
 
-    function reconstruirSelect(id, campo, placeholder, excluir) {
-        const el = document.getElementById(id);
-        const valActual = el.value;
-        const subset = nrcsFiltrados(excluir);
-        let vals;
-        if (campo === 'tutor') {
-            vals = [...new Set(subset.map(x => x.tutor).filter(Boolean).filter(esTutorActivo))].sort();
-        } else {
-            vals = [...new Set(subset.map(x => x[campo]).filter(Boolean))].sort();
-        }
-        const label = vals.length > 0 ? `${placeholder} (${vals.length})` : placeholder;
-        el.innerHTML = `<option value="">${label}</option>`;
-        vals.forEach(v => {
-            const o = document.createElement('option');
-            o.value = v;
-            o.textContent = v;
-            el.appendChild(o);
-        });
-        if (vals.includes(valActual)) el.value = valActual;
-    }
-
     function sincronizarFiltros(cambiado) {
-        // reconstruye todos los selects EXCEPTO el que acaba de cambiar
-        if (cambiado !== 'facultad') reconstruirSelect('sel-facultad', 'facultad', '— Facultad —', 'facultad');
-        if (cambiado !== 'tutor')    reconstruirSelect('sel-tutor',    'tutor',    '— Tutor —',    'tutor');
-        if (cambiado !== 'tipo')     reconstruirSelect('sel-tipo',     'tipo',     '— Tipo —',     'tipo');
-        if (cambiado !== 'estado')   reconstruirSelect('sel-estado',   'estado',   '— Estado —',   'estado');
-        if (cambiado !== 'intake')   reconstruirSelect('sel-intake',   'intake',   '— Intake o versión —', 'intake');
+        CAMPOS_MULTI.forEach(renderMulti);
 
         // actualizar lista de NRCs disponibles según subconjunto activo
         const nrcsActivos = [...new Set(nrcsFiltrados(null).map(x => x.nrc).filter(Boolean))].sort();
@@ -559,6 +545,7 @@
     // cierra dropdown al hacer click fuera
     document.addEventListener('click', e => {
         if (!document.getElementById('nrc-wrap').contains(e.target)) ocultarDropdownNRC();
+        if (!e.target.closest('.multi-filtro')) document.querySelectorAll('.multi-filtro').forEach(x => x.classList.remove('abierto'));
     });
 
     /* ========================================================
@@ -569,6 +556,9 @@
     function sanitizar(v) {
         // Escapa comillas simples dentro del valor OData
         return v.replace(/'/g, "''");
+    }
+    function condicionMultiple(columna, valores) {
+        return '(' + valores.map(v => `${columna} eq '${sanitizar(v)}'`).join(' or ') + ')';
     }
 
     function buildURLFiltrada() {
@@ -581,11 +571,11 @@
         if (cfg.tipo === 'local') {
             const urlLocal = new URL(cfg.url, window.location.href);
             if (claveActual === 'CALENDARIOS') {
-                if (f.facultad) urlLocal.searchParams.set('facultad', f.facultad);
-                if (f.tutor)    urlLocal.searchParams.set('tutor', f.tutor);
-                if (f.tipo)     urlLocal.searchParams.set('tipo', f.tipo);
-                if (f.estado)   urlLocal.searchParams.set('estado', f.estado);
-                if (f.intake)   urlLocal.searchParams.set('intake', f.intake);
+                if (f.facultad.length) urlLocal.searchParams.set('facultad', f.facultad.join('|'));
+                if (f.tutor.length)    urlLocal.searchParams.set('tutor', f.tutor.join('|'));
+                if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
+                if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
+                if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
             }
             return urlLocal.toString();
@@ -597,10 +587,10 @@
 
         // Estos son los nombres EXACTOS del modelo semántico de Power BI.
         // Los nombres internos de SharePoint no se utilizan en esta URL.
-        if (f.facultad) condiciones.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizar(f.facultad)}'`);
-        if (f.tutor)    condiciones.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizar(f.tutor)}'`);
-        if (f.tipo)     condiciones.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizar(f.tipo)}'`);
-        if (f.estado)   condiciones.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizar(f.estado)}'`);
+        if (f.facultad.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/FACULTAD', f.facultad));
+        if (f.tutor.length)    condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', f.tutor));
+        if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
+        if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
         if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
 
         if (condiciones.length === 0) return cfg.url;
@@ -620,11 +610,7 @@
     function actualizarBadge() {
         const f = getFiltrosActivos();
         const partes = [];
-        if (f.facultad) partes.push(f.facultad);
-        if (f.tutor)    partes.push(f.tutor);
-        if (f.tipo)     partes.push(f.tipo);
-        if (f.estado)   partes.push(f.estado);
-        if (f.intake)   partes.push(f.intake);
+        CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? f[c][0] : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
         if (f.nrc)      partes.push('NRC: ' + f.nrc);
 
         const badge   = document.getElementById('badge-activo');
@@ -645,13 +631,11 @@
        LIMPIAR TODO
     ======================================================== */
     function limpiarTodo() {
-        ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
+        CAMPOS_MULTI.forEach(c => seleccionMulti[c].clear());
         document.getElementById('pill-nrc').value = '';
         nrcConfirmado = '';
         ocultarDropdownNRC();
-        poblarSelects(nrcsData);
+        poblarFiltros();
         actualizarBadge();
         refrescarIframe();
     }
@@ -666,7 +650,7 @@
 
     function cargar(clave, btn) {
         claveActual = clave;
-        document.getElementById('sel-intake').style.display = clave === 'CALENDARIOS' ? '' : 'none';
+        document.getElementById('mf-intake').classList.toggle('oculto', clave !== 'CALENDARIOS');
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
