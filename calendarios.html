@@ -82,7 +82,7 @@
     const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
     const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
     const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
-    function filterCourses(data){const tutores=qList('tutor'),intakes=qList('intake');return data.filter(x=>(!q.get('facultad')||norm(x.facultad)===norm(q.get('facultad')))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!q.get('tipo')||norm(x.tipo)===norm(q.get('tipo')))&&(!q.get('estado')||norm(x.estado)===norm(q.get('estado')))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake');return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
     function updateHeader(){
       const tutor=selected(courses,'tutor','Varios / No definido');
       document.getElementById('h-tutor').textContent=tutor;
