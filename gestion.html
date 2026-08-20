@@ -72,6 +72,8 @@
         #titulo-vista { font-size: 13px; font-weight: 600; color: #e2e8f0; white-space: nowrap; }
         .top-bar-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.07); margin: 0 10px; flex-shrink: 0; }
         .top-bar-search { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: nowrap; }
+        .guia-correos{display:none;align-items:center;gap:8px;margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,.1);min-width:0}.guia-correos-texto{max-width:330px;color:#cbd5e1;font-size:10px;line-height:1.25}.guia-correos-texto strong{color:#ffd700}.guia-correos-btn{height:28px;padding:0 11px;border:1px solid rgba(255,215,0,.45);border-radius:7px;background:rgba(255,215,0,.12);color:#ffd700;font:700 10px 'Segoe UI',sans-serif;cursor:pointer;white-space:nowrap}.guia-correos-btn:hover{background:rgba(255,215,0,.22)}.nrc-pill-input.guia-atencion{border-color:#ffd700;box-shadow:0 0 0 4px rgba(255,215,0,.14)}
+        @media(max-width:1200px){.guia-correos-texto{display:none}.guia-correos{margin-left:5px;padding-left:5px}}
         /* Dropdowns */
         .fsel-topbar { height: 28px; border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: #94a3b8; padding: 0 22px 0 8px; font-size: 11px; font-weight: 500; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; cursor: pointer; outline: none; transition: all 0.15s; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 5px center; flex-shrink: 0; max-width: 120px; }
         .fsel-topbar:hover, .fsel-topbar:focus { border-color: rgba(255,215,0,0.3); color: #ffd700; background-color: rgba(255,255,255,0.07); }
@@ -257,6 +259,10 @@
                     <span id="badge-txt">—</span>
                 </div>
                 <button class="btn-clear-filter" id="btn-clear-filter" onclick="limpiarBusqueda()">✕ Limpiar</button>
+            </div>
+            <div class="guia-correos" id="guia-correos">
+                <div class="guia-correos-texto"><strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.</div>
+                <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoBienvenida()">↻ Cargar datos del curso</button>
             </div>
         </div>
         <!-- FIN TOP-BAR -->
@@ -684,8 +690,23 @@
         });
         const hayFiltros = visibles.length > 0;
         document.querySelector('.top-bar-search').style.display = hayFiltros ? 'flex' : 'none';
+        document.getElementById('guia-correos').style.display = clave === 'CORREOS' ? 'flex' : 'none';
         if (catalogoNRC.length) sincronizarFiltros();
         actualizarBadge();
+    }
+
+    function cargarDatosCursoBienvenida() {
+        const input = document.getElementById('input-nrc');
+        if (!BUSQUEDA.nrc) {
+            input.classList.add('guia-atencion');
+            input.focus();
+            setTimeout(() => input.classList.remove('guia-atencion'), 1800);
+            alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');
+            return;
+        }
+        const botonCorreo = [...document.querySelectorAll('.menu-btn')]
+            .find(b => (b.getAttribute('onclick') || '').includes("cargarOnboarding('CORREOS'"));
+        if (botonCorreo) cargarOnboarding('CORREOS', botonCorreo);
     }
 
     function cargar(clave, btn) {
