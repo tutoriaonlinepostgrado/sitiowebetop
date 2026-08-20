@@ -30,8 +30,10 @@
     .nrc{background:#edf3f8;border-left-color:#6884a5;color:#345577}.prep{background:#eef2f7;color:#506f94}.active{background:#e8f5ef;color:#276b52}.closing{background:#fff1df;color:#925a17}.closed-b{background:#f5e9ec;color:#934454}.unknown{background:#edf1f5;color:#64748b}.date{color:#52657a}
     .action{background:#fff;border-color:#cbd5e1;color:#52657a}.action:hover{border-color:#9fb0c2;background:#f3f6fa}.incident-ok{background:#e8f5ef;border-color:#b9dfcf;color:#276b52}.incident-alert{background:#fae6e6;border-color:#efbcbc;color:#a33535}.incident-count{background:#c24141;color:#fff}
     .empty{color:#64748b}.error{background:#fff4f4;border-color:#e0aeb7;color:#a04452}.error div{color:#64748b!important}
+    .btn-export{height:31px;border:1px solid #17765a;border-radius:7px;background:#16805f;color:#fff;padding:0 11px;font-size:10px;font-weight:700;cursor:pointer}.btn-export:hover{background:#11694e}
     @media(max-width:850px){.header-grid{grid-template-columns:max-content 1fr}.logo{display:none}.table-wrap{max-height:calc(100vh - 240px)}#search{width:170px}}
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
   <section class="header">
@@ -57,7 +59,7 @@
         <div class="kpi total" data-state=""><div class="kpi-l">Total</div><div class="kpi-v" style="color:#d6e3f3" id="k-total">0</div></div>
       </div>
     </div>
-    <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span></div>
+    <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span><button class="btn-export" type="button" onclick="descargarExcel()">📥 Descargar Excel</button></div>
   </section>
 
   <div class="table-wrap">
@@ -83,7 +85,7 @@
     const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
     const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
     const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
-    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechaInicio=q.get('fechaInicio')||'';return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechaInicio||dateISO(x['fecha inicio'])===fechaInicio)&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio');return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
     function updateHeader(){
       const tutor=selected(courses,'tutor','Varios / No definido');
       document.getElementById('h-tutor').textContent=tutor;
@@ -108,6 +110,8 @@
     function updateSortHeaders(){document.querySelectorAll('th[data-sort]').forEach(th=>{if(th.dataset.sort===sortKey)th.dataset.dir=sortDir;else delete th.dataset.dir})}
     function updateKPIs(){const count=s=>courses.filter(x=>norm(x.estado)===s).length;const n=courses.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos en listado`;document.querySelectorAll('.kpi[data-state]').forEach(k=>k.classList.toggle('selected',k.dataset.state===stateFilter));}
     function applySearch(){const s=norm(document.getElementById('search').value);const rows=[...document.querySelectorAll('#rows tr[data-search]')];let visible=0;rows.forEach(r=>{const ok=!s||r.dataset.search.includes(s);r.style.display=ok?'':'none';if(ok)visible++});document.getElementById('count').textContent=`${visible} de ${rows.length} cursos`;}
+    function cursosVisibles(){const s=norm(document.getElementById('search').value);return sortCourses(courses.filter(x=>(!stateFilter||norm(x.estado)===stateFilter)&&(!s||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(s))));}
+    function descargarExcel(){const lista=cursosVisibles();if(!lista.length){alert('No hay cursos visibles para descargar.');return;}const filas=lista.map(x=>({'NRC_COD_CAL':x.nrc||'','ESTADO':x.estado||'','COD_CURSO':x['codigo curso']||'','MATERIA':x.materia||'','NOMBRE_CURSO':x['nombre curso']||'','PROGRAMA':x['nombre programa']||'','FACULTAD':x.facultad||'','FECHA_INICIO':dateISO(x['fecha inicio']),'FECHA_FIN':dateISO(x['fecha fin']),'SEMANAS':weeks(x['fecha inicio'],x['fecha fin']),'TUTOR':x.tutor||'','TIPO_NRC':x.tipo||'','INTAKE_VERSION':x.intake||'','PERIODO':x.periodo||''}));const ws=XLSX.utils.json_to_sheet(filas);ws['!autofilter']={ref:ws['!ref']};ws['!cols']=[{wch:20},{wch:14},{wch:15},{wch:13},{wch:42},{wch:48},{wch:20},{wch:14},{wch:14},{wch:10},{wch:28},{wch:14},{wch:34},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios filtrados');XLSX.writeFile(wb,'Calendarios_ETOP_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx',{compression:true});}
     document.getElementById('search').addEventListener('input',applySearch);
     document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
     document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
