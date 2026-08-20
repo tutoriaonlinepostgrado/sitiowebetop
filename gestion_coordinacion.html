@@ -296,7 +296,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-filtrotipo2",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -620,6 +620,7 @@
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
+                urlLocal.searchParams.set('_f', Date.now().toString());
             }
             return urlLocal.toString();
         }
