@@ -47,7 +47,9 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
   </div>
 </div>
 <div class="ew" id="email-content">
-<table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;max-width:800px;margin:12px 0;background:#fff;border:0;font-family:Arial,sans-serif;">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
+<tbody><tr><td align="left" style="padding:12px 0;">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
 <tbody>
   <tr><td style="padding:24px 38px 12px 38px;">
     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="160" style="display:block;border:0;width:160px;height:auto;">
@@ -89,6 +91,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <p>Quedo atenta/o a cualquier consulta o información adicional que necesite.</p>
   </td></tr>
 </tbody>
+</table>
+</td></tr></tbody>
 </table>
 </div>
 <script>
@@ -285,8 +289,8 @@ function setTipo(tipo, btn) {
   }
 }
 function abrirOutlook() {
-  const nrc = params.get('nrc') ? decodeURIComponent(params.get('nrc')) : '';
-  const nombreCurso = params.get('nombreCurso') ? decodeURIComponent(params.get('nombreCurso')) : '';
+  const nrc = params.get('nrc') ? decodeURIComponent(params.get('nrc')).trim() : '';
+  const nombreCurso = params.get('nombreCurso') ? decodeURIComponent(params.get('nombreCurso')).trim() : '';
   const asuntoTexto = 'Bienvenida y Presentación Equipo Tutorial Curso "' + nombreCurso + '" ' + nrc;
   const asunto = encodeURIComponent(asuntoTexto.trim());
   window.open('mailto:?subject=' + asunto, '_blank');
