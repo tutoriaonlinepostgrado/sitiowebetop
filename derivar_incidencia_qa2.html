@@ -8,8 +8,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
 .auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
 .tbr{display:flex;gap:10px;align-items:center;}
-.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
 .btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
+.btn-copiar:hover{background:#facc15;}
 .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
 .toast.show{display:block;}
 /* Controles externos */
@@ -44,7 +44,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .comentario-box{background:#FFFBEB;border:1.5px dashed #F59E0B;border-radius:6px;padding:12px 16px;font-size:13px;color:#374151;line-height:1.7;min-height:48px;cursor:text;outline:none;margin-top:16px;}
 .comentario-box:focus{border-style:solid;}
 .comentario-box:empty:before{content:"Escribe aquí un comentario adicional si lo necesitas...";color:#D1D5DB;font-style:italic;}
-.ew{padding:16px 20px;max-width:990px;margin:0 auto;}
+.ew{padding:16px 20px;max-width:990px;margin:0;}
 </style></head>
 <body>
 <div class="toast" id="toast"></div>
@@ -56,8 +56,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
   </div>
   <div class="tbr">
-    <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
-    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
+    <button class="btn-copiar" onclick="copiarYAbrirOutlook()">📋 Copiar y abrir Outlook</button>
   </div>
 </div>
 
@@ -70,7 +69,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <div class="dest-wrap">
       <span class="dest-label">📬 Para:</span>
       <span class="dest-campo" contenteditable="true" id="campo-destinatario"></span>
-      <span style="font-size:10px;color:#92400E;">← Ingresa el correo del destinatario</span>
+      <span style="font-size:10px;color:#92400E;">← Ingrese el correo del destinatario</span>
     </div>
 
     <!-- Selector de incidencias -->
@@ -95,20 +94,31 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 
   <!-- EMAIL -->
   <div id="email-content">
-  <table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:0 auto 20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
+  <tbody><tr><td align="left" style="padding:0 0 20px 0;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
   <tbody>
-    <tr><td style="padding:40px 60px 20px 60px;">
-      <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+    <tr><td style="padding:24px 38px 12px 38px;">
+      <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="160" style="display:block;border:0;width:160px;height:auto;">
     </td></tr>
-    <tr><td style="padding:0 60px 40px 60px;color:#333;font-size:16px;line-height:1.8;text-align:left;">
+    <tr><td style="padding:0 38px 32px 38px;color:#333;font-size:15px;line-height:1.7;text-align:left;">
 
-      <!-- HEADER ROJO -->
-      <div style="background:#DC2626;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
-        <p style="margin:0;color:white;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🔴 Solicitud de Revisión — Incidencia QA2</p>
+      <!-- ENCABEZADO SOBRIO -->
+      <div style="background:#FFF7ED;border-left:4px solid #DC2626;padding:11px 16px;margin-bottom:20px;">
+        <p style="margin:0;color:#991B1B;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;">Solicitud de revisión · Incidencia QA2</p>
       </div>
 
       <p>Estimado/a,</p>
-      <p>Junto con saludar, solicito tu apoyo para la revisión y resolución de la(s) siguiente(s) incidencia(s) detectada(s) durante el proceso de QA2 del curso <strong id="val-nrc-inline"></strong>, con fecha de inicio <strong id="val-fecha-inline"></strong>.</p>
+      <p>Junto con saludar, solicito su apoyo para revisar y resolver las incidencias detectadas durante el proceso de QA2, las cuales se detallan a continuación.</p>
+
+      <!-- RESUMEN DEL CURSO -->
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;border-collapse:collapse;background:#F8FAFC;border-left:3px solid #1D4ED8;margin:14px 0 18px 0;">
+        <tbody>
+          <tr><td style="padding:10px 14px;color:#64748B;font-size:11px;width:120px;">NRC y curso</td><td style="padding:10px 14px;color:#1E293B;font-size:12px;font-weight:700;"><span id="val-nrc-inline"></span></td></tr>
+          <tr><td style="padding:0 14px 10px;color:#64748B;font-size:11px;">Fecha de inicio</td><td style="padding:0 14px 10px;color:#1E293B;font-size:12px;font-weight:700;"><span id="val-fecha-inline"></span></td></tr>
+          <tr><td style="padding:0 14px 10px;color:#64748B;font-size:11px;">Incidencias</td><td style="padding:0 14px 10px;color:#991B1B;font-size:12px;font-weight:700;"><span id="val-cantidad-inline">0</span></td></tr>
+        </tbody>
+      </table>
 
       <!-- BLOQUES DE INCIDENCIAS SELECCIONADAS -->
       <div id="bloques-email"></div>
@@ -134,10 +144,12 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       </div>
 
 
-      <p>Agradezco tu pronta atención. Quedo a disposición para cualquier información adicional que requieras.</p>
+      <p>Agradezco desde ya su apoyo en la revisión. Quedo a disposición para proporcionar cualquier información adicional que requiera.</p>
 
     </td></tr>
   </tbody>
+  </table>
+  </td></tr></tbody>
   </table>
   </div>
 
@@ -202,6 +214,9 @@ function actualizarBloques() {
     return chk && chk.checked;
   });
 
+  const cantidadEl = document.getElementById('val-cantidad-inline');
+  if (cantidadEl) cantidadEl.textContent = String(seleccionadas.length);
+
   seleccionadas.forEach((inc, i) => {
     const sep = i > 0 ? '<hr class="inc-separator">' : '';
     const bloque = document.createElement('div');
@@ -226,7 +241,8 @@ if (urlAdj) {
   document.getElementById('evidencia-auto-wrap').style.display = 'block';
   const link = document.getElementById('evidencia-auto-link');
   link.href = urlAdj;
-  link.textContent = urlAdj.length > 80 ? urlAdj.substring(0, 80) + '...' : urlAdj;
+  link.textContent = 'Ver evidencia adjunta';
+  link.title = urlAdj;
 }
 
 if (nrc || incidencias.length) document.getElementById('auto-badge').style.display = 'inline-block';
@@ -278,9 +294,14 @@ async function copiarCorreo() {
   }
 }
 
+async function copiarYAbrirOutlook() {
+  await copiarCorreo();
+  abrirOutlook();
+}
+
 function abrirOutlook() {
   const dest = document.getElementById('campo-destinatario').textContent.trim();
-  const asunto = encodeURIComponent('Solicitud de Revisión — Incidencia(s) QA2 | ' + nrc);
+  const asunto = encodeURIComponent('Solicitud de revisión QA2 | ' + nrc + (nombreCurso ? ' | ' + nombreCurso : ''));
   window.open('mailto:' + dest + '?subject=' + asunto, '_blank');
 }
 
