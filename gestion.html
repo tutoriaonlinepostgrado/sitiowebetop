@@ -302,7 +302,7 @@
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
+        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-filtrotipo2",
         'CORREOS':            "onboarding_correos.html",
         'INVITACIONES':       "onboarding_invitaciones.html",
         'PRESENTACION':       "presentacion_tutorial_innovado.html",
@@ -440,6 +440,7 @@
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
             if (BUSQUEDA.fechaInicio.length) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio.join('|'));
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
+            url.searchParams.set('_f', Date.now().toString());
             return url.toString();
         }
 
