@@ -469,15 +469,6 @@
 
         <!-- VISTA QA2 -->
         <div id="vista-qa2" style="display:none;grid-row:1;grid-column:1;flex-direction:column;height:100%;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="material-symbols-outlined" style="color:#facc15;" id="qa2-vista-icono">bug_report</span>
-                    <span style="font-size:13px;font-weight:600;color:#facc15;" id="qa2-vista-titulo">Incidencias</span>
-                </div>
-                <button onclick="ocultarQA2()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;">
-                    <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Volver
-                </button>
-            </div>
             <div class="glass-panel rounded-xl overflow-hidden" style="flex:1;min-height:0;">
                 <iframe id="iframe-qa2" src="" style="width:100%;height:100%;border:none;display:block;" allowfullscreen title="Incidencias"></iframe>
             </div>
@@ -929,12 +920,8 @@ function mostrarVistaQA2() {
     const vistaNormal = document.getElementById('vista-normal');
     const vistaQA2    = document.getElementById('vista-qa2');
     const iframe      = document.getElementById('iframe-qa2');
-    const titulo      = document.getElementById('qa2-vista-titulo');
-    const icono       = document.getElementById('qa2-vista-icono');
 
     iframe.src = URL_QA2_INCIDENCIAS;
-    titulo.textContent = 'Incidencias';
-    icono.textContent = 'report_problem';
 
     document.getElementById('sub-incidencias').classList.add('active');
     document.getElementById('btn-qa2-trigger').classList.add('open','active');
