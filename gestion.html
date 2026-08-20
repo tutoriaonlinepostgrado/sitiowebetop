@@ -77,6 +77,7 @@
         .fsel-topbar:hover, .fsel-topbar:focus { border-color: rgba(255,215,0,0.3); color: #ffd700; background-color: rgba(255,255,255,0.07); }
         .fsel-topbar:disabled { opacity: 0.5; cursor: not-allowed; }
         .fsel-topbar option { background: #1e293b; color: #f1f5f9; }
+        .fecha-multi-wrap{position:relative}.fecha-multi-btn{max-width:145px;min-width:115px}.fecha-multi-panel{display:none;position:absolute;top:34px;left:0;width:210px;max-height:285px;overflow:auto;padding:8px;background:#182238;border:1px solid rgba(255,215,0,.35);border-radius:8px;box-shadow:0 10px 26px rgba(0,0,0,.45);z-index:10000}.fecha-multi-wrap.open .fecha-multi-panel{display:block}.fecha-multi-op{display:flex;align-items:center;gap:7px;padding:6px;color:#e2e8f0;font-size:11px;cursor:pointer;border-radius:5px}.fecha-multi-op:hover{background:rgba(255,215,0,.1)}.fecha-multi-op input{accent-color:#ffd700}
         /* Pills RUT */
         .search-group { display: flex; align-items: center; gap: 6px; }
         .search-group-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,215,0,0.35); white-space: nowrap; flex-shrink: 0; user-select: none; }
@@ -221,7 +222,7 @@
                 <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="display:none;max-width:175px">
                     <option value="">Intake/Versión ⏳</option>
                 </select>
-                <input class="fsel-topbar" id="sel-fecha-inicio" data-filtro="fechaInicio" type="date" title="Fecha de inicio" onchange="aplicarBusqueda('fechaInicio',this.value)" style="display:none;max-width:145px">
+                <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio" style="display:none"><button type="button" class="fsel-topbar fecha-multi-btn" id="fecha-multi-btn" onclick="toggleFechasGestion(event)">Fecha de inicio</button><div class="fecha-multi-panel" id="fecha-multi-panel"></div></div>
                 <div class="top-bar-sep"></div>
                 <!-- NRC dropdown custom -->
                 <div class="search-group" data-filtro="nrc">
@@ -301,7 +302,7 @@
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-fechainicio1",
+        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
         'CORREOS':            "onboarding_correos.html",
         'INVITACIONES':       "onboarding_invitaciones.html",
         'PRESENTACION':       "presentacion_tutorial_innovado.html",
@@ -333,7 +334,7 @@
     };
 
     // ── Estado ────────────────────────────────────────────
-    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null, fechaInicio: null };
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null, fechaInicio: [] };
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
@@ -419,6 +420,7 @@
 
     document.addEventListener('click', function(e) {
         if (!document.getElementById('nrc-pill-wrap').contains(e.target)) ocultarNRCDropdown();
+        if (!document.getElementById('fecha-multi-wrap').contains(e.target)) document.getElementById('fecha-multi-wrap').classList.remove('open');
     });
 
     // ── OData / iframe ────────────────────────────────────
@@ -436,7 +438,7 @@
             if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
-            if (BUSQUEDA.fechaInicio) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio);
+            if (BUSQUEDA.fechaInicio.length) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio.join('|'));
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
             return url.toString();
         }
@@ -484,7 +486,7 @@
             if (excluir !== 'tutor'    && filtroVisible('tutor')    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
             if (excluir !== 'tipo'     && filtroVisible('tipo')     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
             if (excluir !== 'intake'   && filtroVisible('intake')   && BUSQUEDA.intake   && !eqCI(n.intake,   BUSQUEDA.intake))   return false;
-            if (excluir !== 'fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio && fechaISO(n['fecha inicio']) !== BUSQUEDA.fechaInicio) return false;
+            if (excluir !== 'fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length && !BUSQUEDA.fechaInicio.includes(fechaISO(n['fecha inicio']))) return false;
             if (excluir !== 'nrc'      && filtroVisible('nrc')      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
             return true;
         });
@@ -509,7 +511,18 @@
         reconstruirSelect('sel-tutor','tutor','tutor');
         reconstruirSelect('sel-tipo','tipo','tipo');
         reconstruirSelect('sel-intake','intake','intake');
+        renderFechasGestion();
     }
+
+    function toggleFechasGestion(e){e.stopPropagation();document.getElementById('fecha-multi-wrap').classList.toggle('open');}
+    function renderFechasGestion(){
+        if(!catalogoNRC.length)return;
+        const vals=[...new Set(nrcsFiltrados('fechaInicio').map(n=>fechaISO(n['fecha inicio'])).filter(Boolean))].sort();
+        BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(v=>vals.includes(v));
+        document.getElementById('fecha-multi-btn').textContent=BUSQUEDA.fechaInicio.length?`Fecha inicio (${BUSQUEDA.fechaInicio.length})`:'Fecha de inicio';
+        document.getElementById('fecha-multi-panel').innerHTML=vals.map(v=>`<label class="fecha-multi-op"><input type="checkbox" ${BUSQUEDA.fechaInicio.includes(v)?'checked':''} onchange="cambiarFechaGestion('${v}',this.checked)"><span>${v.split('-').reverse().join('-')}</span></label>`).join('')||'<div class="fecha-multi-op">Sin fechas disponibles</div>';
+    }
+    function cambiarFechaGestion(v,marcado){if(marcado){if(!BUSQUEDA.fechaInicio.includes(v))BUSQUEDA.fechaInicio.push(v);}else BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe();}
 
     // ── Aplicar filtro ────────────────────────────────────
     function aplicarBusqueda(campo, valor) {
@@ -521,7 +534,7 @@
 
     // ── Limpiar ───────────────────────────────────────────
     function limpiarBusqueda() {
-        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=null;
+        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=[];
         nrcConfirmado='';
         document.getElementById('input-nrc').value='';
         document.getElementById('input-rut').value='';
@@ -529,7 +542,6 @@
         document.getElementById('sel-tutor').value='';
         document.getElementById('sel-tipo').value='';
         document.getElementById('sel-intake').value='';
-        document.getElementById('sel-fecha-inicio').value='';
         ocultarNRCDropdown();
         sincronizarFiltros();
         actualizarBadge();
@@ -543,7 +555,7 @@
         if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
         if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
         if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
-        if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio) p.push('Inicio: '+BUSQUEDA.fechaInicio.split('-').reverse().join('-'));
+        if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length) p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
         if (filtroVisible('nrc')      && BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
         if (filtroVisible('rut')      && BUSQUEDA.rut)      p.push('RUT: '+BUSQUEDA.rut);
         const badge=document.getElementById('filter-badge'), clear=document.getElementById('btn-clear-filter');
