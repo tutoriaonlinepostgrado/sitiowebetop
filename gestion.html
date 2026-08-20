@@ -221,6 +221,7 @@
                 <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="display:none;max-width:175px">
                     <option value="">Intake/Versión ⏳</option>
                 </select>
+                <input class="fsel-topbar" id="sel-fecha-inicio" data-filtro="fechaInicio" type="date" title="Fecha de inicio" onchange="aplicarBusqueda('fechaInicio',this.value)" style="display:none;max-width:145px">
                 <div class="top-bar-sep"></div>
                 <!-- NRC dropdown custom -->
                 <div class="search-group" data-filtro="nrc">
@@ -300,7 +301,7 @@
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifiltro1",
+        'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-fechainicio1",
         'CORREOS':            "onboarding_correos.html",
         'INVITACIONES':       "onboarding_invitaciones.html",
         'PRESENTACION':       "presentacion_tutorial_innovado.html",
@@ -332,7 +333,7 @@
     };
 
     // ── Estado ────────────────────────────────────────────
-    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null };
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null, fechaInicio: null };
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
@@ -435,6 +436,7 @@
             if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
+            if (BUSQUEDA.fechaInicio) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio);
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
             return url.toString();
         }
@@ -467,6 +469,12 @@
 
     // ── Cross-filter selects ──────────────────────────────
     const eqCI = (a,b) => (a||'').toUpperCase() === (b||'').toUpperCase();
+    function fechaISO(v) {
+        const m=String(v||'').trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+        const d=String(v||'').trim().match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+        return d ? `${d[3]}-${d[2].padStart(2,'0')}-${d[1].padStart(2,'0')}` : '';
+    }
     function filtroVisible(campo) {
         return (FILTROS_POR_VISTA[vistaActual] || []).includes(campo);
     }
@@ -476,6 +484,7 @@
             if (excluir !== 'tutor'    && filtroVisible('tutor')    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
             if (excluir !== 'tipo'     && filtroVisible('tipo')     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
             if (excluir !== 'intake'   && filtroVisible('intake')   && BUSQUEDA.intake   && !eqCI(n.intake,   BUSQUEDA.intake))   return false;
+            if (excluir !== 'fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio && fechaISO(n['fecha inicio']) !== BUSQUEDA.fechaInicio) return false;
             if (excluir !== 'nrc'      && filtroVisible('nrc')      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
             return true;
         });
@@ -512,7 +521,7 @@
 
     // ── Limpiar ───────────────────────────────────────────
     function limpiarBusqueda() {
-        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null;
+        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=null;
         nrcConfirmado='';
         document.getElementById('input-nrc').value='';
         document.getElementById('input-rut').value='';
@@ -520,6 +529,7 @@
         document.getElementById('sel-tutor').value='';
         document.getElementById('sel-tipo').value='';
         document.getElementById('sel-intake').value='';
+        document.getElementById('sel-fecha-inicio').value='';
         ocultarNRCDropdown();
         sincronizarFiltros();
         actualizarBadge();
@@ -533,6 +543,7 @@
         if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
         if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
         if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
+        if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio) p.push('Inicio: '+BUSQUEDA.fechaInicio.split('-').reverse().join('-'));
         if (filtroVisible('nrc')      && BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
         if (filtroVisible('rut')      && BUSQUEDA.rut)      p.push('RUT: '+BUSQUEDA.rut);
         const badge=document.getElementById('filter-badge'), clear=document.getElementById('btn-clear-filter');
@@ -646,7 +657,7 @@
         'CURSOS_PREPARACION': ['facultad','tutor','tipo','nrc'],
         'CURSOS_CIERRE':      ['facultad','tutor','tipo','nrc'],
         'FICHA_ESTUDIANTE':   ['rut'],
-        'CALENDARIOS':        ['facultad','tutor','tipo','intake','nrc'],
+        'CALENDARIOS':        ['facultad','tutor','tipo','intake','fechaInicio','nrc'],
         'CORREOS':            ['nrc'],
         'INVITACIONES':       ['nrc'],
         'PRESENTACION':       ['nrc'],
