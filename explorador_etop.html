@@ -861,7 +861,12 @@ function onInput(v){
   clearTimeout(timer);
   document.getElementById('searchClear').classList.toggle('visible',v.length>0);
   if(v.length<2)closeSug();
-  timer=setTimeout(()=>{const ultimo=v.split(',').pop().trim();if(ultimo.length>=2)renderSug(ultimo);renderCards(v);renderDir(document.getElementById('dirSearch')?.value||'');},160);
+  timer=setTimeout(()=>{
+    const ultimo=v.split(',').pop().trim();
+    if(ultimo.length>=2)renderSug(ultimo);
+    renderCards(v);
+    renderDir(document.getElementById('dirSearch')?.value||'');
+  },420);
 }
 function aplicarFiltrosBusqueda(){
   closeSug();
@@ -882,17 +887,21 @@ function filtrosBusquedaSuperiores(){
   const grupos=String(document.getElementById('globalSearch')?.value||'').split(',').map(v=>norm(v).trim()).filter(Boolean);
   return {grupos,codigo:norm(document.getElementById('courseCodeFilter')?.value||'').trim(),fechas:[...fechasInicioSeleccionadas]};
 }
-function cursoCumpleFiltrosSuperiores(x){
-  const f=filtrosBusquedaSuperiores();
-  const nrcExactos=f.grupos.filter(g=>all.some(c=>norm(c.nrc)===g));
-  const otros=f.grupos.filter(g=>!nrcExactos.includes(g));
-  const cumpleNrc=!nrcExactos.length||nrcExactos.some(g=>norm(x.nrc)===g);
+function prepararFiltroSuperior(f=filtrosBusquedaSuperiores()){
+  const nrcDisponibles=new Set(all.map(c=>norm(c.nrc)));
+  const nrcExactos=new Set(f.grupos.filter(g=>nrcDisponibles.has(g)));
+  return {...f,nrcExactos,otros:f.grupos.filter(g=>!nrcExactos.has(g))};
+}
+function cursoCumpleFiltrosSuperiores(x,fPreparado=null){
+  const f=fPreparado||prepararFiltroSuperior();
+  const nrcNormalizado=norm(x.nrc);
+  const cumpleNrc=!f.nrcExactos.size||f.nrcExactos.has(nrcNormalizado);
   return cumpleNrc
-    &&otros.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
+    &&f.otros.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
     &&(!f.codigo||norm([x.codigoCurso,x.materia,x.nrc].join(' ')).includes(f.codigo))
     &&(!f.fechas.length||f.fechas.includes(fechaISO(x.fechaInicio)));
 }
-function cursosFiltradosSuperiores(){return all.filter(cursoCumpleFiltrosSuperiores).sort((a,b)=>{const d=(parseFecha(a.fechaInicio)?.getTime()||0)-(parseFecha(b.fechaInicio)?.getTime()||0);return d||String(a.codigoCurso||'').localeCompare(String(b.codigoCurso||''),'es',{numeric:true})||String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true});});}
+function cursosFiltradosSuperiores(){const f=prepararFiltroSuperior();return all.filter(c=>cursoCumpleFiltrosSuperiores(c,f)).sort((a,b)=>{const d=(parseFecha(a.fechaInicio)?.getTime()||0)-(parseFecha(b.fechaInicio)?.getTime()||0);return d||String(a.codigoCurso||'').localeCompare(String(b.codigoCurso||''),'es',{numeric:true})||String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true});});}
 function onKey(e){
   const items=document.querySelectorAll('#sugBox .sug-item');
   if(e.key==='ArrowDown'){e.preventDefault();sugSel=Math.min(sugSel+1,items.length-1);hlSug(items);}
@@ -973,9 +982,12 @@ function navegarDirectorio(valor,tipo){
 
 function pickSug(i){
   const s=sugList[i];if(!s)return;
-  document.getElementById('globalSearch').value=s.value;
+  const input=document.getElementById('globalSearch');
+  const partes=input.value.split(',');
+  partes[partes.length-1]=' '+s.value;
+  input.value=partes.map(v=>v.trim()).filter(Boolean).join(', ');
   document.getElementById('searchClear').classList.add('visible');
-  closeSug();renderCards(s.value);
+  closeSug();renderCards(input.value);
   if(s.type==='programa')navegarDirectorio(s.value,'programa');
   if(s.type==='intake')navegarDirectorio(s.value,'intake');
 }
@@ -1068,6 +1080,7 @@ function renderCards(q){
   if(!filtros.grupos.length&&!filtros.codigo&&!filtros.fechas.length){c.innerHTML='';cursosSeleccionados.clear();return;}
   const encontrados=cursosFiltradosSuperiores();
   if(!encontrados.length){c.innerHTML='<div class="search-empty">Sin resultados para la combinación de filtros seleccionada.</div>';cursosSeleccionados.clear();return;}
+  if(encontrados.length>500){c.innerHTML=`<div class="search-empty"><strong>${encontrados.length.toLocaleString('es-CL')} cursos coinciden.</strong><br>Agregue otro NRC, código, palabra o fecha para acotar la lista. Así el explorador se mantiene rápido.</div>`;cursosSeleccionados.clear();return;}
   c.innerHTML=encontrados.length===1?renderTarjetaCurso(encontrados[0]):renderPanelSeleccion(encontrados);
 }
 
@@ -1479,13 +1492,19 @@ function refreshDirTable(idx){
 function renderDir(filtro=''){
   progMap={};cardIdx={};
   const grupos=[...filtrosDirectorio,...String(filtro||'').split(',')].map(v=>v.trim()).filter(Boolean);
-  all.filter(c=>ESTADOS_DIR.includes(c.estado))
+  const filtroSuperior=prepararFiltroSuperior();
+  const cursosDirectorio=all.filter(c=>ESTADOS_DIR.includes(c.estado))
     .filter(c=>c.programa&&c.programa!=='—')
-    .filter(c=>cursoCumpleFiltrosSuperiores(c))
+    .filter(c=>cursoCumpleFiltrosSuperiores(c,filtroSuperior))
     .filter(c=>cursoCumpleFiltroEstadistico(c))
     .filter(c=>cursoCumpleFiltroFecha(c))
-    .filter(c=>!grupos.length||grupos.some(g=>coincideBusquedaFlexible(c,norm(g).split(/\s+/).filter(Boolean))))
-    .forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
+    .filter(c=>!grupos.length||grupos.some(g=>coincideBusquedaFlexible(c,norm(g).split(/\s+/).filter(Boolean))));
+  const hayFiltroSuperior=filtroSuperior.grupos.length||filtroSuperior.codigo||filtroSuperior.fechas.length;
+  if(hayFiltroSuperior&&cursosDirectorio.length>1500){
+    document.getElementById('progList').innerHTML=`<div class="search-empty"><strong>${cursosDirectorio.length.toLocaleString('es-CL')} cursos coinciden.</strong><br>Agregue otro criterio para mostrar el directorio sin sobrecargar la página.</div>`;
+    return;
+  }
+  cursosDirectorio.forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
   const progs=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'));
   if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin programas que coincidan con la búsqueda y los filtros activos.</div>';return;}
   document.getElementById('progList').innerHTML=progs.map((prog,idx)=>{
