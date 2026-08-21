@@ -80,6 +80,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 
 /* RESULT CARDS */
 .search-results{max-width:1460px;margin:10px auto 0}
+.course-detail-section{display:none;max-width:1460px;margin:10px auto 0;padding:0 24px}.course-detail-section.show{display:block}.course-detail-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:#52667d;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.course-detail-head button{border:1px solid #c7d5e2;border-radius:6px;background:#fff;color:#52667d;padding:5px 9px;font:700 9px var(--font);cursor:pointer}
 .result-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;transition:border-color .15s;animation:fadeUp .18s ease}
 .result-card:hover{border-color:rgba(250,204,21,.3)}
 .rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -422,6 +423,10 @@ body{background:#eef3f8;color:var(--text)}
       <button class="search-export" type="button" onclick="descargarCursosFiltrados()">📥 Descargar Excel</button>
       <button class="search-filter-clear" type="button" onclick="clearSearch()">Limpiar filtros</button>
     </div>
+  </div>
+  <div class="course-detail-section" id="courseDetailSection">
+    <div class="course-detail-head"><span>Accesos y ficha del curso</span><button type="button" onclick="ocultarTarjetaCurso()">Cerrar tarjeta</button></div>
+    <div id="courseDetailCard"></div>
   </div>
 </div>
 
@@ -884,11 +889,13 @@ function onInput(v){
     const ultimo=v.split(',').pop().trim();
     if(ultimo.length>=2)renderSug(ultimo);
     renderDir(document.getElementById('dirSearch')?.value||'');
+    actualizarTarjetaCursoSegunFiltros();
   },420);
 }
 function aplicarFiltrosBusqueda(){
   closeSug();
   renderDir(document.getElementById('dirSearch')?.value||'');
+  actualizarTarjetaCursoSegunFiltros();
 }
 function agregarFechaInicio(valor){
   if(valor)fechasInicioSeleccionadas.add(valor);
@@ -1004,22 +1011,16 @@ function pickSug(i){
   partes[partes.length-1]=' '+s.value;
   input.value=partes.map(v=>v.trim()).filter(Boolean).join(', ');
   document.getElementById('searchClear').classList.add('visible');
-  closeSug();renderDir(document.getElementById('dirSearch')?.value||'');
+  closeSug();renderDir(document.getElementById('dirSearch')?.value||'');actualizarTarjetaCursoSegunFiltros();
   if(s.type==='programa')navegarDirectorio(s.value,'programa');
   if(s.type==='intake')navegarDirectorio(s.value,'intake');
 }
 function closeSug(){document.getElementById('sugBox').classList.remove('open');sugSel=-1;sugList=[];}
-function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('courseCodeFilter').value='';document.getElementById('startDateFilter').value='';fechasInicioSeleccionadas.clear();cursosSeleccionados.clear();renderFechasInicio();document.getElementById('searchClear').classList.remove('visible');closeSug();renderDir(document.getElementById('dirSearch')?.value||'');}
+function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('courseCodeFilter').value='';document.getElementById('startDateFilter').value='';fechasInicioSeleccionadas.clear();cursosSeleccionados.clear();renderFechasInicio();document.getElementById('searchClear').classList.remove('visible');closeSug();ocultarTarjetaCurso();renderDir(document.getElementById('dirSearch')?.value||'');}
 document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
 function seleccionarCursoDesdeDirectorio(nrc){
-  const input=document.getElementById('globalSearch');
-  input.value=nrc;
-  document.getElementById('searchClear').classList.add('visible');
-  closeSug();
-  renderDir('');
-  goTo('sec-dir');
-  setTimeout(()=>{const card=document.querySelector('#progList .prog-card');if(card)card.classList.add('open');},120);
+  mostrarTarjetaCursoPorNrc(nrc,true);
 }
 
 function filtroTarjeta(valor,tipo='dato',texto=null){
@@ -1060,6 +1061,26 @@ function renderTarjetaCurso(x){
       <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
     </div><div class="rc-links">${bSP}${bN}${bCanvas}${bIntegracion}${bI}${bTabla}</div>
   </div>`;
+}
+
+function ocultarTarjetaCurso(){
+  const seccion=document.getElementById('courseDetailSection'),contenedor=document.getElementById('courseDetailCard');
+  if(seccion)seccion.classList.remove('show');if(contenedor)contenedor.innerHTML='';
+}
+function mostrarTarjetaCurso(curso,hacerScroll=false){
+  const seccion=document.getElementById('courseDetailSection'),contenedor=document.getElementById('courseDetailCard');
+  if(!seccion||!contenedor||!curso)return;
+  contenedor.innerHTML=renderTarjetaCurso(curso);seccion.classList.add('show');
+  if(hacerScroll)setTimeout(()=>seccion.scrollIntoView({behavior:'smooth',block:'start'}),60);
+}
+function mostrarTarjetaCursoPorNrc(nrc,hacerScroll=false){
+  const curso=all.find(c=>norm(c.nrc)===norm(nrc));if(curso)mostrarTarjetaCurso(curso,hacerScroll);
+}
+function actualizarTarjetaCursoSegunFiltros(){
+  const f=filtrosBusquedaSuperiores();
+  if(!f.grupos.length&&!f.codigo&&!f.fechas.length){ocultarTarjetaCurso();return;}
+  const encontrados=cursosFiltradosSuperiores();
+  if(encontrados.length===1)mostrarTarjetaCurso(encontrados[0]);else ocultarTarjetaCurso();
 }
 
 function renderPanelSeleccion(cursos){
