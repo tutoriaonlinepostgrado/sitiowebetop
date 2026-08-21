@@ -172,6 +172,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .dir-search:focus{border-color:rgba(250,204,21,.4)}
 .dir-search::placeholder{color:var(--text-dim)}
 .dir-search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.dir-selected-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;min-height:0}
+.dir-selected-filters:empty{display:none}
+.dir-filter-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;background:#eef5fb;border:1px solid #c7d9e8;color:#315f86;font-size:10px;font-weight:700}
+.dir-filter-chip button{border:0;background:transparent;color:#6b7f93;cursor:pointer;font-size:14px;line-height:1;padding:0}
+.dir-filter-chip button:hover{color:#b4232f}
+.dir-filter-add,.dir-filter-clear-all{height:34px;padding:0 12px;border-radius:7px;border:1px solid var(--border2);font:700 10px var(--font);cursor:pointer;white-space:nowrap}
+.dir-filter-add{background:#315f86;color:#fff;border-color:#315f86}
+.dir-filter-clear-all{background:#fff;color:#586b82}
+.dir-filter-clear-all:disabled{opacity:.45;cursor:default}
 .dir-date-field{display:flex;flex-direction:column;gap:5px}
 .dir-date-field label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
 .dir-date-field input{height:34px;min-width:145px;padding:6px 9px;border-radius:7px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:var(--font);outline:none}
@@ -246,7 +255,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .group-count{color:var(--text-dim);font-weight:600;margin-left:6px}
 .group-hidden{display:none!important}
 
-.nrc-table{width:100%;border-collapse:collapse}
+.nrc-table{width:max-content;min-width:100%;border-collapse:collapse}
+.nrc-table th,.nrc-table td{white-space:nowrap}
+.nrc-table .td-curso{max-width:none;min-width:300px}
+.nrc-table .td-fecha{min-width:92px}
+.nrc-table .tutor-cell-name{min-width:170px;white-space:nowrap}
+.nrc-table .td-actions{min-width:210px}
 .nrc-table th{padding:7px 18px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
 .nrc-table td{padding:7px 18px;font-size:11px;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.03)}
 .nrc-table tr:last-child td{border-bottom:none}
@@ -361,7 +375,7 @@ body{background:#eef3f8;color:var(--text)}
     <div class="search-wrap" id="searchWrap">
       <span class="search-ico">🔍</span>
       <input class="search-input" id="globalSearch" type="text"
-        placeholder="Ej: 1875, Gestión de Calidad, Paula Pardo o 10-08-2026…"
+        placeholder="Ej.: UNI118, 24-08-2026, PREPARACION (separa cada filtro con coma)"
         oninput="onInput(this.value)" onkeydown="onKey(event)" autocomplete="off">
       <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
       <div class="sug-box" id="sugBox"></div>
@@ -415,8 +429,12 @@ body{background:#eef3f8;color:var(--text)}
     <div class="dir-search-wrap">
       <span class="dir-search-ico">🔍</span>
       <input class="dir-search" id="dirSearch" type="text"
-        placeholder="Buscar programa, intake, NRC, curso, tutor, facultad o estado…"
-        oninput="filtrarDir(this.value)">
+        placeholder="Escribe un programa, intake, NRC, curso o tutor…"
+        oninput="filtrarDir(this.value)" onkeydown="manejarFiltroDirKey(event)">
+    </div>
+    <button class="dir-filter-add" type="button" onclick="agregarFiltrosDirDesdeInput()">+ Agregar filtro</button>
+    <button class="dir-filter-clear-all" id="dirClearAll" type="button" onclick="limpiarFiltrosDir()">Limpiar</button>
+    <div class="dir-selected-filters" id="dirSelectedFilters" aria-live="polite">
     </div>
 
     <input type="date" id="fechaInicioDesde" hidden>
@@ -825,7 +843,7 @@ function onInput(v){
   clearTimeout(timer);
   document.getElementById('searchClear').classList.toggle('visible',v.length>0);
   if(v.length<2)closeSug();
-  timer=setTimeout(()=>{if(v.length>=2)renderSug(v);renderCards(v);renderDir(document.getElementById('dirSearch')?.value||'');},160);
+  timer=setTimeout(()=>{const ultimo=v.split(',').pop().trim();if(ultimo.length>=2)renderSug(ultimo);renderCards(v);renderDir(document.getElementById('dirSearch')?.value||'');},160);
 }
 function aplicarFiltrosBusqueda(){
   closeSug();
@@ -843,15 +861,12 @@ function renderFechasInicio(){
   el.innerHTML=[...fechasInicioSeleccionadas].sort().map(f=>`<span class="date-chip">${esc(f.split('-').reverse().join('-'))}<button type="button" title="Quitar fecha" onclick="quitarFechaInicio('${f}')">×</button></span>`).join('');
 }
 function filtrosBusquedaSuperiores(){
-  return {
-    terminos:norm(document.getElementById('globalSearch')?.value||'').split(/\s+/).filter(Boolean),
-    codigo:norm(document.getElementById('courseCodeFilter')?.value||'').trim(),
-    fechas:[...fechasInicioSeleccionadas]
-  };
+  const grupos=String(document.getElementById('globalSearch')?.value||'').split(',').map(v=>norm(v).trim()).filter(Boolean);
+  return {grupos,codigo:norm(document.getElementById('courseCodeFilter')?.value||'').trim(),fechas:[...fechasInicioSeleccionadas]};
 }
 function cursoCumpleFiltrosSuperiores(x){
   const f=filtrosBusquedaSuperiores();
-  return f.terminos.every(t=>x._s.includes(t))
+  return f.grupos.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
     &&(!f.codigo||norm([x.codigoCurso,x.materia,x.nrc].join(' ')).includes(f.codigo))
     &&(!f.fechas.length||f.fechas.includes(fechaISO(x.fechaInicio)));
 }
@@ -904,6 +919,7 @@ function renderSug(q){
 
 function navegarDirectorio(valor,tipo){
   const dir=document.getElementById('dirSearch');
+  filtrosDirectorio.splice(0);renderFiltrosDir();
   dir.value=valor;
   clearStatFilter();
   renderDir(valor);
@@ -965,7 +981,7 @@ function filtroTarjeta(valor,tipo='dato',texto=null){
 function renderCards(q){
   const c=document.getElementById('searchResults');
   const filtros=filtrosBusquedaSuperiores();
-  if(!filtros.terminos.length&&!filtros.codigo&&!filtros.fechas.length){c.innerHTML='';return;}
+  if(!filtros.grupos.length&&!filtros.codigo&&!filtros.fechas.length){c.innerHTML='';return;}
   const encontrados=cursosFiltradosSuperiores();
   if(!encontrados.length){c.innerHTML='<div class="search-empty">Sin resultados para la combinación de filtros seleccionada.</div>';return;}
   const limite=250,found=encontrados.slice(0,limite);
@@ -1400,13 +1416,13 @@ function refreshDirTable(idx){
 
 function renderDir(filtro=''){
   progMap={};cardIdx={};
-  const terminos=norm(filtro).split(/\s+/).filter(Boolean);
+  const grupos=[...filtrosDirectorio,...String(filtro||'').split(',')].map(v=>v.trim()).filter(Boolean);
   all.filter(c=>ESTADOS_DIR.includes(c.estado))
     .filter(c=>c.programa&&c.programa!=='—')
     .filter(c=>cursoCumpleFiltrosSuperiores(c))
     .filter(c=>cursoCumpleFiltroEstadistico(c))
     .filter(c=>cursoCumpleFiltroFecha(c))
-    .filter(c=>coincideBusquedaFlexible(c,terminos))
+    .filter(c=>!grupos.length||grupos.some(g=>coincideBusquedaFlexible(c,norm(g).split(/\s+/).filter(Boolean))))
     .forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
   const progs=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'));
   if(!progs.length){document.getElementById('progList').innerHTML='<div class="search-empty">Sin programas que coincidan con la búsqueda y los filtros activos.</div>';return;}
@@ -1517,7 +1533,23 @@ function filterPill(e,idx,estado){
   if(vis===0){const tr=document.createElement('tr');tr.id='empty-'+idx;tr.innerHTML=`<td colspan="8" class="td-empty">Sin cursos con estado "${estado}"</td>`;document.getElementById('tbody-'+idx).appendChild(tr);}
 }
 
-function filtrarDir(v){renderDir(v);}
+const filtrosDirectorio=[];
+function renderFiltrosDir(){
+  const el=document.getElementById('dirSelectedFilters');
+  if(el)el.innerHTML=filtrosDirectorio.map((f,i)=>`<span class="dir-filter-chip">${esc(f)}<button type="button" title="Quitar filtro" onclick="quitarFiltroDir(${i})">×</button></span>`).join('');
+  const limpiar=document.getElementById('dirClearAll');
+  if(limpiar)limpiar.disabled=!filtrosDirectorio.length&&!document.getElementById('dirSearch')?.value.trim();
+}
+function agregarFiltrosDirDesdeInput(){
+  const input=document.getElementById('dirSearch');
+  String(input?.value||'').split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>{if(!filtrosDirectorio.some(x=>norm(x)===norm(v)))filtrosDirectorio.push(v);});
+  if(input)input.value='';
+  renderFiltrosDir();renderDir('');
+}
+function manejarFiltroDirKey(e){if(e.key==='Enter'||e.key===','){e.preventDefault();agregarFiltrosDirDesdeInput();}}
+function quitarFiltroDir(i){filtrosDirectorio.splice(i,1);renderFiltrosDir();renderDir(document.getElementById('dirSearch')?.value||'');}
+function limpiarFiltrosDir(){filtrosDirectorio.splice(0);const input=document.getElementById('dirSearch');if(input)input.value='';renderFiltrosDir();renderDir('');}
+function filtrarDir(v){renderFiltrosDir();renderDir(v);}
 
 function mostrarTablaFiltrada(){
   renderDir(document.getElementById('dirSearch')?.value||'');
