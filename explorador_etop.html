@@ -30,6 +30,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 
 /* SECTIONS */
 .section{padding:32px 24px;max-width:1500px;margin:0 auto}
+#sec-dir{max-width:1880px;width:calc(100% - 24px);padding-left:12px;padding-right:12px}
 .section+.section{border-top:1px solid var(--border)}
 .section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -258,14 +259,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .group-count{color:var(--text-dim);font-weight:600;margin-left:6px}
 .group-hidden{display:none!important}
 
-.nrc-table{width:max-content;min-width:100%;border-collapse:collapse}
-.nrc-table th,.nrc-table td{white-space:nowrap}
-.nrc-table .td-curso{max-width:none;min-width:300px}
-.nrc-table .td-fecha{min-width:92px}
-.nrc-table .tutor-cell-name{min-width:170px;white-space:nowrap}
-.nrc-table .td-actions{min-width:210px}
-.nrc-table th{padding:7px 18px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
-.nrc-table td{padding:7px 18px;font-size:11px;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.03)}
+.nrc-table{width:100%;min-width:1450px;table-layout:fixed;border-collapse:collapse}
+.nrc-table th,.nrc-table td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nrc-table th:nth-child(1){width:38px}.nrc-table th:nth-child(2){width:150px}.nrc-table th:nth-child(3){width:330px}.nrc-table th:nth-child(4){width:300px}.nrc-table th:nth-child(5){width:100px}.nrc-table th:nth-child(6),.nrc-table th:nth-child(7){width:90px}.nrc-table th:nth-child(8){width:150px}.nrc-table th:nth-child(9){width:210px}
+.nrc-table .td-curso{max-width:none;min-width:0}
+.nrc-table .td-fecha{min-width:0}
+.nrc-table .tutor-cell-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nrc-table .td-actions{min-width:0;overflow:visible}
+.nrc-table th{padding:7px 9px;text-align:left;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
+.nrc-table td{padding:7px 9px;font-size:10px;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.03)}
 .nrc-table tr:last-child td{border-bottom:none}
 .nrc-table tr:hover td{background:rgba(255,255,255,.02)}
 .td-nrc{font-family:var(--mono);font-weight:700;color:#60a5fa;font-size:11px}
@@ -1481,13 +1483,16 @@ function renderDirTableBody(idx,cs){
     grupos[g].push(c);
   });
 
-  const groupNames=Object.keys(grupos).sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+  // Fuera del intake: versiones más recientes primero.
+  const groupNames=Object.keys(grupos).sort((a,b)=>b.localeCompare(a,'es',{numeric:true,sensitivity:'base'}));
   return groupNames.map(g=>{
     const key=encodeURIComponent(g);
     const collapsed=!!st.collapsed[key];
     const arrow=collapsed?'▸':'▾';
-    const rows=collapsed?'':grupos[g].map(renderFilaCurso).join('');
-    const nrcs=grupos[g].map(claveCursoSeleccion),marcado=nrcs.every(n=>cursosSeleccionados.has(n));
+    // Dentro de cada intake: secuencia cronológica ascendente.
+    const cursosDelIntake=[...grupos[g]].sort((a,b)=>(parseFecha(a.fechaInicio)?.getTime()||0)-(parseFecha(b.fechaInicio)?.getTime()||0)||String(a.codigoCurso||'').localeCompare(String(b.codigoCurso||''),'es',{numeric:true}));
+    const rows=collapsed?'':cursosDelIntake.map(renderFilaCurso).join('');
+    const nrcs=cursosDelIntake.map(claveCursoSeleccion),marcado=nrcs.every(n=>cursosSeleccionados.has(n));
     return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td class="dir-check"><input type="checkbox" aria-label="Seleccionar intake ${esc(g)}" ${marcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcs)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"></td><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
   }).join('');
 }
