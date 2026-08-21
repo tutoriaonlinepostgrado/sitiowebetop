@@ -167,6 +167,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 
 /* ══ DIRECTORIO ══ */
 .dir-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.dir-selection-toolbar{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:10px 13px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc;color:#52667d;font-size:11px}
+.dir-selection-toolbar.show{display:flex}.dir-selection-toolbar strong{color:#24364b;font-size:13px}.dir-selection-actions{display:flex;gap:6px;flex-wrap:wrap}.dir-selection-actions button{height:30px;padding:0 10px;border:1px solid #c7d5e2;border-radius:6px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-selection-actions .download{background:#16805f;border-color:#16805f;color:#fff}
+.dir-check{width:34px;text-align:center!important}.dir-check input,.prog-select-check{accent-color:#315f86;cursor:pointer}.prog-select-check{width:15px;height:15px;flex:0 0 auto}
 .dir-search-wrap{position:relative;flex:1;min-width:300px;max-width:520px;margin-bottom:0}
 .dir-search{width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px 8px 34px;font-size:12px;font-family:var(--font);outline:none;transition:border-color .15s}
 .dir-search:focus{border-color:rgba(250,204,21,.4)}
@@ -418,9 +421,6 @@ body{background:#eef3f8;color:var(--text)}
       <button class="search-filter-clear" type="button" onclick="clearSearch()">Limpiar filtros</button>
     </div>
   </div>
-  <div class="section" style="padding-top:0">
-    <div class="search-results" id="searchResults"></div>
-  </div>
 </div>
 
 <!-- ESTADÍSTICAS -->
@@ -447,7 +447,7 @@ body{background:#eef3f8;color:var(--text)}
 <!-- DIRECTORIO -->
 <div id="sec-dir" class="section">
   <div class="section-label">📚 Directorio de programas</div>
-  <div class="simple-dir-note"><strong>Busca un programa</strong> y selecciona “Ver cursos”. Dentro de la tabla puedes ordenar cualquier columna.</div>
+  <div class="simple-dir-note"><strong>El buscador superior filtra directamente este directorio.</strong> Puede ingresar varios NRC separados por coma, seleccionar cursos por programa o intake y conservar todos sus accesos.</div>
   <div class="active-filter-note" id="activeFilterNote">
     Filtro estadístico: <strong id="activeFilterText">—</strong>
     <button type="button" onclick="clearStatFilter()">Quitar filtro</button>
@@ -466,6 +466,14 @@ body{background:#eef3f8;color:var(--text)}
 
     <input type="date" id="fechaInicioDesde" hidden>
     <input type="date" id="fechaInicioHasta" hidden>
+  </div>
+  <div class="dir-selection-toolbar" id="dirSelectionToolbar">
+    <div><strong id="dirResultCount">0</strong> cursos encontrados · <strong id="dirSelectedCount">0</strong> seleccionados</div>
+    <div class="dir-selection-actions">
+      <button type="button" onclick="seleccionarResultadosVisibles()">Seleccionar resultados</button>
+      <button type="button" onclick="limpiarSeleccionCursos()">Quitar selección</button>
+      <button type="button" class="download" onclick="descargarCursosFiltrados(true)">📥 Descargar seleccionados</button>
+    </div>
   </div>
   <div class="prog-list" id="progList">
     <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
@@ -873,13 +881,11 @@ function onInput(v){
   timer=setTimeout(()=>{
     const ultimo=v.split(',').pop().trim();
     if(ultimo.length>=2)renderSug(ultimo);
-    renderCards(v);
     renderDir(document.getElementById('dirSearch')?.value||'');
   },420);
 }
 function aplicarFiltrosBusqueda(){
   closeSug();
-  renderCards(document.getElementById('globalSearch').value);
   renderDir(document.getElementById('dirSearch')?.value||'');
 }
 function agregarFechaInicio(valor){
@@ -996,12 +1002,12 @@ function pickSug(i){
   partes[partes.length-1]=' '+s.value;
   input.value=partes.map(v=>v.trim()).filter(Boolean).join(', ');
   document.getElementById('searchClear').classList.add('visible');
-  closeSug();renderCards(input.value);
+  closeSug();renderDir(document.getElementById('dirSearch')?.value||'');
   if(s.type==='programa')navegarDirectorio(s.value,'programa');
   if(s.type==='intake')navegarDirectorio(s.value,'intake');
 }
 function closeSug(){document.getElementById('sugBox').classList.remove('open');sugSel=-1;sugList=[];}
-function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('courseCodeFilter').value='';document.getElementById('startDateFilter').value='';fechasInicioSeleccionadas.clear();renderFechasInicio();document.getElementById('searchClear').classList.remove('visible');document.getElementById('searchResults').innerHTML='';closeSug();renderDir(document.getElementById('dirSearch')?.value||'');}
+function clearSearch(){document.getElementById('globalSearch').value='';document.getElementById('courseCodeFilter').value='';document.getElementById('startDateFilter').value='';fechasInicioSeleccionadas.clear();cursosSeleccionados.clear();renderFechasInicio();document.getElementById('searchClear').classList.remove('visible');closeSug();renderDir(document.getElementById('dirSearch')?.value||'');}
 document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target))closeSug();});
 
 function seleccionarCursoDesdeDirectorio(nrc){
@@ -1009,9 +1015,9 @@ function seleccionarCursoDesdeDirectorio(nrc){
   input.value=nrc;
   document.getElementById('searchClear').classList.add('visible');
   closeSug();
-  renderCards(nrc);
-  showExplorerView('courses','sec-buscar',document.getElementById('tabBuscar'));
-  setTimeout(()=>document.getElementById('searchResults')?.scrollIntoView({behavior:'smooth',block:'start'}),180);
+  renderDir('');
+  goTo('sec-dir');
+  setTimeout(()=>{const card=document.querySelector('#progList .prog-card');if(card)card.classList.add('open');},120);
 }
 
 function filtroTarjeta(valor,tipo='dato',texto=null){
@@ -1024,7 +1030,7 @@ function filtroTarjeta(valor,tipo='dato',texto=null){
 const cursosSeleccionados=new Set();
 
 function claveCursoSeleccion(c){return String(c.nrc||'').trim();}
-function refrescarPanelSeleccion(){renderCards(document.getElementById('globalSearch')?.value||'');}
+function refrescarPanelSeleccion(){renderDir(document.getElementById('dirSearch')?.value||'');}
 function toggleCursoSeleccionado(nrc,marcado){marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc);refrescarPanelSeleccion();}
 function toggleListaSeleccion(codificado,marcado){
   JSON.parse(decodeURIComponent(codificado)).forEach(nrc=>marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc));
@@ -1448,6 +1454,7 @@ function renderFilaCurso(c){
     : '—';
 
   return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}">
+    <td class="dir-check"><input type="checkbox" aria-label="Seleccionar ${esc(c.nrc)}" ${cursosSeleccionados.has(claveCursoSeleccion(c))?'checked':''} data-nrc="${esc(encodeURIComponent(claveCursoSeleccion(c)))}" onchange="toggleCursoSeleccionado(decodeURIComponent(this.dataset.nrc),this.checked)"></td>
     <td class="td-nrc">${lnk}</td>
     <td class="td-curso" title="Abrir tarjeta de ${esc(c.curso)}"><button type="button" class="course-select" data-nrc="${esc(encodeURIComponent(c.nrc))}" onclick="seleccionarCursoDesdeDirectorio(decodeURIComponent(this.dataset.nrc))">${esc(c.curso)}</button></td>
     <td class="td-intake">${intakeHtml}</td>
@@ -1462,7 +1469,7 @@ function renderFilaCurso(c){
 function renderDirTableBody(idx,cs){
   const st=getDirState(idx);
   const filtered=sortCursosTabla(cs.filter(c=>cursoPasaFiltrosTabla(c,st)),st);
-  if(!filtered.length)return `<tr><td colspan="8" class="td-empty">Sin cursos para los filtros seleccionados.</td></tr>`;
+  if(!filtered.length)return `<tr><td colspan="9" class="td-empty">Sin cursos para los filtros seleccionados.</td></tr>`;
 
   if(!st.groupBy)return filtered.map(renderFilaCurso).join('');
 
@@ -1480,7 +1487,8 @@ function renderDirTableBody(idx,cs){
     const collapsed=!!st.collapsed[key];
     const arrow=collapsed?'▸':'▾';
     const rows=collapsed?'':grupos[g].map(renderFilaCurso).join('');
-    return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
+    const nrcs=grupos[g].map(claveCursoSeleccion),marcado=nrcs.every(n=>cursosSeleccionados.has(n));
+    return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td class="dir-check"><input type="checkbox" aria-label="Seleccionar intake ${esc(g)}" ${marcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcs)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"></td><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
   }).join('');
 }
 
@@ -1498,17 +1506,26 @@ function refreshDirTable(idx){
   });
 }
 
+function actualizarBarraSeleccionDirectorio(total,activa){
+  const barra=document.getElementById('dirSelectionToolbar');if(!barra)return;
+  barra.classList.toggle('show',!!activa);
+  const totalEl=document.getElementById('dirResultCount'),selEl=document.getElementById('dirSelectedCount');
+  if(totalEl)totalEl.textContent=Number(total||0).toLocaleString('es-CL');
+  if(selEl)selEl.textContent=cursosSeleccionados.size.toLocaleString('es-CL');
+}
+
 function renderDir(filtro=''){
   progMap={};cardIdx={};
   const grupos=[...filtrosDirectorio,...String(filtro||'').split(',')].map(v=>v.trim()).filter(Boolean);
   const filtroSuperior=prepararFiltroSuperior();
+  const hayFiltroSuperior=filtroSuperior.grupos.length||filtroSuperior.codigo||filtroSuperior.fechas.length;
   const cursosDirectorio=all.filter(c=>ESTADOS_DIR.includes(c.estado))
     .filter(c=>c.programa&&c.programa!=='—')
     .filter(c=>cursoCumpleFiltrosSuperiores(c,filtroSuperior))
-    .filter(c=>cursoCumpleFiltroEstadistico(c))
+    .filter(c=>hayFiltroSuperior||cursoCumpleFiltroEstadistico(c))
     .filter(c=>cursoCumpleFiltroFecha(c))
     .filter(c=>!grupos.length||grupos.some(g=>coincideBusquedaFlexible(c,norm(g).split(/\s+/).filter(Boolean))));
-  const hayFiltroSuperior=filtroSuperior.grupos.length||filtroSuperior.codigo||filtroSuperior.fechas.length;
+  actualizarBarraSeleccionDirectorio(cursosDirectorio.length,hayFiltroSuperior);
   if(hayFiltroSuperior&&cursosDirectorio.length>1500){
     document.getElementById('progList').innerHTML=`<div class="search-empty"><strong>${cursosDirectorio.length.toLocaleString('es-CL')} cursos coinciden.</strong><br>Agregue otro criterio para mostrar el directorio sin sobrecargar la página.</div>`;
     return;
@@ -1532,10 +1549,11 @@ function renderDir(filtro=''){
         ? `<span class="tutor-contact" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')"><span class="tutor-contact-name">${esc(t)}</span><span class="tutor-contact-detail">${esc(ct.correo)} · Anexo ${esc(ct.anexo)}</span></span>`
         : `<span class="tutor-tag" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')">${esc(t)}</span>`;
     }).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
-    const rows=renderDirTableBody(idx,cs);
-    return`<div class="prog-card" id="prog-${idx}">
+    const estadoTabla=getDirState(idx);if(hayFiltroSuperior)estadoTabla.groupBy='intake';
+    const rows=renderDirTableBody(idx,cs),nrcsPrograma=cs.map(claveCursoSeleccion),programaMarcado=nrcsPrograma.every(n=>cursosSeleccionados.has(n));
+    return`<div class="prog-card ${hayFiltroSuperior?'open':''}" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
-        <div class="prog-header-left"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
+        <div class="prog-header-left"><input type="checkbox" class="prog-select-check" aria-label="Seleccionar programa ${esc(prog)}" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
         <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-open-label">Ver cursos</span><span class="prog-chevron">▾</span></div>
       </div>
       <div class="prog-body">
@@ -1548,6 +1566,7 @@ function renderDir(filtro=''){
           <table class="nrc-table">
             <thead>
               <tr>
+                <th class="dir-check"><input type="checkbox" aria-label="Seleccionar cursos del programa" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"></th>
                 <th class="sortable" data-key="nrc" onclick="setDirSort(${idx},'nrc')">NRC <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="curso" onclick="setDirSort(${idx},'curso')">Curso <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="intake" onclick="setDirSort(${idx},'intake')">Intake / Versión <span class="sort-ind"></span></th>
