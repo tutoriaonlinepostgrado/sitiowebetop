@@ -284,6 +284,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .active-filter-note strong{color:var(--yellow)}
 .active-filter-note button{margin-left:auto;border:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:5px;padding:3px 8px;cursor:pointer}
 
+/* Panel de selección múltiple de cursos */
+.course-selection-app{background:#fff;border:1px solid #d5e0ea;border-radius:10px;overflow:hidden;box-shadow:0 3px 12px rgba(36,54,75,.06)}
+.selection-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;background:#f7fafc;border-bottom:1px solid #dce5ee;position:sticky;top:52px;z-index:8}
+.selection-summary{display:flex;align-items:center;gap:8px;color:#52667d;font-size:11px}.selection-summary strong{color:#24364b;font-size:13px}
+.selection-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.selection-actions button{height:30px;padding:0 10px;border-radius:6px;border:1px solid #c7d5e2;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}
+.selection-actions button:hover{background:#edf4f9}.selection-actions .selection-download{background:#16805f;border-color:#16805f;color:#fff}.selection-actions .selection-download:hover{background:#11694e}
+.selection-group{border-bottom:1px solid #dfe7ef}.selection-group:last-child{border-bottom:0}
+.selection-program{display:flex;align-items:center;gap:8px;padding:9px 13px;background:#eaf1f7;color:#2e4e69;font-size:11px;font-weight:800}
+.selection-program-count,.selection-intake-count{margin-left:auto;color:#71869a;font-size:9px;font-weight:700}
+.selection-intake{display:flex;align-items:center;gap:8px;padding:7px 15px;background:#f7fafc;border-top:1px solid #e5ecf3;border-bottom:1px solid #e5ecf3;color:#4d6277;font:700 10px var(--font)}
+.selection-table-wrap{overflow-x:auto}.selection-table{width:max-content;min-width:100%;border-collapse:collapse}
+.selection-table th,.selection-table td{padding:7px 10px;border-bottom:1px solid #e7edf3;text-align:left;white-space:nowrap;font-size:10px;color:#435970}
+.selection-table th{background:#fff;color:#72859a;text-transform:uppercase;letter-spacing:.05em;font-size:8px}.selection-table tr:hover td{background:#f7fafc}
+.selection-table .sel-nrc{font:700 10px var(--mono);color:#315f86}.selection-table .sel-course{min-width:300px}.selection-table .sel-tutor{min-width:170px}
+.selection-table input,.selection-program input,.selection-intake input{accent-color:#315f86;cursor:pointer}
+.selection-empty{padding:28px;text-align:center;color:#71869a}
+
 /* Tema claro ETOP: conserva navegación institucional y reduce la fatiga visual */
 :root{--bg:#eef3f8;--surface:#ffffff;--border:#dbe4ee;--border2:#cbd7e4;--yellow:#b88a00;--text:#24364b;--text-muted:#586b82;--text-dim:#7b8da2}
 body{background:#eef3f8;color:var(--text)}
@@ -866,7 +884,11 @@ function filtrosBusquedaSuperiores(){
 }
 function cursoCumpleFiltrosSuperiores(x){
   const f=filtrosBusquedaSuperiores();
-  return f.grupos.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
+  const nrcExactos=f.grupos.filter(g=>all.some(c=>norm(c.nrc)===g));
+  const otros=f.grupos.filter(g=>!nrcExactos.includes(g));
+  const cumpleNrc=!nrcExactos.length||nrcExactos.some(g=>norm(x.nrc)===g);
+  return cumpleNrc
+    &&otros.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
     &&(!f.codigo||norm([x.codigoCurso,x.materia,x.nrc].join(' ')).includes(f.codigo))
     &&(!f.fechas.length||f.fechas.includes(fechaISO(x.fechaInicio)));
 }
@@ -978,35 +1000,75 @@ function filtroTarjeta(valor,tipo='dato',texto=null){
   return `<button type="button" class="rc-filter-value" data-valor="${esc(codificado)}" title="Filtrar directorio por ${esc(visible)}" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'${tipo}')">${esc(visible)}</button>`;
 }
 
-function renderCards(q){
-  const c=document.getElementById('searchResults');
-  const filtros=filtrosBusquedaSuperiores();
-  if(!filtros.grupos.length&&!filtros.codigo&&!filtros.fechas.length){c.innerHTML='';return;}
-  const encontrados=cursosFiltradosSuperiores();
-  if(!encontrados.length){c.innerHTML='<div class="search-empty">Sin resultados para la combinación de filtros seleccionada.</div>';return;}
-  const limite=250,found=encontrados.slice(0,limite);
-  const resumen=`<div class="search-results-toolbar"><span><strong>${encontrados.length.toLocaleString('es-CL')}</strong> curso${encontrados.length===1?'':'s'} encontrado${encontrados.length===1?'':'s'}${encontrados.length>limite?` · se muestran las primeras ${limite} tarjetas`:''}</span><button type="button" onclick="mostrarTablaFiltrada()">Ver tabla desplegable ↓</button></div>`;
-  c.innerHTML=resumen+found.map(x=>{
-    const{urlSP,urlNrcTutor,urlC}=x.urls;
-    const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
-    const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank" rel="noopener">🗂 Ver el curso en base calendarios</a>`:'';
-    const bCanvas=x.urlCanvas?`<a class="rc-btn rc-btn-canvas" href="${esc(x.urlCanvas)}" target="_blank" rel="noopener">🖥 Ver el curso en Canvas</a>`:'';
-    const bIntegracion=urlC?`<a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank" rel="noopener">🔗 Verificar curso en web de integración</a>`:'';
-    const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="incidencias.html?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
-    const bTabla=`<button class="rc-btn" style="border:1px solid #b88a00;background:#fff8dc;color:#725600;cursor:pointer" type="button" data-programa="${esc(encodeURIComponent(x.programa))}" onclick="abrirCursoEnTabla(decodeURIComponent(this.dataset.programa))">▾ Ver en tabla</button>`;
-    return`<div class="result-card">
-      <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc||'—')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${esc(x.curso||'—')}</div></div><div><button type="button" class="rc-filter-badge" data-valor="${esc(encodeURIComponent(String(x.estado||'')))}" title="Ver cursos con este estado" onclick="navegarDirectorio(decodeURIComponent(this.dataset.valor),'estado')">${badge(x.estado)}</button></div></div>
-      <div class="rc-grid">
-        <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${filtroTarjeta(x.tutor,'tutor')}</div></div>
-        <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${esc(fmtF(x.fechaInicio))}</div></div>
-        <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${esc(fmtF(x.fechaFin))}</div></div>
-        <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad||'—')}</div></div>
-        <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso||'—')}</div></div>
-        <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
-      </div>
-      <div class="rc-links">${bSP}${bN}${bCanvas}${bIntegracion}${bI}${bTabla}</div>
-    </div>`;
+const cursosSeleccionados=new Set();
+
+function claveCursoSeleccion(c){return String(c.nrc||'').trim();}
+function refrescarPanelSeleccion(){renderCards(document.getElementById('globalSearch')?.value||'');}
+function toggleCursoSeleccionado(nrc,marcado){marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc);refrescarPanelSeleccion();}
+function toggleListaSeleccion(codificado,marcado){
+  JSON.parse(decodeURIComponent(codificado)).forEach(nrc=>marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc));
+  refrescarPanelSeleccion();
+}
+function seleccionarResultadosVisibles(){cursosFiltradosSuperiores().forEach(c=>cursosSeleccionados.add(claveCursoSeleccion(c)));refrescarPanelSeleccion();}
+function limpiarSeleccionCursos(){cursosSeleccionados.clear();refrescarPanelSeleccion();}
+
+function renderTarjetaCurso(x){
+  const{urlSP,urlNrcTutor,urlC}=x.urls;
+  const bSP=urlSP&&urlSP!=='#'?`<a class="rc-btn rc-btn-sp" href="${esc(urlSP)}" target="_blank">📋 Base Semáforo</a>`:'';
+  const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank" rel="noopener">🗂 Ver el curso en base calendarios</a>`:'';
+  const bCanvas=x.urlCanvas?`<a class="rc-btn rc-btn-canvas" href="${esc(x.urlCanvas)}" target="_blank" rel="noopener">🖥 Ver el curso en Canvas</a>`:'';
+  const bIntegracion=urlC?`<a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank" rel="noopener">🔗 Verificar curso en web de integración</a>`:'';
+  const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="incidencias.html?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
+  const bTabla=`<button class="rc-btn" style="border:1px solid #b88a00;background:#fff8dc;color:#725600;cursor:pointer" type="button" data-programa="${esc(encodeURIComponent(x.programa))}" onclick="abrirCursoEnTabla(decodeURIComponent(this.dataset.programa))">▾ Ver en tabla</button>`;
+  return`<div class="result-card">
+    <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc||'—')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${esc(x.curso||'—')}</div></div><div>${badge(x.estado)}</div></div>
+    <div class="rc-grid">
+      <div><div class="rc-item-label">Tutor</div><div class="rc-item-val">${filtroTarjeta(x.tutor,'tutor')}</div></div>
+      <div><div class="rc-item-label">Inicio</div><div class="rc-item-val">${esc(fmtF(x.fechaInicio))}</div></div>
+      <div><div class="rc-item-label">Fin</div><div class="rc-item-val">${esc(fmtF(x.fechaFin))}</div></div>
+      <div><div class="rc-item-label">Facultad</div><div class="rc-item-val">${esc(x.facultad||'—')}</div></div>
+      <div><div class="rc-item-label">Código</div><div class="rc-item-val">${esc(x.codigoCurso||'—')}</div></div>
+      <div><div class="rc-item-label">Intake / Versión</div><div class="rc-item-val">${filtroTarjeta(x.intake,'intake')}</div></div>
+    </div><div class="rc-links">${bSP}${bN}${bCanvas}${bIntegracion}${bI}${bTabla}</div>
+  </div>`;
+}
+
+function renderPanelSeleccion(cursos){
+  const visibles=new Set(cursos.map(claveCursoSeleccion));
+  [...cursosSeleccionados].forEach(nrc=>{if(!visibles.has(nrc))cursosSeleccionados.delete(nrc);});
+  const grupos={};
+  cursos.forEach(c=>{
+    const programa=c.programa||'Sin programa',intake=c.intake||'Sin intake';
+    if(!grupos[programa])grupos[programa]={};
+    if(!grupos[programa][intake])grupos[programa][intake]=[];
+    grupos[programa][intake].push(c);
+  });
+  const contenido=Object.keys(grupos).sort((a,b)=>a.localeCompare(b,'es')).map(programa=>{
+    const cursosPrograma=Object.values(grupos[programa]).flat();
+    const nrcPrograma=cursosPrograma.map(claveCursoSeleccion);
+    const programaMarcado=nrcPrograma.every(n=>cursosSeleccionados.has(n));
+    const intakes=Object.keys(grupos[programa]).sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(intake=>{
+      const lista=grupos[programa][intake].sort(compararCursosOperativamente),nrcs=lista.map(claveCursoSeleccion);
+      const intakeMarcado=nrcs.every(n=>cursosSeleccionados.has(n));
+      const filas=lista.map(c=>`<tr>
+        <td><input type="checkbox" ${cursosSeleccionados.has(claveCursoSeleccion(c))?'checked':''} onchange="toggleCursoSeleccionado('${esc(claveCursoSeleccion(c))}',this.checked)"></td>
+        <td class="sel-nrc">${esc(c.nrc)}</td><td class="sel-course">${esc(c.curso||'—')}</td><td>${esc(c.codigoCurso||'—')}</td>
+        <td>${badge(c.estado)}</td><td>${esc(fmtF(c.fechaInicio))}</td><td>${esc(fmtF(c.fechaFin))}</td><td class="sel-tutor">${esc(c.tutor||'—')}</td>
+      </tr>`).join('');
+      return`<div class="selection-intake"><input type="checkbox" ${intakeMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcs)))}" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><span>🗂 ${esc(intake)}</span><span class="selection-intake-count">${lista.length} NRC</span></div>
+      <div class="selection-table-wrap"><table class="selection-table"><thead><tr><th></th><th>NRC</th><th>Curso</th><th>Código</th><th>Estado</th><th>Inicio</th><th>Fin</th><th>Tutor</th></tr></thead><tbody>${filas}</tbody></table></div>`;
+    }).join('');
+    return`<div class="selection-group"><div class="selection-program"><input type="checkbox" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcPrograma)))}" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><span>📚 ${esc(programa)}</span><span class="selection-program-count">${cursosPrograma.length} NRC</span></div>${intakes}</div>`;
   }).join('');
+  return`<div class="course-selection-app"><div class="selection-toolbar"><div class="selection-summary"><strong>${cursos.length.toLocaleString('es-CL')}</strong> cursos encontrados · <strong>${cursosSeleccionados.size}</strong> seleccionados</div><div class="selection-actions"><button type="button" onclick="seleccionarResultadosVisibles()">Seleccionar resultados</button><button type="button" onclick="limpiarSeleccionCursos()">Quitar selección</button><button type="button" class="selection-download" onclick="descargarCursosFiltrados(true)">📥 Descargar seleccionados</button></div></div>${contenido}</div>`;
+}
+
+function renderCards(q){
+  const c=document.getElementById('searchResults'),filtros=filtrosBusquedaSuperiores();
+  if(!filtros.grupos.length&&!filtros.codigo&&!filtros.fechas.length){c.innerHTML='';cursosSeleccionados.clear();return;}
+  const encontrados=cursosFiltradosSuperiores();
+  if(!encontrados.length){c.innerHTML='<div class="search-empty">Sin resultados para la combinación de filtros seleccionada.</div>';cursosSeleccionados.clear();return;}
+  c.innerHTML=encontrados.length===1?renderTarjetaCurso(encontrados[0]):renderPanelSeleccion(encontrados);
 }
 
 /* ── STATS ─────────────────────────────── */
@@ -1568,10 +1630,12 @@ function abrirCursoEnTabla(programa){
   },180);
 }
 
-async function descargarCursosFiltrados(){
+async function descargarCursosFiltrados(soloSeleccionados=false){
   const f=filtrosBusquedaSuperiores();
-  if(!f.terminos.length&&!f.codigo&&!f.fechas.length){alert('Seleccione al menos un filtro antes de descargar.');return;}
-  const cursos=cursosFiltradosSuperiores();
+  if(!f.grupos.length&&!f.codigo&&!f.fechas.length){alert('Seleccione al menos un filtro antes de descargar.');return;}
+  const filtrados=cursosFiltradosSuperiores();
+  const cursos=soloSeleccionados?filtrados.filter(c=>cursosSeleccionados.has(claveCursoSeleccion(c))):filtrados;
+  if(soloSeleccionados&&!cursosSeleccionados.size){alert('Marca al menos un curso en la lista antes de descargar.');return;}
   if(!cursos.length){alert('No hay cursos para descargar con los filtros seleccionados.');return;}
   const filas=cursos.map(c=>({
     'NRC':c.nrc||'',
@@ -1590,13 +1654,15 @@ async function descargarCursosFiltrados(){
   }));
   const ws=XLSX.utils.json_to_sheet(filas);
   ws['!cols']=[{wch:18},{wch:14},{wch:12},{wch:42},{wch:48},{wch:20},{wch:27},{wch:34},{wch:15},{wch:14},{wch:14},{wch:14},{wch:12}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Cursos filtrados');
+  const nombreHoja=soloSeleccionados?'Cursos seleccionados':'Cursos filtrados';
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,nombreHoja);
   const ref=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:filas.length,c:Object.keys(filas[0]).length-1}});
   const cols=Object.keys(filas[0]);
   const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><table xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" id="1" name="CursosFiltrados" displayName="CursosFiltrados" ref="'+ref+'" totalsRowShown="0"><autoFilter ref="'+ref+'"/><tableColumns>'+cols.map((c,i)=>'<tableColumn id="'+(i+1)+'" name="'+c+'"/>').join('')+'</tableColumns><tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/></table>';
   const wbout=XLSX.write(wb,{bookType:'xlsx',type:'binary',compression:true});
-  const blob=await injectTableIntoXlsx(wbout,xml,'Cursos filtrados',ref);
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Explorador_ETOP_Cursos_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  const blob=await injectTableIntoXlsx(wbout,xml,nombreHoja,ref);
+  const tipoArchivo=soloSeleccionados?'seleccionados':'filtrados';
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Explorador_ETOP_Cursos_'+tipoArchivo+'_'+new Date().toISOString().slice(0,10)+'.xlsx';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
 async function injectTableIntoXlsx(wboutBinary,tableXml,sheetName,tableRef){
