@@ -80,14 +80,6 @@
         .multi-opcion:hover { background:rgba(255,215,0,.12); }
         .multi-opcion input { margin-top:2px; accent-color:#ffd700; }
         .multi-vacio { padding:10px 6px; color:#a3a3a3; font-size:12px; }
-        .fecha-chip-wrap { display:flex; align-items:center; gap:5px; min-width:0; }
-        .fecha-chip-input { width:128px; height:28px; padding:0 7px; border:1px solid rgba(255,215,0,.34); border-radius:7px; background:rgba(255,255,255,.08); color:#fff; color-scheme:dark; font-size:10px; outline:none; }
-        .fecha-chip-input:focus { border-color:rgba(255,215,0,.75); }
-        .fecha-chip-list { display:flex; align-items:center; gap:4px; max-width:310px; overflow-x:auto; scrollbar-width:thin; }
-        .fecha-chip { display:inline-flex; align-items:center; gap:4px; height:25px; padding:0 7px; border:1px solid rgba(255,215,0,.34); border-radius:13px; background:rgba(255,215,0,.1); color:#fff; font-size:9px; font-weight:700; white-space:nowrap; }
-        .fecha-chip button { border:0; background:none; color:#ffd700; cursor:pointer; padding:0; font-size:13px; line-height:1; }
-        .fecha-chip-clear { height:25px; border:0; background:none; color:#aeb9c7; cursor:pointer; font-size:9px; white-space:nowrap; }
-        .fecha-chip-clear:hover { color:#ffd700; }
         .date-filter-wrap { display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border:1px solid rgba(255,215,0,.42); border-radius:20px; background:rgba(255,255,255,.1); color:#ffd700; flex-shrink:0; }
         .date-filter-label { font-size:11px; font-weight:700; white-space:nowrap; }
         .date-filter-input { width:118px; padding:0; border:0; border-radius:0; background:transparent; color:#fff; font-size:11px; color-scheme:dark; }
@@ -296,7 +288,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-filtrotipo2",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -378,11 +370,6 @@
 
     function renderMulti(campo) {
         const host = document.getElementById('mf-' + campo);
-        if(campo==='fechaInicio'){
-            const fechas=[...seleccionMulti.fechaInicio].sort();
-            host.innerHTML=`<div class="fecha-chip-wrap"><input type="date" class="fecha-chip-input" title="Agregar fecha de inicio" onchange="agregarFechaCoordinacion(this.value)"><div class="fecha-chip-list">${fechas.map(v=>`<span class="fecha-chip">${escHtml(v.split('-').reverse().join('-'))}<button type="button" title="Quitar fecha" onclick="quitarFechaCoordinacion('${v}')">×</button></span>`).join('')}${fechas.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasCoordinacion()">Limpiar</button>':''}</div></div>`;
-            return;
-        }
         const abierto = host.classList.contains('abierto');
         const busqueda = host.querySelector('.multi-search')?.value || '';
         const valores = valoresCampo(campo);
@@ -416,21 +403,6 @@
         const valor = decodeURIComponent(valorCodificado);
         marcado ? seleccionMulti[campo].add(valor) : seleccionMulti[campo].delete(valor);
         sincronizarFiltros(campo);
-    }
-
-    function agregarFechaCoordinacion(valor) {
-        if (valor) seleccionMulti.fechaInicio.add(valor);
-        sincronizarFiltros('fechaInicio');
-    }
-
-    function quitarFechaCoordinacion(valor) {
-        seleccionMulti.fechaInicio.delete(valor);
-        sincronizarFiltros('fechaInicio');
-    }
-
-    function limpiarFechasCoordinacion() {
-        seleccionMulti.fechaInicio.clear();
-        sincronizarFiltros('fechaInicio');
     }
 
 
@@ -620,7 +592,6 @@
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
                 if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
-                urlLocal.searchParams.set('_f', Date.now().toString());
             }
             return urlLocal.toString();
         }
@@ -644,7 +615,10 @@
         // URLSearchParams codifica correctamente el filtro sin dañar la URL
         // base del reporte. Los segmentadores nativos de Power BI siguen activos.
         const url = new URL(cfg.url);
-        url.searchParams.set('filter', filtro);
+        // En el modo seguro reportEmbed, Power BI recibe el filtro OData
+        // mediante el parámetro "$filter". Sin el signo $, el portal mostraba
+        // el filtro seleccionado, pero el informe podía abrirse sin aplicarlo.
+        url.searchParams.set('$filter', filtro);
         return url.toString();
     }
 
