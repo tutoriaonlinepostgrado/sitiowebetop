@@ -170,7 +170,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 /* ══ DIRECTORIO ══ */
 .dir-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:18px}
 .dir-compact-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:9px 11px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc}
-.dir-active-summary{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#71869a;font-size:10px}.dir-summary-label{font-weight:700;color:#52667d}.dir-summary-chip{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #c7d9e8;border-radius:14px;background:#eef5fb;color:#315f86;font-weight:700}
+.dir-active-summary{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#71869a;font-size:10px}.dir-summary-label{font-weight:700;color:#52667d}.dir-summary-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #c7d9e8;border-radius:14px;background:#eef5fb;color:#315f86;font-weight:700}.dir-summary-chip button{border:0;background:transparent;color:#6b7f92;font:800 12px/1 var(--font);padding:0;cursor:pointer}.dir-summary-chip button:hover{color:#b42335}.expand-intakes{height:27px;border:1px solid #d2a61d;border-radius:6px;background:#fff8dc;color:#765900;padding:0 9px;font:700 9px var(--font);cursor:pointer}.expand-intakes:hover{background:#ffefad}
 .dir-compact-actions{display:flex;align-items:center;gap:7px}.dir-compact-actions button{height:32px;padding:0 11px;border:1px solid #c7d5e2;border-radius:7px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-compact-actions .edit-search{background:#315f86;border-color:#315f86;color:#fff}
 .dir-selection-toolbar{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:10px 13px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc;color:#52667d;font-size:11px}
 .dir-selection-toolbar.show{display:flex}.dir-selection-toolbar strong{color:#24364b;font-size:13px}.dir-selection-actions{display:flex;gap:6px;flex-wrap:wrap}.dir-selection-actions button{height:30px;padding:0 10px;border:1px solid #c7d5e2;border-radius:6px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-selection-actions .download{background:#16805f;border-color:#16805f;color:#fff}
@@ -912,14 +912,19 @@ function filtrosBusquedaSuperiores(){
 }
 function prepararFiltroSuperior(f=filtrosBusquedaSuperiores()){
   const nrcDisponibles=new Set(all.map(c=>norm(c.nrc)));
+  const intakeDisponibles=new Set(all.map(c=>norm(c.intake)).filter(Boolean));
   const nrcExactos=new Set(f.grupos.filter(g=>nrcDisponibles.has(g)));
-  return {...f,nrcExactos,otros:f.grupos.filter(g=>!nrcExactos.has(g))};
+  const intakesExactos=new Set(f.grupos.filter(g=>intakeDisponibles.has(g)));
+  return {...f,nrcExactos,intakesExactos,otros:f.grupos.filter(g=>!nrcExactos.has(g)&&!intakesExactos.has(g))};
 }
 function cursoCumpleFiltrosSuperiores(x,fPreparado=null){
   const f=fPreparado||prepararFiltroSuperior();
   const nrcNormalizado=norm(x.nrc);
+  const intakeNormalizado=norm(x.intake);
   const cumpleNrc=!f.nrcExactos.size||f.nrcExactos.has(nrcNormalizado);
+  const cumpleIntake=!f.intakesExactos.size||f.intakesExactos.has(intakeNormalizado);
   return cumpleNrc
+    &&cumpleIntake
     &&f.otros.every(grupo=>grupo.split(/\s+/).filter(Boolean).every(t=>x._s.includes(t)))
     &&(!f.codigo||norm([x.codigoCurso,x.materia,x.nrc].join(' ')).includes(f.codigo))
     &&(!f.fechas.length||f.fechas.includes(fechaISO(x.fechaInicio)));
@@ -1544,11 +1549,40 @@ function actualizarResumenFiltrosDirectorio(){
   const el=document.getElementById('dirActiveFiltersSummary');if(!el)return;
   const etiquetas=String(document.getElementById('globalSearch')?.value||'').split(',').map(v=>v.trim()).filter(Boolean);
   const codigo=String(document.getElementById('courseCodeFilter')?.value||'').trim();
-  if(codigo)etiquetas.push('Código: '+codigo);
-  [...fechasInicioSeleccionadas].sort().forEach(f=>etiquetas.push('Inicio: '+f.split('-').reverse().join('-')));
-  el.innerHTML=etiquetas.length
-    ? `<span class="dir-summary-label">Filtros activos:</span>${etiquetas.map(v=>`<span class="dir-summary-chip">${esc(v)}</span>`).join('')}`
+  const chips=etiquetas.map((v,i)=>`<span class="dir-summary-chip">${esc(v)}<button type="button" title="Quitar este filtro" onclick="quitarFiltroPrincipal(${i})">×</button></span>`);
+  if(codigo)chips.push(`<span class="dir-summary-chip">Código: ${esc(codigo)}<button type="button" title="Quitar código o materia" onclick="quitarFiltroCodigo()">×</button></span>`);
+  [...fechasInicioSeleccionadas].sort().forEach(f=>chips.push(`<span class="dir-summary-chip">Inicio: ${esc(f.split('-').reverse().join('-'))}<button type="button" title="Quitar fecha" onclick="quitarFechaInicio('${f}')">×</button></span>`));
+  const hayNrc=prepararFiltroSuperior().nrcExactos.size>0;
+  el.innerHTML=chips.length
+    ? `<span class="dir-summary-label">Filtros activos:</span>${chips.join('')}${hayNrc?'<button type="button" class="expand-intakes" onclick="mostrarVersionesCompletas()">🗂 Mostrar versiones completas</button>':''}`
     : '<span class="dir-summary-label">Sin filtros superiores · mostrando el directorio general</span>';
+}
+function quitarFiltroPrincipal(indice){
+  const input=document.getElementById('globalSearch');
+  const partes=String(input?.value||'').split(',').map(v=>v.trim()).filter(Boolean);
+  partes.splice(indice,1);input.value=partes.join(', ');
+  document.getElementById('searchClear')?.classList.toggle('visible',partes.length>0);
+  aplicarFiltrosBusqueda();actualizarTarjetaCursoSegunFiltros();
+}
+function quitarFiltroCodigo(){
+  document.getElementById('courseCodeFilter').value='';
+  aplicarFiltrosBusqueda();actualizarTarjetaCursoSegunFiltros();
+}
+function mostrarVersionesCompletas(){
+  const input=document.getElementById('globalSearch'),f=prepararFiltroSuperior();
+  const versiones=[];
+  f.nrcExactos.forEach(nrc=>{
+    const curso=all.find(c=>norm(c.nrc)===nrc);
+    if(curso?.intake&&!versiones.some(v=>norm(v)===norm(curso.intake)))versiones.push(curso.intake);
+  });
+  if(!versiones.length)return;
+  const otrosOriginales=String(input.value||'').split(',').map(v=>v.trim()).filter(Boolean)
+    .filter(v=>!f.nrcExactos.has(norm(v)));
+  input.value=[...otrosOriginales,...versiones].join(', ');
+  // El código/materia podría mantener visible solo UNI118; se limpia para abrir la versión completa.
+  document.getElementById('courseCodeFilter').value='';
+  cursosSeleccionados.clear();
+  aplicarFiltrosBusqueda();actualizarTarjetaCursoSegunFiltros();
 }
 function editarBusquedaPrincipal(){
   goTo('sec-buscar');
