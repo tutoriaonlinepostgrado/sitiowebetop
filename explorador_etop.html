@@ -8,8 +8,8 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f172a;--surface:#1e293b;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
-  --yellow:#facc15;--text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#64748b;
+  --bg:#eef3f8;--surface:#ffffff;--border:#dbe4ee;--border2:#cbd7e4;
+  --yellow:#b88a00;--text:#24364b;--text-muted:#586b82;--text-dim:#7b8da2;
   --font:'Inter',system-ui,sans-serif;--mono:'Consolas','SF Mono',monospace;--radius:10px;
 }
 html{scroll-behavior:smooth}
@@ -174,6 +174,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .dir-compact-actions{display:flex;align-items:center;gap:7px}.dir-compact-actions button{height:32px;padding:0 11px;border:1px solid #c7d5e2;border-radius:7px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-compact-actions .edit-search{background:#315f86;border-color:#315f86;color:#fff}
 .dir-selection-toolbar{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:10px 13px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc;color:#52667d;font-size:11px}
 .dir-selection-toolbar.show{display:flex}.dir-selection-toolbar strong{color:#24364b;font-size:13px}.dir-selection-actions{display:flex;gap:6px;flex-wrap:wrap}.dir-selection-actions button{height:30px;padding:0 10px;border:1px solid #c7d5e2;border-radius:6px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-selection-actions .download{background:#16805f;border-color:#16805f;color:#fff}
+.dir-selection-actions .edit-powerapp,.selection-actions .edit-powerapp{background:#315f86;border-color:#315f86;color:#fff}
+.powerapp-backdrop{position:fixed;inset:52px 0 0;background:transparent;z-index:900;opacity:0;visibility:hidden;transition:opacity .18s ease}.powerapp-backdrop.open{opacity:1;visibility:visible}
+.powerapp-panel{position:fixed;top:52px;right:0;width:min(440px,100vw);height:calc(100vh - 52px);background:#fff;z-index:901;box-shadow:-12px 0 30px rgba(15,23,42,.24);transform:translateX(102%);transition:transform .22s ease;display:flex;flex-direction:column}.powerapp-panel.open{transform:translateX(0)}
+.powerapp-panel-head{min-height:76px;padding:13px 14px;background:#0f172a;color:#fff;border-bottom:3px solid #facc15;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.powerapp-panel-title{font-size:13px;font-weight:800;margin-bottom:4px}.powerapp-panel-sub{font-size:10px;color:#9fb2c7;line-height:1.4;max-width:270px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.powerapp-panel-actions{display:flex;gap:6px;flex-shrink:0}.powerapp-panel-actions a,.powerapp-panel-actions button{height:28px;padding:0 9px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;color:#334155;font:700 9px var(--font);display:inline-flex;align-items:center;text-decoration:none;cursor:pointer}.powerapp-panel-actions .close{border-color:#fecaca;background:#fff1f2;color:#b42335}.powerapp-frame{width:100%;height:100%;border:0;background:#fff;flex:1}body.powerapp-open{overflow:hidden}
+@media(max-width:600px){.powerapp-backdrop{inset:0}.powerapp-panel{top:0;height:100vh;width:100vw}}
 .dir-check{width:34px;text-align:center!important}.dir-check input,.prog-select-check{accent-color:#315f86;cursor:pointer}.prog-select-check{width:15px;height:15px;flex:0 0 auto}
 .dir-search-wrap{position:relative;flex:1;min-width:300px;max-width:520px;margin-bottom:0}
 .dir-search{width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 12px 8px 34px;font-size:12px;font-family:var(--font);outline:none;transition:border-color .15s}
@@ -478,6 +484,7 @@ body{background:#eef3f8;color:var(--text)}
     <div class="dir-selection-actions">
       <button type="button" onclick="seleccionarResultadosVisibles()">Seleccionar resultados</button>
       <button type="button" onclick="limpiarSeleccionCursos()">Quitar selección</button>
+      <button type="button" class="edit-powerapp" onclick="abrirEditorCursos()">✏ Editar seleccionados</button>
       <button type="button" class="download" onclick="descargarCursosFiltrados(true)">📥 Descargar seleccionados</button>
     </div>
   </div>
@@ -1036,6 +1043,7 @@ function filtroTarjeta(valor,tipo='dato',texto=null){
 }
 
 const cursosSeleccionados=new Set();
+const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
 
 function claveCursoSeleccion(c){return String(c.nrc||'').trim();}
 function refrescarPanelSeleccion(){renderDir(document.getElementById('dirSearch')?.value||'');}
@@ -1046,6 +1054,22 @@ function toggleListaSeleccion(codificado,marcado){
 }
 function seleccionarResultadosVisibles(){cursosFiltradosSuperiores().forEach(c=>cursosSeleccionados.add(claveCursoSeleccion(c)));refrescarPanelSeleccion();}
 function limpiarSeleccionCursos(){cursosSeleccionados.clear();refrescarPanelSeleccion();}
+function abrirEditorCursos(){
+  const elegidos=all.filter(c=>cursosSeleccionados.has(claveCursoSeleccion(c)));
+  if(!elegidos.length){alert('Seleccione al menos un curso antes de abrir el editor.');return;}
+  const sinId=elegidos.filter(c=>!String(c.itemId||'').trim());
+  if(sinId.length){alert('No es posible editar porque '+sinId.length+' curso(s) no tienen ID de SharePoint en nrcs.json.');return;}
+  const url=new URL(POWER_APPS_EDITOR_URL);
+  url.searchParams.set('ids',[...new Set(elegidos.map(c=>String(c.itemId).trim()))].join('|'));
+  document.getElementById('powerappEditorFrame').src=url.toString();
+  document.getElementById('powerappOpenExternal').href=url.toString();
+  document.getElementById('powerappEditorSummary').textContent=elegidos.length===1?elegidos[0].nrc:elegidos.length+' cursos seleccionados';
+  document.getElementById('powerappBackdrop').classList.add('open');document.getElementById('powerappPanel').classList.add('open');document.body.classList.add('powerapp-open');
+}
+function cerrarEditorCursos(){
+  document.getElementById('powerappBackdrop').classList.remove('open');document.getElementById('powerappPanel').classList.remove('open');document.body.classList.remove('powerapp-open');
+  setTimeout(()=>{document.getElementById('powerappEditorFrame').src='about:blank';},220);
+}
 
 function renderTarjetaCurso(x){
   const{urlSP,urlNrcTutor,urlC}=x.urls;
@@ -1115,7 +1139,7 @@ function renderPanelSeleccion(cursos){
     }).join('');
     return`<div class="selection-group"><div class="selection-program"><input type="checkbox" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcPrograma)))}" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><span>📚 ${esc(programa)}</span><span class="selection-program-count">${cursosPrograma.length} NRC</span></div>${intakes}</div>`;
   }).join('');
-  return`<div class="course-selection-app"><div class="selection-toolbar"><div class="selection-summary"><strong>${cursos.length.toLocaleString('es-CL')}</strong> cursos encontrados · <strong>${cursosSeleccionados.size}</strong> seleccionados</div><div class="selection-actions"><button type="button" onclick="seleccionarResultadosVisibles()">Seleccionar resultados</button><button type="button" onclick="limpiarSeleccionCursos()">Quitar selección</button><button type="button" class="selection-download" onclick="descargarCursosFiltrados(true)">📥 Descargar seleccionados</button></div></div><div class="course-selection-body">${contenido}</div></div>`;
+  return`<div class="course-selection-app"><div class="selection-toolbar"><div class="selection-summary"><strong>${cursos.length.toLocaleString('es-CL')}</strong> cursos encontrados · <strong>${cursosSeleccionados.size}</strong> seleccionados</div><div class="selection-actions"><button type="button" onclick="seleccionarResultadosVisibles()">Seleccionar resultados</button><button type="button" onclick="limpiarSeleccionCursos()">Quitar selección</button><button type="button" class="edit-powerapp" onclick="abrirEditorCursos()">✏ Editar seleccionados</button><button type="button" class="selection-download" onclick="descargarCursosFiltrados(true)">📥 Descargar seleccionados</button></div></div><div class="course-selection-body">${contenido}</div></div>`;
 }
 
 function renderCards(q){
@@ -2280,6 +2304,12 @@ async function iniciarExplorador(){
 
 iniciarExplorador();
 </script>
+
+<div id="powerappBackdrop" class="powerapp-backdrop" onclick="cerrarEditorCursos()"></div>
+<aside id="powerappPanel" class="powerapp-panel" aria-label="Editor de cursos Power Apps">
+  <div class="powerapp-panel-head"><div><div class="powerapp-panel-title">Actualizar datos del curso</div><div id="powerappEditorSummary" class="powerapp-panel-sub">Cursos seleccionados</div></div><div class="powerapp-panel-actions"><a id="powerappOpenExternal" href="#" target="_blank" rel="noopener">Abrir aparte</a><button type="button" class="close" onclick="cerrarEditorCursos()">Cerrar</button></div></div>
+  <iframe id="powerappEditorFrame" class="powerapp-frame" title="Editor de cursos ETOP" src="about:blank" allow="clipboard-read; clipboard-write"></iframe>
+</aside>
 
 <button id="btn-volver-arriba" class="btn-volver-arriba" type="button"
   aria-label="Volver al inicio de la página" title="Volver arriba">
