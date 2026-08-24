@@ -169,6 +169,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 
 /* ══ DIRECTORIO ══ */
 .dir-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.dir-compact-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:9px 11px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc}
+.dir-active-summary{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#71869a;font-size:10px}.dir-summary-label{font-weight:700;color:#52667d}.dir-summary-chip{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #c7d9e8;border-radius:14px;background:#eef5fb;color:#315f86;font-weight:700}
+.dir-compact-actions{display:flex;align-items:center;gap:7px}.dir-compact-actions button{height:32px;padding:0 11px;border:1px solid #c7d5e2;border-radius:7px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-compact-actions .edit-search{background:#315f86;border-color:#315f86;color:#fff}
 .dir-selection-toolbar{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:10px 13px;border:1px solid #d5e0ea;border-radius:8px;background:#f7fafc;color:#52667d;font-size:11px}
 .dir-selection-toolbar.show{display:flex}.dir-selection-toolbar strong{color:#24364b;font-size:13px}.dir-selection-actions{display:flex;gap:6px;flex-wrap:wrap}.dir-selection-actions button{height:30px;padding:0 10px;border:1px solid #c7d5e2;border-radius:6px;background:#fff;color:#425a72;font:700 10px var(--font);cursor:pointer}.dir-selection-actions .download{background:#16805f;border-color:#16805f;color:#fff}
 .dir-check{width:34px;text-align:center!important}.dir-check input,.prog-select-check{accent-color:#315f86;cursor:pointer}.prog-select-check{width:15px;height:15px;flex:0 0 auto}
@@ -394,6 +397,7 @@ body{background:#eef3f8;color:var(--text)}
   <div class="nav-links">
     <button class="nav-link top-tab active" id="tabBuscar" onclick="showExplorerView('courses','sec-buscar',this)">🔍 Buscar</button>
     <button class="nav-link top-tab" onclick="showExplorerView('courses','sec-dir',this)">📚 Directorio</button>
+    <a class="nav-link" href="gestion_coordinacion.html" title="Regresar al Espacio de Coordinación">🏛 Volver a Coordinación</a>
   </div>
   <div class="nav-stat">Total: <span id="navTotal">—</span> NRC</div>
 </nav>
@@ -459,21 +463,16 @@ body{background:#eef3f8;color:var(--text)}
     Filtro estadístico: <strong id="activeFilterText">—</strong>
     <button type="button" onclick="clearStatFilter()">Quitar filtro</button>
   </div>
-  <div class="dir-filter-bar">
-    <div class="dir-search-wrap">
-      <span class="dir-search-ico">🔍</span>
-      <input class="dir-search" id="dirSearch" type="text"
-        placeholder="Escribe un programa, intake, NRC, curso o tutor…"
-        oninput="filtrarDir(this.value)" onkeydown="manejarFiltroDirKey(event)">
+  <div class="dir-compact-controls">
+    <div class="dir-active-summary" id="dirActiveFiltersSummary" aria-live="polite"></div>
+    <div class="dir-compact-actions">
+      <button type="button" class="edit-search" onclick="editarBusquedaPrincipal()">🔍 Modificar búsqueda</button>
+      <button type="button" onclick="clearSearch()">Limpiar filtros</button>
     </div>
-    <button class="dir-filter-add" type="button" onclick="agregarFiltrosDirDesdeInput()">+ Agregar filtro</button>
-    <button class="dir-filter-clear-all" id="dirClearAll" type="button" onclick="limpiarFiltrosDir()">Limpiar</button>
-    <div class="dir-selected-filters" id="dirSelectedFilters" aria-live="polite">
-    </div>
-
-    <input type="date" id="fechaInicioDesde" hidden>
-    <input type="date" id="fechaInicioHasta" hidden>
   </div>
+  <input id="dirSearch" type="hidden" value="">
+  <input type="date" id="fechaInicioDesde" hidden>
+  <input type="date" id="fechaInicioHasta" hidden>
   <div class="dir-selection-toolbar" id="dirSelectionToolbar">
     <div><strong id="dirResultCount">0</strong> cursos encontrados · <strong id="dirSelectedCount">0</strong> seleccionados</div>
     <div class="dir-selection-actions">
@@ -973,11 +972,12 @@ function renderSug(q){
 }
 
 function navegarDirectorio(valor,tipo){
-  const dir=document.getElementById('dirSearch');
-  filtrosDirectorio.splice(0);renderFiltrosDir();
-  dir.value=valor;
-  clearStatFilter();
-  renderDir(valor);
+  const principal=document.getElementById('globalSearch'),dir=document.getElementById('dirSearch');
+  filtrosDirectorio.splice(0);if(dir)dir.value='';
+  if(principal){principal.value=valor;document.getElementById('searchClear')?.classList.add('visible');}
+  statFilter={tipo:'ALL',valor:'',label:'Todos los NRC'};
+  document.getElementById('activeFilterNote')?.classList.remove('show');
+  renderStats();renderDir('');actualizarTarjetaCursoSegunFiltros();
   goTo('sec-dir');
 
   setTimeout(()=>{
@@ -1540,8 +1540,24 @@ function actualizarBarraSeleccionDirectorio(total,activa){
   if(selEl)selEl.textContent=cursosSeleccionados.size.toLocaleString('es-CL');
 }
 
+function actualizarResumenFiltrosDirectorio(){
+  const el=document.getElementById('dirActiveFiltersSummary');if(!el)return;
+  const etiquetas=String(document.getElementById('globalSearch')?.value||'').split(',').map(v=>v.trim()).filter(Boolean);
+  const codigo=String(document.getElementById('courseCodeFilter')?.value||'').trim();
+  if(codigo)etiquetas.push('Código: '+codigo);
+  [...fechasInicioSeleccionadas].sort().forEach(f=>etiquetas.push('Inicio: '+f.split('-').reverse().join('-')));
+  el.innerHTML=etiquetas.length
+    ? `<span class="dir-summary-label">Filtros activos:</span>${etiquetas.map(v=>`<span class="dir-summary-chip">${esc(v)}</span>`).join('')}`
+    : '<span class="dir-summary-label">Sin filtros superiores · mostrando el directorio general</span>';
+}
+function editarBusquedaPrincipal(){
+  goTo('sec-buscar');
+  setTimeout(()=>document.getElementById('globalSearch')?.focus(),180);
+}
+
 function renderDir(filtro=''){
   progMap={};cardIdx={};
+  actualizarResumenFiltrosDirectorio();
   const grupos=[...filtrosDirectorio,...String(filtro||'').split(',')].map(v=>v.trim()).filter(Boolean);
   const filtroSuperior=prepararFiltroSuperior();
   const hayFiltroSuperior=filtroSuperior.grupos.length||filtroSuperior.codigo||filtroSuperior.fechas.length;
