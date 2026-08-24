@@ -572,7 +572,9 @@
         return d ? `${d[3]}-${d[2].padStart(2,'0')}-${d[1].padStart(2,'0')}` : '';
     }
     function condicionMultiple(columna, valores) {
-        return '(' + valores.map(v => `${columna} eq '${sanitizar(v)}'`).join(' or ') + ')';
+        const limpios = valores.map(v => `'${sanitizar(v)}'`);
+        if (limpios.length === 1) return `${columna} eq ${limpios[0]}`;
+        return `${columna} in (${limpios.join(',')})`;
     }
 
     function buildURLFiltrada() {
