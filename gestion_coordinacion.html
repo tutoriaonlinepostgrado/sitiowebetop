@@ -615,10 +615,8 @@
         // URLSearchParams codifica correctamente el filtro sin dañar la URL
         // base del reporte. Los segmentadores nativos de Power BI siguen activos.
         const url = new URL(cfg.url);
-        // En el modo seguro reportEmbed, Power BI recibe el filtro OData
-        // mediante el parámetro "$filter". Sin el signo $, el portal mostraba
-        // el filtro seleccionado, pero el informe podía abrirse sin aplicarlo.
-        url.searchParams.set('$filter', filtro);
+        // Sintaxis oficial de filtros URL de Power BI: filter=Tabla/Campo eq 'valor'.
+        url.searchParams.set('filter', filtro);
         return url.toString();
     }
 
