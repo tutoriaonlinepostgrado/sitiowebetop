@@ -608,6 +608,11 @@
         if (f.tutor.length)    condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', f.tutor));
         if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
+        if (f.fechaInicio.length) {
+            const fechasValidas = f.fechaInicio.map(fechaISO).filter(Boolean);
+            if (fechasValidas.length === 1) condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq ${fechasValidas[0]}`);
+            if (fechasValidas.length > 1) condiciones.push(`(${fechasValidas.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq ${v}`).join(' or ')})`);
+        }
         if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
 
         if (condiciones.length === 0) return cfg.url;
@@ -669,7 +674,7 @@
     function cargar(clave, btn) {
         claveActual = clave;
         document.getElementById('mf-intake').classList.toggle('oculto', clave !== 'CALENDARIOS');
-        document.getElementById('mf-fechaInicio').classList.toggle('oculto', clave !== 'CALENDARIOS');
+        document.getElementById('mf-fechaInicio').classList.toggle('oculto', !['CALENDARIOS','CURSOS_INICIAR'].includes(clave));
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
