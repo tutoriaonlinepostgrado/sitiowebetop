@@ -1073,7 +1073,23 @@ const cursosSeleccionados=new Set();
 const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
 
 function claveCursoSeleccion(c){return String(c.nrc||'').trim();}
-function refrescarPanelSeleccion(){renderDir(document.getElementById('dirSearch')?.value||'');}
+function refrescarPanelSeleccion(){
+  // No reconstruir el directorio: mantener abiertos programa/versiones y conservar el scroll.
+  const contador=document.getElementById('dirSelectedCount');
+  if(contador)contador.textContent=cursosSeleccionados.size.toLocaleString('es-CL');
+
+  document.querySelectorAll('#progList input[data-nrc]').forEach(input=>{
+    const nrc=decodeURIComponent(input.dataset.nrc||'');
+    input.checked=cursosSeleccionados.has(nrc);
+  });
+
+  document.querySelectorAll('#progList input[data-nrcs]').forEach(input=>{
+    let nrcs=[];
+    try{nrcs=JSON.parse(decodeURIComponent(input.dataset.nrcs||''));}catch(e){}
+    input.checked=nrcs.length>0&&nrcs.every(nrc=>cursosSeleccionados.has(nrc));
+    input.indeterminate=nrcs.some(nrc=>cursosSeleccionados.has(nrc))&&!input.checked;
+  });
+}
 function toggleCursoSeleccionado(nrc,marcado){marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc);refrescarPanelSeleccion();}
 function toggleListaSeleccion(codificado,marcado){
   JSON.parse(decodeURIComponent(codificado)).forEach(nrc=>marcado?cursosSeleccionados.add(nrc):cursosSeleccionados.delete(nrc));
