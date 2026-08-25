@@ -1653,8 +1653,10 @@ function renderDir(filtro=''){
     .filter(c=>cursoCumpleFiltroFecha(c))
     .filter(c=>!grupos.length||grupos.some(g=>coincideBusquedaFlexible(c,norm(g).split(/\s+/).filter(Boolean))));
   actualizarBarraSeleccionDirectorio(cursosDirectorio.length,hayFiltroSuperior);
-  if(hayFiltroSuperior&&cursosDirectorio.length>1500){
-    document.getElementById('progList').innerHTML=`<div class="search-empty"><strong>${cursosDirectorio.length.toLocaleString('es-CL')} cursos coinciden.</strong><br>Agregue otro criterio para mostrar el directorio sin sobrecargar la página.</div>`;
+  // Las facultades pueden superar ampliamente los 1.500 NRC. Se permite mostrar
+  // el directorio agrupado y la protección queda reservada para resultados extremos.
+  if(hayFiltroSuperior&&cursosDirectorio.length>8000){
+    document.getElementById('progList').innerHTML=`<div class="search-empty"><strong>${cursosDirectorio.length.toLocaleString('es-CL')} cursos coinciden.</strong><br>Seleccione una facultad adicionalmente o agregue otro criterio para acotar el resultado.</div>`;
     return;
   }
   cursosDirectorio.forEach(c=>{if(!progMap[c.programa])progMap[c.programa]=[];progMap[c.programa].push(c);});
