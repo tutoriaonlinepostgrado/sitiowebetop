@@ -237,6 +237,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .prog-card.open .prog-chevron{transform:rotate(180deg);color:var(--yellow)}
 .prog-body{display:none;border-top:1px solid var(--border)}
 .prog-card.open .prog-body{display:block}
+.group-toggle-all{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border:1px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text-muted);font:600 10px var(--font);cursor:pointer;white-space:nowrap}
+.group-toggle-all:hover{border-color:var(--yellow);color:var(--yellow);background:#fffaf0}
 .prog-tutores{padding:10px 18px;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .prog-tutores strong{color:var(--text-muted);font-weight:600}
 .tutor-tag{background:rgba(167,139,250,.1);color:#a78bfa;border:.5px solid rgba(167,139,250,.2);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
@@ -254,7 +256,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
   .rc-grid{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
 }
 
-.filter-bar{padding:7px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);display:none;align-items:center;gap:6px;font-size:10px;color:var(--text-dim)}
+.filter-bar{padding:7px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim)}
 .filter-bar-label{font-weight:600;color:var(--text-muted)}
 .filter-bar-count{margin-left:auto;font-weight:700;color:var(--yellow)}
 
@@ -1589,6 +1591,8 @@ function refreshDirTable(idx){
     const ind=th.querySelector('.sort-ind');
     if(ind)ind.textContent=st.sortKey===key?(st.sortDir==='asc'?'▲':'▼'):'';
   });
+
+  actualizarControlesPrograma(idx);
 }
 
 function actualizarBarraSeleccionDirectorio(total,activa){
@@ -1671,11 +1675,11 @@ function renderDir(filtro=''){
     const cs=progMap[prog],ac=cs.filter(c=>c.estado==='ACTIVO').length,ci=cs.filter(c=>c.estado==='EN CIERRE').length,pr=cs.filter(c=>c.estado==='PREPARACION').length,ce=cs.filter(c=>c.estado==='CERRADO').length;
     const tuts=[...new Set(cs.map(c=>c.tutor).filter(t=>t&&t!=='Por asignar'))].filter(tutorEsActivo);
     const intakes=[...new Set(cs.map(c=>c.intake).filter(Boolean))].sort((a,b)=>b.localeCompare(a,'es',{numeric:true}));
-    const pills=(ac?`<span class="prog-pill pill-a" onclick="filterPill(event,${idx},'ACTIVO')">${ac} activo${ac!==1?'s':''}</span>`:'')+
-      (ci?`<span class="prog-pill pill-c" onclick="filterPill(event,${idx},'EN CIERRE')">${ci} en cierre</span>`:'')+
-      (pr?`<span class="prog-pill pill-p" onclick="filterPill(event,${idx},'PREPARACION')">${pr} preparación</span>`:'')+
-      (ce?`<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'CERRADO')">${ce} cerrado${ce!==1?'s':''}</span>`:'')+
-      `<span class="prog-pill pill-all" onclick="filterPill(event,${idx},'ALL')">Todos</span>`;
+    const pills=(ac?`<span class="prog-pill pill-a" data-estado="ACTIVO" onclick="filterPill(event,${idx},'ACTIVO')">${ac} activo${ac!==1?'s':''}</span>`:'')+
+      (ci?`<span class="prog-pill pill-c" data-estado="EN CIERRE" onclick="filterPill(event,${idx},'EN CIERRE')">${ci} en cierre</span>`:'')+
+      (pr?`<span class="prog-pill pill-p" data-estado="PREPARACION" onclick="filterPill(event,${idx},'PREPARACION')">${pr} preparación</span>`:'')+
+      (ce?`<span class="prog-pill pill-all" data-estado="CERRADO" onclick="filterPill(event,${idx},'CERRADO')">${ce} cerrado${ce!==1?'s':''}</span>`:'')+
+      `<span class="prog-pill pill-all" data-estado="ALL" onclick="filterPill(event,${idx},'ALL')">Todos</span>`;
     const tutH=tuts.length?tuts.map(t=>{
       const ct=contactoTutor(t);
       return ct
@@ -1693,8 +1697,8 @@ function renderDir(filtro=''){
       <div class="prog-body">
         <div class="prog-tutores"><strong>Tutores:</strong>${tutH}</div>
         <div class="filter-bar" id="fbar-${idx}">
-          Mostrando: <span class="filter-bar-label" id="flabel-${idx}">—</span>
-          <span class="filter-bar-count" id="fcount-${idx}"></span>
+          <span id="fsummary-${idx}">Mostrando: <span class="filter-bar-label" id="flabel-${idx}">Todos</span> <span class="filter-bar-count" id="fcount-${idx}"></span></span>
+          <button type="button" class="group-toggle-all" id="group-toggle-${idx}" onclick="toggleAllDirGroups(event,${idx})">Desplegar versiones</button>
         </div>
         <div style="overflow-x:auto">
           <table class="nrc-table">
@@ -1722,72 +1726,75 @@ function renderDir(filtro=''){
 
 function toggleCard(idx,e){if(e.target.closest('.prog-pill'))return;document.getElementById('prog-'+idx).classList.toggle('open');}
 
+function cursosProgramaDirectorio(idx){
+  const programa=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'))[idx];
+  return progMap[programa]||[];
+}
+
+function gruposDirectorioVisibles(idx){
+  const st=getDirState(idx),cursos=cursosProgramaDirectorio(idx).filter(c=>cursoPasaFiltrosTabla(c,st));
+  if(!st.groupBy)return [];
+  return [...new Set(cursos.map(c=>{
+    let g=valorCurso(c,st.groupBy)||'Sin valor';
+    if(st.groupBy==='fechaInicio')g=fmtF(c.fechaInicio);
+    return encodeURIComponent(g);
+  }))];
+}
+
+function actualizarControlesPrograma(idx){
+  const st=getDirState(idx),cursos=cursosProgramaDirectorio(idx);
+  const visibles=cursos.filter(c=>cursoPasaFiltrosTabla(c,st)).length;
+  document.querySelectorAll(`#pills-${idx} .prog-pill`).forEach(p=>p.classList.remove('active'));
+  const pills=document.querySelectorAll(`#pills-${idx} .prog-pill`);
+  pills.forEach(p=>p.classList.toggle('active',st.filters.estado?p.dataset.estado===st.filters.estado:p.dataset.estado==='ALL'));
+
+  document.querySelectorAll(`#prog-${idx} [data-tutor]`).forEach(el=>{
+    el.classList.toggle('active',!!st.filters.tutor&&norm(el.dataset.tutor)===norm(st.filters.tutor));
+  });
+
+  const partes=[];
+  if(st.filters.estado)partes.push('Estado: '+st.filters.estado);
+  if(st.filters.tutor)partes.push('Tutor: '+st.filters.tutor);
+  const resumen=document.getElementById('fsummary-'+idx);
+  if(resumen)resumen.innerHTML=partes.length
+    ? `Mostrando: <span class="filter-bar-label">${esc(partes.join(' · '))}</span> <span class="filter-bar-count">${visibles} NRC</span>`
+    : `Mostrando: <span class="filter-bar-label">Todos</span> <span class="filter-bar-count">${visibles} NRC</span>`;
+
+  const boton=document.getElementById('group-toggle-'+idx),grupos=gruposDirectorioVisibles(idx);
+  if(boton){
+    boton.style.display=grupos.length?'inline-flex':'none';
+    const hayContraido=grupos.some(key=>Object.prototype.hasOwnProperty.call(st.collapsed,key)?!!st.collapsed[key]:facultadesSeleccionadas.size>0);
+    boton.textContent=hayContraido?'Desplegar versiones':'Contraer versiones';
+    boton.dataset.action=hayContraido?'expand':'collapse';
+  }
+}
+
+function toggleAllDirGroups(e,idx){
+  e.stopPropagation();
+  const st=getDirState(idx),grupos=gruposDirectorioVisibles(idx);
+  const expandir=e.currentTarget.dataset.action!=='collapse';
+  grupos.forEach(key=>{st.collapsed[key]=!expandir;});
+  refreshDirTable(idx);
+}
+
 function filterTutor(e,idx,tutor){
   e.stopPropagation();
   const card=document.getElementById('prog-'+idx);
   if(!card.classList.contains('open'))card.classList.add('open');
-
-  document.querySelectorAll(`#prog-${idx} [data-tutor]`).forEach(el=>el.classList.remove('active'));
-  e.currentTarget.classList.add('active');
-
-  const rows=document.querySelectorAll(`#tbody-${idx} tr[data-tutor]`);
-  let vis=0;
-  rows.forEach(tr=>{
-    const show=norm(tr.dataset.tutor)===norm(tutor);
-    tr.style.display=show?'':'none';
-    if(show)vis++;
-  });
-
-  const bar=document.getElementById('fbar-'+idx);
-  bar.style.display='flex';
-  document.getElementById('flabel-'+idx).textContent='Tutor: '+tutor;
-  document.getElementById('fcount-'+idx).textContent=vis+' NRC';
-
-  document.querySelectorAll(`#pills-${idx} .prog-pill`).forEach(p=>p.classList.remove('active'));
-
-  const prev=document.getElementById('empty-'+idx);
-  if(prev)prev.remove();
-  if(vis===0){
-    const tr=document.createElement('tr');
-    tr.id='empty-'+idx;
-    tr.innerHTML=`<td colspan="8" class="td-empty">Sin cursos asignados a ${esc(tutor)}</td>`;
-    document.getElementById('tbody-'+idx).appendChild(tr);
-  }
+  const st=getDirState(idx);
+  st.filters.tutor=norm(st.filters.tutor)===norm(tutor)?'':tutor;
+  st.collapsed={};
+  refreshDirTable(idx);
 }
 
 function filterPill(e,idx,estado){
   e.stopPropagation();
   const card=document.getElementById('prog-'+idx);
   if(!card.classList.contains('open'))card.classList.add('open');
-
-  // El filtro se aplica sobre los datos completos del programa, no solo
-  // sobre las filas actualmente desplegadas.
   const st=getDirState(idx);
-  const estadoAplicado=estado!=='ALL'&&st.filters.estado===estado?'ALL':estado;
-  st.filters.estado=estadoAplicado==='ALL'?'':estadoAplicado;
+  st.filters.estado=estado!=='ALL'&&st.filters.estado===estado?'':(estado==='ALL'?'':estado);
   st.collapsed={};
   refreshDirTable(idx);
-
-  document.querySelectorAll(`#pills-${idx} .prog-pill`).forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll(`#prog-${idx} [data-tutor]`).forEach(el=>el.classList.remove('active'));
-  const pills=document.querySelectorAll(`#pills-${idx} .prog-pill`);
-  if(estadoAplicado==='ALL'){
-    pills[pills.length-1]?.classList.add('active');
-  }else{
-    e.currentTarget.classList.add('active');
-  }
-
-  const programa=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'))[idx];
-  const cursos=progMap[programa]||[];
-  const visibles=cursos.filter(c=>cursoPasaFiltrosTabla(c,st)).length;
-  const bar=document.getElementById('fbar-'+idx);
-  if(estadoAplicado==='ALL'){
-    bar.style.display='none';
-  }else{
-    bar.style.display='flex';
-    document.getElementById('flabel-'+idx).textContent=estadoAplicado;
-    document.getElementById('fcount-'+idx).textContent=visibles+' NRC';
-  }
 }
 
 const filtrosDirectorio=[];
