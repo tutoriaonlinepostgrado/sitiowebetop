@@ -75,6 +75,8 @@
         .multi-filtro.abierto .multi-panel { display:block; }
         .multi-search { width:100%; box-sizing:border-box; margin-bottom:7px; padding:7px 9px; border:1px solid rgba(255,255,255,.18); border-radius:7px; background:#111a2e; color:#fff; outline:none; }
         .multi-search:focus { border-color:rgba(255,215,0,.7); }
+        .multi-date-picker { width:100%; box-sizing:border-box; margin-bottom:8px; padding:7px 9px; border:1px solid rgba(255,215,0,.42); border-radius:7px; background:#111a2e; color:#fff; color-scheme:dark; outline:none; }
+        .multi-date-help { color:#aebbd3; font-size:10px; margin:-2px 2px 7px; }
         .multi-opciones { max-height:245px; overflow:auto; }
         .multi-opcion { display:flex; align-items:flex-start; gap:8px; padding:7px 6px; color:#e5e7eb; font-size:12px; border-radius:6px; cursor:pointer; }
         .multi-opcion:hover { background:rgba(255,215,0,.12); }
@@ -379,8 +381,11 @@
         const mostrarValor=v=>campo==='fechaInicio'?v.split('-').reverse().join('-'):v;
         const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? mostrarValor([...elegidos][0]) : `${ETIQUETAS_MULTI[campo]} (${n})`;
         const buscable = campo === 'tutor' || campo === 'intake';
+        const selectorFecha = campo === 'fechaInicio'
+            ? `<input type="date" class="multi-date-picker" aria-label="Elegir fecha de inicio" onchange="agregarFechaInicio(this.value);this.value='';"><div class="multi-date-help">Seleccione una fecha. Puede agregar varias.</div>`
+            : '';
         host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
-          <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
+          <div class="multi-panel">${selectorFecha}${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
           <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${elegidos.has(v)?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
         if (abierto) host.classList.add('abierto');
         if (busqueda) filtrarOpcionesMulti(campo,busqueda);
@@ -403,6 +408,13 @@
         const valor = decodeURIComponent(valorCodificado);
         marcado ? seleccionMulti[campo].add(valor) : seleccionMulti[campo].delete(valor);
         sincronizarFiltros(campo);
+    }
+
+    function agregarFechaInicio(valor) {
+        const fecha = fechaISO(valor);
+        if (!fecha) return;
+        seleccionMulti.fechaInicio.add(fecha);
+        sincronizarFiltros('fechaInicio');
     }
 
 
