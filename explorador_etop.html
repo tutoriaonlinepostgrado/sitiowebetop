@@ -1536,7 +1536,7 @@ function renderFilaCurso(c){
     : '—';
 
   return `<tr data-est="${esc(c.estado)}" data-tutor="${esc(c.tutor)}">
-    <td class="dir-check"><input type="checkbox" aria-label="Seleccionar ${esc(c.nrc)}" ${cursosSeleccionados.has(claveCursoSeleccion(c))?'checked':''} data-nrc="${esc(encodeURIComponent(claveCursoSeleccion(c)))}" onchange="toggleCursoSeleccionado(decodeURIComponent(this.dataset.nrc),this.checked)"></td>
+    <td class="dir-check"><input type="checkbox" aria-label="Seleccionar ${esc(c.nrc)}" ${cursosSeleccionados.has(claveCursoSeleccion(c))?'checked':''} data-nrc="${esc(encodeURIComponent(claveCursoSeleccion(c)))}" onclick="event.stopPropagation();toggleCursoSeleccionado(decodeURIComponent(this.dataset.nrc),this.checked)"></td>
     <td class="td-nrc">${lnk}</td>
     <td class="td-curso" title="Abrir tarjeta de ${esc(c.curso)}"><button type="button" class="course-select" data-nrc="${esc(encodeURIComponent(c.nrc))}" onclick="seleccionarCursoDesdeDirectorio(decodeURIComponent(this.dataset.nrc))">${esc(c.curso)}</button></td>
     <td class="td-intake">${intakeHtml}</td>
@@ -1575,7 +1575,7 @@ function renderDirTableBody(idx,cs){
     const cursosDelIntake=[...grupos[g]].sort((a,b)=>(parseFecha(a.fechaInicio)?.getTime()||0)-(parseFecha(b.fechaInicio)?.getTime()||0)||String(a.codigoCurso||'').localeCompare(String(b.codigoCurso||''),'es',{numeric:true}));
     const rows=collapsed?'':cursosDelIntake.map(renderFilaCurso).join('');
     const nrcs=cursosDelIntake.map(claveCursoSeleccion),marcado=nrcs.every(n=>cursosSeleccionados.has(n));
-    return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td class="dir-check"><input type="checkbox" aria-label="Seleccionar intake ${esc(g)}" ${marcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcs)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"></td><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
+    return `<tr class="group-row" onclick="toggleDirGroup(${idx},'${key}')"><td class="dir-check"><input type="checkbox" aria-label="Seleccionar intake ${esc(g)}" ${marcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcs)))}" onclick="event.stopPropagation();toggleListaSeleccion(this.dataset.nrcs,this.checked)"></td><td colspan="8"><span class="group-chevron">${arrow}</span>${esc(g)}<span class="group-count">${grupos[g].length} NRC</span></td></tr>${rows}`;
   }).join('');
 }
 
@@ -1597,7 +1597,8 @@ function refreshDirTable(idx){
 
 function actualizarBarraSeleccionDirectorio(total,activa){
   const barra=document.getElementById('dirSelectionToolbar');if(!barra)return;
-  barra.classList.toggle('show',!!activa);
+  // La selección debe estar disponible también en el directorio general.
+  barra.classList.add('show');
   const totalEl=document.getElementById('dirResultCount'),selEl=document.getElementById('dirSelectedCount');
   if(totalEl)totalEl.textContent=Number(total||0).toLocaleString('es-CL');
   if(selEl)selEl.textContent=cursosSeleccionados.size.toLocaleString('es-CL');
@@ -1691,7 +1692,7 @@ function renderDir(filtro=''){
     const rows=renderDirTableBody(idx,cs),nrcsPrograma=cs.map(claveCursoSeleccion),programaMarcado=nrcsPrograma.every(n=>cursosSeleccionados.has(n));
     return`<div class="prog-card ${abrirPrograma?'open':''}" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
-        <div class="prog-header-left"><input type="checkbox" class="prog-select-check" aria-label="Seleccionar programa ${esc(prog)}" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
+        <div class="prog-header-left"><input type="checkbox" class="prog-select-check" aria-label="Seleccionar programa ${esc(prog)}" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onclick="event.stopPropagation();toggleListaSeleccion(this.dataset.nrcs,this.checked)"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
         <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-open-label">Ver cursos</span><span class="prog-chevron">▾</span></div>
       </div>
       <div class="prog-body">
@@ -1704,7 +1705,7 @@ function renderDir(filtro=''){
           <table class="nrc-table">
             <thead>
               <tr>
-                <th class="dir-check"><input type="checkbox" aria-label="Seleccionar cursos del programa" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"></th>
+                <th class="dir-check"><input type="checkbox" aria-label="Seleccionar cursos del programa" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onclick="event.stopPropagation();toggleListaSeleccion(this.dataset.nrcs,this.checked)"></th>
                 <th class="sortable" data-key="nrc" onclick="setDirSort(${idx},'nrc')">NRC <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="curso" onclick="setDirSort(${idx},'curso')">Curso <span class="sort-ind"></span></th>
                 <th class="sortable" data-key="intake" onclick="setDirSort(${idx},'intake')">Intake / Versión <span class="sort-ind"></span></th>
@@ -1834,9 +1835,12 @@ function abrirCursoEnTabla(programa){
 
 async function descargarCursosFiltrados(soloSeleccionados=false){
   const f=filtrosBusquedaSuperiores();
-  if(!f.grupos.length&&!f.codigo&&!f.fechas.length&&!f.facultades.length){alert('Seleccione al menos un filtro antes de descargar.');return;}
-  const filtrados=cursosFiltradosSuperiores();
-  const cursos=soloSeleccionados?filtrados.filter(c=>cursosSeleccionados.has(claveCursoSeleccion(c))):filtrados;
+  const hayFiltro=f.grupos.length||f.codigo||f.fechas.length||f.facultades.length;
+  if(!hayFiltro&&!soloSeleccionados){alert('Seleccione al menos un filtro antes de descargar.');return;}
+  const filtrados=hayFiltro?cursosFiltradosSuperiores():all;
+  const cursos=soloSeleccionados
+    ? all.filter(c=>cursosSeleccionados.has(claveCursoSeleccion(c)))
+    : filtrados;
   if(soloSeleccionados&&!cursosSeleccionados.size){alert('Marca al menos un curso en la lista antes de descargar.');return;}
   if(!cursos.length){alert('No hay cursos para descargar con los filtros seleccionados.');return;}
   const filas=cursos.map(c=>({
