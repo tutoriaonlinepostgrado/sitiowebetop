@@ -524,7 +524,7 @@
     <div class="form-group"><label>MATERIA</label><select id="t4-materia" onchange="t4ProponerIntake()"><option value="">— Selecciona materia —</option></select></div>
     <div class="form-group"><label>FACULTAD</label><select id="t4-facultad"><option value="">— Selecciona facultad —</option></select></div>
     <div class="form-group"><label>TIPO DE PROGRAMA</label><select id="t4-tipo"><option value="">— Selecciona tipo —</option><option value="100%ONLINE">100%ONLINE</option><option value="SEMIPRES">SEMIPRES</option></select></div>
-    <div class="form-group"><label>NÚMERO DE VERSIÓN</label><input type="number" id="t4-version-num" min="1" step="1" placeholder="Ej: 1" oninput="t4ProponerIntake()" /></div>
+    <div class="form-group"><label>NÚMERO O LETRA DE VERSIÓN</label><input type="text" id="t4-version-num" maxlength="3" placeholder="Ej: 01, 17 o J" oninput="t4ProponerIntake()" /></div>
     <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCIÓN</label><input type="date" id="t4-fecha-induccion" onchange="t4ProponerIntake()" /></div>
     <div class="form-group"><label>INTAKE O VERSIÓN PROPUESTO (EDITABLE)</label><input type="text" id="t4-intake" placeholder="Ej: MAG_MAPS_VERSION_01_18.08.2026" /></div>
     <div class="form-group">
@@ -1546,11 +1546,12 @@ function t4PrefijoPrograma(programa){
 function t4ProponerIntake(){
   const programa=document.getElementById('t4-programa').value;
   const materia=t4Normalizar(document.getElementById('t4-materia').value).replace(/[^A-Z0-9]/g,'');
-  const numero=String(document.getElementById('t4-version-num').value||'').replace(/\D/g,'');
+  const versionRaw=String(document.getElementById('t4-version-num').value||'').trim().toUpperCase();
+  const version=/^\d+$/.test(versionRaw)?versionRaw.padStart(2,'0'):versionRaw.replace(/[^A-Z0-9]/g,'');
   const fecha=document.getElementById('t4-fecha-induccion').value;
-  if(!programa||!materia||!numero||!fecha)return;
+  if(!programa||!materia||!version||!fecha)return;
   const [yyyy,mm,dd]=fecha.split('-');
-  document.getElementById('t4-intake').value=t4PrefijoPrograma(programa)+'_'+materia+'_VERSION_'+numero.padStart(2,'0')+'_'+dd+'.'+mm+'.'+yyyy;
+  document.getElementById('t4-intake').value=t4PrefijoPrograma(programa)+'_'+materia+'_VERSION_'+version+'_'+dd+'.'+mm+'.'+yyyy;
 }
 
 // Set de coordinadores seleccionados (correos)
