@@ -635,8 +635,8 @@
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
         if (f.fechaInicio.length) {
             const fechasValidas = f.fechaInicio.map(fechaISO).filter(Boolean);
-            if (fechasValidas.length === 1) condiciones.push(`NRC_TUTOR_ACTUAL/Fecha_inicios_NRC eq '${fechasValidas[0].split('-').reverse().join('-')}'`);
-            if (fechasValidas.length > 1) condiciones.push(`(${fechasValidas.map(v => `NRC_TUTOR_ACTUAL/Fecha_inicios_NRC eq '${v.split('-').reverse().join('-')}'`).join(' or ')})`);
+            if (fechasValidas.length === 1) condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechasValidas[0]}T00:00:00'`);
+            if (fechasValidas.length > 1) condiciones.push(`(${fechasValidas.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${v}T00:00:00'`).join(' or ')})`);
         }
         if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
 
