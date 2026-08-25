@@ -430,8 +430,11 @@
     });
 
     // ── OData / iframe ────────────────────────────────────
+    function normalizarFiltro(valor) {
+        return String(valor || '').replace(/\s+/g, ' ').trim();
+    }
     function sanitizarFiltro(valor) {
-        return String(valor || '').replace(/'/g, "''");
+        return normalizarFiltro(valor).replace(/'/g, "''");
     }
 
     function buildURLFiltrada(clave) {
@@ -469,11 +472,16 @@
         }
 
         if (fx.length) url.searchParams.set('filter', fx.join(' and '));
+        url.searchParams.set('_portalFilter', Date.now().toString());
         return url.toString();
     }
 
     function actualizarIframe() {
-        if (urlsBase[vistaActual]) document.getElementById('visor').src = buildURLFiltrada(vistaActual);
+        if (!urlsBase[vistaActual]) return;
+        const visor = document.getElementById('visor');
+        const nuevaURL = buildURLFiltrada(vistaActual);
+        visor.src = 'about:blank';
+        requestAnimationFrame(() => { visor.src = nuevaURL; });
     }
 
     // ── Cross-filter selects ──────────────────────────────
@@ -533,7 +541,7 @@
 
     // ── Aplicar filtro ────────────────────────────────────
     function aplicarBusqueda(campo, valor) {
-        BUSQUEDA[campo] = valor || null;
+        BUSQUEDA[campo] = normalizarFiltro(valor) || null;
         sincronizarFiltros();
         actualizarBadge();
         actualizarIframe();
