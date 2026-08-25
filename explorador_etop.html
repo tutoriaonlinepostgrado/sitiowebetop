@@ -1759,21 +1759,35 @@ function filterPill(e,idx,estado){
   e.stopPropagation();
   const card=document.getElementById('prog-'+idx);
   if(!card.classList.contains('open'))card.classList.add('open');
-  // marcar pill activo y limpiar filtro de tutor
+
+  // El filtro se aplica sobre los datos completos del programa, no solo
+  // sobre las filas actualmente desplegadas.
+  const st=getDirState(idx);
+  const estadoAplicado=estado!=='ALL'&&st.filters.estado===estado?'ALL':estado;
+  st.filters.estado=estadoAplicado==='ALL'?'':estadoAplicado;
+  st.collapsed={};
+  refreshDirTable(idx);
+
   document.querySelectorAll(`#pills-${idx} .prog-pill`).forEach(p=>p.classList.remove('active'));
   document.querySelectorAll(`#prog-${idx} [data-tutor]`).forEach(el=>el.classList.remove('active'));
-  e.currentTarget.classList.add('active');
-  // filtrar filas
-  const rows=document.querySelectorAll(`#tbody-${idx} tr[data-est]`);
-  let vis=0;
-  rows.forEach(tr=>{const show=estado==='ALL'||tr.dataset.est===estado;tr.style.display=show?'':'none';if(show)vis++;});
-  // barra de filtro
+  const pills=document.querySelectorAll(`#pills-${idx} .prog-pill`);
+  if(estadoAplicado==='ALL'){
+    pills[pills.length-1]?.classList.add('active');
+  }else{
+    e.currentTarget.classList.add('active');
+  }
+
+  const programa=Object.keys(progMap).sort((a,b)=>a.localeCompare(b,'es'))[idx];
+  const cursos=progMap[programa]||[];
+  const visibles=cursos.filter(c=>cursoPasaFiltrosTabla(c,st)).length;
   const bar=document.getElementById('fbar-'+idx);
-  if(estado==='ALL'){bar.style.display='none';}
-  else{bar.style.display='flex';document.getElementById('flabel-'+idx).textContent=estado;document.getElementById('fcount-'+idx).textContent=vis+' NRC';}
-  // fila vacía
-  const prev=document.getElementById('empty-'+idx);if(prev)prev.remove();
-  if(vis===0){const tr=document.createElement('tr');tr.id='empty-'+idx;tr.innerHTML=`<td colspan="8" class="td-empty">Sin cursos con estado "${estado}"</td>`;document.getElementById('tbody-'+idx).appendChild(tr);}
+  if(estadoAplicado==='ALL'){
+    bar.style.display='none';
+  }else{
+    bar.style.display='flex';
+    document.getElementById('flabel-'+idx).textContent=estadoAplicado;
+    document.getElementById('fcount-'+idx).textContent=visibles+' NRC';
+  }
 }
 
 const filtrosDirectorio=[];
