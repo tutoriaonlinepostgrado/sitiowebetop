@@ -1485,7 +1485,10 @@ function clearDirView(idx){
 
 function toggleDirGroup(idx,groupKey){
   const st=getDirState(idx);
-  st.collapsed[groupKey]=!st.collapsed[groupKey];
+  const estadoActual=Object.prototype.hasOwnProperty.call(st.collapsed,groupKey)
+    ? !!st.collapsed[groupKey]
+    : facultadesSeleccionadas.size>0;
+  st.collapsed[groupKey]=!estadoActual;
   refreshDirTable(idx);
 }
 
@@ -1562,7 +1565,9 @@ function renderDirTableBody(idx,cs){
   const groupNames=Object.keys(grupos).sort((a,b)=>b.localeCompare(a,'es',{numeric:true,sensitivity:'base'}));
   return groupNames.map(g=>{
     const key=encodeURIComponent(g);
-    const collapsed=!!st.collapsed[key];
+    const collapsed=Object.prototype.hasOwnProperty.call(st.collapsed,key)
+      ? !!st.collapsed[key]
+      : facultadesSeleccionadas.size>0;
     const arrow=collapsed?'▸':'▾';
     // Dentro de cada intake: secuencia cronológica ascendente.
     const cursosDelIntake=[...grupos[g]].sort((a,b)=>(parseFecha(a.fechaInicio)?.getTime()||0)-(parseFecha(b.fechaInicio)?.getTime()||0)||String(a.codigoCurso||'').localeCompare(String(b.codigoCurso||''),'es',{numeric:true}));
