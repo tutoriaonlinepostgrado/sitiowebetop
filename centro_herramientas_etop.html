@@ -1001,6 +1001,11 @@ function calDetectarHeader(cols){
     facultad:['facultad']
   };
   for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw+' '))){if(!(campo in hits))hits[campo]=i;}}}
+  // Algunos calendarios omiten el rótulo NRC, pero conservan su columna
+  // inmediatamente entre Término y Periodo.
+  if(hits.nrc===undefined&&hits.termino!==undefined&&hits.periodo!==undefined&&hits.periodo===hits.termino+2){
+    hits.nrc=hits.termino+1;
+  }
   return Object.keys(hits).length>=2?hits:null;
 }
 function calValorATexto(v){
@@ -1036,10 +1041,17 @@ function calFmtFecha(v){if(!v)return'';const s=String(v).trim().replace(/\.+$/,'
 // Globalmente único: timestamp fijo por ejecución + secuencial local.
 // Sin columnas adicionales. Estructura del objeto idéntica a la versión anterior.
 // ═══════════════════════════════════════════════════════════════════════════════
+function calSumarMesesISO(fechaIso,meses){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(fechaIso))return'';
+  const [y,m,d]=fechaIso.split('-').map(Number);
+  const ultimo=new Date(y,m-1+meses+1,0).getDate();
+  const fecha=new Date(y,m-1+meses,Math.min(d,ultimo));
+  return fecha.getFullYear()+'-'+String(fecha.getMonth()+1).padStart(2,'0')+'-'+String(fecha.getDate()).padStart(2,'0');
+}
 function parsearTextoCalendario(texto){
   const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];
   let headerMap=null,mF='',mP='',mPer='';
-  // Timestamp fijo para todo el procesamiento: YYYYMMDDTHHMM
+  const seenRows=new Set();
   const now=new Date();
   const ts=now.getFullYear().toString()
     +(now.getMonth()+1).toString().padStart(2,'0')
@@ -1047,7 +1059,6 @@ function parsearTextoCalendario(texto){
     +'T'
     +now.getHours().toString().padStart(2,'0')
     +now.getMinutes().toString().padStart(2,'0');
-  // Contador secuencial local para desambiguar dentro del mismo procesamiento
   let tmpSeq=0;
 
   for(const linea of lineas){
@@ -1057,27 +1068,31 @@ function parsearTextoCalendario(texto){
     if(c0.startsWith('período')||c0.startsWith('periodo')){const v=cs.slice(1).find(c=>/^\d{6}$/.test(c))||'';if(v)mPer=v;}
     if(ne.length===1&&ne[0].length>30&&/magíster|master|mba|diplomado|ingeniería|educación|salud/i.test(ne[0])&&!/\d{2}[\/\-]\d{2}[\/\-]\d{4}/.test(ne[0]))mP=ne[0];
     const hmap=calDetectarHeader(cs);if(hmap){headerMap=hmap;continue;}if(!headerMap)continue;
-    const ni=headerMap.nrc;if(ni===undefined)continue;
-    const nv=(ni<cs.length)?cs[ni]:'';
+    const ni=headerMap.nrc;
+    const nv=(ni!==undefined&&ni<cs.length)?cs[ni]:'';
     const get=(c,d)=>{const i=headerMap[c];return(i!==undefined&&i<cs.length)?cs[i]:(d||'');};
     let codigo=get('codigo').replace(/\s+/g,'').toUpperCase(),nombre=get('nombre');
-    const inicio=calFmtFecha(get('inicio')),termino=calFmtFecha(get('termino')),periodo=get('periodo')||mPer;let profesor=get('profesor').trim();const facultad=get('facultad')||mF;
+    const inicio=calFmtFecha(get('inicio'));
+    let termino=calFmtFecha(get('termino'));
+    const periodoFila=get('periodo');
+    if(/^\d{6}$/.test(periodoFila))mPer=periodoFila;
+    const periodo=periodoFila||mPer;
+    let profesor=get('profesor').trim();const facultad=get('facultad')||mF;
     if(!codigo&&nombre){const mm=nombre.match(/^([A-Z]{2,6}\d{3,4}[A-Z]?\d?)\s+(.+)$/i);if(mm){codigo=mm[1].replace(/\s+/g,'').toUpperCase();nombre=mm[2].trim();}}
-    if(!codigo&&/INDUCC/i.test(nombre))codigo='INDUCCION';
+    if(!codigo&&/INDUCC/i.test(nombre))codigo='UNI118';
     if(!profesor||/^(TUTOR DE ACOMPAÑAMIENTO|TUTOR|X|DEFINIR)$/i.test(profesor))profesor='POR DEFINIR';
     if(!nombre&&!inicio)continue;
-    // ── Validar que inicio sea fecha real YYYY-MM-DD ────────────────────────
-    // "Períodos en que se dictan" y textos similares quedan en la col Inicio
-    // cuando se copian desde Excel → calFmtFecha los devuelve tal cual (no ISO).
-    // Solo aceptar si el resultado es YYYY-MM-DD estricto.
     const FECHA_ISO=/^\d{4}-\d{2}-\d{2}$/;
-    if(!FECHA_ISO.test(inicio))continue;   // no es fecha → fila basura → skip
-    // ── NRC: real o temporal globalmente único ──────────────────────────────
+    if(!FECHA_ISO.test(inicio))continue;
+    if(/^5\s*mes(es)?\s*(aprox\.?|app\.?)?$/i.test(termino))termino=calSumarMesesISO(inicio,5);
+    if(termino&&!FECHA_ISO.test(termino))continue;
     let nrcFinal='';
     if(NRC_PAT.test(nv)){
       nrcFinal=nv;
+      const duplicateKey=[nrcFinal,codigo,nombre,inicio,termino,periodo].join('|').toUpperCase();
+      if(seenRows.has(duplicateKey))continue;
+      seenRows.add(duplicateKey);
     }else{
-      // inicio válido pero NRC vacío → curso real sin NRC asignado aún
       tmpSeq++;
       const base=(codigo||nombre.replace(/[^A-Z0-9]/gi,'').toUpperCase().substring(0,6)||'CURSO');
       nrcFinal='TMP-'+base+'-'+ts+'-'+String(tmpSeq).padStart(2,'0');
