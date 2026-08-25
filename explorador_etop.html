@@ -421,7 +421,6 @@ body{background:#eef3f8;color:var(--text)}
   <div class="search-hero">
     <h1>Busca cualquier <span>NRC</span> o programa</h1>
     <p>Escribe lo que conoces del curso. El Explorador encontrará las coincidencias y mostrará sus accesos.</p>
-    <div class="search-guide"><span>NRC</span><span>Curso</span><span>Programa</span><span>Tutor</span><span>Intake</span><span>Fecha</span></div>
     <div class="faculty-filter" id="facultyFilter" aria-label="Filtrar por facultad"></div>
     <div class="search-wrap" id="searchWrap">
       <span class="search-ico">🔍</span>
@@ -1679,8 +1678,9 @@ function renderDir(filtro=''){
         : `<span class="tutor-tag" data-tutor="${esc(t)}" onclick="filterTutor(event,${idx},'${esc(t)}')">${esc(t)}</span>`;
     }).join(''):'<span style="color:var(--text-dim)">Sin asignar</span>';
     const estadoTabla=getDirState(idx);if(hayFiltroSuperior)estadoTabla.groupBy='intake';
+    const abrirPrograma=hayFiltroSuperior&&!filtroSuperior.facultades.length;
     const rows=renderDirTableBody(idx,cs),nrcsPrograma=cs.map(claveCursoSeleccion),programaMarcado=nrcsPrograma.every(n=>cursosSeleccionados.has(n));
-    return`<div class="prog-card ${hayFiltroSuperior?'open':''}" id="prog-${idx}">
+    return`<div class="prog-card ${abrirPrograma?'open':''}" id="prog-${idx}">
       <div class="prog-header" onclick="toggleCard(${idx},event)">
         <div class="prog-header-left"><input type="checkbox" class="prog-select-check" aria-label="Seleccionar programa ${esc(prog)}" ${programaMarcado?'checked':''} data-nrcs="${esc(encodeURIComponent(JSON.stringify(nrcsPrograma)))}" onclick="event.stopPropagation()" onchange="toggleListaSeleccion(this.dataset.nrcs,this.checked)"><div class="prog-icon">${icon(prog)}</div><div><div class="prog-name">${esc(prog)}</div><div class="prog-meta">${cs.length} NRC</div></div></div>
         <div style="display:flex;align-items:center;gap:10px"><div class="prog-pills" id="pills-${idx}">${pills}</div><span class="prog-open-label">Ver cursos</span><span class="prog-chevron">▾</span></div>
