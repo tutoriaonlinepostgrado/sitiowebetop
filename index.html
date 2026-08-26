@@ -572,13 +572,29 @@ function valorCampo(obj, nombres, defecto='') {
 
 function parseFechaCurso(valor) {
     if (!valor) return null;
-    if (valor instanceof Date && !isNaN(valor)) return valor;
+    if (valor instanceof Date && !isNaN(valor)) {
+        return new Date(valor.getFullYear(), valor.getMonth(), valor.getDate());
+    }
+
     const texto = String(valor).trim();
-    const iso = new Date(texto);
-    if (!isNaN(iso)) return new Date(iso.getFullYear(), iso.getMonth(), iso.getDate());
-    const m = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
-    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
-    return null;
+
+    // Una fecha ISO sin hora representa un día de calendario local.
+    // Evita que 2026-08-31 se convierta en 2026-08-30 por la zona horaria.
+    const isoLocal = texto.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (isoLocal) {
+        const fecha = new Date(Number(isoLocal[1]), Number(isoLocal[2]) - 1, Number(isoLocal[3]));
+        return isNaN(fecha) ? null : fecha;
+    }
+
+    const dmy = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+    if (dmy) {
+        const fecha = new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]));
+        return isNaN(fecha) ? null : fecha;
+    }
+
+    const fechaInterpretada = new Date(texto);
+    if (isNaN(fechaInterpretada)) return null;
+    return new Date(fechaInterpretada.getFullYear(), fechaInterpretada.getMonth(), fechaInterpretada.getDate());
 }
 
 function normalizarCurso(item, origen) {
@@ -594,8 +610,10 @@ function normalizarCurso(item, origen) {
 
 function diasDesdeHoy(fecha) {
     const hoy = new Date();
-    const base = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    return Math.round((fecha - base) / 86400000);
+    // Compara únicamente días de calendario, sin desfases horarios ni cambios de DST.
+    const hoyUTC = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    const fechaUTC = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    return Math.round((fechaUTC - hoyUTC) / 86400000);
 }
 
 function badgeInicio(fecha) {
