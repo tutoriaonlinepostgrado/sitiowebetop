@@ -400,8 +400,8 @@ async function procesarNomina() {
     const ta = document.getElementById('anexo-tutor').value;
     const pr = document.getElementById('programa').value;
     const ni = document.getElementById('nrc-induccion').value;
-    const c1 = document.getElementById('curso1').value;
-    const c2 = document.getElementById('curso2').value.trim();
+    const c1 = valorCursoSeleccionado('curso1');
+    const c2 = valorCursoSeleccionado('curso2');
     const fi = document.getElementById('fecha-inicio').value;
     const ff = document.getElementById('fecha-fin').value;
 
@@ -457,10 +457,10 @@ async function procesarNomina() {
           'Columna1': salida.length+1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correoPersonal,
           'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
           'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+          'NOMBRE SEGUNDO CURSO': c2 || '',
           'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
           'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
         };
-        if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
         salida.push(fila);
       }
     }
@@ -516,10 +516,10 @@ function procesarAlumnoPotencial(rawRows, params) {
       'Columna1': salida.length + 1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correo,
       'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
       'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+          'NOMBRE SEGUNDO CURSO': c2 || '',
       'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
       'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
     };
-    if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
     salida.push(fila);
   }
   return salida;
@@ -624,7 +624,16 @@ async function cargarNrcsOb(){
   } catch(e) { console.warn('No se pudo cargar nrcs_onboarding.json'); }
 }
 
+function valorCursoSeleccionado(campo) {
+  const visible = document.getElementById(campo+'-search').value.trim();
+  const interno = document.getElementById(campo).value.trim();
+  return visible && visible === interno ? interno : '';
+}
+
 function buscarCurso(campo) {
+  const visible = document.getElementById(campo+'-search');
+  const interno = document.getElementById(campo);
+  if (interno.value && visible.value.trim() !== interno.value.trim()) interno.value = '';
   const q = document.getElementById(campo+'-search').value.trim().toLowerCase();
   const dd = document.getElementById(campo+'-dropdown');
   const opts = document.getElementById(campo+'-options');
