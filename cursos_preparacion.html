@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cursos en preparación · ETOP</title>
+  <style>
+    :root{--navy:#1f2940;--navy2:#141b2d;--gold:#ffd700;--bg:#edf3f9;--card:#fff;--line:#d6e1ec;--text:#27364a;--muted:#64748b;--blue:#315f86;--red:#c95d63;--green:#4f8a6d}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}
+    .top{position:sticky;top:0;z-index:30;background:var(--navy);color:#fff;border-bottom:2px solid var(--gold);box-shadow:0 4px 18px rgba(15,23,42,.18)}
+    .top-main{min-height:54px;display:flex;align-items:center;gap:12px;padding:8px 18px}.brand{min-width:245px}.brand strong{display:block;color:var(--gold);font-size:14px;letter-spacing:.04em}.brand span{font-size:10px;color:#aeb9c7;text-transform:uppercase;letter-spacing:.12em}
+    .filters{display:flex;align-items:center;gap:7px;flex:1;min-width:0;overflow-x:auto;padding-bottom:1px}.filter{height:30px;min-width:116px;max-width:180px;border:1px solid rgba(255,255,255,.14);border-radius:7px;background:#27334c;color:#dce5f2;padding:0 26px 0 9px;font-size:11px;outline:none}.filter:focus{border-color:var(--gold)}.filter option{background:#1f2940}.search{min-width:150px;padding-right:9px}.clear,.profile{height:30px;border-radius:7px;cursor:pointer;white-space:nowrap}.clear{border:1px solid rgba(248,113,113,.38);background:rgba(239,68,68,.08);color:#fca5a5;padding:0 10px;font-size:10px;font-weight:700}.profile{border:1px solid rgba(255,215,0,.38);background:rgba(255,215,0,.09);color:var(--gold);padding:0 11px;font-size:10px;font-weight:700}
+    .summary{display:grid;grid-template-columns:minmax(280px,1fr) repeat(3,minmax(105px,150px));gap:10px;padding:14px 18px 10px}.summary-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:0 2px 7px rgba(49,95,134,.06)}.summary-card h1{margin:0;font-size:19px;color:#173f61}.summary-card p{margin:4px 0 0;font-size:11px;color:var(--muted)}.kpi{display:flex;align-items:center;justify-content:space-between}.kpi span{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}.kpi strong{font-size:25px;color:var(--blue)}
+    .selection{display:none;position:sticky;top:56px;z-index:25;margin:0 18px 10px;padding:9px 12px;border-radius:9px;background:#fff9d9;border:1px solid #e4c94e;box-shadow:0 5px 18px rgba(76,64,0,.14);align-items:center;gap:10px}.selection.on{display:flex}.selection-info{flex:1;font-size:11px;color:#574a00}.selection-info strong{font-size:12px}.selection button{height:30px;border-radius:7px;border:0;padding:0 12px;font-size:10px;font-weight:800;cursor:pointer}.btn-reset{background:#e9edf2;color:#475569}.btn-qa2{background:var(--navy);color:var(--gold)}
+    .table-shell{margin:0 18px 18px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:calc(100vh - 172px);box-shadow:0 4px 15px rgba(49,95,134,.07)}table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:11px}thead{position:sticky;top:0;z-index:10}th{background:#dce8f3;color:#334155;text-transform:uppercase;letter-spacing:.07em;font-size:9px;padding:9px 10px;text-align:left;border-bottom:2px solid #9fb4c8;white-space:nowrap}td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:#fff}tbody tr:hover td{background:#e7eff7}tbody tr.pending td{background:#fff7f7}tbody tr.pending:hover td{background:#fee2e2}.center{text-align:center}.course{max-width:260px;overflow:hidden;text-overflow:ellipsis}.tutor{max-width:170px;overflow:hidden;text-overflow:ellipsis}.nrc-link{font-weight:800;color:var(--blue);text-decoration:none}.nrc-link:hover{text-decoration:underline}.date{font-size:10px;color:var(--muted)}.countdown{font-weight:800;color:#334155}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:22px;padding:3px 8px;border-radius:7px;font-size:9px;font-weight:800;text-decoration:none}.incident{background:#477a9e;color:#fff}.incident.alert{background:var(--red)}.student{background:#94a3b8;color:#fff}.icon{display:inline-flex;align-items:center;justify-content:center;width:29px;height:27px;border-radius:6px;text-decoration:none;background:#edf2f7;border:1px solid #cad6e2;font-size:14px}.icon:hover{background:#dde8f1}.icon.off{opacity:.34;pointer-events:none}.check{width:16px;height:16px;accent-color:#315f86;cursor:pointer}.empty{padding:42px;text-align:center;color:var(--muted)}
+    .loading{padding:45px;text-align:center;color:var(--muted)}.spinner{display:inline-block;width:22px;height:22px;border:3px solid #cbd5e1;border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:8px}@keyframes spin{to{transform:rotate(360deg)}}
+    .modal{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;padding:20px}.modal.on{display:flex}.dialog{width:min(440px,100%);background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}.dialog-head{background:var(--navy);color:#fff;padding:18px 20px;border-bottom:3px solid var(--gold)}.dialog-head h2{margin:0;font-size:18px}.dialog-head p{margin:5px 0 0;font-size:11px;color:#cbd5e1}.dialog-body{padding:20px}.dialog-body label{display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:6px}.email{width:100%;height:39px;border:1px solid #cbd5e1;border-radius:8px;padding:0 11px;outline:none}.email:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,95,134,.1)}.form-msg{min-height:18px;margin-top:6px;font-size:10px;color:var(--red)}.dialog-actions{display:flex;gap:8px;margin-top:14px}.dialog-actions button{height:36px;border-radius:8px;padding:0 13px;font-size:11px;font-weight:800;cursor:pointer}.save{flex:1;border:0;background:var(--navy);color:var(--gold)}.all{border:1px solid #cbd5e1;background:#f8fafc;color:#475569}
+    @media(max-width:900px){.top-main{align-items:flex-start;flex-wrap:wrap}.brand{min-width:180px}.filters{order:3;width:100%}.summary{grid-template-columns:1fr 1fr}.summary-card:first-child{grid-column:1/-1}.table-shell{max-height:calc(100vh - 245px)}.selection{top:92px}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-main">
+      <div class="brand"><strong>Tablero de Gestión ETOP</strong><span>Cursos en preparación</span></div>
+      <div class="filters" aria-label="Filtros de cursos">
+        <select id="facultad" class="filter"><option value="">Todas las facultades</option></select>
+        <select id="tutor" class="filter"><option value="">Todos los tutores</option></select>
+        <select id="tipo" class="filter"><option value="">Todos los tipos NRC</option></select>
+        <input id="buscar" class="filter search" type="search" placeholder="Buscar NRC o curso…">
+        <button id="clear" class="clear" type="button">✕ Borrar filtros</button>
+      </div>
+      <button id="profile" class="profile" type="button">👤 Mi perfil</button>
+    </div>
+  </header>
+
+  <section class="summary">
+    <div class="summary-card"><h1>Cursos en preparación</h1><p id="scope">Desde hoy y durante los próximos 100 días.</p></div>
+    <div class="summary-card kpi"><span>Visibles</span><strong id="visibleCount">—</strong></div>
+    <div class="summary-card kpi"><span>Pendientes QA2</span><strong id="pendingCount">—</strong></div>
+    <div class="summary-card kpi"><span>Próximos 7 días</span><strong id="soonCount">—</strong></div>
+  </section>
+
+  <section id="selection" class="selection" aria-live="polite">
+    <div class="selection-info"><strong id="selectionTitle">0 NRC seleccionados</strong><div id="selectionDetail"></div></div>
+    <button class="btn-reset" id="clearSelection" type="button">Limpiar</button>
+    <button class="btn-qa2" id="openMultiple" type="button">Realizar QA2 seleccionados ↗</button>
+  </section>
+
+  <main class="table-shell">
+    <table>
+      <thead><tr>
+        <th class="center"><input id="selectAll" class="check" type="checkbox" title="Seleccionar los cursos visibles"></th>
+        <th>NRC / Curso</th><th>Intake / Versión</th><th>F. Inicio</th><th class="center">Inicio en</th><th>F. Fin</th><th>Incidencias</th><th class="center">Web Integr.</th><th class="center">Canvas</th><th class="center">Estudiantes</th><th class="center">Presentación</th><th class="center">Anuncio</th><th class="center">Editar</th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="13" class="loading"><span class="spinner"></span><br>Cargando cursos…</td></tr></tbody>
+    </table>
+  </main>
+
+  <div id="profileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="dialog">
+      <div class="dialog-head"><h2 id="profileTitle">Personaliza tu vista</h2><p>Ingresa tu correo institucional una sola vez. Este navegador lo recordará.</p></div>
+      <div class="dialog-body">
+        <label for="email">Correo institucional</label>
+        <input id="email" class="email" type="email" placeholder="tutoriaonline00@unab.cl" autocomplete="email">
+        <div id="formMsg" class="form-msg"></div>
+        <div class="dialog-actions"><button id="viewAll" class="all" type="button">Vista general</button><button id="saveProfile" class="save" type="button">Guardar y ver mis cursos</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u';
+    const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
+    const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+    const PBI_INTAKE='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/4c8d7e7b8b275872a80d?experience=power-bi&chromeless=1';
+    const SP_LIST='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=';
+    const STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded';
+    const STORAGE='etop_preparacion_correo';
+    const EMAILS={
+      'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
+    };
+    const COORDINACION=new Set(['patricio.collao@unab.cl']);
+    const norm=v=>String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const emailNorm=v=>String(v??'').trim().toLowerCase();
+    const tutorByEmail=email=>Object.keys(EMAILS).find(name=>emailNorm(EMAILS[name])===emailNorm(email))||'';
+    const dateOnly=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T12:00:00');return Number.isNaN(d.getTime())?null:d};
+    const fmt=v=>{const d=dateOnly(v);return d?d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'};
+    const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
+    const days=v=>{const d=dateOnly(v);return d?Math.round((d-today())/86400000):99999};
+    const unique=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
+    let allCourses=[],incidents=[],profileEmail=emailNorm(localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
+
+    function baseCourses(){
+      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor)));
+    }
+    function visibleCourses(exclude=''){
+      const fac=norm(document.getElementById('facultad').value),tut=norm(document.getElementById('tutor').value),tipo=norm(document.getElementById('tipo').value),q=norm(document.getElementById('buscar').value);
+      return baseCourses().filter(x=>(exclude==='facultad'||!fac||norm(x.facultad)===fac)&&(exclude==='tutor'||!tut||norm(x.tutor)===tut)&&(exclude==='tipo'||!tipo||norm(x.tipo)===tipo)&&(!q||norm([x.nrc,x['nombre curso'],x['codigo curso'],x.intake,x['nombre programa']].join(' ')).includes(q))).sort((a,b)=>dateOnly(a['fecha inicio'])-dateOnly(b['fecha inicio'])||String(a.nrc).localeCompare(String(b.nrc)));
+    }
+    function rebuildSelect(id,key,label){
+      const el=document.getElementById(id),current=el.value,vals=unique(visibleCourses(id),key);el.innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(vals.includes(current))el.value=current;
+    }
+    function rebuildFilters(){rebuildSelect('facultad','facultad','Todas las facultades');rebuildSelect('tutor','tutor','Todos los tutores');rebuildSelect('tipo','tipo','Todos los tipos NRC');}
+    function incidentMap(){const map=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!map.has(k))map.set(k,[]);map.get(k).push(i)});return map}
+    function countdown(v){const d=days(v);if(d===0)return'▶️ Hoy';if(d===1)return'🚀 1 día';if(d<=7)return`⚠️ ${d} días`;if(d<=14)return`⏳ ${d} días`;return`📅 ${d} días`}
+    function integrationUrl(nrc){const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';return`https://lms.unab.cl/int-canvas/?term_code=${encodeURIComponent(period)}&periodo=${encodeURIComponent(period)}&nrc=${encodeURIComponent(crn)}&nrc_code=${encodeURIComponent(crn)}&crn=${encodeURIComponent(crn)}&NRC=${encodeURIComponent(crn)}`}
+    function intakeUrl(intake){return PBI_INTAKE+'&filter='+encodeURIComponent(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${String(intake||'').replace(/'/g,"''")}'`)}
+    function presentationUrl(x){const d1=dateOnly(x['fecha inicio']),d2=dateOnly(x['fecha fin']),duration=d1&&d2?Math.ceil((d2-d1)/604800000):'';const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',duracion:String(duration),fechaInicio:fmt(x['fecha inicio']),fechaFin:fmt(x['fecha fin'])});return BASE+'presentacion_tutorial_innovado.html?'+p}
+    function announcementUrl(x){const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmt(x['fecha inicio']),fecha_fin:fmt(x['fecha fin'])});return BASE+'anuncio_bienvenida_curso_malla.html?'+p}
+    function render(){
+      const list=visibleCourses(),byCourse=incidentMap();
+      document.getElementById('visibleCount').textContent=list.length.toLocaleString('es-CL');
+      document.getElementById('soonCount').textContent=list.filter(x=>days(x['fecha inicio'])<=7).length.toLocaleString('es-CL');
+      document.getElementById('pendingCount').textContent=list.filter(x=>!(byCourse.get(String(x.id))||[]).length).length.toLocaleString('es-CL');
+      document.getElementById('scope').textContent=profileTutor?`${profileTutor} · desde hoy y durante los próximos 100 días.`:'Vista general · desde hoy y durante los próximos 100 días.';
+      const body=document.getElementById('rows');if(!list.length){body.innerHTML='<tr><td colspan="13" class="empty">No hay cursos en preparación para los filtros seleccionados.</td></tr>';updateSelection(list);return}
+      body.innerHTML=list.map(x=>{
+        const inc=byCourse.get(String(x.id))||[],canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'',incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length,pending=!inc.length;
+        const incLabel=pending?'PENDIENTE QA2':incidentCount?`⚠ ${incidentCount}`:'✓ OK',incClass=incidentCount?'badge incident alert':'badge incident';
+        return`<tr class="${pending?'pending':''}"><td class="center"><input class="check row-check" type="checkbox" data-id="${x.id}" ${selected.has(String(x.id))?'checked':''} aria-label="Seleccionar ${esc(x.nrc)}"></td><td><a class="nrc-link" href="${esc(formUrl([x.id]))}" target="_blank" rel="noopener" title="Abrir formulario QA2 individual">${esc(x.nrc||'—')} ↗</a><div class="course" title="${esc(x['nombre curso'])}">${esc(String(x['nombre curso']||'').replace(/\*/g,''))}</div></td><td><a class="nrc-link" href="${esc(intakeUrl(x.intake))}" target="_blank" rel="noopener">${esc(x.intake||'—')} ↗</a></td><td class="date">${fmt(x['fecha inicio'])}</td><td class="center countdown">${countdown(x['fecha inicio'])}</td><td class="date">${fmt(x['fecha fin'])}</td><td><a class="${incClass}" href="${BASE}incidencias.html?nrc=${encodeURIComponent(x.nrc||'')}" target="_blank" rel="noopener">${incLabel}</a></td><td class="center"><a class="icon" href="${integrationUrl(x.nrc)}" target="_blank" rel="noopener" title="Verificar curso en web de integración">🌐</a></td><td class="center"><a class="icon ${canvas?'':'off'}" href="${esc(canvas||'#')}" target="_blank" rel="noopener" title="Ver el curso en Canvas">🎓</a></td><td class="center"><a class="badge student" href="${STUDENTS}" target="_blank" rel="noopener" title="Conteo pendiente de JSON resumido">Pendiente</a></td><td class="center"><a class="icon" href="${esc(presentationUrl(x))}" target="_blank" rel="noopener" title="Crear presentación tutorial">👋</a></td><td class="center"><a class="icon" href="${esc(announcementUrl(x))}" target="_blank" rel="noopener" title="Crear anuncio de bienvenida">📢</a></td><td class="center"><a class="icon" href="${SP_LIST}${x.id}" target="_blank" rel="noopener" title="Editar registro del curso">✏️</a></td></tr>`
+      }).join('');
+      document.querySelectorAll('.row-check').forEach(cb=>cb.addEventListener('change',()=>{cb.checked?selected.add(cb.dataset.id):selected.delete(cb.dataset.id);updateSelection(list)}));updateSelection(list)
+    }
+    function updateSelection(list=visibleCourses()){
+      const selectedCourses=allCourses.filter(x=>selected.has(String(x.id))),bar=document.getElementById('selection'),n=selectedCourses.length;bar.classList.toggle('on',n>0);document.getElementById('selectionTitle').textContent=`${n} NRC seleccionado${n===1?'':'s'}`;document.getElementById('selectionDetail').textContent=n?selectedCourses.map(x=>x.nrc).join(' · '):'';document.getElementById('selectAll').checked=!!list.length&&list.every(x=>selected.has(String(x.id)));document.getElementById('selectAll').indeterminate=list.some(x=>selected.has(String(x.id)))&&!list.every(x=>selected.has(String(x.id)))
+    }
+    function apply(){rebuildFilters();render()}
+    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;if(all){localStorage.removeItem(STORAGE);profileEmail=''}else localStorage.setItem(STORAGE,profileEmail);document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=!!profileTutor;closeProfile();apply();return true}
+    function openProfile(){document.getElementById('profileModal').classList.add('on');document.getElementById('email').value=profileEmail;document.getElementById('formMsg').textContent='';setTimeout(()=>document.getElementById('email').focus(),50)}
+    function closeProfile(){document.getElementById('profileModal').classList.remove('on')}
+    ['facultad','tutor','tipo'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('buscar').addEventListener('input',render);document.getElementById('clear').addEventListener('click',()=>{['facultad','tutor','tipo','buscar'].forEach(id=>document.getElementById(id).value='');apply()});
+    document.getElementById('profile').addEventListener('click',openProfile);document.getElementById('saveProfile').addEventListener('click',()=>{const email=document.getElementById('email').value;if(!setProfile(email)){document.getElementById('formMsg').textContent='No encontramos ese correo entre los tutores disponibles. Revisa la escritura o usa Vista general.'}});document.getElementById('viewAll').addEventListener('click',()=>setProfile('',true));document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('saveProfile').click()});
+    document.getElementById('selectAll').addEventListener('change',e=>{visibleCourses().forEach(x=>e.target.checked?selected.add(String(x.id)):selected.delete(String(x.id)));render()});document.getElementById('clearSelection').addEventListener('click',()=>{selected.clear();render()});
+    document.getElementById('openMultiple').addEventListener('click',()=>{const list=allCourses.filter(x=>selected.has(String(x.id)));if(!list.length)return;const codes=new Set(list.map(x=>norm(x['codigo curso']))),dates=new Set(list.map(x=>String(x['fecha inicio']).slice(0,10))),tutors=new Set(list.map(x=>norm(x.tutor)));let warning=`Abrirás una revisión QA2 para ${list.length} NRC:\n\n${list.map(x=>'• '+x.nrc).join('\n')}`;if(codes.size>1||dates.size>1||tutors.size>1)warning+='\n\nAtención: la selección contiene diferencias de curso, fecha de inicio o tutor. Confirma que realmente corresponde a una revisión compartida.';if(confirm(warning))window.open(formUrl(list.map(x=>x.id)),'_blank','noopener')});
+    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'})]).then(async([nr,ir])=>{if(!nr.ok)throw new Error('No fue posible leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];if(profileEmail&&!setProfile(profileEmail)){localStorage.removeItem(STORAGE);profileEmail='';openProfile();apply()}else if(profileEmail)setProfile(profileEmail);else{setProfile('',true);openProfile()}}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="13" class="empty">⚠️ ${esc(err.message)}</td></tr>`});
+  </script>
+</body>
+</html>
