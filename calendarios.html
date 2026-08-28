@@ -31,7 +31,72 @@
     .action{background:#fff;border-color:#cbd5e1;color:#52657a}.action:hover{border-color:#9fb0c2;background:#f3f6fa}.incident-ok{background:#e8f5ef;border-color:#b9dfcf;color:#276b52}.incident-alert{background:#fae6e6;border-color:#efbcbc;color:#a33535}.incident-count{background:#c24141;color:#fff}
     .empty{color:#64748b}.error{background:#fff4f4;border-color:#e0aeb7;color:#a04452}.error div{color:#64748b!important}
     .btn-export{height:31px;border:1px solid #17765a;border-radius:7px;background:#16805f;color:#fff;padding:0 11px;font-size:10px;font-weight:700;cursor:pointer}.btn-export:hover{background:#11694e}
-    @media(max-width:850px){.header-grid{grid-template-columns:max-content 1fr}.logo{display:none}.table-wrap{max-height:calc(100vh - 240px)}#search{width:170px}}
+    /* Responsive ETOP: pantallas grandes, notebook y móvil */
+    @media(max-width:1450px){
+      body{padding:10px}
+      .header{gap:14px;padding:10px 13px}
+      .header-grid{grid-template-columns:max-content minmax(100px,1fr) max-content minmax(100px,1fr);gap:6px 14px;font-size:11px}
+      .logo{height:42px;max-width:145px}
+      .summary{padding-top:6px}
+      .summary-row{align-items:flex-start}
+      .kpis{gap:6px}
+      .kpi{min-width:78px;padding:6px 10px}
+      .kpi-v{font-size:16px}
+      #search{width:220px}
+      .table-wrap{max-height:calc(100vh - 212px)}
+      table{min-width:1160px}
+      th{padding:8px 7px;font-size:9px}
+      td{padding:8px 7px;font-size:11px}
+      .course{max-width:235px}
+      .tutor{max-width:150px}
+    }
+
+    @media(max-width:1180px){
+      .header{align-items:flex-start}
+      .header-grid{grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr)}
+      .logo{height:38px;max-width:125px}
+      .summary-row{display:block}
+      .kpis{margin-top:8px}
+      .search-row{justify-content:flex-start;flex-wrap:wrap}
+      #search{flex:1 1 220px;width:auto;min-width:180px}
+      .table-wrap{max-height:calc(100vh - 245px)}
+      table{min-width:1100px}
+    }
+
+    @media(max-width:900px){
+      body{padding:8px}
+      .header{padding:9px 11px}
+      .header-grid{grid-template-columns:max-content minmax(0,1fr);gap:5px 10px}
+      .logo{display:none}
+      .summary{position:static;padding:5px 0 8px}
+      .kpis{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));width:100%}
+      .kpi{min-width:0;padding:6px 5px}
+      .search-row{gap:6px}
+      .search-label{display:none}
+      #count{order:3;width:100%;margin-left:0}
+      .btn-export{margin-left:auto}
+      .table-wrap{max-height:calc(100vh - 270px)}
+      table{min-width:1040px}
+      th{padding:7px 6px}
+      td{padding:7px 6px}
+    }
+
+    @media(max-width:650px){
+      body{padding:6px}
+      .header{border-radius:7px;margin-bottom:7px}
+      .header-grid{font-size:10.5px}
+      .h-label{font-size:9px}
+      .summary-title{font-size:11px}
+      .summary-sub{font-size:9px}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .kpi.total{grid-column:1/-1;text-align:center}
+      #search{flex-basis:100%;min-width:100%}
+      .btn-export{width:100%;margin-left:0}
+      .table-wrap{max-height:calc(100vh - 330px);border-radius:7px}
+      table{min-width:1000px}
+      .course{max-width:210px}
+      .tutor{max-width:130px}
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
