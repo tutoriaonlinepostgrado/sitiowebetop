@@ -243,6 +243,22 @@
             opacity: 0;
             border-right-color: transparent;
             pointer-events: none;
+            position: relative;
+            z-index: 80;
+        }
+
+        #portal-sidebar.sidebar-mobile-open {
+            position: fixed !important;
+            left: 0;
+            top: 58px;
+            bottom: 0;
+            width: 240px !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            border-right-color: rgba(255,255,255,.08) !important;
+            background: #1f2940;
+            box-shadow: 12px 0 30px rgba(0,0,0,.30);
+            overflow-y: auto;
         }
 
         #btn-menu-lateral {
@@ -432,6 +448,11 @@
         header.h-16 {
             height: 54px !important;
             min-height: 54px;
+        }
+
+        #portal-sidebar.sidebar-mobile-open {
+            top: 54px;
+            width: min(260px, 86vw) !important;
         }
 
         header.h-16 img[alt="UNAB Online"],
@@ -1188,12 +1209,17 @@ function toggleMenuLateral() {
     const btn = document.getElementById('btn-menu-lateral');
     if (!sidebar || !btn) return;
 
-    const oculto = sidebar.classList.toggle('sidebar-collapsed');
-    btn.setAttribute('aria-expanded', String(!oculto));
-    btn.title = oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
-
-    // Al cambiar el ancho, el iframe de Incidencias ocupa automáticamente
-    // todo el espacio disponible del panel principal.
+    if (window.matchMedia('(max-width: 1366px)').matches) {
+        const abierto = sidebar.classList.toggle('sidebar-mobile-open');
+        sidebar.classList.remove('sidebar-collapsed');
+        btn.setAttribute('aria-expanded', String(abierto));
+        btn.title = abierto ? 'Ocultar menú lateral' : 'Mostrar menú lateral';
+    } else {
+        sidebar.classList.remove('sidebar-mobile-open');
+        const oculto = sidebar.classList.toggle('sidebar-collapsed');
+        btn.setAttribute('aria-expanded', String(!oculto));
+        btn.title = oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
+    }
 }
 
 function toggleQA2Menu() {
@@ -1382,6 +1408,19 @@ async function publicarAnuncio() {
     finally{btn.disabled=false;}
 }
 function setStatus(id,msg,tipo){const el=document.getElementById(id);el.textContent=msg;el.className='status-msg '+tipo;}
+
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('portal-sidebar');
+    const btn = document.getElementById('btn-menu-lateral');
+    if (!sidebar || !btn) return;
+
+    if (window.innerWidth > 1366) {
+        sidebar.classList.remove('sidebar-mobile-open');
+        btn.setAttribute('aria-expanded', String(!sidebar.classList.contains('sidebar-collapsed')));
+    } else if (!sidebar.classList.contains('sidebar-mobile-open')) {
+        btn.setAttribute('aria-expanded', 'false');
+    }
+});
 
 getMensajeDelDia();
 cargarBannerCursos();
