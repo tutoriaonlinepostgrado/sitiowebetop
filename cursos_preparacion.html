@@ -113,7 +113,15 @@
     function intakeUrl(intake){return PBI_INTAKE+'&filter='+encodeURIComponent(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${String(intake||'').replace(/'/g,"''")}'`)}
     function presentationUrl(x){const d1=dateOnly(x['fecha inicio']),d2=dateOnly(x['fecha fin']),duration=d1&&d2?Math.ceil((d2-d1)/604800000):'';const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',duracion:String(duration),fechaInicio:fmt(x['fecha inicio']),fechaFin:fmt(x['fecha fin'])});return BASE+'presentacion_tutorial_innovado.html?'+p}
     function announcementUrl(x){const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmt(x['fecha inicio']),fecha_fin:fmt(x['fecha fin'])});return BASE+'anuncio_bienvenida_curso_malla.html?'+p}
-    function studentsUrl(nrc){const u=new URL(STUDENTS);u.searchParams.set('FilterField1','NRC_COD_CAL');u.searchParams.set('FilterValue1',String(nrc||''));return u.href}
+    function studentsUrl(nrc){
+      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
+      u.searchParams.set('FilterField1','NRC_COD_CAL');
+      u.searchParams.set('FilterValue1',String(nrc||''));
+      u.searchParams.set('FilterType1','Calculated');
+      u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+      u.searchParams.set('env','Embedded');
+      return u.href;
+    }
     function render(){
       const list=visibleCourses(),byCourse=incidentMap(),byNrcStudents=studentMap();
       document.getElementById('visibleCount').textContent=list.length.toLocaleString('es-CL');
