@@ -647,6 +647,87 @@
         }
     }
 
+
+    /* Scrollbars ETOP: más discretas y coherentes con el diseño */
+    html{
+        scrollbar-color: rgba(250,204,21,.24) rgba(255,255,255,.04);
+        scrollbar-width: thin;
+    }
+
+    body,
+    #portal-sidebar,
+    #portal-sidebar nav,
+    main.flex-1,
+    .custom-scrollbar{
+        scrollbar-width: thin;
+        scrollbar-color: rgba(250,204,21,.22) rgba(255,255,255,.03);
+    }
+
+    body::-webkit-scrollbar,
+    #portal-sidebar::-webkit-scrollbar,
+    #portal-sidebar nav::-webkit-scrollbar,
+    main.flex-1::-webkit-scrollbar,
+    .custom-scrollbar::-webkit-scrollbar{
+        width: 9px;
+        height: 9px;
+    }
+
+    body::-webkit-scrollbar-track,
+    #portal-sidebar::-webkit-scrollbar-track,
+    #portal-sidebar nav::-webkit-scrollbar-track,
+    main.flex-1::-webkit-scrollbar-track,
+    .custom-scrollbar::-webkit-scrollbar-track{
+        background: rgba(255,255,255,.025);
+        border-radius: 999px;
+        margin: 6px 0;
+    }
+
+    body::-webkit-scrollbar-thumb,
+    #portal-sidebar::-webkit-scrollbar-thumb,
+    #portal-sidebar nav::-webkit-scrollbar-thumb,
+    main.flex-1::-webkit-scrollbar-thumb,
+    .custom-scrollbar::-webkit-scrollbar-thumb{
+        background: linear-gradient(180deg, rgba(250,204,21,.28), rgba(148,163,184,.30));
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        min-height: 40px;
+    }
+
+    body::-webkit-scrollbar-thumb:hover,
+    #portal-sidebar::-webkit-scrollbar-thumb:hover,
+    #portal-sidebar nav::-webkit-scrollbar-thumb:hover,
+    main.flex-1::-webkit-scrollbar-thumb:hover,
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover{
+        background: linear-gradient(180deg, rgba(250,204,21,.48), rgba(148,163,184,.45));
+        background-clip: padding-box;
+    }
+
+    body::-webkit-scrollbar-corner,
+    #portal-sidebar::-webkit-scrollbar-corner,
+    #portal-sidebar nav::-webkit-scrollbar-corner,
+    main.flex-1::-webkit-scrollbar-corner,
+    .custom-scrollbar::-webkit-scrollbar-corner{
+        background: transparent;
+    }
+
+    /* En contenedores internos, aún más fino */
+    #portal-sidebar,
+    main.flex-1{
+        scrollbar-gutter: stable;
+    }
+
+    @media (max-width: 1366px){
+        body::-webkit-scrollbar,
+        #portal-sidebar::-webkit-scrollbar,
+        #portal-sidebar nav::-webkit-scrollbar,
+        main.flex-1::-webkit-scrollbar,
+        .custom-scrollbar::-webkit-scrollbar{
+            width: 8px;
+            height: 8px;
+        }
+    }
+
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
