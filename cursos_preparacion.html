@@ -92,7 +92,7 @@
     const days=v=>{const d=dateOnly(v);return d?Math.round((d-today())/86400000):99999};
     const unique=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
     const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
-    let allCourses=[],incidents=[],profileEmail=emailNorm(localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
+    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
 
     function baseCourses(){
       return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor)));
@@ -107,13 +107,14 @@
     function rebuildDateSelect(){const el=document.getElementById('fecha'),current=el.value,vals=[...new Set(visibleCourses('fecha').map(x=>String(x['fecha inicio']||'').slice(0,10)).filter(Boolean))].sort();el.innerHTML='<option value="">Todas las fechas de inicio</option>'+vals.map(v=>`<option value="${esc(v)}">${fmt(v)}</option>`).join('');if(vals.includes(current))el.value=current}
     function rebuildFilters(){rebuildSelect('facultad','facultad','Todas las facultades');rebuildSelect('tutor','tutor','Todos los tutores');rebuildSelect('tipo','tipo','Todos los tipos NRC');rebuildSelect('codigo','codigo curso','Todos los COD_CURSO');rebuildDateSelect()}
     function incidentMap(){const map=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!map.has(k))map.set(k,[]);map.get(k).push(i)});return map}
+    function studentMap(){const map=new Map();studentMetrics.forEach(i=>{const k=norm(i.nrc);if(k)map.set(k,Number(i.total_estudiantes))});return map}
     function countdown(v){const d=days(v);if(d===0)return'▶️ Hoy';if(d===1)return'🚀 1 día';if(d<=7)return`⚠️ ${d} días`;if(d<=14)return`⏳ ${d} días`;return`📅 ${d} días`}
     function integrationUrl(nrc){const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';return`https://lms.unab.cl/int-canvas/?term_code=${encodeURIComponent(period)}&periodo=${encodeURIComponent(period)}&nrc=${encodeURIComponent(crn)}&nrc_code=${encodeURIComponent(crn)}&crn=${encodeURIComponent(crn)}&NRC=${encodeURIComponent(crn)}`}
     function intakeUrl(intake){return PBI_INTAKE+'&filter='+encodeURIComponent(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${String(intake||'').replace(/'/g,"''")}'`)}
     function presentationUrl(x){const d1=dateOnly(x['fecha inicio']),d2=dateOnly(x['fecha fin']),duration=d1&&d2?Math.ceil((d2-d1)/604800000):'';const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',duracion:String(duration),fechaInicio:fmt(x['fecha inicio']),fechaFin:fmt(x['fecha fin'])});return BASE+'presentacion_tutorial_innovado.html?'+p}
     function announcementUrl(x){const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmt(x['fecha inicio']),fecha_fin:fmt(x['fecha fin'])});return BASE+'anuncio_bienvenida_curso_malla.html?'+p}
     function render(){
-      const list=visibleCourses(),byCourse=incidentMap();
+      const list=visibleCourses(),byCourse=incidentMap(),byNrcStudents=studentMap();
       document.getElementById('visibleCount').textContent=list.length.toLocaleString('es-CL');
       document.getElementById('soonCount').textContent=list.filter(x=>days(x['fecha inicio'])<=7).length.toLocaleString('es-CL');
       document.getElementById('pendingCount').textContent=list.filter(x=>!(byCourse.get(String(x.id))||[]).length).length.toLocaleString('es-CL');
@@ -121,8 +122,10 @@
       const body=document.getElementById('rows');if(!list.length){body.innerHTML='<tr><td colspan="12" class="empty">No hay cursos en preparación para los filtros seleccionados.</td></tr>';updateSelection(list);return}
       body.innerHTML=list.map(x=>{
         const inc=byCourse.get(String(x.id))||[],canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'',incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length,pending=!inc.length;
+        const studentCount=byNrcStudents.get(norm(x.nrc));
+        const studentLabel=Number.isFinite(studentCount)?studentCount.toLocaleString('es-CL'):'Pendiente';
         const incLabel=pending?'PENDIENTE QA2':incidentCount?`⚠ ${incidentCount}`:'✓ OK',incClass=incidentCount?'badge incident alert':'badge incident';
-        return`<tr class="${pending?'pending':''}"><td class="center"><input class="check row-check" type="checkbox" data-id="${x.id}" ${selected.has(String(x.id))?'checked':''} aria-label="Seleccionar ${esc(x.nrc)}"></td><td><a class="nrc-link" href="${esc(formUrl([x.id]))}" target="_blank" rel="noopener" title="Abrir formulario QA2 individual">${esc(x.nrc||'—')} ↗</a><div class="course" title="${esc(x['nombre curso'])}">${esc(String(x['nombre curso']||'').replace(/\*/g,''))}</div></td><td class="intake-cell"><a class="nrc-link" href="${esc(intakeUrl(x.intake))}" target="_blank" rel="noopener" title="${esc(x.intake||'')}">${esc(x.intake||'—')} ↗</a></td><td class="date">${fmt(x['fecha inicio'])}</td><td class="center countdown">${countdown(x['fecha inicio'])}</td><td class="date">${fmt(x['fecha fin'])}</td><td><a class="${incClass}" href="${BASE}incidencias.html?nrc=${encodeURIComponent(x.nrc||'')}" target="_blank" rel="noopener">${incLabel}</a></td><td class="center"><a class="icon" href="${integrationUrl(x.nrc)}" target="_blank" rel="noopener" title="Verificar curso en web de integración">🌐</a></td><td class="center"><a class="icon ${canvas?'':'off'}" href="${esc(canvas||'#')}" target="_blank" rel="noopener" title="Ver el curso en Canvas">🎓</a></td><td class="center"><a class="badge student" href="${STUDENTS}" target="_blank" rel="noopener" title="Conteo pendiente de JSON resumido">Pendiente</a></td><td class="center"><a class="icon" href="${esc(presentationUrl(x))}" target="_blank" rel="noopener" title="Crear presentación tutorial">👋</a></td><td class="center"><a class="icon" href="${esc(announcementUrl(x))}" target="_blank" rel="noopener" title="Crear anuncio de bienvenida">📢</a></td></tr>`
+        return`<tr class="${pending?'pending':''}"><td class="center"><input class="check row-check" type="checkbox" data-id="${x.id}" ${selected.has(String(x.id))?'checked':''} aria-label="Seleccionar ${esc(x.nrc)}"></td><td><a class="nrc-link" href="${esc(formUrl([x.id]))}" target="_blank" rel="noopener" title="Abrir formulario QA2 individual">${esc(x.nrc||'—')} ↗</a><div class="course" title="${esc(x['nombre curso'])}">${esc(String(x['nombre curso']||'').replace(/\*/g,''))}</div></td><td class="intake-cell"><a class="nrc-link" href="${esc(intakeUrl(x.intake))}" target="_blank" rel="noopener" title="${esc(x.intake||'')}">${esc(x.intake||'—')} ↗</a></td><td class="date">${fmt(x['fecha inicio'])}</td><td class="center countdown">${countdown(x['fecha inicio'])}</td><td class="date">${fmt(x['fecha fin'])}</td><td><a class="${incClass}" href="${BASE}incidencias.html?nrc=${encodeURIComponent(x.nrc||'')}" target="_blank" rel="noopener">${incLabel}</a></td><td class="center"><a class="icon" href="${integrationUrl(x.nrc)}" target="_blank" rel="noopener" title="Verificar curso en web de integración">🌐</a></td><td class="center"><a class="icon ${canvas?'':'off'}" href="${esc(canvas||'#')}" target="_blank" rel="noopener" title="Ver el curso en Canvas">🎓</a></td><td class="center"><a class="badge student" href="${STUDENTS}" target="_blank" rel="noopener" title="${Number.isFinite(studentCount)?`Cantidad de estudiantes: ${studentCount}`:'Conteo aún no disponible'}">${studentLabel}</a></td><td class="center"><a class="icon" href="${esc(presentationUrl(x))}" target="_blank" rel="noopener" title="Crear presentación tutorial">👋</a></td><td class="center"><a class="icon" href="${esc(announcementUrl(x))}" target="_blank" rel="noopener" title="Crear anuncio de bienvenida">📢</a></td></tr>`
       }).join('');
       document.querySelectorAll('.row-check').forEach(cb=>cb.addEventListener('change',()=>{cb.checked?selected.add(cb.dataset.id):selected.delete(cb.dataset.id);updateSelection(list)}));updateSelection(list)
     }
@@ -137,7 +140,25 @@
     document.getElementById('profile').addEventListener('click',openProfile);document.getElementById('saveProfile').addEventListener('click',()=>{const email=document.getElementById('email').value;if(!setProfile(email)){document.getElementById('formMsg').textContent='No encontramos ese correo entre los tutores disponibles. Revisa la escritura o usa Vista general.'}});document.getElementById('viewAll').addEventListener('click',()=>setProfile('',true));document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('saveProfile').click()});
     document.getElementById('selectAll').addEventListener('change',e=>{visibleCourses().forEach(x=>e.target.checked?selected.add(String(x.id)):selected.delete(String(x.id)));render()});document.getElementById('clearSelection').addEventListener('click',()=>{selected.clear();render()});
     document.getElementById('openMultiple').addEventListener('click',()=>{const list=allCourses.filter(x=>selected.has(String(x.id)));if(!list.length)return;const ids=list.map(x=>x.id);const target=formUrl(ids);const popup=window.open(target,'_blank','noopener');if(!popup)window.location.href=target});
-    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'})]).then(async([nr,ir])=>{if(!nr.ok)throw new Error('No fue posible leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];if(profileEmail&&!setProfile(profileEmail)){localStorage.removeItem(STORAGE);profileEmail='';openProfile();apply()}else if(profileEmail)setProfile(profileEmail);else{setProfile('',true);openProfile()}}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12" class="empty">⚠️ ${esc(err.message)}</td></tr>`});
+    Promise.all([
+      fetch('nrcs.json',{cache:'no-store'}),
+      fetch('incidencias.json',{cache:'no-store'}),
+      fetch('metricas_estudiantes.json',{cache:'no-store'})
+    ]).then(async([nr,ir,mr])=>{
+      if(!nr.ok)throw new Error('No fue posible leer nrcs.json');
+      allCourses=await nr.json();
+      incidents=ir.ok?await ir.json():[];
+      studentMetrics=mr.ok?await mr.json():[];
+      if(profileEmail&&!setProfile(profileEmail)){
+        localStorage.removeItem(STORAGE);
+        profileEmail='';
+        openProfile();
+        apply();
+      }else if(profileEmail)setProfile(profileEmail);
+      else{setProfile('',true);openProfile()}
+    }).catch(err=>{
+      document.getElementById('rows').innerHTML=`<tr><td colspan="12" class="empty">⚠️ ${esc(err.message)}</td></tr>`;
+    });
   </script>
 </body>
 </html>
