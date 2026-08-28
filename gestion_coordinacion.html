@@ -188,215 +188,124 @@
         .btn-tutoria:hover { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(34,197,94,0.1)); border-color: #22c55e; }
     
         /* =========================================================
-           RESPONSIVE COORDINACIÓN ETOP
-           Prioridad: área de trabajo > filtros > menú lateral
+           AJUSTE DE ALTURA DEL MENÚ DE COORDINACIÓN
+           Mantiene el diseño y comportamiento original.
+           Solo compacta el menú cuando la pantalla es más baja.
            ========================================================= */
 
-        @media (max-width: 1500px) {
-            .sidebar { width: 250px; }
-            .sidebar.closed { margin-left: -250px; }
-            .sidebar-header { padding: 18px 16px; }
-            .sidebar-header h2 { font-size: 16px; }
-            .menu-btn { padding: 10px 16px; font-size: 13px; }
-            .menu-category { padding: 12px 16px 4px; font-size: 10px; }
-            .btn-volver { padding: 14px 16px; }
-
-            .top-bar {
-                padding: 6px 8px;
-                gap: 5px;
-            }
-
-            .filtro-select {
-                max-width: 140px;
-                min-width: 82px;
-                font-size: 11px;
-                padding: 4px 8px;
-            }
-
-            .multi-btn { max-width: 150px; min-width: 95px; }
-            .date-filter-wrap { padding: 0 7px; }
-            .date-filter-label { font-size: 10px; }
-            .date-filter-input { width: 105px; font-size: 10px; }
-            .pill-input { width: 82px; font-size: 11px; }
-            .pill-input:focus { width: 125px; }
-        }
-
-        @media (max-width: 1366px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 250px;
-                z-index: 20000;
-                box-shadow: 12px 0 28px rgba(0,0,0,.28);
-                transform: translateX(-100%);
-                transition: transform .24s ease;
-                margin-left: 0 !important;
-            }
-
-            .sidebar.closed {
-                transform: translateX(-100%);
-                margin-left: 0 !important;
-            }
-
-            .sidebar:not(.closed) {
-                transform: translateX(0);
-            }
-
-            .content-area {
-                width: 100%;
-            }
-
-            .top-bar {
-                min-height: 48px;
-                align-items: flex-start;
-                padding: 6px 8px;
-            }
-
-            .toggle-btn {
-                font-size: 22px;
-                padding: 4px 8px;
-            }
-
-            .titulo-vista {
-                font-size: 12px;
-                margin-top: 6px;
-            }
-
-            .separator-bar {
-                margin-top: 4px;
-            }
-
-            .filtros-wrapper {
-                flex-basis: calc(100% - 155px);
-                gap: 5px;
-            }
-
-            .filtro-select,
-            .multi-btn {
-                max-width: 135px;
-            }
-
-            iframe#visor {
-                min-width: 0;
-            }
-        }
-
-        @media (max-width: 1100px) {
-            .top-bar {
-                display: grid;
-                grid-template-columns: auto auto 1fr;
-                align-items: center;
-            }
-
-            .top-bar > .separator-bar:first-of-type {
-                display: none;
-            }
-
-            .filtros-wrapper {
-                grid-column: 1 / -1;
-                width: 100%;
-                flex-basis: auto;
-                padding-top: 2px;
-            }
-
-            .multi-filtro,
-            .pill-wrap {
-                flex: 1 1 145px;
-                min-width: 120px;
-            }
-
-            .filtro-select,
-            .multi-btn,
-            .pill-input {
-                width: 100%;
-                max-width: none;
-            }
-
-            .pill-input:focus {
-                width: 100%;
-            }
-
-            .date-filter-wrap {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .date-filter-input,
-            .date-filter-input:focus {
-                width: 112px;
-            }
-
-            .filtros-wrapper > .separator-bar {
-                display: none;
-            }
-
-            .badge-activo {
-                max-width: 100%;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-
-        @media (max-width: 800px) {
-            .sidebar {
-                width: min(280px, 88vw);
-            }
-
-            .top-bar {
-                grid-template-columns: auto 1fr;
-            }
-
-            .titulo-vista {
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .filtros-wrapper {
-                gap: 4px;
-            }
-
-            .multi-filtro,
-            .pill-wrap {
-                flex: 1 1 calc(50% - 4px);
-                min-width: 135px;
-            }
-
-            .date-filter-wrap {
-                min-width: 100%;
-            }
-
-            .btn-limpiar {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .badge-activo {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 560px) {
-            .multi-filtro,
-            .pill-wrap {
-                flex-basis: 100%;
-            }
-
-            .top-bar {
-                padding: 5px;
-            }
-
-            .titulo-vista {
-                font-size: 11px;
-            }
-
+        @media (max-height: 850px) {
             .sidebar-header {
-                padding: 15px 14px;
+                padding: 18px 18px;
             }
-
+            .sidebar-header h2 {
+                font-size: 17px;
+            }
+            .sidebar-header span {
+                margin-top: 3px;
+                font-size: 11px;
+            }
+            .sidebar-menu {
+                overflow-y: hidden;
+                padding-bottom: 8px;
+            }
+            .menu-category {
+                padding: 10px 18px 3px;
+                font-size: 10px;
+            }
             .menu-btn {
+                padding: 9px 18px;
+                font-size: 13px;
+                gap: 9px;
+            }
+            .collapsible-header {
+                padding: 9px 18px;
+                font-size: 13px;
+            }
+            .collapsible-body .menu-btn {
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+            .btn-tutoria {
+                margin: 8px 12px;
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+            .btn-volver {
+                padding: 13px 18px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-height: 740px) {
+            .sidebar-header {
+                padding: 13px 16px;
+            }
+            .sidebar-header h2 {
+                font-size: 15px;
+            }
+            .sidebar-header span {
+                font-size: 10px;
+            }
+            .menu-category {
+                padding: 7px 16px 2px;
+                font-size: 9px;
+            }
+            .menu-btn {
+                padding: 7px 16px;
+                font-size: 12px;
+                gap: 8px;
+            }
+            .collapsible-header {
+                padding: 7px 16px;
+                font-size: 12px;
+            }
+            .collapsible-body .menu-btn {
+                padding-top: 6px;
+                padding-bottom: 6px;
+                padding-left: 30px;
+                font-size: 11.5px;
+            }
+            .btn-tutoria {
+                margin: 6px 10px;
+                padding: 7px 10px;
+                font-size: 11px;
+            }
+            .btn-volver {
+                padding: 10px 16px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-height: 650px) {
+            .sidebar-header {
                 padding: 10px 14px;
+            }
+            .sidebar-header h2 {
+                font-size: 14px;
+            }
+            .sidebar-header span {
+                display: none;
+            }
+            .menu-category {
+                padding: 5px 14px 1px;
+                font-size: 8px;
+            }
+            .menu-btn {
+                padding: 6px 14px;
+                font-size: 11.5px;
+            }
+            .collapsible-header {
+                padding: 6px 14px;
+                font-size: 11.5px;
+            }
+            .btn-tutoria {
+                margin: 4px 9px;
+                padding: 6px 9px;
+                font-size: 10.5px;
+            }
+            .btn-volver {
+                padding: 8px 14px;
+                font-size: 10.5px;
             }
         }
 
@@ -505,7 +414,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260828-responsive2",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260828-responsive-final",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -924,19 +833,7 @@
     /* ========================================================
        SIDEBAR
     ======================================================== */
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('closed');
-    }
-
-    function ajustarSidebarResponsive() {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-        if (window.innerWidth <= 1366) {
-            sidebar.classList.add('closed');
-        } else {
-            sidebar.classList.remove('closed');
-        }
-    }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
     function toggleCollapsible(nombre) {
         document.getElementById('header-' + nombre).classList.toggle('open');
@@ -947,19 +844,10 @@
        INIT
     ======================================================== */
     window.onload = function() {
-        ajustarSidebarResponsive();
         cargarNRCS();
         const btnInicio = document.querySelector('.menu-btn.active');
         if (btnInicio) cargar('DASHBOARD_MACRO', btnInicio);
     };
-
-    window.addEventListener('resize', () => {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-        if (window.innerWidth > 1366) {
-            sidebar.classList.remove('closed');
-        }
-    });
 </script>
 </body>
 </html>
