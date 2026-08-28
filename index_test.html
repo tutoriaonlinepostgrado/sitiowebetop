@@ -519,6 +519,58 @@
         }
     }
 
+
+    /* Prioridad de navegación lateral:
+       primero el menú principal; "Mi espacio" queda después y baja si falta altura */
+    #portal-sidebar {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #portal-sidebar > nav {
+        flex: 0 0 auto !important;
+        overflow: visible !important;
+        min-height: max-content;
+    }
+
+    #portal-sidebar > nav + div {
+        flex: 0 0 auto;
+        margin-top: 14px !important;
+    }
+
+    /* En pantallas con poca altura, reducimos solo la zona secundaria */
+    @media (max-height: 760px) {
+        #portal-sidebar {
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+        }
+
+        #portal-sidebar > nav {
+            padding-top: 4px !important;
+        }
+
+        #portal-sidebar > nav + div {
+            margin-top: 10px !important;
+            padding-top: 8px !important;
+        }
+
+        #portal-sidebar > nav + div a {
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
+        }
+    }
+
+    @media (max-height: 650px) {
+        #portal-sidebar > nav + div {
+            margin-top: 8px !important;
+        }
+
+        #portal-sidebar > nav + div .px-6.py-1 {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+    }
+
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
