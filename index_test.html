@@ -571,6 +571,82 @@
         }
     }
 
+
+    .sidebar-secondary-label{
+        display:inline-flex;
+        align-items:center;
+        font-size:10px;
+        font-weight:700;
+        letter-spacing:.18em;
+        text-transform:uppercase;
+        color:rgba(148,163,184,.78);
+        padding:4px 10px;
+        border-radius:9999px;
+        background:rgba(255,255,255,.03);
+        border:1px solid rgba(255,255,255,.05);
+    }
+    @media (max-height:760px){
+        .sidebar-secondary-label{
+            font-size:9px;
+            padding:3px 8px;
+        }
+    }
+
+
+    .mi-espacio-grid{
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:7px;
+        padding:0 14px 10px;
+    }
+    .mi-espacio-btn{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:3px;
+        min-height:56px;
+        padding:7px 4px;
+        border-radius:9px;
+        text-decoration:none;
+        color:#94a3b8;
+        background:rgba(255,255,255,.025);
+        border:1px solid rgba(255,255,255,.045);
+        transition:all .16s ease;
+    }
+    .mi-espacio-btn:hover{
+        color:#facc15;
+        background:rgba(250,204,21,.07);
+        border-color:rgba(250,204,21,.18);
+        transform:translateY(-1px);
+    }
+    .mi-espacio-btn .material-symbols-outlined{
+        font-size:19px;
+        line-height:1;
+    }
+    .mi-espacio-btn span:last-child{
+        font-size:9px;
+        font-weight:600;
+        line-height:1.1;
+        white-space:nowrap;
+    }
+    @media(max-height:700px){
+        .mi-espacio-grid{
+            gap:5px;
+            padding-bottom:6px;
+        }
+        .mi-espacio-btn{
+            min-height:48px;
+            padding:5px 3px;
+        }
+        .mi-espacio-btn .material-symbols-outlined{
+            font-size:17px;
+        }
+        .mi-espacio-btn span:last-child{
+            font-size:8px;
+        }
+    }
+
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
@@ -644,19 +720,24 @@
     <span class="material-symbols-outlined">groups</span>Equipo ETOP
 </a>
         </nav>
-        <div class="border-t border-white/5 pt-3 mt-2">
-            <div class="px-6 py-1">
-                <p class="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-1">Mi espacio</p>
+        <div class="pt-4 mt-4">
+            <div class="px-6 pb-2">
+                <span class="sidebar-secondary-label">Mi espacio</span>
             </div>
-            <a href="https://outlook.office.com/mail/" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined text-base">mail</span>Outlook
-            </a>
-            <a href="https://outlook.office.com/calendar/" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined text-base">calendar_month</span>Calendario
-            </a>
-            <a href="https://m365.cloud.microsoft/chat" target="_blank" class="flex items-center gap-3 px-6 py-1.5 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined text-base">smart_toy</span>Copilot
-            </a>
+            <div class="mi-espacio-grid">
+                <a href="https://outlook.office.com/mail/" target="_blank" class="mi-espacio-btn" title="Abrir Outlook">
+                    <span class="material-symbols-outlined">mail</span>
+                    <span>Outlook</span>
+                </a>
+                <a href="https://outlook.office.com/calendar/" target="_blank" class="mi-espacio-btn" title="Abrir Calendario">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span>Calendario</span>
+                </a>
+                <a href="https://m365.cloud.microsoft/chat" target="_blank" class="mi-espacio-btn" title="Abrir Copilot">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <span>Copilot</span>
+                </a>
+            </div>
         </div>
     </aside>
     <main class="flex-1 p-6 overflow-hidden" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;">
