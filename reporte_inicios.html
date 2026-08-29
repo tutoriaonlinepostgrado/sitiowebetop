@@ -33,12 +33,42 @@ th:nth-child(9),td:nth-child(9){width:7%}th:nth-child(10),td:nth-child(10){width
 .ver-est{display:inline-flex;align-items:center;justify-content:center;width:23px;height:21px;border-radius:5px;border:1px solid #b8c9d8;background:#f7fafc;color:#315f86;text-decoration:none;font-size:12px}.ver-est:hover{border-color:#315f86;background:#edf5fb}
 .vacio,.error{padding:35px;text-align:center;color:#6b7280}.error{background:#fff4f4;color:#9a1730}
 @media(max-width:1100px){body{padding:6px}.ri-tarjetas{grid-template-columns:repeat(3,1fr)}thead th,tbody td{font-size:8px;padding-left:4px;padding-right:4px}table{min-width:1050px}}
+
+/* Perfil tutor / modo embebido */
+.profile-mini{height:25px;padding:0 9px;border-radius:6px;border:1px solid rgba(214,183,43,.55);background:#fffbea;color:#725d00;font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+.profile-mini:hover{background:#fff5bf}
+.modal{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.on{display:flex}
+.dialog{width:min(430px,100%);background:#fff;border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.3);overflow:hidden}
+.dialog-head{background:#1f2940;color:#fff;padding:16px 18px;border-bottom:3px solid #ffd700}
+.dialog-head h2{margin:0;font-size:16px}.dialog-head p{margin:4px 0 0;font-size:10px;color:#cbd5e1}
+.dialog-body{padding:18px}.dialog-body label{display:block;font-size:10px;font-weight:700;color:#475569;margin-bottom:5px}
+.email{width:100%;height:37px;border:1px solid #cbd5e1;border-radius:7px;padding:0 10px;outline:none}
+.email:focus{border-color:#315f86;box-shadow:0 0 0 3px rgba(49,95,134,.1)}
+.form-msg{min-height:18px;margin-top:6px;font-size:10px;color:#b4233d}
+.dialog-actions{display:flex;gap:8px;margin-top:12px}.dialog-actions button{height:34px;border-radius:7px;padding:0 12px;font-size:10px;font-weight:700;cursor:pointer}
+.save{flex:1;border:0;background:#1f2940;color:#ffd700}.all{border:1px solid #cbd5e1;background:#f8fafc;color:#475569}
+body.embedded{padding:6px;border-top:0}
+body.embedded .ri{gap:6px}
+body.embedded .ri-cabecera{min-height:34px;padding:4px 7px}
+body.embedded .ri-cabecera .titulo-bloque{display:none}
+body.embedded .ri-tarjetas{gap:6px}
+body.embedded .ri-tarjeta{padding:6px 9px}
+body.embedded .ri-valor{font-size:17px}
+body.embedded .ri-tabla-contenedor{border-radius:6px}
+body.embedded thead th{padding:6px 5px}
+body.embedded tbody td{height:23px}
+@media(max-height:720px){
+  body.embedded .ri-cabecera{min-height:30px}
+  body.embedded .ri-tarjeta{padding:5px 8px}
+  body.embedded .ri-valor{font-size:15px}
+}
 </style>
 </head>
 <body>
 <div class="ri">
   <div class="ri-cabecera">
-    <div>
+    <div class="titulo-bloque">
       <div class="ri-titulo">Reporte de inicios</div>
       <div class="ri-subtitulo">Equipo de Tutoría Online de Postgrado · datos desde GitHub</div>
     </div>
@@ -50,6 +80,7 @@ th:nth-child(9),td:nth-child(9){width:7%}th:nth-child(10),td:nth-child(10){width
       </div>
       <div class="estado-contexto" id="contexto"></div>
     </div>
+    <button type="button" class="profile-mini" id="profileBtn">👤 Tutor / Cambiar</button>
   </div>
 
   <div class="ri-tarjetas">
@@ -67,9 +98,37 @@ th:nth-child(9),td:nth-child(9){width:7%}th:nth-child(10),td:nth-child(10){width
     </table>
   </div>
 </div>
+
+<div id="profileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="dialog">
+    <div class="dialog-head">
+      <h2 id="profileTitle">Identifica tu vista</h2>
+      <p>Ingresa tu correo institucional una sola vez. Este navegador lo recordará.</p>
+    </div>
+    <div class="dialog-body">
+      <label for="profileEmail">Correo institucional</label>
+      <input id="profileEmail" class="email" type="email" placeholder="tutoriaonline00@unab.cl" autocomplete="email">
+      <div id="profileMsg" class="form-msg"></div>
+      <div class="dialog-actions">
+        <button id="profileAll" class="all" type="button">Vista general</button>
+        <button id="profileSave" class="save" type="button">Guardar y ver mis cursos</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
+if(new URLSearchParams(location.search).get('embed')==='1') document.body.classList.add('embedded');
+
 const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
 const SP_STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx';
+const STORAGE='etop_preparacion_correo';
+const EMAILS={
+  'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
+};
+const COORDINACION=new Set(['patricio.collao@unab.cl']);
+const emailNorm=v=>String(v??'').trim().toLowerCase();
+const tutorByEmail=email=>Object.keys(EMAILS).find(name=>emailNorm(EMAILS[name])===emailNorm(email))||'';
+let profileEmail=emailNorm(localStorage.getItem(STORAGE)||''), profileTutor='';
 let cursos=[], metricas=[], incidencias=[], nomina='TODOS';
 
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
@@ -80,8 +139,8 @@ function valoresParam(nombre){const v=new URLSearchParams(location.search).get(n
 function filterByParams(list){
   const f={facultad:valoresParam('facultad'),tutor:valoresParam('tutor'),tipo:valoresParam('tipo'),codigo:valoresParam('codigo'),estado:valoresParam('estado'),intake:valoresParam('intake'),fechaInicio:valoresParam('fechaInicio'),nrc:valoresParam('nrc')};
   const match=(x,vals)=>!vals.length||vals.includes(norm(x));
-  const out=list.filter(x=>match(x.facultad,f.facultad)&&match(x.tutor,f.tutor)&&match(x.tipo,f.tipo)&&match(x['codigo curso'],f.codigo)&&match(x.estado,f.estado)&&match(x.intake,f.intake)&&match(fechaISO(x['fecha inicio']),f.fechaInicio)&&match(x.nrc,f.nrc));
-  const activos=[];Object.entries(f).forEach(([k,v])=>{if(v.length)activos.push(k+': '+v.join(', '))});document.getElementById('contexto').textContent=activos.length?activos.join(' · '):'Sin filtros superiores';
+  const out=list.filter(x=>match(x.facultad,f.facultad)&&match(x.tutor,f.tutor)&&match(x.tipo,f.tipo)&&match(x['codigo curso'],f.codigo)&&match(x.estado,f.estado)&&match(x.intake,f.intake)&&match(fechaISO(x['fecha inicio']),f.fechaInicio)&&match(x.nrc,f.nrc)&&(!profileTutor||norm(x.tutor)===norm(profileTutor)));
+  const activos=[];Object.entries(f).forEach(([k,v])=>{if(v.length)activos.push(k+': '+v.join(', '))});document.getElementById('contexto').textContent=(profileTutor?'Tutor: '+profileTutor+(activos.length?' · ':''):'')+(activos.length?activos.join(' · '):(!profileTutor?'Sin filtros superiores':''));
   return out;
 }
 function studentsUrl(nrc){
@@ -147,12 +206,53 @@ function render(){
     </tr>`;
   }).join('');
 }
+
+function actualizarProfileBtn(){
+  const b=document.getElementById('profileBtn');
+  if(b) b.textContent=profileTutor?'👤 '+profileTutor.split(' ')[0]+' · Cambiar':'👥 Vista general · Cambiar';
+}
+function setProfile(email,all=false){
+  profileEmail=emailNorm(email);
+  profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);
+  if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail)) return false;
+  if(all){localStorage.removeItem(STORAGE);profileEmail='';}
+  else localStorage.setItem(STORAGE,profileEmail);
+  actualizarProfileBtn();
+  closeProfile();
+  render();
+  return true;
+}
+function openProfile(){
+  document.getElementById('profileModal').classList.add('on');
+  document.getElementById('profileEmail').value=profileEmail;
+  document.getElementById('profileMsg').textContent='';
+  setTimeout(()=>document.getElementById('profileEmail').focus(),50);
+}
+function closeProfile(){document.getElementById('profileModal').classList.remove('on');}
+window.openProfile=openProfile;
+document.getElementById('profileBtn').addEventListener('click',openProfile);
+document.getElementById('profileSave').addEventListener('click',()=>{
+  const email=document.getElementById('profileEmail').value;
+  if(!setProfile(email)) document.getElementById('profileMsg').textContent='No encontramos ese correo entre los tutores disponibles. Revisa la escritura o usa Vista general.';
+});
+document.getElementById('profileAll').addEventListener('click',()=>setProfile('',true));
+document.getElementById('profileEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('profileSave').click()});
+
 document.getElementById('nominaSwitch').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;nomina=b.dataset.v;document.querySelectorAll('#nominaSwitch button').forEach(x=>x.classList.toggle('active',x===b));render()});
 Promise.all([
   fetch('nrcs.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('No se pudo leer nrcs.json');return r.json()}),
   fetch('metricas_estudiantes.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]),
   fetch('incidencias.json',{cache:'no-store'}).then(r=>r.ok?r.json():[])
-]).then(([n,m,i])=>{cursos=n;metricas=m;incidencias=i;render()}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11" class="error">⚠️ ${esc(err.message)}</td></tr>`});
+]).then(([n,m,i])=>{
+  cursos=n;metricas=m;incidencias=i;
+  if(profileEmail&&!setProfile(profileEmail)){
+    localStorage.removeItem(STORAGE);profileEmail='';profileTutor='';actualizarProfileBtn();render();openProfile();
+  }else if(profileEmail){
+    setProfile(profileEmail);
+  }else{
+    actualizarProfileBtn();render();openProfile();
+  }
+}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11" class="error">⚠️ ${esc(err.message)}</td></tr>`});
 </script>
 </body>
 </html>
