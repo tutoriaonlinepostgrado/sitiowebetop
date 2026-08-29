@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reporte de Inicios · ETOP</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:'Segoe UI',Arial,sans-serif;color:#334155;background:#edf3f9}
+body{padding:10px;border-top:3px solid #d6b72b}
+.ri{height:100%;display:flex;flex-direction:column;gap:8px}
+.ri-cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;background:#fff;border:1px solid #d6e1ec;border-radius:7px}
+.ri-titulo{font-size:16px;font-weight:700}.ri-subtitulo{font-size:10px;color:#718096;margin-top:2px}
+.nomina-switch{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.nomina-switch button{height:25px;padding:0 9px;border-radius:6px;border:1px solid #c7d9e8;background:#eef5fb;color:#315f86;font-size:9px;font-weight:700;cursor:pointer}
+.nomina-switch button.active{background:#315f86;color:#fff;border-color:#315f86}
+.ri-tarjetas{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:8px}
+.ri-tarjeta{background:#fff;padding:8px 11px;border-radius:7px;border:1px solid #d6e1ec;border-top:3px solid #6f8fa8;box-shadow:0 1px 2px rgba(51,65,85,.07)}
+.ri-tarjeta.alerta{border-top-color:#c95d63}.ri-etiqueta{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;font-weight:700}.ri-valor{font-size:20px;line-height:1;font-weight:700;margin-top:4px}
+.estado-contexto{font-size:9px;color:#64748b}
+.ri-tabla-contenedor{flex:1;min-height:0;overflow:auto;background:#fff;border:1px solid #d6e1ec;border-radius:7px;box-shadow:0 1px 2px rgba(51,65,85,.06)}
+table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;background:#fff}
+thead th{position:sticky;top:0;z-index:2;background:#dce8f3;color:#334155;padding:7px 6px;font-size:8px;text-transform:uppercase;text-align:left;border-right:1px solid #c7d9e8;border-bottom:2px solid #9fb4c8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tbody td{height:25px;padding:3px 5px;border-bottom:1px solid #d6e1ec;border-right:1px solid #e8eef4;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tbody tr:nth-child(even) td{background:#f5f9fc}tbody tr:hover td{background:#e7eff7}
+th:nth-child(1),td:nth-child(1){width:8%}th:nth-child(2),td:nth-child(2){width:11%}th:nth-child(3),td:nth-child(3){width:7%}th:nth-child(4),td:nth-child(4){width:19%}
+th:nth-child(5),td:nth-child(5){width:7%}th:nth-child(6),td:nth-child(6){width:7%}th:nth-child(7),td:nth-child(7){width:13%}th:nth-child(8),td:nth-child(8){width:11%}
+th:nth-child(9),td:nth-child(9){width:7%}th:nth-child(10),td:nth-child(10){width:8%}th:nth-child(11),td:nth-child(11){width:3%;text-align:center}
+.facultad{font-weight:650;color:#40576d}.codigo{text-align:right;font-weight:700}.codigo a{color:#315f86;text-decoration:none}.codigo a:hover{text-decoration:underline}.codigo a:after{content:' ↗';font-size:7px}
+.chip{display:inline-block;padding:2px 4px;border-radius:2px;font-size:7px;font-weight:750}.activo{color:#0b6541;background:#d5eee2;border-left:2px solid #149263}.gris{color:#44505f;background:#e3e7eb;border-left:2px solid #748191}
+.nomina-ok{display:inline-block;min-width:34px;text-align:center;color:#0b6541;background:#d5eee2;padding:2px 5px;border-radius:2px;font-weight:750}
+.nomina-falta{display:inline-block;color:#9a1730;background:#f7dce2;padding:2px 5px;border-radius:2px;font-size:8px;font-weight:800;border-left:2px solid #b71935}
+.alerta{display:inline-block;padding:2px 5px;border-radius:2px;font-size:8px;font-weight:700}.alerta-roja{color:#9a1730;background:#f7dce2;border-left:2px solid #b71935}.alerta-neutra{color:#3f4a58;background:#e7eaee;border-left:2px solid #8793a1}.alerta-ok{color:#0b6541;background:#d5eee2;border-left:2px solid #149263}
+.ver-est{display:inline-flex;align-items:center;justify-content:center;width:23px;height:21px;border-radius:5px;border:1px solid #b8c9d8;background:#f7fafc;color:#315f86;text-decoration:none;font-size:12px}.ver-est:hover{border-color:#315f86;background:#edf5fb}
+.vacio,.error{padding:35px;text-align:center;color:#6b7280}.error{background:#fff4f4;color:#9a1730}
+@media(max-width:1100px){body{padding:6px}.ri-tarjetas{grid-template-columns:repeat(3,1fr)}thead th,tbody td{font-size:8px;padding-left:4px;padding-right:4px}table{min-width:1050px}}
+</style>
+</head>
+<body>
+<div class="ri">
+  <div class="ri-cabecera">
+    <div>
+      <div class="ri-titulo">Reporte de inicios</div>
+      <div class="ri-subtitulo">Equipo de Tutoría Online de Postgrado · datos desde GitHub</div>
+    </div>
+    <div>
+      <div class="nomina-switch" id="nominaSwitch">
+        <button class="active" data-v="TODOS">Todos</button>
+        <button data-v="FALTA_NOMINA">Falta nómina</button>
+        <button data-v="CON_ESTUDIANTES">Con estudiantes</button>
+      </div>
+      <div class="estado-contexto" id="contexto"></div>
+    </div>
+  </div>
+
+  <div class="ri-tarjetas">
+    <div class="ri-tarjeta"><div class="ri-etiqueta">Total NRC</div><div class="ri-valor" id="kNrc">0</div></div>
+    <div class="ri-tarjeta"><div class="ri-etiqueta">Total estudiantes</div><div class="ri-valor" id="kEst">0</div></div>
+    <div class="ri-tarjeta alerta"><div class="ri-etiqueta">NRC sin nómina</div><div class="ri-valor" id="kSin">0</div></div>
+  </div>
+
+  <div class="ri-tabla-contenedor">
+    <table>
+      <thead><tr>
+        <th>Facultad</th><th>NRC</th><th>Estado</th><th>Nombre del curso</th><th>Inicio</th><th>Fin</th><th>Versión</th><th>Nombre tutor</th><th>Total est.</th><th>Incidencias</th><th title="Abrir Base de estudiantes filtrada por NRC">👥</th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="11" class="vacio">Cargando datos…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+<script>
+const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const SP_STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx';
+let cursos=[], metricas=[], incidencias=[], nomina='TODOS';
+
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function fechaISO(v){const s=String(v??'').trim();let m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''}
+function fmt(v){const f=fechaISO(v);return f?f.split('-').reverse().join('-'):'—'}
+function valoresParam(nombre){const v=new URLSearchParams(location.search).get(nombre);return v?v.split('|').map(norm).filter(Boolean):[]}
+function filterByParams(list){
+  const f={facultad:valoresParam('facultad'),tutor:valoresParam('tutor'),tipo:valoresParam('tipo'),estado:valoresParam('estado'),intake:valoresParam('intake'),fechaInicio:valoresParam('fechaInicio'),nrc:valoresParam('nrc')};
+  const match=(x,vals)=>!vals.length||vals.includes(norm(x));
+  const out=list.filter(x=>match(x.facultad,f.facultad)&&match(x.tutor,f.tutor)&&match(x.tipo,f.tipo)&&match(x.estado,f.estado)&&match(x.intake,f.intake)&&match(fechaISO(x['fecha inicio']),f.fechaInicio)&&match(x.nrc,f.nrc));
+  const activos=[];Object.entries(f).forEach(([k,v])=>{if(v.length)activos.push(k+': '+v.join(', '))});document.getElementById('contexto').textContent=activos.length?activos.join(' · '):'Sin filtros superiores';
+  return out;
+}
+function studentsUrl(nrc){
+  const u=new URL(SP_STUDENTS);
+  u.searchParams.set('FilterField1','NRC_COD_CAL');
+  u.searchParams.set('FilterValue1',nrc||'');
+  u.searchParams.set('FilterType1','Calculated');
+  u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+  u.searchParams.set('env','Embedded');
+  return u.href;
+}
+function canvasUrl(codigo){
+  const p=String(codigo||'').split('_').filter(Boolean);
+  if(p.length<2)return '';
+  const nrc=p[0],periodo=p[p.length-1];
+  return 'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:periodo,periodo,nrc,nrc_code:nrc,crn:nrc,NRC:nrc}).toString();
+}
+function incidentMap(){
+  const m=new Map();
+  incidencias.forEach(i=>{const k=String(i.cursoId??'');if(!m.has(k))m.set(k,[]);m.get(k).push(i)});
+  return m;
+}
+function incidenciaTexto(x,byCourse){
+  if(norm(x['codigo curso'])==='UNI118')return {t:'NO APLICA',c:'alerta alerta-neutra'};
+  const arr=byCourse.get(String(x.id))||[];
+  if(!arr.length)return {t:'PENDIENTE DE QA2',c:'alerta alerta-roja'};
+  const n=arr.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
+  if(n)return {t:'CON INCIDENCIA ('+n+')',c:'alerta alerta-roja'};
+  return {t:'SIN INCIDENCIA',c:'alerta alerta-ok'};
+}
+function render(){
+  const metricMap=new Map(metricas.map(x=>[norm(x.nrc),Number(x.total_estudiantes)||0]));
+  const byCourse=incidentMap();
+  let list=filterByParams(cursos).map(x=>({...x,total:metricMap.get(norm(x.nrc))||0}));
+  if(nomina==='FALTA_NOMINA')list=list.filter(x=>x.total===0);
+  if(nomina==='CON_ESTUDIANTES')list=list.filter(x=>x.total>0);
+  list.sort((a,b)=>String(a.facultad||'').localeCompare(String(b.facultad||''),'es')||String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true}));
+
+  document.getElementById('kNrc').textContent=list.length.toLocaleString('es-CL');
+  document.getElementById('kEst').textContent=list.reduce((s,x)=>s+x.total,0).toLocaleString('es-CL');
+  document.getElementById('kSin').textContent=list.filter(x=>x.total===0).length.toLocaleString('es-CL');
+
+  const body=document.getElementById('rows');
+  if(!list.length){body.innerHTML='<tr><td colspan="11" class="vacio">No hay registros para los filtros seleccionados.</td></tr>';return}
+  if(list.length>3000){body.innerHTML=`<tr><td colspan="11" class="error">Demasiados registros (${list.length.toLocaleString('es-CL')}). Usa los filtros superiores para acotar la tabla.</td></tr>`;return}
+  body.innerHTML=list.map(x=>{
+    const inc=incidenciaTexto(x,byCourse);
+    const cu=canvasUrl(x.nrc);
+    const codigo=cu?`<a href="${esc(cu)}" target="_blank" rel="noopener">${esc(x.nrc||'')}</a>`:esc(x.nrc||'');
+    const st=norm(x.estado)==='ACTIVO'?'activo':'gris';
+    const nom=x.total===0?`<span class="nomina-falta">FALTA NÓMINA</span>`:`<span class="nomina-ok">${x.total.toLocaleString('es-CL')}</span>`;
+    return `<tr>
+      <td title="${esc(x.facultad||'')}"><span class="facultad">${esc(x.facultad||'Sin facultad')}</span></td>
+      <td class="codigo" title="${esc(x.nrc||'')}">${codigo}</td>
+      <td><span class="chip ${st}">${esc(x.estado||'')}</span></td>
+      <td title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'').replace(/\*/g,''))}</td>
+      <td>${fmt(x['fecha inicio'])}</td><td>${fmt(x['fecha fin'])}</td>
+      <td title="${esc(x.intake||'')}">${esc(x.intake||'')}</td>
+      <td title="${esc(x.tutor||'')}">${esc(x.tutor||'')}</td>
+      <td>${nom}</td>
+      <td title="${esc(inc.t)}"><span class="${inc.c}">${esc(inc.t)}</span></td>
+      <td><a class="ver-est" href="${esc(studentsUrl(x.nrc))}" target="_blank" rel="noopener" title="Ver estudiantes del NRC en BASESEMAFORO_20">👥</a></td>
+    </tr>`;
+  }).join('');
+}
+document.getElementById('nominaSwitch').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;nomina=b.dataset.v;document.querySelectorAll('#nominaSwitch button').forEach(x=>x.classList.toggle('active',x===b));render()});
+Promise.all([
+  fetch('nrcs.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('No se pudo leer nrcs.json');return r.json()}),
+  fetch('metricas_estudiantes.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]),
+  fetch('incidencias.json',{cache:'no-store'}).then(r=>r.ok?r.json():[])
+]).then(([n,m,i])=>{cursos=n;metricas=m;incidencias=i;render()}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11" class="error">⚠️ ${esc(err.message)}</td></tr>`});
+</script>
+</body>
+</html>
