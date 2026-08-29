@@ -78,9 +78,9 @@ function fechaISO(v){const s=String(v??'').trim();let m=s.match(/^(\d{4})[-\/](\
 function fmt(v){const f=fechaISO(v);return f?f.split('-').reverse().join('-'):'—'}
 function valoresParam(nombre){const v=new URLSearchParams(location.search).get(nombre);return v?v.split('|').map(norm).filter(Boolean):[]}
 function filterByParams(list){
-  const f={facultad:valoresParam('facultad'),tutor:valoresParam('tutor'),tipo:valoresParam('tipo'),estado:valoresParam('estado'),intake:valoresParam('intake'),fechaInicio:valoresParam('fechaInicio'),nrc:valoresParam('nrc')};
+  const f={facultad:valoresParam('facultad'),tutor:valoresParam('tutor'),tipo:valoresParam('tipo'),codigo:valoresParam('codigo'),estado:valoresParam('estado'),intake:valoresParam('intake'),fechaInicio:valoresParam('fechaInicio'),nrc:valoresParam('nrc')};
   const match=(x,vals)=>!vals.length||vals.includes(norm(x));
-  const out=list.filter(x=>match(x.facultad,f.facultad)&&match(x.tutor,f.tutor)&&match(x.tipo,f.tipo)&&match(x.estado,f.estado)&&match(x.intake,f.intake)&&match(fechaISO(x['fecha inicio']),f.fechaInicio)&&match(x.nrc,f.nrc));
+  const out=list.filter(x=>match(x.facultad,f.facultad)&&match(x.tutor,f.tutor)&&match(x.tipo,f.tipo)&&match(x['codigo curso'],f.codigo)&&match(x.estado,f.estado)&&match(x.intake,f.intake)&&match(fechaISO(x['fecha inicio']),f.fechaInicio)&&match(x.nrc,f.nrc));
   const activos=[];Object.entries(f).forEach(([k,v])=>{if(v.length)activos.push(k+': '+v.join(', '))});document.getElementById('contexto').textContent=activos.length?activos.join(' · '):'Sin filtros superiores';
   return out;
 }
