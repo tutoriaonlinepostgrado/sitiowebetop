@@ -321,6 +321,9 @@
                 </div>
                 <div class="separator-bar"></div>
 
+                <button type="button" class="btn-limpiar" id="btn-tutor-perfil"
+                    style="display:none;border-color:rgba(255,215,0,.45);color:#ffd700;background:rgba(255,215,0,.08)"
+                    onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
                 <!-- Badge + Limpiar -->
                 <div class="badge-activo" id="badge-activo">🔍 <span id="badge-txt"></span></div>
                 <button class="btn-limpiar" id="btn-limpiar" onclick="limpiarTodo()">✕ Limpiar</button>
@@ -796,6 +799,18 @@
         return `${columna} in (${limpios.join(',')})`;
     }
 
+
+    function abrirPerfilTutor() {
+        const visor=document.getElementById('visor');
+        try {
+            if (claveActual==='CURSOS_INICIAR' && visor?.contentWindow?.openProfile) {
+                visor.contentWindow.openProfile();
+            }
+        } catch(e) {
+            console.warn('No se pudo abrir el perfil del tutor:', e);
+        }
+    }
+
     function buildURLFiltrada() {
         const cfg = misReportes[claveActual];
         if (!cfg) return '';
@@ -814,6 +829,7 @@
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
                 if (f.nrc) urlLocal.searchParams.set('nrc', f.nrc);
+                if (claveActual === 'CURSOS_INICIAR') urlLocal.searchParams.set('embed','1');
             }
             return urlLocal.toString();
         }
@@ -909,6 +925,8 @@
 
     function cargar(clave, btn) {
         claveActual = clave;
+        const btnPerfilTutor=document.getElementById('btn-tutor-perfil');
+        if (btnPerfilTutor) btnPerfilTutor.style.display = (claveActual==='CURSOS_INICIAR') ? 'inline-flex' : 'none';
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
