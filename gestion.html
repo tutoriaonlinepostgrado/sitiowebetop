@@ -285,6 +285,10 @@
                         <button class="search-pill-go" onclick="aplicarBusqueda('rut',document.getElementById('input-rut').value.trim())">↵</button>
                     </div>
                 </div>
+
+                <button type="button" class="btn-clear-filter" id="btn-tutor-perfil"
+                    style="display:none;border-color:rgba(255,215,0,.45);color:#ffd700;background:rgba(255,215,0,.08)"
+                    onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
                 <!-- Badge + Limpiar -->
                 <div class="filter-badge" id="filter-badge">
                     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
@@ -535,6 +539,7 @@
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
             if (BUSQUEDA.fechaInicio.length) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio.join('|'));
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
+            if (clave === 'CURSOS_PREPARACION') url.searchParams.set('embed','1');
             url.searchParams.set('_f', Date.now().toString());
             return url.toString();
         }
@@ -565,6 +570,17 @@
         if (fx.length) url.searchParams.set('filter', fx.join(' and '));
         url.searchParams.set('_portalFilter', Date.now().toString());
         return url.toString();
+    }
+
+    function abrirPerfilTutor() {
+        const visor=document.getElementById('visor');
+        try {
+            if (vistaActual==='CURSOS_PREPARACION' && visor?.contentWindow?.openProfile) {
+                visor.contentWindow.openProfile();
+            }
+        } catch(e) {
+            console.warn('No se pudo abrir el perfil del tutor:', e);
+        }
     }
 
     function actualizarIframe() {
@@ -848,6 +864,8 @@
 
     function cargar(clave, btn) {
         vistaActual = clave;
+        const btnPerfilTutor=document.getElementById('btn-tutor-perfil');
+        if (btnPerfilTutor) btnPerfilTutor.style.display = (vistaActual==='CURSOS_PREPARACION') ? 'inline-flex' : 'none';
         configurarFiltros(clave);
         document.getElementById('canal-splash').classList.remove('visible');
         document.getElementById('visor').style.display = 'block';
