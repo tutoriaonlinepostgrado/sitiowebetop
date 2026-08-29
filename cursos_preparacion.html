@@ -94,8 +94,33 @@
     const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
     let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
 
+    const portalParams=(()=>{
+      const p=new URLSearchParams(location.search);
+      const vals=k=>(p.get(k)||'').split('|').map(norm).filter(Boolean);
+      return {
+        facultad:vals('facultad'),
+        tutor:vals('tutor'),
+        tipo:vals('tipo'),
+        estado:vals('estado'),
+        intake:vals('intake'),
+        fechaInicio:(p.get('fechaInicio')||'').split('|').map(v=>String(v).slice(0,10)).filter(Boolean),
+        nrc:vals('nrc')
+      };
+    })();
+
+    function matchPortal(x){
+      const m=(v,a)=>!a.length||a.includes(norm(v));
+      return m(x.facultad,portalParams.facultad)
+        && m(x.tutor,portalParams.tutor)
+        && m(x.tipo,portalParams.tipo)
+        && m(x.estado,portalParams.estado)
+        && m(x.intake,portalParams.intake)
+        && (!portalParams.fechaInicio.length||portalParams.fechaInicio.includes(String(x['fecha inicio']||'').slice(0,10)))
+        && m(x.nrc,portalParams.nrc);
+    }
+
     function baseCourses(){
-      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor)));
+      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor))&&matchPortal(x));
     }
     function visibleCourses(exclude=''){
       const fac=norm(document.getElementById('facultad').value),tut=norm(document.getElementById('tutor').value),tipo=norm(document.getElementById('tipo').value),codigo=norm(document.getElementById('codigo').value),fecha=document.getElementById('fecha').value,q=norm(document.getElementById('buscar').value);
