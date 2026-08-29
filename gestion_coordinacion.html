@@ -357,8 +357,8 @@
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
-    url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=60127766361783cd5242&navContentPaneEnabled=false&filterPaneEnabled=false",
-    tipo: 'pbi'
+    url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/reporte_inicios.html?v=20260829-portal1",
+    tipo: 'local'
 },
         'INCIDENCIAS': {
             url: "incidencias.html",
@@ -800,14 +800,14 @@
         // Las páginas HTML locales reciben sus filtros como parámetros URL.
         if (cfg.tipo === 'local') {
             const urlLocal = new URL(cfg.url, window.location.href);
-            if (claveActual === 'CALENDARIOS') {
+            if (['CALENDARIOS','CURSOS_INICIAR'].includes(claveActual)) {
                 if (f.facultad.length) urlLocal.searchParams.set('facultad', f.facultad.join('|'));
                 if (f.tutor.length)    urlLocal.searchParams.set('tutor', f.tutor.join('|'));
                 if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
-                if (f.nrc)      urlLocal.searchParams.set('nrc', f.nrc);
+                if (f.nrc) urlLocal.searchParams.set('nrc', f.nrc);
             }
             return urlLocal.toString();
         }
