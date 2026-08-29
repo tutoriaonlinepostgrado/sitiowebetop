@@ -243,6 +243,10 @@
                     <option value="100%ONLINE">100%ONLINE</option>
                     <option value="SEMIPRES">SEMIPRES</option>
                 </select>
+                <!-- CÓDIGO CURSO -->
+                <select class="fsel-topbar" id="sel-codigo" data-filtro="codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
+                    <option value="">Código curso ⏳</option>
+                </select>
                 <!-- ESTADO -->
                 <select class="fsel-topbar" id="sel-estado" data-filtro="estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
                     <option value="">Estado ⏳</option>
@@ -371,7 +375,7 @@
     };
 
     // ── Estado ────────────────────────────────────────────
-    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, estado: null, intake: null, fechaInicio: [] };
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, codigo: null, estado: null, intake: null, fechaInicio: [] };
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
@@ -526,6 +530,7 @@
             if (BUSQUEDA.facultad) url.searchParams.set('facultad', BUSQUEDA.facultad);
             if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
+            if (BUSQUEDA.codigo)   url.searchParams.set('codigo', BUSQUEDA.codigo);
             if (BUSQUEDA.estado)   url.searchParams.set('estado', BUSQUEDA.estado);
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
             if (BUSQUEDA.fechaInicio.length) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio.join('|'));
@@ -547,6 +552,7 @@
         if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         if (BUSQUEDA.tutor)    fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
         if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
+        if (BUSQUEDA.codigo)   fx.push(`NRC_TUTOR_ACTUAL/CODIGO_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
         if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
         if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
         if (BUSQUEDA.fechaInicio.length===1) fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
@@ -583,6 +589,7 @@
     }
     function campoRegistro(n,campo) {
         if (campo==='fechaInicio') return fechaISO(n['fecha inicio']);
+        if (campo==='codigo') return n['codigo curso'] ?? '';
         return n[campo] ?? '';
     }
     function filtroVisible(campo) {
@@ -597,6 +604,7 @@
             if (excluir!=='facultad' && filtroVisible('facultad') && BUSQUEDA.facultad && !coincide(n,'facultad',BUSQUEDA.facultad)) return false;
             if (excluir!=='tutor' && filtroVisible('tutor') && BUSQUEDA.tutor && !coincide(n,'tutor',BUSQUEDA.tutor)) return false;
             if (excluir!=='tipo' && filtroVisible('tipo') && BUSQUEDA.tipo && !coincide(n,'tipo',BUSQUEDA.tipo)) return false;
+            if (excluir!=='codigo' && filtroVisible('codigo') && BUSQUEDA.codigo && !coincide(n,'codigo',BUSQUEDA.codigo)) return false;
             if (excluir!=='estado' && filtroVisible('estado') && BUSQUEDA.estado && !coincide(n,'estado',BUSQUEDA.estado)) return false;
             if (excluir!=='intake' && filtroVisible('intake') && BUSQUEDA.intake && !coincide(n,'intake',BUSQUEDA.intake)) return false;
             if (excluir!=='fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length && !BUSQUEDA.fechaInicio.map(fechaISO).includes(fechaISO(n['fecha inicio']))) return false;
@@ -628,6 +636,7 @@
         reconstruirSelect('sel-facultad','facultad');
         reconstruirSelect('sel-tutor','tutor');
         reconstruirSelect('sel-tipo','tipo');
+        reconstruirSelect('sel-codigo','codigo');
         reconstruirSelect('sel-estado','estado');
         reconstruirSelect('sel-intake','intake');
         renderFechasGestion();
@@ -654,13 +663,14 @@
 
     // ── Limpiar ───────────────────────────────────────────
     function limpiarBusqueda() {
-        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.estado=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=[];
+        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.codigo=null; BUSQUEDA.estado=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=[];
         nrcConfirmado='';
         document.getElementById('input-nrc').value='';
         document.getElementById('input-rut').value='';
         document.getElementById('sel-facultad').value='';
         document.getElementById('sel-tutor').value='';
         document.getElementById('sel-tipo').value='';
+        document.getElementById('sel-codigo').value='';
         document.getElementById('sel-estado').value='';
         document.getElementById('sel-intake').value='';
         ocultarNRCDropdown();
@@ -671,7 +681,7 @@
 
     // ── Badge ─────────────────────────────────────────────
     function actualizarEstadoVisualFiltros() {
-        [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo]) => {
+        [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo]) => {
             const el=document.getElementById(id); if(el) el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]));
         });
         const nr=document.getElementById('nrc-pill-wrap'); if(nr) nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
@@ -684,6 +694,7 @@
         if (filtroVisible('facultad') && BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
         if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
         if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
+        if (filtroVisible('codigo')   && BUSQUEDA.codigo)   p.push(BUSQUEDA.codigo);
         if (filtroVisible('estado')   && BUSQUEDA.estado)   p.push(BUSQUEDA.estado);
         if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
         if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length) p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
@@ -701,14 +712,14 @@
             if (!resp.ok) throw new Error('no ok');
             catalogoNRC = await resp.json();
             construirIndiceNRC();
-            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(function(id) {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
             });
             sincronizarFiltros();
         } catch(err) {
-            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(function(id) {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
@@ -795,14 +806,14 @@
 
     // ── Navegación: reportes Power BI ────────────────────
     const FILTROS_POR_VISTA = {
-        'DASHBOARD':          ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc','rut'],
-        'NOMINA_ESTUDIANTES': ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc','rut'],
-        'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
-        'CURSOS_PREPARACION': ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
-        'CURSOS_CIERRE':      ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
-        'REPORTE_INICIOS':   ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
+        'DASHBOARD':          ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
+        'NOMINA_ESTUDIANTES': ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
+        'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+        'CURSOS_PREPARACION': ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+        'CURSOS_CIERRE':      ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+        'REPORTE_INICIOS':   ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
         'FICHA_ESTUDIANTE':   ['rut'],
-        'CALENDARIOS':        ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
+        'CALENDARIOS':        ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
         'CORREOS':            ['nrc'],
         'INVITACIONES':       ['nrc'],
         'PRESENTACION':       ['nrc'],
