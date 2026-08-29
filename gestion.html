@@ -25,7 +25,7 @@
         .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 10px; }
         .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255,215,0,0.6); }
         .menu-category { padding: 8px 16px 3px 16px; font-size: 10px; text-transform: uppercase; color: var(--texto-gris); font-weight: 700; letter-spacing: 1px; }
-        .menu-btn { background: none; border: none; color: #e0e0e0; padding: 7px 16px; text-align: left; font-size: 13px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; }
+        .menu-btn { background: none; border: none; color: #e0e0e0; padding: 7px 16px; text-align: left; font-size: 13px; cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 8px; width: 100%; text-decoration: none; box-sizing: border-box; white-space: normal; line-height: 1.25; }
         .menu-btn:hover { background-color: rgba(255,215,0,0.1); color: var(--amarillo-top); }
         .menu-btn.active { background-color: rgba(255,215,0,0.15); color: var(--amarillo-top); border-left: 4px solid var(--amarillo-top); font-weight: 600; }
         .collapsible-header { padding: 7px 16px; font-size: 13px; color: #e0e0e0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid transparent; transition: all 0.2s; user-select: none; }
@@ -109,6 +109,28 @@
         .nrc-dropdown-item .match { color: var(--amarillo-top); font-weight: 700; }
         .nrc-dropdown::-webkit-scrollbar { width: 4px; }
         .nrc-dropdown::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.25); border-radius: 4px; }
+        /* Filtros activos + limpiar NRC dentro del cajón */
+        .fsel-topbar.filtro-activo,
+        .fecha-multi-wrap.filtro-activo .fecha-multi-input,
+        .nrc-pill-wrap.filtro-activo .nrc-pill-input {
+            border-color: rgba(255,215,0,.95) !important;
+            background-color: rgba(255,215,0,.10) !important;
+            color: #ffd700 !important;
+            box-shadow: 0 0 0 1px rgba(255,215,0,.10);
+            font-weight: 700;
+        }
+        .nrc-pill-clear {
+            position:absolute; right:6px; top:50%; transform:translateY(-50%);
+            width:18px; height:18px; border:0; border-radius:50%;
+            background:rgba(239,68,68,.14); color:#fca5a5; cursor:pointer;
+            display:none; padding:0; line-height:18px; font-size:12px; z-index:3;
+        }
+        .nrc-pill-wrap.filtro-activo .nrc-pill-clear,
+        .nrc-pill-wrap.nrc-con-texto .nrc-pill-clear { display:block; }
+        .nrc-pill-wrap.filtro-activo .nrc-pill-input,
+        .nrc-pill-wrap.nrc-con-texto .nrc-pill-input { padding-right:28px; }
+        .nrc-pill-clear:hover { background:rgba(239,68,68,.28); color:#fff; }
+
         /* Badge y limpiar */
         .filter-badge { display: none; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 10px; background: rgba(255,215,0,0.07); border: 1px solid rgba(255,215,0,0.2); font-size: 9px; font-weight: 600; color: rgba(255,215,0,0.75); white-space: nowrap; flex-shrink: 0; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
         .filter-badge.on { display: flex; }
@@ -220,11 +242,15 @@
                     <option value="100%ONLINE">100%ONLINE</option>
                     <option value="SEMIPRES">SEMIPRES</option>
                 </select>
+                <!-- ESTADO -->
+                <select class="fsel-topbar" id="sel-estado" data-filtro="estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
+                    <option value="">Estado ⏳</option>
+                </select>
                 <!-- INTAKE / VERSION: visible únicamente en Calendarios -->
-                <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="display:none;max-width:175px">
+                <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled style="max-width:175px">
                     <option value="">Intake/Versión ⏳</option>
                 </select>
-                <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio" style="display:none"><input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)"><div class="fecha-chips" id="fecha-multi-chips"></div></div>
+                <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio"><input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)"><div class="fecha-chips" id="fecha-multi-chips"></div></div>
                 <div class="top-bar-sep"></div>
                 <!-- NRC dropdown custom -->
                 <div class="search-group" data-filtro="nrc">
@@ -237,6 +263,7 @@
                             oninput="onNRCInput(this.value)"
                             onkeydown="onNRCKeydown(event)"
                             onfocus="mostrarNRCDropdown()">
+                        <button type="button" class="nrc-pill-clear" id="nrc-pill-clear" title="Quitar filtro NRC" aria-label="Quitar filtro NRC" onclick="limpiarFiltroNRC(event)">×</button>
                         <div class="nrc-dropdown" id="nrc-dropdown"></div>
                     </div>
                 </div>
@@ -340,7 +367,7 @@
     };
 
     // ── Estado ────────────────────────────────────────────
-    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, intake: null, fechaInicio: [] };
+    const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, estado: null, intake: null, fechaInicio: [] };
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
@@ -359,18 +386,49 @@
     // ── NRC dropdown custom ───────────────────────────────
     let nrcConfirmado = '';
     let nrcDropIdx = -1;
+    let nrcIndiceBusqueda = [];
+    let nrcBusquedaTimer = null;
 
+    function normalizarBusqueda(v) {
+        return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+    }
+    function textoBuscableCurso(n) {
+        return normalizarBusqueda([n.nrc,n['codigo curso'],n['nombre curso'],n['nombre programa'],n.tutor,n.intake,n.facultad,n.tipo,n.estado].join(' '));
+    }
+    function construirIndiceNRC() {
+        nrcIndiceBusqueda = catalogoNRC.map(n => ({ ref:n, texto:textoBuscableCurso(n), nrcNorm:normalizarBusqueda(n.nrc) }));
+    }
     function onNRCInput(val) {
         nrcDropIdx = -1;
-        if (val.trim() !== nrcConfirmado) {
-            nrcConfirmado = '';
-            BUSQUEDA.nrc = null;
+        const wrap=document.getElementById('nrc-pill-wrap');
+        if (wrap) wrap.classList.toggle('nrc-con-texto', Boolean(val.trim()));
+
+        const previo=nrcConfirmado;
+        if (previo && val.trim() !== previo) {
+            nrcConfirmado='';
+            BUSQUEDA.nrc=null;
+            sincronizarFiltros();
+            actualizarBadge();
+            actualizarIframe();
         }
-        const q = val.trim().toUpperCase();
-        if (!q) { ocultarNRCDropdown(); actualizarIframe(); return; }
-        const todosNRCs = [...new Set(catalogoNRC.map(n => (n.nrc||'').trim()).filter(Boolean))].sort();
-        const matches = todosNRCs.filter(n => n.toUpperCase().includes(q)).slice(0, 60);
-        renderNRCDropdown(matches, q);
+
+        if (nrcBusquedaTimer) clearTimeout(nrcBusquedaTimer);
+        const q=normalizarBusqueda(val);
+        if (!q) { ocultarNRCDropdown(); actualizarEstadoVisualFiltros(); return; }
+
+        nrcBusquedaTimer=setTimeout(() => {
+            const permitidos=new Set(nrcsFiltrados('nrc').map(n => (n.nrc||'').trim()));
+            const matches=nrcIndiceBusqueda
+                .filter(i => permitidos.has((i.ref.nrc||'').trim()) && i.texto.includes(q))
+                .sort((a,b) => {
+                    const ar=a.nrcNorm===q?0:a.nrcNorm.startsWith(q)?1:2;
+                    const br=b.nrcNorm===q?0:b.nrcNorm.startsWith(q)?1:2;
+                    return ar-br || a.nrcNorm.localeCompare(b.nrcNorm,'es',{numeric:true});
+                })
+                .slice(0,30)
+                .map(i => (i.ref.nrc||'').trim());
+            renderNRCDropdown(matches,q);
+        },90);
     }
 
     function onNRCKeydown(e) {
@@ -409,8 +467,26 @@
         const existe = catalogoNRC.some(n => (n.nrc||'').trim() === val);
         nrcConfirmado = existe ? val : '';
         document.getElementById('input-nrc').value = val;
+        const wrap=document.getElementById('nrc-pill-wrap');
+        if (wrap) wrap.classList.add('nrc-con-texto');
         ocultarNRCDropdown();
         aplicarBusqueda('nrc', nrcConfirmado || null);
+    }
+
+    function limpiarFiltroNRC(evento) {
+        if (evento) { evento.preventDefault(); evento.stopPropagation(); }
+        if (nrcBusquedaTimer) { clearTimeout(nrcBusquedaTimer); nrcBusquedaTimer=null; }
+        nrcConfirmado='';
+        BUSQUEDA.nrc=null;
+        const input=document.getElementById('input-nrc');
+        const wrap=document.getElementById('nrc-pill-wrap');
+        if (input) input.value='';
+        if (wrap) wrap.classList.remove('nrc-con-texto','filtro-activo');
+        ocultarNRCDropdown();
+        sincronizarFiltros();
+        actualizarBadge();
+        actualizarIframe();
+        if (input) input.focus();
     }
 
     function mostrarNRCDropdown() {
@@ -446,6 +522,7 @@
             if (BUSQUEDA.facultad) url.searchParams.set('facultad', BUSQUEDA.facultad);
             if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
+            if (BUSQUEDA.estado)   url.searchParams.set('estado', BUSQUEDA.estado);
             if (BUSQUEDA.intake)   url.searchParams.set('intake', BUSQUEDA.intake);
             if (BUSQUEDA.fechaInicio.length) url.searchParams.set('fechaInicio', BUSQUEDA.fechaInicio.join('|'));
             if (BUSQUEDA.nrc)      url.searchParams.set('nrc', BUSQUEDA.nrc);
@@ -466,6 +543,10 @@
         if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         if (BUSQUEDA.tutor)    fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
         if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
+        if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
+        if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
+        if (BUSQUEDA.fechaInicio.length===1) fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
+        if (BUSQUEDA.fechaInicio.length>1) fx.push('(' + BUSQUEDA.fechaInicio.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ') + ')');
         if (BUSQUEDA.nrc)      fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
         if (BUSQUEDA.rut && cfg.filtroRut) {
             fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
@@ -484,60 +565,80 @@
         requestAnimationFrame(() => { visor.src = nuevaURL; });
     }
 
-    // ── Cross-filter selects ──────────────────────────────
-    const eqCI = (a,b) => (a||'').toUpperCase() === (b||'').toUpperCase();
+    // ── Cross-filter tipo Power BI ───────────────────────
     function fechaISO(v) {
-        const m=String(v||'').trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        const s=String(v||'').trim();
+        let m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
         if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-        const d=String(v||'').trim().match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
-        return d ? `${d[3]}-${d[2].padStart(2,'0')}-${d[1].padStart(2,'0')}` : '';
+        m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+        return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : '';
+    }
+    function claveValor(v,campo='') {
+        if (campo==='fechaInicio') return fechaISO(v);
+        return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+    }
+    function campoRegistro(n,campo) {
+        if (campo==='fechaInicio') return fechaISO(n['fecha inicio']);
+        return n[campo] ?? '';
     }
     function filtroVisible(campo) {
         return (FILTROS_POR_VISTA[vistaActual] || []).includes(campo);
     }
-    function nrcsFiltrados(excluir) {
-        return catalogoNRC.filter(function(n) {
-            if (excluir !== 'facultad' && filtroVisible('facultad') && BUSQUEDA.facultad && !eqCI(n.facultad, BUSQUEDA.facultad)) return false;
-            if (excluir !== 'tutor'    && filtroVisible('tutor')    && BUSQUEDA.tutor    && !eqCI(n.tutor,    BUSQUEDA.tutor))    return false;
-            if (excluir !== 'tipo'     && filtroVisible('tipo')     && BUSQUEDA.tipo     && !eqCI(n.tipo,     BUSQUEDA.tipo))     return false;
-            if (excluir !== 'intake'   && filtroVisible('intake')   && BUSQUEDA.intake   && !eqCI(n.intake,   BUSQUEDA.intake))   return false;
-            if (excluir !== 'fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length && !BUSQUEDA.fechaInicio.includes(fechaISO(n['fecha inicio']))) return false;
-            if (excluir !== 'nrc'      && filtroVisible('nrc')      && BUSQUEDA.nrc      && !eqCI(n.nrc,      BUSQUEDA.nrc))      return false;
+    function coincide(n,campo,valor) {
+        if (!valor) return true;
+        return claveValor(campoRegistro(n,campo),campo)===claveValor(valor,campo);
+    }
+    function nrcsFiltrados(excluir=null) {
+        return catalogoNRC.filter(n => {
+            if (excluir!=='facultad' && filtroVisible('facultad') && BUSQUEDA.facultad && !coincide(n,'facultad',BUSQUEDA.facultad)) return false;
+            if (excluir!=='tutor' && filtroVisible('tutor') && BUSQUEDA.tutor && !coincide(n,'tutor',BUSQUEDA.tutor)) return false;
+            if (excluir!=='tipo' && filtroVisible('tipo') && BUSQUEDA.tipo && !coincide(n,'tipo',BUSQUEDA.tipo)) return false;
+            if (excluir!=='estado' && filtroVisible('estado') && BUSQUEDA.estado && !coincide(n,'estado',BUSQUEDA.estado)) return false;
+            if (excluir!=='intake' && filtroVisible('intake') && BUSQUEDA.intake && !coincide(n,'intake',BUSQUEDA.intake)) return false;
+            if (excluir!=='fechaInicio' && filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length && !BUSQUEDA.fechaInicio.map(fechaISO).includes(fechaISO(n['fecha inicio']))) return false;
+            if (excluir!=='nrc' && filtroVisible('nrc') && BUSQUEDA.nrc && claveValor(n.nrc)!==claveValor(BUSQUEDA.nrc)) return false;
             return true;
         });
     }
-
-    function reconstruirSelect(id, campo, excluir) {
-        const sel = document.getElementById(id);
-        const valorActual = sel.value;
-        const placeholder = sel.options[0].text.replace(' ⏳','');
-        if (!catalogoNRC.length) return;
-        let vals = [...new Set(nrcsFiltrados(excluir).map(n => (n[campo]||'').trim()).filter(Boolean))];
-        if (campo === 'tutor') vals = vals.filter(esTutorActivo);
-        vals.sort();
-        sel.innerHTML = '<option value="">' + placeholder + '</option>';
-        vals.forEach(function(v) { const o = document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
-        sel.value = vals.includes(valorActual) ? valorActual : '';
-        if (!vals.includes(valorActual) && valorActual) BUSQUEDA[campo] = null;
+    function reconstruirSelect(id,campo) {
+        const sel=document.getElementById(id);
+        if (!sel || !catalogoNRC.length) return;
+        const valorActual=BUSQUEDA[campo] || '';
+        const placeholder=(sel.options[0]?.text || campo).replace(' ⏳','');
+        const mapa=new Map();
+        nrcsFiltrados(campo).forEach(n => {
+            const raw=String(campoRegistro(n,campo)||'').trim();
+            if (!raw) return;
+            if (campo==='tutor' && !esTutorActivo(raw)) return;
+            const k=claveValor(raw,campo);
+            if (!mapa.has(k)) mapa.set(k,raw);
+        });
+        if (valorActual && !mapa.has(claveValor(valorActual,campo))) mapa.set(claveValor(valorActual,campo),valorActual);
+        const vals=[...mapa.values()].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'}));
+        sel.innerHTML='<option value="">'+placeholder+'</option>';
+        vals.forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+        sel.value=valorActual;
+        sel.disabled=false;
     }
-
     function sincronizarFiltros() {
-        reconstruirSelect('sel-facultad','facultad','facultad');
-        reconstruirSelect('sel-tutor','tutor','tutor');
-        reconstruirSelect('sel-tipo','tipo','tipo');
-        reconstruirSelect('sel-intake','intake','intake');
+        reconstruirSelect('sel-facultad','facultad');
+        reconstruirSelect('sel-tutor','tutor');
+        reconstruirSelect('sel-tipo','tipo');
+        reconstruirSelect('sel-estado','estado');
+        reconstruirSelect('sel-intake','intake');
         renderFechasGestion();
+        actualizarEstadoVisualFiltros();
     }
-
-    function renderFechasGestion(){
-        if(!catalogoNRC.length)return;
-        const vals=[...new Set(nrcsFiltrados('fechaInicio').map(n=>fechaISO(n['fecha inicio'])).filter(Boolean))].sort();
-        BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(v=>vals.includes(v));
-        document.getElementById('fecha-multi-chips').innerHTML=BUSQUEDA.fechaInicio.slice().sort().map(v=>`<span class="fecha-chip">${v.split('-').reverse().join('-')}<button type="button" title="Quitar fecha" onclick="quitarFechaGestion('${v}')">×</button></span>`).join('')+(BUSQUEDA.fechaInicio.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasGestion()">Limpiar</button>':'');
+    function renderFechasGestion() {
+        if (!catalogoNRC.length) return;
+        const host=document.getElementById('fecha-multi-wrap');
+        const chips=document.getElementById('fecha-multi-chips');
+        if (chips) chips.innerHTML=BUSQUEDA.fechaInicio.slice().sort().map(v=>`<span class="fecha-chip">${v.split('-').reverse().join('-')}<button type="button" title="Quitar fecha" onclick="quitarFechaGestion('${v}')">×</button></span>`).join('')+(BUSQUEDA.fechaInicio.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasGestion()">Limpiar</button>':'');
+        if (host) host.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
     }
-    function agregarFechaGestion(v){if(v&&!BUSQUEDA.fechaInicio.includes(v))BUSQUEDA.fechaInicio.push(v);document.getElementById('fecha-multi-input').value='';sincronizarFiltros();actualizarBadge();actualizarIframe();}
-    function quitarFechaGestion(v){BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe();}
-    function limpiarFechasGestion(){BUSQUEDA.fechaInicio=[];sincronizarFiltros();actualizarBadge();actualizarIframe();}
+    function agregarFechaGestion(v){ const f=fechaISO(v); if(f&&!BUSQUEDA.fechaInicio.includes(f)) BUSQUEDA.fechaInicio.push(f); document.getElementById('fecha-multi-input').value=''; sincronizarFiltros(); actualizarBadge(); actualizarIframe(); }
+    function quitarFechaGestion(v){ BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v); sincronizarFiltros(); actualizarBadge(); actualizarIframe(); }
+    function limpiarFechasGestion(){ BUSQUEDA.fechaInicio=[]; sincronizarFiltros(); actualizarBadge(); actualizarIframe(); }
 
     // ── Aplicar filtro ────────────────────────────────────
     function aplicarBusqueda(campo, valor) {
@@ -549,13 +650,14 @@
 
     // ── Limpiar ───────────────────────────────────────────
     function limpiarBusqueda() {
-        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=[];
+        BUSQUEDA.nrc=null; BUSQUEDA.rut=null; BUSQUEDA.facultad=null; BUSQUEDA.tutor=null; BUSQUEDA.tipo=null; BUSQUEDA.estado=null; BUSQUEDA.intake=null; BUSQUEDA.fechaInicio=[];
         nrcConfirmado='';
         document.getElementById('input-nrc').value='';
         document.getElementById('input-rut').value='';
         document.getElementById('sel-facultad').value='';
         document.getElementById('sel-tutor').value='';
         document.getElementById('sel-tipo').value='';
+        document.getElementById('sel-estado').value='';
         document.getElementById('sel-intake').value='';
         ocultarNRCDropdown();
         sincronizarFiltros();
@@ -564,11 +666,21 @@
     }
 
     // ── Badge ─────────────────────────────────────────────
+    function actualizarEstadoVisualFiltros() {
+        [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo]) => {
+            const el=document.getElementById(id); if(el) el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]));
+        });
+        const nr=document.getElementById('nrc-pill-wrap'); if(nr) nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
+        const fm=document.getElementById('fecha-multi-wrap'); if(fm) fm.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+    }
+
     function actualizarBadge() {
+        actualizarEstadoVisualFiltros();
         const p=[];
         if (filtroVisible('facultad') && BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
         if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
         if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
+        if (filtroVisible('estado')   && BUSQUEDA.estado)   p.push(BUSQUEDA.estado);
         if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
         if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length) p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
         if (filtroVisible('nrc')      && BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
@@ -584,14 +696,15 @@
             const resp = await fetch('nrcs.json', { cache:'no-store' });
             if (!resp.ok) throw new Error('no ok');
             catalogoNRC = await resp.json();
-            ['sel-facultad','sel-tutor','sel-tipo','sel-intake'].forEach(function(id) {
+            construirIndiceNRC();
+            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
             });
             sincronizarFiltros();
         } catch(err) {
-            ['sel-facultad','sel-tutor','sel-tipo','sel-intake'].forEach(function(id) {
+            ['sel-facultad','sel-tutor','sel-tipo','sel-estado','sel-intake'].forEach(function(id) {
                 const s=document.getElementById(id);
                 s.options[0].text=s.options[0].text.replace(' ⏳','');
                 s.disabled=false;
@@ -678,13 +791,13 @@
 
     // ── Navegación: reportes Power BI ────────────────────
     const FILTROS_POR_VISTA = {
-        'DASHBOARD':          ['facultad','tutor','tipo','nrc','rut'],
-        'NOMINA_ESTUDIANTES': ['facultad','tutor','tipo','nrc','rut'],
-        'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','nrc'],
-        'CURSOS_PREPARACION': ['facultad','tutor','tipo','nrc'],
-        'CURSOS_CIERRE':      ['facultad','tutor','tipo','nrc'],
+        'DASHBOARD':          ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc','rut'],
+        'NOMINA_ESTUDIANTES': ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc','rut'],
+        'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
+        'CURSOS_PREPARACION': ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
+        'CURSOS_CIERRE':      ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'FICHA_ESTUDIANTE':   ['rut'],
-        'CALENDARIOS':        ['facultad','tutor','tipo','intake','fechaInicio','nrc'],
+        'CALENDARIOS':        ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'CORREOS':            ['nrc'],
         'INVITACIONES':       ['nrc'],
         'PRESENTACION':       ['nrc'],
