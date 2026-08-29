@@ -186,129 +186,6 @@
             cursor: pointer;
         }
         .btn-tutoria:hover { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(34,197,94,0.1)); border-color: #22c55e; }
-    
-        /* =========================================================
-           AJUSTE DE ALTURA DEL MENÚ DE COORDINACIÓN
-           Mantiene el diseño y comportamiento original.
-           Solo compacta el menú cuando la pantalla es más baja.
-           ========================================================= */
-
-        @media (max-height: 850px) {
-            .sidebar-header {
-                padding: 18px 18px;
-            }
-            .sidebar-header h2 {
-                font-size: 17px;
-            }
-            .sidebar-header span {
-                margin-top: 3px;
-                font-size: 11px;
-            }
-            .sidebar-menu {
-                overflow-y: hidden;
-                padding-bottom: 8px;
-            }
-            .menu-category {
-                padding: 10px 18px 3px;
-                font-size: 10px;
-            }
-            .menu-btn {
-                padding: 9px 18px;
-                font-size: 13px;
-                gap: 9px;
-            }
-            .collapsible-header {
-                padding: 9px 18px;
-                font-size: 13px;
-            }
-            .collapsible-body .menu-btn {
-                padding-top: 8px;
-                padding-bottom: 8px;
-            }
-            .btn-tutoria {
-                margin: 8px 12px;
-                padding: 9px 12px;
-                font-size: 12px;
-            }
-            .btn-volver {
-                padding: 13px 18px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-height: 740px) {
-            .sidebar-header {
-                padding: 13px 16px;
-            }
-            .sidebar-header h2 {
-                font-size: 15px;
-            }
-            .sidebar-header span {
-                font-size: 10px;
-            }
-            .menu-category {
-                padding: 7px 16px 2px;
-                font-size: 9px;
-            }
-            .menu-btn {
-                padding: 7px 16px;
-                font-size: 12px;
-                gap: 8px;
-            }
-            .collapsible-header {
-                padding: 7px 16px;
-                font-size: 12px;
-            }
-            .collapsible-body .menu-btn {
-                padding-top: 6px;
-                padding-bottom: 6px;
-                padding-left: 30px;
-                font-size: 11.5px;
-            }
-            .btn-tutoria {
-                margin: 6px 10px;
-                padding: 7px 10px;
-                font-size: 11px;
-            }
-            .btn-volver {
-                padding: 10px 16px;
-                font-size: 11px;
-            }
-        }
-
-        @media (max-height: 650px) {
-            .sidebar-header {
-                padding: 10px 14px;
-            }
-            .sidebar-header h2 {
-                font-size: 14px;
-            }
-            .sidebar-header span {
-                display: none;
-            }
-            .menu-category {
-                padding: 5px 14px 1px;
-                font-size: 8px;
-            }
-            .menu-btn {
-                padding: 6px 14px;
-                font-size: 11.5px;
-            }
-            .collapsible-header {
-                padding: 6px 14px;
-                font-size: 11.5px;
-            }
-            .btn-tutoria {
-                margin: 4px 9px;
-                padding: 6px 9px;
-                font-size: 10.5px;
-            }
-            .btn-volver {
-                padding: 8px 14px;
-                font-size: 10.5px;
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -356,12 +233,27 @@
             <div class="separator-bar"></div>
 
             <div class="filtros-wrapper">
-                <div class="multi-filtro" id="mf-facultad"></div>
-                <div class="multi-filtro" id="mf-tutor"></div>
-                <div class="multi-filtro" id="mf-tipo"></div>
-                <div class="multi-filtro" id="mf-estado"></div>
-                <div class="multi-filtro oculto" id="mf-intake"></div>
-                <div class="multi-filtro oculto" id="mf-fechaInicio"></div>
+                <div class="multi-filtro" id="mf-facultad">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Facultad</span><b>⌄</b></button>
+    </div>
+                <div class="multi-filtro" id="mf-tutor">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Tutor</span><b>⌄</b></button>
+    </div>
+                <div class="multi-filtro" id="mf-tipo">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Tipo</span><b>⌄</b></button>
+    </div>
+                <div class="multi-filtro" id="mf-estado">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Estado</span><b>⌄</b></button>
+    </div>
+                <div class="multi-filtro" id="mf-intake">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Intake o versión</span><b>⌄</b></button>
+    </div>
+                <div class="multi-filtro" id="mf-fechaInicio">
+        <div class="date-filter-wrap" style="opacity:.55">
+            <span class="date-filter-label">📅 Fecha de inicio</span>
+            <input type="date" class="date-filter-input" disabled aria-label="Fecha de inicio">
+        </div>
+    </div>
 
                 <div class="separator-bar"></div>
 
@@ -414,7 +306,7 @@
             tipo: 'pbi'
         },
         'CALENDARIOS': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260828-responsive-final",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-multifechaexcel1",
             tipo: 'local'
         },
       'CURSOS_INICIAR': {
@@ -452,7 +344,8 @@
     /* ── estado global ── */
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
-    let nrcConfirmado = '';   // NRC seleccionado que se envía al iframe (distinto del texto parcial del input)
+    let nrcConfirmado = '';   // NRC exacto seleccionado
+    let nrcBusquedaTexto = ''; // búsqueda parcial del super buscador NRC
     const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake','fechaInicio'];
     const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
@@ -471,9 +364,13 @@
             habilitarControles();
         } catch (e) {
             console.warn('nrcs.json no disponible:', e.message);
-            // deja controles deshabilitados con texto de error
-            CAMPOS_MULTI.forEach(c => document.getElementById('mf-' + c).innerHTML = '<button class="filtro-select multi-btn" disabled>⚠️ Sin datos</button>');
-            document.getElementById('pill-nrc').placeholder = '⚠️ Sin datos';
+            // Conserva físicamente todos los filtros aunque el JSON no esté disponible.
+            document.querySelectorAll('#mf-facultad button,#mf-tutor button,#mf-tipo button,#mf-estado button,#mf-intake button')
+                .forEach(b => b.disabled = true);
+            const fecha = document.querySelector('#mf-fechaInicio input');
+            if (fecha) fecha.disabled = true;
+            document.getElementById('pill-nrc').disabled = true;
+            document.getElementById('pill-nrc').placeholder = '🔍 NRC';
         }
     }
 
@@ -563,21 +460,60 @@
         nrcListaCompleta = nrcs;
     }
 
+    function normalizarBusqueda(v) {
+        return String(v || '')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toUpperCase();
+    }
+
+    function textoBuscableCurso(x) {
+        return normalizarBusqueda([
+            x.nrc,
+            x['codigo curso'],
+            x['nombre curso'],
+            x['nombre programa'],
+            x.tutor,
+            x.intake,
+            x.facultad,
+            x.tipo,
+            x.estado
+        ].join(' '));
+    }
+
     function onNRCInput(val) {
         nrcDropdownIdx = -1;
-        const q = val.trim().toUpperCase();
-        // Si el usuario edita el campo → anular la confirmación previa
+        nrcBusquedaTexto = val.trim();
+
+        // Al editar, se desconfirma un NRC exacto previo.
         if (val.trim() !== nrcConfirmado) nrcConfirmado = '';
+
+        const q = normalizarBusqueda(val);
+
+        // Recalcular inmediatamente los demás filtros con el texto escrito.
+        sincronizarFiltros('nrc');
+
         if (!q) {
             ocultarDropdownNRC();
-            sincronizarFiltros('nrc');   // refresca iframe sin NRC
             return;
         }
-        // Busca SIEMPRE en nrcsData completo — no en el subconjunto filtrado
-        // para que el usuario pueda encontrar cualquier NRC independientemente
-        // de los otros filtros activos.
-        const todosLosNRCs = [...new Set(nrcsData.map(x => x.nrc).filter(Boolean))].sort();
-        const matches = todosLosNRCs.filter(n => n.toUpperCase().includes(q)).slice(0, 50);
+
+        // La búsqueda NRC respeta TODOS los otros filtros activos.
+        const baseCompatible = nrcsFiltrados('nrc');
+
+        const matches = baseCompatible
+            .filter(x => textoBuscableCurso(x).includes(q))
+            .sort((a, b) => {
+                const an = normalizarBusqueda(a.nrc);
+                const bn = normalizarBusqueda(b.nrc);
+                const ar = an === q ? 0 : an.startsWith(q) ? 1 : 2;
+                const br = bn === q ? 0 : bn.startsWith(q) ? 1 : 2;
+                return ar - br || an.localeCompare(bn, 'es', { numeric: true });
+            })
+            .slice(0, 50)
+            .map(x => x.nrc);
+
         renderDropdownNRC(matches, q);
     }
 
@@ -636,6 +572,7 @@
         // Solo confirmar si el valor existe exactamente en la lista
         const existe = nrcsData.some(x => x.nrc === val);
         nrcConfirmado = existe ? val : '';
+        nrcBusquedaTexto = existe ? val : '';
         document.getElementById('pill-nrc').value = val;
         ocultarDropdownNRC();
         sincronizarFiltros('nrc');
@@ -667,7 +604,8 @@
             estado   : [...seleccionMulti.estado],
             intake   : [...seleccionMulti.intake],
             fechaInicio : [...seleccionMulti.fechaInicio],
-            nrc      : nrcConfirmado   // solo NRC confirmado (click/Enter), nunca texto parcial
+            nrc      : nrcConfirmado,
+            nrcQuery : nrcBusquedaTexto
         };
     }
 
@@ -682,7 +620,10 @@
             if (excluir !== 'estado'   && f.estado.length   && !f.estado.includes(x.estado)) return false;
             if (excluir !== 'intake'   && f.intake.length   && !f.intake.includes(x.intake)) return false;
             if (excluir !== 'fechaInicio' && f.fechaInicio.length && !f.fechaInicio.includes(fechaISO(x['fecha inicio']))) return false;
-            if (excluir !== 'nrc'      && f.nrc      && x.nrc !== f.nrc)                      return false;
+            if (excluir !== 'nrc') {
+                if (f.nrc && x.nrc !== f.nrc) return false;
+                if (!f.nrc && f.nrcQuery && !textoBuscableCurso(x).includes(normalizarBusqueda(f.nrcQuery))) return false;
+            }
             return true;
         });
     }
@@ -782,7 +723,8 @@
         const f = getFiltrosActivos();
         const partes = [];
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
-        if (f.nrc)      partes.push('NRC: ' + f.nrc);
+        if (f.nrc) partes.push('NRC: ' + f.nrc);
+        else if (f.nrcQuery) partes.push('Búsqueda: ' + f.nrcQuery);
 
         const badge   = document.getElementById('badge-activo');
         const limpiar = document.getElementById('btn-limpiar');
@@ -805,6 +747,7 @@
         CAMPOS_MULTI.forEach(c => seleccionMulti[c].clear());
         document.getElementById('pill-nrc').value = '';
         nrcConfirmado = '';
+        nrcBusquedaTexto = '';
         ocultarDropdownNRC();
         poblarFiltros();
         actualizarBadge();
@@ -821,8 +764,6 @@
 
     function cargar(clave, btn) {
         claveActual = clave;
-        document.getElementById('mf-intake').classList.toggle('oculto', clave !== 'CALENDARIOS');
-        document.getElementById('mf-fechaInicio').classList.toggle('oculto', !['CALENDARIOS','CURSOS_INICIAR'].includes(clave));
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
