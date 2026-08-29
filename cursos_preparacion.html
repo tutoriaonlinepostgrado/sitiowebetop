@@ -17,6 +17,14 @@
     .modal{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;padding:20px}.modal.on{display:flex}.dialog{width:min(440px,100%);background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}.dialog-head{background:var(--navy);color:#fff;padding:18px 20px;border-bottom:3px solid var(--gold)}.dialog-head h2{margin:0;font-size:18px}.dialog-head p{margin:5px 0 0;font-size:11px;color:#cbd5e1}.dialog-body{padding:20px}.dialog-body label{display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:6px}.email{width:100%;height:39px;border:1px solid #cbd5e1;border-radius:8px;padding:0 11px;outline:none}.email:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,95,134,.1)}.form-msg{min-height:18px;margin-top:6px;font-size:10px;color:var(--red)}.dialog-actions{display:flex;gap:8px;margin-top:14px}.dialog-actions button{height:36px;border-radius:8px;padding:0 13px;font-size:11px;font-weight:800;cursor:pointer}.save{flex:1;border:0;background:var(--navy);color:var(--gold)}.all{border:1px solid #cbd5e1;background:#f8fafc;color:#475569}
     @media(max-width:1450px){.top-main{flex-wrap:wrap}.brand{min-width:210px}.filters{order:3;width:100%;overflow:visible;flex-wrap:wrap}.filter{flex:1 1 145px;max-width:none}.search{flex:2 1 220px}.selection{top:98px}.table-shell{max-height:calc(100vh - 222px)}th{padding-inline:8px}td{padding-inline:8px}.course{max-width:225px}.intake-cell{max-width:225px}}
     @media(max-width:900px){.top-main{align-items:flex-start}.brand{min-width:180px;flex:1}.profile{margin-left:auto}.filter{flex-basis:135px}.search{flex-basis:190px}.summary{grid-template-columns:1fr 1fr}.summary-card:first-child{grid-column:1/-1}.table-shell{max-height:calc(100vh - 285px)}.selection{top:132px}}
+    body.embedded .filters{display:none!important}
+    body.embedded .top-main{min-height:42px;padding:6px 12px}
+    body.embedded .brand{min-width:0;flex:1}
+    body.embedded .brand strong{font-size:12px}
+    body.embedded .brand span{font-size:9px}
+    body.embedded .profile{margin-left:auto}
+    body.embedded .selection{top:44px}
+    body.embedded .table-shell{max-height:calc(100vh - 128px)}
   </style>
 </head>
 <body>
@@ -72,6 +80,7 @@
   </div>
 
   <script>
+    if(new URLSearchParams(location.search).get('embed')==='1') document.body.classList.add('embedded');
     const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u';
     const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
     const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
@@ -101,6 +110,7 @@
         facultad:vals('facultad'),
         tutor:vals('tutor'),
         tipo:vals('tipo'),
+        codigo:vals('codigo'),
         estado:vals('estado'),
         intake:vals('intake'),
         fechaInicio:(p.get('fechaInicio')||'').split('|').map(v=>String(v).slice(0,10)).filter(Boolean),
@@ -113,6 +123,7 @@
       return m(x.facultad,portalParams.facultad)
         && m(x.tutor,portalParams.tutor)
         && m(x.tipo,portalParams.tipo)
+        && m(x['codigo curso'],portalParams.codigo)
         && m(x.estado,portalParams.estado)
         && m(x.intake,portalParams.intake)
         && (!portalParams.fechaInicio.length||portalParams.fechaInicio.includes(String(x['fecha inicio']||'').slice(0,10)))
