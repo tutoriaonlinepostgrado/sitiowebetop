@@ -289,6 +289,9 @@
                 <div class="multi-filtro" id="mf-tipo">
         <button type="button" class="filtro-select multi-btn" disabled><span>Tipo</span><b>⌄</b></button>
     </div>
+                <div class="multi-filtro" id="mf-codigo">
+        <button type="button" class="filtro-select multi-btn" disabled><span>Código curso</span><b>⌄</b></button>
+    </div>
                 <div class="multi-filtro" id="mf-estado">
         <button type="button" class="filtro-select multi-btn" disabled><span>Estado</span><b>⌄</b></button>
     </div>
@@ -393,8 +396,8 @@
     let claveActual = 'DASHBOARD_MACRO';
     let nrcConfirmado = '';   // NRC exacto seleccionado
     let nrcBusquedaTexto = ''; // solo texto de búsqueda; no filtra hasta seleccionar NRC
-    const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake','fechaInicio'];
-    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
+    const CAMPOS_MULTI = ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio'];
+    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', codigo:'Código curso', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
 
     const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
@@ -431,6 +434,7 @@
     ======================================================== */
     function valorCampoRegistro(x, campo) {
         if (campo === 'fechaInicio') return fechaISO(x['fecha inicio']);
+        if (campo === 'codigo') return x['codigo curso'] ?? '';
         return x[campo] ?? '';
     }
 
@@ -728,6 +732,7 @@
             if (excluir !== 'facultad' && !seleccionadoCoincide(x, 'facultad', seleccionMulti.facultad)) return false;
             if (excluir !== 'tutor' && !seleccionadoCoincide(x, 'tutor', seleccionMulti.tutor)) return false;
             if (excluir !== 'tipo' && !seleccionadoCoincide(x, 'tipo', seleccionMulti.tipo)) return false;
+            if (excluir !== 'codigo' && !seleccionadoCoincide(x, 'codigo', seleccionMulti.codigo)) return false;
             if (excluir !== 'estado' && !seleccionadoCoincide(x, 'estado', seleccionMulti.estado)) return false;
             if (excluir !== 'intake' && !seleccionadoCoincide(x, 'intake', seleccionMulti.intake)) return false;
             if (excluir !== 'fechaInicio' && !seleccionadoCoincide(x, 'fechaInicio', seleccionMulti.fechaInicio)) return false;
@@ -804,6 +809,7 @@
                 if (f.facultad.length) urlLocal.searchParams.set('facultad', f.facultad.join('|'));
                 if (f.tutor.length)    urlLocal.searchParams.set('tutor', f.tutor.join('|'));
                 if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
+                if (f.codigo.length)   urlLocal.searchParams.set('codigo', f.codigo.join('|'));
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
@@ -821,6 +827,7 @@
         if (f.facultad.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/FACULTAD', f.facultad));
         if (f.tutor.length)    condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', f.tutor));
         if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
+        if (f.codigo.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/CODIGO_CURSO', f.codigo));
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
         if (f.fechaInicio.length) {
             const fechasValidas = f.fechaInicio.map(fechaISO).filter(Boolean);
