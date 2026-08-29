@@ -186,6 +186,53 @@
             cursor: pointer;
         }
         .btn-tutoria:hover { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(34,197,94,0.1)); border-color: #22c55e; }
+    
+        /* =========================================================
+           FILTROS ACTIVOS — lectura visual clara
+           No cambia la lógica, solo hace evidente qué está filtrando.
+           ========================================================= */
+        .multi-filtro.filtro-activo .filtro-select,
+        .multi-filtro.filtro-activo .multi-btn,
+        .multi-filtro.filtro-activo .date-filter-wrap,
+        .pill-wrap.filtro-activo .pill-input {
+            border-color: rgba(255,215,0,.95) !important;
+            background: rgba(255,215,0,.12) !important;
+            color: #ffd700 !important;
+            box-shadow: 0 0 0 1px rgba(255,215,0,.12);
+            font-weight: 700;
+        }
+
+        .multi-filtro.filtro-activo .multi-btn::before,
+        .multi-filtro.filtro-activo .date-filter-wrap::before,
+        .pill-wrap.filtro-activo::before {
+            content: '●';
+            color: #ffd700;
+            font-size: 8px;
+            line-height: 1;
+            margin-right: 5px;
+            flex-shrink: 0;
+        }
+
+        .multi-filtro.filtro-activo .multi-btn span,
+        .multi-filtro.filtro-activo .date-filter-label {
+            color: #ffd700 !important;
+        }
+
+        .filtro-select:not(:disabled):hover,
+        .multi-btn:not(:disabled):hover,
+        .date-filter-wrap:hover,
+        .pill-input:hover {
+            border-color: rgba(255,215,0,.65);
+        }
+
+        /* Badge resumen un poco más legible */
+        .badge-activo.visible {
+            border-color: rgba(255,215,0,.72);
+            background: rgba(255,215,0,.13);
+            color: #ffd700;
+            font-weight: 700;
+        }
+
     </style>
 </head>
 <body>
@@ -360,6 +407,7 @@
             const r = await fetch(NRCS_JSON_URL, { cache: 'no-store' });
             if (!r.ok) throw new Error('HTTP ' + r.status);
             nrcsData = await r.json();
+            construirIndiceNRC();
             poblarFiltros();
             habilitarControles();
         } catch (e) {
@@ -496,6 +544,8 @@
     /* NRC dropdown custom */
     let nrcListaCompleta = [];
     let nrcDropdownIdx = -1;
+    let nrcIndiceBusqueda = [];
+    let nrcBusquedaTimer = null;
 
     function llenarDatalist(nrcs) {
         // guarda la lista; el dropdown se construye al escribir
@@ -524,40 +574,53 @@
         ].join(' '));
     }
 
+    function construirIndiceNRC() {
+        nrcIndiceBusqueda = nrcsData.map(x => ({
+            ref: x,
+            texto: textoBuscableCurso(x),
+            nrcNorm: normalizarBusqueda(x.nrc)
+        }));
+    }
+
     function onNRCInput(val) {
         nrcDropdownIdx = -1;
         nrcBusquedaTexto = val.trim();
 
-        // Si el usuario edita el texto, se desconfirma el NRC anterior,
-        // pero la búsqueda parcial NO filtra los demás slicers.
+        // Si se edita un NRC confirmado, se desconfirma.
+        // NO recalculamos filtros ni iframe mientras se escribe.
         if (val.trim() !== nrcConfirmado) nrcConfirmado = '';
 
         const q = normalizarBusqueda(val);
 
-        // Al desconfirmar un NRC anterior, recalcular los demás slicers.
-        sincronizarFiltros('nrc');
+        if (nrcBusquedaTimer) {
+            clearTimeout(nrcBusquedaTimer);
+            nrcBusquedaTimer = null;
+        }
 
         if (!q) {
             ocultarDropdownNRC();
+            actualizarEstadoVisualFiltros();
             return;
         }
 
-        // Buscar solo dentro del universo permitido por los otros filtros.
-        const base = nrcsFiltrados('nrc');
+        // Pequeño debounce para que escribir rápido no dispare búsquedas innecesarias.
+        nrcBusquedaTimer = setTimeout(() => {
+            const permitidos = new Set(
+                nrcsFiltrados('nrc').map(x => x.nrc)
+            );
 
-        const matches = base
-            .filter(x => textoBuscableCurso(x).includes(q))
-            .sort((a,b) => {
-                const an = normalizarBusqueda(a.nrc);
-                const bn = normalizarBusqueda(b.nrc);
-                const ar = an === q ? 0 : an.startsWith(q) ? 1 : 2;
-                const br = bn === q ? 0 : bn.startsWith(q) ? 1 : 2;
-                return ar - br || an.localeCompare(bn,'es',{numeric:true});
-            })
-            .slice(0, 50)
-            .map(x => x.nrc);
+            const matches = nrcIndiceBusqueda
+                .filter(item => permitidos.has(item.ref.nrc) && item.texto.includes(q))
+                .sort((a,b) => {
+                    const ar = a.nrcNorm === q ? 0 : a.nrcNorm.startsWith(q) ? 1 : 2;
+                    const br = b.nrcNorm === q ? 0 : b.nrcNorm.startsWith(q) ? 1 : 2;
+                    return ar - br || a.nrcNorm.localeCompare(b.nrcNorm, 'es', { numeric:true });
+                })
+                .slice(0, 30)
+                .map(item => item.ref.nrc);
 
-        renderDropdownNRC(matches, q);
+            renderDropdownNRC(matches, q);
+        }, 90);
     }
 
     function onNRCKeydown(e) {
@@ -612,18 +675,24 @@
     }
 
     function seleccionarNRC(val) {
-        // Solo confirmar si el valor existe exactamente en la lista
+        if (nrcBusquedaTimer) {
+            clearTimeout(nrcBusquedaTimer);
+            nrcBusquedaTimer = null;
+        }
+
         const existe = nrcsData.some(x => x.nrc === val);
         nrcConfirmado = existe ? val : '';
         nrcBusquedaTexto = existe ? val : '';
         document.getElementById('pill-nrc').value = val;
         ocultarDropdownNRC();
+
+        // Aquí sí: selección real tipo slicer.
         sincronizarFiltros('nrc');
     }
 
     function mostrarDropdownNRC() {
-        const q = document.getElementById('pill-nrc').value.trim().toUpperCase();
-        if (q) onNRCInput(document.getElementById('pill-nrc').value);
+        const val = document.getElementById('pill-nrc').value;
+        if (val.trim()) onNRCInput(val);
     }
 
     function ocultarDropdownNRC() {
@@ -775,7 +844,21 @@
     /* ========================================================
        BADGE DE FILTROS ACTIVOS
     ======================================================== */
+    function actualizarEstadoVisualFiltros() {
+        CAMPOS_MULTI.forEach(campo => {
+            const host = document.getElementById('mf-' + campo);
+            if (!host) return;
+            host.classList.toggle('filtro-activo', seleccionMulti[campo].size > 0);
+        });
+
+        const nrcWrap = document.getElementById('nrc-wrap');
+        if (nrcWrap) {
+            nrcWrap.classList.toggle('filtro-activo', Boolean(nrcConfirmado));
+        }
+    }
+
     function actualizarBadge() {
+        actualizarEstadoVisualFiltros();
         const f = getFiltrosActivos();
         const partes = [];
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
