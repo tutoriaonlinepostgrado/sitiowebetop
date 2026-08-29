@@ -345,7 +345,7 @@
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
     let nrcConfirmado = '';   // NRC exacto seleccionado
-    let nrcBusquedaTexto = ''; // búsqueda parcial del super buscador NRC
+    let nrcBusquedaTexto = ''; // solo texto de búsqueda; no filtra hasta seleccionar NRC
     const CAMPOS_MULTI = ['facultad','tutor','tipo','estado','intake','fechaInicio'];
     const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
@@ -381,12 +381,12 @@
     /* ========================================================
        POBLAR SELECTS desde array de NRCs
     ======================================================== */
-    function valorRegistro(x, campo) {
+    function valorCampoRegistro(x, campo) {
         if (campo === 'fechaInicio') return fechaISO(x['fecha inicio']);
         return x[campo] ?? '';
     }
 
-    function claveFiltro(v, campo = '') {
+    function claveValor(v, campo = '') {
         if (campo === 'fechaInicio') return fechaISO(v);
         return String(v ?? '')
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -395,26 +395,36 @@
             .toUpperCase();
     }
 
-    function coincideSeleccion(x, campo, seleccion) {
-        if (!seleccion || !seleccion.size) return true;
-        const valor = claveFiltro(valorRegistro(x, campo), campo);
-        return [...seleccion].some(v => claveFiltro(v, campo) === valor);
+    function seleccionadoCoincide(x, campo, seleccion) {
+        if (!seleccion || seleccion.size === 0) return true;
+        const k = claveValor(valorCampoRegistro(x, campo), campo);
+        return [...seleccion].some(v => claveValor(v, campo) === k);
     }
 
     function valoresCampo(campo) {
+        // Power BI slicer semantics:
+        // cada slicer calcula sus opciones usando TODOS los demás filtros,
+        // pero excluyéndose a sí mismo.
         const subset = nrcsFiltrados(campo);
-        const unicos = new Map();
+        const mapa = new Map();
 
         subset.forEach(x => {
-            const raw = valorRegistro(x, campo);
+            const raw = valorCampoRegistro(x, campo);
             if (!raw) return;
             if (campo === 'tutor' && !esTutorActivo(raw)) return;
 
-            const k = claveFiltro(raw, campo);
-            if (k && !unicos.has(k)) unicos.set(k, raw);
+            const key = claveValor(raw, campo);
+            if (key && !mapa.has(key)) mapa.set(key, raw);
         });
 
-        return [...unicos.values()].sort((a,b) =>
+        // Mantener también valores actualmente seleccionados para que el usuario
+        // pueda ver y desmarcar una selección aunque el contexto haya cambiado.
+        seleccionMulti[campo].forEach(v => {
+            const key = claveValor(v, campo);
+            if (key && !mapa.has(key)) mapa.set(key, v);
+        });
+
+        return [...mapa.values()].sort((a,b) =>
             String(a).localeCompare(String(b), 'es', { numeric:true, sensitivity:'base' })
         );
     }
@@ -430,8 +440,6 @@
         const busqueda = host.querySelector('.multi-search')?.value || '';
         const valores = valoresCampo(campo);
         const elegidos = seleccionMulti[campo];
-        // IMPORTANTE: renderizar nunca debe modificar el estado de los filtros.
-        // Las selecciones se conservan estables mientras se recalculan las opciones.
         const n = elegidos.size;
         const mostrarValor=v=>campo==='fechaInicio'?v.split('-').reverse().join('-'):v;
         const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? mostrarValor([...elegidos][0]) : `${ETIQUETAS_MULTI[campo]} (${n})`;
@@ -447,7 +455,7 @@
         const buscable = campo === 'tutor' || campo === 'intake';
         host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
           <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
-          <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${[...elegidos].some(s=>claveFiltro(s,campo)===claveFiltro(v,campo))?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
+          <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${[...elegidos].some(s=>claveValor(s,campo)===claveValor(v,campo))?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
         if (abierto) host.classList.add('abierto');
         if (busqueda) filtrarOpcionesMulti(campo,busqueda);
     }
@@ -520,12 +528,13 @@
         nrcDropdownIdx = -1;
         nrcBusquedaTexto = val.trim();
 
-        // Al editar, se desconfirma un NRC exacto previo.
+        // Si el usuario edita el texto, se desconfirma el NRC anterior,
+        // pero la búsqueda parcial NO filtra los demás slicers.
         if (val.trim() !== nrcConfirmado) nrcConfirmado = '';
 
         const q = normalizarBusqueda(val);
 
-        // Recalcular inmediatamente los demás filtros con el texto escrito.
+        // Al desconfirmar un NRC anterior, recalcular los demás slicers.
         sincronizarFiltros('nrc');
 
         if (!q) {
@@ -533,17 +542,17 @@
             return;
         }
 
-        // La búsqueda NRC respeta TODOS los otros filtros activos.
-        const baseCompatible = nrcsFiltrados('nrc');
+        // Buscar solo dentro del universo permitido por los otros filtros.
+        const base = nrcsFiltrados('nrc');
 
-        const matches = baseCompatible
+        const matches = base
             .filter(x => textoBuscableCurso(x).includes(q))
-            .sort((a, b) => {
+            .sort((a,b) => {
                 const an = normalizarBusqueda(a.nrc);
                 const bn = normalizarBusqueda(b.nrc);
                 const ar = an === q ? 0 : an.startsWith(q) ? 1 : 2;
                 const br = bn === q ? 0 : bn.startsWith(q) ? 1 : 2;
-                return ar - br || an.localeCompare(bn, 'es', { numeric: true });
+                return ar - br || an.localeCompare(bn,'es',{numeric:true});
             })
             .slice(0, 50)
             .map(x => x.nrc);
@@ -647,20 +656,17 @@
         const f = getFiltrosActivos();
 
         return nrcsData.filter(x => {
-            if (excluir !== 'facultad' && !coincideSeleccion(x, 'facultad', seleccionMulti.facultad)) return false;
-            if (excluir !== 'tutor' && !coincideSeleccion(x, 'tutor', seleccionMulti.tutor)) return false;
-            if (excluir !== 'tipo' && !coincideSeleccion(x, 'tipo', seleccionMulti.tipo)) return false;
-            if (excluir !== 'estado' && !coincideSeleccion(x, 'estado', seleccionMulti.estado)) return false;
-            if (excluir !== 'intake' && !coincideSeleccion(x, 'intake', seleccionMulti.intake)) return false;
-            if (excluir !== 'fechaInicio' && !coincideSeleccion(x, 'fechaInicio', seleccionMulti.fechaInicio)) return false;
+            if (excluir !== 'facultad' && !seleccionadoCoincide(x, 'facultad', seleccionMulti.facultad)) return false;
+            if (excluir !== 'tutor' && !seleccionadoCoincide(x, 'tutor', seleccionMulti.tutor)) return false;
+            if (excluir !== 'tipo' && !seleccionadoCoincide(x, 'tipo', seleccionMulti.tipo)) return false;
+            if (excluir !== 'estado' && !seleccionadoCoincide(x, 'estado', seleccionMulti.estado)) return false;
+            if (excluir !== 'intake' && !seleccionadoCoincide(x, 'intake', seleccionMulti.intake)) return false;
+            if (excluir !== 'fechaInicio' && !seleccionadoCoincide(x, 'fechaInicio', seleccionMulti.fechaInicio)) return false;
 
-            if (excluir !== 'nrc') {
-                if (f.nrc && claveFiltro(x.nrc) !== claveFiltro(f.nrc)) return false;
-
-                if (!f.nrc && f.nrcQuery) {
-                    const q = normalizarBusqueda(f.nrcQuery);
-                    if (q && !textoBuscableCurso(x).includes(q)) return false;
-                }
+            // NRC se comporta como un slicer:
+            // solo filtra cuando existe una selección exacta confirmada.
+            if (excluir !== 'nrc' && f.nrc) {
+                if (claveValor(x.nrc) !== claveValor(f.nrc)) return false;
             }
 
             return true;
@@ -668,17 +674,13 @@
     }
 
     function sincronizarFiltros(cambiado) {
-        // Primero calculamos todo con un estado inmutable.
-        const opciones = Object.fromEntries(
-            CAMPOS_MULTI.map(c => [c, valoresCampo(c)])
-        );
-
-        // Después pintamos. renderMulti ya no borra ni altera selecciones.
+        // No borrar selecciones de otros slicers.
+        // Solo recalcular las opciones visibles de cada uno.
         CAMPOS_MULTI.forEach(renderMulti);
 
         const nrcsActivos = [...new Set(
-            nrcsFiltrados(null).map(x => x.nrc).filter(Boolean)
-        )].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
+            nrcsFiltrados('nrc').map(x => x.nrc).filter(Boolean)
+        )].sort((a,b) => String(a).localeCompare(String(b),'es',{numeric:true}));
 
         nrcListaCompleta = nrcsActivos;
 
@@ -705,11 +707,9 @@
         const s = String(v ?? '').trim();
         if (!s) return '';
 
-        // yyyy-mm-dd, incluso con hora o timezone después.
         let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
         if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
 
-        // dd-mm-yyyy o dd/mm/yyyy, incluso si después viene una hora.
         m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
         if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
 
@@ -780,7 +780,6 @@
         const partes = [];
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
         if (f.nrc) partes.push('NRC: ' + f.nrc);
-        else if (f.nrcQuery) partes.push('Búsqueda: ' + f.nrcQuery);
 
         const badge   = document.getElementById('badge-activo');
         const limpiar = document.getElementById('btn-limpiar');
