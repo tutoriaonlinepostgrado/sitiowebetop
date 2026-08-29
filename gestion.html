@@ -158,6 +158,7 @@
             <button class="menu-btn" onclick="cargar('NOMINA_ESTUDIANTES',this)">📋 Nómina Estudiantes</button>
             <button class="menu-btn" onclick="cargar('CURSOS_ACTIVOS',this)">🟢 Cursos Activos</button>
             <button class="menu-btn" onclick="cargar('CURSOS_PREPARACION',this)">⏳ Cursos en Preparación</button>
+            <button class="menu-btn" onclick="cargar('REPORTE_INICIOS',this)">📋 Reporte de Inicios</button>
             <button class="menu-btn" onclick="cargar('CURSOS_CIERRE',this)">🏁 Cursos en Cierre</button>
             <button class="menu-btn" onclick="cargar('FICHA_ESTUDIANTE',this)">👤 Ficha del Estudiante</button>
             <button class="menu-btn" onclick="cargar('CALENDARIOS',this)">📅 Calendarios</button>
@@ -333,6 +334,7 @@
         'NOMINA_ESTUDIANTES': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_ACTIVOS':     "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CURSOS_PREPARACION': "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=75dcbe8308cd22de087d&navContentPaneEnabled=false&filterPaneEnabled=false",
+        'REPORTE_INICIOS':   "https://tutoriaonlinepostgrado.github.io/sitiowebetop/reporte_inicios.html?v=20260829-1",
         'CURSOS_CIERRE':      "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
         'FICHA_ESTUDIANTE':   "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
         'CALENDARIOS':        "https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html?v=20260820-filtrotipo2",
@@ -348,6 +350,7 @@
         'CURSOS_ACTIVOS':     { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'9df5f2db687d901b71b9', filtroRut:false },
         'CURSOS_PREPARACION': { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'75dcbe8308cd22de087d', filtroRut:false },
         'CURSOS_CIERRE':      { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'ab4e8f37a94c688a5869', filtroRut:false },
+        'REPORTE_INICIOS':   { local:true, filtroRut:false },
         'FICHA_ESTUDIANTE':   { reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8', page:'0961bca799ff83e065db', filtroRut:true  },
         'CALENDARIOS':        { local:true, filtroRut:false }
     };
@@ -358,6 +361,7 @@
         'CURSOS_ACTIVOS':'Cursos Activos',
         'CURSOS_PREPARACION':'Cursos en Preparación',
         'CURSOS_CIERRE':'Cursos en Cierre',
+        'REPORTE_INICIOS':'Reporte de Inicios',
         'FICHA_ESTUDIANTE':'Ficha del Estudiante',
         'CALENDARIOS':'📅 Calendarios',
         'CORREOS':'📧 Generador de Correos de Bienvenida',
@@ -796,6 +800,7 @@
         'CURSOS_ACTIVOS':     ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'CURSOS_PREPARACION': ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'CURSOS_CIERRE':      ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
+        'REPORTE_INICIOS':   ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'FICHA_ESTUDIANTE':   ['rut'],
         'CALENDARIOS':        ['facultad','tutor','tipo','estado','intake','fechaInicio','nrc'],
         'CORREOS':            ['nrc'],
