@@ -27,6 +27,38 @@
     body.embedded .selection{top:0}
     body.embedded .summary{padding-top:10px}
     body.embedded .table-shell{max-height:calc(100vh - 112px)}
+
+    /* Tabla embebida adaptable al ancho del portal */
+    body.embedded .table-shell{overflow:auto}
+    body.embedded table{width:100%;min-width:0;table-layout:fixed;font-size:10px}
+    body.embedded th{padding:7px 5px;font-size:8px;overflow:hidden;text-overflow:ellipsis}
+    body.embedded td{padding:6px 5px;font-size:9px;overflow:hidden;text-overflow:ellipsis}
+    body.embedded .course{max-width:none;font-size:9px;line-height:1.2}
+    body.embedded .intake-cell{max-width:none;overflow:hidden;text-overflow:ellipsis}
+    body.embedded .date{font-size:9px}
+    body.embedded .badge{padding:2px 5px;font-size:8px;min-height:20px}
+    body.embedded .icon{width:25px;height:24px;font-size:12px}
+    body.embedded th:nth-child(1),body.embedded td:nth-child(1){width:3%}
+    body.embedded th:nth-child(2),body.embedded td:nth-child(2){width:22%}
+    body.embedded th:nth-child(3),body.embedded td:nth-child(3){width:18%}
+    body.embedded th:nth-child(4),body.embedded td:nth-child(4){width:7%}
+    body.embedded th:nth-child(5),body.embedded td:nth-child(5){width:7%}
+    body.embedded th:nth-child(6),body.embedded td:nth-child(6){width:7%}
+    body.embedded th:nth-child(7),body.embedded td:nth-child(7){width:10%}
+    body.embedded th:nth-child(8),body.embedded td:nth-child(8){width:5%}
+    body.embedded th:nth-child(9),body.embedded td:nth-child(9){width:5%}
+    body.embedded th:nth-child(10),body.embedded td:nth-child(10){width:6%}
+    body.embedded th:nth-child(11),body.embedded td:nth-child(11){width:5%}
+    body.embedded th:nth-child(12),body.embedded td:nth-child(12){width:5%}
+    @media(max-width:1350px){
+      body.embedded .summary{grid-template-columns:minmax(0,1fr) 120px 120px 120px}
+      body.embedded .summary-card{padding:8px 10px}
+      body.embedded .summary-card h1{font-size:16px}
+      body.embedded .kpi strong{font-size:21px}
+      body.embedded th{font-size:7px;padding-left:3px;padding-right:3px}
+      body.embedded td{font-size:8px;padding-left:3px;padding-right:3px}
+      body.embedded .icon{width:23px;height:22px;font-size:11px}
+    }
   </style>
 </head>
 <body>
