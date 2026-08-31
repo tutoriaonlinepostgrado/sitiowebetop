@@ -89,6 +89,7 @@
     const PBI_INTAKE='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/4c8d7e7b8b275872a80d?experience=power-bi&chromeless=1';
     const STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded';
     const STORAGE='etop_preparacion_correo';
+    const GLOBAL_SESSION='etop_usuario_sesion';
     const EMAILS={
       'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
     };
@@ -103,7 +104,9 @@
     const days=v=>{const d=dateOnly(v);return d?Math.round((d-today())/86400000):99999};
     const unique=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
     const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
-    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
+    function globalSession(){try{return JSON.parse(localStorage.getItem(GLOBAL_SESSION)||'null')}catch(e){return null}}
+    const gs=globalSession();
+    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
 
     const portalParams=(()=>{
       const p=new URLSearchParams(location.search);
@@ -181,7 +184,7 @@
       const selectedCourses=allCourses.filter(x=>selected.has(String(x.id))),bar=document.getElementById('selection'),n=selectedCourses.length;bar.classList.toggle('on',n>0);document.getElementById('selectionTitle').textContent=`${n} NRC seleccionado${n===1?'':'s'}`;document.getElementById('selectionDetail').textContent=n?selectedCourses.map(x=>x.nrc).join(' · '):'';document.getElementById('selectAll').checked=!!list.length&&list.every(x=>selected.has(String(x.id)));document.getElementById('selectAll').indeterminate=list.some(x=>selected.has(String(x.id)))&&!list.every(x=>selected.has(String(x.id)))
     }
     function apply(){rebuildFilters();render()}
-    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;if(all){localStorage.removeItem(STORAGE);profileEmail=''}else localStorage.setItem(STORAGE,profileEmail);document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=!!profileTutor;closeProfile();apply();return true}
+    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;if(all){localStorage.removeItem(STORAGE);profileEmail=''}else {localStorage.setItem(STORAGE,profileEmail);localStorage.setItem(GLOBAL_SESSION,JSON.stringify({email:profileEmail,tutor:profileTutor,rol:COORDINACION.has(profileEmail)?'COORDINACION':'TUTOR',guardado:new Date().toISOString()}));}document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=!!profileTutor;closeProfile();apply();return true}
     function openProfile(){document.getElementById('profileModal').classList.add('on');document.getElementById('email').value=profileEmail;document.getElementById('formMsg').textContent='';setTimeout(()=>document.getElementById('email').focus(),50)}
     function closeProfile(){document.getElementById('profileModal').classList.remove('on')}
     ['facultad','tutor','tipo','codigo','fecha'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('buscar').addEventListener('input',render);document.getElementById('clear').addEventListener('click',()=>{['facultad','tutor','tipo','codigo','fecha','buscar'].forEach(id=>document.getElementById(id).value='');apply()});
