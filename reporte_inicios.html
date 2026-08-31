@@ -122,13 +122,16 @@ if(new URLSearchParams(location.search).get('embed')==='1') document.body.classL
 const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
 const SP_STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx';
 const STORAGE='etop_preparacion_correo';
+const GLOBAL_SESSION='etop_usuario_sesion';
 const EMAILS={
   'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
 };
 const COORDINACION=new Set(['patricio.collao@unab.cl']);
 const emailNorm=v=>String(v??'').trim().toLowerCase();
 const tutorByEmail=email=>Object.keys(EMAILS).find(name=>emailNorm(EMAILS[name])===emailNorm(email))||'';
-let profileEmail=emailNorm(localStorage.getItem(STORAGE)||''), profileTutor='';
+function globalSession(){try{return JSON.parse(localStorage.getItem(GLOBAL_SESSION)||'null')}catch(e){return null}}
+const gs=globalSession();
+let profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''), profileTutor='';
 let cursos=[], metricas=[], incidencias=[], nomina='TODOS';
 
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
@@ -216,7 +219,7 @@ function setProfile(email,all=false){
   profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);
   if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail)) return false;
   if(all){localStorage.removeItem(STORAGE);profileEmail='';}
-  else localStorage.setItem(STORAGE,profileEmail);
+  else {localStorage.setItem(STORAGE,profileEmail);localStorage.setItem(GLOBAL_SESSION,JSON.stringify({email:profileEmail,tutor:profileTutor,rol:COORDINACION.has(profileEmail)?'COORDINACION':'TUTOR',guardado:new Date().toISOString()}));}
   actualizarProfileBtn();
   closeProfile();
   render();
