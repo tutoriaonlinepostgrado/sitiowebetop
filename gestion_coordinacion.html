@@ -394,6 +394,16 @@
     /* ── estado global ── */
     let nrcsData = [];
     let claveActual = 'DASHBOARD_MACRO';
+
+    const ETOP_GLOBAL_SESSION='etop_usuario_sesion';
+    function sesionGlobalETOP(){
+        try { return JSON.parse(localStorage.getItem(ETOP_GLOBAL_SESSION) || 'null'); }
+        catch(e){ return null; }
+    }
+    function tutorSesionETOP(){
+        const s=sesionGlobalETOP();
+        return s && s.rol==='TUTOR' && s.tutor ? String(s.tutor).trim() : '';
+    }
     let nrcConfirmado = '';   // NRC exacto seleccionado
     let nrcBusquedaTexto = ''; // solo texto de búsqueda; no filtra hasta seleccionar NRC
     const CAMPOS_MULTI = ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio'];
@@ -728,8 +738,10 @@
 
     function nrcsFiltrados(excluir = null) {
         const f = getFiltrosActivos();
+        const tutorSesion=tutorSesionETOP();
 
         return nrcsData.filter(x => {
+            if (tutorSesion && claveValor(x.tutor)!==claveValor(tutorSesion)) return false;
             if (excluir !== 'facultad' && !seleccionadoCoincide(x, 'facultad', seleccionMulti.facultad)) return false;
             if (excluir !== 'tutor' && !seleccionadoCoincide(x, 'tutor', seleccionMulti.tutor)) return false;
             if (excluir !== 'tipo' && !seleccionadoCoincide(x, 'tipo', seleccionMulti.tipo)) return false;
@@ -808,7 +820,8 @@
             const urlLocal = new URL(cfg.url, window.location.href);
             if (['CALENDARIOS','CURSOS_INICIAR'].includes(claveActual)) {
                 if (f.facultad.length) urlLocal.searchParams.set('facultad', f.facultad.join('|'));
-                if (f.tutor.length)    urlLocal.searchParams.set('tutor', f.tutor.join('|'));
+                const tutorEfectivo = f.tutor.length ? f.tutor : (tutorSesionETOP() ? [tutorSesionETOP()] : []);
+                if (tutorEfectivo.length) urlLocal.searchParams.set('tutor', tutorEfectivo.join('|'));
                 if (f.tipo.length)     urlLocal.searchParams.set('tipo', f.tipo.join('|'));
                 if (f.codigo.length)   urlLocal.searchParams.set('codigo', f.codigo.join('|'));
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
@@ -826,7 +839,8 @@
         // Estos son los nombres EXACTOS del modelo semántico de Power BI.
         // Los nombres internos de SharePoint no se utilizan en esta URL.
         if (f.facultad.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/FACULTAD', f.facultad));
-        if (f.tutor.length)    condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', f.tutor));
+        const tutorEfectivo = f.tutor.length ? f.tutor : (tutorSesionETOP() ? [tutorSesionETOP()] : []);
+        if (tutorEfectivo.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', tutorEfectivo));
         if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
         if (f.codigo.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/CODIGO_CURSO', f.codigo));
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
@@ -869,6 +883,8 @@
         actualizarEstadoVisualFiltros();
         const f = getFiltrosActivos();
         const partes = [];
+        const tutorSesion=tutorSesionETOP();
+        if (tutorSesion) partes.push('Tutor sesión: ' + tutorSesion);
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
         if (f.nrc) partes.push('NRC: ' + f.nrc);
 
