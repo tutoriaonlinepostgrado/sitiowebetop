@@ -189,19 +189,52 @@
 
         /* Ajuste de ancho con sidebar abierto */
         .app-container,.content-area,.top-bar{min-width:0}
-        .top-bar{overflow:hidden}
-        .filtros-wrapper{min-width:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
-        .filtros-wrapper::-webkit-scrollbar{height:3px}
-        .filtros-wrapper::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:5px}
+        .top-bar{
+            overflow:visible;
+            flex-wrap:nowrap;
+            gap:5px;
+        }
+        .filtros-wrapper{
+            min-width:0;
+            overflow:visible;
+            flex-wrap:nowrap;
+            gap:4px;
+            align-items:center;
+        }
+        .multi-filtro{flex:0 1 auto}
+        .multi-btn{min-width:88px;max-width:128px}
+        #mf-facultad .multi-btn{width:100px}
+        #mf-tutor .multi-btn{width:100px}
+        #mf-tipo .multi-btn{width:88px}
+        #mf-codigo .multi-btn{width:108px}
+        #mf-estado .multi-btn{width:92px}
+        #mf-intake .multi-btn{width:126px}
+        #mf-fechaInicio{flex-shrink:0}
+        .date-filter-wrap{height:28px;padding:0 6px}
+        .date-filter-input{width:103px}
+        .pill-wrap{flex-shrink:0}
+        .pill-input{width:82px}
+        .pill-input:focus{width:112px}
+        .badge-activo{max-width:170px;overflow:hidden;text-overflow:ellipsis}
         @media(max-width:1500px){
             .sidebar:not(.closed){width:250px}
             .sidebar:not(.closed) .menu-btn{padding-left:13px;padding-right:10px;font-size:12px}
             .sidebar:not(.closed) .menu-category{padding-left:13px}
-            .multi-btn{min-width:92px;max-width:132px;font-size:11px}
-            .date-filter-wrap{padding-left:6px;padding-right:6px}
-            .date-filter-input{width:105px}
-            .pill-input{width:82px}
-            .pill-input:focus{width:118px}
+            .titulo-vista{font-size:12px}
+            .separator-bar{margin-left:1px;margin-right:1px}
+            .multi-btn{font-size:10px;min-width:78px;max-width:112px}
+            #mf-facultad .multi-btn{width:88px}
+            #mf-tutor .multi-btn{width:88px}
+            #mf-tipo .multi-btn{width:78px}
+            #mf-codigo .multi-btn{width:96px}
+            #mf-estado .multi-btn{width:82px}
+            #mf-intake .multi-btn{width:112px}
+            .date-filter-label{font-size:10px}
+            .date-filter-input{width:92px;font-size:10px}
+            .pill-input{width:72px;font-size:10px}
+            .pill-input:focus{width:100px}
+            .badge-activo{max-width:135px;font-size:10px}
+            .btn-limpiar{font-size:10px;padding-left:7px;padding-right:7px}
         }
     
         /* =========================================================
