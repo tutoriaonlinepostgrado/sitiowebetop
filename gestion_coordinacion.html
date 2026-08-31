@@ -42,7 +42,7 @@
         .collapsible-body .menu-btn::before { content: '›'; color: rgba(255,215,0,0.4); font-size: 16px; margin-right: -4px; }
         .collapsible-body .menu-btn:hover { color: var(--amarillo-top); }
         .collapsible-body .menu-btn.active { color: var(--amarillo-top); border-left-color: var(--amarillo-top); }
-        .content-area { flex-grow: 1; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .content-area { flex-grow: 1; min-width:0; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { background-color: var(--azul-sidebar); min-height: 50px; display: flex; align-items: center; padding: 6px 12px 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
         .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; flex-shrink: 0; }
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
@@ -168,7 +168,7 @@
         .btn-limpiar:hover { background: rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.7); }
         .btn-limpiar.visible { display: flex; }
 
-        iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
+        iframe { width: 100%; height: 100%; min-width:0; max-width:100%; border: none; flex-grow: 1; display:block; }
         .btn-tutoria {
             margin: 8px 12px;
             padding: 9px 14px;
@@ -186,6 +186,23 @@
             cursor: pointer;
         }
         .btn-tutoria:hover { background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(34,197,94,0.1)); border-color: #22c55e; }
+
+        /* Ajuste de ancho con sidebar abierto */
+        .app-container,.content-area,.top-bar{min-width:0}
+        .top-bar{overflow:hidden}
+        .filtros-wrapper{min-width:0;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
+        .filtros-wrapper::-webkit-scrollbar{height:3px}
+        .filtros-wrapper::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:5px}
+        @media(max-width:1500px){
+            .sidebar:not(.closed){width:250px}
+            .sidebar:not(.closed) .menu-btn{padding-left:13px;padding-right:10px;font-size:12px}
+            .sidebar:not(.closed) .menu-category{padding-left:13px}
+            .multi-btn{min-width:92px;max-width:132px;font-size:11px}
+            .date-filter-wrap{padding-left:6px;padding-right:6px}
+            .date-filter-input{width:105px}
+            .pill-input{width:82px}
+            .pill-input:focus{width:118px}
+        }
     
         /* =========================================================
            FILTROS ACTIVOS — lectura visual clara
