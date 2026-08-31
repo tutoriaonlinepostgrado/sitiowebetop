@@ -383,6 +383,16 @@
     let vistaActual = 'DASHBOARD';
     let catalogoNRC = [];
 
+    const ETOP_GLOBAL_SESSION='etop_usuario_sesion';
+    function sesionGlobalETOP(){
+        try { return JSON.parse(localStorage.getItem(ETOP_GLOBAL_SESSION) || 'null'); }
+        catch(e){ return null; }
+    }
+    function tutorSesionETOP(){
+        const s=sesionGlobalETOP();
+        return s && s.rol==='TUTOR' && s.tutor ? String(s.tutor).trim() : '';
+    }
+
     // Tutores activos: controla únicamente las opciones del desplegable.
     // No elimina ni oculta cursos históricos del catálogo o de Power BI.
     const TUTORES_ACTIVOS = new Set(["HANS NOVAKOVIC","KIMBERLY JORQUERA","MARTA GONZALEZ","DANITZA JANSEN","SYLVIA VALENZUELA","PAULA PARDO","MARIA FERNANDA GONZALEZ","BARBARA ROJAS","CONSTANZA CONTRERAS","CARLA PENA","NOEMI PAZ","ORIETTA CORTES","HECTOR TAPIA","CONSUELO PARGA","FRANCISCA INDA","JAVIERA ROJAS","ALYSON HERNANDEZ"]);
@@ -532,7 +542,8 @@
         if (cfg.local) {
             const url = new URL(misReportes[clave], window.location.href);
             if (BUSQUEDA.facultad) url.searchParams.set('facultad', BUSQUEDA.facultad);
-            if (BUSQUEDA.tutor)    url.searchParams.set('tutor', BUSQUEDA.tutor);
+            const tutorEfectivo = BUSQUEDA.tutor || tutorSesionETOP();
+            if (tutorEfectivo)     url.searchParams.set('tutor', tutorEfectivo);
             if (BUSQUEDA.tipo)     url.searchParams.set('tipo', BUSQUEDA.tipo);
             if (BUSQUEDA.codigo)   url.searchParams.set('codigo', BUSQUEDA.codigo);
             if (BUSQUEDA.estado)   url.searchParams.set('estado', BUSQUEDA.estado);
@@ -555,7 +566,8 @@
 
         const fx = [];
         if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
-        if (BUSQUEDA.tutor)    fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(BUSQUEDA.tutor)}'`);
+        const tutorEfectivo = BUSQUEDA.tutor || tutorSesionETOP();
+        if (tutorEfectivo)      fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
         if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
         if (BUSQUEDA.codigo)   fx.push(`NRC_TUTOR_ACTUAL/CODIGO_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
         if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
@@ -616,7 +628,9 @@
         return claveValor(campoRegistro(n,campo),campo)===claveValor(valor,campo);
     }
     function nrcsFiltrados(excluir=null) {
+        const tutorSesion=tutorSesionETOP();
         return catalogoNRC.filter(n => {
+            if (tutorSesion && claveValor(n.tutor)!==claveValor(tutorSesion)) return false;
             if (excluir!=='facultad' && filtroVisible('facultad') && BUSQUEDA.facultad && !coincide(n,'facultad',BUSQUEDA.facultad)) return false;
             if (excluir!=='tutor' && filtroVisible('tutor') && BUSQUEDA.tutor && !coincide(n,'tutor',BUSQUEDA.tutor)) return false;
             if (excluir!=='tipo' && filtroVisible('tipo') && BUSQUEDA.tipo && !coincide(n,'tipo',BUSQUEDA.tipo)) return false;
@@ -707,6 +721,8 @@
     function actualizarBadge() {
         actualizarEstadoVisualFiltros();
         const p=[];
+        const tutorSesion=tutorSesionETOP();
+        if (tutorSesion) p.push('Tutor sesión: '+tutorSesion);
         if (filtroVisible('facultad') && BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
         if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
         if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
