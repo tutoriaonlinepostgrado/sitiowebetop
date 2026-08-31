@@ -651,12 +651,20 @@ window.onload = async function() {
   const fi = toISO(p.get('fechaInicio'));
   if(fi) document.getElementById('fecha-inicio').value = fi;
 
-  // Cargar nrcs_onboarding para buscador de curso
+  // El nombre del curso llega directamente desde Gestión.
+  // nrcs_onboarding queda solo como respaldo para accesos antiguos/directos.
   const nrcParam = p.get('nrc');
+  const nombreCursoParam = p.get('nombreCurso') || '';
   intakeActivoInv = p.get('intake') || '';
+
+  if(nombreCursoParam) {
+    set('curso-search', nombreCursoParam);
+    set('curso', nombreCursoParam);
+  }
+
   await cargarNrcsObInv();
 
-  if(nrcParam) {
+  if(nrcParam && !nombreCursoParam) {
     const ob = nrcsObCacheInv.find(x => x.nrc === nrcParam);
     if(ob) {
       if(ob['nombre curso']) {
