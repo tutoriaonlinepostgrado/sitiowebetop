@@ -952,6 +952,12 @@
                         ? `${BUSQUEDA.nrc} — ${nombreInduccion}`
                         : BUSQUEDA.nrc);
 
+                } else if (clave === 'INVITACIONES') {
+                    // Invitación sincrónica: usar directamente el curso seleccionado
+                    // en Gestión, sin depender de reconstruirlo desde otro JSON.
+                    if (nd['nombre curso']) p.set('nombreCurso', nd['nombre curso']);
+                    if (nd.intake) p.set('intake', nd.intake);
+
                 } else if (clave === 'PRESENTACION') {
                     // Presentación Tutorial necesita: nombreCurso, duracion, diaInicio, diaFin
                     const duracion  = calcularSemanas(fi, ff);
