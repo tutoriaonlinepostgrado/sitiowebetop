@@ -125,7 +125,7 @@
     const EMAILS={
       'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl','ALVARO ORELLANA':'tutoriaonline86@unab.cl'
     };
-    const COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
+    const COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
     const norm=v=>String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const emailNorm=v=>String(v??'').trim().toLowerCase();
@@ -138,7 +138,20 @@
     const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
     function globalSession(){try{return JSON.parse(localStorage.getItem(GLOBAL_SESSION)||'null')}catch(e){return null}}
     const gs=globalSession();
-    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor='',selected=new Set();
+    const hasGlobalSession=!!(gs && gs.email && (gs.rol==='COORDINACION' || (gs.rol==='TUTOR' && gs.tutor)));
+    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor=gs?.rol==='TUTOR'&&gs?.tutor?String(gs.tutor).trim():'',selected=new Set();
+
+    function applyGlobalSession(){
+      if(!hasGlobalSession) return false;
+      profileEmail=emailNorm(gs.email);
+      profileTutor=gs.rol==='TUTOR'?String(gs.tutor||'').trim():'';
+      localStorage.setItem(STORAGE,profileEmail);
+      document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';
+      document.getElementById('tutor').disabled=!!profileTutor;
+      closeProfile();
+      apply();
+      return true;
+    }
 
     const portalParams=(()=>{
       const p=new URLSearchParams(location.search);
@@ -232,13 +245,19 @@
       allCourses=await nr.json();
       incidents=ir.ok?await ir.json():[];
       studentMetrics=mr.ok?await mr.json():[];
-      if(profileEmail&&!setProfile(profileEmail)){
+      if(hasGlobalSession){
+        applyGlobalSession();
+      }else if(profileEmail&&!setProfile(profileEmail)){
         localStorage.removeItem(STORAGE);
         profileEmail='';
         openProfile();
         apply();
-      }else if(profileEmail)setProfile(profileEmail);
-      else{setProfile('',true);openProfile()}
+      }else if(profileEmail){
+        setProfile(profileEmail);
+      }else{
+        setProfile('',true);
+        openProfile();
+      }
     }).catch(err=>{
       document.getElementById('rows').innerHTML=`<tr><td colspan="12" class="empty">⚠️ ${esc(err.message)}</td></tr>`;
     });
