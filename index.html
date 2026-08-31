@@ -183,6 +183,24 @@
         border-color:rgba(250,204,21,.38);
     }
 
+
+    /* Sesión global ETOP */
+    .etop-user-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:9px;border:1px solid rgba(250,204,21,.30);background:rgba(250,204,21,.08);color:#facc15;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+    .etop-user-btn:hover{background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.5)}
+    .etop-login-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(2,6,23,.78);align-items:center;justify-content:center;padding:18px}
+    .etop-login-overlay.open{display:flex}
+    .etop-login-card{width:min(430px,100%);background:#1f2940;border:1px solid rgba(250,204,21,.28);border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,.45);overflow:hidden}
+    .etop-login-head{padding:18px 20px;border-bottom:2px solid #facc15;background:rgba(0,0,0,.16)}
+    .etop-login-head h3{margin:0;color:#facc15;font-size:17px}
+    .etop-login-head p{margin:5px 0 0;color:#94a3b8;font-size:11px;line-height:1.45}
+    .etop-login-body{padding:20px}
+    .etop-login-body label{display:block;color:#cbd5e1;font-size:11px;font-weight:700;margin-bottom:6px}
+    .etop-login-input{width:100%;height:40px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:#111827;color:#fff;padding:0 11px;outline:none;font-size:13px}
+    .etop-login-input:focus{border-color:#facc15;box-shadow:0 0 0 3px rgba(250,204,21,.10)}
+    .etop-login-msg{min-height:18px;margin-top:7px;color:#fca5a5;font-size:10px}
+    .etop-login-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+    .etop-login-save{height:36px;border:0;border-radius:8px;background:#facc15;color:#1f2940;padding:0 16px;font-size:11px;font-weight:800;cursor:pointer}
+    .etop-login-cancel{height:36px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:transparent;color:#cbd5e1;padding:0 13px;font-size:11px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body class="text-white h-screen flex flex-col">
@@ -1074,5 +1092,92 @@ cargarAnuncios();
 cargarEventosUNAB();
 cargarGrafico();
 </script>
+
+<div id="etop-login-overlay" class="etop-login-overlay" role="dialog" aria-modal="true" aria-labelledby="etop-login-title">
+  <div class="etop-login-card">
+    <div class="etop-login-head">
+      <h3 id="etop-login-title">Identificación ETOP</h3>
+      <p>Ingresa tu correo institucional una sola vez. El portal recordará tu perfil en este navegador.</p>
+    </div>
+    <div class="etop-login-body">
+      <label for="etop-login-email">Correo institucional</label>
+      <input id="etop-login-email" class="etop-login-input" type="email" autocomplete="email" placeholder="tutoriaonline00@unab.cl">
+      <div id="etop-login-msg" class="etop-login-msg"></div>
+      <div class="etop-login-actions">
+        <button id="etop-login-cancel" class="etop-login-cancel" type="button" onclick="cerrarSesionETOP()">Cancelar</button>
+        <button class="etop-login-save" type="button" onclick="guardarSesionETOP()">Guardar perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const ETOP_SESSION_KEY='etop_usuario_sesion';
+const ETOP_LEGACY_EMAIL_KEY='etop_preparacion_correo';
+const ETOP_EMAILS={
+  'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
+};
+const ETOP_COORDINACION=new Set(['patricio.collao@unab.cl']);
+const etopEmailNorm=v=>String(v||'').trim().toLowerCase();
+function etopTutorByEmail(email){
+  const e=etopEmailNorm(email);
+  return Object.keys(ETOP_EMAILS).find(n=>etopEmailNorm(ETOP_EMAILS[n])===e)||'';
+}
+function leerSesionETOP(){
+  try{
+    const raw=localStorage.getItem(ETOP_SESSION_KEY);
+    return raw?JSON.parse(raw):null;
+  }catch(e){return null}
+}
+function actualizarSesionETOPUI(){
+  const s=leerSesionETOP(),b=document.getElementById('etop-user-btn');
+  const cancel=document.getElementById('etop-login-cancel');
+  if(!b)return;
+  if(!s){b.textContent='👤 Identificarse';if(cancel)cancel.style.display='none';return}
+  b.textContent=s.rol==='COORDINACION'?'🏛️ Coordinación · Cambiar':'👤 '+(s.tutor||'Tutor').split(' ')[0]+' · Cambiar';
+  if(cancel)cancel.style.display='';
+}
+function abrirSesionETOP(){
+  const o=document.getElementById('etop-login-overlay'),i=document.getElementById('etop-login-email'),s=leerSesionETOP();
+  document.getElementById('etop-login-msg').textContent='';
+  if(i)i.value=s?.email||localStorage.getItem(ETOP_LEGACY_EMAIL_KEY)||'';
+  if(o)o.classList.add('open');
+  setTimeout(()=>i?.focus(),50);
+}
+function cerrarSesionETOP(){
+  if(!leerSesionETOP()) return;
+  document.getElementById('etop-login-overlay')?.classList.remove('open');
+}
+function guardarSesionETOP(){
+  const input=document.getElementById('etop-login-email');
+  const msg=document.getElementById('etop-login-msg');
+  const email=etopEmailNorm(input?.value);
+  const tutor=etopTutorByEmail(email);
+  const esCoord=ETOP_COORDINACION.has(email);
+  if(!email){msg.textContent='Ingresa tu correo institucional.';return}
+  if(!tutor&&!esCoord){msg.textContent='Este correo no está asociado a un tutor o usuario de coordinación del portal.';return}
+  const sesion={email,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};
+  localStorage.setItem(ETOP_SESSION_KEY,JSON.stringify(sesion));
+  // Compatibilidad temporal con las páginas que todavía usan la clave anterior.
+  localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
+  document.getElementById('etop-login-overlay')?.classList.remove('open');
+  actualizarSesionETOPUI();
+}
+document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')guardarSesionETOP()});
+(function iniciarSesionGlobalETOP(){
+  // Migra automáticamente un perfil anterior si ya existía.
+  let s=leerSesionETOP();
+  if(!s){
+    const legacy=etopEmailNorm(localStorage.getItem(ETOP_LEGACY_EMAIL_KEY));
+    const tutor=etopTutorByEmail(legacy),esCoord=ETOP_COORDINACION.has(legacy);
+    if(legacy&&(tutor||esCoord)){
+      s={email:legacy,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};
+      localStorage.setItem(ETOP_SESSION_KEY,JSON.stringify(s));
+    }
+  }
+  actualizarSesionETOPUI();
+  if(!s) abrirSesionETOP();
+})();
+</script>
+
 </body>
 </html>
