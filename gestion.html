@@ -65,13 +65,13 @@
         .teams-icon-lg span { color: white; font-weight: 900; font-size: 26px; font-family: 'Segoe UI', sans-serif; }
         .content-area { flex-grow: 1; min-width: 0; overflow: hidden; background-color: #F3F2F1; position: relative; display: flex; flex-direction: column; }
         /* TOP-BAR */
-        .top-bar { background-color: var(--azul-sidebar); height: 52px; display: flex; align-items: center; padding: 0 12px 0 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: white; flex-shrink: 0; }
+        .top-bar { background-color: var(--azul-sidebar); min-height: 52px; height: auto; display: flex; align-items: center; padding: 0 12px 0 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: white; flex-shrink: 0; }
         .top-bar-left { display: flex; align-items: center; gap: 4px; padding-right: 14px; border-right: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
         .toggle-btn { background: none; border: none; color: var(--amarillo-top); font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
         .toggle-btn:hover { background-color: rgba(255,255,255,0.1); }
         #titulo-vista { font-size: 13px; font-weight: 600; color: #e2e8f0; white-space: nowrap; }
         .top-bar-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.07); margin: 0 10px; flex-shrink: 0; }
-        .top-bar-search { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: nowrap; }
+        .top-bar-search { display: flex; align-items: center; gap: 7px; flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; }
         .guia-correos{display:none;align-items:center;gap:8px;margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,.1);min-width:0}.guia-correos-texto{max-width:330px;color:#cbd5e1;font-size:10px;line-height:1.25}.guia-correos-texto strong{color:#ffd700}.guia-correos-btn{height:28px;padding:0 11px;border:1px solid rgba(255,215,0,.45);border-radius:7px;background:rgba(255,215,0,.12);color:#ffd700;font:700 10px 'Segoe UI',sans-serif;cursor:pointer;white-space:nowrap}.guia-correos-btn:hover{background:rgba(255,215,0,.22)}.nrc-pill-input.guia-atencion{border-color:#ffd700;box-shadow:0 0 0 4px rgba(255,215,0,.14)}
         @media(max-width:1200px){.guia-correos-texto{display:none}.guia-correos{margin-left:5px;padding-left:5px}}
         /* Dropdowns */
@@ -143,10 +143,15 @@
 
         /* Ajuste de ancho con sidebar abierto */
         .app-container, .content-area, .top-bar { min-width:0; }
-        .top-bar { overflow:hidden; }
-        .top-bar-search { min-width:0; max-width:100%; overflow-x:auto; scrollbar-width:thin; }
-        .top-bar-search::-webkit-scrollbar{height:3px}
-        .top-bar-search::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:5px}
+        .top-bar { overflow:visible; }
+        .top-bar-search { max-width:100%; overflow:visible; }
+        @media (max-width:1500px){
+            .top-bar{align-items:flex-start;padding-top:6px;padding-bottom:6px}
+            .top-bar-left{min-height:40px;align-items:center}
+            .top-bar-sep{margin-top:9px}
+            .top-bar-search{flex-wrap:wrap;row-gap:5px;padding-top:3px}
+            .guia-correos{align-self:flex-start;margin-top:3px}
+        }
         @media (max-width:1500px){
             .sidebar:not(.closed){width:250px}
             .sidebar:not(.closed) .sidebar-header{padding-left:14px;padding-right:14px}
@@ -317,7 +322,7 @@
             </div>
             <div class="guia-correos" id="guia-correos">
                 <div class="guia-correos-texto"><strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.</div>
-                <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoBienvenida()">↻ Cargar datos del curso</button>
+                <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoOnboarding()">↻ Cargar datos del curso</button>
             </div>
         </div>
         <!-- FIN TOP-BAR -->
@@ -874,12 +879,12 @@
         });
         const hayFiltros = visibles.length > 0;
         document.querySelector('.top-bar-search').style.display = hayFiltros ? 'flex' : 'none';
-        document.getElementById('guia-correos').style.display = clave === 'CORREOS' ? 'flex' : 'none';
+        document.getElementById('guia-correos').style.display = (clave === 'CORREOS' || clave === 'INVITACIONES') ? 'flex' : 'none';
         if (catalogoNRC.length) sincronizarFiltros();
         actualizarBadge();
     }
 
-    function cargarDatosCursoBienvenida() {
+    function cargarDatosCursoOnboarding() {
         const input = document.getElementById('input-nrc');
         if (!BUSQUEDA.nrc) {
             input.classList.add('guia-atencion');
@@ -888,9 +893,10 @@
             alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');
             return;
         }
+        const claveDestino = vistaActual === 'INVITACIONES' ? 'INVITACIONES' : 'CORREOS';
         const botonCorreo = [...document.querySelectorAll('.menu-btn')]
-            .find(b => (b.getAttribute('onclick') || '').includes("cargarOnboarding('CORREOS'"));
-        if (botonCorreo) cargarOnboarding('CORREOS', botonCorreo);
+            .find(b => (b.getAttribute('onclick') || '').includes("cargarOnboarding('" + claveDestino + "'"));
+        if (botonCorreo) cargarOnboarding(claveDestino, botonCorreo);
     }
 
     function cargar(clave, btn) {
