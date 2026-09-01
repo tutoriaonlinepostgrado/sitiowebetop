@@ -613,7 +613,7 @@
         if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         const tutorEfectivo = BUSQUEDA.tutor || tutorSesionETOP();
         if (tutorEfectivo)      fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
-        if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_x0020_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
+        if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
         if (BUSQUEDA.codigo)   fx.push(`NRC_TUTOR_ACTUAL/CODIGO_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
         if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
         if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
@@ -624,12 +624,15 @@
             fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
         }
 
-        if (fx.length) url.searchParams.set('filter', fx.join(' and '));
         url.searchParams.set('_portalFilter', Date.now().toString());
 
-        // Power BI puede ignorar silenciosamente expresiones OData cuando
-        // URLSearchParams codifica los espacios como "+". Forzamos %20.
-        return url.toString().replace(/\+/g, '%20');
+        // Construir el filtro OData como un bloque codificado completo.
+        // Esto evita que URLSearchParams altere caracteres dentro de la expresión
+        // (por ejemplo valores como 100%ONLINE).
+        const baseUrl = url.toString();
+        return fx.length
+            ? baseUrl + '&filter=' + encodeURIComponent(fx.join(' and '))
+            : baseUrl;
     }
 
     function abrirPerfilTutor() {
