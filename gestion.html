@@ -613,13 +613,27 @@
         if (BUSQUEDA.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
         const tutorEfectivo = BUSQUEDA.tutor || tutorSesionETOP();
         if (tutorEfectivo)      fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
-        if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
-        if (BUSQUEDA.codigo)   fx.push(`NRC_TUTOR_ACTUAL/CODIGO_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
         if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
         if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
         if (BUSQUEDA.fechaInicio.length===1) fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
         if (BUSQUEDA.fechaInicio.length>1) fx.push('(' + BUSQUEDA.fechaInicio.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ') + ')');
-        if (BUSQUEDA.nrc)      fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
+        if (BUSQUEDA.nrc) {
+            fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
+        } else if (BUSQUEDA.tipo || BUSQUEDA.codigo) {
+            // Tipo NRC y Código curso no se envían directamente al modelo semántico.
+            // Se resuelven contra nrcs.json y se convierten en el conjunto exacto de NRC válidos.
+            const nrcPuente = [...new Set(
+                nrcsFiltrados('nrc').map(n => String(n.nrc || '').trim()).filter(Boolean)
+            )];
+            if (!nrcPuente.length) {
+                // Expresión imposible: evita que Power BI vuelva a mostrar el universo completo.
+                fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '__SIN_RESULTADOS__'`);
+            } else if (nrcPuente.length === 1) {
+                fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(nrcPuente[0])}'`);
+            } else {
+                fx.push('(' + nrcPuente.map(v => `NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(v)}'`).join(' or ') + ')');
+            }
+        }
         if (BUSQUEDA.rut && cfg.filtroRut) {
             fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
         }
