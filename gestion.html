@@ -165,7 +165,170 @@
             .nrc-pill-input{width:110px}
             .nrc-pill-input:focus{width:130px}
         }
-    </style>
+    
+        /* ── Filtros compactos: estado dentro del propio control ── */
+        .compact-filter-wrap{
+            position:relative;
+            width:112px;
+            min-width:112px;
+            height:30px;
+            border-radius:7px;
+        }
+        .compact-filter-wrap[data-campo="intake"]{width:132px;min-width:132px}
+        .compact-filter-wrap .fsel-topbar{
+            width:100%!important;
+            max-width:none!important;
+            height:30px;
+            padding:0 30px 0 9px!important;
+            color:transparent!important;
+            background-color:rgba(255,255,255,.025);
+            border:1px solid rgba(255,255,255,.13);
+            border-radius:7px;
+            cursor:pointer;
+        }
+        .compact-filter-wrap .fsel-topbar option{
+            color:#e5e7eb!important;
+            background:#1f2e4b;
+        }
+        .compact-filter-display{
+            position:absolute;
+            inset:0;
+            display:flex;
+            align-items:center;
+            gap:6px;
+            padding:0 27px 0 9px;
+            pointer-events:none;
+            color:#cbd5e1;
+            font-size:10px;
+            font-weight:600;
+            white-space:nowrap;
+            overflow:hidden;
+        }
+        .compact-filter-display .compact-filter-label{
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+        .compact-filter-display .compact-filter-count{
+            display:none;
+            min-width:17px;
+            height:17px;
+            padding:0 5px;
+            border-radius:9px;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,215,0,.14);
+            border:1px solid rgba(255,215,0,.38);
+            color:#ffd700;
+            font-size:9px;
+            font-weight:800;
+            flex-shrink:0;
+        }
+        .compact-filter-clear{
+            position:absolute;
+            right:6px;
+            top:50%;
+            transform:translateY(-50%);
+            width:17px;
+            height:17px;
+            padding:0;
+            border:0;
+            border-radius:50%;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(239,68,68,.14);
+            color:#fca5a5;
+            font-size:12px;
+            line-height:1;
+            cursor:pointer;
+            z-index:3;
+        }
+        .compact-filter-clear:hover{background:rgba(239,68,68,.28);color:#fff}
+        .compact-filter-wrap.filtro-activo .fsel-topbar{
+            border-color:rgba(255,215,0,.65);
+            background:rgba(255,215,0,.07);
+        }
+        .compact-filter-wrap.filtro-activo .compact-filter-display{color:#fff}
+        .compact-filter-wrap.filtro-activo .compact-filter-count{display:inline-flex}
+        .compact-filter-wrap.filtro-activo .compact-filter-clear{display:flex}
+
+        /* Fecha múltiple compacta: no expande la barra con chips */
+        .fecha-multi-wrap{
+            position:relative;
+            width:126px;
+            min-width:126px;
+            height:30px;
+            overflow:visible;
+        }
+        .fecha-multi-wrap .fecha-multi-input{
+            width:100%!important;
+            height:30px;
+            color:transparent!important;
+            padding-right:27px!important;
+            cursor:pointer;
+        }
+        .fecha-multi-wrap .fecha-multi-input::-webkit-datetime-edit{color:transparent}
+        .fecha-multi-wrap .fecha-chips{display:none!important}
+        .compact-date-display{
+            position:absolute;
+            inset:0;
+            display:flex;
+            align-items:center;
+            gap:6px;
+            padding:0 29px 0 9px;
+            pointer-events:none;
+            font-size:10px;
+            font-weight:600;
+            color:#cbd5e1;
+            white-space:nowrap;
+        }
+        .compact-date-count{
+            display:none;
+            min-width:17px;
+            height:17px;
+            padding:0 5px;
+            border-radius:9px;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,215,0,.14);
+            border:1px solid rgba(255,215,0,.38);
+            color:#ffd700;
+            font-size:9px;
+            font-weight:800;
+        }
+        .compact-date-clear{
+            position:absolute;
+            right:6px;
+            top:50%;
+            transform:translateY(-50%);
+            width:17px;
+            height:17px;
+            padding:0;
+            border:0;
+            border-radius:50%;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(239,68,68,.14);
+            color:#fca5a5;
+            font-size:12px;
+            cursor:pointer;
+            z-index:3;
+        }
+        .fecha-multi-wrap.filtro-activo .fecha-multi-input{
+            border-color:rgba(255,215,0,.65)!important;
+            background:rgba(255,215,0,.07)!important;
+        }
+        .fecha-multi-wrap.filtro-activo .compact-date-display{color:#fff}
+        .fecha-multi-wrap.filtro-activo .compact-date-count{display:inline-flex}
+        .fecha-multi-wrap.filtro-activo .compact-date-clear{display:flex}
+
+        @media(max-width:1500px){
+            .compact-filter-wrap{width:104px;min-width:104px}
+            .compact-filter-wrap[data-campo="intake"]{width:120px;min-width:120px}
+            .fecha-multi-wrap{width:118px;min-width:118px}
+        }
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -663,6 +826,77 @@
             return true;
         });
     }
+    const ETIQUETAS_FILTRO_COMPACTO = {
+        facultad:'Facultad',
+        tutor:'Tutor',
+        tipo:'Tipo NRC',
+        codigo:'Código curso',
+        estado:'Estado',
+        intake:'Intake/Versión'
+    };
+
+    function inicializarFiltrosCompactos() {
+        [
+            ['sel-facultad','facultad'],
+            ['sel-tutor','tutor'],
+            ['sel-tipo','tipo'],
+            ['sel-codigo','codigo'],
+            ['sel-estado','estado'],
+            ['sel-intake','intake']
+        ].forEach(([id,campo]) => {
+            const sel=document.getElementById(id);
+            if(!sel || sel.closest('.compact-filter-wrap')) return;
+            const wrap=document.createElement('div');
+            wrap.className='compact-filter-wrap';
+            wrap.dataset.filtro=campo;
+            wrap.dataset.campo=campo;
+            sel.parentNode.insertBefore(wrap,sel);
+            wrap.appendChild(sel);
+            sel.removeAttribute('data-filtro');
+
+            const display=document.createElement('div');
+            display.className='compact-filter-display';
+            display.innerHTML='<span class="compact-filter-label">'+ETIQUETAS_FILTRO_COMPACTO[campo]+'</span><span class="compact-filter-count">1</span>';
+            wrap.appendChild(display);
+
+            const clear=document.createElement('button');
+            clear.type='button';
+            clear.className='compact-filter-clear';
+            clear.title='Quitar filtro '+ETIQUETAS_FILTRO_COMPACTO[campo];
+            clear.setAttribute('aria-label',clear.title);
+            clear.textContent='×';
+            clear.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();limpiarFiltroCompacto(campo);});
+            wrap.appendChild(clear);
+        });
+
+        const fecha=document.getElementById('fecha-multi-wrap');
+        if(fecha && !fecha.querySelector('.compact-date-display')){
+            const display=document.createElement('div');
+            display.className='compact-date-display';
+            display.innerHTML='<span>Fecha inicio</span><span class="compact-date-count" id="compact-date-count">0</span>';
+            fecha.appendChild(display);
+
+            const clear=document.createElement('button');
+            clear.type='button';
+            clear.className='compact-date-clear';
+            clear.title='Quitar fechas de inicio';
+            clear.setAttribute('aria-label',clear.title);
+            clear.textContent='×';
+            clear.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();limpiarFechasGestion();});
+            fecha.appendChild(clear);
+        }
+    }
+
+    function limpiarFiltroCompacto(campo){
+        BUSQUEDA[campo]=null;
+        const ids={facultad:'sel-facultad',tutor:'sel-tutor',tipo:'sel-tipo',codigo:'sel-codigo',estado:'sel-estado',intake:'sel-intake'};
+        const sel=document.getElementById(ids[campo]);
+        if(sel) sel.value='';
+        sincronizarFiltros();
+        actualizarBadge();
+        actualizarIframe();
+    }
+
     function reconstruirSelect(id,campo) {
         const sel=document.getElementById(id);
         if (!sel || !catalogoNRC.length) return;
@@ -694,11 +928,17 @@
         actualizarEstadoVisualFiltros();
     }
     function renderFechasGestion() {
-        if (!catalogoNRC.length) return;
         const host=document.getElementById('fecha-multi-wrap');
         const chips=document.getElementById('fecha-multi-chips');
-        if (chips) chips.innerHTML=BUSQUEDA.fechaInicio.slice().sort().map(v=>`<span class="fecha-chip">${v.split('-').reverse().join('-')}<button type="button" title="Quitar fecha" onclick="quitarFechaGestion('${v}')">×</button></span>`).join('')+(BUSQUEDA.fechaInicio.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasGestion()">Limpiar</button>':'');
-        if (host) host.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+        if (chips) chips.innerHTML='';
+        if (host) {
+            host.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+            host.title=BUSQUEDA.fechaInicio.length
+                ? BUSQUEDA.fechaInicio.slice().sort().map(v=>v.split('-').reverse().join('-')).join(' · ')
+                : 'Fecha de inicio';
+        }
+        const count=document.getElementById('compact-date-count');
+        if(count) count.textContent=String(BUSQUEDA.fechaInicio.length);
     }
     function agregarFechaGestion(v){ const f=fechaISO(v); if(f&&!BUSQUEDA.fechaInicio.includes(f)) BUSQUEDA.fechaInicio.push(f); document.getElementById('fecha-multi-input').value=''; sincronizarFiltros(); actualizarBadge(); actualizarIframe(); }
     function quitarFechaGestion(v){ BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v); sincronizarFiltros(); actualizarBadge(); actualizarIframe(); }
@@ -733,29 +973,37 @@
     // ── Badge ─────────────────────────────────────────────
     function actualizarEstadoVisualFiltros() {
         [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo]) => {
-            const el=document.getElementById(id); if(el) el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]));
+            const el=document.getElementById(id);
+            const wrap=el?.closest('.compact-filter-wrap');
+            if(wrap){
+                const activo=Boolean(BUSQUEDA[campo]);
+                wrap.classList.toggle('filtro-activo',activo);
+                wrap.title=activo ? ETIQUETAS_FILTRO_COMPACTO[campo]+': '+BUSQUEDA[campo] : ETIQUETAS_FILTRO_COMPACTO[campo];
+            }
         });
         const nr=document.getElementById('nrc-pill-wrap'); if(nr) nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
         const fm=document.getElementById('fecha-multi-wrap'); if(fm) fm.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+        const count=document.getElementById('compact-date-count'); if(count) count.textContent=String(BUSQUEDA.fechaInicio.length);
     }
 
     function actualizarBadge() {
         actualizarEstadoVisualFiltros();
-        const p=[];
-        const tutorSesion=tutorSesionETOP();
-        if (tutorSesion) p.push('Tutor sesión: '+tutorSesion);
-        if (filtroVisible('facultad') && BUSQUEDA.facultad) p.push(BUSQUEDA.facultad);
-        if (filtroVisible('tutor')    && BUSQUEDA.tutor)    p.push(BUSQUEDA.tutor);
-        if (filtroVisible('tipo')     && BUSQUEDA.tipo)     p.push(BUSQUEDA.tipo);
-        if (filtroVisible('codigo')   && BUSQUEDA.codigo)   p.push(BUSQUEDA.codigo);
-        if (filtroVisible('estado')   && BUSQUEDA.estado)   p.push(BUSQUEDA.estado);
-        if (filtroVisible('intake')   && BUSQUEDA.intake)   p.push('Intake: '+BUSQUEDA.intake);
-        if (filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length) p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
-        if (filtroVisible('nrc')      && BUSQUEDA.nrc)      p.push('NRC: '+BUSQUEDA.nrc);
-        if (filtroVisible('rut')      && BUSQUEDA.rut)      p.push('RUT: '+BUSQUEDA.rut);
+        let n=0;
+        ['facultad','tutor','tipo','codigo','estado','intake'].forEach(campo=>{
+            if(filtroVisible(campo) && BUSQUEDA[campo]) n++;
+        });
+        if(filtroVisible('fechaInicio') && BUSQUEDA.fechaInicio.length) n++;
+        if(filtroVisible('nrc') && BUSQUEDA.nrc) n++;
+        if(filtroVisible('rut') && BUSQUEDA.rut) n++;
         const badge=document.getElementById('filter-badge'), clear=document.getElementById('btn-clear-filter');
-        if (p.length) { document.getElementById('badge-txt').textContent=p.join(' · '); badge.classList.add('on'); clear.classList.add('on'); }
-        else { badge.classList.remove('on'); clear.classList.remove('on'); }
+        if (n) {
+            document.getElementById('badge-txt').textContent=n+' filtro'+(n===1?'':'s')+' activo'+(n===1?'':'s');
+            badge.classList.add('on');
+            clear.classList.add('on');
+        } else {
+            badge.classList.remove('on');
+            clear.classList.remove('on');
+        }
     }
 
     // ── Cargar nrcs.json ──────────────────────────────────
@@ -1008,6 +1256,7 @@
     }
 
     // ── Init ──────────────────────────────────────────────
+    inicializarFiltrosCompactos();
     cargarSugerenciasNRC();
     window.onload = function() {
         const btn = document.querySelector('.menu-btn.active');
