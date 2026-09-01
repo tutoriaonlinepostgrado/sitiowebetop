@@ -145,11 +145,35 @@
         .app-container, .content-area, .top-bar { min-width:0; }
         .top-bar { overflow:visible; }
         .top-bar-search { max-width:100%; overflow:visible; }
-        @media (max-width:1500px){
-            .top-bar{align-items:flex-start;padding-top:6px;padding-bottom:6px}
-            .top-bar-left{min-height:40px;align-items:center}
-            .top-bar-sep{margin-top:9px}
-            .top-bar-search{flex-wrap:wrap;row-gap:5px;padding-top:3px}
+        @media (max-width:1900px){
+            .top-bar{
+                align-items:flex-start;
+                padding-top:6px;
+                padding-bottom:6px;
+                min-height:76px;
+            }
+            .top-bar-left{
+                min-height:64px;
+                align-items:flex-start;
+                padding-top:5px;
+            }
+            .top-bar > .top-bar-sep{margin-top:9px}
+            .top-bar-search{
+                flex-wrap:wrap;
+                row-gap:6px;
+                column-gap:7px;
+                padding-top:1px;
+                align-content:flex-start;
+            }
+            /* El separador interno antes de NRC fuerza el segundo nivel:
+               arriba filtros académicos; abajo NRC/RUT/perfil/acciones. */
+            .top-bar-search > .top-bar-sep{
+                flex-basis:100%;
+                width:0;
+                height:0;
+                margin:0;
+                background:transparent;
+            }
             .guia-correos{align-self:flex-start;margin-top:3px}
         }
         @media (max-width:1500px){
@@ -602,7 +626,10 @@
 
         if (fx.length) url.searchParams.set('filter', fx.join(' and '));
         url.searchParams.set('_portalFilter', Date.now().toString());
-        return url.toString();
+
+        // Power BI puede ignorar silenciosamente expresiones OData cuando
+        // URLSearchParams codifica los espacios como "+". Forzamos %20.
+        return url.toString().replace(/\+/g, '%20');
     }
 
     function abrirPerfilTutor() {
