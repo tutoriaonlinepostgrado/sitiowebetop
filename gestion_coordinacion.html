@@ -932,7 +932,10 @@
         if (f.facultad.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/FACULTAD', f.facultad));
         const tutorEfectivo = f.tutor.length ? f.tutor : (tutorSesionETOP() ? [tutorSesionETOP()] : []);
         if (tutorEfectivo.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NOMBRE_TUTOR', tutorEfectivo));
-        if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
+        if (f.tipo.length) {
+            const tiposPBI = f.tipo.map(v => v === '100%ONLINE' ? '100PCTONLINE' : v);
+            condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC_URL', tiposPBI));
+        }
         if (f.codigo.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/CODIGO_CURSO', f.codigo));
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
         if (f.intake.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION', f.intake));
