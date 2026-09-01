@@ -123,16 +123,20 @@
     .panel-action .pa-icon{font-size:16px;flex-shrink:0}
     .panel-status{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid #d7e0ea;font-size:10px;color:#52657a}
     .panel-status strong{color:#334155}
-    .quick-filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-    .quick-filter{height:31px;border:1px solid #cad7e4;border-radius:7px;background:#fff;color:#52657a;font-size:9px;font-weight:800;cursor:pointer;padding:0 8px}
-    .quick-filter:hover{border-color:#d6a900;color:#8a6d00;background:#fffdf2}
-    .quick-filter.active{border-color:#d6a900;background:#fff8dc;color:#725600;box-shadow:0 0 0 2px rgba(214,169,0,.08)}
-    .quick-filter-clear{width:100%;height:30px;margin-top:6px;border:1px solid #efc1c5;border-radius:7px;background:#fff5f5;color:#a84d55;font-size:9px;font-weight:800;cursor:pointer}
-    .detail-filter-bar{display:none;align-items:center;gap:5px;flex-wrap:wrap;margin:0 0 6px;padding:6px 8px;border:1px solid #e3d38d;border-radius:7px;background:#fffdf2;font-size:9px;color:#6b7280}
-    .detail-filter-bar.on{display:flex}
-    .detail-filter-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:10px;background:#fff8dc;border:1px solid #e2c65d;color:#725600;font-weight:700}
-    .detail-filter-chip button{border:0;background:transparent;color:#9a6f00;cursor:pointer;font-weight:900;padding:0}
-    .detail-filter-clear-all{margin-left:auto;border:0;background:transparent;color:#a84d55;font-size:9px;font-weight:800;cursor:pointer}
+    .course-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+    .course-meta-filter{min-width:0;text-align:left;padding:8px 9px;border:1px solid #d7e0ea;border-radius:8px;background:#f8fafc;color:#334155;cursor:pointer;transition:.15s}
+    .course-meta-filter:hover{border-color:#d6a900;background:#fffdf2}
+    .course-meta-filter.active{border-color:#d6a900;background:#fff8dc;box-shadow:0 0 0 2px rgba(214,169,0,.08)}
+    .course-meta-label{display:block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#7b8da2;margin-bottom:2px}
+    .course-meta-value{display:block;font-size:10px;font-weight:700;color:#41566e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .course-meta-filter.active .course-meta-value{color:#725600}
+    .course-filter-clear{width:100%;height:29px;margin-top:7px;border:1px solid #efc1c5;border-radius:7px;background:#fff5f5;color:#a84d55;font-size:9px;font-weight:800;cursor:pointer}
+    .powerapp-panel-view{height:calc(100vh - 250px);min-height:430px;display:flex;flex-direction:column}
+    .powerapp-panel-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+    .powerapp-back{height:29px;padding:0 9px;border:1px solid #c7d5e2;border-radius:7px;background:#fff;color:#52657a;font-size:9px;font-weight:800;cursor:pointer}
+    .powerapp-external{font-size:9px;font-weight:700;color:#315f86;text-decoration:none}
+    .powerapp-iframe{width:100%;flex:1;border:0;background:#fff}
+    .powerapp-open-note{font-size:9px;color:#64748b;padding:0 10px 8px}
     @media(max-width:1100px){
       .course-panel{position:fixed;top:12px;right:12px;bottom:12px;z-index:60;width:min(390px,calc(100vw - 24px));max-height:none;box-shadow:0 18px 45px rgba(15,23,42,.24)}
     }
@@ -166,7 +170,6 @@
     <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span><button class="btn-export" type="button" onclick="descargarExcel()">📥 Descargar Excel</button></div>
   </section>
 
-  <div class="detail-filter-bar" id="detail-filter-bar"></div>
   <div class="calendar-workspace">
     <div class="table-wrap">
       <table>
@@ -189,7 +192,7 @@
     const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
     const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u';
     const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
-    const PBI_INTAKE='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/4c8d7e7b8b275872a80d?experience=power-bi&chromeless=1';
+    let allCourses=[];
     let selectedCourseNrc='';
     const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:''};
     const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
@@ -201,7 +204,11 @@
     const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
     const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
     const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
-    function filterCourses(data){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio');return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function filterCourses(data,{ignoreNrc=false}={}){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio');return data.filter(x=>(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(norm(x.estado)))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(ignoreNrc||!q.get('nrc')||norm(x.nrc)===norm(q.get('nrc'))));}
+    function reconstruirUniversoDesdeFicha(){
+      const explorando=Object.values(detailFilters).some(Boolean);
+      courses=filterCourses(allCourses,{ignoreNrc:explorando});
+    }
     function updateHeader(list=courses){
       const tutor=selected(list,'tutor','Varios / No definido');
       document.getElementById('h-tutor').textContent=tutor;
@@ -254,49 +261,37 @@
       const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmtDate(x['fecha inicio']),fecha_fin:fmtDate(x['fecha fin'])});
       return BASE+'anuncio_bienvenida_curso_malla.html?'+p.toString();
     }
-    function intakePbiUrl(intake){
-      if(!intake)return '';
-      const u=new URL(PBI_INTAKE);
-      u.searchParams.set('filter',`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${String(intake).replace(/'/g,"''")}'`);
-      return u.toString().replace(/\+/g,'%20');
-    }
     function panelLink(url,icon,texto,primary=false){
       const enabled=Boolean(url);
       return `<a class="panel-action ${primary?'primary ':''}${enabled?'':'disabled'}" href="${enabled?esc(url):'#'}" ${enabled?'target="_blank" rel="noopener"':''}><span class="pa-icon">${icon}</span><span>${esc(texto)}</span></a>`;
     }
     function aplicarFiltroFicha(campo,valor){
       if(!valor)return;
-      if(campo==='estado')stateFilter='';
-      detailFilters[campo]=valor;
+      const mismo=norm(detailFilters[campo])===norm(valor);
+      detailFilters[campo]=mismo?'':valor;
+
+      // La ficha se comporta como el Explorador: al navegar por un dato,
+      // el texto de búsqueda deja de limitar el resultado al NRC original.
+      const search=document.getElementById('search');
+      if(search)search.value='';
+      stateFilter='';
+
+      reconstruirUniversoDesdeFicha();
       render();
-      renderDetailFilterBar();
-      if(selectedCourseNrc)renderCoursePanel(courses.find(x=>norm(x.nrc)===norm(selectedCourseNrc)));
-    }
-    function quitarFiltroFicha(campo){
-      detailFilters[campo]='';
-      render();
-      renderDetailFilterBar();
-      if(selectedCourseNrc)renderCoursePanel(courses.find(x=>norm(x.nrc)===norm(selectedCourseNrc)));
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+      if(seleccionado)renderCoursePanel(seleccionado);
     }
     function limpiarFiltrosFicha(){
       Object.keys(detailFilters).forEach(k=>detailFilters[k]='');
+      reconstruirUniversoDesdeFicha();
       render();
-      renderDetailFilterBar();
-      if(selectedCourseNrc)renderCoursePanel(courses.find(x=>norm(x.nrc)===norm(selectedCourseNrc)));
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+      if(seleccionado)renderCoursePanel(seleccionado);
     }
-    function renderDetailFilterBar(){
-      const bar=document.getElementById('detail-filter-bar');
-      const labels={tutor:'Tutor',intake:'Intake',estado:'Estado',facultad:'Facultad',codigo:'Código'};
-      const activos=Object.entries(detailFilters).filter(([,v])=>v);
-      bar.classList.toggle('on',activos.length>0);
-      bar.innerHTML=activos.length
-        ? '<strong>Filtros desde ficha:</strong> '+activos.map(([k,v])=>`<span class="detail-filter-chip">${esc(labels[k])}: ${esc(v)} <button type="button" onclick="quitarFiltroFicha('${k}')">×</button></span>`).join('')+'<button type="button" class="detail-filter-clear-all" onclick="limpiarFiltrosFicha()">Limpiar filtros de ficha</button>'
-        : '';
-    }
-    function quickFilterButton(campo,label,valor){
+    function metaFilterButton(campo,label,valor){
       if(!valor)return '';
       const activo=norm(detailFilters[campo])===norm(valor);
-      return `<button type="button" class="quick-filter ${activo?'active':''}" title="${esc(label+': '+valor)}" onclick="aplicarFiltroFicha('${campo}',decodeURIComponent('${encodeURIComponent(valor)}'))">${activo?'✓ ':''}${esc(label)}</button>`;
+      return `<button type="button" class="course-meta-filter ${activo?'active':''}" title="Filtrar calendario por ${esc(label)}: ${esc(valor)}" onclick="aplicarFiltroFicha('${campo}',decodeURIComponent('${encodeURIComponent(valor)}'))"><span class="course-meta-label">${esc(label)}</span><span class="course-meta-value">${activo?'✓ ':''}${esc(valor)}</span></button>`;
     }
     function renderCoursePanel(x){
       const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
@@ -308,17 +303,27 @@
       const incidentUrl=BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||'');
       host.innerHTML=`
         <div class="course-panel-head">
-          <div><div class="course-panel-kicker">Panel operativo del NRC</div><div class="course-panel-nrc">${esc(x.nrc||'—')}</div><div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div></div>
+          <div>
+            <div class="course-panel-kicker">Accesos y ficha del curso</div>
+            <div class="course-panel-nrc">${esc(x.nrc||'—')}</div>
+            <div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div>
+            <div class="course-meta-grid">
+              ${metaFilterButton('tutor','Tutor',x.tutor||'')}
+              ${metaFilterButton('intake','Intake / Versión',x.intake||'')}
+              ${metaFilterButton('estado','Estado',x.estado||'')}
+              ${metaFilterButton('facultad','Facultad',x.facultad||'')}
+              ${metaFilterButton('codigo','Código curso',x['codigo curso']||'')}
+            </div>
+            ${Object.values(detailFilters).some(Boolean)?'<button type="button" class="course-filter-clear" onclick="limpiarFiltrosFicha()">Quitar filtros aplicados desde la ficha</button>':''}
+          </div>
           <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
         </div>
         <div class="course-panel-body">
           <div class="panel-section">
             <div class="panel-section-title">Gestión del curso</div>
             <div class="panel-actions-grid">
-              ${panelLink(String(x.id||'').trim()?powerAppsUrl(x):'', '✏️','Editar curso en Power Apps',true)}
-              ${panelLink(String(x.id||'').trim()?SP_BASE+x.id:'','🗂️','Registro Base Calendarios')}
+              <button type="button" class="panel-action primary ${String(x.id||'').trim()?'':'disabled'}" onclick="abrirPowerAppsEnFicha()" ${String(x.id||'').trim()?'':'disabled'}><span class="pa-icon">✏️</span><span>Editar curso en Power Apps</span></button>
               ${panelLink(studentsUrl(x.nrc),'👥','Base Semáforo / estudiantes')}
-              ${panelLink(intakePbiUrl(x.intake),'📈','Ver Intake en Power BI')}
             </div>
           </div>
           <div class="panel-section">
@@ -339,23 +344,36 @@
               ${panelLink(announcementUrl(x),'📣','Anuncio bienvenida curso')}
             </div>
           </div>
-          <div class="panel-section">
-            <div class="panel-section-title">Filtrar la tabla desde este curso</div>
-            <div class="quick-filter-grid">
-              ${quickFilterButton('tutor','Tutor',x.tutor||'')}
-              ${quickFilterButton('intake','Intake',x.intake||'')}
-              ${quickFilterButton('estado','Estado',x.estado||'')}
-              ${quickFilterButton('facultad','Facultad',x.facultad||'')}
-              ${quickFilterButton('codigo','Código',x['codigo curso']||'')}
-            </div>
-            ${Object.values(detailFilters).some(Boolean)?'<button type="button" class="quick-filter-clear" onclick="limpiarFiltrosFicha()">Quitar filtros aplicados desde la ficha</button>':''}
-          </div>
         </div>`;
       panel.classList.add('open');
     }
+    function abrirPowerAppsEnFicha(){
+      const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
+      if(!x||!String(x.id||'').trim())return;
+      const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
+      const url=powerAppsUrl(x);
+      host.innerHTML=`
+        <div class="course-panel-head">
+          <div><div class="course-panel-kicker">Editor Power Apps</div><div class="course-panel-nrc">${esc(x.nrc||'—')}</div><div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div></div>
+          <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
+        </div>
+        <div class="powerapp-panel-view">
+          <div class="powerapp-panel-toolbar">
+            <button type="button" class="powerapp-back" onclick="volverFichaCurso()">← Volver a la ficha</button>
+            <a class="powerapp-external" href="${esc(url)}" target="_blank" rel="noopener">Abrir aparte ↗</a>
+          </div>
+          <div class="powerapp-open-note">Edición del registro seleccionado sin salir de Calendarios.</div>
+          <iframe class="powerapp-iframe" src="${esc(url)}" title="Editor de curso Power Apps" allow="clipboard-read; clipboard-write"></iframe>
+        </div>`;
+      panel.classList.add('open');
+    }
+    function volverFichaCurso(){
+      const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
+      if(x)renderCoursePanel(x);
+    }
     function abrirFichaCurso(nrc,event){
       if(event && event.target.closest('a,button,input'))return;
-      const x=courses.find(c=>norm(c.nrc)===norm(nrc));
+      const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));
       if(!x)return;
       selectedCourseNrc=x.nrc||'';
       renderCoursePanel(x);
@@ -376,7 +394,6 @@
       const shown=sortCourses(panelCourses.filter(x=>!stateFilter||norm(x.estado)===stateFilter));
       if(shown.length>3000){body.innerHTML=`<tr><td colspan="11"><div class="error"><div style="font-size:35px;margin-bottom:5px">⚠️</div><strong>Demasiados registros (${shown.length.toLocaleString('es-CL')})</strong><div style="font-size:12px;color:#bfc8d5;margin-top:8px">Selecciona un KPI o utiliza los filtros superiores de Gestión para acotar los resultados.</div></div></td></tr>`;document.getElementById('count').textContent='';return;}
       body.innerHTML=shown.map(x=>{const b=badge(x.estado);const inc=byCourse.get(String(x.id))||[];const canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'';const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;const incidentUrl=BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||'');const incidentAction=!inc.length?'':incidentCount?`<a class="action incident-alert" href="${esc(incidentUrl)}" target="_blank" rel="noopener" title="${incidentCount} incidencia${incidentCount===1?'':'s'} registrada${incidentCount===1?'':'s'}">⚠<span class="incident-count">${incidentCount}</span></a>`:`<a class="action incident-ok" href="${esc(incidentUrl)}" target="_blank" rel="noopener" title="Registro revisado: sin incidencias">✓ OK</a>`;const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',fechaInicio:x['fecha inicio']||'',fechaFin:x['fecha fin']||''});const actions=[action(SP_BASE+x.id,'Ver curso en base calendarios','📋'),action(canvas,'Ver el curso en Canvas','🖥',!!canvas),action(BASE+'presentacion_tutorial_innovado.html?'+p,'Presentación Tutorial','📊'),action(BASE+'comunicaciones_etop.html','Hub Comunicaciones','✉️'),incidentAction].join('');return `<tr class="${norm(x.estado)==='CERRADO'?'closed':''}${norm(x.nrc)===norm(selectedCourseNrc)?' row-selected':''}" data-nrc="${esc(encodeURIComponent(x.nrc||''))}" onclick="abrirFichaCurso(decodeURIComponent(this.dataset.nrc),event)" data-search="${esc(norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')))}"><td><span class="nrc">${esc(x.nrc||'—')}</span></td><td><span class="badge ${b[1]}">${esc(b[0])}</span></td><td class="course" title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</td><td>${esc(x.facultad||'—')}</td><td class="date">${fmtDate(x['fecha inicio'])}</td><td class="date">${fmtDate(x['fecha fin'])}</td><td class="center">${weeks(x['fecha inicio'],x['fecha fin'])}</td><td class="tutor" title="${esc(x.tutor||'')}">${esc(x.tutor||'—')}</td><td>${esc(x.tipo||'—')}</td><td>${esc(x.periodo||'—')}</td><td><div class="actions">${actions}</div></td></tr>`}).join('');updateSortHeaders();applySearch();
-      renderDetailFilterBar();
     }
     function sortCourses(list){return [...list].sort((a,b)=>{let av,bv;if(sortKey==='semanas'){const x=dateValue(a['fecha inicio']),y=dateValue(a['fecha fin']),u=dateValue(b['fecha inicio']),v=dateValue(b['fecha fin']);av=x&&y?y-x:-1;bv=u&&v?v-u:-1}else if(sortKey==='fecha inicio'||sortKey==='fecha fin'){av=dateValue(a[sortKey])?.getTime()||0;bv=dateValue(b[sortKey])?.getTime()||0}else{av=norm(a[sortKey]);bv=norm(b[sortKey])}const c=typeof av==='number'?av-bv:String(av).localeCompare(String(bv),'es',{numeric:true});return sortDir==='asc'?c:-c})}
     function updateSortHeaders(){document.querySelectorAll('th[data-sort]').forEach(th=>{if(th.dataset.sort===sortKey)th.dataset.dir=sortDir;else delete th.dataset.dir})}
@@ -387,7 +404,7 @@
     document.getElementById('search').addEventListener('input',applySearch);
     document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
     document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
-    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'})]).then(async([nr,ir])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');courses=filterCourses(await nr.json());incidents=ir.ok?await ir.json():[];render();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
+    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'})]).then(async([nr,ir])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();courses=filterCourses(allCourses);incidents=ir.ok?await ir.json():[];render();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
   </script>
 </body>
 </html>
