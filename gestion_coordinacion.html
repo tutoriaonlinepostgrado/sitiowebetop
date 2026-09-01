@@ -894,6 +894,7 @@
         if (f.tipo.length)     condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/TIPO_NRC', f.tipo));
         if (f.codigo.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/CODIGO_CURSO', f.codigo));
         if (f.estado.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/ESTADO_CAL', f.estado));
+        if (f.intake.length)   condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION', f.intake));
         if (f.fechaInicio.length) {
             const fechasValidas = f.fechaInicio.map(fechaISO).filter(Boolean);
             if (fechasValidas.length === 1) condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechasValidas[0]}T00:00:00'`);
@@ -910,7 +911,10 @@
         const url = new URL(cfg.url);
         // Sintaxis oficial de filtros URL de Power BI: filter=Tabla/Campo eq 'valor'.
         url.searchParams.set('filter', filtro);
-        return url.toString();
+
+        // Power BI puede ignorar silenciosamente expresiones OData cuando
+        // URLSearchParams codifica los espacios como "+". Forzamos %20.
+        return url.toString().replace(/\+/g, '%20');
     }
 
     /* ========================================================
