@@ -104,6 +104,28 @@
         .pill-input::placeholder { color: rgba(255,255,255,0.35); }
         .pill-input:focus { border-color: rgba(255,215,0,0.7); background-color: rgba(255,255,255,0.13); color: #fff; width: 140px; }
         .pill-input:disabled { opacity: 0.4; cursor: not-allowed; }
+        .nrc-clear {
+            position:absolute;
+            right:5px;
+            top:50%;
+            transform:translateY(-50%);
+            width:18px;
+            height:18px;
+            border:0;
+            border-radius:50%;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(239,68,68,.14);
+            color:#fca5a5;
+            font-size:12px;
+            line-height:1;
+            cursor:pointer;
+            z-index:3;
+        }
+        .nrc-clear:hover { background:rgba(239,68,68,.28); color:#fff; }
+        #nrc-wrap.filtro-activo .pill-input { padding-right:30px; }
+        #nrc-wrap.filtro-activo .nrc-clear { display:flex; }
         /* dropdown custom NRC */
         .nrc-dropdown {
             position: absolute;
@@ -367,6 +389,7 @@
                         maxlength="30"
                         title="Buscar NRC — filtra por cualquier parte del código"
                         autocomplete="off">
+                    <button type="button" class="nrc-clear" id="nrc-clear" title="Quitar solo filtro NRC" aria-label="Quitar solo filtro NRC" onclick="limpiarSoloNRC(event)">×</button>
                     <div class="nrc-dropdown" id="nrc-dropdown"></div>
                 </div>
                 <div class="separator-bar"></div>
@@ -751,6 +774,24 @@
         ocultarDropdownNRC();
 
         // Aquí sí: selección real tipo slicer.
+        sincronizarFiltros('nrc');
+    }
+
+    function limpiarSoloNRC(evento) {
+        if (evento) {
+            evento.preventDefault();
+            evento.stopPropagation();
+        }
+        if (nrcBusquedaTimer) {
+            clearTimeout(nrcBusquedaTimer);
+            nrcBusquedaTimer = null;
+        }
+        nrcConfirmado = '';
+        nrcBusquedaTexto = '';
+        document.getElementById('pill-nrc').value = '';
+        ocultarDropdownNRC();
+
+        // Conserva todos los demás filtros.
         sincronizarFiltros('nrc');
     }
 
