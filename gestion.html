@@ -616,7 +616,7 @@
         if (BUSQUEDA.tipo)     fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC eq '${sanitizarFiltro(BUSQUEDA.tipo)}'`);
         if (BUSQUEDA.codigo)   fx.push(`NRC_TUTOR_ACTUAL/CODIGO_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
         if (BUSQUEDA.estado)   fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
-        if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
+        if (BUSQUEDA.intake)   fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
         if (BUSQUEDA.fechaInicio.length===1) fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
         if (BUSQUEDA.fechaInicio.length>1) fx.push('(' + BUSQUEDA.fechaInicio.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ') + ')');
         if (BUSQUEDA.nrc)      fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
