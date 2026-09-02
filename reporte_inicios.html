@@ -36,6 +36,11 @@ th:nth-child(9),td:nth-child(9){width:7%}th:nth-child(10),td:nth-child(10){width
 
 /* Perfil tutor / modo embebido */
 .profile-mini{height:25px;padding:0 9px;border-radius:6px;border:1px solid rgba(214,183,43,.55);background:#fffbea;color:#725d00;font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+.header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.export-excel{height:25px;padding:0 10px;border-radius:6px;border:1px solid #8fb39f;background:#edf8f1;color:#246340;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}
+.export-excel:hover{background:#dff2e6;border-color:#659177}
+.export-excel:disabled{opacity:.55;cursor:wait}
+
 .profile-mini:hover{background:#fff5bf}
 .modal{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:18px}
 .modal.on{display:flex}
@@ -64,6 +69,7 @@ body.embedded tbody td{height:23px}
   body.embedded .ri-valor{font-size:15px}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 </head>
 <body>
 <div class="ri">
@@ -80,7 +86,10 @@ body.embedded tbody td{height:23px}
       </div>
       <div class="estado-contexto" id="contexto"></div>
     </div>
-    <button type="button" class="profile-mini" id="profileBtn">👤 Tutor / Cambiar</button>
+    <div class="header-actions">
+      <button type="button" class="export-excel" id="exportExcelBtn">📥 Descargar Excel</button>
+      <button type="button" class="profile-mini" id="profileBtn">👤 Tutor / Cambiar</button>
+    </div>
   </div>
 
   <div class="ri-tarjetas">
@@ -186,13 +195,17 @@ function incidenciaTexto(x,byCourse){
   if(n)return {t:'CON INCIDENCIA ('+n+')',c:'alerta alerta-roja'};
   return {t:'SIN INCIDENCIA',c:'alerta alerta-ok'};
 }
-function render(){
+function listaActualReporte(){
   const metricMap=new Map(metricas.map(x=>[norm(x.nrc),Number(x.total_estudiantes)||0]));
-  const byCourse=incidentMap();
   let list=filterByParams(cursos).map(x=>({...x,total:metricMap.get(norm(x.nrc))||0}));
   if(nomina==='FALTA_NOMINA')list=list.filter(x=>x.total===0);
   if(nomina==='CON_ESTUDIANTES')list=list.filter(x=>x.total>0);
   list.sort((a,b)=>String(a.facultad||'').localeCompare(String(b.facultad||''),'es')||String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true}));
+  return list;
+}
+function render(){
+  const byCourse=incidentMap();
+  const list=listaActualReporte();
 
   document.getElementById('kNrc').textContent=list.length.toLocaleString('es-CL');
   document.getElementById('kEst').textContent=list.reduce((s,x)=>s+x.total,0).toLocaleString('es-CL');
@@ -222,6 +235,178 @@ function render(){
   }).join('');
 }
 
+async function descargarExcelReporte(){
+  const btn=document.getElementById('exportExcelBtn');
+  const list=listaActualReporte();
+  if(!list.length){alert('No hay registros para exportar con los filtros seleccionados.');return;}
+  if(typeof ExcelJS==='undefined'){alert('No fue posible cargar el componente de exportación a Excel.');return;}
+
+  btn.disabled=true;
+  const textoOriginal=btn.textContent;
+  btn.textContent='⏳ Generando…';
+
+  try{
+    const byCourse=incidentMap();
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Portal ETOP';
+    wb.company='Universidad Andrés Bello';
+    wb.subject='Reporte de inicios';
+    wb.title='ETOP · Reporte de Cursos por Iniciar';
+    wb.created=new Date();
+
+    const ws=wb.addWorksheet('Reporte de inicios',{
+      views:[{state:'frozen',ySplit:7,xSplit:2}]
+    });
+    ws.properties.tabColor={argb:'FFD6B72B'};
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:0.3,right:0.3,top:0.5,bottom:0.5,header:0.2,footer:0.2}};
+
+    const navy='FF1F2940', gold='FFFFD700', blue='FF315F86', lightBlue='FFDCE8F3';
+    const line='FFD6E1EC', text='FF334155', muted='FF64748B', green='FFD5EEE2', greenText='FF0B6541';
+    const red='FFF7DCE2', redText='FF9A1730', gray='FFE7EAEE';
+
+    ws.mergeCells('A1:K1');
+    ws.getCell('A1').value='ETOP · REPORTE DE CURSOS POR INICIAR';
+    ws.getCell('A1').font={name:'Aptos Display',size:18,bold:true,color:{argb:'FFFFFFFF'}};
+    ws.getCell('A1').fill={type:'pattern',pattern:'solid',fgColor:{argb:navy}};
+    ws.getCell('A1').alignment={vertical:'middle',horizontal:'left'};
+    ws.getRow(1).height=32;
+
+    ws.mergeCells('A2:K2');
+    const ahora=new Date();
+    const generado=ahora.toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'});
+    const contexto=document.getElementById('contexto')?.textContent?.trim()||'Sin filtros superiores';
+    const vistaNomina=nomina==='FALTA_NOMINA'?'Falta nómina':nomina==='CON_ESTUDIANTES'?'Con estudiantes':'Todos';
+    ws.getCell('A2').value='Generado: '+generado+'  ·  Vista: '+vistaNomina+'  ·  '+contexto;
+    ws.getCell('A2').font={name:'Aptos',size:9,color:{argb:muted}};
+    ws.getCell('A2').alignment={vertical:'middle'};
+    ws.getRow(2).height=20;
+
+    const totalEst=list.reduce((s,x)=>s+x.total,0);
+    const sinNomina=list.filter(x=>x.total===0).length;
+
+    [['A4','C4','TOTAL NRC',list.length,blue],['D4','F4','TOTAL ESTUDIANTES',totalEst,'FF27815E'],['G4','K4','NRC SIN NÓMINA',sinNomina,'FFC95D63']].forEach(([a,b,label,value,color])=>{
+      ws.mergeCells(a+':'+b);
+      const row=parseInt(a.match(/\d+/)[0],10);
+      const startCol=ws.getCell(a).col,endCol=ws.getCell(b).col;
+      const labelCell=ws.getCell(row,startCol);
+      labelCell.value=label+'  ·  '+Number(value).toLocaleString('es-CL');
+      labelCell.font={name:'Aptos',size:11,bold:true,color:{argb:'FFFFFFFF'}};
+      labelCell.fill={type:'pattern',pattern:'solid',fgColor:{argb:color}};
+      labelCell.alignment={horizontal:'center',vertical:'middle'};
+      for(let col=startCol;col<=endCol;col++){
+        ws.getCell(row,col).border={top:{style:'thin',color:{argb:line}},bottom:{style:'thin',color:{argb:line}},left:{style:'thin',color:{argb:line}},right:{style:'thin',color:{argb:line}}};
+      }
+    });
+    ws.getRow(4).height=24;
+
+    const headers=['FACULTAD','NRC','ESTADO','NOMBRE DEL CURSO','INICIO','FIN','VERSIÓN / INTAKE','NOMBRE TUTOR','TOTAL EST.','INCIDENCIAS','BASE ESTUDIANTES'];
+    const headerRow=ws.getRow(7);
+    headerRow.values=headers;
+    headerRow.height=26;
+    headerRow.eachCell(cell=>{
+      cell.font={name:'Aptos',size:9,bold:true,color:{argb:text}};
+      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:lightBlue}};
+      cell.alignment={horizontal:'center',vertical:'middle',wrapText:true};
+      cell.border={top:{style:'thin',color:{argb:'FF9FB4C8'}},bottom:{style:'medium',color:{argb:'FF9FB4C8'}},left:{style:'thin',color:{argb:'FFC7D9E8'}},right:{style:'thin',color:{argb:'FFC7D9E8'}}};
+    });
+
+    list.forEach((x,i)=>{
+      const inc=incidenciaTexto(x,byCourse);
+      const canvas=canvasUrl(x.nrc);
+      const students=studentsUrl(x.nrc);
+      const row=ws.addRow([
+        x.facultad||'Sin facultad',
+        x.nrc||'',
+        x.estado||'',
+        String(x['nombre curso']||'').replace(/\*/g,''),
+        fechaISO(x['fecha inicio'])||'',
+        fechaISO(x['fecha fin'])||'',
+        x.intake||'',
+        x.tutor||'',
+        x.total===0?'FALTA NÓMINA':x.total,
+        inc.t,
+        'Abrir estudiantes'
+      ]);
+      row.height=21;
+
+      row.eachCell({includeEmpty:true},cell=>{
+        cell.font={name:'Aptos',size:9,color:{argb:text}};
+        cell.alignment={vertical:'middle',wrapText:false};
+        cell.border={bottom:{style:'hair',color:{argb:line}},right:{style:'hair',color:{argb:'FFE8EEF4'}}};
+        if(i%2===1) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF7FAFC'}};
+      });
+
+      if(canvas){
+        row.getCell(2).value={text:x.nrc||'',hyperlink:canvas,tooltip:'Abrir curso en integración Canvas'};
+        row.getCell(2).font={name:'Aptos',size:9,bold:true,color:{argb:blue},underline:true};
+      }
+
+      row.getCell(11).value={text:'Abrir estudiantes',hyperlink:students,tooltip:'Abrir BASESEMAFORO_20 filtrada por NRC'};
+      row.getCell(11).font={name:'Aptos',size:9,bold:true,color:{argb:blue},underline:true};
+
+      const estado=norm(x.estado);
+      if(estado==='ACTIVO'){
+        row.getCell(3).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(3).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+      }else{
+        row.getCell(3).fill={type:'pattern',pattern:'solid',fgColor:{argb:gray}};
+        row.getCell(3).font={name:'Aptos',size:9,bold:true,color:{argb:text}};
+      }
+
+      if(x.total===0){
+        row.getCell(9).fill={type:'pattern',pattern:'solid',fgColor:{argb:red}};
+        row.getCell(9).font={name:'Aptos',size:9,bold:true,color:{argb:redText}};
+      }else{
+        row.getCell(9).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(9).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+        row.getCell(9).numFmt='#,##0';
+      }
+
+      if(norm(inc.t).includes('INCIDENCIA')||norm(inc.t).includes('PENDIENTE')){
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:red}};
+        row.getCell(10).font={name:'Aptos',size:9,bold:true,color:{argb:redText}};
+      }else if(norm(inc.t)==='SIN INCIDENCIA'){
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(10).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+      }else{
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:gray}};
+      }
+    });
+
+    ws.autoFilter={from:{row:7,column:1},to:{row:7,column:11}};
+    ws.columns=[
+      {width:14},{width:24},{width:13},{width:42},{width:13},{width:13},{width:24},{width:24},{width:14},{width:23},{width:20}
+    ];
+    ws.getColumn(4).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(7).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(8).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(9).alignment={horizontal:'center',vertical:'middle'};
+    ws.getColumn(10).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(11).alignment={horizontal:'center',vertical:'middle'};
+
+    ws.headerFooter.oddFooter='&LETOP · Universidad Andrés Bello&C&P de &N&RGenerado desde Portal ETOP';
+
+    const buffer=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const tutorArchivo=(profileTutor||'EQUIPO').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'');
+    const fechaArchivo=new Date().toISOString().slice(0,10);
+    a.href=url;
+    a.download='ETOP_Inicios_'+tutorArchivo+'_'+fechaArchivo+'.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(err){
+    console.error('Error generando Excel:',err);
+    alert('No fue posible generar el Excel. Intenta nuevamente.');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=textoOriginal;
+  }
+}
+
 function actualizarProfileBtn(){
   const b=document.getElementById('profileBtn');
   if(b) b.textContent=profileTutor?'👤 '+profileTutor.split(' ')[0]+' · Cambiar':'👥 Vista general · Cambiar';
@@ -245,6 +430,7 @@ function openProfile(){
 }
 function closeProfile(){document.getElementById('profileModal').classList.remove('on');}
 window.openProfile=openProfile;
+document.getElementById('exportExcelBtn').addEventListener('click',descargarExcelReporte);
 document.getElementById('profileBtn').addEventListener('click',openProfile);
 document.getElementById('profileSave').addEventListener('click',()=>{
   const email=document.getElementById('profileEmail').value;
