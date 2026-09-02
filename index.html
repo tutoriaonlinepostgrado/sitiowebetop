@@ -367,24 +367,57 @@
                             </div>
                         </section>
 
-                        <!-- CURSOS POR FACULTAD: 65% -->
+                        <!-- MI CARGA TUTORIAL -->
                         <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
-                            <div class="px-3 pt-3 pb-1 flex items-start justify-between gap-2 flex-shrink-0">
+                            <div class="px-3 pt-3 pb-2 flex items-start justify-between gap-2 flex-shrink-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
+                                    <span class="material-symbols-outlined text-[#facc15] text-base">monitoring</span>
                                     <div>
                                         <h3 id="chart-title" class="text-[10px] font-bold text-white uppercase tracking-wider">Mi carga tutorial</h3>
                                         <p id="chart-subtitle" class="text-[8px] text-slate-500">Estado actual de mis cursos</p>
                                     </div>
                                 </div>
+                                <div class="text-right">
+                                    <div class="text-[7px] uppercase tracking-wider text-slate-500">En gestión</div>
+                                    <div><span id="chart-total" class="text-[21px] font-bold text-white">—</span><span class="text-[8px] text-slate-500 ml-1">cursos</span></div>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between gap-2 px-3 pt-1 flex-shrink-0">
-                                <div><span id="chart-total" class="text-[22px] font-bold text-white">—</span><span class="text-[8px] text-slate-500 ml-1">cursos</span></div>
-                                <div id="chart-upcoming" class="text-[8px] text-slate-400 text-right">—</div>
+
+                            <div class="grid grid-cols-3 gap-2 px-3 pb-2 flex-shrink-0">
+                                <div class="rounded-lg p-2.5 border border-yellow-400/15" style="background:rgba(250,204,21,.06)">
+                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#facc15;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">Preparación</span></div>
+                                    <div id="load-prep" class="text-[20px] font-bold text-white">—</div>
+                                </div>
+                                <div class="rounded-lg p-2.5 border border-blue-400/15" style="background:rgba(59,130,246,.06)">
+                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#3b82f6;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">Activos</span></div>
+                                    <div id="load-active" class="text-[20px] font-bold text-white">—</div>
+                                </div>
+                                <div class="rounded-lg p-2.5 border border-purple-400/15" style="background:rgba(139,92,246,.06)">
+                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#8b5cf6;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">En cierre</span></div>
+                                    <div id="load-closing" class="text-[20px] font-bold text-white">—</div>
+                                </div>
                             </div>
-                            <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
-                            <div style="flex:1;min-height:0;padding:2px 8px 10px;">
-                                <canvas id="chartFacultad" role="img" aria-label="Carga tutorial por estado" style="width:100%;height:100%;"></canvas>
+
+                            <div class="px-3 pb-2 flex-shrink-0">
+                                <div class="rounded-lg border border-white/5 px-3 py-2" style="background:rgba(255,255,255,.025)">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div>
+                                            <div class="text-[7px] uppercase tracking-wider text-slate-500">Próximos 7 días</div>
+                                            <div id="chart-upcoming" class="text-[10px] font-semibold text-white mt-0.5">—</div>
+                                        </div>
+                                        <span class="material-symbols-outlined text-[#facc15] text-lg">event_upcoming</span>
+                                    </div>
+                                    <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.06)">
+                                        <div id="load-upcoming-bar" class="h-full rounded-full" style="width:0%;background:#facc15"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto px-3 pb-3 flex-shrink-0">
+                                <div class="flex items-center justify-between border-t border-white/5 pt-2">
+                                    <span class="text-[8px] text-slate-500">Cerrados históricos</span>
+                                    <span id="load-closed" class="text-[11px] font-bold text-slate-300">—</span>
+                                </div>
                             </div>
                         </section>
                     </aside>
@@ -872,71 +905,22 @@ async function cargarGrafico() {
             return f && f>=inicioHoy && f<=limite7 && !['CERRADO','CANCELADO','ANULADO'].includes(est);
         }).length;
 
-        const total = Object.values(estados).reduce((a,b)=>a+b,0);
+        const enGestion = estados.PREPARACION + estados.ACTIVO + estados['EN CIERRE'];
+        const pctProximos = enGestion ? Math.min(100, Math.round((proximos7/enGestion)*100)) : 0;
+
         document.getElementById('chart-title').textContent=contexto.esTutor?'Mi carga tutorial':contexto.esCoordinacion?'Carga tutorial del equipo':'Carga tutorial';
         document.getElementById('chart-subtitle').textContent=contexto.esTutor?'Estado actual de mis cursos':contexto.esCoordinacion?'Estado actual de los cursos del equipo':'Identifícate para ver tu carga';
-        document.getElementById('chart-total').textContent=total.toLocaleString('es-CL');
-        document.getElementById('chart-upcoming').textContent=contexto.sesion?(proximos7+' comienzan en los próximos 7 días'):'Sin sesión';
-
-        const labels=['Preparación','Activos','En cierre','Cerrados'];
-        const values=[estados.PREPARACION,estados.ACTIVO,estados['EN CIERRE'],estados.CERRADO];
-        const colors=['#facc15','#3b82f6','#8b5cf6','#64748b'];
-
-        const canvas=document.getElementById('chartFacultad');
-        if(cargaChartETOP) cargaChartETOP.destroy();
-        cargaChartETOP=new Chart(canvas,{
-            type:'bar',
-            data:{
-                labels,
-                datasets:[{
-                    label:'Cursos',
-                    data:values,
-                    backgroundColor:colors,
-                    borderRadius:5,
-                    borderSkipped:false,
-                    barThickness:16
-                }]
-            },
-            options:{
-                indexAxis:'y',
-                responsive:true,
-                maintainAspectRatio:false,
-                layout:{padding:{left:2,right:8,bottom:3}},
-                plugins:{
-                    legend:{display:false},
-                    tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' curso'+(ctx.raw===1?'':'s')}}
-                },
-                scales:{
-                    x:{
-                        beginAtZero:true,
-                        ticks:{color:'#64748b',font:{size:8,family:'Inter'},precision:0},
-                        grid:{color:'rgba(255,255,255,0.04)'},
-                        border:{display:false}
-                    },
-                    y:{
-                        ticks:{color:'#94a3b8',font:{size:9,family:'Inter',weight:'600'}},
-                        grid:{display:false},
-                        border:{display:false}
-                    }
-                }
-            }
-        });
-
-        const legendEl=document.getElementById('chart-legend');
-        legendEl.innerHTML='';
-        [
-            ['Preparación',estados.PREPARACION,colors[0]],
-            ['Activo',estados.ACTIVO,colors[1]],
-            ['En cierre',estados['EN CIERRE'],colors[2]],
-            ['Cerrado',estados.CERRADO,colors[3]]
-        ].forEach(([label,n,color])=>{
-            const item=document.createElement('span');
-            item.style.cssText='display:flex;align-items:center;gap:4px;padding:2px 4px;border-radius:4px;white-space:nowrap';
-            item.innerHTML='<span style="width:7px;height:7px;border-radius:2px;background:'+color+';display:inline-block"></span>'+label+' '+n;
-            legendEl.appendChild(item);
-        });
+        document.getElementById('chart-total').textContent=enGestion.toLocaleString('es-CL');
+        document.getElementById('load-prep').textContent=estados.PREPARACION.toLocaleString('es-CL');
+        document.getElementById('load-active').textContent=estados.ACTIVO.toLocaleString('es-CL');
+        document.getElementById('load-closing').textContent=estados['EN CIERRE'].toLocaleString('es-CL');
+        document.getElementById('load-closed').textContent=estados.CERRADO.toLocaleString('es-CL');
+        document.getElementById('chart-upcoming').textContent=contexto.sesion
+            ? proximos7 + (proximos7===1?' curso comienza':' cursos comienzan')
+            : 'Sin sesión';
+        document.getElementById('load-upcoming-bar').style.width=pctProximos+'%';
     } catch(e) {
-        console.warn('Error cargando gráfico:', e);
+        console.warn('Error cargando carga tutorial:', e);
     }
 }
 
