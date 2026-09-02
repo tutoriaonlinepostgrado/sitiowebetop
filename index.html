@@ -134,7 +134,7 @@
     .course-badge-prox14 { background:rgba(167,139,250,.12); color:#a78bfa; border:.5px solid rgba(167,139,250,.25); }
     .course-ticker-empty { width:100%; padding:0 18px; color:#94a3b8; font-size:11px; }
     .load-row{min-width:0}
-    .load-row-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+    .load-row-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
     .load-label{display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
     .load-dot{width:7px;height:7px;border-radius:2px;display:inline-block;flex:0 0 auto}
     .load-dot.prep,.load-fill.prep{background:#facc15}
@@ -143,7 +143,7 @@
     .load-value{display:flex;align-items:baseline;gap:5px;color:#fff}
     .load-value strong{font-size:11px}
     .load-value small{font-size:7px;color:#64748b}
-    .load-track{height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06)}
+    .load-track{height:9px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.07)}
     .load-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}
 
     @keyframes ticker-cursos { from{transform:translateX(0)} to{transform:translateX(-50%)} }
@@ -359,7 +359,7 @@
                     <aside class="col-span-3 flex flex-col gap-3 overflow-hidden" style="min-height:0;">
 
                         <!-- MANUAL DE APOYO: 35% -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:220px;">
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col" style="height:58%;min-height:250px;">
                             <div class="px-3 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">play_circle</span>
@@ -381,7 +381,7 @@
                         </section>
 
                         <!-- MI CARGA TUTORIAL -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-shrink-0" style="height:205px;min-height:205px;">
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:235px;">
                             <div class="px-3 pt-3 pb-2 flex items-start justify-between gap-2 flex-shrink-0">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">monitoring</span>
@@ -396,7 +396,7 @@
                                 </div>
                             </div>
 
-                            <div class="px-3 space-y-2">
+                            <div class="px-3 space-y-3">
                                 <div class="load-row">
                                     <div class="load-row-top"><span class="load-label"><span class="load-dot prep"></span>Preparación</span><span class="load-value"><strong id="load-prep">—</strong><small id="load-prep-pct">—%</small></span></div>
                                     <div class="load-track"><div id="load-prep-bar" class="load-fill prep"></div></div>
