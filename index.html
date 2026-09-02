@@ -133,6 +133,19 @@
     .course-badge-prox7  { background:rgba(96,165,250,.12);  color:#60a5fa; border:.5px solid rgba(96,165,250,.25); }
     .course-badge-prox14 { background:rgba(167,139,250,.12); color:#a78bfa; border:.5px solid rgba(167,139,250,.25); }
     .course-ticker-empty { width:100%; padding:0 18px; color:#94a3b8; font-size:11px; }
+    .load-row{min-width:0}
+    .load-row-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+    .load-label{display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+    .load-dot{width:7px;height:7px;border-radius:2px;display:inline-block;flex:0 0 auto}
+    .load-dot.prep,.load-fill.prep{background:#facc15}
+    .load-dot.active,.load-fill.active{background:#3b82f6}
+    .load-dot.closing,.load-fill.closing{background:#8b5cf6}
+    .load-value{display:flex;align-items:baseline;gap:5px;color:#fff}
+    .load-value strong{font-size:11px}
+    .load-value small{font-size:7px;color:#64748b}
+    .load-track{height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06)}
+    .load-fill{height:100%;width:0;border-radius:999px;transition:width .35s ease}
+
     @keyframes ticker-cursos { from{transform:translateX(0)} to{transform:translateX(-50%)} }
     @media (prefers-reduced-motion:reduce) {
         .course-banner-dot { animation:none; }
@@ -346,7 +359,7 @@
                     <aside class="col-span-3 flex flex-col gap-3 overflow-hidden" style="min-height:0;">
 
                         <!-- MANUAL DE APOYO: 35% -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col" style="height:35%;min-height:170px;">
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:220px;">
                             <div class="px-3 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">play_circle</span>
@@ -368,7 +381,7 @@
                         </section>
 
                         <!-- MI CARGA TUTORIAL -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
+                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-shrink-0" style="height:205px;min-height:205px;">
                             <div class="px-3 pt-3 pb-2 flex items-start justify-between gap-2 flex-shrink-0">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">monitoring</span>
@@ -379,44 +392,29 @@
                                 </div>
                                 <div class="text-right">
                                     <div class="text-[7px] uppercase tracking-wider text-slate-500">En gestión</div>
-                                    <div><span id="chart-total" class="text-[21px] font-bold text-white">—</span><span class="text-[8px] text-slate-500 ml-1">cursos</span></div>
+                                    <div><span id="chart-total" class="text-[18px] font-bold text-white">—</span><span class="text-[8px] text-slate-500 ml-1">cursos</span></div>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-2 px-3 pb-2 flex-shrink-0">
-                                <div class="rounded-lg p-2.5 border border-yellow-400/15" style="background:rgba(250,204,21,.06)">
-                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#facc15;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">Preparación</span></div>
-                                    <div id="load-prep" class="text-[20px] font-bold text-white">—</div>
+                            <div class="px-3 space-y-2">
+                                <div class="load-row">
+                                    <div class="load-row-top"><span class="load-label"><span class="load-dot prep"></span>Preparación</span><span class="load-value"><strong id="load-prep">—</strong><small id="load-prep-pct">—%</small></span></div>
+                                    <div class="load-track"><div id="load-prep-bar" class="load-fill prep"></div></div>
                                 </div>
-                                <div class="rounded-lg p-2.5 border border-blue-400/15" style="background:rgba(59,130,246,.06)">
-                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#3b82f6;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">Activos</span></div>
-                                    <div id="load-active" class="text-[20px] font-bold text-white">—</div>
+                                <div class="load-row">
+                                    <div class="load-row-top"><span class="load-label"><span class="load-dot active"></span>Activos</span><span class="load-value"><strong id="load-active">—</strong><small id="load-active-pct">—%</small></span></div>
+                                    <div class="load-track"><div id="load-active-bar" class="load-fill active"></div></div>
                                 </div>
-                                <div class="rounded-lg p-2.5 border border-purple-400/15" style="background:rgba(139,92,246,.06)">
-                                    <div class="flex items-center gap-1.5 mb-1"><span style="width:7px;height:7px;border-radius:2px;background:#8b5cf6;display:inline-block"></span><span class="text-[7px] uppercase tracking-wider text-slate-500">En cierre</span></div>
-                                    <div id="load-closing" class="text-[20px] font-bold text-white">—</div>
-                                </div>
-                            </div>
-
-                            <div class="px-3 pb-2 flex-shrink-0">
-                                <div class="rounded-lg border border-white/5 px-3 py-2" style="background:rgba(255,255,255,.025)">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <div>
-                                            <div class="text-[7px] uppercase tracking-wider text-slate-500">Próximos 7 días</div>
-                                            <div id="chart-upcoming" class="text-[10px] font-semibold text-white mt-0.5">—</div>
-                                        </div>
-                                        <span class="material-symbols-outlined text-[#facc15] text-lg">event_upcoming</span>
-                                    </div>
-                                    <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.06)">
-                                        <div id="load-upcoming-bar" class="h-full rounded-full" style="width:0%;background:#facc15"></div>
-                                    </div>
+                                <div class="load-row">
+                                    <div class="load-row-top"><span class="load-label"><span class="load-dot closing"></span>En cierre</span><span class="load-value"><strong id="load-closing">—</strong><small id="load-closing-pct">—%</small></span></div>
+                                    <div class="load-track"><div id="load-closing-bar" class="load-fill closing"></div></div>
                                 </div>
                             </div>
 
-                            <div class="mt-auto px-3 pb-3 flex-shrink-0">
-                                <div class="flex items-center justify-between border-t border-white/5 pt-2">
-                                    <span class="text-[8px] text-slate-500">Cerrados históricos</span>
-                                    <span id="load-closed" class="text-[11px] font-bold text-slate-300">—</span>
+                            <div class="mt-auto px-3 pb-3 pt-2">
+                                <div class="flex items-center justify-between gap-2 border-t border-white/5 pt-2">
+                                    <div class="text-[8px] text-slate-400"><span class="material-symbols-outlined align-middle text-[#facc15]" style="font-size:13px">event_upcoming</span> <span id="chart-upcoming">—</span></div>
+                                    <div class="text-[8px] text-slate-500">Cerrados <strong id="load-closed" class="text-slate-300">—</strong></div>
                                 </div>
                             </div>
                         </section>
@@ -906,7 +904,9 @@ async function cargarGrafico() {
         }).length;
 
         const enGestion = estados.PREPARACION + estados.ACTIVO + estados['EN CIERRE'];
-        const pctProximos = enGestion ? Math.min(100, Math.round((proximos7/enGestion)*100)) : 0;
+        const pctPrep = enGestion ? Math.round((estados.PREPARACION/enGestion)*100) : 0;
+        const pctActivo = enGestion ? Math.round((estados.ACTIVO/enGestion)*100) : 0;
+        const pctCierre = enGestion ? Math.round((estados['EN CIERRE']/enGestion)*100) : 0;
 
         document.getElementById('chart-title').textContent=contexto.esTutor?'Mi carga tutorial':contexto.esCoordinacion?'Carga tutorial del equipo':'Carga tutorial';
         document.getElementById('chart-subtitle').textContent=contexto.esTutor?'Estado actual de mis cursos':contexto.esCoordinacion?'Estado actual de los cursos del equipo':'Identifícate para ver tu carga';
@@ -915,10 +915,15 @@ async function cargarGrafico() {
         document.getElementById('load-active').textContent=estados.ACTIVO.toLocaleString('es-CL');
         document.getElementById('load-closing').textContent=estados['EN CIERRE'].toLocaleString('es-CL');
         document.getElementById('load-closed').textContent=estados.CERRADO.toLocaleString('es-CL');
+        document.getElementById('load-prep-pct').textContent=pctPrep+'%';
+        document.getElementById('load-active-pct').textContent=pctActivo+'%';
+        document.getElementById('load-closing-pct').textContent=pctCierre+'%';
+        document.getElementById('load-prep-bar').style.width=pctPrep+'%';
+        document.getElementById('load-active-bar').style.width=pctActivo+'%';
+        document.getElementById('load-closing-bar').style.width=pctCierre+'%';
         document.getElementById('chart-upcoming').textContent=contexto.sesion
-            ? proximos7 + (proximos7===1?' curso comienza':' cursos comienzan')
+            ? proximos7 + (proximos7===1?' curso comienza en 7 días':' cursos comienzan en 7 días')
             : 'Sin sesión';
-        document.getElementById('load-upcoming-bar').style.width=pctProximos+'%';
     } catch(e) {
         console.warn('Error cargando carga tutorial:', e);
     }
