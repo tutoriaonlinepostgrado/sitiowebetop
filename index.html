@@ -326,7 +326,7 @@
                         <div class="course-banner-wrap top-course-banner" id="course-banner">
                             <div class="course-banner-header">
                                 <div class="course-banner-dot"></div>
-                                <span class="course-banner-label">Próximos inicios de cursos</span>
+                                <span class="course-banner-label" id="course-banner-label">Próximos inicios de cursos</span>
                                 <span class="course-banner-counter" id="course-ctr">Consultando…</span>
                                 <a class="course-banner-link" href="calendarios.html">Ver todos ↗</a>
                             </div>
@@ -373,14 +373,18 @@
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
                                     <div>
-                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Cursos por Facultad</h3>
-                                        <p class="text-[8px] text-slate-500">Estado actual de los NRC</p>
+                                        <h3 id="chart-title" class="text-[10px] font-bold text-white uppercase tracking-wider">Mi carga tutorial</h3>
+                                        <p id="chart-subtitle" class="text-[8px] text-slate-500">Estado actual de mis cursos</p>
                                     </div>
                                 </div>
                             </div>
+                            <div class="flex items-center justify-between gap-2 px-3 pt-1 flex-shrink-0">
+                                <div><span id="chart-total" class="text-[22px] font-bold text-white">—</span><span class="text-[8px] text-slate-500 ml-1">cursos</span></div>
+                                <div id="chart-upcoming" class="text-[8px] text-slate-400 text-right">—</div>
+                            </div>
                             <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
-                            <div style="flex:1;min-height:0;padding:4px 8px 10px;">
-                                <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
+                            <div style="flex:1;min-height:0;padding:2px 8px 10px;">
+                                <canvas id="chartFacultad" role="img" aria-label="Carga tutorial por estado" style="width:100%;height:100%;"></canvas>
                             </div>
                         </section>
                     </aside>
@@ -579,6 +583,34 @@ const MENSAJES = [
     "La excelencia en tutoría se construye día a día.",
     "Hoy es una nueva oportunidad para marcar la diferencia."
 ];
+function sesionIndexETOP(){
+    try{
+        const raw=localStorage.getItem('etop_usuario_sesion');
+        return raw?JSON.parse(raw):null;
+    }catch(e){return null}
+}
+function normIndexETOP(v){
+    return String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function datosSegunSesionETOP(data){
+    const s=sesionIndexETOP();
+    if(!s) return [];
+    if(s.rol==='TUTOR' && s.tutor){
+        return data.filter(x=>normIndexETOP(x.tutor||x.NOMBRE_TUTOR||x.nombre_tutor)===normIndexETOP(s.tutor));
+    }
+    return data;
+}
+function contextoSesionETOP(){
+    const s=sesionIndexETOP();
+    return {
+        sesion:s,
+        esTutor:!!(s&&s.rol==='TUTOR'&&s.tutor),
+        esCoordinacion:!!(s&&s.rol==='COORDINACION'),
+        tutor:s&&s.rol==='TUTOR'?String(s.tutor||'').trim():''
+    };
+}
+let cargaChartETOP=null;
+
 const TIPO_CONFIG = {
     aviso:   { label:'📋 Aviso',   color:'#facc15' },
     info:    { label:'ℹ️ Info',    color:'#3b82f6' },
@@ -669,8 +701,12 @@ async function cargarBannerCursos() {
             fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('onboarding HTTP '+r.status); return r.json(); })
         ]);
 
-        const base = rNrcs.status === 'fulfilled' ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value || [])) : [];
+        const baseCompleta = rNrcs.status === 'fulfilled' ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value || [])) : [];
+        const contexto = contextoSesionETOP();
+        const base = datosSegunSesionETOP(baseCompleta);
         const onboarding = rOnboarding.status === 'fulfilled' ? (Array.isArray(rOnboarding.value) ? rOnboarding.value : (rOnboarding.value.value || [])) : [];
+        const bannerLabel = document.getElementById('course-banner-label');
+        if (bannerLabel) bannerLabel.textContent = contexto.esTutor ? 'Mis próximos inicios' : (contexto.esCoordinacion ? 'Próximos inicios del equipo' : 'Próximos inicios');
         const lookup = {};
         onboarding.forEach(item => { if (item.nrc) lookup[item.nrc] = item; });
 
@@ -704,7 +740,7 @@ async function cargarBannerCursos() {
         .slice(0,15);
 
         if (!cursos.length) {
-            track.innerHTML = '<div class="course-ticker-empty">📅 No hay inicios programados para los próximos 14 días.</div>';
+            track.innerHTML = '<div class="course-ticker-empty">' + (contexto.esTutor ? '📅 No tienes cursos programados para iniciar en los próximos 14 días.' : contexto.esCoordinacion ? '📅 No hay inicios del equipo programados para los próximos 14 días.' : '👤 Identifícate para ver tus próximos inicios.') + '</div>';
             ctr.textContent = '0 próximos';
             track.style.animation = 'none';
             return;
@@ -718,7 +754,7 @@ async function cargarBannerCursos() {
                 '<span class="course-badge-fecha ' + badge.clase + '">' + badge.texto + '</span>' +
                 '<span class="course-ticker-programa">' + escaparHTML(curso.programa) + '</span>' +
                 '<span class="course-ticker-curso">' + escaparHTML(curso.curso) + '</span>' +
-                '<span class="course-ticker-tutor">Tutor: ' + escaparHTML(curso.tutor) + '</span>' +
+                (contexto.esTutor ? '' : '<span class="course-ticker-tutor">Tutor: ' + escaparHTML(curso.tutor) + '</span>') +
                 '<span class="course-ticker-nrc">NRC ' + escaparHTML(curso.nrc) + '</span>' +
             '</div>';
         }).join('');
@@ -816,77 +852,87 @@ async function cargarEventosUNAB() {
 async function cargarGrafico() {
     try {
         const r = await fetch(NRCS_JSON + '?t=' + Date.now());
-        const data = await r.json();
-        const facultades = {};
-        data.forEach(nrc => {
-            const fac = nrc.facultad || 'OTRO';
-            const est = (nrc.estado || '').toUpperCase();
-            if (!facultades[fac]) facultades[fac] = { ACTIVO:0, 'EN CIERRE':0, PREPARACION:0 };
-            if (facultades[fac][est] !== undefined) facultades[fac][est]++;
-        });
-        const labels = Object.keys(facultades).sort();
-        const activos  = labels.map(f => facultades[f]['ACTIVO']      || 0);
-        const cierre   = labels.map(f => facultades[f]['EN CIERRE']   || 0);
-        const prep     = labels.map(f => facultades[f]['PREPARACION'] || 0);
+        const raw = await r.json();
+        const contexto = contextoSesionETOP();
+        const data = datosSegunSesionETOP(Array.isArray(raw) ? raw : (raw.value || []));
 
-        const canvas = document.getElementById('chartFacultad');
-        const chart = new Chart(canvas, {
-            type: 'bar',
-            data: {
+        const estados = { PREPARACION:0, ACTIVO:0, 'EN CIERRE':0, CERRADO:0 };
+        data.forEach(nrc => {
+            const est = normIndexETOP(nrc.estado || nrc.ESTADO_CAL || '');
+            if (Object.prototype.hasOwnProperty.call(estados, est)) estados[est]++;
+        });
+
+        const hoy = new Date();
+        const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        const limite7 = new Date(inicioHoy);
+        limite7.setDate(limite7.getDate()+7);
+        const proximos7 = data.filter(nrc => {
+            const f=parseFechaCurso(nrc['fecha inicio']||nrc.FECHA_INICIO||nrc.fecha_inicio);
+            const est=normIndexETOP(nrc.estado||nrc.ESTADO_CAL||'');
+            return f && f>=inicioHoy && f<=limite7 && !['CERRADO','CANCELADO','ANULADO'].includes(est);
+        }).length;
+
+        const total = Object.values(estados).reduce((a,b)=>a+b,0);
+        document.getElementById('chart-title').textContent=contexto.esTutor?'Mi carga tutorial':contexto.esCoordinacion?'Carga tutorial del equipo':'Carga tutorial';
+        document.getElementById('chart-subtitle').textContent=contexto.esTutor?'Estado actual de mis cursos':contexto.esCoordinacion?'Estado actual de los cursos del equipo':'Identifícate para ver tu carga';
+        document.getElementById('chart-total').textContent=total.toLocaleString('es-CL');
+        document.getElementById('chart-upcoming').textContent=contexto.sesion?(proximos7+' comienzan en los próximos 7 días'):'Sin sesión';
+
+        const labels=['Preparación','Activos','En cierre','Cerrados'];
+        const values=[estados.PREPARACION,estados.ACTIVO,estados['EN CIERRE'],estados.CERRADO];
+        const colors=['#facc15','#3b82f6','#8b5cf6','#64748b'];
+
+        const canvas=document.getElementById('chartFacultad');
+        if(cargaChartETOP) cargaChartETOP.destroy();
+        cargaChartETOP=new Chart(canvas,{
+            type:'bar',
+            data:{
                 labels,
-                datasets: [
-                    { label:'Activo',      data:activos, backgroundColor:'#3b82f6', borderRadius:0 },
-                    { label:'En Cierre',   data:cierre,  backgroundColor:'#8b5cf6', borderRadius:0 },
-                    { label:'Preparación', data:prep,    backgroundColor:'#facc15', borderRadius:3 }
-                ]
+                datasets:[{
+                    label:'Cursos',
+                    data:values,
+                    backgroundColor:colors,
+                    borderRadius:5,
+                    borderSkipped:false,
+                    barThickness:16
+                }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { bottom: 8 } },
-                plugins: {
-                    legend:{ display:false }
+            options:{
+                indexAxis:'y',
+                responsive:true,
+                maintainAspectRatio:false,
+                layout:{padding:{left:2,right:8,bottom:3}},
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' curso'+(ctx.raw===1?'':'s')}}
                 },
-                scales: {
-                    x: {
-                        stacked: true,
-                        ticks: {
-                            color:'#64748b',
-                            font:{ size:9, family:'Inter' },
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 45
-                        },
-                        grid: { display:false },
-                        border: { display:false }
+                scales:{
+                    x:{
+                        beginAtZero:true,
+                        ticks:{color:'#64748b',font:{size:8,family:'Inter'},precision:0},
+                        grid:{color:'rgba(255,255,255,0.04)'},
+                        border:{display:false}
                     },
-                    y: {
-                        stacked: true,
-                        ticks: { color:'#64748b', font:{ size:9, family:'Inter' } },
-                        grid: { color:'rgba(255,255,255,0.04)' },
-                        border: { display:false }
+                    y:{
+                        ticks:{color:'#94a3b8',font:{size:9,family:'Inter',weight:'600'}},
+                        grid:{display:false},
+                        border:{display:false}
                     }
                 }
             }
         });
 
-        // ── Leyenda interactiva HTML ──
-        const legendEl = document.getElementById('chart-legend');
-        const datasets = [
-            { label:'Activo',      color:'#3b82f6' },
-            { label:'En Cierre',   color:'#8b5cf6' },
-            { label:'Preparación', color:'#facc15' }
-        ];
-        datasets.forEach((d, i) => {
-            const item = document.createElement('span');
-            item.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:opacity 0.15s;user-select:none';
-            item.innerHTML = `<span style="width:8px;height:8px;border-radius:2px;background:${d.color};display:inline-block;flex-shrink:0"></span>${d.label}`;
-            item.addEventListener('click', () => {
-                const meta = chart.getDatasetMeta(i);
-                meta.hidden = !meta.hidden;
-                item.style.opacity = meta.hidden ? '0.35' : '1';
-                chart.update();
-            });
+        const legendEl=document.getElementById('chart-legend');
+        legendEl.innerHTML='';
+        [
+            ['Preparación',estados.PREPARACION,colors[0]],
+            ['Activo',estados.ACTIVO,colors[1]],
+            ['En cierre',estados['EN CIERRE'],colors[2]],
+            ['Cerrado',estados.CERRADO,colors[3]]
+        ].forEach(([label,n,color])=>{
+            const item=document.createElement('span');
+            item.style.cssText='display:flex;align-items:center;gap:4px;padding:2px 4px;border-radius:4px;white-space:nowrap';
+            item.innerHTML='<span style="width:7px;height:7px;border-radius:2px;background:'+color+';display:inline-block"></span>'+label+' '+n;
             legendEl.appendChild(item);
         });
     } catch(e) {
@@ -1174,6 +1220,8 @@ function guardarSesionETOP(){
   localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
   document.getElementById('etop-login-overlay')?.classList.remove('open');
   actualizarSesionETOPUI();
+  cargarBannerCursos();
+  cargarGrafico();
 }
 document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')guardarSesionETOP()});
 (function iniciarSesionGlobalETOP(){
