@@ -2,9 +2,10 @@ name: Temporary patch NRC_COD_CAL_FILTRO
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
-      - '.github/workflows/tmp_patch_nrc_cod_cal_filtro.yml'
+      - .github/workflows/tmp_patch_nrc_cod_cal_filtro.yml
 
 permissions:
   contents: write
@@ -13,27 +14,17 @@ jobs:
   patch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Add NRC_COD_CAL_FILTRO to exported student files
-        shell: python
+      - name: Clone repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          from pathlib import Path
-
-          path = Path('centro_herramientas_etop.html')
-          text = path.read_text(encoding='utf-8')
-          old = """function exportXLSXConTabla(rows,filename){
-  if(!rows||!rows.length)return;const cols=Object.keys(rows[0]);const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Estudiantes');"""
-          new = """function exportXLSXConTabla(rows,filename){
-  if(!rows||!rows.length)return;
-  rows=rows.map(r=>{const nrcCod=String(r.NRC_COD||'').trim(),periodo=String(r.PERIODO||'').trim();return {...r,NRC_COD_CAL_FILTRO:(nrcCod&&periodo)?`${nrcCod}_${periodo}`:''};});
-  const cols=Object.keys(rows[0]);const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Estudiantes');"""
-          if old not in text:
-              raise SystemExit('Target exportXLSXConTabla signature not found; no changes written.')
-          if 'NRC_COD_CAL_FILTRO' in text:
-              raise SystemExit('NRC_COD_CAL_FILTRO already exists; no changes written.')
-          text = text.replace(old, new, 1)
-          path.write_text(text, encoding='utf-8')
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+      - name: Patch formatter
+        working-directory: repo
+        run: |
+          python3 -c "from pathlib import Path; p=Path('centro_herramientas_etop.html'); s=p.read_text(encoding='utf-8'); old=\"function exportXLSXConTabla(rows,filename){\\n  if(!rows||!rows.length)return;const cols=Object.keys(rows[0]);const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Estudiantes');\"; new=\"function exportXLSXConTabla(rows,filename){\\n  if(!rows||!rows.length)return;\\n  rows=rows.map(r=>{const nrcCod=String(r.NRC_COD||'').trim(),periodo=String(r.PERIODO||'').trim();return {...r,NRC_COD_CAL_FILTRO:(nrcCod&&periodo)?nrcCod+'_'+periodo:''};});\\n  const cols=Object.keys(rows[0]);const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Estudiantes');\"; assert old in s, 'target not found'; assert 'NRC_COD_CAL_FILTRO' not in s, 'field already exists'; p.write_text(s.replace(old,new,1),encoding='utf-8')"
       - name: Commit change
+        working-directory: repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
