@@ -624,11 +624,127 @@ async function enviarSharePointPabloDaniela() {
 
 // ── DATOS NRC PARA BUSCADOR DE CURSOS ──
 let nrcsObData = [];
+let nrcsData = [];
+
+function valorCampo(obj, nombres){
+  for(const n of nombres){
+    const v = obj?.[n];
+    if(v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim();
+  }
+  return '';
+}
+
+function normalizarTexto(v){
+  return String(v||'')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/\s+/g,' ').trim();
+}
+
+function fechaComparable(v){
+  if(!v) return Number.MAX_SAFE_INTEGER;
+  const s = String(v).trim();
+  let d;
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) d = new Date(s.substring(0,10)+'T00:00:00');
+  else {
+    const m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+    d = m ? new Date(`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}T00:00:00`) : new Date(s);
+  }
+  return isNaN(d) ? Number.MAX_SAFE_INTEGER : d.getTime();
+}
+
+function esCursoInduccion(r){
+  const cod = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL','codigo curso','CODIGO_CURSO']);
+  const nom = valorCampo(r,['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
+  const t = normalizarTexto(cod+' '+nom);
+  return t.includes('uni118') || t.includes('induccion');
+}
+
+function autocompletarPrimerCursoDesdeContexto(){
+  const p = new URLSearchParams(window.location.search);
+  const programaParam = p.get('nombrePrograma') || document.getElementById('programa').value || '';
+  const cursoInduccionTexto = p.get('nombreCurso') || document.getElementById('nrc-induccion').value || '';
+  const nrcInduccion = cursoInduccionTexto.split(/\s+[—–-]\s+/)[0].trim();
+
+  const fuente = nrcsData.length ? nrcsData : nrcsObData;
+  if(!fuente.length) return;
+
+  // Primero buscamos el registro de inducción seleccionado para recuperar su Intake/Versión.
+  const regInduccion = fuente.find(r => {
+    const nrc = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']);
+    return nrcInduccion && normalizarTexto(nrc) === normalizarTexto(nrcInduccion);
+  });
+
+  const intake = valorCampo(regInduccion,[
+    'intake','INTAKE','intake o version','INTAKE O VERSION',
+    'intake/version','INTAKE/VERSION','version','VERSION'
+  ]) || p.get('intake') || '';
+
+  const programa = valorCampo(regInduccion,[
+    'nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'
+  ]) || programaParam;
+
+  const fechaFinInd = fechaComparable(
+    valorCampo(regInduccion,['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN']) || p.get('fechaFin')
+  );
+
+  let candidatos = fuente.filter(r => {
+    if(esCursoInduccion(r)) return false;
+
+    const nrc = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']);
+    if(nrcInduccion && normalizarTexto(nrc) === normalizarTexto(nrcInduccion)) return false;
+
+    const rIntake = valorCampo(r,[
+      'intake','INTAKE','intake o version','INTAKE O VERSION',
+      'intake/version','INTAKE/VERSION','version','VERSION'
+    ]);
+    const rPrograma = valorCampo(r,[
+      'nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'
+    ]);
+
+    if(intake && rIntake && normalizarTexto(rIntake) !== normalizarTexto(intake)) return false;
+    if(programa && rPrograma && normalizarTexto(rPrograma) !== normalizarTexto(programa)) return false;
+
+    return true;
+  });
+
+  // Si conocemos el término de inducción, priorizamos cursos que comienzan desde esa fecha en adelante.
+  if(fechaFinInd !== Number.MAX_SAFE_INTEGER){
+    const posteriores = candidatos.filter(r => {
+      const f = fechaComparable(valorCampo(r,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+      return f === Number.MAX_SAFE_INTEGER || f >= fechaFinInd;
+    });
+    if(posteriores.length) candidatos = posteriores;
+  }
+
+  candidatos.sort((a,b) => {
+    const fa = fechaComparable(valorCampo(a,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+    const fb = fechaComparable(valorCampo(b,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+    if(fa !== fb) return fa - fb;
+    return valorCampo(a,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL'])
+      .localeCompare(valorCampo(b,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),'es');
+  });
+
+  const primero = candidatos[0];
+  if(!primero) return;
+
+  const nombre = valorCampo(primero,['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
+  if(!nombre) return;
+
+  document.getElementById('curso1-search').value = nombre;
+  document.getElementById('curso1').value = nombre;
+}
+
 async function cargarNrcsOb(){
   try {
-    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json');
-    nrcsObData = await r.json();
-  } catch(e) { console.warn('No se pudo cargar nrcs_onboarding.json'); }
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json', {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    nrcsObData = Array.isArray(data) ? data : (data.value || []);
+  } catch(e) {
+    // Fallback: la página también puede trabajar directamente con nrcs.json.
+    nrcsObData = [];
+    console.warn('nrcs_onboarding.json no disponible; se usará nrcs.json como respaldo.');
+  }
 }
 
 async function cargarProgramas(){
@@ -636,8 +752,15 @@ async function cargarProgramas(){
     const r = await fetch('nrcs.json', {cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const datos = await r.json();
-    const programas = [...new Set(datos.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean))]
+    nrcsData = Array.isArray(datos) ? datos : (datos.value || []);
+
+    if(!nrcsObData.length) nrcsObData = nrcsData;
+
+    const programas = [...new Set(nrcsData.map(x =>
+      valorCampo(x,['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'])
+    ).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,'es'));
+
     document.getElementById('programas-list').innerHTML = programas
       .map(p=>`<option value="${p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"></option>`).join('');
   } catch(e) {
@@ -688,9 +811,7 @@ document.addEventListener('click', function(e){
   });
 });
 
-window.onload = function() {
-  cargarNrcsOb();
-  cargarProgramas();
+window.onload = async function() {
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
   document.getElementById('fecha-fin').value = today;
@@ -699,13 +820,20 @@ window.onload = function() {
   const p = new URLSearchParams(window.location.search);
   const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
   const toISO = v => { if(!v) return ''; if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10); const m=v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/); return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''; };
+
   set('nombre-tutor',  p.get('nombreTutor'));
   set('correo-tutor',  p.get('correoTutor'));
   set('anexo-tutor',   p.get('anexoTutor'));
   set('programa',      p.get('nombrePrograma'));
   set('nrc-induccion', p.get('nombreCurso'));
+
   const fi = toISO(p.get('fechaInicio')); if(fi) document.getElementById('fecha-inicio').value = fi;
   const ff = toISO(p.get('fechaFin'));    if(ff) document.getElementById('fecha-fin').value   = ff;
+
+  // Cargamos los catálogos y recién entonces resolvemos el primer curso.
+  await cargarNrcsOb();
+  await cargarProgramas();
+  autocompletarPrimerCursoDesdeContexto();
 };
 </script>
 </body>
