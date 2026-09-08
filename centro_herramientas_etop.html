@@ -387,8 +387,9 @@
         <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
         <option value="BARBARA ROJAS">BARBARA ROJAS</option>
         <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
-        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="CARLA PEÑA">CARLA PEÑA</option>
         <option value="NOEMI PAZ">NOEMI PAZ</option>
+        <option value="ORIETTA CORTES">ORIETTA CORTES</option>
         <option value="HECTOR TAPIA">HECTOR TAPIA</option>
         <option value="CONSUELO PARGA">CONSUELO PARGA</option>
         <option value="FRANCISCA INDA">FRANCISCA INDA</option>
@@ -528,7 +529,7 @@
     <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCIÓN</label><input type="date" id="t4-fecha-induccion" onchange="t4ProponerIntake()" /></div>
     <div class="form-group"><label>INTAKE O VERSIÓN PROPUESTO (EDITABLE)</label><input type="text" id="t4-intake" placeholder="Ej: MAG_MAPS_VERSION_01_18.08.2026" /></div>
     <div class="form-group">
-      <label>NOMBRE TUTOR</label>
+      <label>TUTOR NUEVA VERSIÓN <span style="color:#95a3b8;font-weight:400;text-transform:none;">(solo se aplica al intake nuevo)</span></label>
       <select id="t4-tutor" onchange="t4AutoCorreo()">
         <option value="">— Selecciona tutor —</option>
         <option value="HANS NOVAKOVIC">HANS NOVAKOVIC</option>
@@ -540,7 +541,8 @@
         <option value="MARIA FERNANDA GONZALEZ">MARIA FERNANDA GONZALEZ</option>
         <option value="BARBARA ROJAS">BARBARA ROJAS</option>
         <option value="CONSTANZA CONTRERAS">CONSTANZA CONTRERAS</option>
-        <option value="CARLA PENA">CARLA PENA</option>
+        <option value="CARLA PEÑA">CARLA PEÑA</option>
+        <option value="ORIETTA CORTES">ORIETTA CORTES</option>
         <option value="ALVARO ORELLANA">ALVARO ORELLANA</option>
         <option value="NOEMI PAZ">NOEMI PAZ</option>
         <option value="CONSUELO PARGA">CONSUELO PARGA</option>
@@ -559,8 +561,8 @@
       </select>
     </div>
     <div class="form-group">
-      <label>CORREO TUTOR <span style="color:#95a3b8;font-weight:400;text-transform:none;">(se autocompleta)</span></label>
-      <input type="text" id="t4-correotutor" placeholder="Se autocompleta al elegir tutor" />
+      <label>CORREO TUTOR NUEVA VERSIÓN <span style="color:#95a3b8;font-weight:400;text-transform:none;">(solo intake nuevo)</span></label>
+      <input type="text" id="t4-correotutor" placeholder="Se autocompleta al elegir tutor de la nueva versión" />
     </div>
     <div class="form-group full">
       <label>COORDINADORES <span style="color:#95a3b8;font-weight:400;text-transform:none;">(selección múltiple — columna COORDINADION)</span></label>
@@ -1000,7 +1002,9 @@ function calDetectarHeader(cols){
     termino:['fecha de termino','fecha termino','fecha de fin','fecha fin','termino de curso','termino curso','termino','fin','hasta'],
     periodo:['periodo'],
     profesor:['nombre de profesor','nombre profesor','profesor','docente','academico','relator'],
-    facultad:['facultad']
+    facultad:['facultad'],
+    version:['version','version logica','version cohorte','version intake'],
+    rango:['fechas','rango de fechas','fecha inicio y fin','fecha de inicio y termino','fecha de inicio y término','periodo de clases']
   };
   for(const[campo,kws]of Object.entries(KEYS)){for(let i=0;i<cu.length;i++){if(kws.some(kw=>cu[i]===kw||cu[i].startsWith(kw+' '))){if(!(campo in hits))hits[campo]=i;}}}
   // Algunos calendarios omiten el rótulo NRC, pero conservan su columna
@@ -1035,7 +1039,62 @@ async function t4CargarExcel(input){
     input.value='';
   }
 }
-function calFmtFecha(v){if(!v)return'';const s=String(v).trim().replace(/\.+$/,'').trim();if(!s)return'';const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return s;}
+function calFmtFecha(v){
+  if(!v)return'';
+  const s=String(v).trim().replace(/\.+$/,'').trim();if(!s)return'';
+  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);
+  let m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+  if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2})$/);
+  if(m)return '20'+m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  return s;
+}
+function calSepararRangoFechas(v){
+  const s=String(v||'').trim();
+  if(!s)return {inicio:'',termino:''};
+  const m=s.match(/(\d{1,2}[\/\-.]\d{1,2}[\/\-.](?:\d{2}|\d{4}))\s*(?:al|a|hasta|–|—|-)\s*(\d{1,2}[\/\-.]\d{1,2}[\/\-.](?:\d{2}|\d{4}))/i);
+  if(!m)return {inicio:calFmtFecha(s),termino:''};
+  return {inicio:calFmtFecha(m[1]),termino:calFmtFecha(m[2])};
+}
+function calHeaderPlano(v){
+  const n=calNormalizarEncabezado(v);
+  const mapa={
+    'nrc':'nrc','numero nrc':'nrc','nrc curso':'nrc',
+    'periodo':'periodo',
+    'codigo':'codigo','codigo curso':'codigo','codigo de curso':'codigo','codigo asignatura':'codigo','codigo de asignatura':'codigo','abreviada':'codigo',
+    'version':'version','version logica':'version',
+    'asignatura':'nombre','nombre asignatura':'nombre','nombre de asignatura':'nombre','nombre curso':'nombre','nombre de curso':'nombre',
+    'docente':'profesor','profesor':'profesor','nombre profesor':'profesor','nombre de profesor':'profesor',
+    'fecha inicio':'inicio','fecha de inicio':'inicio','inicio':'inicio',
+    'fecha fin':'termino','fecha de termino':'termino','fecha termino':'termino','fin':'termino',
+    'fechas':'rango','rango de fechas':'rango','fecha inicio y fin':'rango'
+  };
+  return mapa[n]||'';
+}
+function calConvertirTextoPlanoATabulado(texto){
+  // Outlook/Teams puede pegar una tabla HTML dejando cada celda en una línea.
+  // Si ya hay tabs, no tocamos nada.
+  if(String(texto).includes('\t'))return texto;
+  const lineas=String(texto).split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  let ini=-1,headers=[];
+  for(let i=0;i<lineas.length;i++){
+    const hs=[];let j=i;
+    while(j<lineas.length){
+      const h=calHeaderPlano(lineas[j]);
+      if(!h)break;
+      hs.push({raw:lineas[j],canon:h});j++;
+    }
+    if(hs.length>=4){ini=i;headers=hs;break;}
+  }
+  if(ini<0)return texto;
+  const datos=lineas.slice(ini+headers.length);
+  if(datos.length<headers.length)return texto;
+  const out=[headers.map(h=>h.raw).join('\t')];
+  for(let i=0;i+headers.length<=datos.length;i+=headers.length){
+    out.push(datos.slice(i,i+headers.length).join('\t'));
+  }
+  return out.join('\n');
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // parsearTextoCalendario
@@ -1051,6 +1110,7 @@ function calSumarMesesISO(fechaIso,meses){
   return fecha.getFullYear()+'-'+String(fecha.getMonth()+1).padStart(2,'0')+'-'+String(fecha.getDate()).padStart(2,'0');
 }
 function parsearTextoCalendario(texto){
+  texto=calConvertirTextoPlanoATabulado(texto);
   const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];
   let headerMap=null,mF='',mP='',mPer='';
   const seenRows=new Set();
@@ -1074,8 +1134,11 @@ function parsearTextoCalendario(texto){
     const nv=(ni!==undefined&&ni<cs.length)?cs[ni]:'';
     const get=(c,d)=>{const i=headerMap[c];return(i!==undefined&&i<cs.length)?cs[i]:(d||'');};
     let codigo=get('codigo').replace(/\s+/g,'').toUpperCase(),nombre=get('nombre');
-    const inicio=calFmtFecha(get('inicio'));
-    let termino=calFmtFecha(get('termino'));
+    const rangoCrudo=get('rango')||get('inicio');
+    const rango=calSepararRangoFechas(rangoCrudo);
+    const inicio=rango.inicio;
+    let termino=calFmtFecha(get('termino'))||rango.termino;
+    const versionLogica=get('version').trim();
     const periodoFila=get('periodo');
     if(/^\d{6}$/.test(periodoFila))mPer=periodoFila;
     const periodo=periodoFila||mPer;
@@ -1099,9 +1162,88 @@ function parsearTextoCalendario(texto){
       const base=(codigo||nombre.replace(/[^A-Z0-9]/gi,'').toUpperCase().substring(0,6)||'CURSO');
       nrcFinal='TMP-'+base+'-'+ts+'-'+String(tmpSeq).padStart(2,'0');
     }
-    resultados.push({NRC:nrcFinal,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,PROFESOR:profesor,_programa:mP});
+    resultados.push({NRC:nrcFinal,PERIODO:periodo,FACULTAD:facultad,'CODIGO CURSO':codigo,'NOMBRE CURSO':nombre,'FECHA DE INICIO':inicio,'FECHA FIN':termino,'VERSION LOGICA':versionLogica,PROFESOR:profesor,_programa:mP});
   }
   return resultados;
+}
+
+function t4ParseVersionLogica(v){
+  const m=String(v||'').trim().toUpperCase().match(/^V?\s*([0-9A-Z]+)\s+(20\d{2})$/);
+  if(!m)return null;
+  const num=/^\d+$/.test(m[1])?m[1].padStart(2,'0'):m[1];
+  return {num,anio:m[2],etiqueta:'V'+String(parseInt(m[1],10)||m[1])+' '+m[2]};
+}
+function t4AnioDesdeIntake(intake){
+  const m=String(intake||'').match(/_\d{2}\.\d{2}\.(20\d{2})/);
+  return m?m[1]:'';
+}
+function t4ResolverIntakeExistente(materia,versionLogica){
+  const pv=t4ParseVersionLogica(versionLogica);if(!pv)return {estado:'sin-version',intake:'',pv:null};
+  const mat=t4Normalizar(materia).replace(/[^A-Z0-9]/g,'');
+  const candidatos=[...new Set((t2NrcsData||[])
+    .filter(r=>t4Normalizar(r.materia).replace(/[^A-Z0-9]/g,'')===mat)
+    .map(r=>String(r.intake||'').trim()).filter(Boolean)
+    .filter(i=>new RegExp('_VERSION_'+pv.num+'(?:_|$)','i').test(i)&&t4AnioDesdeIntake(i)===pv.anio))];
+  if(candidatos.length===1)return {estado:'existente',intake:candidatos[0],pv};
+  if(candidatos.length>1)return {estado:'ambiguo',intake:'',pv,candidatos};
+  return {estado:'nuevo',intake:'',pv};
+}
+function t4VersionManualCoincide(pv){
+  if(!pv)return false;
+  const vr=String(document.getElementById('t4-version-num').value||'').trim().toUpperCase();
+  const vn=/^\d+$/.test(vr)?vr.padStart(2,'0'):vr;
+  const fi=String(document.getElementById('t4-fecha-induccion').value||'');
+  const anio=fi.match(/^(20\d{2})-/)?.[1]||'';
+  return vn===pv.num&&anio===pv.anio;
+}
+
+
+// Para cohortes ya existentes, el tutor se hereda desde la base por curso.
+// Se cruza INTAKE + CODIGO CURSO porque un mismo intake puede cambiar de tutor
+// a lo largo de su trayectoria.
+function t4ResolverTutorExistente(intake,codigoCurso,fechaCurso){
+  const iKey=String(intake||'').trim();
+  const cKey=t4Normalizar(codigoCurso).replace(/[^A-Z0-9]/g,'');
+  if(!iKey)return {nombre:'',correo:'',encontrado:false,fuente:'sin-intake'};
+
+  const todosIntake=(t2NrcsData||[]).filter(r=>String(r.intake||'').trim()===iKey);
+  const conTutor=todosIntake.filter(r=>String(r.tutor||'').trim());
+  if(!conTutor.length)return {nombre:'',correo:'',encontrado:false,fuente:'sin-tutor-intake'};
+
+  const codigoRegistro=r=>t4Normalizar(r['codigo curso']??r['codigo_curso']??r.CODIGO_CURSO??'').replace(/[^A-Z0-9]/g,'');
+  const fechaRegistro=r=>String(r['fecha inicio']??r.fecha_inicio??r.FECHA_INICIO??'').substring(0,10);
+  const aMs=s=>{const m=String(s||'').match(/^(20\d{2})-(\d{2})-(\d{2})$/);return m?Date.UTC(+m[1],+m[2]-1,+m[3]):NaN;};
+  const target=aMs(fechaCurso);
+
+  function elegirMasCercano(lista){
+    if(!lista.length)return null;
+    if(!Number.isFinite(target))return lista[0];
+    const fechados=lista.map(r=>({r,ms:aMs(fechaRegistro(r))})).filter(x=>Number.isFinite(x.ms));
+    if(!fechados.length)return lista[0];
+    // Priorizar el tutor vigente inmediatamente antes (o en) la fecha del curso.
+    const anteriores=fechados.filter(x=>x.ms<=target).sort((a,b)=>b.ms-a.ms);
+    if(anteriores.length)return anteriores[0].r;
+    // Si el intake solo tiene registros posteriores, tomar el más próximo hacia adelante.
+    return fechados.sort((a,b)=>a.ms-b.ms)[0].r;
+  }
+
+  // 1) Coincidencia exacta por INTAKE + CÓDIGO DE CURSO.
+  const exactos=cKey?conTutor.filter(r=>codigoRegistro(r)===cKey):[];
+  let elegido=elegirMasCercano(exactos);
+  let fuente='curso';
+
+  // 2) Continuidad: si ese código aún no existe en el histórico del intake,
+  // heredar el tutor vigente/más cercano del mismo INTAKE.
+  if(!elegido){
+    elegido=elegirMasCercano(conTutor);
+    fuente='intake';
+  }
+
+  if(!elegido)return {nombre:'',correo:'',encontrado:false,fuente:'sin-coincidencia'};
+  const contacto=t4ContactoTutor(elegido.tutor);
+  const nombre=contacto.nombre;
+  const correo=contacto.correo;
+  return {nombre,correo,encontrado:!!nombre,fuente};
 }
 
 async function processTab4(){
@@ -1109,19 +1251,61 @@ async function processTab4(){
   re.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando calendario...</div>';
   const texto=document.getElementById('t4-texto').value;if(!texto.trim()){re.innerHTML='<div class="alert error">Sube el Excel o pega el bloque del calendario primero.</div>';return;}
   try{
-    const filas=parsearTextoCalendario(texto);if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. Verifica que el bloque incluya encabezados.</div>';return;}
-    const materia=document.getElementById('t4-materia').value.trim(),intake=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tipo=document.getElementById('t4-tipo').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
-    if(!programa||!materia||!facultad||!tipo||!intake){re.innerHTML='<div class="alert error">Selecciona Programa, Materia, Facultad y Tipo de programa, y completa el Intake o Versión antes de procesar.</div>';return;}
+    const filas=parsearTextoCalendario(texto);
+    if(!filas.length){re.innerHTML='<div class="alert error">No se pudieron extraer cursos. El formato pegado no pudo interpretarse. Revisa que incluya NRC/Periodo/Código/Versión y fechas.</div>';return;}
+    const materia=document.getElementById('t4-materia').value.trim(),intakeManual=document.getElementById('t4-intake').value.trim(),programa=document.getElementById('t4-programa').value.trim(),facultad=document.getElementById('t4-facultad').value.trim(),tipo=document.getElementById('t4-tipo').value.trim(),tutor=document.getElementById('t4-tutor').value.trim(),cTut=document.getElementById('t4-correotutor').value.trim();
+    if(!programa||!materia||!facultad||!tipo){re.innerHTML='<div class="alert error">Selecciona Programa, Materia, Facultad y Tipo de programa antes de procesar.</div>';return;}
     const coordEmails=document.getElementById('t4-coord-value').value;
     if(!coordEmails){re.innerHTML='<div class="alert error">Selecciona al menos un coordinador para completar la columna COORDINADION.</div>';return;}
-    // Formato Claims para columnas de usuario SharePoint: i:0#.f|membership|correo
-    const tutorClaims=cTut?'i:0#.f|membership|'+cTut:'';
-    const coordClaims=coordEmails?coordEmails.split(';').filter(Boolean).map(c=>'i:0#.f|membership|'+c).join(';'):'';
-    const salida=filas.map(f=>({'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'TIPO_NRC':tipo,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':intake,'NOMBRE TUTOR':tutor,'CORREO TUTOR':cTut,'Correo_Tutor_a':cTut,'COORDINADION':coordEmails,'Coordinadores_Emails_Texto':coordEmails,'Tutor_Claims':tutorClaims,'Coordinadores_Claims':coordClaims,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa}));
-    state.t4Data=salida;cAutocompletarDesdeCalendario(programa,intake);re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados. El aviso quedó preparado con los datos del calendario.</div>';
+
+    const resoluciones=filas.map(f=>({f,res:t4ResolverIntakeExistente(materia,f['VERSION LOGICA'])}));
+    const ambiguos=resoluciones.filter(x=>x.res.estado==='ambiguo');
+    if(ambiguos.length){
+      re.innerHTML='<div class="alert error">Hay más de un intake posible para '+[...new Set(ambiguos.map(x=>x.res.pv.etiqueta))].join(', ')+'. Revisa la base antes de continuar.</div>';return;
+    }
+    const sinResolver=[];
+    resoluciones.forEach(x=>{
+      if(x.res.estado==='existente')x.intakeFinal=x.res.intake;
+      else if(x.res.estado==='nuevo'&&t4VersionManualCoincide(x.res.pv)&&intakeManual)x.intakeFinal=intakeManual;
+      else if(x.res.estado==='sin-version'&&intakeManual)x.intakeFinal=intakeManual;
+      else sinResolver.push(x);
+    });
+    if(sinResolver.length){
+      const etiquetas=[...new Set(sinResolver.map(x=>x.res.pv?.etiqueta||'(sin versión)'))];
+      re.innerHTML='<div class="alert info"><strong>🆕 Intake nuevo detectado:</strong> '+etiquetas.join(', ')+'. Completa arriba el número/letra de versión y la fecha de inicio de UNI118 para generar el intake propuesto. Luego vuelve a procesar.</div>';
+      return;
+    }
+
+    const coordClaims=coordEmails.split(';').filter(Boolean).map(c=>'i:0#.f|membership|'+c).join(';');
+    const tutoresSinCorreo=new Set();
+    let tutorPorContinuidad=0;
+    const salida=resoluciones.map(x=>{
+      const f=x.f;
+      let tutorFinal='',correoFinal='';
+      if(x.res.estado==='existente'){
+        const heredado=t4ResolverTutorExistente(x.intakeFinal,f['CODIGO CURSO'],f['FECHA DE INICIO']);
+        tutorFinal=heredado.nombre;
+        correoFinal=heredado.correo;
+        if(heredado.fuente==='intake')tutorPorContinuidad++;
+        if(tutorFinal&&!correoFinal)tutoresSinCorreo.add(tutorFinal);
+      }else{
+        // El selector manual se usa únicamente para la nueva versión.
+        const contactoNuevo=t4ContactoTutor(tutor);
+        tutorFinal=contactoNuevo.nombre||tutor;
+        correoFinal=cTut||contactoNuevo.correo;
+      }
+      const tutorClaimsFinal=correoFinal?'i:0#.f|membership|'+correoFinal:'';
+      return {'NRC':f.NRC,'PERIODO':f.PERIODO,'FACULTAD':facultad||f.FACULTAD,'MATERIA':materia,'TIPO_NRC':tipo,'CODIGO CURSO':f['CODIGO CURSO'],'NOMBRE CURSO':f['NOMBRE CURSO'],'FECHA DE INICIO':f['FECHA DE INICIO'],'FECHA FIN':f['FECHA FIN'],'INTAKE O VERSION':x.intakeFinal,'NOMBRE TUTOR':tutorFinal,'CORREO TUTOR':correoFinal,'Correo_Tutor_a':correoFinal,'COORDINADION':coordEmails,'Coordinadores_Emails_Texto':coordEmails,'Tutor_Claims':tutorClaimsFinal,'Coordinadores_Claims':coordClaims,'PROFESOR':f.PROFESOR,'NOMBRE_PROGRAMA':programa||f._programa};
+    });
+    state.t4Data=salida;
+    const intakes=[...new Set(salida.map(r=>r['INTAKE O VERSION']).filter(Boolean))];
+    cAutocompletarDesdeCalendario(programa,intakes.length===1?intakes[0]:intakeManual);
+    const avisoTutor=tutoresSinCorreo.size?'<div class="alert info">ℹ️ Tutor(es) heredados desde nrcs.json sin correo configurado en esta herramienta: <strong>'+[...tutoresSinCorreo].join(', ')+'</strong>. El nombre quedó correcto; agrega su correo al mapa de tutores si necesitas completar CORREO TUTOR y Tutor_Claims.</div>':'';
+    re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados · '+intakes.length+' intake(s) resuelto(s). Las versiones existentes heredaron su tutor desde nrcs.json; '+tutorPorContinuidad+' curso(s) de continuidad usaron el tutor vigente del mismo intake. El tutor seleccionado se aplicó solo a la versión nueva.</div>'+avisoTutor;
     const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
   }catch(err){re.innerHTML='<div class="alert error">Error: '+err.message+'</div>';}
 }
+
 function downloadTab4(){
   if(!state.t4Data)return;const cols=Object.keys(state.t4Data[0]),ws=XLSX.utils.json_to_sheet(state.t4Data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios');
   function colLetter(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
@@ -1341,8 +1525,10 @@ const TUTORES_MAP = {
   'MARIA FERNANDA GONZALEZ': {correo:'tutoriaonline41@unab.cl', nombre:'María Fernanda González Valenzuela',       anexo:'600 585 8550 Anexo 5644'},
   'BARBARA ROJAS':           {correo:'barbara.rojas.c@unab.cl', nombre:'Barbara Belen Rojas Castro',               anexo:'600 585 8550 Anexo 7260'},
   'CONSTANZA CONTRERAS':     {correo:'tutoriaonline56@unab.cl', nombre:'Constanza Contreras Palma',                anexo:'600 585 8550 Anexo 8201'},
-  'CARLA PENA':              {correo:'tutoriaonline54@unab.cl', nombre:'Carla Peña',                               anexo:'600 585 8550 Anexo 7361'},
+  'CARLA PEÑA':              {correo:'tutoriaonline54@unab.cl', nombre:'Carla Peña',                               anexo:'600 585 8550 Anexo 7361'},
+  'CARLA PENA':              {correo:'tutoriaonline54@unab.cl', nombre:'Carla Peña',                               anexo:'600 585 8550 Anexo 7361'}, // alias sin tilde
   'NOEMI PAZ':               {correo:'tutoriaonline08@unab.cl', nombre:'Noemí Paz',                                anexo:'600 585 8550 Anexo 1288'},
+  'ORIETTA CORTES':          {correo:'tutoriaonline04@unab.cl', nombre:'Orietta Cortes',                           anexo:'600 585 8550 Anexo 5230'},
   'HECTOR TAPIA':            {correo:'tutoriaonline23@unab.cl', nombre:'Héctor Tapia Ruminado',                    anexo:'600 585 8550 Anexo 5685'},
   'CONSUELO PARGA':          {correo:'tutoriaonline70@unab.cl', nombre:'Consuelo Parga',                           anexo:'600 585 8550 Anexo 1273'},
   'FRANCISCA INDA':          {correo:'tutoriaonline75@unab.cl', nombre:'Francisca Inda',                           anexo:'600 585 8550 Anexo 1278'},
@@ -1499,6 +1685,21 @@ function t4Normalizar(v){
   return String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
 }
 
+function t4TutorCanonico(nombre){
+  const k=t4Normalizar(nombre);
+  const alias={
+    'CARLA PENA':'CARLA PEÑA',
+    'ORIETTA CORTES':'ORIETTA CORTES'
+  };
+  return alias[k] || String(nombre||'').trim().toUpperCase();
+}
+function t4ContactoTutor(nombre){
+  const canon=t4TutorCanonico(nombre);
+  const keyDirecto=Object.keys(TUTORES_MAP).find(k=>t4Normalizar(k)===t4Normalizar(canon));
+  const t=keyDirecto?TUTORES_MAP[keyDirecto]:null;
+  return {nombre:canon,correo:t?.correo||'',anexo:t?.anexo||''};
+}
+
 function t4Unicos(filas,campo){
   return [...new Set(filas.map(r=>String(r[campo]||'').trim()).filter(Boolean))]
     .sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
@@ -1560,8 +1761,8 @@ const t4CoordSel = new Set();
 
 function t4AutoCorreo(){
   const sel=document.getElementById('t4-tutor').value;
-  const correo=T4_TUTORES[sel]||'';
-  document.getElementById('t4-correotutor').value=correo;
+  const contacto=t4ContactoTutor(sel);
+  document.getElementById('t4-correotutor').value=contacto.correo||'';
 }
 
 function t4CoordToggle(){
