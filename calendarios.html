@@ -239,6 +239,18 @@
       u.searchParams.set('env','Embedded');
       return u.href;
     }
+    function intakeCoursesUrl(intake){
+      if(!String(intake||'').trim())return '';
+      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');
+      u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');
+      u.searchParams.set('env','WebViewList');
+      u.searchParams.set('isDlg','1');
+      u.searchParams.set('iframed','1');
+      u.searchParams.set('isfromSharePointTeams','true');
+      u.searchParams.set('FilterField1','field_8');
+      u.searchParams.set('FilterValue1',String(intake).trim());
+      return u.href;
+    }
     function integrationUrl(nrc){
       const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';
       return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
@@ -323,6 +335,7 @@
             <div class="panel-section-title">Gestión del curso</div>
             <div class="panel-actions-grid">
               <button type="button" class="panel-action primary ${String(x.id||'').trim()?'':'disabled'}" onclick="abrirPowerAppsEnFicha()" ${String(x.id||'').trim()?'':'disabled'}><span class="pa-icon">✏️</span><span>Editar curso en Power Apps</span></button>
+              ${panelLink(intakeCoursesUrl(x.intake),'📚','Base de cursos del Intake')}
               ${panelLink(studentsUrl(x.nrc),'👥','Base Semáforo / estudiantes')}
             </div>
           </div>
