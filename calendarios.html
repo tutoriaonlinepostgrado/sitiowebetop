@@ -230,15 +230,18 @@
         (!detailFilters.codigo || norm(x['codigo curso'])===norm(detailFilters.codigo))
       );
     }
-    function studentsUrl(nrc){
-      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
-      u.searchParams.set('FilterField1','NRC_COD_CAL');
-      u.searchParams.set('FilterValue1',String(nrc||''));
-      u.searchParams.set('FilterType1','Calculated');
-      u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
-      u.searchParams.set('env','Embedded');
-      return u.href;
-    }
+   function studentsUrl(nrc){
+  const u = new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
+
+  u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');
+  u.searchParams.set('FilterValue1',String(nrc || ''));
+  u.searchParams.set('FilterType1','Text');
+
+  u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+  u.searchParams.set('env','Embedded');
+
+  return u.href;
+}
     function intakeCoursesUrl(intake){
       if(!String(intake||'').trim())return '';
       const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');
