@@ -14,11 +14,11 @@ html,body{margin:0;width:100%;height:100%;background:#141b2d;overflow:hidden}
 <script>
 (async()=>{
   try{
-    const r=await fetch('gestion_base.html?v=20260911-kpi1',{cache:'no-store'});
+    const r=await fetch('gestion_base.html?v=20260911-kpi2',{cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     let html=await r.text();
     const cierre='</bo'+'dy>';
-    const script='<scr'+'ipt src="gestion_kpi.js?v=20260911-kpi1"></scr'+'ipt>';
+    const script='<scr'+'ipt src="gestion_kpi.js?v=20260911-kpi2"></scr'+'ipt>';
     html=html.replace(cierre,script+cierre);
     document.open();
     document.write(html);
