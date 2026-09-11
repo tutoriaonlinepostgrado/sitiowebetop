@@ -13,6 +13,16 @@
       .replace(/\s+/g, ' ').trim().toUpperCase();
   }
 
+  // Clave NRC tolerante a espacios residuales del origen.
+  // Ej.: 4136_MSPG005 _202582 y 4136_MSPG005_202582 deben ser el mismo curso.
+  function nrcKey(v) {
+    return String(v ?? '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .replace(/\s+/g, '')
+      .trim();
+  }
+
   function estadoObjetivo() {
     if (typeof vistaActual === 'undefined') return '';
     if (vistaActual === 'CURSOS_ACTIVOS') return 'ACTIVO';
@@ -21,9 +31,9 @@
   }
 
   function esEstadoVista(curso, objetivo) {
-    const e = norm(curso?.estado);
+    const e = norm(curso?.estado).replace(/_/g, ' ');
     if (objetivo === 'ACTIVO') return e === 'ACTIVO';
-    if (objetivo === 'EN CIERRE') return e === 'EN CIERRE' || e === 'EN_CIERRE';
+    if (objetivo === 'EN CIERRE') return e === 'EN CIERRE';
     return false;
   }
 
@@ -102,7 +112,7 @@
     const totalCursos = cursos.length;
     let totalEstudiantes = 0;
     for (const c of cursos) {
-      const key = norm(c?.nrc);
+      const key = nrcKey(c?.nrc);
       totalEstudiantes += Number(metricasPorNrc.get(key) || 0);
     }
 
@@ -138,7 +148,7 @@
       const data = await r.json();
       const mapa = new Map();
       (Array.isArray(data) ? data : []).forEach(x => {
-        const k = norm(x?.nrc);
+        const k = nrcKey(x?.nrc);
         if (k) mapa.set(k, Number(x?.total_estudiantes) || 0);
       });
       metricasPorNrc = mapa;
