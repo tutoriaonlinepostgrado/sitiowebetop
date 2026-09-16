@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Correos de Bienvenida</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --bg: #F3F2F1;
+    --panel: #ffffff;
+    --line: #f6c128;
+    --line-dim: rgba(246,193,40,0.25);
+    --text: #1f2940;
+    --muted: #666666;
+    --soft: #888888;
+    --ok-bg: #d4edda;
+    --ok-text: #155724;
+    --err-bg: #f8d7da;
+    --err-text: #721c24;
+    --input-bg: #ffffff;
+    --input-text: #1f2940;
+    --radius: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 2rem;
+  }
+
+  .header { margin-bottom: 2rem; border-bottom: 2px solid var(--line); padding-bottom: 1rem; }
+  .header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text); }
+  .header p { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  @media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } }
+  
+  .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  input[type="text"], input[type="date"], textarea {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid rgba(246,193,40,0.8);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--line);
+    box-shadow: 0 0 0 2px rgba(246,193,40,0.15);
+  }
+
+  .file-drop {
+    border: 1px dashed rgba(246,193,40,0.5);
+    border-radius: 10px;
+    padding: 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    background: transparent;
+    position: relative;
+  }
+  .file-drop:hover { border-color: var(--line); background: rgba(246,193,40,0.05); color: var(--text); }
+  .file-drop input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .file-drop .file-name {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--line);
+    font-family: 'IBM Plex Mono', monospace;
+    word-break: break-all;
+  }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .btn:hover { background: rgba(246,193,40,0.1); }
+  .btn.primary { background: rgba(246,193,40,0.14); }
+  .btn.primary:hover { background: rgba(246,193,40,0.22); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+  .alert { border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; margin-top: 0.75rem; }
+  .alert.success { background: var(--ok-bg); color: var(--ok-text); }
+  .alert.error { background: var(--err-bg); color: var(--err-text); }
+  .alert.info { background: #d1ecf1; color: #0c5460; }
+
+  .helper {
+    background: rgba(246,193,40,0.1);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--line);
+  }
+
+  .table-wrap {
+    overflow: auto;
+    max-height: 340px;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border: 1px solid var(--line-dim);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  th {
+    background: rgba(246,193,40,0.1);
+    color: var(--text);
+    font-weight: 700;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line-dim);
+  }
+  td {
+    padding: 0.4rem 0.75rem;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(246,193,40,0.05); color: var(--text); }
+
+  .divider { border: none; border-top: 1px solid var(--line-dim); margin: 1.5rem 0; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(246,193,40,0.3);
+    border-top-color: var(--line);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .badge {
+    display: inline-block;
+    background: rgba(246,193,40,0.15);
+    color: var(--line);
+    border-radius: 6px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .paso3-box {
+    display: none;
+    margin-top: 1.2rem;
+    background: rgba(246,193,40,0.05);
+    border-left: 4px solid var(--line);
+    border-radius: 8px;
+    padding: 1.2rem;
+  }
+  .paso3-box.visible { display: block; }
+  .paso3-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .paso3-badge {
+    background: var(--line);
+    color: #17202d;
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .paso3-titulo {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📧 Generador de Correos de Bienvenida</h1>
+    <p>Usa los estudiantes ya cargados en BASE/SEMAFORO_2.0 o, si aún no están disponibles, sube la nómina original como respaldo.</p>
+  </div>
+
+  <div class="helper" id="seguimiento-helper">
+    <strong>Fuente de estudiantes:</strong> primero se buscarán los estudiantes del NRC UNI118 en <strong>BASE/SEMAFORO_2.0</strong>.
+    Si todavía no están cargados, puede usarse el Excel como respaldo. Los datos consultados desde SharePoint sólo se mantienen en memoria del navegador.
+  </div>
+
+  <div class="btn-row" style="margin-top:0; margin-bottom:0.75rem;">
+    <button class="btn primary" type="button" onclick="cargarEstudiantesSeguimiento(false)">🔎 Buscar estudiantes en seguimiento</button>
+  </div>
+  <div id="seguimiento-status"></div>
+
+  <div class="form-group" style="max-width:600px; margin-top:1rem;">
+    <label>📥 Nómina original <span style="font-weight:400;text-transform:none;color:#64748b;">(respaldo si no hay estudiantes en seguimiento)</span></label>
+    <div class="file-drop" id="drop-nomina">
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this)" />
+      📂 Haz clic o arrastra el archivo aquí
+      <div class="file-name" id="file-name"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div style="font-weight:700; margin-bottom:1rem;">2. Ingresa los datos de la Inducción</div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>NOMBRE TUTOR</label>
+      <input type="text" id="nombre-tutor" placeholder="Nombre completo del tutor" />
+    </div>
+    <div class="form-group">
+      <label>CORREO TUTOR</label>
+      <input type="text" id="correo-tutor" placeholder="tutor@dominio.cl" />
+    </div>
+    <div class="form-group">
+      <label>ANEXO TUTOR</label>
+      <input type="text" id="anexo-tutor" placeholder="Ej: 1234" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE DE PROGRAMA</label>
+      <input type="text" id="programa" list="programas-list" placeholder="Escribe o selecciona el nombre oficial" autocomplete="off" />
+      <datalist id="programas-list"></datalist>
+    </div>
+    <div class="form-group">
+      <label>NRC Y NOMBRE DE CURSO INDUCC</label>
+      <input type="text" id="nrc-induccion" placeholder="Ej: 12345 - Inducción Postgrado" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE PRIMER CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(busca por NRC)</span></label>
+      <input type="text" id="curso1-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso1')" autocomplete="off" />
+      <div id="curso1-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="curso1-options"></div>
+      </div>
+      <input type="hidden" id="curso1" />
+    </div>
+    <div class="form-group">
+      <label>NOMBRE SEGUNDO CURSO <span style="font-weight:400;text-transform:none;color:#64748b;">(opcional — busca por NRC)</span></label>
+      <input type="text" id="curso2-search" placeholder="Escribe NRC o nombre del curso..." oninput="buscarCurso('curso2')" autocomplete="off" />
+      <div id="curso2-dropdown" style="display:none;background:#f0f4fa;border:1px solid #b0c0d8;border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <div id="curso2-options"></div>
+      </div>
+      <input type="hidden" id="curso2" />
+    </div>
+    <div class="form-group"></div>
+    <div class="form-group">
+      <label>FECHA INICIO INDUCCION</label>
+      <input type="date" id="fecha-inicio" />
+    </div>
+    <div class="form-group">
+      <label>FECHA TERMINO INDUCCION</label>
+      <input type="date" id="fecha-fin" />
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" onclick="procesarNomina()">🪄 Construir Plantilla Exacta</button>
+  </div>
+
+  <div id="resultado"></div>
+
+  <div id="acciones" style="display:none" class="btn-row">
+    <button class="btn" onclick="descargarExcel()">📥 Descargar Excel</button>
+    <button class="btn primary" onclick="enviarSharePoint()">📨 Enviar a SharePoint</button>
+    <button class="btn primary" onclick="enviarSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
+    <button class="btn primary" onclick="enviarSharePointPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
+  </div>
+  
+  <div id="sp-result"></div>
+  <div id="sp-result-miguel"></div>
+  <div id="sp-result-pablo-daniela"></div>
+
+  <div id="paso3" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
+      📧 Abrir app — Enviar correos de bienvenida
+    </button>
+  </div>
+
+  <div id="paso3-miguel" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Miguel</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
+      📧 Abrir app — Enviar correos Equipo Miguel
+    </button>
+  </div>
+
+  <div id="paso3-pablo-daniela" class="paso3-box">
+    <div class="paso3-header">
+      <div class="paso3-badge">PASO 3</div>
+      <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Pablo_Daniela</div>
+    </div>
+    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
+    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778798468383','_blank')">
+      📧 Abrir app — Enviar correos Equipo Pablo_Daniela
+    </button>
+  </div>
+</div>
+
+<script>
+let nominaFile = null;
+let datosFinales = null;
+let estudiantesSeguimiento = [];
+let nrcSeguimientoCargado = '';
+
+// Flujo de SOLO LECTURA: consulta BASE/SEMAFORO_2.0 por NRC_COD_CAL_FILTRO.
+// No crea ni modifica registros en SharePoint y no guarda estudiantes en GitHub.
+const URL_ESTUDIANTES_SEGUIMIENTO = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/06/workflows/7125e222e80a4f3cb819e7353360154a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LcQickXz3zG2Lk9SUoToNGLMZertcp6VbYFJjF6Wsas';
+
+function handleFile(input) {
+  nominaFile = input.files[0];
+  document.getElementById('file-name').textContent = nominaFile ? nominaFile.name : '';
+}
+
+function extraerNrcInduccion(valor) {
+  const s = String(valor || '').trim();
+  const match = s.match(/(?:^|\s)([^\s]+_UNI118_\d{6})(?:\s|$)/i) || s.match(/([^\s]+_UNI118_\d{6})/i);
+  if(match) return match[1].trim();
+  // Respaldo si el campo contiene exactamente el NRC sin texto adicional.
+  if(/^[^\s]+_UNI118_\d{6}$/i.test(s)) return s;
+  return '';
+}
+
+function limpiarEstudiantesSeguimiento(mostrarAviso=false) {
+  estudiantesSeguimiento = [];
+  nrcSeguimientoCargado = '';
+  if(mostrarAviso) {
+    const el = document.getElementById('seguimiento-status');
+    if(el) el.innerHTML = '<div class="alert info">ℹ️ Cambió el NRC de inducción. Vuelva a buscar los estudiantes en seguimiento.</div>';
+  }
+}
+
+async function cargarEstudiantesSeguimiento(silencioso=false) {
+  const statusEl = document.getElementById('seguimiento-status');
+  const nrc = extraerNrcInduccion(document.getElementById('nrc-induccion').value);
+
+  if(!nrc) {
+    limpiarEstudiantesSeguimiento(false);
+    if(!silencioso && statusEl) {
+      statusEl.innerHTML = '<div class="alert info">ℹ️ Primero cargue o escriba un NRC de inducción con formato como <strong>2012_UNI118_202682</strong>.</div>';
+    }
+    return false;
+  }
+
+  if(statusEl) statusEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Consultando BASE/SEMAFORO_2.0 para <strong>'+nrc+'</strong>...</div>';
+
+  try {
+    const res = await fetch(URL_ESTUDIANTES_SEGUIMIENTO, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nrc })
+    });
+
+    if(!res.ok) throw new Error('HTTP '+res.status+' '+res.statusText);
+    const data = await res.json();
+    const lista = Array.isArray(data?.estudiantes) ? data.estudiantes : [];
+
+    // Seguridad adicional: aunque el flujo ya filtra por NRC, sólo aceptamos filas del NRC solicitado.
+    estudiantesSeguimiento = lista.filter(e =>
+      String(e?.nrcCodCalFiltro || '').trim().toUpperCase() === nrc.toUpperCase()
+    );
+    nrcSeguimientoCargado = nrc;
+
+    if(estudiantesSeguimiento.length) {
+      const conCorreo = estudiantesSeguimiento.filter(e => String(e?.correoPersonal || e?.correoUnab || '').includes('@')).length;
+      if(statusEl) statusEl.innerHTML = '<div class="alert success">✅ Se encontraron <strong>'+estudiantesSeguimiento.length+'</strong> estudiantes en BASE/SEMAFORO_2.0 para <strong>'+nrc+'</strong>. '+conCorreo+' tienen correo disponible. <strong>No necesita subir el Excel.</strong></div>';
+      return true;
+    }
+
+    if(statusEl) statusEl.innerHTML = '<div class="alert info">⚠️ No se encontraron estudiantes en BASE/SEMAFORO_2.0 para <strong>'+nrc+'</strong>. Puede usar la nómina Excel de respaldo.</div>';
+    return false;
+  } catch(err) {
+    limpiarEstudiantesSeguimiento(false);
+    if(statusEl) statusEl.innerHTML = '<div class="alert error">No fue posible consultar la base de seguimiento: '+err.message+'. Puede continuar usando el Excel de respaldo.</div>';
+    console.error(err);
+    return false;
+  }
+}
+
+function construirDesdeSeguimiento(estudiantes, params) {
+  const { tn, tc, ta, pr, ni, c1, c2, fi, ff } = params;
+  const salida = [];
+  const vistos = new Set();
+
+  for(const e of estudiantes) {
+    const rut = String(e?.rut || '').trim().toUpperCase();
+    const nombre = String(e?.nombre || '').trim().toUpperCase();
+    // La herramienta actual de bienvenida prioriza el correo personal; mantenemos ese comportamiento.
+    const correo = String(e?.correoPersonal || e?.correoUnab || '').trim().toLowerCase();
+    if(!correo || !correo.includes('@')) continue;
+
+    const clave = (rut || correo).toUpperCase();
+    if(vistos.has(clave)) continue;
+    vistos.add(clave);
+
+    const fila = {
+      'Columna1': salida.length + 1,
+      'NOMBRES': nombre,
+      'Rut o ID': rut,
+      'CORREO': correo,
+      'NOMBRE TUTOR': tn,
+      'CORREO TUTOR': tc,
+      'ANEXO TUTOR': ta,
+      'NOMBRE DE PROGRAMA': pr,
+      'NRC Y NOMBRE DE CURSO INDUCC': ni,
+      'NOMBRE PRIMER CURSO': c1,
+      'FECHA INICIO INDUCCION': fi,
+      'FECHA TERMINO INDUCCION': ff,
+      'FECHA_INICIO_CALCULADA': fi,
+      'FECHA FIN CALCULADA': ff,
+      'Columna2': 'Pendiente'
+    };
+    if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
+    salida.push(fila);
+  }
+  return salida;
+}
+
+async function leerArchivo(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:'array', cellDates:true});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        resolve(XLSX.utils.sheet_to_json(ws, {header:1, defval:''}));
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function esAlumnoPotencial(headerRow) {
+  const joined = headerRow.map(c => String(c||'')).join('|').toLowerCase();
+  return joined.includes('alumno potencial') && joined.includes('dv');
+}
+
+async function procesarNomina() {
+  const resultEl = document.getElementById('resultado');
+  const accionesEl = document.getElementById('acciones');
+  accionesEl.style.display='none';
+  resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Construyendo plantilla...</div>';
+
+  const nrcActual = extraerNrcInduccion(document.getElementById('nrc-induccion').value);
+  const puedeUsarSeguimiento = estudiantesSeguimiento.length > 0 && nrcSeguimientoCargado && nrcSeguimientoCargado.toUpperCase() === nrcActual.toUpperCase();
+  if(!puedeUsarSeguimiento && !nominaFile) {
+    resultEl.innerHTML='<div class="alert error">No hay estudiantes cargados desde BASE/SEMAFORO_2.0 y tampoco se ha subido una nómina de respaldo.</div>';
+    return;
+  }
+
+  try {
+    const rawRows = puedeUsarSeguimiento ? null : await leerArchivo(nominaFile);
+    const tn = document.getElementById('nombre-tutor').value;
+    const tc = document.getElementById('correo-tutor').value;
+    const ta = document.getElementById('anexo-tutor').value;
+    const pr = document.getElementById('programa').value.trim();
+    const ni = document.getElementById('nrc-induccion').value;
+    const c1 = document.getElementById('curso1').value;
+    const c2 = document.getElementById('curso2').value.trim();
+    const fi = document.getElementById('fecha-inicio').value;
+    const ff = document.getElementById('fecha-fin').value;
+
+    if(!pr) { resultEl.innerHTML='<div class="alert error">Ingresa o selecciona el nombre del programa antes de construir la plantilla.</div>'; return; }
+
+    let salida = [];
+
+    if(puedeUsarSeguimiento) {
+      salida = construirDesdeSeguimiento(estudiantesSeguimiento, {tn, tc, ta, pr, ni, c1, c2, fi, ff});
+    } else {
+      const firstRow = rawRows[0] || [];
+      if(esAlumnoPotencial(firstRow)) {
+        salida = procesarAlumnoPotencial(rawRows, {tn, tc, ta, pr, ni, c1, c2, fi, ff});
+      } else {
+      let hIdx=-1;
+      for(let i=0; i<Math.min(20,rawRows.length); i++) {
+        const rowStr = rawRows[i].join(' ').toUpperCase();
+        if((rowStr.includes('RUT')||rowStr.includes('ID')) && (rowStr.includes('CORREO')||rowStr.includes('EMAIL')||rowStr.includes('MAIL'))) {
+          hIdx=i; break;
+        }
+      }
+      const headers = hIdx!==-1 ? rawRows[hIdx].map(h=>String(h).toUpperCase().trim()) : rawRows[0].map((_,i)=>`C${i}`);
+      const dataRows = rawRows.slice(hIdx+1);
+      const seenH=new Set(), finalHeaders=[];
+      for(const h of headers) { finalHeaders.push(seenH.has(h) ? h+'_R' : h); seenH.add(h); }
+
+      const emailRe = /[a-zA-Z0-9._\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+      const rutRe = /\b(\d{7,8}-?[0-9Kk])\b/i;
+
+      for(const rawRow of dataRows) {
+        const r = {};
+        finalHeaders.forEach((h,i) => r[h] = String(rawRow[i]??''));
+        const rowStr = Object.values(r).join(' ');
+        if(!rowStr.includes('@')) continue;
+
+        const emails = rowStr.match(emailRe)||[];
+        let correoPersonal = emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))||'';
+        if(!correoPersonal && emails.length) correoPersonal = emails[0].toLowerCase();
+        if(!correoPersonal) continue;
+        correoPersonal = correoPersonal.toLowerCase();
+
+        const rutCol = finalHeaders.find(h=>h.includes('RUT')||h.includes('ID'));
+        let rut = '';
+        if(rutCol && r[rutCol]) {
+          const v = String(r[rutCol]).replace('.0','').trim().toUpperCase();
+          if(/^\d{7,9}-?[0-9Kk]$/i.test(v)) rut=v;
+        }
+        if(!rut) { const m=rowStr.match(rutRe); if(m) rut=m[1].toUpperCase(); }
+
+        const nombreCol = finalHeaders.find(h=>h.includes('NOMBRE')&&!h.includes('TUTOR'));
+        const apellidoCol = finalHeaders.find(h=>h.includes('APELLIDO'));
+        const partes = [];
+        if(nombreCol && r[nombreCol] && r[nombreCol].toLowerCase()!=='nan') partes.push(r[nombreCol].trim());
+        if(apellidoCol && r[apellidoCol] && r[apellidoCol].toLowerCase()!=='nan') partes.push(r[apellidoCol].trim());
+        const nombre = partes.join(' ').trim().toUpperCase() || '';
+
+        const fila = {
+          'Columna1': salida.length+1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correoPersonal,
+          'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
+          'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+          'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
+          'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
+        };
+        if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
+        salida.push(fila);
+      }
+      }
+    }
+
+    if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron estudiantes con correo válido en la fuente seleccionada.</div>'; return; }
+
+    // Garantía final: el programa escrito debe quedar en todas las filas,
+    // independientemente del formato de la nómina de origen.
+    salida.forEach(fila => { fila['NOMBRE DE PROGRAMA'] = pr; });
+
+    datosFinales = salida;
+    const fuenteTexto = puedeUsarSeguimiento ? 'BASE/SEMAFORO_2.0' : 'nómina Excel';
+    resultEl.innerHTML = `<div class="alert success">🎉 Plantilla generada con éxito. <span class="badge">${salida.length}</span> registros · Fuente: <strong>${fuenteTexto}</strong>.</div>`;
+    const tableDiv = document.createElement('div');
+    resultEl.appendChild(tableDiv);
+    renderTable(salida, tableDiv);
+    accionesEl.style.display='flex';
+
+  } catch(err) {
+    resultEl.innerHTML = `<div class="alert error">Error: ${err.message}</div>`;
+    console.error(err);
+  }
+}
+
+function procesarAlumnoPotencial(rawRows, params) {
+  const { tn, tc, ta, pr, ni, c1, c2, fi, ff } = params;
+  const headers = rawRows[0].map(h => String(h||'').trim());
+  const findIdx = (...kws) => {
+    for(const kw of kws) {
+      const idx = headers.findIndex(h => h.toLowerCase().includes(kw.toLowerCase()));
+      if(idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxRut    = findIdx('RUT (Alumno Potencial)');
+  const idxDv     = findIdx('DV (Alumno Potencial)');
+  const idxNombre = findIdx('Nombre (Alumno Potencial)');
+  const idxCorreo = findIdx('Correo Electrónico', 'Correo Electronico', 'correo electrónico');
+
+  const salida = [];
+
+  for(let i = 1; i < rawRows.length; i++) {
+    const row = rawRows[i];
+    if(!row || row.every(c => !String(c||'').trim())) continue;
+
+    const correo = idxCorreo !== -1 ? String(row[idxCorreo]||'').trim().toLowerCase() : '';
+    if(!correo || !correo.includes('@')) continue;
+
+    const rutBase = idxRut !== -1 ? String(row[idxRut]||'').replace('.0','').trim() : '';
+    const dvVal   = idxDv  !== -1 ? String(row[idxDv] ||'').replace('.0','').trim().toUpperCase() : '';
+    const rut = (rutBase && dvVal) ? `${rutBase}-${dvVal}` : rutBase;
+
+    const nombreRaw = idxNombre !== -1 ? String(row[idxNombre]||'').trim() : '';
+    const nombre = (nombreRaw && nombreRaw.toLowerCase() !== 'nan') ? nombreRaw.toUpperCase() : '';
+
+    const fila = {
+      'Columna1': salida.length + 1, 'NOMBRES': nombre, 'Rut o ID': rut, 'CORREO': correo,
+      'NOMBRE TUTOR': tn, 'CORREO TUTOR': tc, 'ANEXO TUTOR': ta, 'NOMBRE DE PROGRAMA': pr,
+      'NRC Y NOMBRE DE CURSO INDUCC': ni, 'NOMBRE PRIMER CURSO': c1,
+      'FECHA INICIO INDUCCION': fi, 'FECHA TERMINO INDUCCION': ff,
+      'FECHA_INICIO_CALCULADA': fi, 'FECHA FIN CALCULADA': ff, 'Columna2': 'Pendiente'
+    };
+    if(c2) fila['NOMBRE SEGUNDO CURSO'] = c2;
+    salida.push(fila);
+  }
+  return salida;
+}
+
+function renderTable(rows, containerEl) {
+  if(!rows || rows.length===0) { containerEl.innerHTML='<div class="alert info">No se encontraron registros.</div>'; return; }
+  const cols = Object.keys(rows[0]);
+  let html = '<div class="table-wrap"><table><thead><tr>';
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += '</tr></thead><tbody>';
+  rows.slice(0,200).forEach(r => {
+    html += '<tr>';
+    cols.forEach(c => html += `<td title="${String(r[c]).replace(/"/g,'&quot;')}">${r[c]??''}</td>`);
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  if(rows.length>200) html += `<div class="alert info" style="margin-top:0.5rem;">Mostrando primeras 200 filas de ${rows.length}.</div>`;
+  containerEl.innerHTML = html;
+}
+
+function descargarExcel() {
+  if(!datosFinales) return;
+  const ws = XLSX.utils.json_to_sheet(datosFinales);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Hoja1');
+  XLSX.writeFile(wb, 'Nomina_SharePoint.xlsx');
+}
+
+async function enviarSharePoint() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
+      document.getElementById('paso3').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function enviarSharePointMiguel() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-miguel');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
+      document.getElementById('paso3-miguel').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function enviarSharePointPabloDaniela() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-pablo-daniela');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Pablo_Daniela...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d040109474f04cebbc90300640607f30/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=35S4lnBFfc3aPPnEcX0P2g0DDpPMxCPvBeyLNZXjq7c";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
+      document.getElementById('paso3-pablo-daniela').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+// ── DATOS NRC PARA BUSCADOR DE CURSOS ──
+let nrcsObData = [];
+let nrcsData = [];
+
+function valorCampo(obj, nombres){
+  for(const n of nombres){
+    const v = obj?.[n];
+    if(v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim();
+  }
+  return '';
+}
+
+function normalizarTexto(v){
+  return String(v||'')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/\s+/g,' ').trim();
+}
+
+function fechaComparable(v){
+  if(!v) return Number.MAX_SAFE_INTEGER;
+  const s = String(v).trim();
+  let d;
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) d = new Date(s.substring(0,10)+'T00:00:00');
+  else {
+    const m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+    d = m ? new Date(`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}T00:00:00`) : new Date(s);
+  }
+  return isNaN(d) ? Number.MAX_SAFE_INTEGER : d.getTime();
+}
+
+function esCursoInduccion(r){
+  const cod = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL','codigo curso','CODIGO_CURSO']);
+  const nom = valorCampo(r,['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
+  const t = normalizarTexto(cod+' '+nom);
+  return t.includes('uni118') || t.includes('induccion');
+}
+
+function autocompletarPrimerCursoDesdeContexto(){
+  const p = new URLSearchParams(window.location.search);
+  const programaParam = p.get('nombrePrograma') || document.getElementById('programa').value || '';
+  const cursoInduccionTexto = p.get('nombreCurso') || document.getElementById('nrc-induccion').value || '';
+  const nrcInduccion = cursoInduccionTexto.split(/\s+[—–-]\s+/)[0].trim();
+
+  const fuente = nrcsData.length ? nrcsData : nrcsObData;
+  if(!fuente.length) return;
+
+  // Primero buscamos el registro de inducción seleccionado para recuperar su Intake/Versión.
+  const regInduccion = fuente.find(r => {
+    const nrc = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']);
+    return nrcInduccion && normalizarTexto(nrc) === normalizarTexto(nrcInduccion);
+  });
+
+  const intake = valorCampo(regInduccion,[
+    'intake','INTAKE','intake o version','INTAKE O VERSION',
+    'intake/version','INTAKE/VERSION','version','VERSION'
+  ]) || p.get('intake') || '';
+
+  const programa = valorCampo(regInduccion,[
+    'nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'
+  ]) || programaParam;
+
+  const fechaFinInd = fechaComparable(
+    valorCampo(regInduccion,['fecha fin','FECHA FIN','fecha_fin','FECHA_FIN']) || p.get('fechaFin')
+  );
+
+  let candidatos = fuente.filter(r => {
+    if(esCursoInduccion(r)) return false;
+
+    const nrc = valorCampo(r,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']);
+    if(nrcInduccion && normalizarTexto(nrc) === normalizarTexto(nrcInduccion)) return false;
+
+    const rIntake = valorCampo(r,[
+      'intake','INTAKE','intake o version','INTAKE O VERSION',
+      'intake/version','INTAKE/VERSION','version','VERSION'
+    ]);
+    const rPrograma = valorCampo(r,[
+      'nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'
+    ]);
+
+    if(intake && rIntake && normalizarTexto(rIntake) !== normalizarTexto(intake)) return false;
+    if(programa && rPrograma && normalizarTexto(rPrograma) !== normalizarTexto(programa)) return false;
+
+    return true;
+  });
+
+  // Si conocemos el término de inducción, priorizamos cursos que comienzan desde esa fecha en adelante.
+  if(fechaFinInd !== Number.MAX_SAFE_INTEGER){
+    const posteriores = candidatos.filter(r => {
+      const f = fechaComparable(valorCampo(r,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+      return f === Number.MAX_SAFE_INTEGER || f >= fechaFinInd;
+    });
+    if(posteriores.length) candidatos = posteriores;
+  }
+
+  candidatos.sort((a,b) => {
+    const fa = fechaComparable(valorCampo(a,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+    const fb = fechaComparable(valorCampo(b,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']));
+    if(fa !== fb) return fa - fb;
+    return valorCampo(a,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL'])
+      .localeCompare(valorCampo(b,['nrc','NRC','nrc_cod_cal','NRC_COD_CAL']),'es');
+  });
+
+  const primero = candidatos[0];
+  if(!primero) return;
+
+  const nombre = valorCampo(primero,['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
+  if(!nombre) return;
+
+  document.getElementById('curso1-search').value = nombre;
+  document.getElementById('curso1').value = nombre;
+}
+
+async function cargarNrcsOb(){
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json', {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    nrcsObData = Array.isArray(data) ? data : (data.value || []);
+  } catch(e) {
+    // Fallback: la página también puede trabajar directamente con nrcs.json.
+    nrcsObData = [];
+    console.warn('nrcs_onboarding.json no disponible; se usará nrcs.json como respaldo.');
+  }
+}
+
+async function cargarProgramas(){
+  try {
+    const r = await fetch('nrcs.json', {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const datos = await r.json();
+    nrcsData = Array.isArray(datos) ? datos : (datos.value || []);
+
+    if(!nrcsObData.length) nrcsObData = nrcsData;
+
+    const programas = [...new Set(nrcsData.map(x =>
+      valorCampo(x,['nombre programa','NOMBRE PROGRAMA','nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA'])
+    ).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,'es'));
+
+    document.getElementById('programas-list').innerHTML = programas
+      .map(p=>`<option value="${p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"></option>`).join('');
+  } catch(e) {
+    console.warn('No se pudo cargar el catálogo de programas; el campo seguirá permitiendo escritura manual.');
+  }
+}
+
+function buscarCurso(campo) {
+  const q = document.getElementById(campo+'-search').value.trim().toLowerCase();
+  const dd = document.getElementById(campo+'-dropdown');
+  const opts = document.getElementById(campo+'-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = nrcsObData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r['nombre curso']||'').toLowerCase().includes(q)
+  ).slice(0, 25);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='#dbeafe';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
+    div.onclick = () => seleccionarCurso(campo, r.nrc, nombre);
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+function seleccionarCurso(campo, nrc, nombre) {
+  document.getElementById(campo+'-search').value = nombre;
+  document.getElementById(campo).value = nombre;
+  document.getElementById(campo+'-dropdown').style.display = 'none';
+}
+
+// Cerrar dropdowns al clic fuera
+document.addEventListener('click', function(e){
+  ['curso1','curso2'].forEach(c => {
+    const inp = document.getElementById(c+'-search');
+    const dd  = document.getElementById(c+'-dropdown');
+    if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+  });
+});
+
+window.onload = async function() {
+  const today = new Date().toISOString().substring(0,10);
+  document.getElementById('fecha-inicio').value = today;
+  document.getElementById('fecha-fin').value = today;
+
+  // ── PRE-LLENADO DESDE CONTEXTO NRC (comunicaciones_etop.html) ──
+  const p = new URLSearchParams(window.location.search);
+  const set = (id, val) => { if(val){ const el=document.getElementById(id); if(el) el.value=val; } };
+  const toISO = v => { if(!v) return ''; if(/^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10); const m=v.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/); return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''; };
+
+  set('nombre-tutor',  p.get('nombreTutor'));
+  set('correo-tutor',  p.get('correoTutor'));
+  set('anexo-tutor',   p.get('anexoTutor'));
+  set('programa',      p.get('nombrePrograma'));
+  set('nrc-induccion', p.get('nombreCurso'));
+
+  const fi = toISO(p.get('fechaInicio')); if(fi) document.getElementById('fecha-inicio').value = fi;
+  const ff = toISO(p.get('fechaFin'));    if(ff) document.getElementById('fecha-fin').value   = ff;
+
+  // Cargamos los catálogos y recién entonces resolvemos el primer curso.
+  await cargarNrcsOb();
+  await cargarProgramas();
+  autocompletarPrimerCursoDesdeContexto();
+
+  const nrcInput = document.getElementById('nrc-induccion');
+  if(nrcInput){
+    nrcInput.addEventListener('input', () => {
+      if(nrcSeguimientoCargado && extraerNrcInduccion(nrcInput.value).toUpperCase() !== nrcSeguimientoCargado.toUpperCase()) {
+        limpiarEstudiantesSeguimiento(true);
+      }
+    });
+  }
+
+  // Si la página fue abierta desde el contexto de un NRC UNI118, intenta recuperar la nómina automáticamente.
+  if(extraerNrcInduccion(document.getElementById('nrc-induccion').value)) {
+    await cargarEstudiantesSeguimiento(true);
+  }
+};
+</script>
+</body>
+</html>
