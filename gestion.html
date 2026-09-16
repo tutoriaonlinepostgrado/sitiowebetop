@@ -19,7 +19,8 @@ html,body{margin:0;width:100%;height:100%;background:#141b2d;overflow:hidden}
     let html=await r.text();
     const cierre='</bo'+'dy>';
     const script='<scr'+'ipt src="gestion_kpi.js?v=20260911-kpi2"></scr'+'ipt>'+
-                 '<scr'+'ipt src="menu_bienvenida_prueba.js?v=20260916-4"></scr'+'ipt>';
+                 '<scr'+'ipt src="menu_bienvenida_prueba.js?v=20260916-4"></scr'+'ipt>'+
+                 '<scr'+'ipt src="menu_invitaciones_sharepoint.js?v=20260916-1"></scr'+'ipt>';
     html=html.replace(cierre,script+cierre);
     document.open();
     document.write(html);
