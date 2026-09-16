@@ -1,7 +1,18 @@
 (function(){
+  function extraerNrcUni118(valor){
+    const s=String(valor||'').trim();
+    const m=s.match(/([^\s]+_UNI118_\d{6})/i);
+    return m ? m[1].trim() : '';
+  }
+
   function obtenerDatosFinales(){
     try{
-      return (typeof datosFinales !== 'undefined' && Array.isArray(datosFinales) && datosFinales.length) ? datosFinales : null;
+      if(typeof datosFinales==='undefined' || !Array.isArray(datosFinales) || !datosFinales.length) return null;
+      const nrcPagina=extraerNrcUni118(document.getElementById('nrc-induccion')?.value || '');
+      return datosFinales.map(fila=>({
+        ...fila,
+        'NRC_COD_CAL_FILTRO': extraerNrcUni118(fila?.['NRC Y NOMBRE DE CURSO INDUCC']) || nrcPagina
+      }));
     }catch(e){ return null; }
   }
 
