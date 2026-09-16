@@ -8,6 +8,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .tbt{font-size:13px;font-weight:500;color:#e2e8f0;}
 .tbr{display:flex;gap:10px;align-items:center;}
 .auto-badge{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;}
+.btn-outlook{font-size:12px;font-weight:700;padding:7px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:5px;cursor:pointer;text-decoration:none;}
+.btn-outlook:hover{background:rgba(255,255,255,0.2);}
 .btn-copiar{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}
 .btn-copiar:hover{background:#facc15;}
 .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
@@ -43,7 +45,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         <button onclick="setApertura('calido',this)" id="ap-calido" style="font-size:10px;font-weight:700;padding:4px 10px;border:none;border-radius:5px;cursor:pointer;background:transparent;color:#cbd5e1;white-space:nowrap;">Cálido</button>
       </div>
     </div>
-    <button class="btn-copiar" onclick="copiarYAbrirOutlook()">📋 Copiar y abrir Outlook</button>
+    <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
+    <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
 </div>
 <div class="ew" id="email-content">
@@ -198,10 +201,6 @@ function mostrarToast(msg, error=false) {
   t.style.background = error ? '#DC2626' : '#059669';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 4000);
-}
-async function copiarYAbrirOutlook() {
-  await copiarCorreo();
-  abrirOutlook();
 }
 function buildSpan(campo, ph) {
   let el = document.querySelector('[data-campo="'+campo+'"]');
