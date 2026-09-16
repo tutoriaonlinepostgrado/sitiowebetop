@@ -18,6 +18,17 @@
     return catalogoNRC.find(n => String(n.nrc||'').trim() === String(BUSQUEDA.nrc||'').trim()) || null;
   }
 
+  function inyectarFix(visor){
+    try{
+      const d=visor?.contentDocument;
+      if(!d || !d.head || d.getElementById('etop-bienvenida-fix')) return;
+      const s=d.createElement('script');
+      s.id='etop-bienvenida-fix';
+      s.src='https://tutoriaonlinepostgrado.github.io/sitiowebetop/generador_bienvenidas_fix.js?v='+Date.now();
+      d.head.appendChild(s);
+    }catch(e){console.warn('No se pudo cargar complemento de bienvenida:',e);}
+  }
+
   function cargarCamposEnIframe(){
     const visor = document.getElementById('visor');
     const nd = datosNrcSeleccionado();
@@ -48,11 +59,10 @@
       set('fecha-inicio', toISO(nd['fecha inicio']));
       set('fecha-fin', toISO(nd['fecha fin']));
 
-      if (typeof w.autocompletarPrimerCursoDesdeContexto === 'function') {
-        w.autocompletarPrimerCursoDesdeContexto();
-      }
+      if (typeof w.autocompletarPrimerCursoDesdeContexto === 'function') w.autocompletarPrimerCursoDesdeContexto();
+      if (typeof w.cargarEstudiantesSeguimiento === 'function') w.cargarEstudiantesSeguimiento(false);
 
-      const st = d.getElementById('datos-auto-prueba-status');
+      const st = d.getElementById('datos-auto-prueba-status') || d.getElementById('datos-curso-status');
       if (st) st.innerHTML = '<div class="alert success">✅ Datos del curso cargados automáticamente. Revise los campos antes de construir la plantilla.</div>';
       return true;
     } catch(e) {
@@ -67,14 +77,13 @@
     try {
       const d = visor.contentDocument;
       if (!d || !d.body || !String(visor.src||'').includes('generador_bienvenidas.html')) return;
+      inyectarFix(visor);
 
       const tutorEl = d.getElementById('nombre-tutor');
       const correoEl = d.getElementById('correo-tutor');
-      if (tutorEl && correoEl && !correoEl.value.trim()) {
-        correoEl.value = correoTutor(tutorEl.value);
-      }
+      if (tutorEl && correoEl && !correoEl.value.trim()) correoEl.value = correoTutor(tutorEl.value);
 
-      if (!d.getElementById('bloque-auto-prueba')) {
+      if (!d.getElementById('bloque-auto-prueba') && !d.getElementById('datos-curso-status')) {
         const formGrid = d.querySelector('.form-grid');
         if (formGrid) {
           const bloque = d.createElement('div');
@@ -151,18 +160,15 @@
   function agregarAcceso(){
     const menu = document.querySelector('.sidebar-menu');
     if (!menu || document.getElementById('btn-bienvenida-prueba')) return;
-
     const categoria = document.createElement('div');
     categoria.className = 'menu-category';
     categoria.textContent = 'Prueba';
-
     const btn = document.createElement('button');
     btn.id = 'btn-bienvenida-prueba';
     btn.className = 'menu-btn';
     btn.type = 'button';
     btn.innerHTML = '🧪 Bienvenida SharePoint (Prueba)';
     btn.addEventListener('click', function(){ cargarBienvenidaPrueba(btn); });
-
     menu.appendChild(categoria);
     menu.appendChild(btn);
   }
