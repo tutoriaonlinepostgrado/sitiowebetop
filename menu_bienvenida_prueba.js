@@ -2,6 +2,9 @@
   const CORREOS_EXTRA = {
     'ORIETTA CORTES': 'tutoriaonline04@unab.cl'
   };
+  const ANEXOS_EXTRA = {
+    'ORIETTA CORTES': '6005858550 – Anexo 5230'
+  };
 
   function normalizarNombreTutor(v){
     return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
@@ -11,6 +14,12 @@
     const key = normalizarNombreTutor(nombre);
     if (typeof TC !== 'undefined' && TC[key]) return TC[key];
     return CORREOS_EXTRA[key] || '';
+  }
+
+  function anexoTutor(nombre){
+    const key = normalizarNombreTutor(nombre);
+    if (typeof TA !== 'undefined' && TA[key]) return TA[key];
+    return ANEXOS_EXTRA[key] || '';
   }
 
   function datosNrcSeleccionado(){
@@ -46,7 +55,7 @@
       const tutor = nd.tutor || '';
       set('nombre-tutor', tutor);
       set('correo-tutor', correoTutor(tutor));
-      if (typeof TA !== 'undefined') set('anexo-tutor', TA[normalizarNombreTutor(tutor)] || '');
+      set('anexo-tutor', anexoTutor(tutor));
       set('programa', nd['nombre programa'] || '');
       set('nrc-induccion', nd['nombre curso'] ? `${BUSQUEDA.nrc} — ${nd['nombre curso']}` : BUSQUEDA.nrc);
 
@@ -61,14 +70,52 @@
 
       if (typeof w.autocompletarPrimerCursoDesdeContexto === 'function') w.autocompletarPrimerCursoDesdeContexto();
       if (typeof w.cargarEstudiantesSeguimiento === 'function') w.cargarEstudiantesSeguimiento(false);
-
-      const st = d.getElementById('datos-auto-prueba-status') || d.getElementById('datos-curso-status');
-      if (st) st.innerHTML = '<div class="alert success">✅ Datos del curso cargados automáticamente. Revise los campos antes de construir la plantilla.</div>';
       return true;
     } catch(e) {
       console.warn('No se pudieron completar los campos de la prueba:', e);
       return false;
     }
+  }
+
+  function configurarGuiaSuperior(){
+    const guia = document.getElementById('guia-correos');
+    if (!guia) return;
+    guia.style.display = 'flex';
+
+    const texto = guia.querySelector('.guia-correos-texto');
+    if (texto) texto.innerHTML = '<strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.';
+
+    const boton = guia.querySelector('.guia-correos-btn');
+    if (boton) {
+      boton.textContent = '↻ Cargar datos del curso';
+      boton.removeAttribute('onclick');
+      boton.onclick = function(){
+        if (!BUSQUEDA?.nrc) {
+          const input = document.getElementById('input-nrc');
+          if (input) {
+            input.classList.add('guia-atencion');
+            input.focus();
+            setTimeout(() => input.classList.remove('guia-atencion'), 1800);
+          }
+          alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');
+          return;
+        }
+        if (!cargarCamposEnIframe()) alert('No fue posible cargar los datos del curso seleccionado.');
+      };
+    }
+  }
+
+  function ocultarCargaInterna(d){
+    try {
+      const btnInterno = d.querySelector('button[onclick*="cargarDatosCursoAutomatico"]');
+      if (btnInterno) {
+        const bloque = btnInterno.closest('.helper');
+        if (bloque) bloque.style.display='none';
+        else btnInterno.style.display='none';
+      }
+      const extra = d.getElementById('bloque-auto-prueba');
+      if (extra) extra.remove();
+    } catch(e) {}
   }
 
   function prepararIframePrueba(){
@@ -78,33 +125,14 @@
       const d = visor.contentDocument;
       if (!d || !d.body || !String(visor.src||'').includes('generador_bienvenidas.html')) return;
       inyectarFix(visor);
+      ocultarCargaInterna(d);
 
       const tutorEl = d.getElementById('nombre-tutor');
       const correoEl = d.getElementById('correo-tutor');
-      if (tutorEl && correoEl && !correoEl.value.trim()) correoEl.value = correoTutor(tutorEl.value);
-
-      if (!d.getElementById('bloque-auto-prueba') && !d.getElementById('datos-curso-status')) {
-        const formGrid = d.querySelector('.form-grid');
-        if (formGrid) {
-          const bloque = d.createElement('div');
-          bloque.id = 'bloque-auto-prueba';
-          bloque.style.marginBottom = '1rem';
-          bloque.innerHTML = `
-            <div class="helper" style="margin-bottom:.65rem;">
-              <strong>Completar datos del curso:</strong> usa el NRC UNI118 seleccionado en Gestión para completar automáticamente tutor, correo, programa, curso de inducción, fechas y primer curso.
-            </div>
-            <div class="btn-row" style="margin-top:0;">
-              <button type="button" class="btn primary" id="btn-cargar-datos-prueba">⚡ Cargar datos del curso</button>
-            </div>
-            <div id="datos-auto-prueba-status"></div>`;
-          formGrid.parentNode.insertBefore(bloque, formGrid);
-          d.getElementById('btn-cargar-datos-prueba').addEventListener('click', function(){
-            if (!cargarCamposEnIframe()) {
-              const st = d.getElementById('datos-auto-prueba-status');
-              if (st) st.innerHTML = '<div class="alert error">No hay un NRC seleccionado en Gestión. Seleccione primero el UNI118 y vuelva a intentar.</div>';
-            }
-          });
-        }
+      const anexoEl = d.getElementById('anexo-tutor');
+      if (tutorEl) {
+        if (correoEl && !correoEl.value.trim()) correoEl.value = correoTutor(tutorEl.value);
+        if (anexoEl && !anexoEl.value.trim()) anexoEl.value = anexoTutor(tutorEl.value);
       }
     } catch(e) {
       console.warn('No se pudo preparar la interfaz de prueba:', e);
@@ -115,8 +143,7 @@
     try {
       vistaActual = 'BIENVENIDA_PRUEBA';
       configurarFiltros('CORREOS');
-      const guia = document.getElementById('guia-correos');
-      if (guia) guia.style.display = 'none';
+      configurarGuiaSuperior();
 
       document.getElementById('canal-splash')?.classList.remove('visible');
       const visor = document.getElementById('visor');
@@ -126,11 +153,10 @@
       const url = new URL('https://tutoriaonlinepostgrado.github.io/sitiowebetop/generador_bienvenidas.html');
       const nd = datosNrcSeleccionado();
       if (nd) {
-        const tutorKey = normalizarNombreTutor(nd.tutor);
         const params = {
           nombreTutor: nd.tutor || '',
           correoTutor: correoTutor(nd.tutor),
-          anexoTutor: (typeof TA !== 'undefined' && TA[tutorKey]) ? TA[tutorKey] : '',
+          anexoTutor: anexoTutor(nd.tutor),
           nrc: BUSQUEDA.nrc,
           fechaInicio: nd['fecha inicio'] || '',
           fechaFin: nd['fecha fin'] || '',
