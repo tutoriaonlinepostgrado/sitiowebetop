@@ -881,7 +881,7 @@ async function processCSVManual(file,nrcCod,fechaInicio){
 }
 
 // ─── TAB 1 · CARGA UNIVERSAL DE ESTUDIANTES ─────────────────────────────────
-const T1_FLOW_URL = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/1a3ba21b3f4648358f2ec74fbd121ab1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=25yY_8M-JR9gmePCv2WCE9MbMV4YrRG_x0dt8saYtmQ'; // Flujo ETOP_CARGA_ESTUDIANTES_DIRECTA
+const T1_FLOW_URL = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/a85ccb20ca1445ae9eec63d6c8bdbb6f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UdUZM4x43rwxEjwzfeWLPmbWDdRNSmotFEMlzH4zW7c'; // Flujo ETOP_CARGA_ESTUDIANTES_DIRECTA V2.1
 
 function t1Get(obj, keys){
   for(const k of keys){
@@ -1142,10 +1142,20 @@ async function t1EnviarDirectoSharePoint(){
   const el=document.getElementById('t1-sp-result');
   if(!state.t1Data||!state.t1Data.length){el.innerHTML='<div class="alert error">No hay registros procesados.</div>';return;}
   if(!t1TieneCurso(state.t1Data)){el.innerHTML='<div class="alert error">Falta asignar curso/NRC antes de cargar.</div>';return;}
-  if(!T1_FLOW_URL){el.innerHTML='<div class="alert info">⚙️ La carga directa está preparada, pero falta conectar la URL del nuevo flujo de Power Automate. El Excel sigue disponible mientras configuramos el flujo.</div>';return;}
+  if(!T1_FLOW_URL){el.innerHTML='<div class="alert info">⚙️ La carga directa está preparada, pero falta conectar la URL del nuevo flujo de Power Automate.</div>';return;}
   const payload={origen:'Centro Herramientas ETOP',fechaEnvio:new Date().toISOString(),total:state.t1Data.length,formato:state.t1DetectedFormat,estudiantes:state.t1Data};
-  el.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando '+state.t1Data.length+' estudiantes a SharePoint...</div>';
-  try{const res=await fetch(T1_FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});let data={};try{data=await res.json();}catch(_){data={};}if(!res.ok&&res.status!==202)throw new Error('HTTP '+res.status+' '+res.statusText);const creados=data.creados??data.created??'—',existentes=data.existentes??data.duplicates??'—',errores=data.errores??data.errors??'—';el.innerHTML=`<div class="alert success">✅ Solicitud procesada. Recibidos: <strong>${state.t1Data.length}</strong> · Creados: <strong>${creados}</strong> · Ya existentes: <strong>${existentes}</strong> · Errores: <strong>${errores}</strong></div>`;}catch(err){el.innerHTML='<div class="alert error">Error al cargar: '+err.message+'</div>';}
+  el.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando '+state.t1Data.length+' estudiantes a Power Automate...</div>';
+  try{
+    const res=await fetch(T1_FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    let data={};try{data=await res.json();}catch(_){data={};}
+    if(!res.ok&&res.status!==202)throw new Error('HTTP '+res.status+' '+res.statusText);
+    if(res.status===202 || data.estado==='aceptado' || data.status==='accepted'){
+      el.innerHTML=`<div class="alert success">✅ <strong>${state.t1Data.length}</strong> estudiantes enviados correctamente. Power Automate aceptó la carga y continuará procesándola en segundo plano.</div>`;
+      return;
+    }
+    const creados=data.creados??data.created??'—',existentes=data.existentes??data.duplicates??'—',errores=data.errores??data.errors??'—';
+    el.innerHTML=`<div class="alert success">✅ Solicitud procesada. Recibidos: <strong>${state.t1Data.length}</strong> · Creados: <strong>${creados}</strong> · Ya existentes: <strong>${existentes}</strong> · Errores: <strong>${errores}</strong></div>`;
+  }catch(err){el.innerHTML='<div class="alert error">Error al cargar: '+err.message+'</div>';}
 }
 
 function isAlumnoPotencialNomina(hRow){const j=hRow.map(c=>String(c||'')).join('|').toLowerCase();return j.includes('alumno potencial')&&j.includes('dv');}
