@@ -1,0 +1,122 @@
+name: Fix Carga Tutorial consistency
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix_carga_tutorial_consistency.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply fixes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # ---------------- CARGA TUTORIAL ----------------
+          p=Path('carga_tutorial.html')
+          s=p.read_text(encoding='utf-8')
+
+          def rep(old,new,label):
+              global s
+              if old not in s:
+                  raise SystemExit(f'No se encontró bloque esperado: {label}')
+              s=s.replace(old,new,1)
+
+          rep("body.embedded .top{display:none}.embedded .wrap{padding-top:10px}",
+              "body.embedded .top{display:block}.embedded .brand{display:none}.embedded .top-main{min-height:48px}.embedded .wrap{padding-top:10px}",
+              'embedded filters')
+
+          rep("let courses=[],metrics=[],metricMap=new Map();\nif(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('embedded');",
+              "let courses=[],metrics=[],metricMap=new Map();\nconst cargaQuery=new URLSearchParams(location.search);\nif(cargaQuery.get('embedded')==='1')document.body.classList.add('embedded');\nfunction estadosSeleccionados(){return String(estado.value||'').split('|').map(norm).filter(Boolean)}\nfunction cargaReturnUrl(){const p=new URLSearchParams();p.set('embedded','1');[['facultad',facultad.value],['tutor',tutor.value],['tipo',tipo.value],['estado',estado.value],['intake',intake.value],['codigo',codigo.value],['fecha',fecha.value]].forEach(([k,v])=>{if(String(v||'').trim())p.set(k,v)});return 'carga_tutorial.html?'+p.toString()}\nfunction aplicarFiltrosDesdeUrl(){[['facultad','facultad'],['tutor','tutor'],['tipo','tipo'],['estado','estado'],['intake','intake'],['codigo','codigo'],['fecha','fecha']].forEach(([id,key])=>{const el=document.getElementById(id),v=cargaQuery.get(key);if(!el||!v)return;if(el.tagName==='INPUT')el.value=v;else if([...el.options].some(o=>o.value===v))el.value=v})}",
+              'query helpers')
+
+          rep("function abrirCalendarios(extra={}){const params=new URLSearchParams();params.set('origen','carga_tutorial');const base=",
+              "function abrirCalendarios(extra={}){const params=new URLSearchParams();params.set('origen','carga_tutorial');params.set('retorno',cargaReturnUrl());const base=",
+              'return url')
+
+          rep("function rebuildFilters(){fill('facultad','facultad','Todas las facultades');fillTutor();fill('tipo','tipo','Todos los tipos NRC');fill('estado','estado','Todos los estados');fill('intake','intake','Todos los intake');fill('codigo','codigo curso','Todos los códigos')}",
+              "function fillEstado(){const e=document.getElementById('estado'),cur=e.value;const vals=uniqueVals('estado');e.innerHTML='<option value=\"\">Todos los estados</option>'+vals.map(v=>`<option value=\"${esc(v)}\">${esc(v)}</option>`).join('')+((vals.some(v=>norm(v)==='ACTIVO')&&vals.some(v=>norm(v)==='EN CIERRE'))?'<option value=\"ACTIVO|EN CIERRE\">ACTIVO + EN CIERRE</option>':'');if([...e.options].some(o=>o.value===cur))e.value=cur}\nfunction rebuildFilters(){fill('facultad','facultad','Todas las facultades');fillTutor();fill('tipo','tipo','Todos los tipos NRC');fillEstado();fill('intake','intake','Todos los intake');fill('codigo','codigo curso','Todos los códigos')}",
+              'multi state selector')
+
+          rep("function filtered(ignoreTutor=false){const f={facultad:norm(facultad.value),tutor:norm(tutor.value),tipo:norm(tipo.value),estado:norm(estado.value),intake:norm(intake.value),codigo:norm(codigo.value),fecha:fecha.value};return courses.filter(x=>(!f.facultad||norm(x.facultad)===f.facultad)&&(ignoreTutor||!f.tutor||norm(x.tutor)===f.tutor)&&(!f.tipo||norm(x.tipo)===f.tipo)&&(!f.estado||norm(x.estado)===f.estado)&&(!f.intake||norm(x.intake)===f.intake)&&(!f.codigo||norm(x['codigo curso'])===f.codigo)&&(!f.fecha||String(x['fecha inicio']||'').slice(0,10)===f.fecha))}",
+              "function filtered(ignoreTutor=false){const f={facultad:norm(facultad.value),tutor:norm(tutor.value),tipo:norm(tipo.value),estados:estadosSeleccionados(),intake:norm(intake.value),codigo:norm(codigo.value),fecha:fecha.value};return courses.filter(x=>(!f.facultad||norm(x.facultad)===f.facultad)&&(ignoreTutor||!f.tutor||norm(x.tutor)===f.tutor)&&(!f.tipo||norm(x.tipo)===f.tipo)&&(!f.estados.length||f.estados.includes(norm(x.estado)))&&(!f.intake||norm(x.intake)===f.intake)&&(!f.codigo||norm(x['codigo curso'])===f.codigo)&&(!f.fecha||String(x['fecha inicio']||'').slice(0,10)===f.fecha))}",
+              'state filtering')
+
+          rep("function renderFacultyBars(facRows){","function renderFacultyBars(facRows,graphStates){",'graph signature')
+          rep("abrirCalendarios({facultad:decodeURIComponent(el.dataset.fac)})",
+              "abrirCalendarios({facultad:decodeURIComponent(el.dataset.fac),estado:(graphStates||[]).join('|'),nrc:'',fechaInicio:''})",
+              'graph drill state')
+
+          rep("function render(){const data=filtered(false);const operational=data.filter(x=>['ACTIVO','EN CIERRE'].includes(norm(x.estado)));",
+              "function render(){const data=filtered(false);const operational=data.filter(x=>['ACTIVO','EN CIERRE'].includes(norm(x.estado)));const selectedStates=estadosSeleccionados();const graphStates=selectedStates.length?selectedStates:['ACTIVO'];const graphData=data.filter(x=>graphStates.includes(norm(x.estado)));",
+              'graph state universe')
+
+          rep("const prep30=data.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=30);kPrep30.textContent=prep30.length;const programas30=new Set(prep30.filter(x=>norm(x['codigo curso'])==='UNI118').map(x=>String(x['nombre programa']||'').trim()).filter(Boolean));kProg.textContent=programas30.size;kProgCard.classList.toggle('hidden',programas30.size===0);",
+              "const prep30=data.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=30);kPrep30.textContent=prep30.length;const inicios30=prep30.filter(x=>norm(x['codigo curso'])==='UNI118');const programas30=new Set(inicios30.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean));const intakes30=[...new Set(inicios30.map(x=>String(x.intake||'').trim()).filter(Boolean))];kProg.textContent=programas30.size;kProgCard.dataset.intakes=intakes30.join('|');kProgCard.classList.toggle('hidden',programas30.size===0);",
+              'upcoming programs intake universe')
+
+          rep("const byFac=new Map();operational.forEach(x=>","const byFac=new Map();graphData.forEach(x=>",'graph data')
+          rep("renderFacultyBars([...byFac.values()].sort((a,b)=>b.att-a.att));",
+              "renderFacultyBars([...byFac.values()].sort((a,b)=>b.att-a.att),graphStates);",
+              'graph render states')
+
+          rep("kProgCard.addEventListener('click',()=>abrirCalendarios({estado:'PREPARACION',codigo:'UNI118',fechaInicio:'',fechaDesde:isoToday(),fechaHasta:addDaysISO(30)}));",
+              "kProgCard.addEventListener('click',()=>{const ints=kProgCard.dataset.intakes||'';abrirCalendarios({intake:ints,codigo:'',estado:'',programa:'',nrc:'',fechaInicio:'',fechaDesde:'',fechaHasta:''})});",
+              'upcoming programs drilldown')
+
+          rep("metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));rebuildFilters();render();",
+              "metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));rebuildFilters();aplicarFiltrosDesdeUrl();render();",
+              'restore filters')
+
+          p.write_text(s,encoding='utf-8')
+
+          # ---------------- CALENDARIOS ----------------
+          p=Path('calendarios.html')
+          s=p.read_text(encoding='utf-8')
+
+          def repc(old,new,label):
+              global s
+              if old not in s:
+                  raise SystemExit(f'No se encontró bloque esperado en Calendarios: {label}')
+              s=s.replace(old,new,1)
+
+          repc("function volverCargaTutorial(){if(history.length>1){history.back();return;}location.href='carga_tutorial.html'}",
+               "function volverCargaTutorial(){location.href=q.get('retorno')||'carga_tutorial.html?embedded=1'}",
+               'back button')
+
+          repc("function updateKPIs(list=courses){const count=s=>list.filter(x=>norm(x.estado)===s).length;const n=list.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos en listado`;document.querySelectorAll('.kpi[data-state]').forEach(k=>k.classList.toggle('selected',k.dataset.state===stateFilter));}",
+               "function updateKPIs(list=courses){const count=s=>list.filter(x=>norm(x.estado)===s).length;const visibleState=stateFilter?list.filter(x=>norm(x.estado)===stateFilter):list;const n=visibleState.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos visibles`;document.querySelectorAll('.kpi[data-state]').forEach(k=>k.classList.toggle('selected',k.dataset.state===stateFilter));}",
+               'total KPI')
+
+          repc(".drill-context{display:none;",".drill-context{position:sticky;top:0;z-index:20;display:none;",'sticky back context')
+          p.write_text(s,encoding='utf-8')
+          PY
+
+          node - <<'NODE'
+          const fs=require('fs');
+          for(const f of ['carga_tutorial.html','calendarios.html']){
+            const s=fs.readFileSync(f,'utf8');
+            const m=s.match(/<script>([\s\S]*)<\/script>/);
+            if(!m) throw new Error('No script in '+f);
+            new Function(m[1]);
+            console.log('JS OK',f);
+          }
+          NODE
+
+      - name: Commit fixes
+        shell: bash
+        run: |
+          git config user.name "ETOP Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add carga_tutorial.html calendarios.html
+          git commit -m "Corregir filtros y drill-down de Carga Tutorial" || true
+          git push
