@@ -1,0 +1,112 @@
+(x.id).trim());
+      return u.toString();
+    }
+    function presentationUrl(x){
+      const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',fechaInicio:x['fecha inicio']||'',fechaFin:x['fecha fin']||''});
+      return BASE+'presentacion_tutorial_innovado.html?'+p.toString();
+    }
+    function announcementUrl(x){
+      const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmtDate(x['fecha inicio']),fecha_fin:fmtDate(x['fecha fin'])});
+      return BASE+'anuncio_bienvenida_curso_malla.html?'+p.toString();
+    }
+    function panelLink(url,icon,texto,primary=false){
+      const enabled=Boolean(url);
+      return `<a class="panel-action ${primary?'primary ':''}${enabled?'':'disabled'}" href="${enabled?esc(url):'#'}" ${enabled?'target="_blank" rel="noopener"':''}><span class="pa-icon">${icon}</span><span>${esc(texto)}</span></a>`;
+    }
+    function aplicarFiltroFicha(campo,valor){
+      if(!valor)return;
+      const mismo=norm(detailFilters[campo])===norm(valor);
+      detailFilters[campo]=mismo?'':valor;
+
+      // La ficha se comporta como el Explorador: al navegar por un dato,
+      // el texto de búsqueda deja de limitar el resultado al NRC original.
+      const search=document.getElementById('search');
+      if(search)search.value='';
+      stateFilter='';
+
+      reconstruirUniversoDesdeFicha();
+      render();
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+      if(seleccionado)renderCoursePanel(seleccionado);
+    }
+    function limpiarFiltrosFicha(){
+      Object.keys(detailFilters).forEach(k=>detailFilters[k]='');
+      reconstruirUniversoDesdeFicha();
+      render();
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+      if(seleccionado)renderCoursePanel(seleccionado);
+    }
+    function metaFilterButton(campo,label,valor){
+      if(!valor)return '';
+      const activo=norm(detailFilters[campo])===norm(valor);
+      return `<button type="button" class="course-meta-filter ${activo?'active':''}" title="Filtrar calendario por ${esc(label)}: ${esc(valor)}" onclick="aplicarFiltroFicha('${campo}',decodeURIComponent('${encodeURIComponent(valor)}'))"><span class="course-meta-label">${esc(label)}</span><span class="course-meta-value">${activo?'✓ ':''}${esc(valor)}</span></button>`;
+    }
+    function renderCoursePanel(x){
+      const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
+      if(!x){panel.classList.remove('open');host.innerHTML='';return;}
+      const byCourse=buildIncidentMaps(),inc=byCourse.get(String(x.id))||[];
+      const canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'';
+      const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
+      const incidentStatus=norm(x['codigo curso'])==='UNI118'?'NO APLICA':!inc.length?'PENDIENTE QA2':incidentCount?`CON INCIDENCIA (${incidentCount})`:'SIN INCIDENCIA';
+      const incidentUrl=BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||'');
+      host.innerHTML=`
+        <div class="course-panel-head">
+          <div>
+            <div class="course-panel-kicker">Accesos y ficha del curso</div>
+            <div class="course-panel-nrc">${esc(x.nrc||'—')}</div>
+            <div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div>
+            <div class="course-meta-grid">
+              ${metaFilterButton('tutor','Tutor',x.tutor||'')}
+              ${metaFilterButton('intake','Intake / Versión',x.intake||'')}
+              ${metaFilterButton('estado','Estado',x.estado||'')}
+              ${metaFilterButton('facultad','Facultad',x.facultad||'')}
+              ${metaFilterButton('codigo','Código curso',x['codigo curso']||'')}
+            </div>
+            ${Object.values(detailFilters).some(Boolean)?'<button type="button" class="course-filter-clear" onclick="limpiarFiltrosFicha()">Quitar filtros aplicados desde la ficha</button>':''}
+          </div>
+          <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
+        </div>
+        <div class="course-panel-body">
+          <div class="panel-section">
+            <div class="panel-section-title">Gestión del curso</div>
+            <div class="panel-actions-grid">
+              <button type="button" class="panel-action primary ${String(x.id||'').trim()?'':'disabled'}" onclick="abrirPowerAppsEnFicha()" ${String(x.id||'').trim()?'':'disabled'}><span class="pa-icon">✏️</span><span>Editar curso en Power Apps</span></button>
+              ${panelLink(intakeCoursesUrl(x.intake),'📚','Base de cursos del Intake')}
+              ${panelLink(studentsUrl(x.nrc),'👥','Base Semáforo / estudiantes')}
+            </div>
+          </div>
+          <div class="panel-section">
+            <div class="panel-section-title">Canvas y seguimiento</div>
+            <div class="panel-actions-grid">
+              ${panelLink(canvas,'🎓','Abrir curso en Canvas')}
+              ${panelLink(integrationUrl(x.nrc),'🌐','Verificar integración Canvas')}
+              ${panelLink(incidentUrl,'⚠️','Incidencias / QA2')}
+              ${panelLink(String(x.id||'').trim()?qa2Url(x):'','✅','Formulario QA2')}
+            </div>
+            <div class="panel-status" style="margin-top:7px"><span>Estado QA2 / incidencias</span><strong>${esc(incidentStatus)}</strong></div>
+          </div>
+          <div class="panel-section">
+            <div class="panel-section-title">Acompañamiento y comunicaciones</div>
+            <div class="panel-actions-grid">
+              ${panelLink(presentationUrl(x),'📊','Presentación Tutorial')}
+              ${panelLink(BASE+'comunicaciones_etop.html','✉️','Hub Comunicaciones')}
+              ${panelLink(announcementUrl(x),'📣','Anuncio bienvenida curso')}
+            </div>
+          </div>
+        </div>`;
+      panel.classList.add('open');
+    }
+    function abrirPowerAppsEnFicha(){
+      const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
+      if(!x||!String(x.id||'').trim())return;
+      const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
+      const url=powerAppsUrl(x);
+      host.innerHTML=`
+        <div class="course-panel-head">
+          <div><div class="course-panel-kicker">Editor Power Apps</div><div class="course-panel-nrc">${esc(x.nrc||'—')}</div><div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div></div>
+          <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
+        </div>
+        <div class="powerapp-panel-view">
+          <div class="powerapp-panel-toolbar">
+            <button type="button" class="powerapp-back" onclick="volverFichaCurso()">← Volver a la ficha</button>
+            <a class="powerapp-external" href="${esc(url)}" target="_blank" rel="
