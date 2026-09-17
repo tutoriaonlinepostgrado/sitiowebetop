@@ -35,6 +35,44 @@
     return '';
   }
 
+  function enriquecerDatosFinalesConNrc(){
+    const nrc = obtenerNrcInv();
+    try {
+      if (typeof datosFinales === 'undefined' || !Array.isArray(datosFinales) || !datosFinales.length) return;
+      datosFinales = datosFinales.map(fila => ({
+        ...fila,
+        'NRC_COD_CAL_FILTRO': String(fila?.NRC_COD_CAL_FILTRO || nrc || '').trim()
+      }));
+    } catch(e) {
+      console.warn('No se pudo agregar NRC_COD_CAL_FILTRO a invitaciones:', e);
+    }
+  }
+
+  const enviarSharePointOriginal = window.enviarSharePoint;
+  const enviarSharePointMiguelOriginal = window.enviarSharePointMiguel;
+  const enviarSharePointPabloDanielaOriginal = window.enviarSharePointPabloDaniela;
+
+  if (typeof enviarSharePointOriginal === 'function') {
+    window.enviarSharePoint = function(){
+      enriquecerDatosFinalesConNrc();
+      return enviarSharePointOriginal.apply(this, arguments);
+    };
+  }
+
+  if (typeof enviarSharePointMiguelOriginal === 'function') {
+    window.enviarSharePointMiguel = function(){
+      enriquecerDatosFinalesConNrc();
+      return enviarSharePointMiguelOriginal.apply(this, arguments);
+    };
+  }
+
+  if (typeof enviarSharePointPabloDanielaOriginal === 'function') {
+    window.enviarSharePointPabloDaniela = function(){
+      enriquecerDatosFinalesConNrc();
+      return enviarSharePointPabloDanielaOriginal.apply(this, arguments);
+    };
+  }
+
   function aplicarTutorInvLocal(){
     const nombre = normalizar(document.getElementById('nombre-tutor')?.value);
     const correo = document.getElementById('correo-tutor');
@@ -123,7 +161,9 @@
     const puedeUsarSeguimiento = estudiantesSeguimientoInv.length > 0 && nrcSeguimientoInv && nrcActual && nrcSeguimientoInv.toUpperCase() === nrcActual.toUpperCase();
 
     if (!puedeUsarSeguimiento) {
-      return procesarInvitacionesOriginal.apply(this, arguments);
+      const r = await procesarInvitacionesOriginal.apply(this, arguments);
+      enriquecerDatosFinalesConNrc();
+      return r;
     }
 
     const resultEl = document.getElementById('resultado');
@@ -167,7 +207,8 @@
           'LINK SESION SINCRONICA': link,
           'CORREO TUTOR': correoTutor,
           'NOMBRE TUTOR': nombreTutor.toUpperCase(),
-          'fechacal': fechacalSlash
+          'fechacal': fechacalSlash,
+          'NRC_COD_CAL_FILTRO': nrcActual
         });
       }
 
@@ -176,7 +217,6 @@
         return;
       }
 
-      // datosFinales es una variable global léxica declarada por onboarding_invitaciones.html.
       datosFinales = salida;
       resultEl.innerHTML = `<div class="alert success">🎉 Plantilla de invitación generada desde seguimiento. <span class="badge">${salida.length}</span> registros.</div>`;
       const tableDiv = document.createElement('div');
