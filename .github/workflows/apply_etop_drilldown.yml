@@ -1,0 +1,56 @@
+name: Apply ETOP drilldown
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply_etop_drilldown.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild ETOP pages and update Coordinacion
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          carga = ''.join((root / f'.etop_tmp/carga.part{i:02d}').read_text(encoding='utf-8') for i in range(4))
+          cal = ''.join((root / f'.etop_tmp/cal.part{i:02d}').read_text(encoding='utf-8') for i in range(7))
+
+          (root / 'carga_tutorial.html').write_text(carga, encoding='utf-8')
+          (root / 'calendarios.html').write_text(cal, encoding='utf-8')
+
+          p = root / 'gestion_coordinacion.html'
+          text = p.read_text(encoding='utf-8')
+          pattern = r"('CARGA_TUTORIAL'\s*:\s*\{\s*url:\s*)\"[^\"]+\"(\s*,\s*tipo:\s*)'pbi'(\s*\})"
+          replacement = r"\1\"https://tutoriaonlinepostgrado.github.io/sitiowebetop/carga_tutorial.html?embedded=1&v=20260917-drilldown2\"\2'local'\3"
+          text2, n = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit(f'No se encontró un único bloque CARGA_TUTORIAL Power BI; coincidencias={n}')
+          p.write_text(text2, encoding='utf-8')
+          PY
+
+          rm -rf .etop_tmp
+
+      - name: Commit final changes
+        shell: bash
+        run: |
+          git config user.name "ETOP Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add carga_tutorial.html calendarios.html gestion_coordinacion.html .etop_tmp
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Integrar drill-down Carga Tutorial con Calendarios"
+          git push
