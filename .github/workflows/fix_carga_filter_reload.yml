@@ -1,0 +1,57 @@
+name: Fix Carga Tutorial filter reload
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix_carga_filter_reload.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Force fresh local iframe URLs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('gestion_coordinacion.html')
+          s=p.read_text(encoding='utf-8')
+          old='https://tutoriaonlinepostgrado.github.io/sitiowebetop/carga_tutorial.html?embedded=1&v=20260917-drilldown2'
+          new='https://tutoriaonlinepostgrado.github.io/sitiowebetop/carga_tutorial.html?embedded=1&v=20260917-filterfix1'
+          if old not in s:
+              raise SystemExit('No se encontró URL antigua de Carga Tutorial')
+          s=s.replace(old,new,1)
+          old2="""function refrescarIframe() {
+        const url = buildURLFiltrada();
+        if (url) document.getElementById('visor').src = url;
+    }"""
+          new2="""function refrescarIframe() {
+        const url = buildURLFiltrada();
+        if (!url) return;
+        const cfg = misReportes[claveActual];
+        if (cfg && cfg.tipo === 'local') {
+            const u = new URL(url, window.location.href);
+            u.searchParams.set('_fresh', Date.now().toString());
+            document.getElementById('visor').src = u.toString();
+        } else {
+            document.getElementById('visor').src = url;
+        }
+    }"""
+          if old2 not in s:
+              raise SystemExit('No se encontró refrescarIframe esperado')
+          s=s.replace(old2,new2,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name "ETOP Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add gestion_coordinacion.html
+          git commit -m "Forzar recarga de filtros en Carga Tutorial"
+          git push
