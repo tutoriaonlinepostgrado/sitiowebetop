@@ -274,10 +274,6 @@
       <input type="text" id="link" placeholder="https://..." />
     </div>
     <div class="form-group">
-      <label>fechacal</label>
-      <input type="date" id="fechacal" />
-    </div>
-    <div class="form-group">
       <label>FECHA SESION SINCRONICA</label>
       <input type="date" id="fecha-sesion" />
     </div>
@@ -416,7 +412,6 @@ async function procesarInvitaciones() {
     const curso       = document.getElementById('curso').value || document.getElementById('curso-search').value.trim();
     const fechaInicio = document.getElementById('fecha-inicio').value;
     const link        = document.getElementById('link').value;
-    const fechacal    = document.getElementById('fechacal').value;
     const fechaSesion = document.getElementById('fecha-sesion').value;
     const hora        = document.getElementById('hora').value;
     const correoTutor = document.getElementById('correo-tutor').value;
@@ -435,6 +430,16 @@ async function procesarInvitaciones() {
       if(!correoEst && emails.length) correoEst = emails[0].toLowerCase();
       if(!correoEst) continue;
       correoEst = correoEst.toLowerCase();
+
+      // Identificador del estudiante para actualizar seguimiento posteriormente.
+      const rutCol = finalHeaders.find(h => {
+        const x = String(h||'').toUpperCase().trim();
+        return x === 'RUT' || x.includes('RUT') || x === 'ID' ||
+               x.includes('ID ALUMNO') || x.includes('ID ESTUDIANTE') ||
+               x.includes('IDENTIFICACION') || x.includes('IDENTIFICACIÓN');
+      });
+      const rut = rutCol ? String(r[rutCol] || '').trim().toUpperCase() : '';
+
       // Detectar tipo de nómina
       const esAlumnoPotencial = finalHeaders.some(h => h.includes('ALUMNO POTENCIAL'));
       
@@ -469,13 +474,17 @@ async function procesarInvitaciones() {
       const fechaHoraDisplay = fechaSesion ? formatSyncDisplay(fechaSesion, hora) : '';
       const formatoFechaHora = fechaSesion ? `${fechaSesion} ${hora}` : '';
       const fechaInicioDMY = fechaInicio ? formatDateDMY(fechaInicio) : '';
-      const fechacalSlash  = fechacal    ? formatDateSlash(fechacal)  : '';
       salida.push({
-        'NOMBRE ESTUDIANTE': nombre, 'CORREO ESTUDIANTE': correoEst,
-        'CURSO DE INDUCCION': curso, 'FECHA INICIO CURSO DE INDUCCION': fechaInicioDMY,
-        'FECHA Y HORA SESION SINCRONICA': fechaHoraDisplay, 'FORMATO FECHA HORA': formatoFechaHora,
-        'LINK SESION SINCRONICA': link, 'CORREO TUTOR': correoTutor,
-        'NOMBRE TUTOR': nombreTutor.toUpperCase(), 'fechacal': fechacalSlash
+        'NOMBRE ESTUDIANTE': nombre,
+        'RUT': rut,
+        'CORREO ESTUDIANTE': correoEst,
+        'CURSO DE INDUCCION': curso,
+        'FECHA INICIO CURSO DE INDUCCION': fechaInicioDMY,
+        'FECHA Y HORA SESION SINCRONICA': fechaHoraDisplay,
+        'FORMATO FECHA HORA': formatoFechaHora,
+        'LINK SESION SINCRONICA': link,
+        'CORREO TUTOR': correoTutor,
+        'NOMBRE TUTOR': nombreTutor.toUpperCase()
       });
     }
 
@@ -633,7 +642,6 @@ document.addEventListener('click', function(e){
 window.onload = async function() {
   const today = new Date().toISOString().substring(0,10);
   document.getElementById('fecha-inicio').value = today;
-  document.getElementById('fechacal').value = today;
   document.getElementById('fecha-sesion').value = today;
 
   // ── PRE-LLENADO DESDE URL PARAMS ──
