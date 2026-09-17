@@ -425,7 +425,7 @@
             tipo: 'pbi'
         },
         'CARGA_TUTORIAL': {
-            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/carga_tutorial.html?embedded=1&v=20260917-drilldown2",
+            url: "https://tutoriaonlinepostgrado.github.io/sitiowebetop/carga_tutorial.html?embedded=1&v=20260917-filterfix2",
             tipo: 'local'
         },
         'CALENDARIOS': {
@@ -1019,7 +1019,7 @@
     ======================================================== */
     function refrescarIframe() {
         const url = buildURLFiltrada();
-        if (url) document.getElementById('visor').src = url;
+        if (url) { const u=new URL(url,window.location.href); if(misReportes[claveActual]&&misReportes[claveActual].tipo==='local') u.searchParams.set('_fresh',Date.now().toString()); document.getElementById('visor').src=u.toString(); }
     }
 
     function cargar(clave, btn) {
