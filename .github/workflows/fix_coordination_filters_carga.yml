@@ -1,0 +1,86 @@
+name: Connect Coordinacion filters to Carga Tutorial
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix_coordination_filters_carga.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch Coordinacion and Carga Tutorial
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # --- gestion_coordinacion.html: enviar filtros también a CARGA_TUTORIAL
+          p=Path('gestion_coordinacion.html')
+          s=p.read_text(encoding='utf-8')
+          old="if (['CALENDARIOS','CURSOS_INICIAR'].includes(claveActual)) {"
+          new="if (['CALENDARIOS','CURSOS_INICIAR','CARGA_TUTORIAL'].includes(claveActual)) {"
+          if old not in s: raise SystemExit('No se encontró lista de páginas locales filtrables')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+
+          # --- carga_tutorial.html: en embedded usa los filtros de Coordinación, incluso multi-selección
+          p=Path('carga_tutorial.html')
+          s=p.read_text(encoding='utf-8')
+
+          def rep(old,new,label):
+              global s
+              if old not in s: raise SystemExit('No se encontró: '+label)
+              s=s.replace(old,new,1)
+
+          rep("body.embedded .top{display:block}.embedded .brand{display:none}.embedded .top-main{min-height:48px}.embedded .wrap{padding-top:10px}",
+              "body.embedded .top{display:none}.embedded .wrap{padding-top:10px}",
+              'embedded header')
+
+          rep("function estadosSeleccionados(){return String(estado.value||'').split('|').map(norm).filter(Boolean)}",
+              "function rawFiltro(key,id){const fromUrl=cargaQuery.get(key);if(cargaQuery.get('embedded')==='1'&&fromUrl!==null)return fromUrl;const el=document.getElementById(id);return el?String(el.value||''):''}\nfunction filtroValores(key,id){return rawFiltro(key,id).split('|').map(norm).filter(Boolean)}\nfunction estadosSeleccionados(){return filtroValores('estado','estado')}",
+              'multi URL helpers')
+
+          rep("function cargaReturnUrl(){const p=new URLSearchParams();p.set('embedded','1');[['facultad',facultad.value],['tutor',tutor.value],['tipo',tipo.value],['estado',estado.value],['intake',intake.value],['codigo',codigo.value],['fecha',fecha.value]].forEach(([k,v])=>{if(String(v||'').trim())p.set(k,v)});return 'carga_tutorial.html?'+p.toString()}",
+              "function cargaReturnUrl(){const p=new URLSearchParams();p.set('embedded','1');[['facultad','facultad'],['tutor','tutor'],['tipo','tipo'],['estado','estado'],['intake','intake'],['codigo','codigo'],['fechaInicio','fecha']].forEach(([key,id])=>{const v=rawFiltro(key,id);if(String(v||'').trim())p.set(key,v)});return 'carga_tutorial.html?'+p.toString()}",
+              'return URL filters')
+
+          rep("function abrirCalendarios(extra={}){const params=new URLSearchParams();params.set('origen','carga_tutorial');params.set('retorno',cargaReturnUrl());const base={facultad:facultad.value,tutor:tutor.value,tipo:tipo.value,estado:estado.value,intake:intake.value,codigo:codigo.value,fechaInicio:fecha.value};Object.entries(base).forEach(([k,v])=>{if(String(v||'').trim())params.set(k,v)});Object.entries(extra).forEach(([k,v])=>{if(v===null||v===undefined||v==='')params.delete(k);else params.set(k,v)});location.href=`calendarios.html?${params.toString()}`}",
+              "function abrirCalendarios(extra={}){const params=new URLSearchParams();params.set('origen','carga_tutorial');params.set('retorno',cargaReturnUrl());const base={facultad:rawFiltro('facultad','facultad'),tutor:rawFiltro('tutor','tutor'),tipo:rawFiltro('tipo','tipo'),estado:rawFiltro('estado','estado'),intake:rawFiltro('intake','intake'),codigo:rawFiltro('codigo','codigo'),fechaInicio:rawFiltro('fechaInicio','fecha')};Object.entries(base).forEach(([k,v])=>{if(String(v||'').trim())params.set(k,v)});Object.entries(extra).forEach(([k,v])=>{if(v===null||v===undefined||v==='')params.delete(k);else params.set(k,v)});location.href=`calendarios.html?${params.toString()}`}",
+              'drill inherited filters')
+
+          old_filtered="function filtered(ignoreTutor=false){const f={facultad:norm(facultad.value),tutor:norm(tutor.value),tipo:norm(tipo.value),estados:estadosSeleccionados(),intake:norm(intake.value),codigo:norm(codigo.value),fecha:fecha.value};return courses.filter(x=>(!f.facultad||norm(x.facultad)===f.facultad)&&(ignoreTutor||!f.tutor||norm(x.tutor)===f.tutor)&&(!f.tipo||norm(x.tipo)===f.tipo)&&(!f.estados.length||f.estados.includes(norm(x.estado)))&&(!f.intake||norm(x.intake)===f.intake)&&(!f.codigo||norm(x['codigo curso'])===f.codigo)&&(!f.fecha||String(x['fecha inicio']||'').slice(0,10)===f.fecha))}"
+          new_filtered="function filtered(ignoreTutor=false){const f={facultad:filtroValores('facultad','facultad'),tutor:filtroValores('tutor','tutor'),tipo:filtroValores('tipo','tipo'),estados:estadosSeleccionados(),intake:filtroValores('intake','intake'),codigo:filtroValores('codigo','codigo'),fecha:filtroValores('fechaInicio','fecha')};return courses.filter(x=>(!f.facultad.length||f.facultad.includes(norm(x.facultad)))&&(ignoreTutor||!f.tutor.length||f.tutor.includes(norm(x.tutor)))&&(!f.tipo.length||f.tipo.includes(norm(x.tipo)))&&(!f.estados.length||f.estados.includes(norm(x.estado)))&&(!f.intake.length||f.intake.includes(norm(x.intake)))&&(!f.codigo.length||f.codigo.includes(norm(x['codigo curso'])))&&(!f.fecha.length||f.fecha.includes(norm(String(x['fecha inicio']||'').slice(0,10)))))}"
+          rep(old_filtered,new_filtered,'filtered multi URL')
+
+          # URL usa fechaInicio; permitir restauración visual si se abre Carga sola con parámetros
+          rep("[['facultad','facultad'],['tutor','tutor'],['tipo','tipo'],['estado','estado'],['intake','intake'],['codigo','codigo'],['fecha','fecha']]",
+              "[['facultad','facultad'],['tutor','tutor'],['tipo','tipo'],['estado','estado'],['intake','intake'],['codigo','codigo'],['fecha','fechaInicio']]",
+              'restore fechaInicio')
+
+          p.write_text(s,encoding='utf-8')
+          PY
+
+          node - <<'NODE'
+          const fs=require('fs');
+          for(const f of ['gestion_coordinacion.html','carga_tutorial.html','calendarios.html']){
+            const s=fs.readFileSync(f,'utf8');
+            const scripts=[...s.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(x=>x.trim());
+            for(const js of scripts){ new Function(js); }
+            console.log('JS OK',f);
+          }
+          NODE
+
+      - name: Commit connection
+        shell: bash
+        run: |
+          git config user.name "ETOP Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add gestion_coordinacion.html carga_tutorial.html
+          git commit -m "Conectar filtros de Coordinacion con Carga Tutorial" || true
+          git push
