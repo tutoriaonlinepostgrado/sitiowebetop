@@ -176,7 +176,6 @@
       const curso       = document.getElementById('curso').value || document.getElementById('curso-search').value.trim();
       const fechaInicio = document.getElementById('fecha-inicio').value;
       const link        = document.getElementById('link').value;
-      const fechacal    = document.getElementById('fechacal').value;
       const fechaSesion = document.getElementById('fecha-sesion').value;
       const hora        = document.getElementById('hora').value;
       const correoTutor = document.getElementById('correo-tutor').value;
@@ -185,7 +184,6 @@
       const fechaHoraDisplay = fechaSesion ? formatSyncDisplay(fechaSesion, hora) : '';
       const formatoFechaHora = fechaSesion ? `${fechaSesion} ${hora}` : '';
       const fechaInicioDMY = fechaInicio ? formatDateDMY(fechaInicio) : '';
-      const fechacalSlash = fechacal ? formatDateSlash(fechacal) : '';
       const vistos = new Set();
       const salida = [];
 
@@ -199,6 +197,7 @@
         vistos.add(clave);
         salida.push({
           'NOMBRE ESTUDIANTE': nombre,
+          'RUT': rut,
           'CORREO ESTUDIANTE': correoEst,
           'CURSO DE INDUCCION': curso,
           'FECHA INICIO CURSO DE INDUCCION': fechaInicioDMY,
@@ -207,7 +206,6 @@
           'LINK SESION SINCRONICA': link,
           'CORREO TUTOR': correoTutor,
           'NOMBRE TUTOR': nombreTutor.toUpperCase(),
-          'fechacal': fechacalSlash,
           'NRC_COD_CAL_FILTRO': nrcActual
         });
       }
