@@ -1,0 +1,73 @@
+));
+    function studentCount(x){return Number(metricMap.get(norm(x.nrc))||0)}
+    function volverCargaTutorial(){if(history.length>1){history.back();return;}location.href='carga_tutorial.html'}
+    function renderDrillContext(){if(q.get('origen')!=='carga_tutorial')return;const box=document.getElementById('drill-context'),txt=document.getElementById('drill-context-text');const parts=[];const labels={facultad:'Facultad',tutor:'Tutor',tipo:'Tipo',estado:'Estado',intake:'Intake',codigo:'Código',programa:'Programa',fechaInicio:'Fecha',fechaDesde:'Desde',fechaHasta:'Hasta'};Object.entries(labels).forEach(([key,label])=>{const v=q.get(key);if(v)parts.push(`${label}: ${v.replace(/\|/g,' · ')}`)});const vistas={sinTutor:'Cursos sin tutor',ceroEstudiantes:'Cursos con 0 estudiantes',mas30:'Cursos con más de 30 estudiantes'};if(q.get('vista')&&vistas[q.get('vista')])parts.push(vistas[q.get('vista')]);if(q.get('nrc'))parts.push(`NRC: ${q.get('nrc')}`);txt.textContent=parts.length?parts.join(' · '):'Detalle filtrado desde Carga Tutorial';box.classList.add('show')}
+    const uniq=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))];
+    const selected=(arr,key,multi,empty='No disponible')=>{const v=uniq(arr,key);return v.length===1?v[0]:(v.length>1?multi:empty)};
+    const dateValue=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(d.getTime())?null:d};
+    const dateISO=v=>{const d=dateValue(v);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''};
+    const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
+    const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
+    const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
+    function filterCourses(data,{ignoreNrc=false}={}){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio'),codigos=qList('codigo'),programas=qList('programa'),nrcs=qList('nrc');const fechaDesde=dateValue(q.get('fechaDesde')),fechaHasta=dateValue(q.get('fechaHasta')),vista=q.get('vista')||'';return data.filter(x=>{const fi=dateValue(x['fecha inicio']),st=norm(x.estado);const base=(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(st))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(!codigos.length||codigos.includes(norm(x['codigo curso'])))&&(!programas.length||programas.includes(norm(x['nombre programa'])))&&(!fechaDesde||(fi&&fi>=fechaDesde))&&(!fechaHasta||(fi&&fi<=fechaHasta))&&(ignoreNrc||!nrcs.length||nrcs.includes(norm(x.nrc)));if(!base)return false;if(vista==='sinTutor')return ['ACTIVO','EN CIERRE'].includes(st)&&!String(x.tutor||'').trim();if(vista==='ceroEstudiantes')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)===0;if(vista==='mas30')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)>30;return true;});}
+    function reconstruirUniversoDesdeFicha(){
+      const explorando=Object.values(detailFilters).some(Boolean);
+      courses=filterCourses(allCourses,{ignoreNrc:explorando});
+    }
+    function updateHeader(list=courses){
+      const tutor=selected(list,'tutor','Varios / No definido');
+      document.getElementById('h-tutor').textContent=tutor;
+      document.getElementById('h-programa').textContent=selected(list,'nombre programa','Múltiples programas');
+      document.getElementById('h-correo').textContent=uniq(list,'tutor').length===1?(EMAILS[norm(tutor)]||'No disponible'):'No disponible';
+      document.getElementById('h-tipo').textContent=selected(list,'tipo','Varios');
+      document.getElementById('h-intake').textContent=selected(list,'intake','Múltiples versiones');
+      document.getElementById('h-facultad').textContent=selected(list,'facultad','Varias');
+    }
+    function badge(state){const s=norm(state);if(s==='PREPARACION')return['PREP','prep'];if(s==='ACTIVO')return['ACTIVO','active'];if(s==='EN CIERRE')return['CIERRE','closing'];if(s==='CERRADO')return['CERRADO','closed-b'];return[state||'—','unknown'];}
+    function action(url,title,icon,enabled=true){return enabled?`<a class="action" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(title)}">${icon}</a>`:'';}
+    function buildIncidentMaps(){const byCourse=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!byCourse.has(k))byCourse.set(k,[]);byCourse.get(k).push(i)});return byCourse;}
+    function detailFilteredCourses(){
+      return courses.filter(x =>
+        (!detailFilters.tutor || norm(x.tutor)===norm(detailFilters.tutor)) &&
+        (!detailFilters.intake || norm(x.intake)===norm(detailFilters.intake)) &&
+        (!detailFilters.estado || norm(x.estado)===norm(detailFilters.estado)) &&
+        (!detailFilters.facultad || norm(x.facultad)===norm(detailFilters.facultad)) &&
+        (!detailFilters.codigo || norm(x['codigo curso'])===norm(detailFilters.codigo))
+      );
+    }
+   function studentsUrl(nrc){
+  const u = new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
+
+  u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');
+  u.searchParams.set('FilterValue1',String(nrc || ''));
+  u.searchParams.set('FilterType1','Text');
+
+  u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+  u.searchParams.set('env','Embedded');
+
+  return u.href;
+}
+    function intakeCoursesUrl(intake){
+      if(!String(intake||'').trim())return '';
+      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');
+      u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');
+      u.searchParams.set('env','WebViewList');
+      u.searchParams.set('isDlg','1');
+      u.searchParams.set('iframed','1');
+      u.searchParams.set('isfromSharePointTeams','true');
+      u.searchParams.set('FilterField1','field_8');
+      u.searchParams.set('FilterValue1',String(intake).trim());
+      return u.href;
+    }
+    function integrationUrl(nrc){
+      const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';
+      return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
+    }
+    function powerAppsUrl(x){
+      const u=new URL(POWER_APPS_EDITOR_URL);
+      if(String(x.id||'').trim())u.searchParams.set('ids',String(x.id).trim());
+      return u.toString();
+    }
+    function qa2Url(x){
+      const u=new URL(FORM_URL);
+      if(String
