@@ -909,7 +909,7 @@
         // Las páginas HTML locales reciben sus filtros como parámetros URL.
         if (cfg.tipo === 'local') {
             const urlLocal = new URL(cfg.url, window.location.href);
-            if (['CALENDARIOS','CURSOS_INICIAR'].includes(claveActual)) {
+            if (['CALENDARIOS','CURSOS_INICIAR','CARGA_TUTORIAL'].includes(claveActual)) {
                 if (f.facultad.length) urlLocal.searchParams.set('facultad', f.facultad.join('|'));
                 const tutorEfectivo = f.tutor.length ? f.tutor : (tutorSesionETOP() ? [tutorSesionETOP()] : []);
                 if (tutorEfectivo.length) urlLocal.searchParams.set('tutor', tutorEfectivo.join('|'));
