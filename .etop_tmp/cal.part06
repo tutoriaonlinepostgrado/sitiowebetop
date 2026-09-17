@@ -1,9 +1,0 @@
-endarios filtrados');XLSX.writeFile(wb,'Calendarios_ETOP_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx',{compression:true});}
-    document.getElementById('search').addEventListener('input',applySearch);
-    document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
-    document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
-    function abrirNrcInicialDesdeUrl(){const nrc=q.get('nrc');if(!nrc)return;const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));if(!x)return;selectedCourseNrc=x.nrc||'';renderCoursePanel(x);document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));}
-    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
-  </script>
-</body>
-</html>
