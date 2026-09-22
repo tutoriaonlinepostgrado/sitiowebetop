@@ -164,6 +164,13 @@
   .promo button{border:0;border-radius:9px;background:#6c35d1;color:#fff;padding:10px 18px;font-weight:700;cursor:pointer}
 
   .footer{text-align:right;font-size:10px;color:#7c8b9b;padding:12px 2px 4px}
+  .workspace-viewer{display:none;flex-direction:column;height:100vh;background:#eef3f8}
+  .workspace-bar{height:58px;min-height:58px;display:flex;align-items:center;gap:12px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}
+  .workspace-back{border:1px solid var(--line);background:#f8fafc;color:#29415f;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .workspace-back:hover{background:#eef5ff;border-color:#aac7ed}
+  .workspace-title{font-size:15px;font-weight:800;color:#14213d}
+  .workspace-sub{font-size:10px;color:#728197;margin-top:2px}
+  .workspace-frame{width:100%;flex:1;border:0;background:white}
 
 
   .viva-card{overflow:hidden;min-height:520px;display:flex;flex-direction:column}
@@ -219,13 +226,13 @@
 
     <nav class="nav">
       <div class="section">Portal ETOP</div>
-      <a class="active" href="index.html"><span>🏠</span><span class="label">Inicio</span></a>
-      <a href="gestion_coordinacion.html"><span>🏛️</span><span class="label">Coordinación</span></a>
-      <a href="incidencias.html"><span>🧪</span><span class="label">Gestión QA2</span></a>
-      <a href="comunicaciones_etop.html"><span>📣</span><span class="label">Comunicaciones</span></a>
-      <a href="aplicaciones.html"><span>🧩</span><span class="label">Aplicaciones</span></a>
-      <a href="recursos_aprendizaje.html"><span>📚</span><span class="label">Recursos</span></a>
-      <a href="equipo_etop_mejorado.html"><span>👥</span><span class="label">Equipo ETOP</span></a>
+      <a class="active" href="#" onclick="openHome();return false;"><span>🏠</span><span class="label">Inicio</span></a>
+      <a href="#" onclick="openView('gestion_coordinacion.html','Coordinación');return false;"><span>🏛️</span><span class="label">Coordinación</span></a>
+      <a href="#" onclick="openView('incidencias.html','Gestión QA2');return false;"><span>🧪</span><span class="label">Gestión QA2</span></a>
+      <a href="#" onclick="openView('comunicaciones_etop.html','Comunicaciones');return false;"><span>📣</span><span class="label">Comunicaciones</span></a>
+      <a href="#" onclick="openView('aplicaciones.html','Aplicaciones');return false;"><span>🧩</span><span class="label">Aplicaciones</span></a>
+      <a href="#" onclick="openView('recursos_aprendizaje.html','Recursos');return false;"><span>📚</span><span class="label">Recursos</span></a>
+      <a href="#" onclick="openView('equipo_etop_mejorado.html','Equipo ETOP');return false;"><span>👥</span><span class="label">Equipo ETOP</span></a>
     </nav>
     <div class="userbox">
       <div class="avatar">PC</div>
@@ -237,6 +244,7 @@
   </aside>
 
   <main class="main">
+    <div id="home-view">
     <header class="topbar">
       <div class="title">
         <h1>Centro de Control ETOP</h1>
@@ -310,102 +318,79 @@
               </div>
               <div class="card-body">
                 <div class="focus-list">
-                  <div class="focus-item risk" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae'" title="Abrir Tablero de Gestión">
-                    <div class="icon">⛔</div><div class="num">—</div>
+                  <div class="focus-item risk" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión · Riesgo accionable')" title="Abrir Tablero de Gestión">
+                    <div class="icon">⛔</div><div class="num" id="kpi-riesgo">—</div>
                     <div class="desc">Riesgo accionable<small>Es_Riesgo_Accionable = SI</small></div>
                     <div class="action">Abrir Tablero de Gestión →</div>
                   </div>
-
-                  <div class="focus-item warn" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae'" title="Abrir tabla de riesgo">
-                    <div class="icon">🚫</div><div class="num">—</div>
-                    <div class="desc">No ingresaron al curso<small>INGRESA_CURSO = NO</small></div>
+                  <div class="focus-item warn" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión · No ingreso')" title="Abrir estudiantes que requieren seguimiento">
+                    <div class="icon">🚫</div><div class="num" id="kpi-no-ingreso">—</div>
+                    <div class="desc">No ingresaron al curso<small>INGRESA_CURSO = NO · accionables</small></div>
                     <div class="action">Revisar estudiantes →</div>
                   </div>
-
-                  <div class="focus-item warn" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae'" title="Abrir tabla de riesgo">
-                    <div class="icon">🎓</div><div class="num">—</div>
-                    <div class="desc">Sin cotejo en Canvas<small>Registros accionables con Canvas pendiente</small></div>
+                  <div class="focus-item warn" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión · Sin registro de ingreso')" title="Abrir Tablero de Gestión">
+                    <div class="icon">🕒</div><div class="num" id="kpi-sin-registro">—</div>
+                    <div class="desc">Sin registro de ingreso +7d<small>Cursos con más de 7 días activos</small></div>
                     <div class="action">Revisar en Gestión →</div>
                   </div>
-
-                  <div class="focus-item info" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae'" title="Abrir Tablero de Gestión">
-                    <div class="icon">🔁</div><div class="num">—</div>
-                    <div class="desc">Riesgo en varios cursos<small>Estudiantes con riesgo multicurso</small></div>
+                  <div class="focus-item risk" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión · Canvas')" title="Abrir Tablero de Gestión">
+                    <div class="icon">🎓</div><div class="num" id="kpi-canvas">—</div>
+                    <div class="desc">Sin cotejo en Canvas<small>Casos accionables pendientes de revisión</small></div>
+                    <div class="action">Revisar en Gestión →</div>
+                  </div>
+                  <div class="focus-item info" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión · Riesgo multicurso')" title="Abrir Tablero de Gestión">
+                    <div class="icon">🔁</div><div class="num" id="kpi-multicurso">—</div>
+                    <div class="desc">Riesgo en varios cursos<small>Estudiantes accionables en más de un curso</small></div>
                     <div class="action">Ver prioridades →</div>
                   </div>
-
-                  <div class="focus-item neutral" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=75dcbe8308cd22de087d'" title="Abrir Cursos en Preparación">
-                    <div class="icon">🚀</div><div class="num">—</div>
-                    <div class="desc">Cursos que inician<small>Misma página de Cursos en Preparación de Gestión</small></div>
+                  <div class="focus-item neutral" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=75dcbe8308cd22de087d','Cursos en Preparación')" title="Abrir Cursos en Preparación">
+                    <div class="icon">🚀</div><div class="num" id="kpi-inicios">—</div>
+                    <div class="desc">Cursos que inician<small>Abre la misma vista Cursos en Preparación de Gestión</small></div>
                     <div class="action">Abrir Cursos en Preparación →</div>
                   </div>
-
-                  <div class="focus-item risk" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869'" title="Abrir Cursos en Cierre">
-                    <div class="icon">⏳</div><div class="num">—</div>
-                    <div class="desc">Cursos cierran &lt;14 días<small>Con estudiantes en riesgo</small></div>
+                  <div class="focus-item risk" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869','Cursos en Cierre')" title="Abrir Cursos en Cierre">
+                    <div class="icon">⏳</div><div class="num" id="kpi-cierre14">—</div>
+                    <div class="desc">Cierran en menos de 14 días<small>Cursos con estudiantes en riesgo</small></div>
                     <div class="action">Abrir Cursos en Cierre →</div>
                   </div>
-                </div>
+                </div></div>
               </div>
             </section>
 
             <div class="kpi-grid">
-              <div class="kpi" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=9df5f2db687d901b71b9'" title="Abrir Cursos Activos">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=9df5f2db687d901b71b9','Cursos Activos')" title="Abrir Cursos Activos">
+                <div class="value" id="kpi-cursos-activos">—</div>
                 <div class="label">Cursos activos</div>
                 <div class="trend">Power BI · Cursos Activos</div>
               </div>
-              <div class="kpi" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869'" title="Abrir Cursos en Cierre">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869','Cursos en Cierre')" title="Abrir Cursos en Cierre">
+                <div class="value" id="kpi-cursos-cierre">—</div>
                 <div class="label">Cursos en cierre</div>
                 <div class="trend">Power BI · Cursos en Cierre</div>
               </div>
-              <div class="kpi" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=255c88d86191d22dd1c3'" title="Abrir Nómina de Estudiantes">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=255c88d86191d22dd1c3','Nómina de Estudiantes')" title="Abrir Nómina de Estudiantes">
+                <div class="value" id="kpi-atenciones-activas">—</div>
                 <div class="label">Atenciones activas</div>
                 <div class="trend">Modelo semántico</div>
               </div>
-              <div class="kpi" onclick="location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=255c88d86191d22dd1c3'" title="Abrir Nómina de Estudiantes">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=255c88d86191d22dd1c3','Nómina de Estudiantes')" title="Abrir Nómina de Estudiantes">
+                <div class="value" id="kpi-unicos">—</div>
                 <div class="label">Estudiantes únicos</div>
                 <div class="trend">Modelo semántico</div>
               </div>
-              <div class="kpi" onclick="location.href='incidencias.html'" title="Abrir Gestión QA2">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('incidencias.html','Gestión QA2')" title="Abrir Gestión QA2">
+                <div class="value" id="kpi-qa2">—</div>
                 <div class="label">QA2 pendientes</div>
                 <div class="trend">Gestión QA2</div>
               </div>
-              <div class="kpi" onclick="location.href='incidencias.html'" title="Abrir Incidencias">
-                <div class="value">—</div>
+              <div class="kpi" onclick="openView('incidencias.html','Gestión QA2')" title="Abrir Incidencias">
+                <div class="value" id="kpi-incidencias">—</div>
                 <div class="label">Incidencias abiertas</div>
                 <div class="trend">Incidencias · HTML</div>
               </div>
             </div>
           </div>
         </div>
-
-          <section class="card">
-            <div class="card-head">
-              <h2>📅 Cursos próximos</h2>
-              <a href="https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=75dcbe8308cd22de087d">Ver todos →</a>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Inicio</th><th>NRC</th><th>Curso</th><th>Programa</th><th>Tutor</th><th>Estud.</th><th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>22-09-2026</td><td>2013</td><td>UNI118</td><td>MSP</td><td>Javiera</td><td>48</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
-                  <tr><td>05-10-2026</td><td>2239</td><td>MSP007</td><td>MSP</td><td>Paula Pardo</td><td>42</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>05-10-2026</td><td>1800</td><td>MAPS013</td><td>MAPS</td><td>Carolina</td><td>36</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>06-10-2026</td><td>3401</td><td>MES559</td><td>MES</td><td>Carlos</td><td>28</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>12-10-2026</td><td>2612</td><td>MSPE007</td><td>MSP</td><td>Sofía</td><td>21</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
             <section class="card">
@@ -469,10 +454,49 @@
 
       <div class="footer">Universidad Andrés Bello · ETOP · 2026</div>
     </section>
+    </div>
+
+    <section id="workspace-viewer" class="workspace-viewer">
+      <div class="workspace-bar">
+        <button class="workspace-back" onclick="openHome()">← Volver al inicio</button>
+        <div>
+          <div id="workspace-title" class="workspace-title">Vista ETOP</div>
+          <div class="workspace-sub">La herramienta se mantiene sin cambios y se abre dentro del portal.</div>
+        </div>
+      </div>
+      <iframe id="workspace-frame" class="workspace-frame" src="about:blank" title="Herramienta ETOP" allowfullscreen></iframe>
+    </section>
   </main>
 </div>
 
 <script>
+
+function openView(url,title){
+  const home=document.getElementById('home-view');
+  const viewer=document.getElementById('workspace-viewer');
+  const frame=document.getElementById('workspace-frame');
+  const ttl=document.getElementById('workspace-title');
+  if(!home||!viewer||!frame)return;
+  home.style.display='none';
+  viewer.style.display='flex';
+  ttl.textContent=title||'Vista ETOP';
+  frame.src=url;
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function openHome(){
+  const home=document.getElementById('home-view');
+  const viewer=document.getElementById('workspace-viewer');
+  const frame=document.getElementById('workspace-frame');
+  if(!home||!viewer||!frame)return;
+  frame.src='about:blank';
+  viewer.style.display='none';
+  home.style.display='block';
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+  const first=document.querySelector('.nav a');
+  if(first)first.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
 function setSearch(value){
   document.getElementById('globalSearch').value = value;
   showSearchResults();
@@ -488,16 +512,16 @@ document.addEventListener('click', function(e){
 });
 
 // La portada definitiva no usa ETOP IA en este espacio: aquí se conserva Viva Engage.
-function abrirGestion(){ window.location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae'; }
-function abrirPreparacion(){ window.location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=75dcbe8308cd22de087d'; }
-function abrirCierre(){ window.location.href='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869'; }
+function abrirGestion(){ openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=a90b3a4c28d3179b1fae','Tablero de Gestión'); }
+function abrirPreparacion(){ openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=75dcbe8308cd22de087d','Cursos en Preparación'); }
+function abrirCierre(){ openView('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=ab4e8f37a94c688a5869','Cursos en Cierre'); }
 </script>
 
 <!--
   MOCKUP V5 ETOP
-  - Archivo independiente.
-  - No publica ni modifica GitHub.
-  - Valores de KPIs son demostrativos.
+  - Página de inicio operativa del Portal ETOP.
+  - Las herramientas se abren dentro del área central mediante iframe.
+  - Los valores DAX quedan preparados para conexión con el modelo semántico; no se inventan valores.
   - Puntos de integración futuros:
       * Power BI: riesgo accionable / gestión.
       * Calendarios: cursos y NRC.
