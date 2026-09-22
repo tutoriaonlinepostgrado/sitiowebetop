@@ -1,0 +1,455 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRC 360 · ETOP V5</title>
+<style>
+:root{
+  --bg:#eef3f8;--card:#fff;--navy:#142440;--navy2:#1b3155;--text:#213047;--muted:#6f8093;
+  --line:#d8e1eb;--yellow:#d8aa00;--blue:#2563eb;--green:#15825e;--red:#c53d4e;--orange:#b96c16;
+  --shadow:0 8px 26px rgba(25,45,70,.08);--r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+body{min-height:100vh}
+.top{
+  background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:18px 22px;
+  display:flex;justify-content:space-between;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,.12)
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:#f2c300;color:#17223a;display:grid;place-items:center;font-weight:900}
+.brand h1{margin:0;font-size:22px}.brand p{margin:3px 0 0;color:#cbd7e6;font-size:11px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:9px;padding:9px 12px;text-decoration:none;font-size:11px;font-weight:700;cursor:pointer}
+.btn:hover{border-color:#9fb2c8;background:#f8fafc}
+.btn.primary{background:#f2c300;border-color:#f2c300;color:#1f2937}
+.btn.dark{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.18)}
+.wrap{max-width:1500px;margin:auto;padding:16px}
+.searchbar{
+  display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:9px;background:#fff;border:1px solid var(--line);
+  padding:12px;border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:14px
+}
+.searchbar input{height:42px;border:2px solid #9dbff6;border-radius:9px;padding:0 13px;outline:none;font-size:13px}
+.searchbar input:focus{border-color:#2563eb}
+.searchbar button{border:0;border-radius:9px;background:#2563eb;color:white;font-weight:800;cursor:pointer}
+.hint{grid-column:1/-1;font-size:10px;color:var(--muted)}
+.statusline{display:none;margin-bottom:12px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:11px}
+.statusline.show{display:block}
+.statusline.error{border-color:#f0c0c7;background:#fff5f6;color:#a43143}
+.hero{
+  background:#fff;border:1px solid var(--line);border-top:4px solid var(--yellow);border-radius:var(--r);box-shadow:var(--shadow);
+  padding:18px;margin-bottom:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px
+}
+.kicker{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#856900;font-weight:900}
+.nrc{font:800 19px Consolas,monospace;color:#295c8d;margin-top:4px}
+.course{font-size:21px;font-weight:800;margin-top:5px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.pill{font-size:10px;border:1px solid var(--line);background:#f8fafc;border-radius:999px;padding:5px 9px;color:#53657a}
+.state{font-size:11px;font-weight:900;border-radius:999px;padding:7px 12px;align-self:flex-start}
+.state.ACTIVO{background:#e8f6ef;color:#226b50}.state.PREPARACION{background:#edf3fb;color:#466c99}.state.EN-CIERRE{background:#fff1df;color:#9b6018}.state.CERRADO{background:#f5e9ec;color:#984755}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:13px 15px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}
+.card-head h2{font-size:14px;margin:0}.sub{font-size:10px;color:var(--muted)}
+.card-body{padding:14px 15px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{border:1px solid var(--line);border-radius:11px;padding:13px;background:#fafbfd}
+.metric .v{font-size:25px;font-weight:900}.metric .l{font-size:10px;color:#63758a;margin-top:3px}
+.metric.link{cursor:pointer}.metric.link:hover{border-color:#8eb3ec;background:#f4f8ff}
+.fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.fact{border:1px solid var(--line);background:#f8fafc;border-radius:10px;padding:10px;min-width:0}
+.fact b{display:block;font-size:9px;text-transform:uppercase;color:#78899d;letter-spacing:.05em;margin-bottom:4px}
+.fact span{display:block;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.action{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:#f8fafc;border-radius:10px;padding:11px;text-decoration:none;color:#32455d;font-size:10px;font-weight:800}
+.action:hover{border-color:#d8aa00;background:#fffbed}.action.disabled{opacity:.42;pointer-events:none}
+.action.primary{grid-column:1/-1;background:#edf5ff;border-color:#b7d0ef;color:#285d91}
+.qa-box{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.qa{border-radius:10px;padding:12px;border:1px solid var(--line);background:#fafbfd}
+.qa .v{font-size:22px;font-weight:900}.qa .l{font-size:9px;color:#718196;margin-top:3px}
+.qa.ok .v{color:var(--green)}.qa.warn .v{color:var(--orange)}.qa.bad .v{color:var(--red)}
+.inc-list{display:grid;gap:7px;margin-top:10px}
+.inc{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fbfcfe}
+.inc-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.inc-cat{font-size:10px;font-weight:900;color:#42566f}.inc-state{font-size:9px;font-weight:900;border-radius:999px;padding:3px 7px;background:#f3f4f6}
+.inc p{font-size:10px;line-height:1.35;color:#64748b;margin:6px 0 0}
+.empty{padding:22px;text-align:center;color:#7c8997;font-size:11px}
+.footer{padding:14px;text-align:right;font-size:9px;color:#7b8999}
+.note{margin-top:10px;padding:9px;border-radius:9px;background:#fff9e8;border:1px solid #ecd98c;font-size:10px;color:#6c5a20}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.top{align-items:flex-start}.searchbar{grid-template-columns:1fr}.searchbar button{height:40px}.hero{grid-template-columns:1fr}.metrics,.qa-box,.actions,.fact-grid{grid-template-columns:1fr}.action.primary{grid-column:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="logo">ET</div>
+    <div><h1>NRC 360</h1><p>Vista integrada de curso · ETOP V5</p></div>
+  </div>
+  <div class="top-actions">
+    <a class="btn dark" id="btnCalendarios" href="#" target="_blank">📅 Calendarios</a>
+    <a class="btn dark" id="btnIncidenciasTop" href="#" target="_blank">⚠️ Incidencias</a>
+    <a class="btn primary" id="btnGestionTop" href="#" target="_blank">📊 Ver riesgo en Gestión</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="searchbar">
+    <input id="searchNrc" placeholder="Escriba NRC_COD_CAL o NRC, por ejemplo 2239_MSP007_202681">
+    <button onclick="buscar()">Abrir NRC</button>
+    <div class="hint">También puede abrir esta página usando <b>?nrc=...</b>. La búsqueda consulta los datos vigentes de ETOP.</div>
+  </section>
+
+  <div id="status" class="statusline"></div>
+
+  <section id="hero" class="hero" style="display:none">
+    <div>
+      <div class="kicker">Ficha integral del curso</div>
+      <div id="heroNrc" class="nrc">—</div>
+      <div id="heroCourse" class="course">—</div>
+      <div class="meta">
+        <span class="pill" id="heroProgram">Programa: —</span>
+        <span class="pill" id="heroTutor">Tutor: —</span>
+        <span class="pill" id="heroIntake">Intake: —</span>
+        <span class="pill" id="heroFaculty">Facultad: —</span>
+      </div>
+    </div>
+    <div id="heroState" class="state">—</div>
+  </section>
+
+  <section id="workspace" class="grid" style="display:none">
+    <div style="display:grid;gap:14px">
+
+      <section class="card">
+        <div class="card-head"><h2>Resumen operacional</h2><span class="sub">Datos agregados disponibles</span></div>
+        <div class="card-body">
+          <div class="metrics">
+            <div class="metric">
+              <div class="v" id="mStudents">—</div>
+              <div class="l">Estudiantes</div>
+            </div>
+            <div class="metric link" onclick="openGestion()">
+              <div class="v">↗</div>
+              <div class="l">Riesgo accionable · ver en Gestión</div>
+            </div>
+            <div class="metric">
+              <div class="v" id="mInc">0</div>
+              <div class="l">Incidencias</div>
+            </div>
+            <div class="metric">
+              <div class="v" id="mPending">0</div>
+              <div class="l">Incidencias pendientes</div>
+            </div>
+          </div>
+          <div class="note">
+            El conteo de <b>riesgo accionable</b> no se recalcula aquí. Se mantiene Power BI como motor oficial de <code>Es_Riesgo_Accionable</code>; este botón lleva al Tablero de Gestión.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Datos del curso</h2></div>
+        <div class="card-body">
+          <div class="fact-grid">
+            <div class="fact"><b>Inicio</b><span id="fStart">—</span></div>
+            <div class="fact"><b>Fin</b><span id="fEnd">—</span></div>
+            <div class="fact"><b>Código curso</b><span id="fCode">—</span></div>
+            <div class="fact"><b>Materia</b><span id="fMateria">—</span></div>
+            <div class="fact"><b>Periodo</b><span id="fPeriod">—</span></div>
+            <div class="fact"><b>Tipo NRC</b><span id="fType">—</span></div>
+            <div class="fact"><b>ID curso</b><span id="fId">—</span></div>
+            <div class="fact"><b>Semanas</b><span id="fWeeks">—</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>QA2 e incidencias</h2><a id="incDetail" class="btn" href="#" target="_blank">Abrir detalle</a></div>
+        <div class="card-body">
+          <div class="qa-box">
+            <div class="qa ok"><div class="v" id="qCorrected">0</div><div class="l">Corregidas</div></div>
+            <div class="qa warn"><div class="v" id="qDerived">0</div><div class="l">Derivadas</div></div>
+            <div class="qa bad"><div class="v" id="qPending">0</div><div class="l">Pendientes</div></div>
+          </div>
+          <div id="incList" class="inc-list"></div>
+        </div>
+      </section>
+    </div>
+
+    <aside style="display:grid;gap:14px;align-content:start">
+      <section class="card">
+        <div class="card-head"><h2>Acciones del NRC</h2></div>
+        <div class="card-body">
+          <div class="actions">
+            <a class="action primary" id="aStudents" href="#" target="_blank">👥 <span>Base Semáforo / estudiantes</span></a>
+            <a class="action" id="aCanvas" href="#" target="_blank">🎓 <span>Abrir Canvas</span></a>
+            <a class="action" id="aIntegration" href="#" target="_blank">🌐 <span>Verificar integración</span></a>
+            <a class="action" id="aInc" href="#" target="_blank">⚠️ <span>Incidencias / QA2</span></a>
+            <a class="action" id="aQa2" href="#" target="_blank">✅ <span>Formulario QA2</span></a>
+            <a class="action" id="aIntake" href="#" target="_blank">📚 <span>Cursos del Intake</span></a>
+            <a class="action" id="aPresentation" href="#" target="_blank">📊 <span>Presentación Tutorial</span></a>
+            <a class="action" href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/comunicaciones_etop.html" target="_blank">✉️ <span>Comunicaciones</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Estado QA2</h2></div>
+        <div class="card-body">
+          <div id="qaState" style="font-size:14px;font-weight:900">—</div>
+          <div id="qaDetail" class="sub" style="margin-top:6px;line-height:1.5">Seleccione un NRC.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Próximo paso V5</h2></div>
+        <div class="card-body" style="font-size:11px;line-height:1.55;color:#5d6f83">
+          Esta versión ya une <b>nrcs.json</b>, <b>incidencias.json</b> y <b>metricas_estudiantes.json</b>.
+          El siguiente conector será el resumen agregado de Power BI para mostrar aquí el número oficial de estudiantes con riesgo accionable.
+        </div>
+      </section>
+    </aside>
+  </section>
+
+  <div class="footer">ETOP · NRC 360 V1 · archivo de prueba independiente</div>
+</main>
+
+<script>
+const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const SOURCES={
+  nrcs:BASE+'nrcs.json',
+  incidents:BASE+'incidencias.json',
+  metrics:BASE+'metricas_estudiantes.json'
+};
+const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
+const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
+const GESTION_URL=BASE+'gestion.html';
+
+let courses=[],incidents=[],metrics=[],current=null,currentInc=[];
+
+const $=id=>document.getElementById(id);
+const norm=v=>String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const upper=v=>String(v??'').toUpperCase().trim();
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+function clean(v){return Array.isArray(v)?v:(v?.value||[])}
+function fmtDate(v){
+  if(!v)return '—';
+  const s=String(v).slice(0,10),p=s.split('-');
+  return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:s;
+}
+function weeks(a,b){
+  if(!a||!b)return '—';
+  const x=new Date(a),y=new Date(b);
+  if(isNaN(x)||isNaN(y))return '—';
+  return Math.max(1,Math.round((y-x)/(7*86400000)))+' sem.';
+}
+function extractUrl(v){
+  if(!v)return '';
+  if(typeof v==='string')return v.trim();
+  if(typeof v==='object')return String(v.Url||v.url||v.URL||v.href||'').trim();
+  return '';
+}
+function getCanvasUrl(rows){
+  for(const r of rows){
+    const u=[r.urlCanvas,r.URL_QA2_FI_Url,r.urlQa2FiUrl,r.urlQA2FIUrl].map(extractUrl).find(Boolean);
+    if(u)return u;
+  }
+  return '';
+}
+function setLink(id,url){
+  const a=$(id); if(!a)return;
+  if(url){a.href=url;a.classList.remove('disabled')}
+  else{a.href='#';a.classList.add('disabled')}
+}
+function showStatus(msg,error=false){
+  const s=$('status');s.textContent=msg;s.className='statusline show'+(error?' error':'');
+}
+function clearStatus(){$('status').className='statusline';$('status').textContent=''}
+function studentsUrl(nrc){
+  const s=String(nrc||'').split('_'),crn=s[0]||'',period=s[s.length-1]||'';
+  if(!crn||!period)return '';
+  return 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded&FilterField1=NRC_COD&FilterValue1='+encodeURIComponent(crn)+'&FilterField2=PERIODO_x002a_&FilterValue2='+encodeURIComponent(period);
+}
+function integrationUrl(nrc){
+  const s=String(nrc||'').split('_'),crn=s[0]||'',period=s[s.length-1]||'';
+  return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
+}
+function intakeUrl(intake){
+  return intake?BASE+'calendarios.html?intake='+encodeURIComponent(intake):'';
+}
+function qa2Url(c){
+  if(!String(c.id||'').trim())return '';
+  const u=new URL(FORM_QA2);
+  u.searchParams.set(FORM_COURSE_FIELD,String(c.id).trim());
+  return u.toString();
+}
+function presentationUrl(c){
+  const p=new URLSearchParams({
+    nombreTutor:c.tutor||'',
+    nombreCurso:c['nombre curso']||'',
+    nrc:c.nrc||'',
+    fechaInicio:c['fecha inicio']||'',
+    fechaFin:c['fecha fin']||''
+  });
+  return BASE+'presentacion_tutorial_innovado.html?'+p.toString();
+}
+function gestionUrl(c){
+  // Mantener Power BI/Gestión como fuente oficial del riesgo.
+  // Se envía contexto NRC por querystring; la página destino puede usarlo cuando se implemente el drill-through web.
+  return GESTION_URL+'?nrc='+encodeURIComponent(c.nrc||'')+'&riesgo=SI';
+}
+function incidentUrl(c){return BASE+'incidencias.html?nrc='+encodeURIComponent(c.nrc||'')}
+function calendarUrl(c){return BASE+'calendarios.html?nrc='+encodeURIComponent(c.nrc||'')}
+
+function metricFor(nrc){
+  const m=metrics.find(x=>norm(x.nrc)===norm(nrc) || norm(x.NRC_COD_CAL)===norm(nrc));
+  if(!m)return null;
+  return Number(m.total_estudiantes ?? m.total ?? m.estudiantes ?? 0);
+}
+
+function findCourse(term){
+  const q=norm(term);
+  if(!q)return null;
+  return courses.find(c=>norm(c.nrc)===q)
+      || courses.find(c=>String(c.nrc||'').split('_')[0]===String(term).trim())
+      || courses.find(c=>norm(c['codigo curso'])===q)
+      || courses.find(c=>norm(c['nombre curso']).includes(q));
+}
+
+function render(c){
+  current=c;
+  currentInc=incidents.filter(i=>String(i.cursoId??'')===String(c.id??''));
+  const con=currentInc.filter(i=>upper(i.qaIncidencias)==='CON INCIDENCIA');
+  const pending=con.filter(i=>upper(i.estadoIncidencia)==='PENDIENTE');
+  const corrected=con.filter(i=>upper(i.estadoIncidencia)==='CORREGIDA');
+  const derived=con.filter(i=>upper(i.estadoIncidencia)==='DERIVADO');
+  const canvas=getCanvasUrl(currentInc);
+  const uni118=norm(c['codigo curso'])==='uni118';
+  const totalStudents=metricFor(c.nrc);
+
+  $('hero').style.display='grid';
+  $('workspace').style.display='grid';
+
+  $('heroNrc').textContent=c.nrc||'—';
+  $('heroCourse').textContent=String(c['nombre curso']||'—').replace(/\*/g,'');
+  $('heroProgram').textContent='Programa: '+(c['nombre programa']||c.programa||'—');
+  $('heroTutor').textContent='Tutor: '+(c.tutor||'Por asignar');
+  $('heroIntake').textContent='Intake: '+(c.intake||'—');
+  $('heroFaculty').textContent='Facultad: '+(c.facultad||'—');
+  const st=upper(c.estado)||'—';
+  $('heroState').textContent=st;
+  $('heroState').className='state '+st.replace(/\s+/g,'-');
+
+  $('mStudents').textContent=totalStudents===null?'—':totalStudents.toLocaleString('es-CL');
+  $('mInc').textContent=con.length;
+  $('mPending').textContent=pending.length;
+
+  $('fStart').textContent=fmtDate(c['fecha inicio']);
+  $('fEnd').textContent=fmtDate(c['fecha fin']);
+  $('fCode').textContent=c['codigo curso']||'—';
+  $('fMateria').textContent=c.materia||'—';
+  $('fPeriod').textContent=c.periodo||'—';
+  $('fType').textContent=c.tipo||c['tipo nrc']||'—';
+  $('fId').textContent=c.id||'—';
+  $('fWeeks').textContent=weeks(c['fecha inicio'],c['fecha fin']);
+
+  $('qCorrected').textContent=corrected.length;
+  $('qDerived').textContent=derived.length;
+  $('qPending').textContent=pending.length;
+
+  if(uni118){
+    $('qaState').textContent='NO APLICA';
+    $('qaDetail').textContent='UNI118 está excluido de QA2.';
+  }else if(!currentInc.length){
+    $('qaState').textContent='PENDIENTE QA2';
+    $('qaDetail').textContent='No se encontraron registros QA2 asociados al curso.';
+  }else if(con.length){
+    $('qaState').textContent='CON INCIDENCIA';
+    $('qaDetail').textContent=`${con.length} incidencia(s): ${pending.length} pendiente(s), ${corrected.length} corregida(s), ${derived.length} derivada(s).`;
+  }else{
+    $('qaState').textContent='SIN INCIDENCIA';
+    $('qaDetail').textContent='Existe registro QA2 sin incidencias.';
+  }
+
+  const list=$('incList');
+  if(!con.length){
+    list.innerHTML='<div class="empty">No hay incidencias registradas para este NRC.</div>';
+  }else{
+    list.innerHTML=con.slice(0,6).map(i=>`
+      <div class="inc">
+        <div class="inc-top">
+          <span class="inc-cat">${esc(i.categoria||'Sin categoría')}</span>
+          <span class="inc-state">${esc(upper(i.estadoIncidencia)||'—')}</span>
+        </div>
+        <p>${esc(i.descripcionIncidencia||'Sin descripción')}</p>
+      </div>`).join('')+(con.length>6?`<div class="sub">+ ${con.length-6} incidencias adicionales. Use “Abrir detalle”.</div>`:'');
+  }
+
+  const iUrl=incidentUrl(c),gUrl=gestionUrl(c),calUrl=calendarUrl(c);
+  setLink('aStudents',studentsUrl(c.nrc));
+  setLink('aCanvas',canvas);
+  setLink('aIntegration',integrationUrl(c.nrc));
+  setLink('aInc',iUrl);
+  setLink('aQa2',uni118?'':qa2Url(c));
+  setLink('aIntake',intakeUrl(c.intake));
+  setLink('aPresentation',presentationUrl(c));
+  setLink('incDetail',iUrl);
+  setLink('btnIncidenciasTop',iUrl);
+  setLink('btnGestionTop',gUrl);
+  setLink('btnCalendarios',calUrl);
+
+  const u=new URL(location.href);
+  u.searchParams.set('nrc',c.nrc||'');
+  history.replaceState(null,'',u);
+  $('searchNrc').value=c.nrc||'';
+  clearStatus();
+}
+
+function buscar(){
+  const value=$('searchNrc').value.trim();
+  const c=findCourse(value);
+  if(!c){showStatus('No encontré un curso que coincida con "'+value+'". Pruebe con NRC_COD_CAL completo o NRC.',true);return}
+  render(c);
+}
+function openGestion(){if(current)window.open(gestionUrl(current),'_blank')}
+$('searchNrc').addEventListener('keydown',e=>{if(e.key==='Enter')buscar()});
+
+async function load(){
+  showStatus('Cargando fuentes ETOP…');
+  try{
+    const stamp='?t='+Date.now();
+    const [a,b,c]=await Promise.all([
+      fetch(SOURCES.nrcs+stamp,{cache:'no-store'}),
+      fetch(SOURCES.incidents+stamp,{cache:'no-store'}),
+      fetch(SOURCES.metrics+stamp,{cache:'no-store'})
+    ]);
+    if(!a.ok)throw new Error('No se pudo leer nrcs.json');
+    courses=clean(await a.json());
+    incidents=b.ok?clean(await b.json()):[];
+    metrics=c.ok?clean(await c.json()):[];
+    const q=new URLSearchParams(location.search).get('nrc');
+    if(q){
+      const found=findCourse(q);
+      if(found)render(found);
+      else showStatus('Las fuentes cargaron, pero el NRC indicado en la URL no fue encontrado.',true);
+    }else{
+      clearStatus();
+    }
+  }catch(err){
+    console.error(err);
+    showStatus('Error al cargar las fuentes ETOP: '+err.message+'. Si abre el archivo directamente y el navegador bloquea CORS, pruebe servirlo desde un servidor local.',true);
+  }
+}
+load();
+</script>
+</body>
+</html>'''
+
+path = Path("/mnt/data/nrc_360_etop_v1.html")
+path.write_text(html, encoding="utf-8")
+print(path)
