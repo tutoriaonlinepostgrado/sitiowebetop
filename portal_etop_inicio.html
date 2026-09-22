@@ -94,3 +94,523 @@
   .result-item{display:flex;align-items:center;gap:10px;padding:9px;border-radius:9px;margin-top:5px;background:#f8fafc}
   .result-item:hover{background:#eef5ff}
   .result-icon{width:31px;height:31px;border-radius:8px;display:grid;place-items:center;background:#e8f2ff}
+  .result-item span{font-size:11px;color:#64748b}
+
+  .grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.75fr);gap:14px}
+  .left-col{display:grid;gap:14px}
+  .right-col{display:grid;gap:14px;align-content:start}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #edf1f5}
+  .card-head h2{margin:0;font-size:15px}
+  .card-head a{font-size:11px;color:#0f66e8;text-decoration:none}
+  .card-body{padding:14px 16px}
+
+  .focus-list{display:grid;gap:9px}
+  .focus-item{display:grid;grid-template-columns:38px 44px 1fr auto;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;background:#f7f9fc}
+  .focus-item .icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+  .focus-item .num{font-size:23px;font-weight:800}
+  .focus-item .desc{font-size:12px}
+  .focus-item .desc small{display:block;color:var(--muted);margin-top:3px}
+  .focus-item .action{font-size:11px;color:#0f66e8;cursor:pointer}
+  .risk{background:#fff1f2}.risk .icon{background:#ffe1e6;color:#d12f4a}.risk .num{color:#dc263f}
+  .warn{background:#fff8ec}.warn .icon{background:#ffedc7;color:#d97706}.warn .num{color:#d97706}
+  .info{background:#f0f6ff}.info .icon{background:#dbeafe;color:#2563eb}.info .num{color:#2563eb}
+  .neutral{background:#f4f6f8}.neutral .icon{background:#e6eaf0;color:#6b7280}.neutral .num{color:#4b5563}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .kpi{padding:16px;background:#fff;border:1px solid var(--line);border-radius:14px;min-height:105px}
+  .kpi .value{font-size:28px;font-weight:800}
+  .kpi .label{font-size:12px;color:#53667d;margin-top:4px}
+  .kpi .trend{font-size:11px;margin-top:12px;font-weight:700}.kpi-link{cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}.kpi-link:hover{transform:translateY(-2px);border-color:#9fc0ee;box-shadow:0 10px 24px rgba(20,50,90,.12)}
+  .up{color:#059669}.down{color:#dc2626}
+
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:720px}
+  th{font-size:10px;text-align:left;color:#5f6f82;background:#f2f5f9;padding:9px 10px;white-space:nowrap}
+  td{font-size:11px;padding:10px;border-bottom:1px solid #edf1f5;white-space:nowrap}
+  .status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+  .dot-green{background:#28b97b}.dot-yellow{background:#f4b72f}.dot-blue{background:#438df0}.dot-red{background:#e65b67}
+
+  .activity{display:grid;gap:9px}
+  .activity-row{display:grid;grid-template-columns:54px 1fr 1fr;gap:10px;font-size:10px;padding:7px 0;border-bottom:1px solid #eff3f6}
+  .activity-row:last-child{border-bottom:0}
+  .activity-row .time{color:#3b4a5f;font-weight:700}
+  .activity-row .meta{color:#6f8094}
+
+  .health-table td:nth-child(2){font-weight:600}
+  .health-badge{display:inline-flex;align-items:center;gap:6px}
+
+  .ai-card{border:1px solid #c7c8ff;background:linear-gradient(180deg,#f9f8ff 0%,#ffffff 100%);overflow:hidden}
+  .ai-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid #e5e4ff}
+  .ai-logo{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#1d66e8;color:#fff;font-weight:800}
+  .beta{margin-left:auto;background:#5046e5;color:white;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:800}
+  .ai-body{padding:14px}
+  .ai-hello{border:1px solid #e3e8f1;border-radius:10px;padding:12px;background:#fff;font-size:12px;line-height:1.45}
+  .ai-suggestions{display:grid;gap:8px;margin-top:12px}
+  .ai-suggestions button{border:1px solid #dfe5ef;background:#fff;border-radius:9px;padding:10px;text-align:left;font-size:11px;color:#344256;cursor:pointer}
+  .ai-suggestions button:hover{border-color:#9dbcf6;background:#f7faff}
+  .ai-input{display:flex;gap:8px;margin-top:14px}
+  .ai-input input{flex:1;border:1px solid #dbe4ef;border-radius:9px;padding:10px;outline:0}
+  .ai-input button{width:42px;border:0;border-radius:9px;background:#2f7df3;color:#fff;font-weight:800;cursor:pointer}
+  .ai-note{font-size:9px;color:#7a8798;margin-top:10px}
+  .ai-response{display:none;margin-top:10px;padding:10px;border-radius:9px;background:#eef4ff;border:1px solid #d5e4ff;font-size:11px;line-height:1.4}
+  .ai-response.show{display:block}
+
+  .promo{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-radius:14px;border:1px solid #d9ccff;background:linear-gradient(90deg,#f6f2ff,#fbfaff)}
+  .promo strong{color:#5c2fc2}
+  .promo span{display:block;font-size:11px;color:#6f6482;margin-top:3px}
+  .promo button{border:0;border-radius:9px;background:#6c35d1;color:#fff;padding:10px 18px;font-weight:700;cursor:pointer}
+
+  .footer{text-align:right;font-size:10px;color:#7c8b9b;padding:12px 2px 4px}
+
+  @media (max-width:1250px){
+    .grid{grid-template-columns:1fr}
+    .right-col{grid-template-columns:1fr}
+    .ai-card{order:-1}
+  }
+  @media (max-width:980px){
+    .app{grid-template-columns:78px minmax(0,1fr)}
+    .brand-title,.brand-sub,.nav .label,.nav .chev,.help-box span,.help-box strong,.userbox div{display:none}
+    .brand{justify-content:center}
+    .nav a,.nav button{justify-content:center}
+    .help-box{padding:9px;text-align:center}
+    .userbox{justify-content:center}
+    .search-wrap{grid-template-columns:1fr}
+    .advanced{height:50px}
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:680px){
+    .topbar{align-items:flex-start}
+    .motto{display:none}
+    .datebox{font-size:10px}
+    .title h1{font-size:20px}
+    .content{padding:8px}
+    .kpi-grid{grid-template-columns:1fr}
+    .focus-item{grid-template-columns:34px 38px 1fr}
+    .focus-item .action{grid-column:3}
+    .promo{align-items:flex-start;flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><span></span><span></span><span></span><span></span></div>
+      <div>
+        <div class="brand-title">ETOP</div>
+        <div class="brand-sub">UNAB Online</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="section">Operación diaria</div>
+      <a class="active" href="#"><span>🏠</span><span class="label">Inicio</span></a>
+      <button><span>👥</span><span class="label">Estudiantes</span><span class="chev">⌄</span></button>
+      <button><span>📚</span><span class="label">Cursos</span><span class="chev">⌄</span></button>
+      <button><span>📋</span><span class="label">Control Académico</span><span class="chev">⌄</span></button>
+      <button><span>📊</span><span class="label">Gestión</span><span class="chev">⌄</span></button>
+      <button><span>💬</span><span class="label">Comunicaciones</span><span class="chev">⌄</span></button>
+      <button><span>🔧</span><span class="label">Herramientas</span><span class="chev">⌄</span></button>
+      <button><span>📦</span><span class="label">Recursos</span></button>
+      <button class="go-coord"><span>🏛️</span><span class="label">Ir a Espacio Coordinación →</span></button>
+    </nav>
+
+    <div class="help-box">
+      <strong>¿Necesita ayuda?</strong>
+      <span>Consulte a ETOP IA</span>
+    </div>
+
+    <div class="userbox">
+      <div class="avatar">PC</div>
+      <div>
+        <b>Equipo Tutorial</b>
+        <small>Portal ETOP</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="title">
+        <h1>Centro de Control ETOP</h1>
+        <p>Resumen diario y acceso directo a sus herramientas de trabajo</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px">
+        <div class="datebox">Lunes 21 de septiembre de 2026<b>18:25</b></div>
+        <div class="motto">Acompañamos<br>el aprendizaje<br>que transforma</div>
+      </div>
+    </header>
+
+    <section class="content">
+
+      <div class="search-wrap">
+        <div class="search-card">
+          <div class="search-row">
+            <div class="search-input">
+              <span>🔎</span>
+              <input id="globalSearch" placeholder="Buscar estudiante, RUT, NRC, curso, programa, tutor..." />
+            </div>
+            <button class="search-btn" onclick="showSearchResults()">Buscar</button>
+          </div>
+          <div class="examples">
+            <span>Ejemplos:</span>
+            <span class="chip" onclick="setSearch('2239')">2239</span>
+            <span class="chip" onclick="setSearch('MSP007')">MSP007</span>
+            <span class="chip" onclick="setSearch('Germana Pablaza')">Germana Pablaza</span>
+            <span class="chip" onclick="setSearch('MAPS')">MAPS</span>
+            <span class="chip" onclick="setSearch('Paula Pardo')">Paula Pardo</span>
+          </div>
+
+          <div class="search-results" id="searchResults">
+            <div class="result-group">
+              <b>👤 Estudiantes (1)</b>
+              <div class="result-item">
+                <div class="result-icon">👤</div>
+                <div><strong>Germana Pablaza</strong><br><span>RUT 12.345.678-9 · MSP</span></div>
+              </div>
+            </div>
+            <div class="result-group">
+              <b>📚 Cursos (2)</b>
+              <div class="result-item">
+                <div class="result-icon">📘</div>
+                <div><strong>MSP007 · NRC 2239</strong><br><span>Inicio 05/10/2026 · Activo</span></div>
+              </div>
+            </div>
+            <div class="result-group">
+              <b>🏷️ Programas (1)</b>
+              <div class="result-item">
+                <div class="result-icon">🏷️</div>
+                <div><strong>MSP</strong><br><span>10 cursos activos</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="advanced">
+          <span>Búsqueda avanzada</span>
+          <span>⌄</span>
+        </div>
+      </div>
+
+      <div class="grid">
+
+        <div class="left-col">
+
+          <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px">
+            <section class="card">
+              <div class="card-head">
+                <h2>🎯 Foco del día</h2>
+                <span style="font-size:11px;color:#7b8797">Situaciones que requieren atención</span>
+              </div>
+              <div class="card-body">
+                <div class="focus-list">
+                  <div class="focus-item risk" role="button" tabindex="0" onclick="openRoute('RIESGO')" onkeydown="cardKey(event,'RIESGO')">
+                    <div class="icon">⛔</div><div class="num" id="focoRiesgo">—</div>
+                    <div class="desc">Estudiantes con riesgo accionable<small>Tabla DAX · Gestión Tutorial</small></div>
+                    <div class="action">Abrir estudiantes en riesgo →</div>
+                  </div>
+                  <div class="focus-item warn" role="button" tabindex="0" onclick="openRoute('INICIOS')" onkeydown="cardKey(event,'INICIOS')">
+                    <div class="icon">⚠️</div><div class="num" id="focoInicios">—</div>
+                    <div class="desc">Cursos que inician esta semana<small>HTML · Calendarios</small></div>
+                    <div class="action">Ver próximos inicios →</div>
+                  </div>
+                  <div class="focus-item warn" role="button" tabindex="0" onclick="openRoute('QA2')" onkeydown="cardKey(event,'QA2')">
+                    <div class="icon">🟨</div><div class="num" id="focoQa2">—</div>
+                    <div class="desc">QA2 pendientes<small>HTML · Control Académico</small></div>
+                    <div class="action">Revisar QA2 pendientes →</div>
+                  </div>
+                  <div class="focus-item info" role="button" tabindex="0" onclick="openRoute('INCIDENCIAS')" onkeydown="cardKey(event,'INCIDENCIAS')">
+                    <div class="icon">ℹ️</div><div class="num" id="focoIncidencias">—</div>
+                    <div class="desc">Incidencias abiertas<small>HTML · Incidencias</small></div>
+                    <div class="action">Ver incidencias →</div>
+                  </div>
+                  <div class="focus-item neutral" role="button" tabindex="0" onclick="openRoute('PREPARACION')" onkeydown="cardKey(event,'PREPARACION')">
+                    <div class="icon">◉</div><div class="num" id="focoPreparacion">—</div>
+                    <div class="desc">Cursos en preparación<small>Tabla actual · Gestión Tutorial</small></div>
+                    <div class="action">Abrir cursos en preparación →</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="kpi-grid">
+              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('ACTIVOS')" onkeydown="cardKey(event,'ACTIVOS')" title="Abrir la tabla de cursos activos">
+                <div class="value" id="kpiActivos">—</div>
+                <div class="label">Mis cursos activos</div>
+                <div class="trend">Tabla de cursos →</div>
+              </div>
+              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('INICIOS')" onkeydown="cardKey(event,'INICIOS')" title="Abrir próximos inicios">
+                <div class="value" id="kpiInicios">—</div>
+                <div class="label">Inicios próximos (7 días)</div>
+                <div class="trend">Calendarios →</div>
+              </div>
+              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('RIESGO')" onkeydown="cardKey(event,'RIESGO')" title="Abrir estudiantes en riesgo">
+                <div class="value" id="kpiRiesgo" style="color:#dc263f">—</div>
+                <div class="label">Estudiantes con riesgo accionable</div>
+                <div class="trend">Tabla DAX →</div>
+              </div>
+              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('PREPARACION')" onkeydown="cardKey(event,'PREPARACION')" title="Abrir cursos en preparación">
+                <div class="value" id="kpiPreparacion">—</div>
+                <div class="label">Cursos en preparación</div>
+                <div class="trend">Tabla de preparación →</div>
+              </div>
+              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('INCIDENCIAS')" onkeydown="cardKey(event,'INCIDENCIAS')" title="Abrir incidencias">
+                <div class="value" id="kpiIncidencias">—</div>
+                <div class="label">Incidencias abiertas</div>
+                <div class="trend">Incidencias HTML →</div>
+              </div>
+            </div>
+          </div>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>📅 Cursos próximos</h2>
+              <a href="calendarios.html">Ver todos →</a>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Inicio</th><th>NRC</th><th>Curso</th><th>Programa</th><th>Tutor</th><th>Estud.</th><th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>22-09-2026</td><td>2013</td><td>UNI118</td><td>MSP</td><td>Javiera</td><td>48</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
+                  <tr><td>05-10-2026</td><td>2239</td><td>MSP007</td><td>MSP</td><td>Paula Pardo</td><td>42</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
+                  <tr><td>05-10-2026</td><td>1800</td><td>MAPS013</td><td>MAPS</td><td>Carolina</td><td>36</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
+                  <tr><td>06-10-2026</td><td>3401</td><td>MES559</td><td>MES</td><td>Carlos</td><td>28</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
+                  <tr><td>12-10-2026</td><td>2612</td><td>MSPE007</td><td>MSP</td><td>Sofía</td><td>21</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <section class="card">
+              <div class="card-head"><h2>⚡ Accesos rápidos</h2></div>
+              <div class="card-body activity">
+                <div class="activity-row" onclick="openRoute('ACTIVOS')" style="cursor:pointer"><span class="time">📚</span><span>Mis cursos activos</span><span class="meta">Abrir tabla actual →</span></div>
+                <div class="activity-row" onclick="openRoute('RIESGO')" style="cursor:pointer"><span class="time">👥</span><span>Estudiantes en riesgo</span><span class="meta">Abrir tabla DAX →</span></div>
+                <div class="activity-row" onclick="openRoute('PREPARACION')" style="cursor:pointer"><span class="time">🛠️</span><span>Cursos en preparación</span><span class="meta">Abrir tabla actual →</span></div>
+                <div class="activity-row" onclick="openRoute('CALENDARIOS')" style="cursor:pointer"><span class="time">📅</span><span>Calendarios</span><span class="meta">Abrir HTML →</span></div>
+                <div class="activity-row" onclick="openRoute('INCIDENCIAS')" style="cursor:pointer"><span class="time">⚠️</span><span>Incidencias / QA2</span><span class="meta">Abrir HTML →</span></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head"><h2>📊 Salud de Programas</h2><a href="#">Ver detalle →</a></div>
+              <div class="table-wrap">
+                <table class="health-table">
+                  <thead><tr><th>Programa</th><th>Estado</th><th>Cursos</th><th>Ingreso</th><th>Riesgo</th></tr></thead>
+                  <tbody>
+                    <tr><td>MSP</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>31</td><td>94%</td><td>17</td></tr>
+                    <tr><td>MAPS</td><td><span class="health-badge"><span class="status-dot dot-yellow"></span>Requiere revisión</span></td><td>22</td><td>86%</td><td>41</td></tr>
+                    <tr><td>MDML</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>12</td><td>91%</td><td>9</td></tr>
+                    <tr><td>MES</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>18</td><td>93%</td><td>11</td></tr>
+                    <tr><td>Enfermería APS</td><td><span class="health-badge"><span class="status-dot dot-yellow"></span>Requiere revisión</span></td><td>9</td><td>88%</td><td>14</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <section class="promo">
+            <div>
+              <strong>📊 Descubra la Salud de Programas</strong>
+              <span>Visión consolidada del estado académico por programa, con indicadores de ingreso, riesgo, incidencias y calidad de datos.</span>
+            </div>
+            <button onclick="openRoute('CALENDARIOS')">Explorar cursos →</button>
+          </section>
+
+        </div>
+
+        <div class="right-col">
+          <section class="card ai-card">
+            <div class="ai-head">
+              <div class="ai-logo">AI</div>
+              <div>
+                <strong>ETOP IA</strong>
+                <div style="font-size:10px;color:#6d7285;margin-top:2px">Asistente ETOP</div>
+              </div>
+              <span class="beta">BETA</span>
+            </div>
+            <div class="ai-body">
+              <div class="ai-hello">
+                <strong>Hola 👋</strong><br>
+                Puedo ayudarte a encontrar información, analizar datos y generar resúmenes del portal. ¿Qué necesitas hoy?
+              </div>
+
+              <div style="font-size:11px;font-weight:800;margin-top:13px">Sugerencias</div>
+              <div class="ai-suggestions">
+                <button onclick="askAI('¿Qué cursos inician esta semana?')">📅 ¿Qué cursos inician esta semana?</button>
+                <button onclick="askAI('Muéstrame estudiantes en riesgo de Paula Pardo')">👥 Muéstrame estudiantes en riesgo de Paula Pardo</button>
+                <button onclick="askAI('Resume las incidencias abiertas')">⚠️ Resume las incidencias abiertas</button>
+                <button onclick="askAI('Genera un reporte de QA2 por programa')">📊 Genera un reporte de QA2 por programa</button>
+                <button onclick="askAI('¿Qué NRC no tienen tutor?')">❓ ¿Qué NRC no tienen tutor?</button>
+                <button onclick="askAI('Busca un estudiante por RUT')">🔎 Busca un estudiante por RUT</button>
+              </div>
+
+              <div class="ai-input">
+                <input id="aiInput" placeholder="Escribe tu consulta aquí..." />
+                <button onclick="askFromInput()">➤</button>
+              </div>
+              <div class="ai-response" id="aiResponse"></div>
+              <div class="ai-note">Mockup visual. En una implementación real, ETOP IA consultaría únicamente fuentes autorizadas del portal.</div>
+            </div>
+          </section>
+        </div>
+
+      </div>
+
+      <div class="footer">Universidad Andrés Bello · ETOP · 2026</div>
+    </section>
+  </main>
+</div>
+
+<script>
+const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+
+/*
+  RUTAS DE DESTINO.
+  Las hojas actuales se conservan. Si más adelante queremos caer en una tabla DAX
+  específica dentro de gestion.html, basta con cambiar aquí la URL/parametro sin
+  rediseñar la portada.
+*/
+const ROUTES={
+  ACTIVOS:'gestion.html?destino=cursos_activos',
+  RIESGO:'gestion.html?destino=estudiantes_riesgo',
+  PREPARACION:'gestion.html?destino=cursos_preparacion',
+  INICIOS:'calendarios.html?destino=proximos_7_dias',
+  CALENDARIOS:'calendarios.html',
+  INCIDENCIAS:'incidencias.html?destino=abiertas',
+  QA2:'incidencias.html?destino=qa2_pendiente',
+  COORDINACION:'gestion_coordinacion.html'
+};
+
+let courses=[],incidents=[],metrics=[];
+const norm=v=>String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const upper=v=>String(v??'').toUpperCase().trim();
+const clean=v=>Array.isArray(v)?v:(v?.value||[]);
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+function openRoute(key){
+  const url=ROUTES[key];
+  if(url) window.location.href=url;
+}
+function cardKey(e,key){if(e.key==='Enter'||e.key===' '){e.preventDefault();openRoute(key)}}
+function setSearch(value){document.getElementById('globalSearch').value=value;runSearch()}
+function isRut(v){return /^\d{7,8}-?[\dkK]$/.test(String(v).replace(/\./g,'').replace(/\s/g,''))}
+function openStudentRut(rut){
+  const r=String(rut).replace(/\./g,'').replace(/\s/g,'');
+  const url='https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi&rp:Param_consolidado_5f_esudiantes_RUT='+encodeURIComponent(r);
+  window.open(url,'_blank');
+}
+function openNrc360(nrc){window.open('nrc_360_etop_v1.html?nrc='+encodeURIComponent(nrc),'_blank')}
+
+function runSearch(){
+  const input=document.getElementById('globalSearch'), host=document.getElementById('searchResults');
+  const raw=input.value.trim();
+  if(!raw){host.classList.remove('show');return}
+  if(isRut(raw)){
+    host.innerHTML=`<div class="result-group"><b>👤 Estudiante</b><div class="result-item" style="cursor:pointer" onclick="openStudentRut('${esc(raw)}')"><div class="result-icon">👤</div><div><strong>Abrir ficha por RUT</strong><br><span>${esc(raw)} · Ficha Estudiante</span></div></div></div>`;
+    host.classList.add('show');return;
+  }
+  const q=norm(raw);
+  const found=courses.filter(c=>norm([c.nrc,c['codigo curso'],c['nombre curso'],c['nombre programa'],c.tutor,c.intake,c.facultad].join(' ')).includes(q)).slice(0,7);
+  if(!found.length){
+    host.innerHTML='<div class="result-group"><span style="font-size:11px;color:#64748b">Sin coincidencias en cursos. Pruebe NRC, código de curso, programa o tutor.</span></div>';
+  }else{
+    host.innerHTML=`<div class="result-group"><b>📚 Cursos (${found.length})</b>${found.map(c=>`<div class="result-item" style="cursor:pointer" onclick="openNrc360('${esc(c.nrc)}')"><div class="result-icon">📘</div><div><strong>${esc(c['codigo curso']||c.nrc)} · ${esc(c.nrc)}</strong><br><span>${esc(String(c['nombre curso']||'').replace(/\*/g,''))} · ${esc(c.tutor||'Sin tutor')}</span></div></div>`).join('')}</div>`;
+  }
+  host.classList.add('show');
+}
+function showSearchResults(){runSearch()}
+document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch()});
+document.addEventListener('click',function(e){const card=document.querySelector('.search-card');if(card&&!card.contains(e.target))document.getElementById('searchResults').classList.remove('show')});
+
+function upcoming(days=7){
+  const start=new Date();start.setHours(0,0,0,0);const end=new Date(start);end.setDate(end.getDate()+days);
+  return courses.filter(c=>{const d=new Date(String(c['fecha inicio']||'')+'T12:00:00');return !isNaN(d)&&d>=start&&d<=end&&!['CERRADO','CANCELADO','ANULADO'].includes(upper(c.estado))});
+}
+function metricTotal(nrc){
+  const m=metrics.find(x=>norm(x.nrc)===norm(nrc)||norm(x.NRC_COD_CAL)===norm(nrc));
+  return m?Number(m.total_estudiantes??m.total??m.estudiantes??0):null;
+}
+function renderCourses(){
+  const rows=upcoming(21).sort((a,b)=>new Date(a['fecha inicio'])-new Date(b['fecha inicio'])).slice(0,5);
+  const body=document.querySelector('.table-wrap table tbody');
+  if(!body)return;
+  const fmt=v=>{if(!v)return'—';const d=new Date(v+'T12:00:00');return isNaN(d)?v:d.toLocaleDateString('es-CL')};
+  body.innerHTML=rows.length?rows.map(c=>{
+    const total=metricTotal(c.nrc), st=upper(c.estado), dot=st==='ACTIVO'?'dot-green':st==='EN CIERRE'?'dot-yellow':'dot-blue';
+    return `<tr style="cursor:pointer" onclick="openNrc360('${esc(c.nrc)}')"><td>${fmt(c['fecha inicio'])}</td><td>${esc(String(c.nrc||'').split('_')[0])}</td><td>${esc(c['codigo curso']||'—')}</td><td>${esc(c['nombre programa']||c.materia||'—')}</td><td>${esc(c.tutor||'—')}</td><td>${total===null?'—':total}</td><td><span class="status-dot ${dot}"></span>${esc(st||'—')}</td></tr>`;
+  }).join(''):'<tr><td colspan="7">No hay próximos inicios.</td></tr>';
+}
+function renderKpis(){
+  const active=courses.filter(c=>upper(c.estado)==='ACTIVO').length;
+  const prep=courses.filter(c=>upper(c.estado)==='PREPARACION').length;
+  const next7=upcoming(7).length;
+  const con=incidents.filter(i=>upper(i.qaIncidencias)==='CON INCIDENCIA');
+  const openInc=con.filter(i=>!['CORREGIDA','CERRADA','RESUELTA'].includes(upper(i.estadoIncidencia))).length;
+  const qaIds=new Set(incidents.map(i=>String(i.cursoId??'')).filter(Boolean));
+  const qaPend=courses.filter(c=>['ACTIVO','EN CIERRE','PREPARACION'].includes(upper(c.estado))&&norm(c['codigo curso'])!=='uni118'&&!qaIds.has(String(c.id??''))).length;
+  document.getElementById('kpiActivos').textContent=active;
+  document.getElementById('kpiInicios').textContent=next7;
+  document.getElementById('kpiPreparacion').textContent=prep;
+  document.getElementById('kpiIncidencias').textContent=openInc;
+  document.getElementById('focoInicios').textContent=next7;
+  document.getElementById('focoQa2').textContent=qaPend;
+  document.getElementById('focoIncidencias').textContent=openInc;
+  document.getElementById('focoPreparacion').textContent=prep;
+  // Riesgo accionable se mantiene oficialmente en Power BI; no se recalcula aquí.
+  document.getElementById('kpiRiesgo').textContent='↗';
+  document.getElementById('focoRiesgo').textContent='↗';
+}
+
+function askAI(question){
+  const box=document.getElementById('aiResponse'),q=norm(question);let answer='Puedo ayudarte a navegar hacia las herramientas actuales del portal.';
+  if(q.includes('cursos')&&q.includes('semana')) answer=`Hay ${upcoming(7).length} curso(s) con inicio dentro de los próximos 7 días. Puede abrir Calendarios desde el KPI correspondiente.`;
+  else if(q.includes('riesgo')) answer='El detalle de riesgo accionable se mantiene en la tabla DAX de Gestión Tutorial. Use el KPI “Estudiantes con riesgo accionable”.';
+  else if(q.includes('incidencia')) answer='Las incidencias se consultan en el HTML de Incidencias. El KPI abre esa vista sin cambiar la forma actual de trabajo.';
+  else if(q.includes('qa2')) answer='Los QA2 pendientes se revisan desde Control Académico / Incidencias. UNI118 queda excluido de este control.';
+  else if(q.includes('rut')) answer='Ingrese el RUT en el buscador universal para abrir la Ficha del Estudiante.';
+  box.textContent=answer;box.classList.add('show');
+}
+function askFromInput(){const input=document.getElementById('aiInput');if(input.value.trim())askAI(input.value.trim())}
+document.getElementById('aiInput').addEventListener('keydown',e=>{if(e.key==='Enter')askFromInput()});
+
+async function loadData(){
+  try{
+    const stamp='?t='+Date.now();
+    const [a,b,c]=await Promise.all([
+      fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),
+      fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),
+      fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})
+    ]);
+    if(!a.ok)throw new Error('nrcs.json no disponible');
+    courses=clean(await a.json());incidents=b.ok?clean(await b.json()):[];metrics=c.ok?clean(await c.json()):[];
+    renderKpis();renderCourses();
+  }catch(err){
+    console.warn(err);
+    ['kpiActivos','kpiInicios','kpiPreparacion','kpiIncidencias','focoInicios','focoQa2','focoIncidencias','focoPreparacion'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});
+  }
+}
+loadData();
+</script>
+
+<!--
+  INICIO TUTOR V5 ETOP
+  - Archivo independiente.
+  - No publica ni modifica GitHub.
+  - Los KPIs de cursos/incidencias se alimentan de JSON existentes; riesgo accionable permanece en Power BI.
+  - Puntos de integración futuros:
+      * Power BI: riesgo accionable / gestión.
+      * Calendarios: cursos y NRC.
+      * SharePoint: QA2, incidencias y datos base.
+      * ETOP IA: capa asistiva sobre datos autorizados.
+-->
+</body>
+</html>
