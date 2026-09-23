@@ -23,6 +23,65 @@
 
 .main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}
 .home{flex:1;overflow:auto;padding:14px}.viewer{display:none;flex:1;min-height:0;background:#fff}.viewer iframe{width:100%;height:100%;border:0}.hero{background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);border:1px solid var(--line);border-radius:16px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center}.hero .kicker{font-size:9px;color:#68809c;font-weight:800;text-transform:uppercase;letter-spacing:.11em}.hero h1{margin:4px 0 2px;font-size:22px}.hero p{margin:0;color:#728197;font-size:11px}.hero-side{text-align:right;font-size:10px;color:#728197}.hero-side b{display:block;color:#253b55;font-size:11px;margin-bottom:3px}.preview-tag{display:inline-block;background:#fff7cc;color:#8a6a00;border:1px solid #eadb86;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:800}
+
+/* Banner de Inicio inspirado en el banner principal de index.html */
+.hero.hero-index-banner{
+  position:relative;
+  min-height:112px;
+  overflow:hidden;
+  background:linear-gradient(90deg,#0f274f 0%,#12366f 48%,#174791 100%);
+  border:1px solid rgba(244,196,0,.20);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  padding:0;
+}
+.hero-index-banner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 50%,rgba(244,196,0,.10) 0%,transparent 34%),
+    radial-gradient(circle at 78% 28%,rgba(255,255,255,.06) 0%,transparent 24%);
+  pointer-events:none;
+}
+.hero-banner-photo{
+  position:absolute;
+  top:0;
+  right:0;
+  width:42%;
+  height:100%;
+  background-image:url('https://res.cloudinary.com/dk53pztfo/image/upload/v1784773664/ChatGPT_Image_22_jul_2026_10_25_47_p.m_oycgrb.png');
+  background-size:cover;
+  background-position:center right;
+  opacity:.92;
+}
+.hero-banner-fade{
+  position:absolute;
+  top:0;
+  right:28%;
+  width:24%;
+  height:100%;
+  background:linear-gradient(90deg,rgba(15,39,79,1) 0%,rgba(15,39,79,.88) 28%,rgba(15,39,79,.42) 64%,rgba(15,39,79,0) 100%);
+}
+.hero-banner-copy{
+  position:relative;
+  z-index:2;
+  padding:0 22px;
+}
+.hero.hero-index-banner .kicker{
+  color:#f4c400;
+  font-size:9px;
+  letter-spacing:.14em;
+  opacity:.92;
+}
+.hero.hero-index-banner h1{
+  color:#fff;
+  font-size:24px;
+  margin:5px 0 0;
+  text-shadow:0 2px 12px rgba(0,0,0,.28);
+}
+
 .dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
 .foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
 .kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:9px;padding:8px;text-align:left;color:#334a63;min-height:66px}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:8px;line-height:1.1}.quick span{font-size:14px;display:block;margin-bottom:4px}
@@ -448,7 +507,14 @@
     </div>
   </div>
   <section class="home" id="homeView">
-    <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
+    <div class="hero hero-index-banner">
+      <div class="hero-banner-photo" aria-hidden="true"></div>
+      <div class="hero-banner-fade" aria-hidden="true"></div>
+      <div class="hero-banner-copy">
+        <div class="kicker">Universidad Andrés Bello · ETOP</div>
+        <h1>Centro de Control Tutorial</h1>
+      </div>
+    </div>
     <div class="dashboard">
       <div class="left">
         <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link"
