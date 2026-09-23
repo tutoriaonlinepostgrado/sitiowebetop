@@ -1,616 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Centro de Control ETOP · Mockup V5</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETOP · Gestión Tutorial V5 · Vista previa</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --navy:#142440;
-    --navy-2:#1c2f50;
-    --blue:#0f66e8;
-    --blue-soft:#eaf3ff;
-    --yellow:#f4c400;
-    --bg:#eef3f8;
-    --card:#ffffff;
-    --text:#14213d;
-    --muted:#728197;
-    --line:#d9e2ec;
-    --red:#ef4444;
-    --orange:#f59e0b;
-    --green:#10b981;
-    --purple:#6d28d9;
-    --shadow:0 8px 24px rgba(31,45,61,.08);
-    --radius:16px;
-  }
-
-  *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
-  body{overflow-x:hidden}
-  button,input,select{font:inherit}
-
-  .app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
-  .sidebar{
-    position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#122541 0%,#142440 100%);
-    color:#fff;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06)
-  }
-  .brand{display:flex;align-items:center;gap:12px;padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
-  .brand-mark{display:grid;grid-template-columns:repeat(2,13px);gap:4px}
-  .brand-mark span{width:13px;height:13px;border-radius:3px;background:#53a7ff}
-  .brand-mark span:nth-child(2){background:#f3b62f}
-  .brand-mark span:nth-child(3){background:#2d7de0}
-  .brand-mark span:nth-child(4){background:#ff6b54}
-  .brand-title{font-size:21px;font-weight:800;letter-spacing:.03em}
-  .brand-sub{font-size:11px;color:#c7d3e2;margin-top:2px}
-
-  .nav{padding:10px 8px;overflow:auto;flex:1}
-  .nav a,.nav button{
-    width:100%;border:0;background:transparent;color:#dbe5ef;text-decoration:none;
-    display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:10px;cursor:pointer;text-align:left;
-    font-size:13px;margin:2px 0
-  }
-  .nav a:hover,.nav button:hover{background:rgba(255,255,255,.07);color:#fff}
-  .nav .active{background:linear-gradient(90deg,rgba(32,133,255,.33),rgba(32,133,255,.13));border-left:3px solid #3aa0ff;color:#fff}
-  .nav .section{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#7f93ab;padding:14px 12px 5px;font-weight:800}
-  .nav .chev{margin-left:auto;color:#9bb0c9}
-  .nav .go-coord{margin-top:14px;border:1px solid rgba(244,196,0,.45);color:#ffe16d;background:rgba(244,196,0,.06)}
-  .help-box{margin:12px;border:1px solid rgba(80,160,255,.32);border-radius:12px;padding:12px;background:rgba(55,125,220,.1)}
-  .help-box strong{display:block;font-size:12px;margin-bottom:4px}
-  .help-box span{font-size:11px;color:#c9d7e7}
-  .userbox{display:flex;align-items:center;gap:10px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.08)}
-  .avatar{width:38px;height:38px;border-radius:50%;background:#8ea0b8;display:grid;place-items:center;font-weight:800}
-  .userbox b{display:block;font-size:12px}
-  .userbox small{color:#9fb0c4}
-
-  .main{min-width:0}
-  .topbar{
-    background:#f7f9fc;border-bottom:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:20px;
-    position:sticky;top:0;z-index:20
-  }
-  .title h1{margin:0;font-size:26px;line-height:1}
-  .title p{margin:5px 0 0;color:var(--muted);font-size:12px}
-  .datebox{text-align:right;font-size:11px;color:#64748b}
-  .datebox b{display:block;color:#14213d;font-size:13px;margin-top:2px}
-  .motto{border-left:1px solid var(--line);padding-left:16px;font-size:11px;color:#4c6380;text-align:right;line-height:1.25}
-
-  .content{padding:14px}
-  .search-wrap{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:12px;align-items:start;margin-bottom:14px}
-  .search-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow);position:relative}
-  .search-row{display:flex;gap:8px}
-  .search-input{
-    flex:1;display:flex;align-items:center;gap:9px;border:2px solid #2d7de0;border-radius:10px;padding:0 12px;background:#fff;
-  }
-  .search-input input{border:0;outline:0;width:100%;height:40px;color:#1e293b}
-  .search-btn{border:0;border-radius:9px;background:#1265df;color:white;font-weight:700;padding:0 24px;cursor:pointer}
-  .search-btn:hover{background:#0d57c2}
-  .examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;font-size:11px;color:#64748b}
-  .chip{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:99px;padding:4px 10px;cursor:pointer}
-  .chip:hover{border-color:#8ab8f8;color:#0f5fd5}
-  .advanced{height:66px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;box-shadow:var(--shadow);font-size:12px;color:#53667d}
-  .search-results{display:none;position:absolute;left:50%;transform:translateX(-30%);top:76px;width:min(470px,78vw);background:white;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 42px rgba(15,23,42,.18);z-index:15;padding:10px}
-  .search-results.show{display:block}
-  .result-group{padding:8px}
-  .result-group b{font-size:11px}
-  .result-item{display:flex;align-items:center;gap:10px;padding:9px;border-radius:9px;margin-top:5px;background:#f8fafc}
-  .result-item:hover{background:#eef5ff}
-  .result-icon{width:31px;height:31px;border-radius:8px;display:grid;place-items:center;background:#e8f2ff}
-  .result-item span{font-size:11px;color:#64748b}
-
-  .grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.75fr);gap:14px}
-  .left-col{display:grid;gap:14px}
-  .right-col{display:grid;gap:14px;align-content:start}
-
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #edf1f5}
-  .card-head h2{margin:0;font-size:15px}
-  .card-head a{font-size:11px;color:#0f66e8;text-decoration:none}
-  .card-body{padding:14px 16px}
-
-  .focus-list{display:grid;gap:9px}
-  .focus-item{display:grid;grid-template-columns:38px 44px 1fr auto;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;background:#f7f9fc}
-  .focus-item .icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
-  .focus-item .num{font-size:23px;font-weight:800}
-  .focus-item .desc{font-size:12px}
-  .focus-item .desc small{display:block;color:var(--muted);margin-top:3px}
-  .focus-item .action{font-size:11px;color:#0f66e8;cursor:pointer}
-  .risk{background:#fff1f2}.risk .icon{background:#ffe1e6;color:#d12f4a}.risk .num{color:#dc263f}
-  .warn{background:#fff8ec}.warn .icon{background:#ffedc7;color:#d97706}.warn .num{color:#d97706}
-  .info{background:#f0f6ff}.info .icon{background:#dbeafe;color:#2563eb}.info .num{color:#2563eb}
-  .neutral{background:#f4f6f8}.neutral .icon{background:#e6eaf0;color:#6b7280}.neutral .num{color:#4b5563}
-
-  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .kpi{padding:16px;background:#fff;border:1px solid var(--line);border-radius:14px;min-height:105px}
-  .kpi .value{font-size:28px;font-weight:800}
-  .kpi .label{font-size:12px;color:#53667d;margin-top:4px}
-  .kpi .trend{font-size:11px;margin-top:12px;font-weight:700}.kpi-link{cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}.kpi-link:hover{transform:translateY(-2px);border-color:#9fc0ee;box-shadow:0 10px 24px rgba(20,50,90,.12)}
-  .up{color:#059669}.down{color:#dc2626}
-
-  .table-wrap{overflow:auto}
-  table{width:100%;border-collapse:collapse;min-width:720px}
-  th{font-size:10px;text-align:left;color:#5f6f82;background:#f2f5f9;padding:9px 10px;white-space:nowrap}
-  td{font-size:11px;padding:10px;border-bottom:1px solid #edf1f5;white-space:nowrap}
-  .status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-  .dot-green{background:#28b97b}.dot-yellow{background:#f4b72f}.dot-blue{background:#438df0}.dot-red{background:#e65b67}
-
-  .activity{display:grid;gap:9px}
-  .activity-row{display:grid;grid-template-columns:54px 1fr 1fr;gap:10px;font-size:10px;padding:7px 0;border-bottom:1px solid #eff3f6}
-  .activity-row:last-child{border-bottom:0}
-  .activity-row .time{color:#3b4a5f;font-weight:700}
-  .activity-row .meta{color:#6f8094}
-
-  .health-table td:nth-child(2){font-weight:600}
-  .health-badge{display:inline-flex;align-items:center;gap:6px}
-
-  .ai-card{border:1px solid #c7c8ff;background:linear-gradient(180deg,#f9f8ff 0%,#ffffff 100%);overflow:hidden}
-  .ai-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid #e5e4ff}
-  .ai-logo{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#1d66e8;color:#fff;font-weight:800}
-  .beta{margin-left:auto;background:#5046e5;color:white;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:800}
-  .ai-body{padding:14px}
-  .ai-hello{border:1px solid #e3e8f1;border-radius:10px;padding:12px;background:#fff;font-size:12px;line-height:1.45}
-  .ai-suggestions{display:grid;gap:8px;margin-top:12px}
-  .ai-suggestions button{border:1px solid #dfe5ef;background:#fff;border-radius:9px;padding:10px;text-align:left;font-size:11px;color:#344256;cursor:pointer}
-  .ai-suggestions button:hover{border-color:#9dbcf6;background:#f7faff}
-  .ai-input{display:flex;gap:8px;margin-top:14px}
-  .ai-input input{flex:1;border:1px solid #dbe4ef;border-radius:9px;padding:10px;outline:0}
-  .ai-input button{width:42px;border:0;border-radius:9px;background:#2f7df3;color:#fff;font-weight:800;cursor:pointer}
-  .ai-note{font-size:9px;color:#7a8798;margin-top:10px}
-  .ai-response{display:none;margin-top:10px;padding:10px;border-radius:9px;background:#eef4ff;border:1px solid #d5e4ff;font-size:11px;line-height:1.4}
-  .ai-response.show{display:block}
-
-  .promo{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-radius:14px;border:1px solid #d9ccff;background:linear-gradient(90deg,#f6f2ff,#fbfaff)}
-  .promo strong{color:#5c2fc2}
-  .promo span{display:block;font-size:11px;color:#6f6482;margin-top:3px}
-  .promo button{border:0;border-radius:9px;background:#6c35d1;color:#fff;padding:10px 18px;font-weight:700;cursor:pointer}
-
-  .footer{text-align:right;font-size:10px;color:#7c8b9b;padding:12px 2px 4px}
-
-  @media (max-width:1250px){
-    .grid{grid-template-columns:1fr}
-    .right-col{grid-template-columns:1fr}
-    .ai-card{order:-1}
-  }
-  @media (max-width:980px){
-    .app{grid-template-columns:78px minmax(0,1fr)}
-    .brand-title,.brand-sub,.nav .label,.nav .chev,.help-box span,.help-box strong,.userbox div{display:none}
-    .brand{justify-content:center}
-    .nav a,.nav button{justify-content:center}
-    .help-box{padding:9px;text-align:center}
-    .userbox{justify-content:center}
-    .search-wrap{grid-template-columns:1fr}
-    .advanced{height:50px}
-    .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  }
-  @media (max-width:680px){
-    .topbar{align-items:flex-start}
-    .motto{display:none}
-    .datebox{font-size:10px}
-    .title h1{font-size:20px}
-    .content{padding:8px}
-    .kpi-grid{grid-template-columns:1fr}
-    .focus-item{grid-template-columns:34px 38px 1fr}
-    .focus-item .action{grid-column:3}
-    .promo{align-items:flex-start;flex-direction:column}
-  }
+:root{--navy:#142440;--navy2:#1d3153;--blue:#1265df;--yellow:#f4c400;--bg:#eef3f8;--card:#fff;--line:#d9e2ec;--text:#17243a;--muted:#728197;--red:#dc3545;--orange:#e58b00;--green:#11a36a;--purple:#7c3aed;--shadow:0 8px 24px rgba(31,45,61,.08)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}body{overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;height:100vh;width:100vw}.sidebar{width:270px;min-width:270px;background:linear-gradient(180deg,#122541 0%,#142440 100%);color:#fff;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);transition:.22s;overflow:hidden}.sidebar.closed{width:0;min-width:0;opacity:0}
+.brand{min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.brand img{width:58px;height:58px;object-fit:contain}.brand-text b{display:block;font-size:16px;letter-spacing:.04em}.brand-text span{font-size:10px;color:#b9c8d9}
+.menu{flex:1;overflow:auto;padding:9px 7px 10px}.menu-cat{padding:12px 12px 5px;color:#72859f;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.menu-btn,.collapsible{width:100%;border:0;background:transparent;color:#d8e3ee;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12px;text-align:left;margin:2px 0;transition:.15s}.menu-btn:hover,.collapsible:hover{background:rgba(255,255,255,.06);color:#fff}.menu-btn.active{background:linear-gradient(90deg,rgba(26,124,245,.32),rgba(26,124,245,.09));color:#fff;border-left:3px solid #3a9bff;font-weight:700}.menu-btn .ico,.collapsible .ico{width:20px;text-align:center}.collapsible .arrow{margin-left:auto;color:#768aa3;font-size:10px}.submenu{display:none;margin-left:14px;padding-left:7px;border-left:1px solid rgba(255,255,255,.09)}.submenu.open{display:block}.submenu .menu-btn{font-size:11px;color:#afbed0;padding:7px 9px}.coord-btn{margin:10px 8px 0;border:1px solid rgba(244,196,0,.38);color:#ffe16d;background:rgba(244,196,0,.06)}
+.session-box{padding:11px 13px;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.09)}.session-box small{display:block;color:#8094ad;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.session-box b{display:block;margin-top:4px;font-size:11px}.session-box span{display:inline-flex;margin-top:5px;padding:3px 6px;border-radius:999px;background:rgba(34,197,94,.12);color:#65df91;font-size:8px;font-weight:800}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}.filter-session{margin-left:auto;display:flex;align-items:center;gap:6px;background:#eef6ff;border:1px solid #d4e7ff;color:#2c659b;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:700;white-space:nowrap}.filter-session .dot{width:7px;height:7px;border-radius:50%;background:#22c55e}
+.home{flex:1;overflow:auto;padding:14px}.viewer{display:none;flex:1;min-height:0;background:#fff}.viewer iframe{width:100%;height:100%;border:0}.hero{background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);border:1px solid var(--line);border-radius:16px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center}.hero .kicker{font-size:9px;color:#68809c;font-weight:800;text-transform:uppercase;letter-spacing:.11em}.hero h1{margin:4px 0 2px;font-size:22px}.hero p{margin:0;color:#728197;font-size:11px}.hero-side{text-align:right;font-size:10px;color:#728197}.hero-side b{display:block;color:#253b55;font-size:11px;margin-bottom:3px}.preview-tag{display:inline-block;background:#fff7cc;color:#8a6a00;border:1px solid #eadb86;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:800}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:start}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
+.foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
+.kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:10px;padding:10px;text-align:left;color:#334a63}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:9px}.quick span{font-size:16px;display:block;margin-bottom:5px}
+.viva{min-height:565px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}.note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
+@media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark"><span></span><span></span><span></span><span></span></div>
-      <div>
-        <div class="brand-title">ETOP</div>
-        <div class="brand-sub">UNAB Online</div>
-      </div>
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP"><div class="brand-text"><b>ESPACIO TUTORÍA</b><span>Gestión Tutorial · ETOP</span></div></div>
+  <div class="menu">
+    <div class="menu-cat">Operación diaria</div>
+    <button class="menu-btn active" data-key="INICIO" onclick="showHome(this)"><span class="ico">🏠</span>Inicio</button>
+    <button class="menu-btn" data-key="DASHBOARD" onclick="openReport('DASHBOARD',this)"><span class="ico">📊</span>Tablero de Gestión</button>
+    <button class="menu-btn" data-key="NOMINA_ESTUDIANTES" onclick="openReport('NOMINA_ESTUDIANTES',this)"><span class="ico">📋</span>Nómina Estudiantes</button>
+    <button class="menu-btn" data-key="CURSOS_ACTIVOS" onclick="openReport('CURSOS_ACTIVOS',this)"><span class="ico">🟢</span>Cursos Activos</button>
+    <button class="menu-btn" data-key="CURSOS_PREPARACION" onclick="openReport('CURSOS_PREPARACION',this)"><span class="ico">⏳</span>Cursos en Preparación</button>
+    <button class="menu-btn" data-key="CURSOS_CIERRE" onclick="openReport('CURSOS_CIERRE',this)"><span class="ico">🏁</span>Cursos en Cierre</button>
+    <button class="menu-btn" data-key="FICHA_ESTUDIANTE" onclick="openReport('FICHA_ESTUDIANTE',this)"><span class="ico">👤</span>Ficha del Estudiante</button>
+    <button class="menu-btn" data-key="CALENDARIOS" onclick="openReport('CALENDARIOS',this)"><span class="ico">📅</span>Calendarios</button>
+    <div class="menu-cat">Onboarding</div>
+    <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
+    <div class="submenu" id="onboarding"><button class="menu-btn" onclick="openLocal('onboarding_correos.html','Correos de Bienvenida',this)">Correos de Bienvenida</button><button class="menu-btn" onclick="openLocal('onboarding_invitaciones.html','Invitación Sesión Sincrónica',this)">Invitación Sesión Sincrónica</button><button class="menu-btn" onclick="openLocal('onboarding_presentacion_tutorial.html','Presentación Tutorial',this)">Presentación Tutorial</button><button class="menu-btn" onclick="openLocal('onboarding_cierre.html','Correo de Cierre',this)">Correo de Cierre</button></div>
+    <div class="menu-cat">Canales del equipo</div>
+    <button class="collapsible" onclick="toggleSub('canales')"><span class="ico">🟣</span>Canales SharePoint<span class="arrow">▼</span></button>
+    <div class="submenu" id="canales"><button class="menu-btn" onclick="showChannels(this)">Ver todos los canales</button></div>
+    <button class="menu-btn coord-btn" onclick="openLocal('gestion_coordinacion.html','Coordinación',this)"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
+  </div>
+  <div class="session-box"><small>Tutor sesión</small><b id="sessionTutor">PAULA PARDO</b><span>● ACTIVO</span></div>
+</aside>
+<main class="main">
+  <div class="top"><button class="toggle" onclick="toggleSidebar()">☰</button><div class="view-title" id="viewTitle">Inicio · Gestión Tutorial</div><div class="sep"></div><div class="filters">
+    <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
+      <div class="search-pill" style="flex:1;max-width:760px"><span>🔎</span><input id="universalSearch" placeholder="Buscar estudiante, RUT, NRC, curso, programa o tutor..." style="width:100%;border-radius:9px;padding-left:30px" onkeydown="if(event.key==='Enter')runUniversalSearch()"></div>
+      <button onclick="runUniversalSearch()" style="height:31px;border:0;border-radius:8px;background:#1265df;color:white;padding:0 16px;font-size:10px;font-weight:800">Buscar</button>
     </div>
-
-    <nav class="nav">
-      <div class="section">Operación diaria</div>
-      <a class="active" href="#"><span>🏠</span><span class="label">Inicio</span></a>
-      <button><span>👥</span><span class="label">Estudiantes</span><span class="chev">⌄</span></button>
-      <button><span>📚</span><span class="label">Cursos</span><span class="chev">⌄</span></button>
-      <button><span>📋</span><span class="label">Control Académico</span><span class="chev">⌄</span></button>
-      <button><span>📊</span><span class="label">Gestión</span><span class="chev">⌄</span></button>
-      <button><span>💬</span><span class="label">Comunicaciones</span><span class="chev">⌄</span></button>
-      <button><span>🔧</span><span class="label">Herramientas</span><span class="chev">⌄</span></button>
-      <button><span>📦</span><span class="label">Recursos</span></button>
-      <button class="go-coord"><span>🏛️</span><span class="label">Ir a Espacio Coordinación →</span></button>
-    </nav>
-
-    <div class="help-box">
-      <strong>¿Necesita ayuda?</strong>
-      <span>Consulte a ETOP IA</span>
+    <div id="gestionFilters" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:1">
+      <select id="sel-facultad" class="fsel" data-filtro="facultad" onchange="applyFilter('facultad',this.value)"><option value="">Facultad</option><option>MEDI</option><option>ENFE</option><option>FEDU</option><option>INGE</option></select>
+      <select id="sel-tutor" class="fsel" data-filtro="tutor" onchange="applyFilter('tutor',this.value)"><option value="">Tutor</option><option>PAULA PARDO</option><option>JAVIERA ROJAS</option><option>HANS NOVAKOVIC</option></select>
+      <select id="sel-tipo" class="fsel" data-filtro="tipo" onchange="applyFilter('tipo',this.value)"><option value="">Tipo NRC</option><option>100%ONLINE</option><option>SEMIPRES</option></select>
+      <select id="sel-codigo" class="fsel" data-filtro="codigo" onchange="applyFilter('codigo',this.value)"><option value="">Código curso</option><option>MSP007</option><option>MAPS013</option><option>UNI118</option></select>
+      <select id="sel-estado" class="fsel" data-filtro="estado" onchange="applyFilter('estado',this.value)"><option value="">Estado</option><option>ACTIVO</option><option>EN CIERRE</option><option>PREPARACION</option></select>
+      <select id="sel-intake" class="fsel" data-filtro="intake" onchange="applyFilter('intake',this.value)"><option value="">Intake / Versión</option><option>202681</option><option>202682</option><option>202683</option></select>
+      <div data-filtro="fechaInicio"><input id="fecha-inicio" type="date" style="height:31px;border:1px solid #d6e0eb;border-radius:8px;background:white;color:#485b70;padding:0 7px;font-size:10px" onchange="applyFilter('fechaInicio',this.value)"></div>
+      <div class="search-pill" data-filtro="nrc"><span>⌗</span><input id="input-nrc" placeholder="NRC" onkeydown="if(event.key==='Enter')applyFilter('nrc',this.value.trim())"></div>
+      <div class="search-pill" data-filtro="rut"><span>◈</span><input id="input-rut" placeholder="RUT" onkeydown="if(event.key==='Enter')applyFilter('rut',this.value.trim())"></div>
+      <div class="filter-session"><span class="dot"></span><span id="sessionFilterLabel">Tutor sesión: PAULA PARDO</span></div>
     </div>
-
-    <div class="userbox">
-      <div class="avatar">PC</div>
-      <div>
-        <b>Equipo Tutorial</b>
-        <small>Portal ETOP</small>
-      </div>
+  </div></div>
+  <section class="home" id="homeView">
+    <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión.</p></div><div class="hero-side"><b id="helloTutor">Hola, Paula Pardo</b><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
+    <div class="dashboard">
+      <div class="left">
+        <div class="top-summary"><section class="card"><div class="card-head"><h2>🎯 Foco del día</h2><span>Visual Power BI · FOCO_DIA_ETOP_HTML</span></div><div class="card-body"><div class="foco-grid">
+          <div class="foco red" onclick="openReport('DASHBOARD',findBtn('DASHBOARD'))"><div class="ico">!</div><div class="num">27</div><div><b>Riesgo accionable</b><small>Requieren gestión</small></div></div>
+          <div class="foco red"><div class="ico">●</div><div class="num">5</div><div><b>En rojo</b><small>Riesgo crítico</small></div></div>
+          <div class="foco yellow"><div class="ico">●</div><div class="num">8</div><div><b>En amarillo</b><small>Seguimiento preventivo</small></div></div>
+          <div class="foco orange"><div class="ico">●</div><div class="num">3</div><div><b>En naranjo</b><small>Riesgo intermedio</small></div></div>
+          <div class="foco orange"><div class="ico">↘</div><div class="num">6</div><div><b>No ingresaron</b><small>Ingreso = NO</small></div></div>
+          <div class="foco orange"><div class="ico">⌛</div><div class="num">4</div><div><b>Sin registro +7d</b><small>Ingreso pendiente</small></div></div>
+          <div class="foco red"><div class="ico">C</div><div class="num">7</div><div><b>Canvas sin cotejo</b><small>Revisar acceso</small></div></div>
+          <div class="foco purple"><div class="ico">↔</div><div class="num">2</div><div><b>Riesgo multicurso</b><small>Más de un curso</small></div></div>
+          <div class="foco blue"><div class="ico">↻</div><div class="num">1</div><div><b>En trámite</b><small>Proceso de retiro</small></div></div>
+          <div class="foco purple"><div class="ico">Ⅱ</div><div class="num">2</div><div><b>Seguimiento detenido</b><small>Semáforo morado</small></div></div>
+          <div class="foco gray"><div class="ico">×</div><div class="num">1</div><div><b>En retiro</b><small>Estado estudiante</small></div></div>
+          <div class="foco red" onclick="openReport('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="ico">14</div><div class="num">2</div><div><b>Cierre &lt;14 días</b><small>Cursos con riesgo</small></div></div>
+        </div><div class="note" style="margin-top:7px;padding:7px;font-size:8px">Los valores son demostrativos solo para visualizar el diseño. En la versión final este bloque será el visual HTML de Power BI y respetará automáticamente el tutor de sesión y los filtros superiores.</div></div></section>
+        <section class="card"><div class="card-head"><h2>Resumen de cartera</h2><span>Modelo semántico</span></div><div class="card-body"><div class="kpi-row">
+          <div class="kpi" onclick="openReport('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v">12</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div><div class="kpi" onclick="openReport('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v">3</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div><div class="kpi" onclick="openReport('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">428</div><div class="l">Atenciones activas</div><div class="s">Nómina →</div></div><div class="kpi" onclick="openReport('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">314</div><div class="l">Estudiantes únicos</div><div class="s">Nómina →</div></div><div class="kpi" onclick="openReport('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v">5</div><div class="l">En preparación</div><div class="s">Preparación →</div></div><div class="kpi"><div class="v">94%</div><div class="l">Ingreso registrado</div><div class="s">Contexto tutor</div></div>
+        </div></div></section></div>
+        <section class="card">
+  <div class="card-head">
+    <h2>Accesos directos</h2>
+    <span>Herramientas rescatadas de la portada actual</span>
+  </div>
+  <div class="card-body">
+    <div class="quick" style="grid-template-columns:repeat(5,1fr)">
+      <button onclick="openLocal('incidencias.html','Gestión QA2',this)"><span>🧪</span><b>Gestión QA2</b></button>
+      <button onclick="openLocal('comunicaciones_etop.html','Comunicaciones',this)"><span>📣</span><b>Comunicaciones</b></button>
+      <button onclick="openLocal('aplicaciones.html','Aplicaciones',this)"><span>🧩</span><b>Aplicaciones</b></button>
+      <button onclick="openLocal('recursos_aprendizaje.html','Recursos',this)"><span>📚</span><b>Recursos</b></button>
+      <button onclick="openLocal('equipo_etop_mejorado.html','Equipo ETOP',this)"><span>👥</span><b>Equipo ETOP</b></button>
     </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div class="title">
-        <h1>Centro de Control ETOP</h1>
-        <p>Resumen diario y acceso directo a sus herramientas de trabajo</p>
+  </div>
+</section>
+        <section class="card"><div class="card-head"><h2>Salud de programas</h2><span>Vista de apoyo · propuesta</span></div><div class="card-body programs"><div class="prog"><b>MSP</b><span>5 activos</span><span>96% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MAPS</b><span>3 activos</span><span>91% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MES</b><span>2 activos</span><span>88% ingreso</span><span class="badge">Revisar</span></div></div></section>
       </div>
-      <div style="display:flex;align-items:center;gap:18px">
-        <div class="datebox">Lunes 21 de septiembre de 2026<b>18:25</b></div>
-        <div class="motto">Acompañamos<br>el aprendizaje<br>que transforma</div>
-      </div>
-    </header>
-
-    <section class="content">
-
-      <div class="search-wrap">
-        <div class="search-card">
-          <div class="search-row">
-            <div class="search-input">
-              <span>🔎</span>
-              <input id="globalSearch" placeholder="Buscar estudiante, RUT, NRC, curso, programa, tutor..." />
-            </div>
-            <button class="search-btn" onclick="showSearchResults()">Buscar</button>
-          </div>
-          <div class="examples">
-            <span>Ejemplos:</span>
-            <span class="chip" onclick="setSearch('2239')">2239</span>
-            <span class="chip" onclick="setSearch('MSP007')">MSP007</span>
-            <span class="chip" onclick="setSearch('Germana Pablaza')">Germana Pablaza</span>
-            <span class="chip" onclick="setSearch('MAPS')">MAPS</span>
-            <span class="chip" onclick="setSearch('Paula Pardo')">Paula Pardo</span>
-          </div>
-
-          <div class="search-results" id="searchResults">
-            <div class="result-group">
-              <b>👤 Estudiantes (1)</b>
-              <div class="result-item">
-                <div class="result-icon">👤</div>
-                <div><strong>Germana Pablaza</strong><br><span>RUT 12.345.678-9 · MSP</span></div>
-              </div>
-            </div>
-            <div class="result-group">
-              <b>📚 Cursos (2)</b>
-              <div class="result-item">
-                <div class="result-icon">📘</div>
-                <div><strong>MSP007 · NRC 2239</strong><br><span>Inicio 05/10/2026 · Activo</span></div>
-              </div>
-            </div>
-            <div class="result-group">
-              <b>🏷️ Programas (1)</b>
-              <div class="result-item">
-                <div class="result-icon">🏷️</div>
-                <div><strong>MSP</strong><br><span>10 cursos activos</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="advanced">
-          <span>Búsqueda avanzada</span>
-          <span>⌄</span>
-        </div>
-      </div>
-
-      <div class="grid">
-
-        <div class="left-col">
-
-          <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px">
-            <section class="card">
-              <div class="card-head">
-                <h2>🎯 Foco del día</h2>
-                <span style="font-size:11px;color:#7b8797">Situaciones que requieren atención</span>
-              </div>
-              <div class="card-body">
-                <div class="focus-list">
-                  <div class="focus-item risk" role="button" tabindex="0" onclick="openRoute('RIESGO')" onkeydown="cardKey(event,'RIESGO')">
-                    <div class="icon">⛔</div><div class="num" id="focoRiesgo">—</div>
-                    <div class="desc">Estudiantes con riesgo accionable<small>Tabla DAX · Gestión Tutorial</small></div>
-                    <div class="action">Abrir estudiantes en riesgo →</div>
-                  </div>
-                  <div class="focus-item warn" role="button" tabindex="0" onclick="openRoute('INICIOS')" onkeydown="cardKey(event,'INICIOS')">
-                    <div class="icon">⚠️</div><div class="num" id="focoInicios">—</div>
-                    <div class="desc">Cursos que inician esta semana<small>HTML · Calendarios</small></div>
-                    <div class="action">Ver próximos inicios →</div>
-                  </div>
-                  <div class="focus-item warn" role="button" tabindex="0" onclick="openRoute('QA2')" onkeydown="cardKey(event,'QA2')">
-                    <div class="icon">🟨</div><div class="num" id="focoQa2">—</div>
-                    <div class="desc">QA2 pendientes<small>HTML · Control Académico</small></div>
-                    <div class="action">Revisar QA2 pendientes →</div>
-                  </div>
-                  <div class="focus-item info" role="button" tabindex="0" onclick="openRoute('INCIDENCIAS')" onkeydown="cardKey(event,'INCIDENCIAS')">
-                    <div class="icon">ℹ️</div><div class="num" id="focoIncidencias">—</div>
-                    <div class="desc">Incidencias abiertas<small>HTML · Incidencias</small></div>
-                    <div class="action">Ver incidencias →</div>
-                  </div>
-                  <div class="focus-item neutral" role="button" tabindex="0" onclick="openRoute('PREPARACION')" onkeydown="cardKey(event,'PREPARACION')">
-                    <div class="icon">◉</div><div class="num" id="focoPreparacion">—</div>
-                    <div class="desc">Cursos en preparación<small>Tabla actual · Gestión Tutorial</small></div>
-                    <div class="action">Abrir cursos en preparación →</div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div class="kpi-grid">
-              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('ACTIVOS')" onkeydown="cardKey(event,'ACTIVOS')" title="Abrir la tabla de cursos activos">
-                <div class="value" id="kpiActivos">—</div>
-                <div class="label">Mis cursos activos</div>
-                <div class="trend">Tabla de cursos →</div>
-              </div>
-              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('INICIOS')" onkeydown="cardKey(event,'INICIOS')" title="Abrir próximos inicios">
-                <div class="value" id="kpiInicios">—</div>
-                <div class="label">Inicios próximos (7 días)</div>
-                <div class="trend">Calendarios →</div>
-              </div>
-              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('RIESGO')" onkeydown="cardKey(event,'RIESGO')" title="Abrir estudiantes en riesgo">
-                <div class="value" id="kpiRiesgo" style="color:#dc263f">—</div>
-                <div class="label">Estudiantes con riesgo accionable</div>
-                <div class="trend">Tabla DAX →</div>
-              </div>
-              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('PREPARACION')" onkeydown="cardKey(event,'PREPARACION')" title="Abrir cursos en preparación">
-                <div class="value" id="kpiPreparacion">—</div>
-                <div class="label">Cursos en preparación</div>
-                <div class="trend">Tabla de preparación →</div>
-              </div>
-              <div class="kpi kpi-link" role="button" tabindex="0" onclick="openRoute('INCIDENCIAS')" onkeydown="cardKey(event,'INCIDENCIAS')" title="Abrir incidencias">
-                <div class="value" id="kpiIncidencias">—</div>
-                <div class="label">Incidencias abiertas</div>
-                <div class="trend">Incidencias HTML →</div>
-              </div>
-            </div>
-          </div>
-
-          <section class="card">
-            <div class="card-head">
-              <h2>📅 Cursos próximos</h2>
-              <a href="calendarios.html">Ver todos →</a>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Inicio</th><th>NRC</th><th>Curso</th><th>Programa</th><th>Tutor</th><th>Estud.</th><th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>22-09-2026</td><td>2013</td><td>UNI118</td><td>MSP</td><td>Javiera</td><td>48</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
-                  <tr><td>05-10-2026</td><td>2239</td><td>MSP007</td><td>MSP</td><td>Paula Pardo</td><td>42</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>05-10-2026</td><td>1800</td><td>MAPS013</td><td>MAPS</td><td>Carolina</td><td>36</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>06-10-2026</td><td>3401</td><td>MES559</td><td>MES</td><td>Carlos</td><td>28</td><td><span class="status-dot dot-blue"></span>En preparación</td></tr>
-                  <tr><td>12-10-2026</td><td>2612</td><td>MSPE007</td><td>MSP</td><td>Sofía</td><td>21</td><td><span class="status-dot dot-yellow"></span>Por iniciar</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-            <section class="card">
-              <div class="card-head"><h2>⚡ Accesos rápidos</h2></div>
-              <div class="card-body activity">
-                <div class="activity-row" onclick="openRoute('ACTIVOS')" style="cursor:pointer"><span class="time">📚</span><span>Mis cursos activos</span><span class="meta">Abrir tabla actual →</span></div>
-                <div class="activity-row" onclick="openRoute('RIESGO')" style="cursor:pointer"><span class="time">👥</span><span>Estudiantes en riesgo</span><span class="meta">Abrir tabla DAX →</span></div>
-                <div class="activity-row" onclick="openRoute('PREPARACION')" style="cursor:pointer"><span class="time">🛠️</span><span>Cursos en preparación</span><span class="meta">Abrir tabla actual →</span></div>
-                <div class="activity-row" onclick="openRoute('CALENDARIOS')" style="cursor:pointer"><span class="time">📅</span><span>Calendarios</span><span class="meta">Abrir HTML →</span></div>
-                <div class="activity-row" onclick="openRoute('INCIDENCIAS')" style="cursor:pointer"><span class="time">⚠️</span><span>Incidencias / QA2</span><span class="meta">Abrir HTML →</span></div>
-              </div>
-            </section>
-
-            <section class="card">
-              <div class="card-head"><h2>📊 Salud de Programas</h2><a href="#">Ver detalle →</a></div>
-              <div class="table-wrap">
-                <table class="health-table">
-                  <thead><tr><th>Programa</th><th>Estado</th><th>Cursos</th><th>Ingreso</th><th>Riesgo</th></tr></thead>
-                  <tbody>
-                    <tr><td>MSP</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>31</td><td>94%</td><td>17</td></tr>
-                    <tr><td>MAPS</td><td><span class="health-badge"><span class="status-dot dot-yellow"></span>Requiere revisión</span></td><td>22</td><td>86%</td><td>41</td></tr>
-                    <tr><td>MDML</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>12</td><td>91%</td><td>9</td></tr>
-                    <tr><td>MES</td><td><span class="health-badge"><span class="status-dot dot-green"></span>Estable</span></td><td>18</td><td>93%</td><td>11</td></tr>
-                    <tr><td>Enfermería APS</td><td><span class="health-badge"><span class="status-dot dot-yellow"></span>Requiere revisión</span></td><td>9</td><td>88%</td><td>14</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          </div>
-
-          <section class="promo">
-            <div>
-              <strong>📊 Descubra la Salud de Programas</strong>
-              <span>Visión consolidada del estado académico por programa, con indicadores de ingreso, riesgo, incidencias y calidad de datos.</span>
-            </div>
-            <button onclick="openRoute('CALENDARIOS')">Explorar cursos →</button>
-          </section>
-
-        </div>
-
-        <div class="right-col">
-          <section class="card ai-card">
-            <div class="ai-head">
-              <div class="ai-logo">AI</div>
-              <div>
-                <strong>ETOP IA</strong>
-                <div style="font-size:10px;color:#6d7285;margin-top:2px">Asistente ETOP</div>
-              </div>
-              <span class="beta">BETA</span>
-            </div>
-            <div class="ai-body">
-              <div class="ai-hello">
-                <strong>Hola 👋</strong><br>
-                Puedo ayudarte a encontrar información, analizar datos y generar resúmenes del portal. ¿Qué necesitas hoy?
-              </div>
-
-              <div style="font-size:11px;font-weight:800;margin-top:13px">Sugerencias</div>
-              <div class="ai-suggestions">
-                <button onclick="askAI('¿Qué cursos inician esta semana?')">📅 ¿Qué cursos inician esta semana?</button>
-                <button onclick="askAI('Muéstrame estudiantes en riesgo de Paula Pardo')">👥 Muéstrame estudiantes en riesgo de Paula Pardo</button>
-                <button onclick="askAI('Resume las incidencias abiertas')">⚠️ Resume las incidencias abiertas</button>
-                <button onclick="askAI('Genera un reporte de QA2 por programa')">📊 Genera un reporte de QA2 por programa</button>
-                <button onclick="askAI('¿Qué NRC no tienen tutor?')">❓ ¿Qué NRC no tienen tutor?</button>
-                <button onclick="askAI('Busca un estudiante por RUT')">🔎 Busca un estudiante por RUT</button>
-              </div>
-
-              <div class="ai-input">
-                <input id="aiInput" placeholder="Escribe tu consulta aquí..." />
-                <button onclick="askFromInput()">➤</button>
-              </div>
-              <div class="ai-response" id="aiResponse"></div>
-              <div class="ai-note">Mockup visual. En una implementación real, ETOP IA consultaría únicamente fuentes autorizadas del portal.</div>
-            </div>
-          </section>
-        </div>
-
-      </div>
-
-      <div class="footer">Universidad Andrés Bello · ETOP · 2026</div>
-    </section>
-  </main>
+      <div class="right"><section class="card viva"><div class="viva-head"><div class="viva-logo">V</div><div class="viva-title"><b>Viva Engage</b><span>Comunidad y comunicación del equipo</span></div><span class="online">EN LÍNEA</span></div><iframe title="Viva Engage" src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"></iframe></section></div>
+    </div>
+    <div class="footer">ETOP · Propuesta visual de integración Gestión + nueva portada</div>
+  </section>
+  <section class="viewer" id="viewer"><iframe id="reportFrame" title="Vista Gestión"></iframe></section>
+</main>
 </div>
-
 <script>
-const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const PB='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&navContentPaneEnabled=false&filterPaneEnabled=false&pageName=';
+const REPORTS={DASHBOARD:{page:'a90b3a4c28d3179b1fae',title:'Tablero de Gestión',rut:true},NOMINA_ESTUDIANTES:{page:'255c88d86191d22dd1c3',title:'Nómina Estudiantes',rut:true},CURSOS_ACTIVOS:{page:'9df5f2db687d901b71b9',title:'Cursos Activos'},CURSOS_PREPARACION:{local:true,url:'cursos_preparacion.html?v=20260829-portal1',title:'Cursos en Preparación'},CURSOS_CIERRE:{page:'ab4e8f37a94c688a5869',title:'Cursos en Cierre'},FICHA_ESTUDIANTE:{page:'0961bca799ff83e065db',title:'Ficha del Estudiante',rut:true},CALENDARIOS:{local:true,url:'calendarios.html?v=20260820-filtrotipo2',title:'Calendarios'}};
+const FILTER={facultad:null,tutor:null,tipo:null,codigo:null,estado:null,intake:null,fechaInicio:[],nrc:null,rut:null};
+const VIEW_FILTERS={DASHBOARD:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],NOMINA_ESTUDIANTES:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],CURSOS_ACTIVOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],FICHA_ESTUDIANTE:['rut'],CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc']};
+function setTopbarMode(mode,key){const hs=document.getElementById('homeTopSearch'),gf=document.getElementById('gestionFilters');if(mode==='home'){hs.style.display='flex';gf.style.display='none';return;}hs.style.display='none';gf.style.display='flex';const visibles=VIEW_FILTERS[key]||[];document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>el.style.display=visibles.includes(el.dataset.filtro)?'':'none');}
 
-/*
-  RUTAS DE DESTINO.
-  Las hojas actuales se conservan. Si más adelante queremos caer en una tabla DAX
-  específica dentro de gestion.html, basta con cambiar aquí la URL/parametro sin
-  rediseñar la portada.
-*/
-const ROUTES={
-  ACTIVOS:'gestion.html?destino=cursos_activos',
-  RIESGO:'gestion.html?destino=estudiantes_riesgo',
-  PREPARACION:'gestion.html?destino=cursos_preparacion',
-  INICIOS:'calendarios.html?destino=proximos_7_dias',
-  CALENDARIOS:'calendarios.html',
-  INCIDENCIAS:'incidencias.html?destino=abiertas',
-  QA2:'incidencias.html?destino=qa2_pendiente',
-  COORDINACION:'gestion_coordinacion.html'
-};
-
-let courses=[],incidents=[],metrics=[];
-const norm=v=>String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-const upper=v=>String(v??'').toUpperCase().trim();
-const clean=v=>Array.isArray(v)?v:(v?.value||[]);
-const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-
-function openRoute(key){
-  const url=ROUTES[key];
-  if(url) window.location.href=url;
-}
-function cardKey(e,key){if(e.key==='Enter'||e.key===' '){e.preventDefault();openRoute(key)}}
-function setSearch(value){document.getElementById('globalSearch').value=value;runSearch()}
-function isRut(v){return /^\d{7,8}-?[\dkK]$/.test(String(v).replace(/\./g,'').replace(/\s/g,''))}
-function openStudentRut(rut){
-  const r=String(rut).replace(/\./g,'').replace(/\s/g,'');
-  const url='https://app.powerbi.com/rdlEmbed?reportId=8d398d46-ce63-49bf-9f24-55f1e195bdb5&autoAuth=true&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&experience=power-bi&rp:Param_consolidado_5f_esudiantes_RUT='+encodeURIComponent(r);
-  window.open(url,'_blank');
-}
-function openNrc360(nrc){window.open('nrc_360_etop_v1.html?nrc='+encodeURIComponent(nrc),'_blank')}
-
-function runSearch(){
-  const input=document.getElementById('globalSearch'), host=document.getElementById('searchResults');
-  const raw=input.value.trim();
-  if(!raw){host.classList.remove('show');return}
-  if(isRut(raw)){
-    host.innerHTML=`<div class="result-group"><b>👤 Estudiante</b><div class="result-item" style="cursor:pointer" onclick="openStudentRut('${esc(raw)}')"><div class="result-icon">👤</div><div><strong>Abrir ficha por RUT</strong><br><span>${esc(raw)} · Ficha Estudiante</span></div></div></div>`;
-    host.classList.add('show');return;
-  }
-  const q=norm(raw);
-  const found=courses.filter(c=>norm([c.nrc,c['codigo curso'],c['nombre curso'],c['nombre programa'],c.tutor,c.intake,c.facultad].join(' ')).includes(q)).slice(0,7);
-  if(!found.length){
-    host.innerHTML='<div class="result-group"><span style="font-size:11px;color:#64748b">Sin coincidencias en cursos. Pruebe NRC, código de curso, programa o tutor.</span></div>';
-  }else{
-    host.innerHTML=`<div class="result-group"><b>📚 Cursos (${found.length})</b>${found.map(c=>`<div class="result-item" style="cursor:pointer" onclick="openNrc360('${esc(c.nrc)}')"><div class="result-icon">📘</div><div><strong>${esc(c['codigo curso']||c.nrc)} · ${esc(c.nrc)}</strong><br><span>${esc(String(c['nombre curso']||'').replace(/\*/g,''))} · ${esc(c.tutor||'Sin tutor')}</span></div></div>`).join('')}</div>`;
-  }
-  host.classList.add('show');
-}
-function showSearchResults(){runSearch()}
-document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch()});
-document.addEventListener('click',function(e){const card=document.querySelector('.search-card');if(card&&!card.contains(e.target))document.getElementById('searchResults').classList.remove('show')});
-
-function upcoming(days=7){
-  const start=new Date();start.setHours(0,0,0,0);const end=new Date(start);end.setDate(end.getDate()+days);
-  return courses.filter(c=>{const d=new Date(String(c['fecha inicio']||'')+'T12:00:00');return !isNaN(d)&&d>=start&&d<=end&&!['CERRADO','CANCELADO','ANULADO'].includes(upper(c.estado))});
-}
-function metricTotal(nrc){
-  const m=metrics.find(x=>norm(x.nrc)===norm(nrc)||norm(x.NRC_COD_CAL)===norm(nrc));
-  return m?Number(m.total_estudiantes??m.total??m.estudiantes??0):null;
-}
-function renderCourses(){
-  const rows=upcoming(21).sort((a,b)=>new Date(a['fecha inicio'])-new Date(b['fecha inicio'])).slice(0,5);
-  const body=document.querySelector('.table-wrap table tbody');
-  if(!body)return;
-  const fmt=v=>{if(!v)return'—';const d=new Date(v+'T12:00:00');return isNaN(d)?v:d.toLocaleDateString('es-CL')};
-  body.innerHTML=rows.length?rows.map(c=>{
-    const total=metricTotal(c.nrc), st=upper(c.estado), dot=st==='ACTIVO'?'dot-green':st==='EN CIERRE'?'dot-yellow':'dot-blue';
-    return `<tr style="cursor:pointer" onclick="openNrc360('${esc(c.nrc)}')"><td>${fmt(c['fecha inicio'])}</td><td>${esc(String(c.nrc||'').split('_')[0])}</td><td>${esc(c['codigo curso']||'—')}</td><td>${esc(c['nombre programa']||c.materia||'—')}</td><td>${esc(c.tutor||'—')}</td><td>${total===null?'—':total}</td><td><span class="status-dot ${dot}"></span>${esc(st||'—')}</td></tr>`;
-  }).join(''):'<tr><td colspan="7">No hay próximos inicios.</td></tr>';
-}
-function renderKpis(){
-  const active=courses.filter(c=>upper(c.estado)==='ACTIVO').length;
-  const prep=courses.filter(c=>upper(c.estado)==='PREPARACION').length;
-  const next7=upcoming(7).length;
-  const con=incidents.filter(i=>upper(i.qaIncidencias)==='CON INCIDENCIA');
-  const openInc=con.filter(i=>!['CORREGIDA','CERRADA','RESUELTA'].includes(upper(i.estadoIncidencia))).length;
-  const qaIds=new Set(incidents.map(i=>String(i.cursoId??'')).filter(Boolean));
-  const qaPend=courses.filter(c=>['ACTIVO','EN CIERRE','PREPARACION'].includes(upper(c.estado))&&norm(c['codigo curso'])!=='uni118'&&!qaIds.has(String(c.id??''))).length;
-  document.getElementById('kpiActivos').textContent=active;
-  document.getElementById('kpiInicios').textContent=next7;
-  document.getElementById('kpiPreparacion').textContent=prep;
-  document.getElementById('kpiIncidencias').textContent=openInc;
-  document.getElementById('focoInicios').textContent=next7;
-  document.getElementById('focoQa2').textContent=qaPend;
-  document.getElementById('focoIncidencias').textContent=openInc;
-  document.getElementById('focoPreparacion').textContent=prep;
-  // Riesgo accionable se mantiene oficialmente en Power BI; no se recalcula aquí.
-  document.getElementById('kpiRiesgo').textContent='↗';
-  document.getElementById('focoRiesgo').textContent='↗';
-}
-
-function askAI(question){
-  const box=document.getElementById('aiResponse'),q=norm(question);let answer='Puedo ayudarte a navegar hacia las herramientas actuales del portal.';
-  if(q.includes('cursos')&&q.includes('semana')) answer=`Hay ${upcoming(7).length} curso(s) con inicio dentro de los próximos 7 días. Puede abrir Calendarios desde el KPI correspondiente.`;
-  else if(q.includes('riesgo')) answer='El detalle de riesgo accionable se mantiene en la tabla DAX de Gestión Tutorial. Use el KPI “Estudiantes con riesgo accionable”.';
-  else if(q.includes('incidencia')) answer='Las incidencias se consultan en el HTML de Incidencias. El KPI abre esa vista sin cambiar la forma actual de trabajo.';
-  else if(q.includes('qa2')) answer='Los QA2 pendientes se revisan desde Control Académico / Incidencias. UNI118 queda excluido de este control.';
-  else if(q.includes('rut')) answer='Ingrese el RUT en el buscador universal para abrir la Ficha del Estudiante.';
-  box.textContent=answer;box.classList.add('show');
-}
-function askFromInput(){const input=document.getElementById('aiInput');if(input.value.trim())askAI(input.value.trim())}
-document.getElementById('aiInput').addEventListener('keydown',e=>{if(e.key==='Enter')askFromInput()});
-
-async function loadData(){
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('closed')}function toggleSub(id){document.getElementById(id).classList.toggle('open')}function findBtn(key){return document.querySelector('[data-key="'+key+'"]')}function activate(btn){document.querySelectorAll('.menu-btn').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+function normalizarFiltro(v){return String(v||'').replace(/\s+/g,' ').trim()}
+function sanitizarFiltro(v){return normalizarFiltro(v).replace(/'/g,"''")}
+function tutorSesionETOP(){
   try{
-    const stamp='?t='+Date.now();
-    const [a,b,c]=await Promise.all([
-      fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),
-      fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),
-      fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})
-    ]);
-    if(!a.ok)throw new Error('nrcs.json no disponible');
-    courses=clean(await a.json());incidents=b.ok?clean(await b.json()):[];metrics=c.ok?clean(await c.json()):[];
-    renderKpis();renderCourses();
-  }catch(err){
-    console.warn(err);
-    ['kpiActivos','kpiInicios','kpiPreparacion','kpiIncidencias','focoInicios','focoQa2','focoIncidencias','focoPreparacion'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});
-  }
+    const s=JSON.parse(localStorage.getItem('etop_usuario_sesion')||'null');
+    return s&&s.rol==='TUTOR'&&s.tutor?String(s.tutor).trim():'';
+  }catch(e){return''}
 }
-loadData();
-</script>
+function buildUrl(key){
+  const cfg=REPORTS[key]; if(!cfg)return'';
+  const tutorEfectivo=FILTER.tutor||tutorSesionETOP();
 
-<!--
-  INICIO TUTOR V5 ETOP
-  - Archivo independiente.
-  - No publica ni modifica GitHub.
-  - Los KPIs de cursos/incidencias se alimentan de JSON existentes; riesgo accionable permanece en Power BI.
-  - Puntos de integración futuros:
-      * Power BI: riesgo accionable / gestión.
-      * Calendarios: cursos y NRC.
-      * SharePoint: QA2, incidencias y datos base.
-      * ETOP IA: capa asistiva sobre datos autorizados.
--->
+  if(cfg.local){
+    const url=new URL(cfg.url,location.href);
+    if(FILTER.facultad) url.searchParams.set('facultad',FILTER.facultad);
+    if(tutorEfectivo) url.searchParams.set('tutor',tutorEfectivo);
+    if(FILTER.tipo) url.searchParams.set('tipo',FILTER.tipo);
+    if(FILTER.codigo) url.searchParams.set('codigo',FILTER.codigo);
+    if(FILTER.estado) url.searchParams.set('estado',FILTER.estado);
+    if(FILTER.intake) url.searchParams.set('intake',FILTER.intake);
+    if(FILTER.fechaInicio.length) url.searchParams.set('fechaInicio',FILTER.fechaInicio.join('|'));
+    if(FILTER.nrc) url.searchParams.set('nrc',FILTER.nrc);
+    if(key==='CURSOS_PREPARACION') url.searchParams.set('embed','1');
+    return url.toString();
+  }
+
+  const url=new URL('https://app.powerbi.com/reportEmbed');
+  url.searchParams.set('reportId','66b1fc8c-00c8-44f3-b327-890f57f3c7b8');
+  url.searchParams.set('groupId','308deb6f-aa2f-4c21-b5fb-33b977c17e13');
+  url.searchParams.set('ctid','8fbed393-d03b-49f8-be79-cd5e1f590fb2');
+  url.searchParams.set('autoAuth','true');
+  url.searchParams.set('pageName',cfg.page);
+  url.searchParams.set('navContentPaneEnabled','false');
+  url.searchParams.set('filterPaneEnabled','false');
+
+  const fx=[];
+  if(FILTER.facultad) fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(FILTER.facultad)}'`);
+  if(tutorEfectivo) fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
+  if(FILTER.tipo){
+    const tipoPBI=FILTER.tipo==='100%ONLINE'?'100PCTONLINE':FILTER.tipo;
+    fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`);
+  }
+  if(FILTER.codigo) fx.push(`NRC_TUTOR_ACTUAL/COD_CURSO eq '${sanitizarFiltro(FILTER.codigo)}'`);
+  if(FILTER.estado) fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(FILTER.estado)}'`);
+  if(FILTER.intake) fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(FILTER.intake)}'`);
+  if(FILTER.fechaInicio.length===1) fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${FILTER.fechaInicio[0]}T00:00:00'`);
+  if(FILTER.fechaInicio.length>1) fx.push('('+FILTER.fechaInicio.map(v=>`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${v}T00:00:00'`).join(' or ')+')');
+  if(FILTER.nrc) fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(FILTER.nrc)}'`);
+  if(FILTER.rut&&cfg.rut) fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(FILTER.rut)}'`);
+
+  const base=url.toString();
+  return fx.length?base+'&filter='+encodeURIComponent(fx.join(' and ')):base;
+}
+function openReport(key,btn){setTopbarMode('gestion',key);document.getElementById('homeView').style.display='none';document.getElementById('viewer').style.display='block';document.getElementById('reportFrame').src=buildUrl(key);document.getElementById('viewTitle').textContent=REPORTS[key].title;activate(btn)}
+function showHome(btn){setTopbarMode('home');document.getElementById('reportFrame').src='about:blank';document.getElementById('viewer').style.display='none';document.getElementById('homeView').style.display='block';document.getElementById('viewTitle').textContent='Inicio · Gestión Tutorial';activate(btn)}
+function openLocal(url,title,btn){setTopbarMode('gestion',null);document.getElementById('homeView').style.display='none';document.getElementById('viewer').style.display='block';document.getElementById('reportFrame').src=url;document.getElementById('viewTitle').textContent=title;activate(btn)}
+function showChannels(btn){openLocal('about:blank','Canales del Equipo',btn);document.getElementById('reportFrame').srcdoc='<style>body{font-family:Inter,Segoe UI;background:#eef3f8;margin:0;padding:35px;color:#21324a}.box{max-width:700px;margin:auto;background:white;border:1px solid #d9e2ec;border-radius:16px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,.06)}h2{margin-top:0;color:#142440}</style><div class="box"><h2>🟣 Canales SharePoint</h2><p>En la versión final se conserva exactamente la vista de canales de la página Gestión actual.</p></div>'}
+function runUniversalSearch(){const q=(document.getElementById('universalSearch').value||'').trim();if(!q)return;alert('Vista previa: el buscador universal buscará '+q+' en estudiante/RUT, NRC, curso, programa y tutor.');}
+function applyFilter(field,value){
+  if(field==='fechaInicio'){
+    const v=(value||'').trim();
+    if(v&&!FILTER.fechaInicio.includes(v))FILTER.fechaInicio.push(v);
+  }else{
+    FILTER[field]=value||null;
+  }if(document.getElementById('viewer').style.display==='block'){const active=document.querySelector('.menu-btn.active');const key=active?.dataset?.key;if(key&&REPORTS[key])document.getElementById('reportFrame').src=buildUrl(key)}}
+function resolveTutorSession(){
+  const real=tutorSesionETOP();
+  if(real)return real.toUpperCase();
+  const p=new URLSearchParams(location.search);
+  return (p.get('tutor')||'PAULA PARDO').trim().toUpperCase();
+}
+function initSession(){const tutor=resolveTutorSession();FILTER.tutor=tutor;const sel=document.getElementById('sel-tutor');let opt=[...sel.options].find(o=>o.value.toUpperCase()===tutor);if(!opt){opt=document.createElement('option');opt.value=tutor;opt.textContent=tutor;sel.appendChild(opt)}sel.value=tutor;document.getElementById('sessionTutor').textContent=tutor;
+  const real=tutorSesionETOP();
+  if(real){
+    sel.disabled=true;
+    sel.title='Tutor fijado por la sesión ETOP';
+  }document.getElementById('sessionFilterLabel').textContent='Tutor sesión: '+tutor;document.getElementById('helloTutor').textContent='Hola, '+tutor.replace(/\b\w/g,m=>m.toUpperCase())}initSession();setTopbarMode('home');
+</script>
 </body>
 </html>
