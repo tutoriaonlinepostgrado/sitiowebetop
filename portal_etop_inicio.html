@@ -198,6 +198,10 @@
 
 /* ===== Foco del día · página real Power BI ===== */
 .foco-powerbi-card{overflow:hidden}
+.foco-dashboard-link{cursor:pointer;transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease}
+.foco-dashboard-link:hover{border-color:#9fbfe9;box-shadow:0 10px 28px rgba(18,101,223,.12);transform:translateY(-1px)}
+.foco-dashboard-link:focus{outline:2px solid #3a9bff;outline-offset:2px}
+.foco-dashboard-link .foco-powerbi-frame{pointer-events:none}
 .foco-powerbi-body{
   padding:0!important;
   height:430px;
@@ -324,7 +328,7 @@
       <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
         <span>🔎</span>
         <input id="universalSearch"
-               placeholder="Buscar RUT, NRC, curso, programa o tutor..."
+               placeholder="Buscar RUT sin guion, NRC, curso, programa o tutor..."
                autocomplete="off"
                style="width:100%;border-radius:9px;padding-left:30px"
                oninput="onUniversalInput(this.value)"
@@ -406,17 +410,23 @@
     <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
     <div class="dashboard">
       <div class="left">
-        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card">
+        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link"
+         role="button"
+         tabindex="0"
+         title="Abrir Tablero de Gestión"
+         onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cargar('DASHBOARD',findBtn('DASHBOARD'))}">
   <div class="card-head">
     <h2>🎯 Foco del día</h2>
-    <span>Power BI · KPIs de seguimiento</span>
+    <span>Power BI · KPIs de seguimiento · Abrir Tablero de Gestión →</span>
   </div>
   <div class="card-body foco-powerbi-body">
     <iframe
       id="focoDiaFrame"
       class="foco-powerbi-frame"
       title="Foco del día · Power BI"
-      allowfullscreen="true">
+      allowfullscreen="true"
+      tabindex="-1">
     </iframe>
   </div>
 </section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
@@ -1052,12 +1062,15 @@ let universalIdx=-1;
 let universalItems=[];
 
 function universalRut(valor){
-  let r=String(valor||'').trim().toUpperCase().replace(/\./g,'').replace(/\s+/g,'');
-  if(/^\d{6,8}[\dK]$/.test(r))r=r.slice(0,-1)+'-'+r.slice(-1);
-  return r;
+  return String(valor||'')
+    .trim()
+    .toUpperCase()
+    .replace(/\./g,'')
+    .replace(/-/g,'')
+    .replace(/\s+/g,'');
 }
 function pareceRutUniversal(valor){
-  return /^\d{6,8}-[\dK]$/.test(universalRut(valor));
+  return /^\d{7,8}[\dK]$/.test(universalRut(valor));
 }
 function limpiarContextoUniversal(){
   Object.keys(BUSQUEDA).forEach(k=>BUSQUEDA[k]=Array.isArray(BUSQUEDA[k])?[]:null);
