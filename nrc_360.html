@@ -155,8 +155,16 @@ function studentsUrl(nrc,periodo){
   const codigo=(s[1]||'').trim();
   const per=String(periodo||s[s.length-1]||'').trim();
   if(!crn||!codigo||!per)return '';
+
   const filtro=crn+'_'+codigo;
-  return 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded'
+
+  // Vista SharePoint "Panel Gestion".
+  // Se reutiliza el mismo viewid que ya usa Explorador de Cursos ETOP.
+  const viewid='1f85f1c7-089f-47d6-8635-a2cc761fecc3';
+
+  return 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx'
+    +'?env=Embedded'
+    +'&viewid='+encodeURIComponent(viewid)
     +'&FilterField1=NRC_COD_CAL_FILTRO'
     +'&FilterValue1='+encodeURIComponent(filtro)
     +'&FilterField2=PERIODO_x002a_'
