@@ -116,6 +116,85 @@
 }
 
 .channel-link{display:block;padding:11px 12px;border:1px solid #dfe7f0;border-radius:9px;background:#f9fbfd;color:#334a63;text-decoration:none;font-size:10px;font-weight:700}.channel-link:hover{background:#eef6ff;border-color:#9fbfe9}
+
+/* ===== V5 · barra superior del mismo color que el menú izquierdo ===== */
+.top{
+  background:linear-gradient(180deg,#122541 0%,#142440 100%)!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+  color:#fff!important;
+}
+.view-title{color:#fff!important}
+.sep{background:rgba(255,255,255,.10)!important}
+.toggle{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.05)!important;
+  color:#dbe8f5!important;
+}
+.toggle:hover{background:rgba(255,255,255,.10)!important}
+#homeTopSearch .search-pill input,
+.fsel-topbar,.fecha-multi-input,.search-pill-input,.nrc-pill-input{
+  background:rgba(255,255,255,.055)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+#homeTopSearch .search-pill input::placeholder,
+.search-pill-input::placeholder,.nrc-pill-input::placeholder{color:#7f94ad!important}
+.fsel-topbar option{background:#142440!important;color:#e6edf5!important}
+.fsel-topbar:hover,.fsel-topbar:focus,
+.fecha-multi-input:focus,.search-pill-input:focus,.nrc-pill-input:focus{
+  border-color:#3a9bff!important;
+  background:rgba(255,255,255,.085)!important;
+  color:#fff!important;
+}
+.fsel-topbar.filtro-activo,
+.fecha-multi-wrap.filtro-activo .fecha-multi-input,
+.nrc-pill-wrap.filtro-activo .nrc-pill-input{
+  background:rgba(18,101,223,.20)!important;
+  border-color:#3a9bff!important;
+  color:#dcecff!important;
+}
+.search-group-label{color:#7188a4!important}
+.search-pill-icon,.nrc-pill-icon{color:#7188a4!important}
+.fecha-chip{
+  background:rgba(18,101,223,.20)!important;
+  border-color:rgba(58,155,255,.42)!important;
+  color:#dcecff!important;
+}
+.fecha-chip button{color:#76b8ff!important}
+.fecha-chip-clear{color:#8ea2ba!important}
+.filter-badge{
+  background:rgba(18,101,223,.18)!important;
+  border-color:rgba(58,155,255,.32)!important;
+  color:#b9d9ff!important;
+}
+.btn-clear-filter{
+  background:rgba(239,68,68,.10)!important;
+  border-color:rgba(239,68,68,.28)!important;
+  color:#fca5a5!important;
+}
+#btn-tutor-perfil{
+  background:rgba(255,255,255,.05)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+.guia-correos{border-left-color:rgba(255,255,255,.10)!important}
+.guia-correos-texto{color:#9fb0c4!important}
+.guia-correos-texto strong{color:#dce7f2!important}
+.guia-correos-btn{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(58,155,255,.30)!important;
+  color:#b9d9ff!important;
+}
+.universal-search-btn{background:#1265df!important;color:#fff!important}
+.nrc-dropdown{
+  background:#142440!important;
+  border-color:rgba(58,155,255,.32)!important;
+}
+.nrc-dropdown-item{color:#d6e2ee!important;border-bottom-color:rgba(255,255,255,.06)!important}
+.nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:rgba(18,101,223,.22)!important;color:#fff!important}
+.nrc-dropdown-item .match{color:#6db4ff!important}
+
 </style>
 </head>
 <body>
@@ -143,7 +222,7 @@
     <div class="menu-cat">Canales del equipo</div>
     <button class="collapsible" onclick="toggleSub('canales')"><span class="ico">🟣</span>Canales SharePoint<span class="arrow">▼</span></button>
     <div class="submenu" id="canales"><button class="menu-btn" onclick="mostrarCanales(this)">Ver todos los canales</button></div>
-    <button class="menu-btn coord-btn" onclick="openLocal('gestion_coordinacion.html','Coordinación',this)"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
+    <button class="menu-btn coord-btn" onclick="abrirCoordinacionPantallaCompleta()"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
   </div>
   <div class="session-box">
     <small>Sesión ETOP</small>
@@ -712,6 +791,16 @@ function openLocal(url,title,btn){
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
   document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;document.getElementById('titulo-vista').textContent=title;activate(btn);
 }
+
+function abrirCoordinacionPantallaCompleta(){
+  // En GitHub abre la hoja real ocupando toda la ventana.
+  // En la vista previa local abre la maqueta visual incluida con esta versión.
+  const esPreview = location.protocol === 'file:' || location.hostname.includes('sandbox');
+  location.href = esPreview
+    ? 'gestion_coordinacion_v5_visual_preview.html'
+    : 'gestion_coordinacion.html';
+}
+
 function runUniversalSearch(){const q=(document.getElementById('universalSearch').value||'').trim();if(!q)return;alert('Vista previa: búsqueda universal de "'+q+'".')}
 
 /* ===== Login: misma clave global que index.html; identidad visible solo en el panel izquierdo ===== */
