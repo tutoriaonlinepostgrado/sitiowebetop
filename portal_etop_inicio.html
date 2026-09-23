@@ -223,8 +223,49 @@
 
 <style>
 /* ===== Buscador universal V1 ===== */
-.universal-search-wrap{position:relative;z-index:80}
+.universal-search-wrap{
+  position:relative;
+  z-index:80;
+}
 .universal-search-wrap>span{z-index:2}
+
+/* Identidad visual sutil del buscador universal */
+.universal-search-wrap::before{
+  content:"UNIVERSAL";
+  position:absolute;
+  left:30px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  pointer-events:none;
+  padding:3px 7px;
+  border-radius:999px;
+  border:1px solid rgba(91,166,255,.34);
+  background:rgba(18,101,223,.18);
+  color:#9fcbff;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+}
+#homeTopSearch .universal-search-wrap input{
+  padding-left:94px!important;
+  border-color:rgba(91,166,255,.34)!important;
+  background:linear-gradient(90deg,rgba(18,101,223,.12),rgba(255,255,255,.055))!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.015);
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease!important;
+}
+#homeTopSearch .universal-search-wrap:hover input{
+  border-color:rgba(91,166,255,.52)!important;
+}
+#homeTopSearch .universal-search-wrap input:focus{
+  border-color:#4fa3ff!important;
+  background:rgba(255,255,255,.085)!important;
+  box-shadow:0 0 0 3px rgba(18,101,223,.13)!important;
+}
+#homeTopSearch .universal-search-btn{
+  box-shadow:0 4px 12px rgba(18,101,223,.18);
+}
 .universal-results{
   display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);
   max-height:min(460px,64vh);
@@ -330,7 +371,7 @@
         <input id="universalSearch"
                placeholder="Buscar RUT sin guion, NRC, curso, programa o tutor..."
                autocomplete="off"
-               style="width:100%;border-radius:9px;padding-left:30px"
+               style="width:100%;border-radius:9px"
                oninput="onUniversalInput(this.value)"
                onkeydown="onUniversalKeydown(event)">
         <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
@@ -430,7 +471,7 @@
     </iframe>
   </div>
 </section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
-          <div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Estudiantes acumulados →</div></div>
+          <div class="kpi" onclick="abrirNominaAtencionesActivas()"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Nómina · estado ACTIVO →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
           <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPromedio">—</div><div class="l">Promedio estudiantes / NRC</div><div class="s">Ver carga →</div></div>
@@ -1024,6 +1065,11 @@ function abrirDetalleCargaTutorial(){
   visor.src=BASE+'carga_tutorial.html?'+p.toString();
   document.getElementById('titulo-vista').textContent='Carga Tutorial';
   activate(null);
+}
+
+function abrirNominaAtencionesActivas(){
+  BUSQUEDA.estado='ACTIVO';
+  cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'));
 }
 
 function showHome(btn){
