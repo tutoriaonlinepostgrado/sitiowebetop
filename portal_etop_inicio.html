@@ -1140,7 +1140,7 @@ function buscarUniversal(valor){
       tipo:'curso',
       key:'curso:'+String(c.nrc||''),
       titulo:[c.nrc,c['codigo curso'],c['nombre curso']].filter(Boolean).join(' · '),
-      sub:[c['nombre programa'],c.tutor,c.estado,c.intake].filter(Boolean).join(' · '),
+      sub:['Ficha NRC',c['nombre programa'],c.tutor,c.estado,c.intake].filter(Boolean).join(' · '),
       tag:c.estado||'Curso',
       curso:c
     }));
@@ -1202,12 +1202,19 @@ function onUniversalKeydown(e){
     document.getElementById('universalResults')?.classList.remove('open');
   }
 }
-function destinoCursoUniversal(c){
-  const e=normalizarBusqueda(c?.estado);
-  if(e==='PREPARACION')return 'CURSOS_PREPARACION';
-  if(e==='EN CIERRE')return 'CURSOS_CIERRE';
-  if(e==='ACTIVO')return 'CURSOS_ACTIVOS';
-  return 'CALENDARIOS';
+function abrirFichaNRCUniversal(c){
+  const nrc=String(c?.nrc||'').trim();
+  if(!nrc)return;
+  mostrarAreaGestion();
+  vistaActual=null;
+  document.getElementById('homeTopSearch').style.display='none';
+  document.getElementById('gestionFilters').style.display='none';
+  document.getElementById('guia-correos').style.display='none';
+  const visor=document.getElementById('visor');
+  visor.style.display='block';
+  visor.src=BASE+'nrc_360.html?embed=1&nrc='+encodeURIComponent(nrc);
+  document.getElementById('titulo-vista').textContent='Ficha NRC · '+nrc;
+  activate(null);
 }
 function ejecutarUniversalItem(item){
   if(!item)return;
@@ -1234,8 +1241,7 @@ function ejecutarUniversalItem(item){
     BUSQUEDA.nrc=nrc;nrcConfirmado=nrc;
     const inp=document.getElementById('input-nrc');if(inp)inp.value=nrc;
     sincronizarFiltros();actualizarBadge();
-    const destino=destinoCursoUniversal(item.curso);
-    cargar(destino,findBtn(destino));
+    abrirFichaNRCUniversal(item.curso);
   }
 }
 function runUniversalSearch(){
