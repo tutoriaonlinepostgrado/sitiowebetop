@@ -1,318 +1,1361 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Cursos en preparación · ETOP</title>
-  <style>
-    :root{--navy:#1f2940;--navy2:#141b2d;--gold:#ffd700;--bg:#edf3f9;--card:#fff;--line:#d6e1ec;--text:#27364a;--muted:#64748b;--blue:#315f86;--red:#c95d63;--green:#4f8a6d}
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Tahoma,sans-serif;font-weight:400;background:var(--bg);color:var(--text)}button,input,select{font:inherit}
-    .top{position:sticky;top:0;z-index:30;background:var(--navy);color:#fff;border-bottom:2px solid var(--gold);box-shadow:0 4px 18px rgba(15,23,42,.18)}
-    .top-main{min-height:54px;display:flex;align-items:center;gap:12px;padding:8px 18px}.brand{min-width:245px}.brand strong{display:block;color:var(--gold);font-size:14px;letter-spacing:.04em}.brand span{font-size:10px;color:#aeb9c7;text-transform:uppercase;letter-spacing:.12em}
-    .filters{display:flex;align-items:center;gap:7px;flex:1;min-width:0;overflow-x:auto;padding-bottom:1px}.filter{height:30px;min-width:116px;max-width:180px;border:1px solid rgba(255,255,255,.14);border-radius:7px;background:#27334c;color:#dce5f2;padding:0 26px 0 9px;font-size:11px;outline:none}.filter:focus{border-color:var(--gold)}.filter option{background:#1f2940}.search{min-width:150px;padding-right:9px}.clear,.profile{height:30px;border-radius:7px;cursor:pointer;white-space:nowrap}.clear{border:1px solid rgba(248,113,113,.38);background:rgba(239,68,68,.08);color:#fca5a5;padding:0 10px;font-size:10px;font-weight:700}.profile{border:1px solid rgba(255,215,0,.38);background:rgba(255,215,0,.09);color:var(--gold);padding:0 11px;font-size:10px;font-weight:700}
-    .summary{display:grid;grid-template-columns:minmax(280px,1fr) repeat(3,minmax(105px,150px));gap:10px;padding:14px 18px 10px}.summary-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:0 2px 7px rgba(49,95,134,.06)}.summary-card h1{margin:0;font-size:19px;font-weight:600;color:#173f61}.summary-card p{margin:4px 0 0;font-size:11px;color:var(--muted)}.kpi{display:flex;align-items:center;justify-content:space-between}.kpi span{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}.kpi strong{font-size:25px;font-weight:600;color:var(--blue)}
-    .selection{display:none;position:sticky;top:56px;z-index:25;margin:0 18px 10px;padding:9px 12px;border-radius:9px;background:#fff9d9;border:1px solid #e4c94e;box-shadow:0 5px 18px rgba(76,64,0,.14);align-items:center;gap:10px}.selection.on{display:flex}.selection-info{flex:1;font-size:11px;color:#574a00}.selection-info strong{font-size:12px}.selection button{height:30px;border-radius:7px;border:0;padding:0 12px;font-size:10px;font-weight:800;cursor:pointer}.btn-reset{background:#e9edf2;color:#475569}.btn-qa2{background:var(--navy);color:var(--gold)}
-    .table-shell{margin:0 18px 18px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:calc(100vh - 172px);box-shadow:0 4px 15px rgba(49,95,134,.07)}table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:11px}thead{position:sticky;top:0;z-index:10}th{background:#dce8f3;color:#334155;text-transform:uppercase;letter-spacing:.045em;font-size:9px;font-weight:600;padding:9px 10px;text-align:left;border-bottom:2px solid #9fb4c8;white-space:nowrap}td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:#fff;font-weight:400}tbody tr:hover td{background:#e7eff7}tbody tr.pending td{background:#fff7f7}tbody tr.pending:hover td{background:#fee2e2}.center{text-align:center}.course{max-width:260px;line-height:1.3;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.intake-cell{max-width:260px}.intake-cell .nrc-link{display:block;overflow:hidden;text-overflow:ellipsis}.tutor{max-width:170px;overflow:hidden;text-overflow:ellipsis}.nrc-link{font-weight:600;color:var(--blue);text-decoration:none}.nrc-link:hover{text-decoration:underline}.date{font-size:10px;color:var(--muted)}.countdown{font-weight:600;color:#334155}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:22px;padding:3px 8px;border-radius:7px;font-size:9px;font-weight:600;text-decoration:none}.incident{background:#477a9e;color:#fff}.incident.alert{background:var(--red)}.student{background:#94a3b8;color:#fff}.icon{display:inline-flex;align-items:center;justify-content:center;width:29px;height:27px;border-radius:6px;text-decoration:none;background:#edf2f7;border:1px solid #cad6e2;font-size:14px}.icon:hover{background:#dde8f1}.icon.off{opacity:.34;pointer-events:none}.edit-course{display:inline-flex;align-items:center;justify-content:center;height:27px;padding:0 9px;border-radius:6px;text-decoration:none;background:#edf2f7;border:1px solid #cad6e2;color:#315f86;font-size:9px;font-weight:800;white-space:nowrap;cursor:pointer;font-family:inherit}.edit-course:hover{background:#dde8f1;border-color:#9fb4c8}
-    .prep-workspace{display:flex;gap:12px;align-items:flex-start;margin:0 18px 18px}
-    .prep-workspace .table-shell{margin:0;flex:1;min-width:0}
-    .prep-editor{display:none;width:390px;min-width:390px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 4px 15px rgba(49,95,134,.08);position:sticky;top:68px;height:calc(100vh - 82px);max-height:calc(100vh - 82px)}
-    .prep-editor.open{display:flex;flex-direction:column}
-    #prepEditorContent{display:flex;flex-direction:column;flex:1;min-height:0;height:100%}
-    .prep-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line);background:#f8fafc;flex:0 0 auto}
-    .prep-editor-kicker{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#64748b}
-    .prep-editor-nrc{font-size:11px;font-weight:800;color:#173f61;margin-top:2px}
-    .prep-editor-course{font-size:9px;color:#64748b;margin-top:1px;line-height:1.2}
-    .prep-editor-close{width:26px;height:26px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;color:#64748b;font-size:15px;cursor:pointer;flex:0 0 auto}
-    .prep-editor-note{padding:5px 9px;font-size:8px;color:#64748b;border-bottom:1px solid var(--line);flex:0 0 auto}
-    .prep-editor iframe{display:block;width:100%;height:100%;min-height:0;flex:1 1 auto;border:0;background:#fff}
-    @media(max-width:1100px){.prep-editor{position:fixed;top:8px;right:8px;bottom:8px;height:auto;max-height:none;z-index:90;width:min(390px,calc(100vw - 16px));min-width:0;box-shadow:0 18px 45px rgba(15,23,42,.24)}}
-    body.embedded .prep-workspace{margin:0 0 6px}
-    body.embedded .prep-editor{top:4px;height:calc(100vh - 8px);max-height:calc(100vh - 8px)}
-.check{width:16px;height:16px;accent-color:#315f86;cursor:pointer}.empty{padding:42px;text-align:center;color:var(--muted)}
-    .loading{padding:45px;text-align:center;color:var(--muted)}.spinner{display:inline-block;width:22px;height:22px;border:3px solid #cbd5e1;border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:8px}@keyframes spin{to{transform:rotate(360deg)}}
-    .modal{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;padding:20px}.modal.on{display:flex}.dialog{width:min(440px,100%);background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}.dialog-head{background:var(--navy);color:#fff;padding:18px 20px;border-bottom:3px solid var(--gold)}.dialog-head h2{margin:0;font-size:18px}.dialog-head p{margin:5px 0 0;font-size:11px;color:#cbd5e1}.dialog-body{padding:20px}.dialog-body label{display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:6px}.email{width:100%;height:39px;border:1px solid #cbd5e1;border-radius:8px;padding:0 11px;outline:none}.email:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,95,134,.1)}.form-msg{min-height:18px;margin-top:6px;font-size:10px;color:var(--red)}.dialog-actions{display:flex;gap:8px;margin-top:14px}.dialog-actions button{height:36px;border-radius:8px;padding:0 13px;font-size:11px;font-weight:800;cursor:pointer}.save{flex:1;border:0;background:var(--navy);color:var(--gold)}.all{border:1px solid #cbd5e1;background:#f8fafc;color:#475569}
-    @media(max-width:1450px){.top-main{flex-wrap:wrap}.brand{min-width:210px}.filters{order:3;width:100%;overflow:visible;flex-wrap:wrap}.filter{flex:1 1 145px;max-width:none}.search{flex:2 1 220px}.selection{top:98px}.table-shell{max-height:calc(100vh - 222px)}th{padding-inline:8px}td{padding-inline:8px}.course{max-width:225px}.intake-cell{max-width:225px}}
-    @media(max-width:900px){.top-main{align-items:flex-start}.brand{min-width:180px;flex:1}.profile{margin-left:auto}.filter{flex-basis:135px}.search{flex-basis:190px}.summary{grid-template-columns:1fr 1fr}.summary-card:first-child{grid-column:1/-1}.table-shell{max-height:calc(100vh - 285px)}.selection{top:132px}}
-    body.embedded .top{display:none!important}
-    body.embedded .filters{display:none!important}
-    body.embedded .top-main{min-height:42px;padding:6px 12px}
-    body.embedded .brand{min-width:0;flex:1}
-    body.embedded .brand strong{font-size:12px}
-    body.embedded .brand span{font-size:9px}
-    body.embedded .profile{margin-left:auto}
-    body.embedded .selection{top:0}
-    body.embedded .summary{padding-top:10px}
-    body.embedded .table-shell{max-height:calc(100vh - 112px)}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETOP · Gestión Tutorial V5 · Vista previa</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#142440;--navy2:#1d3153;--blue:#1265df;--yellow:#f4c400;--bg:#eef3f8;--card:#fff;--line:#d9e2ec;--text:#17243a;--muted:#728197;--red:#dc3545;--orange:#e58b00;--green:#11a36a;--purple:#7c3aed;--shadow:0 8px 24px rgba(31,45,61,.08)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}body{overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;height:100vh;width:100vw}.sidebar{width:270px;min-width:270px;background:linear-gradient(180deg,#122541 0%,#142440 100%);color:#fff;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);transition:.22s;overflow:hidden}.sidebar.closed{width:0;min-width:0;opacity:0}
+.brand{min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.brand img{width:58px;height:58px;object-fit:contain}.brand-text b{display:block;font-size:16px;letter-spacing:.04em}.brand-text span{font-size:10px;color:#b9c8d9}
+.menu{flex:1;overflow:auto;padding:9px 7px 10px}.menu-cat{padding:12px 12px 5px;color:#72859f;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.menu-btn,.collapsible{width:100%;border:0;background:transparent;color:#d8e3ee;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12px;text-align:left;margin:2px 0;transition:.15s}.menu-btn:hover,.collapsible:hover{background:rgba(255,255,255,.06);color:#fff}.menu-btn.active{background:linear-gradient(90deg,rgba(26,124,245,.32),rgba(26,124,245,.09));color:#fff;border-left:3px solid #3a9bff;font-weight:700}.menu-btn .ico,.collapsible .ico{width:20px;text-align:center}.collapsible .arrow{margin-left:auto;color:#768aa3;font-size:10px}.submenu{display:none;margin-left:14px;padding-left:7px;border-left:1px solid rgba(255,255,255,.09)}.submenu.open{display:block}.submenu .menu-btn{font-size:11px;color:#afbed0;padding:7px 9px}.coord-btn{margin:10px 8px 0;border:1px solid rgba(244,196,0,.38);color:#ffe16d;background:rgba(244,196,0,.06)}
 
-    /* Tabla embebida adaptable al ancho del portal */
-    body.embedded .table-shell{overflow:auto}
-    body.embedded table{width:100%;min-width:0;table-layout:fixed;font-size:10px}
-    body.embedded th{padding:7px 5px;font-size:8px;overflow:hidden;text-overflow:ellipsis}
-    body.embedded td{padding:6px 5px;font-size:9px;overflow:hidden;text-overflow:ellipsis}
-    body.embedded .course{max-width:none;font-size:9px;line-height:1.2}
-    body.embedded .intake-cell{max-width:none;overflow:hidden;text-overflow:ellipsis}
-    body.embedded .date{font-size:9px}
-    body.embedded .badge{padding:2px 5px;font-size:8px;min-height:20px}
-    body.embedded .icon{width:25px;height:24px;font-size:12px}
-    body.embedded th:nth-child(1),body.embedded td:nth-child(1){width:3%}
-    body.embedded th:nth-child(2),body.embedded td:nth-child(2){width:22%}
-    body.embedded th:nth-child(3),body.embedded td:nth-child(3){width:18%}
-    body.embedded th:nth-child(4),body.embedded td:nth-child(4){width:7%}
-    body.embedded th:nth-child(5),body.embedded td:nth-child(5){width:7%}
-    body.embedded th:nth-child(6),body.embedded td:nth-child(6){width:7%}
-    body.embedded th:nth-child(7),body.embedded td:nth-child(7){width:10%}
-    body.embedded th:nth-child(8),body.embedded td:nth-child(8){width:5%}
-    body.embedded th:nth-child(9),body.embedded td:nth-child(9){width:5%}
-    body.embedded th:nth-child(10),body.embedded td:nth-child(10){width:6%}
-    body.embedded th:nth-child(11),body.embedded td:nth-child(11){width:5%}
-    body.embedded th:nth-child(12),body.embedded td:nth-child(12){width:5%}
-    body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%}
-    @media(max-width:1350px){
-      body.embedded .summary{grid-template-columns:minmax(0,1fr) 120px 120px 120px}
-      body.embedded .summary-card{padding:8px 10px}
-      body.embedded .summary-card h1{font-size:16px}
-      body.embedded .kpi strong{font-size:21px}
-      body.embedded th{font-size:7px;padding-left:3px;padding-right:3px}
-      body.embedded td{font-size:8px;padding-left:3px;padding-right:3px}
-      body.embedded .icon{width:23px;height:22px;font-size:11px}
-    }
-  </style>
+.session-box{padding:11px 13px 13px;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.10)}
+.session-box small{display:block;color:#8094ad;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.session-box b{display:block;margin-top:4px;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-meta{margin-top:5px}
+.session-box .session-meta span{display:inline-flex;margin:0;padding:3px 6px;border-radius:999px;background:rgba(34,197,94,.12);color:#65df91;font-size:8px;font-weight:800}
+.session-box .session-meta span.off{background:rgba(148,163,184,.12);color:#a8b5c5}
+.sidebar-login-btn{width:100%;height:30px;margin-top:8px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:#dce7f2;font-size:9px;font-weight:800;cursor:pointer}
+.sidebar-login-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(58,155,255,.45);color:#fff}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}
+.home{flex:1;overflow:auto;padding:14px}.viewer{display:none;flex:1;min-height:0;background:#fff}.viewer iframe{width:100%;height:100%;border:0}.hero{background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);border:1px solid var(--line);border-radius:16px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center}.hero .kicker{font-size:9px;color:#68809c;font-weight:800;text-transform:uppercase;letter-spacing:.11em}.hero h1{margin:4px 0 2px;font-size:22px}.hero p{margin:0;color:#728197;font-size:11px}.hero-side{text-align:right;font-size:10px;color:#728197}.hero-side b{display:block;color:#253b55;font-size:11px;margin-bottom:3px}.preview-tag{display:inline-block;background:#fff7cc;color:#8a6a00;border:1px solid #eadb86;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:800}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
+.foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
+.kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:9px;padding:8px;text-align:left;color:#334a63;min-height:66px}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:8px;line-height:1.1}.quick span{font-size:14px;display:block;margin-bottom:4px}
+.viva{height:calc(100vh - 174px);min-height:640px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}.note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
+@media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{height:auto;min-height:560px}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
+
+.etop-user-btn{display:inline-flex;align-items:center;gap:6px;height:31px;padding:0 10px;border-radius:9px;border:1px solid #d7e2ef;background:#fff;color:#315b86;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}
+.etop-user-btn:hover{background:#f5f9ff;border-color:#aac7e9}
+.etop-login-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(2,6,23,.70);align-items:center;justify-content:center;padding:18px}
+.etop-login-overlay.open{display:flex}
+.etop-login-card{width:min(430px,100%);background:#fff;border:1px solid #d8e2ed;border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,.32);overflow:hidden}
+.etop-login-head{padding:18px 20px;border-bottom:3px solid #f4c400;background:#142440}
+.etop-login-head h3{margin:0;color:#fff;font-size:17px}.etop-login-head p{margin:5px 0 0;color:#b7c5d6;font-size:11px;line-height:1.45}
+.etop-login-body{padding:20px}.etop-login-body label{display:block;color:#334155;font-size:11px;font-weight:700;margin-bottom:6px}
+.etop-login-input{width:100%;height:40px;border-radius:9px;border:1px solid #cad6e4;background:#fff;color:#1f2937;padding:0 11px;outline:none;font-size:13px}
+.etop-login-input:focus{border-color:#1265df;box-shadow:0 0 0 3px rgba(18,101,223,.10)}
+.etop-login-msg{min-height:18px;margin-top:7px;color:#dc2626;font-size:10px}
+.etop-login-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.etop-login-save{height:36px;border:0;border-radius:8px;background:#1265df;color:#fff;padding:0 16px;font-size:11px;font-weight:800;cursor:pointer}.etop-login-cancel{height:36px;border:1px solid #d7e0ea;border-radius:8px;background:#fff;color:#52677d;padding:0 13px;font-size:11px;font-weight:700;cursor:pointer}
+.guia-correos{display:none;align-items:center;gap:8px;margin-left:5px}.guia-correos-texto{font-size:8px;color:#718399;max-width:260px}.guia-correos-texto strong{color:#294866}.guia-correos-btn{height:28px;padding:0 9px;border:1px solid #d9c768;border-radius:7px;background:#fff9d9;color:#7f6700;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.filter-badge{display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#eef6ff;border:1px solid #d6e8ff;font-size:8px;font-weight:700;color:#315f91;white-space:nowrap}.filter-badge.on{display:inline-flex}
+.clear-filter{display:none;height:26px;border:1px solid #f0caca;background:#fff4f4;color:#b42318;border-radius:7px;padding:0 8px;font-size:8px;font-weight:800}.clear-filter.on{display:inline-flex;align-items:center}
+.nrc-dropdown{position:absolute;top:35px;left:0;z-index:100;background:white;border:1px solid #d6e0eb;border-radius:8px;min-width:260px;max-height:230px;overflow:auto;box-shadow:0 10px 30px rgba(15,23,42,.15);display:none}
+.nrc-dropdown.show{display:block}.nrc-item{padding:7px 10px;font-size:9px;color:#334155;border-bottom:1px solid #eef2f7;cursor:pointer}.nrc-item:hover{background:#f2f7ff}
+.date-chip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 7px;border-radius:999px;border:1px solid #d7e2ef;background:#fff;font-size:8px;color:#52677d}.date-chip button{border:0;background:transparent;color:#b42318;padding:0;cursor:pointer}
+
+
+.sidebar,.menu{overflow-x:hidden!important}
+.menu-btn,.collapsible,.coord-btn{max-width:100%;min-width:0}
+.menu::-webkit-scrollbar:horizontal,.sidebar::-webkit-scrollbar:horizontal{height:0!important;display:none!important}
+.menu{scrollbar-width:thin}
+
+
+#gestionFilters{column-gap:6px!important;row-gap:5px!important}
+#gestionFilters .filter-badge{margin-left:2px}
+#gestionFilters #btn-clear-filter{margin-left:0}
+
+
+/* ===== Filtros V5 con comportamiento idéntico a gestion_base.html ===== */
+.top{height:auto;min-height:58px;align-items:flex-start;padding:8px 14px;flex-wrap:nowrap}
+.top .toggle,.top .view-title,.top .sep{margin-top:2px}
+.top-bar-search{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;flex-wrap:wrap;row-gap:6px;align-content:flex-start}
+.fsel-topbar{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;font-weight:500;cursor:pointer;outline:none;appearance:none;max-width:132px;min-width:92px;background-image:linear-gradient(45deg,transparent 50%,#718399 50%),linear-gradient(135deg,#718399 50%,transparent 50%);background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+.fsel-topbar:hover,.fsel-topbar:focus{border-color:#77a8eb;color:#244b75}
+.fsel-topbar:disabled{opacity:.5;cursor:not-allowed}
+.fsel-topbar.filtro-activo,.fecha-multi-wrap.filtro-activo .fecha-multi-input,.nrc-pill-wrap.filtro-activo .nrc-pill-input{border-color:#77a8eb!important;background-color:#eef6ff!important;color:#1265df!important;font-weight:700}
+.fecha-multi-wrap{display:flex;align-items:center;gap:5px;min-width:0}
+.fecha-multi-input{height:31px;width:126px;padding:0 7px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;font-size:10px;outline:none;color-scheme:light}
+.fecha-chips{display:flex;align-items:center;gap:4px;max-width:270px;overflow-x:auto;scrollbar-width:thin}
+.fecha-chip{display:inline-flex;align-items:center;gap:4px;height:25px;padding:0 7px;border:1px solid #bcd4f1;border-radius:13px;background:#eef6ff;color:#315f91;font-size:8px;font-weight:700;white-space:nowrap}
+.fecha-chip button{border:0;background:none;color:#1265df;font-size:12px;line-height:1;cursor:pointer;padding:0}
+.fecha-chip-clear{height:25px;border:0;background:none;color:#718399;font-size:8px;cursor:pointer;white-space:nowrap}
+.fecha-chip-clear:hover{color:#1265df}
+.top-filter-break{flex-basis:100%;height:0}
+.search-group{display:flex;align-items:center;gap:5px}
+.search-group-label{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#718399;white-space:nowrap}
+.search-pill-wrap,.nrc-pill-wrap{position:relative;display:flex;align-items:center}
+.search-pill-icon,.nrc-pill-icon{position:absolute;left:9px;pointer-events:none;font-size:12px;color:#8ba0b8;line-height:1;z-index:1}
+.search-pill-input,.nrc-pill-input{height:31px;border-radius:999px;background:#fff;border:1px solid #d6e0eb;color:#42576e;padding:0 28px 0 27px;font-size:10px;font-weight:500;outline:none;transition:.15s;width:118px}
+.search-pill-input:focus,.nrc-pill-input:focus{width:148px;border-color:#77a8eb;box-shadow:0 0 0 3px rgba(18,101,223,.06)}
+.search-pill-go{position:absolute;right:6px;height:18px;padding:0 6px;border-radius:9px;background:#eef6ff;border:1px solid #bfd8f8;color:#1265df;font-size:8px;font-weight:700;cursor:pointer;opacity:0;pointer-events:none}
+.search-pill-input:focus + .search-pill-go{opacity:1;pointer-events:auto}
+.nrc-pill-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:0;border-radius:50%;background:#fff0f0;color:#cf3a3a;cursor:pointer;display:none;padding:0;line-height:18px;font-size:12px;z-index:3}
+.nrc-pill-wrap.filtro-activo .nrc-pill-clear,.nrc-pill-wrap.nrc-con-texto .nrc-pill-clear{display:block}
+.nrc-pill-wrap.filtro-activo .nrc-pill-input,.nrc-pill-wrap.nrc-con-texto .nrc-pill-input{padding-right:28px}
+.nrc-dropdown{position:absolute;top:calc(100% + 5px);left:0;background:#fff;border:1px solid #cfdbe8;border-radius:9px;max-height:230px;overflow-y:auto;z-index:9999;min-width:260px;display:none;box-shadow:0 12px 30px rgba(15,23,42,.16)}
+.nrc-dropdown.visible{display:block}
+.nrc-dropdown-item{padding:7px 11px;font-size:10px;color:#42576e;cursor:pointer;border-bottom:1px solid #edf1f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:#eef6ff;color:#183e69}
+.nrc-dropdown-item .match{color:#1265df;font-weight:800}
+.filter-badge{display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#eef6ff;border:1px solid #d6e8ff;font-size:8px;font-weight:700;color:#315f91;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.filter-badge.on{display:flex}
+.btn-clear-filter{display:none;align-items:center;height:27px;padding:0 8px;border-radius:7px;border:1px solid #f0caca;background:#fff4f4;color:#b42318;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.btn-clear-filter.on{display:flex}
+#btn-tutor-perfil{border-color:#c9d9ed;background:#f3f8fe;color:#315f91}
+.guia-correos{display:none;align-items:center;gap:7px;margin-left:7px;padding-left:7px;border-left:1px solid #e3e9f0;min-width:0}
+.guia-correos-texto{max-width:300px;color:#718399;font-size:8px;line-height:1.25}.guia-correos-texto strong{color:#315f91}
+.guia-correos-btn{height:28px;padding:0 10px;border:1px solid #c8d9ee;border-radius:7px;background:#f3f8fe;color:#315f91;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.universal-search-btn{height:31px;border:0;border-radius:8px;background:#1265df;color:white;padding:0 16px;font-size:10px;font-weight:800}
+.nrc-pill-input.guia-atencion{border-color:#e0a800!important;box-shadow:0 0 0 4px rgba(244,196,0,.14)!important}
+.canal-splash-v5{display:none;position:absolute;inset:0;overflow:auto;background:#eef3f8;padding:28px}
+.canal-splash-v5.visible{display:block}
+.viewer{position:relative}
+@media(min-width:1500px){
+  .top-filter-break{display:none}
+  .top-bar-search{flex-wrap:nowrap}
+}
+@media(max-width:1499px){
+  .top{padding-top:6px;padding-bottom:6px}
+  .top-bar-search{flex-wrap:wrap}
+  .top-filter-break{display:block}
+}
+
+.channel-link{display:block;padding:11px 12px;border:1px solid #dfe7f0;border-radius:9px;background:#f9fbfd;color:#334a63;text-decoration:none;font-size:10px;font-weight:700}.channel-link:hover{background:#eef6ff;border-color:#9fbfe9}
+
+/* ===== V5 · barra superior del mismo color que el menú izquierdo ===== */
+.top{
+  background:linear-gradient(180deg,#122541 0%,#142440 100%)!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+  color:#fff!important;
+}
+.view-title{color:#fff!important}
+.sep{background:rgba(255,255,255,.10)!important}
+.toggle{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.05)!important;
+  color:#dbe8f5!important;
+}
+.toggle:hover{background:rgba(255,255,255,.10)!important}
+#homeTopSearch .search-pill input,
+.fsel-topbar,.fecha-multi-input,.search-pill-input,.nrc-pill-input{
+  background:rgba(255,255,255,.055)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+#homeTopSearch .search-pill input::placeholder,
+.search-pill-input::placeholder,.nrc-pill-input::placeholder{color:#7f94ad!important}
+.fsel-topbar option{background:#142440!important;color:#e6edf5!important}
+.fsel-topbar:hover,.fsel-topbar:focus,
+.fecha-multi-input:focus,.search-pill-input:focus,.nrc-pill-input:focus{
+  border-color:#3a9bff!important;
+  background:rgba(255,255,255,.085)!important;
+  color:#fff!important;
+}
+.fsel-topbar.filtro-activo,
+.fecha-multi-wrap.filtro-activo .fecha-multi-input,
+.nrc-pill-wrap.filtro-activo .nrc-pill-input{
+  background:rgba(18,101,223,.20)!important;
+  border-color:#3a9bff!important;
+  color:#dcecff!important;
+}
+.search-group-label{color:#7188a4!important}
+.search-pill-icon,.nrc-pill-icon{color:#7188a4!important}
+.fecha-chip{
+  background:rgba(18,101,223,.20)!important;
+  border-color:rgba(58,155,255,.42)!important;
+  color:#dcecff!important;
+}
+.fecha-chip button{color:#76b8ff!important}
+.fecha-chip-clear{color:#8ea2ba!important}
+.filter-badge{
+  background:rgba(18,101,223,.18)!important;
+  border-color:rgba(58,155,255,.32)!important;
+  color:#b9d9ff!important;
+}
+.btn-clear-filter{
+  background:rgba(239,68,68,.10)!important;
+  border-color:rgba(239,68,68,.28)!important;
+  color:#fca5a5!important;
+}
+#btn-tutor-perfil{
+  background:rgba(255,255,255,.05)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+.guia-correos{border-left-color:rgba(255,255,255,.10)!important}
+.guia-correos-texto{color:#9fb0c4!important}
+.guia-correos-texto strong{color:#dce7f2!important}
+.guia-correos-btn{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(58,155,255,.30)!important;
+  color:#b9d9ff!important;
+}
+.universal-search-btn{background:#1265df!important;color:#fff!important}
+.nrc-dropdown{
+  background:#142440!important;
+  border-color:rgba(58,155,255,.32)!important;
+}
+.nrc-dropdown-item{color:#d6e2ee!important;border-bottom-color:rgba(255,255,255,.06)!important}
+.nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:rgba(18,101,223,.22)!important;color:#fff!important}
+.nrc-dropdown-item .match{color:#6db4ff!important}
+
+
+/* ===== Foco del día · página real Power BI ===== */
+.foco-powerbi-card{overflow:hidden}
+.foco-powerbi-body{
+  padding:0!important;
+  height:430px;
+  min-height:430px;
+  background:#fff;
+}
+.foco-powerbi-frame{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+@media(max-width:1280px){
+  .foco-powerbi-body{height:480px;min-height:480px}
+}
+
+</style>
+
+<style>
+/* ===== Buscador universal V1 ===== */
+.universal-search-wrap{position:relative;z-index:80}
+.universal-search-wrap>span{z-index:2}
+.universal-results{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(100% + 6px);
+  max-height:min(520px,70vh);
+  overflow:auto;
+  background:#fff;
+  border:1px solid #d8e2ee;
+  border-radius:12px;
+  box-shadow:0 18px 46px rgba(15,23,42,.22);
+  z-index:9999;
+  padding:5px;
+}
+.universal-results.open{display:block}
+.universal-result{
+  width:100%;
+  border:0;
+  background:#fff;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  text-align:left;
+  padding:8px 9px;
+  border-radius:9px;
+  cursor:pointer;
+  color:#24364c;
+}
+.universal-result:hover,.universal-result.sel{background:#eef6ff}
+.universal-result+.universal-result{margin-top:2px}
+.universal-result-ico{
+  width:32px;height:32px;border-radius:9px;
+  display:grid;place-items:center;
+  background:#edf4fb;color:#315f86;
+  font-size:13px;font-weight:900
+}
+.universal-result.rut .universal-result-ico{background:#f0ecff;color:#7c3aed}
+.universal-result.tutor .universal-result-ico{background:#eef8f3;color:#23805e}
+.universal-result-main{min-width:0}
+.universal-result-title{
+  display:block;
+  color:#1d334b;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.universal-result-sub{
+  display:block;
+  margin-top:2px;
+  color:#74869a;
+  font-size:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.universal-result-tag{
+  max-width:95px;
+  border-radius:999px;
+  background:#f4f7fa;
+  color:#6f8195;
+  padding:3px 6px;
+  font-size:7px;
+  font-weight:800;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.universal-empty{
+  padding:15px 12px;
+  text-align:center;
+  color:#728197;
+  font-size:9px;
+  line-height:1.4
+}
+.universal-search-note{
+  padding:7px 9px 5px;
+  color:#8493a5;
+  font-size:7.5px;
+  border-top:1px solid #edf1f5;
+  margin-top:4px
+}
+</style>
+
 </head>
 <body>
-  <header class="top">
-    <div class="top-main">
-      <div class="brand"><strong>Tablero de Gestión ETOP</strong><span>Cursos en preparación</span></div>
-      <div class="filters" aria-label="Filtros de cursos">
-        <select id="facultad" class="filter"><option value="">Todas las facultades</option></select>
-        <select id="tutor" class="filter"><option value="">Todos los tutores</option></select>
-        <select id="tipo" class="filter"><option value="">Todos los tipos NRC</option></select>
-        <select id="codigo" class="filter"><option value="">Todos los COD_CURSO</option></select>
-        <select id="fecha" class="filter"><option value="">Todas las fechas de inicio</option></select>
-        <input id="buscar" class="filter search" type="search" placeholder="Buscar NRC o curso…">
-        <button id="clear" class="clear" type="button">✕ Borrar filtros</button>
-      </div>
-      <button id="profile" class="profile" type="button">👤 Mi perfil</button>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP"><div class="brand-text"><b>ESPACIO TUTORÍA</b><span>Gestión Tutorial · ETOP</span></div></div>
+  <div class="menu">
+    <div class="menu-cat">Operación diaria</div>
+    <button class="menu-btn active" data-key="INICIO" onclick="showHome(this)"><span class="ico">🏠</span>Inicio</button>
+    <button class="menu-btn" data-key="DASHBOARD" onclick="cargar('DASHBOARD',this)"><span class="ico">📊</span>Tablero de Gestión</button>
+    <button class="menu-btn" data-key="NOMINA_ESTUDIANTES" onclick="cargar('NOMINA_ESTUDIANTES',this)"><span class="ico">📋</span>Nómina Estudiantes</button>
+    <button class="menu-btn" data-key="CURSOS_ACTIVOS" onclick="cargar('CURSOS_ACTIVOS',this)"><span class="ico">🟢</span>Cursos Activos</button>
+    <button class="menu-btn" data-key="CURSOS_PREPARACION" onclick="cargar('CURSOS_PREPARACION',this)"><span class="ico">⏳</span>Cursos en Preparación</button>
+    <button class="menu-btn" data-key="CURSOS_CIERRE" onclick="cargar('CURSOS_CIERRE',this)"><span class="ico">🏁</span>Cursos en Cierre</button>
+    <button class="menu-btn" data-key="FICHA_ESTUDIANTE" onclick="cargar('FICHA_ESTUDIANTE',this)"><span class="ico">👤</span>Ficha del Estudiante</button>
+    <button class="menu-btn" data-key="CALENDARIOS" onclick="cargar('CALENDARIOS',this)"><span class="ico">📅</span>Calendarios</button>
+    <div class="menu-cat">Onboarding</div>
+    <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
+    <div class="submenu" id="onboarding">
+      <button class="menu-btn" data-key="CORREOS" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
+      <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
+      <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
+      <button class="menu-btn" data-key="CIERRE" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
     </div>
-  </header>
-
-  <section class="summary">
-    <div class="summary-card"><h1>Cursos en preparación</h1><p id="scope">Desde hoy y durante los próximos 100 días.</p></div>
-    <div class="summary-card kpi"><span>Visibles</span><strong id="visibleCount">—</strong></div>
-    <div class="summary-card kpi"><span>Pendientes QA2</span><strong id="pendingCount">—</strong></div>
-    <div class="summary-card kpi"><span>Próximos 7 días</span><strong id="soonCount">—</strong></div>
-  </section>
-
-  <section id="selection" class="selection" aria-live="polite">
-    <div class="selection-info"><strong id="selectionTitle">0 NRC seleccionados</strong><div id="selectionDetail"></div></div>
-    <button class="btn-reset" id="clearSelection" type="button">Limpiar</button>
-    <button class="btn-qa2" id="openMultiple" type="button">Realizar QA2 seleccionados ↗</button>
-  </section>
-
-  <div class="prep-workspace">
-    <main class="table-shell">
-      <table>
-        <thead><tr>
-          <th class="center"><input id="selectAll" class="check" type="checkbox" title="Seleccionar los cursos visibles"></th>
-          <th>NRC / Curso</th><th>Intake / Versión</th><th>F. Inicio</th><th class="center">Inicio en</th><th>F. Fin</th><th>Incidencias</th><th class="center">Web Integr.</th><th class="center">Canvas</th><th class="center">Estudiantes</th><th class="center">Presentación</th><th class="center">Anuncio</th><th class="center">Editar</th>
-        </tr></thead>
-        <tbody id="rows"><tr><td colspan="13" class="loading"><span class="spinner"></span><br>Cargando cursos…</td></tr></tbody>
-      </table>
-    </main>
-    <aside id="prepEditor" class="prep-editor" aria-label="Editor del curso">
-      <div id="prepEditorContent"></div>
-    </aside>
+    <div class="menu-cat">Canales del equipo</div>
+    <button class="collapsible" onclick="toggleSub('canales')"><span class="ico">🟣</span>Canales SharePoint<span class="arrow">▼</span></button>
+    <div class="submenu" id="canales"><button class="menu-btn" onclick="mostrarCanales(this)">Ver todos los canales</button></div>
+    <button class="menu-btn coord-btn" onclick="abrirCoordinacionPantallaCompleta()"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
   </div>
+  <div class="session-box">
+    <small>Sesión ETOP</small>
+    <b id="sessionTutor">SIN IDENTIFICAR</b>
+    <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
+    <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
+  </div>
+</aside>
+<main class="main">
+  <div class="top" id="topBar">
+    <button class="toggle" onclick="toggleSidebar()">☰</button>
+    <div class="view-title" id="titulo-vista">Inicio · Gestión Tutorial</div>
+    <div class="sep"></div>
 
-  <div id="profileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
-    <div class="dialog">
-      <div class="dialog-head"><h2 id="profileTitle">Personaliza tu vista</h2><p>Ingresa tu correo institucional una sola vez. Este navegador lo recordará.</p></div>
-      <div class="dialog-body">
-        <label for="email">Correo institucional</label>
-        <input id="email" class="email" type="email" placeholder="tutoriaonline00@unab.cl" autocomplete="email">
-        <div id="formMsg" class="form-msg"></div>
-        <div class="dialog-actions"><button id="viewAll" class="all" type="button">Vista general</button><button id="saveProfile" class="save" type="button">Guardar y ver mis cursos</button></div>
+    <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
+      <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
+        <span>🔎</span>
+        <input id="universalSearch"
+               placeholder="Buscar RUT, NRC, curso, programa o tutor..."
+               autocomplete="off"
+               style="width:100%;border-radius:9px;padding-left:30px"
+               oninput="onUniversalInput(this.value)"
+               onkeydown="onUniversalKeydown(event)">
+        <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
       </div>
+      <button onclick="runUniversalSearch()" class="universal-search-btn">Buscar</button>
     </div>
-  </div>
 
-  <script>
-    if(new URLSearchParams(location.search).get('embed')==='1') document.body.classList.add('embedded');
-    const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u';
-    const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
-    const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
-    const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
-    const PBI_INTAKE='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/4c8d7e7b8b275872a80d?experience=power-bi&chromeless=1';
-    const STUDENTS='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded';
-    const STORAGE='etop_preparacion_correo';
-    const GLOBAL_SESSION='etop_usuario_sesion';
-    const EMAILS={
-      'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl','ALVARO ORELLANA':'tutoriaonline86@unab.cl'
-    };
-    const COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
-    const norm=v=>String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const emailNorm=v=>String(v??'').trim().toLowerCase();
-    const tutorByEmail=email=>Object.keys(EMAILS).find(name=>emailNorm(EMAILS[name])===emailNorm(email))||'';
-    const dateOnly=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T12:00:00');return Number.isNaN(d.getTime())?null:d};
-    const fmt=v=>{const d=dateOnly(v);return d?d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'};
-    const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
-    const days=v=>{const d=dateOnly(v);return d?Math.round((d-today())/86400000):99999};
-    const unique=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-    const formUrl=ids=>{const u=new URL(FORM_URL);u.searchParams.set(FORM_COURSE_FIELD,ids.join(','));return u.href};
-    function globalSession(){try{return JSON.parse(localStorage.getItem(GLOBAL_SESSION)||'null')}catch(e){return null}}
-    const gs=globalSession();
-    const hasGlobalSession=!!(gs && gs.email && (gs.rol==='COORDINACION' || (gs.rol==='TUTOR' && gs.tutor)));
-    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor=gs?.rol==='TUTOR'&&gs?.tutor?String(gs.tutor).trim():'',selected=new Set();
+    <div class="top-bar-search" id="gestionFilters" style="display:none">
+      <select class="fsel-topbar" id="sel-facultad" data-filtro="facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
+        <option value="">Facultad ⏳</option>
+      </select>
+      <select class="fsel-topbar" id="sel-tutor" data-filtro="tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
+        <option value="">Tutor ⏳</option>
+      </select>
+      <select class="fsel-topbar" id="sel-tipo" data-filtro="tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
+        <option value="">Tipo NRC ⏳</option>
+      </select>
+      <select class="fsel-topbar" id="sel-codigo" data-filtro="codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
+        <option value="">Código curso ⏳</option>
+      </select>
+      <select class="fsel-topbar" id="sel-estado" data-filtro="estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
+        <option value="">Estado ⏳</option>
+      </select>
+      <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
+        <option value="">Intake/Versión ⏳</option>
+      </select>
 
-    function applyGlobalSession(){
-      if(!hasGlobalSession) return false;
-      profileEmail=emailNorm(gs.email);
-      profileTutor=gs.rol==='TUTOR'?String(gs.tutor||'').trim():'';
-      localStorage.setItem(STORAGE,profileEmail);
-      document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';
-      document.getElementById('tutor').disabled=!!profileTutor;
-      closeProfile();
-      apply();
-      return true;
-    }
+      <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio">
+        <input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)">
+        <div class="fecha-chips" id="fecha-multi-chips"></div>
+      </div>
 
-    const portalParams=(()=>{
-      const p=new URLSearchParams(location.search);
-      const vals=k=>(p.get(k)||'').split('|').map(norm).filter(Boolean);
-      return {
-        facultad:vals('facultad'),
-        tutor:vals('tutor'),
-        tipo:vals('tipo'),
-        codigo:vals('codigo'),
-        estado:vals('estado'),
-        intake:vals('intake'),
-        fechaInicio:(p.get('fechaInicio')||'').split('|').map(v=>String(v).slice(0,10)).filter(Boolean),
-        nrc:vals('nrc')
-      };
-    })();
+      <div class="top-filter-break" aria-hidden="true"></div>
 
-    function matchPortal(x){
-      const m=(v,a)=>!a.length||a.includes(norm(v));
-      return m(x.facultad,portalParams.facultad)
-        && m(x.tutor,portalParams.tutor)
-        && m(x.tipo,portalParams.tipo)
-        && m(x['codigo curso'],portalParams.codigo)
-        && m(x.estado,portalParams.estado)
-        && m(x.intake,portalParams.intake)
-        && (!portalParams.fechaInicio.length||portalParams.fechaInicio.includes(String(x['fecha inicio']||'').slice(0,10)))
-        && m(x.nrc,portalParams.nrc);
-    }
-
-    function baseCourses(){
-      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor))&&matchPortal(x));
-    }
-    function visibleCourses(exclude=''){
-      const fac=norm(document.getElementById('facultad').value),tut=norm(document.getElementById('tutor').value),tipo=norm(document.getElementById('tipo').value),codigo=norm(document.getElementById('codigo').value),fecha=document.getElementById('fecha').value,q=norm(document.getElementById('buscar').value);
-      return baseCourses().filter(x=>(exclude==='facultad'||!fac||norm(x.facultad)===fac)&&(exclude==='tutor'||!tut||norm(x.tutor)===tut)&&(exclude==='tipo'||!tipo||norm(x.tipo)===tipo)&&(exclude==='codigo'||!codigo||norm(x['codigo curso'])===codigo)&&(exclude==='fecha'||!fecha||String(x['fecha inicio']||'').slice(0,10)===fecha)&&(!q||norm([x.nrc,x['nombre curso'],x['codigo curso'],x.intake,x['nombre programa']].join(' ')).includes(q))).sort((a,b)=>dateOnly(a['fecha inicio'])-dateOnly(b['fecha inicio'])||String(a.nrc).localeCompare(String(b.nrc)));
-    }
-    function rebuildSelect(id,key,label){
-      const el=document.getElementById(id),current=el.value,vals=unique(visibleCourses(id),key);el.innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(vals.includes(current))el.value=current;
-    }
-    function rebuildDateSelect(){const el=document.getElementById('fecha'),current=el.value,vals=[...new Set(visibleCourses('fecha').map(x=>String(x['fecha inicio']||'').slice(0,10)).filter(Boolean))].sort();el.innerHTML='<option value="">Todas las fechas de inicio</option>'+vals.map(v=>`<option value="${esc(v)}">${fmt(v)}</option>`).join('');if(vals.includes(current))el.value=current}
-    function rebuildFilters(){rebuildSelect('facultad','facultad','Todas las facultades');rebuildSelect('tutor','tutor','Todos los tutores');rebuildSelect('tipo','tipo','Todos los tipos NRC');rebuildSelect('codigo','codigo curso','Todos los COD_CURSO');rebuildDateSelect()}
-    function incidentMap(){const map=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!map.has(k))map.set(k,[]);map.get(k).push(i)});return map}
-    function studentMap(){const map=new Map();studentMetrics.forEach(i=>{const k=norm(i.nrc);if(k)map.set(k,Number(i.total_estudiantes))});return map}
-    function countdown(v){const d=days(v);if(d===0)return'▶️ Hoy';if(d===1)return'🚀 1 día';if(d<=7)return`⚠️ ${d} días`;if(d<=14)return`⏳ ${d} días`;return`📅 ${d} días`}
-    function integrationUrl(nrc){const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';return`https://lms.unab.cl/int-canvas/?term_code=${encodeURIComponent(period)}&periodo=${encodeURIComponent(period)}&nrc=${encodeURIComponent(crn)}&nrc_code=${encodeURIComponent(crn)}&crn=${encodeURIComponent(crn)}&NRC=${encodeURIComponent(crn)}`}
-    function intakeUrl(intake){return PBI_INTAKE+'&filter='+encodeURIComponent(`NRC_TUTOR_ACTUAL/INTAKE O VERSION eq '${String(intake||'').replace(/'/g,"''")}'`)}
-    function presentationUrl(x){const d1=dateOnly(x['fecha inicio']),d2=dateOnly(x['fecha fin']),duration=d1&&d2?Math.ceil((d2-d1)/604800000):'';const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',duracion:String(duration),fechaInicio:fmt(x['fecha inicio']),fechaFin:fmt(x['fecha fin'])});return BASE+'presentacion_tutorial_innovado.html?'+p}
-    function announcementUrl(x){const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmt(x['fecha inicio']),fecha_fin:fmt(x['fecha fin'])});return BASE+'anuncio_bienvenida_curso_malla.html?'+p}
-    function powerAppsUrl(x){
-      const u=new URL(POWER_APPS_EDITOR_URL);
-      if(String(x.id||'').trim())u.searchParams.set('ids',String(x.id).trim());
-      return u.toString();
-    }
-    function abrirEditorCurso(id){
-      const x=allCourses.find(c=>String(c.id)===String(id));
-      if(!x)return;
-      const panel=document.getElementById('prepEditor');
-      const host=document.getElementById('prepEditorContent');
-      const url=powerAppsUrl(x);
-      host.innerHTML=`
-        <div class="prep-editor-head">
-          <div>
-            <div class="prep-editor-kicker">Editar curso</div>
-            <div class="prep-editor-nrc">${esc(x.nrc||'—')}</div>
-            <div class="prep-editor-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div>
-          </div>
-          <button type="button" class="prep-editor-close" onclick="cerrarEditorCurso()" title="Cerrar">×</button>
+      <div class="search-group" data-filtro="nrc">
+        <span class="search-group-label">NRC</span>
+        <div class="nrc-pill-wrap" id="nrc-pill-wrap">
+          <span class="nrc-pill-icon">⌗</span>
+          <input type="text" class="nrc-pill-input" id="input-nrc"
+                 placeholder="Buscar NRC…" maxlength="40" autocomplete="off"
+                 oninput="onNRCInput(this.value)"
+                 onkeydown="onNRCKeydown(event)"
+                 onfocus="mostrarNRCDropdown()">
+          <button type="button" class="nrc-pill-clear" id="nrc-pill-clear" title="Quitar filtro NRC" aria-label="Quitar filtro NRC" onclick="limpiarFiltroNRC(event)">×</button>
+          <div class="nrc-dropdown" id="nrc-dropdown"></div>
         </div>
-        <div class="prep-editor-note">Edición del registro seleccionado sin salir de Cursos en preparación.</div>
-        <iframe src="${esc(url)}" title="Editor de curso Power Apps" allow="clipboard-read; clipboard-write"></iframe>
-      `;
-      panel.classList.add('open');
+      </div>
+
+      <div class="search-group" data-filtro="rut">
+        <span class="search-group-label">RUT</span>
+        <div class="search-pill-wrap">
+          <span class="search-pill-icon">◈</span>
+          <input type="text" class="search-pill-input" id="input-rut"
+                 placeholder="Buscar RUT…" maxlength="12"
+                 oninput="this.value=this.value.replace(/[^0-9kK\-]/g,'')"
+                 onkeydown="if(event.key==='Enter'){aplicarBusqueda('rut',this.value.trim());this.blur()}"
+                 onchange="aplicarBusqueda('rut',this.value.trim())">
+          <button class="search-pill-go" onclick="aplicarBusqueda('rut',document.getElementById('input-rut').value.trim())">↵</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-clear-filter" id="btn-tutor-perfil"
+              style="display:none" onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
+
+      <div class="filter-badge" id="filter-badge">
+        <span id="badge-txt">—</span>
+      </div>
+      <button class="btn-clear-filter" id="btn-clear-filter" onclick="limpiarBusqueda()">✕ Limpiar</button>
+    </div>
+
+    <div class="guia-correos" id="guia-correos">
+      <div class="guia-correos-texto"><strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.</div>
+      <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoOnboarding()">↻ Cargar datos del curso</button>
+    </div>
+  </div>
+  <section class="home" id="homeView">
+    <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
+    <div class="dashboard">
+      <div class="left">
+        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card">
+  <div class="card-head">
+    <h2>🎯 Foco del día</h2>
+    <span>Power BI · KPIs de seguimiento</span>
+  </div>
+  <div class="card-body foco-powerbi-body">
+    <iframe
+      id="focoDiaFrame"
+      class="foco-powerbi-frame"
+      title="Foco del día · Power BI"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
+          <div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Estudiantes acumulados →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPromedio">—</div><div class="l">Promedio estudiantes / NRC</div><div class="s">Ver carga →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v" id="resCargaPrep30">—</div><div class="l">Preparación próximos 30 días</div><div class="s">Abrir cursos en preparación →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaProgramas30">—</div><div class="l">Programas por iniciar</div><div class="s">UNI118 · próximos 30 días →</div></div>
+        </div></div></section><section class="card">
+  <div class="card-head">
+    <h2>Accesos directos</h2>
+    <span>Herramientas rescatadas de la portada actual</span>
+  </div>
+  <div class="card-body">
+    <div class="quick" style="grid-template-columns:repeat(5,1fr)">
+      <button onclick="openLocal('incidencias.html','Gestión QA2',this)"><span>🧪</span><b>Gestión QA2</b></button>
+      <button onclick="openLocal('comunicaciones_etop.html','Comunicaciones',this)"><span>📣</span><b>Comunicaciones</b></button>
+      <button onclick="openLocal('aplicaciones.html','Aplicaciones',this)"><span>🧩</span><b>Aplicaciones</b></button>
+      <button onclick="openLocal('recursos_aprendizaje.html','Recursos',this)"><span>📚</span><b>Recursos</b></button>
+      <button onclick="openLocal('equipo_etop_mejorado.html','Equipo ETOP',this)"><span>👥</span><b>Equipo ETOP</b></button>
+    </div>
+  </div>
+</section></div></div>
+        
+        <section class="card"><div class="card-head"><h2>Salud de programas</h2><span>Vista de apoyo · propuesta</span></div><div class="card-body programs"><div class="prog"><b>MSP</b><span>5 activos</span><span>96% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MAPS</b><span>3 activos</span><span>91% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MES</b><span>2 activos</span><span>88% ingreso</span><span class="badge">Revisar</span></div></div></section>
+      </div>
+      <div class="right"><section class="card viva"><div class="viva-head"><div class="viva-logo">V</div><div class="viva-title"><b>Viva Engage</b><span>Comunidad y comunicación del equipo</span></div><span class="online">EN LÍNEA</span></div><iframe title="Viva Engage" src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"></iframe></section></div>
+    </div>
+    <div class="footer">ETOP · Propuesta visual de integración Gestión + nueva portada</div>
+  </section>
+  <section class="viewer" id="viewer"><iframe id="visor" title="Vista Gestión" allowfullscreen="true"></iframe><div id="canal-splash" class="canal-splash-v5"></div></section>
+</main>
+</div>
+<script>
+
+const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('closed')}
+function toggleSub(id){document.getElementById(id).classList.toggle('open')}
+function findBtn(key){return document.querySelector('[data-key="'+key+'"]')}
+function activate(btn){document.querySelectorAll('.menu-btn').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+
+const misReportes={
+  DASHBOARD:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false",
+  NOMINA_ESTUDIANTES:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
+  CURSOS_ACTIVOS:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+  CURSOS_PREPARACION:BASE+"cursos_preparacion.html?v=20260829-portal1",
+  CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
+  FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
+  CALENDARIOS:BASE+"calendarios.html?v=20260820-filtrotipo2",
+  CORREOS:"onboarding_correos.html",
+  INVITACIONES:"onboarding_invitaciones.html",
+  PRESENTACION:"presentacion_tutorial_innovado.html",
+  CIERRE:"enviar_correo_cierre.html"
+};
+
+const urlsBase={
+  DASHBOARD:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'a90b3a4c28d3179b1fae',filtroRut:true},
+  NOMINA_ESTUDIANTES:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'255c88d86191d22dd1c3',filtroRut:true},
+  CURSOS_ACTIVOS:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'9df5f2db687d901b71b9',filtroRut:false},
+  CURSOS_PREPARACION:{local:true,filtroRut:false},
+  CURSOS_CIERRE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'ab4e8f37a94c688a5869',filtroRut:false},
+  FICHA_ESTUDIANTE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'0961bca799ff83e065db',filtroRut:true},
+  CALENDARIOS:{local:true,filtroRut:false}
+};
+
+const titulos={
+  DASHBOARD:'Tablero de Gestión',
+  NOMINA_ESTUDIANTES:'Nómina Estudiantes',
+  CURSOS_ACTIVOS:'Cursos Activos',
+  CURSOS_PREPARACION:'Cursos en Preparación',
+  CURSOS_CIERRE:'Cursos en Cierre',
+  FICHA_ESTUDIANTE:'Ficha del Estudiante',
+  CALENDARIOS:'📅 Calendarios',
+  CORREOS:'📧 Generador de Correos de Bienvenida',
+  INVITACIONES:'📅 Envío Invitación Sesión Sincrónica',
+  PRESENTACION:'👩‍🏫 Presentación Tutorial',
+  CIERRE:'🏁 Correo de Cierre'
+};
+
+const BUSQUEDA={nrc:null,rut:null,facultad:null,tutor:null,tipo:null,codigo:null,estado:null,intake:null,fechaInicio:[]};
+let vistaActual='INICIO';
+let catalogoNRC=[];
+
+const ETOP_GLOBAL_SESSION='etop_usuario_sesion';
+const ETOP_LEGACY_EMAIL_KEY='etop_preparacion_correo';
+function sesionGlobalETOP(){try{return JSON.parse(localStorage.getItem(ETOP_GLOBAL_SESSION)||'null')}catch(e){return null}}
+function tutorSesionETOP(){const s=sesionGlobalETOP();return s&&s.rol==='TUTOR'&&s.tutor?String(s.tutor).trim():''}
+
+const TUTORES_ACTIVOS=new Set(["HANS NOVAKOVIC","KIMBERLY JORQUERA","MARTA GONZALEZ","DANITZA JANSEN","SYLVIA VALENZUELA","PAULA PARDO","MARIA FERNANDA GONZALEZ","BARBARA ROJAS","CONSTANZA CONTRERAS","CARLA PENA","NOEMI PAZ","ORIETTA CORTES","HECTOR TAPIA","CONSUELO PARGA","FRANCISCA INDA","JAVIERA ROJAS","ALYSON HERNANDEZ"]);
+function claveTutorActivo(valor){return String(valor||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase()}
+function esTutorActivo(valor){return TUTORES_ACTIVOS.has(claveTutorActivo(valor))}
+
+let nrcConfirmado='';
+let nrcDropIdx=-1;
+let nrcIndiceBusqueda=[];
+let nrcBusquedaTimer=null;
+function normalizarBusqueda(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase()}
+function textoBuscableCurso(n){return normalizarBusqueda([n.nrc,n['codigo curso'],n['nombre curso'],n['nombre programa'],n.tutor,n.intake,n.facultad,n.tipo,n.estado].join(' '))}
+function construirIndiceNRC(){nrcIndiceBusqueda=catalogoNRC.map(n=>({ref:n,texto:textoBuscableCurso(n),nrcNorm:normalizarBusqueda(n.nrc)}))}
+function onNRCInput(val){
+  nrcDropIdx=-1;
+  const wrap=document.getElementById('nrc-pill-wrap');
+  if(wrap)wrap.classList.toggle('nrc-con-texto',Boolean(val.trim()));
+  const previo=nrcConfirmado;
+  if(previo&&val.trim()!==previo){
+    nrcConfirmado='';BUSQUEDA.nrc=null;sincronizarFiltros();actualizarBadge();actualizarIframe();
+  }
+  if(nrcBusquedaTimer)clearTimeout(nrcBusquedaTimer);
+  const q=normalizarBusqueda(val);
+  if(!q){ocultarNRCDropdown();actualizarEstadoVisualFiltros();return}
+  nrcBusquedaTimer=setTimeout(()=>{
+    const permitidos=new Set(nrcsFiltrados('nrc').map(n=>(n.nrc||'').trim()));
+    const matches=nrcIndiceBusqueda
+      .filter(i=>permitidos.has((i.ref.nrc||'').trim())&&i.texto.includes(q))
+      .sort((a,b)=>{
+        const ar=a.nrcNorm===q?0:a.nrcNorm.startsWith(q)?1:2;
+        const br=b.nrcNorm===q?0:b.nrcNorm.startsWith(q)?1:2;
+        return ar-br||a.nrcNorm.localeCompare(b.nrcNorm,'es',{numeric:true});
+      }).slice(0,30).map(i=>(i.ref.nrc||'').trim());
+    renderNRCDropdown(matches,q);
+  },90);
+}
+function onNRCKeydown(e){
+  const dd=document.getElementById('nrc-dropdown');
+  const items=dd.querySelectorAll('.nrc-dropdown-item');
+  if(e.key==='ArrowDown'){e.preventDefault();nrcDropIdx=Math.min(nrcDropIdx+1,items.length-1);marcarNRCItem(items)}
+  else if(e.key==='ArrowUp'){e.preventDefault();nrcDropIdx=Math.max(nrcDropIdx-1,-1);marcarNRCItem(items)}
+  else if(e.key==='Enter'){e.preventDefault();if(nrcDropIdx>=0&&items[nrcDropIdx])confirmarNRC(items[nrcDropIdx].dataset.val);else confirmarNRC(document.getElementById('input-nrc').value.trim())}
+  else if(e.key==='Escape'){ocultarNRCDropdown()}
+}
+function marcarNRCItem(items){items.forEach((el,i)=>el.classList.toggle('sel',i===nrcDropIdx));if(nrcDropIdx>=0&&items[nrcDropIdx])items[nrcDropIdx].scrollIntoView({block:'nearest'})}
+function renderNRCDropdown(matches,q){
+  const dd=document.getElementById('nrc-dropdown');
+  if(!matches.length){ocultarNRCDropdown();return}
+  dd.innerHTML='';
+  matches.forEach(function(n){
+    const div=document.createElement('div');div.className='nrc-dropdown-item';div.dataset.val=n;
+    const idx=n.toUpperCase().indexOf(q);
+    if(idx>=0)div.innerHTML=esc(n.slice(0,idx))+'<span class="match">'+esc(n.slice(idx,idx+q.length))+'</span>'+esc(n.slice(idx+q.length));
+    else div.textContent=n;
+    div.addEventListener('mousedown',e=>{e.preventDefault();confirmarNRC(n)});
+    dd.appendChild(div);
+  });
+  dd.classList.add('visible');
+}
+function confirmarNRC(val){
+  const existe=catalogoNRC.some(n=>(n.nrc||'').trim()===val);
+  nrcConfirmado=existe?val:'';
+  document.getElementById('input-nrc').value=val;
+  const wrap=document.getElementById('nrc-pill-wrap');if(wrap)wrap.classList.add('nrc-con-texto');
+  ocultarNRCDropdown();aplicarBusqueda('nrc',nrcConfirmado||null);
+}
+function limpiarFiltroNRC(evento){
+  if(evento){evento.preventDefault();evento.stopPropagation()}
+  if(nrcBusquedaTimer){clearTimeout(nrcBusquedaTimer);nrcBusquedaTimer=null}
+  nrcConfirmado='';BUSQUEDA.nrc=null;
+  const input=document.getElementById('input-nrc'),wrap=document.getElementById('nrc-pill-wrap');
+  if(input)input.value='';if(wrap)wrap.classList.remove('nrc-con-texto','filtro-activo');
+  ocultarNRCDropdown();sincronizarFiltros();actualizarBadge();actualizarIframe();if(input)input.focus();
+}
+function mostrarNRCDropdown(){const i=document.getElementById('input-nrc');const q=i.value.trim().toUpperCase();if(q)onNRCInput(i.value)}
+function ocultarNRCDropdown(){document.getElementById('nrc-dropdown')?.classList.remove('visible')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+document.addEventListener('click',function(e){
+  const n=document.getElementById('nrc-pill-wrap');if(n&&!n.contains(e.target))ocultarNRCDropdown();
+});
+
+function normalizarFiltro(valor){return String(valor||'').replace(/\s+/g,' ').trim()}
+function sanitizarFiltro(valor){return normalizarFiltro(valor).replace(/'/g,"''")}
+function buildURLFiltrada(clave){
+  const cfg=urlsBase[clave];if(!cfg)return misReportes[clave];
+  if(cfg.local){
+    const url=new URL(misReportes[clave],window.location.href);
+    if(BUSQUEDA.facultad)url.searchParams.set('facultad',BUSQUEDA.facultad);
+    const tutorEfectivo=BUSQUEDA.tutor||tutorSesionETOP();
+    if(tutorEfectivo)url.searchParams.set('tutor',tutorEfectivo);
+    if(BUSQUEDA.tipo)url.searchParams.set('tipo',BUSQUEDA.tipo);
+    if(BUSQUEDA.codigo)url.searchParams.set('codigo',BUSQUEDA.codigo);
+    if(BUSQUEDA.estado)url.searchParams.set('estado',BUSQUEDA.estado);
+    if(BUSQUEDA.intake)url.searchParams.set('intake',BUSQUEDA.intake);
+    if(BUSQUEDA.fechaInicio.length)url.searchParams.set('fechaInicio',BUSQUEDA.fechaInicio.join('|'));
+    if(BUSQUEDA.nrc)url.searchParams.set('nrc',BUSQUEDA.nrc);
+    if(clave==='CURSOS_PREPARACION')url.searchParams.set('embed','1');
+    url.searchParams.set('_f',Date.now().toString());
+    return url.toString();
+  }
+  const url=new URL('https://app.powerbi.com/reportEmbed');
+  url.searchParams.set('reportId',cfg.reportId);
+  url.searchParams.set('groupId','308deb6f-aa2f-4c21-b5fb-33b977c17e13');
+  url.searchParams.set('ctid','8fbed393-d03b-49f8-be79-cd5e1f590fb2');
+  url.searchParams.set('autoAuth','true');url.searchParams.set('pageName',cfg.page);
+  url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
+  const fx=[];
+  if(BUSQUEDA.facultad)fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
+  const tutorEfectivo=BUSQUEDA.tutor||tutorSesionETOP();
+  if(tutorEfectivo)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
+  if(BUSQUEDA.tipo){const tipoPBI=BUSQUEDA.tipo==='100%ONLINE'?'100PCTONLINE':BUSQUEDA.tipo;fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`)}
+  if(BUSQUEDA.codigo)fx.push(`NRC_TUTOR_ACTUAL/COD_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
+  if(BUSQUEDA.estado)fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
+  if(BUSQUEDA.intake)fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
+  if(BUSQUEDA.fechaInicio.length===1)fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
+  if(BUSQUEDA.fechaInicio.length>1)fx.push('('+BUSQUEDA.fechaInicio.map(v=>`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ')+')');
+  if(BUSQUEDA.nrc)fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
+  if(BUSQUEDA.rut&&cfg.filtroRut)fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
+  url.searchParams.set('_portalFilter',Date.now().toString());
+  const baseUrl=url.toString();
+  return fx.length?baseUrl+'&filter='+encodeURIComponent(fx.join(' and ')):baseUrl;
+}
+function abrirPerfilTutor(){
+  const visor=document.getElementById('visor');
+  try{if(vistaActual==='CURSOS_PREPARACION'&&visor?.contentWindow?.openProfile)visor.contentWindow.openProfile()}
+  catch(e){console.warn('No se pudo abrir el perfil del tutor:',e)}
+}
+function actualizarIframe(){
+  if(!urlsBase[vistaActual])return;
+  const visor=document.getElementById('visor'),nuevaURL=buildURLFiltrada(vistaActual);
+  visor.src='about:blank';requestAnimationFrame(()=>{visor.src=nuevaURL});
+}
+function fechaISO(v){
+  const s=String(v||'').trim();let m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:'';
+}
+function claveValor(v,campo=''){if(campo==='fechaInicio')return fechaISO(v);return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase()}
+function campoRegistro(n,campo){if(campo==='fechaInicio')return fechaISO(n['fecha inicio']);if(campo==='codigo')return n['codigo curso']??'';return n[campo]??''}
+function filtroVisible(campo){return(FILTROS_POR_VISTA[vistaActual]||[]).includes(campo)}
+function coincide(n,campo,valor){if(!valor)return true;return claveValor(campoRegistro(n,campo),campo)===claveValor(valor,campo)}
+function nrcsFiltrados(excluir=null){
+  const tutorSesion=tutorSesionETOP();
+  return catalogoNRC.filter(n=>{
+    if(tutorSesion&&claveValor(n.tutor)!==claveValor(tutorSesion))return false;
+    if(excluir!=='facultad'&&filtroVisible('facultad')&&BUSQUEDA.facultad&&!coincide(n,'facultad',BUSQUEDA.facultad))return false;
+    if(excluir!=='tutor'&&filtroVisible('tutor')&&BUSQUEDA.tutor&&!coincide(n,'tutor',BUSQUEDA.tutor))return false;
+    if(excluir!=='tipo'&&filtroVisible('tipo')&&BUSQUEDA.tipo&&!coincide(n,'tipo',BUSQUEDA.tipo))return false;
+    if(excluir!=='codigo'&&filtroVisible('codigo')&&BUSQUEDA.codigo&&!coincide(n,'codigo',BUSQUEDA.codigo))return false;
+    if(excluir!=='estado'&&filtroVisible('estado')&&BUSQUEDA.estado&&!coincide(n,'estado',BUSQUEDA.estado))return false;
+    if(excluir!=='intake'&&filtroVisible('intake')&&BUSQUEDA.intake&&!coincide(n,'intake',BUSQUEDA.intake))return false;
+    if(excluir!=='fechaInicio'&&filtroVisible('fechaInicio')&&BUSQUEDA.fechaInicio.length&&!BUSQUEDA.fechaInicio.map(fechaISO).includes(fechaISO(n['fecha inicio'])))return false;
+    if(excluir!=='nrc'&&filtroVisible('nrc')&&BUSQUEDA.nrc&&claveValor(n.nrc)!==claveValor(BUSQUEDA.nrc))return false;
+    return true;
+  });
+}
+function reconstruirSelect(id,campo){
+  const sel=document.getElementById(id);if(!sel||!catalogoNRC.length)return;
+  const valorActual=BUSQUEDA[campo]||'';
+  const placeholder=(sel.options[0]?.text||campo).replace(' ⏳','');
+  const mapa=new Map();
+  nrcsFiltrados(campo).forEach(n=>{
+    const raw=String(campoRegistro(n,campo)||'').trim();if(!raw)return;
+    if(campo==='tutor'&&!esTutorActivo(raw))return;
+    const k=claveValor(raw,campo);if(!mapa.has(k))mapa.set(k,raw);
+  });
+  if(valorActual&&!mapa.has(claveValor(valorActual,campo)))mapa.set(claveValor(valorActual,campo),valorActual);
+  const vals=[...mapa.values()].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'}));
+  sel.innerHTML='<option value="">'+placeholder+'</option>';
+  vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
+  sel.value=valorActual;sel.disabled=false;
+}
+function sincronizarFiltros(){
+  reconstruirSelect('sel-facultad','facultad');reconstruirSelect('sel-tutor','tutor');reconstruirSelect('sel-tipo','tipo');
+  reconstruirSelect('sel-codigo','codigo');reconstruirSelect('sel-estado','estado');reconstruirSelect('sel-intake','intake');
+  renderFechasGestion();actualizarEstadoVisualFiltros();
+}
+function renderFechasGestion(){
+  if(!catalogoNRC.length)return;
+  const host=document.getElementById('fecha-multi-wrap'),chips=document.getElementById('fecha-multi-chips');
+  if(chips)chips.innerHTML=BUSQUEDA.fechaInicio.slice().sort().map(v=>`<span class="fecha-chip">${v.split('-').reverse().join('-')}<button type="button" title="Quitar fecha" onclick="quitarFechaGestion('${v}')">×</button></span>`).join('')+(BUSQUEDA.fechaInicio.length?'<button type="button" class="fecha-chip-clear" onclick="limpiarFechasGestion()">Limpiar</button>':'');
+  if(host)host.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+}
+function agregarFechaGestion(v){const f=fechaISO(v);if(f&&!BUSQUEDA.fechaInicio.includes(f))BUSQUEDA.fechaInicio.push(f);document.getElementById('fecha-multi-input').value='';sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function quitarFechaGestion(v){BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function limpiarFechasGestion(){BUSQUEDA.fechaInicio=[];sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function aplicarBusqueda(campo,valor){BUSQUEDA[campo]=normalizarFiltro(valor)||null;sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function limpiarBusqueda(){
+  BUSQUEDA.nrc=null;BUSQUEDA.rut=null;BUSQUEDA.facultad=null;BUSQUEDA.tutor=null;BUSQUEDA.tipo=null;BUSQUEDA.codigo=null;BUSQUEDA.estado=null;BUSQUEDA.intake=null;BUSQUEDA.fechaInicio=[];
+  nrcConfirmado='';
+  document.getElementById('input-nrc').value='';document.getElementById('input-rut').value='';
+  ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  ocultarNRCDropdown();sincronizarFiltros();actualizarBadge();actualizarIframe();
+}
+function actualizarEstadoVisualFiltros(){
+  [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo])=>{const el=document.getElementById(id);if(el)el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]))});
+  const nr=document.getElementById('nrc-pill-wrap');if(nr)nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
+  const fm=document.getElementById('fecha-multi-wrap');if(fm)fm.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
+}
+function actualizarBadge(){
+  actualizarEstadoVisualFiltros();
+  const p=[];
+  /* El tutor de sesión NO se repite arriba; sigue aplicándose como filtro base. */
+  if(filtroVisible('facultad')&&BUSQUEDA.facultad)p.push(BUSQUEDA.facultad);
+  if(filtroVisible('tutor')&&BUSQUEDA.tutor)p.push(BUSQUEDA.tutor);
+  if(filtroVisible('tipo')&&BUSQUEDA.tipo)p.push(BUSQUEDA.tipo);
+  if(filtroVisible('codigo')&&BUSQUEDA.codigo)p.push(BUSQUEDA.codigo);
+  if(filtroVisible('estado')&&BUSQUEDA.estado)p.push(BUSQUEDA.estado);
+  if(filtroVisible('intake')&&BUSQUEDA.intake)p.push('Intake: '+BUSQUEDA.intake);
+  if(filtroVisible('fechaInicio')&&BUSQUEDA.fechaInicio.length)p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
+  if(filtroVisible('nrc')&&BUSQUEDA.nrc)p.push('NRC: '+BUSQUEDA.nrc);
+  if(filtroVisible('rut')&&BUSQUEDA.rut)p.push('RUT: '+BUSQUEDA.rut);
+  const badge=document.getElementById('filter-badge'),clear=document.getElementById('btn-clear-filter');
+  if(p.length){document.getElementById('badge-txt').textContent=p.join(' · ');badge.classList.add('on');clear.classList.add('on')}
+  else{badge.classList.remove('on');clear.classList.remove('on')}
+}
+async function cargarSugerenciasNRC(){
+  const url=(location.hostname.includes('github.io')?'nrcs.json':BASE+'nrcs.json');
+  try{
+    const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error('HTTP '+resp.status);
+    catalogoNRC=await resp.json();construirIndiceNRC();
+    if(typeof refrescarResumenCargaTutorial==='function')refrescarResumenCargaTutorial();
+    ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const s=document.getElementById(id);s.options[0].text=s.options[0].text.replace(' ⏳','');s.disabled=false});
+    sincronizarFiltros();
+  }catch(err){
+    console.warn('No se pudo cargar nrcs.json en esta vista previa; se usa un catálogo mínimo solo para probar el comportamiento de los filtros:',err);
+    if(!location.hostname.includes('github.io')){
+      catalogoNRC=[
+        {nrc:'2239_MSP007_202681',facultad:'MEDI',tutor:'PAULA PARDO',tipo:'100%ONLINE','codigo curso':'MSP007',estado:'ACTIVO',intake:'202681','fecha inicio':'2026-10-05','nombre curso':'Curso MSP007','nombre programa':'MSP'},
+        {nrc:'1800_MAPS013_202583',facultad:'MEDI',tutor:'PAULA PARDO',tipo:'100%ONLINE','codigo curso':'MAPS013',estado:'ACTIVO',intake:'202583','fecha inicio':'2026-09-21','nombre curso':'Curso MAPS013','nombre programa':'MAPS'},
+        {nrc:'2012_UNI118_202682',facultad:'MEDI',tutor:'PAULA PARDO',tipo:'100%ONLINE','codigo curso':'UNI118',estado:'PREPARACION',intake:'202682','fecha inicio':'2026-09-07','nombre curso':'Inducción','nombre programa':'MSP'},
+        {nrc:'3032_MSPE006_202483',facultad:'ENFE',tutor:'ORIETTA CORTES',tipo:'100%ONLINE','codigo curso':'MSPE006',estado:'EN CIERRE',intake:'202483','fecha inicio':'2026-08-15','nombre curso':'MSPE006','nombre programa':'MSP'},
+        {nrc:'3040_MSPE007_202483',facultad:'ENFE',tutor:'ORIETTA CORTES',tipo:'100%ONLINE','codigo curso':'MSPE007',estado:'ACTIVO',intake:'202483','fecha inicio':'2026-09-01','nombre curso':'MSPE007','nombre programa':'MSP'}
+      ];
+      construirIndiceNRC();sincronizarFiltros();
     }
-    function cerrarEditorCurso(){
-      document.getElementById('prepEditor').classList.remove('open');
-      document.getElementById('prepEditorContent').innerHTML='';
-    }
-    function studentsUrl(nrc){
-      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
-      u.searchParams.set('FilterField1','NRC_COD_CAL');
-      u.searchParams.set('FilterValue1',String(nrc||''));
-      u.searchParams.set('FilterType1','Calculated');
-      u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
-      u.searchParams.set('env','Embedded');
-      return u.href;
-    }
-    function render(){
-      const list=visibleCourses(),byCourse=incidentMap(),byNrcStudents=studentMap();
-      document.getElementById('visibleCount').textContent=list.length.toLocaleString('es-CL');
-      document.getElementById('soonCount').textContent=list.filter(x=>days(x['fecha inicio'])<=7).length.toLocaleString('es-CL');
-      document.getElementById('pendingCount').textContent=list.filter(x=>norm(x['codigo curso'])!=='UNI118'&&!(byCourse.get(String(x.id))||[]).length).length.toLocaleString('es-CL');
-      document.getElementById('scope').textContent=profileTutor?`${profileTutor} · desde hoy y durante los próximos 100 días.`:'Vista general · desde hoy y durante los próximos 100 días.';
-      const body=document.getElementById('rows');if(!list.length){body.innerHTML='<tr><td colspan="13" class="empty">No hay cursos en preparación para los filtros seleccionados.</td></tr>';updateSelection(list);return}
-      body.innerHTML=list.map(x=>{
-        const inc=byCourse.get(String(x.id))||[],canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'',incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length,isUni118=norm(x['codigo curso'])==='UNI118',pending=!isUni118&&!inc.length;
-        const studentCount=byNrcStudents.get(norm(x.nrc));
-        const studentLabel=Number.isFinite(studentCount)?studentCount.toLocaleString('es-CL'):'Pendiente';
-        const incLabel=isUni118?'NO APLICA':pending?'PENDIENTE QA2':incidentCount?`⚠ ${incidentCount}`:'✓ OK',
-              incClass=isUni118?'badge incident':incidentCount?'badge incident alert':'badge incident';
-        return`<tr class="${pending?'pending':''}"><td class="center"><input class="check row-check" type="checkbox" data-id="${x.id}" ${selected.has(String(x.id))?'checked':''} aria-label="Seleccionar ${esc(x.nrc)}"></td><td><a class="nrc-link" href="${esc(formUrl([x.id]))}" target="_blank" rel="noopener" title="Abrir formulario QA2 individual">${esc(x.nrc||'—')} ↗</a><div class="course" title="${esc(x['nombre curso'])}">${esc(String(x['nombre curso']||'').replace(/\*/g,''))}</div></td><td class="intake-cell"><a class="nrc-link" href="${esc(intakeUrl(x.intake))}" target="_blank" rel="noopener" title="${esc(x.intake||'')}">${esc(x.intake||'—')} ↗</a></td><td class="date">${fmt(x['fecha inicio'])}</td><td class="center countdown">${countdown(x['fecha inicio'])}</td><td class="date">${fmt(x['fecha fin'])}</td><td><a class="${incClass}" href="${BASE}incidencias.html?nrc=${encodeURIComponent(x.nrc||'')}" target="_blank" rel="noopener">${incLabel}</a></td><td class="center"><a class="icon" href="${integrationUrl(x.nrc)}" target="_blank" rel="noopener" title="Verificar curso en web de integración">🌐</a></td><td class="center"><a class="icon ${canvas?'':'off'}" href="${esc(canvas||'#')}" target="_blank" rel="noopener" title="Ver el curso en Canvas">🎓</a></td><td class="center"><a class="badge student" href="${esc(studentsUrl(x.nrc))}" target="_blank" rel="noopener" title="${Number.isFinite(studentCount)?`Cantidad de estudiantes: ${studentCount}. Abrir Panel Gestión filtrado por NRC`:'Conteo aún no disponible. Abrir Panel Gestión filtrado por NRC'}">${studentLabel}</a></td><td class="center"><a class="icon" href="${esc(presentationUrl(x))}" target="_blank" rel="noopener" title="Crear presentación tutorial">👋</a></td><td class="center"><a class="icon" href="${esc(announcementUrl(x))}" target="_blank" rel="noopener" title="Crear anuncio de bienvenida">📢</a></td><td class="center">${String(x.id||'').trim()?`<button type="button" class="edit-course" onclick="abrirEditorCurso('${esc(String(x.id))}')" title="Editar curso">✏️ Editar curso</button>`:'—'}</td></tr>`
-      }).join('');
-      document.querySelectorAll('.row-check').forEach(cb=>cb.addEventListener('change',()=>{cb.checked?selected.add(cb.dataset.id):selected.delete(cb.dataset.id);updateSelection(list)}));updateSelection(list)
-    }
-    function updateSelection(list=visibleCourses()){
-      const selectedCourses=allCourses.filter(x=>selected.has(String(x.id))),bar=document.getElementById('selection'),n=selectedCourses.length;bar.classList.toggle('on',n>0);document.getElementById('selectionTitle').textContent=`${n} NRC seleccionado${n===1?'':'s'}`;document.getElementById('selectionDetail').textContent=n?selectedCourses.map(x=>x.nrc).join(' · '):'';document.getElementById('selectAll').checked=!!list.length&&list.every(x=>selected.has(String(x.id)));document.getElementById('selectAll').indeterminate=list.some(x=>selected.has(String(x.id)))&&!list.every(x=>selected.has(String(x.id)))
-    }
-    function apply(){rebuildFilters();render()}
-    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;if(all){localStorage.removeItem(STORAGE);profileEmail=''}else {localStorage.setItem(STORAGE,profileEmail);localStorage.setItem(GLOBAL_SESSION,JSON.stringify({email:profileEmail,tutor:profileTutor,rol:COORDINACION.has(profileEmail)?'COORDINACION':'TUTOR',guardado:new Date().toISOString()}));}document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=!!profileTutor;closeProfile();apply();return true}
-    function openProfile(){document.getElementById('profileModal').classList.add('on');document.getElementById('email').value=profileEmail;document.getElementById('formMsg').textContent='';setTimeout(()=>document.getElementById('email').focus(),50)}
-    function closeProfile(){document.getElementById('profileModal').classList.remove('on')}
-    ['facultad','tutor','tipo','codigo','fecha'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('buscar').addEventListener('input',render);document.getElementById('clear').addEventListener('click',()=>{['facultad','tutor','tipo','codigo','fecha','buscar'].forEach(id=>document.getElementById(id).value='');apply()});
-    document.getElementById('profile').addEventListener('click',openProfile);document.getElementById('saveProfile').addEventListener('click',()=>{const email=document.getElementById('email').value;if(!setProfile(email)){document.getElementById('formMsg').textContent='No encontramos ese correo entre los tutores disponibles. Revisa la escritura o usa Vista general.'}});document.getElementById('viewAll').addEventListener('click',()=>setProfile('',true));document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('saveProfile').click()});
-    document.getElementById('selectAll').addEventListener('change',e=>{visibleCourses().forEach(x=>e.target.checked?selected.add(String(x.id)):selected.delete(String(x.id)));render()});document.getElementById('clearSelection').addEventListener('click',()=>{selected.clear();render()});
-    document.getElementById('openMultiple').addEventListener('click',()=>{const list=allCourses.filter(x=>selected.has(String(x.id)));if(!list.length)return;const ids=list.map(x=>x.id);const target=formUrl(ids);const popup=window.open(target,'_blank','noopener');if(!popup)window.location.href=target});
-    Promise.all([
-      fetch('nrcs.json',{cache:'no-store'}),
-      fetch('incidencias.json',{cache:'no-store'}),
-      fetch('metricas_estudiantes.json',{cache:'no-store'})
-    ]).then(async([nr,ir,mr])=>{
-      if(!nr.ok)throw new Error('No fue posible leer nrcs.json');
-      allCourses=await nr.json();
-      incidents=ir.ok?await ir.json():[];
-      studentMetrics=mr.ok?await mr.json():[];
-      if(hasGlobalSession){
-        applyGlobalSession();
-      }else if(profileEmail&&!setProfile(profileEmail)){
-        localStorage.removeItem(STORAGE);
-        profileEmail='';
-        openProfile();
-        apply();
-      }else if(profileEmail){
-        setProfile(profileEmail);
-      }else{
-        setProfile('',true);
-        openProfile();
+    ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const el=document.getElementById(id);if(el){el.options[0].text=el.options[0].text.replace(' ⏳','');el.disabled=false}});
+  }
+}
+
+const TC={
+'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl',
+'CAROLINA MONSALVE':'carolina.monsalve.g@unab.cl','PATRICIO COLLAO':'patricio.collao@unab.cl','FELIPE GARCIA':'felipe.garcia@unab.cl','RITA GALVEZ':'rita.galvez@unab.cl',
+'MIGUEL ROSALES':'tutoriaonline16@unab.cl','PABLO ALDERETE':'tutoriaonline47@unab.cl','DANIELA CORNEJO':'tutoriaonline36@unab.cl'
+};
+const TA={
+'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284','MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866',
+'SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285','MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260',
+'CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361','NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685',
+'CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278','JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'
+};
+
+function diaSemana(fechaStr){
+  if(!fechaStr)return'';let partes=fechaStr.split('-'),d;
+  if(partes[0].length===4)d=new Date(partes[0],parseInt(partes[1])-1,parseInt(partes[2]));
+  else d=new Date(partes[2],parseInt(partes[1])-1,parseInt(partes[0]));
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  return isNaN(d.getTime())?'':dias[d.getDay()];
+}
+function calcularSemanas(ini,fin){
+  if(!ini||!fin)return'';let pIni=ini.split('-'),pFin=fin.split('-'),dIni,dFin;
+  if(pIni[0].length===4){dIni=new Date(pIni[0],parseInt(pIni[1])-1,parseInt(pIni[2]));dFin=new Date(pFin[0],parseInt(pFin[1])-1,parseInt(pFin[2]))}
+  else{dIni=new Date(pIni[2],parseInt(pIni[1])-1,parseInt(pIni[0]));dFin=new Date(pFin[2],parseInt(pFin[1])-1,parseInt(pFin[0]))}
+  if(isNaN(dIni.getTime())||isNaN(dFin.getTime()))return'';return String(Math.round((dFin-dIni)/(7*24*3600*1000))+1);
+}
+function calcularFechaLimite(finStr,dias){
+  if(!finStr)return'';let partes=finStr.split('-'),d;
+  if(partes[0].length===4)d=new Date(partes[0],parseInt(partes[1])-1,parseInt(partes[2]));
+  else d=new Date(partes[2],parseInt(partes[1])-1,parseInt(partes[0]));
+  if(isNaN(d.getTime()))return'';d.setDate(d.getDate()+dias);
+  return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear();
+}
+
+const FILTROS_POR_VISTA={
+  DASHBOARD:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
+  NOMINA_ESTUDIANTES:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
+  CURSOS_ACTIVOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  FICHA_ESTUDIANTE:['rut'],
+  CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  CORREOS:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
+};
+function configurarFiltros(clave){
+  const visibles=FILTROS_POR_VISTA[clave]||[];
+  document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>{el.style.display=visibles.includes(el.dataset.filtro)?'':'none'});
+  document.getElementById('gestionFilters').style.display=visibles.length?'flex':'none';
+  document.getElementById('homeTopSearch').style.display='none';
+  document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='INVITACIONES')?'flex':'none';
+  if(catalogoNRC.length)sincronizarFiltros();actualizarBadge();
+}
+function cargarDatosCursoOnboarding(){
+  const input=document.getElementById('input-nrc');
+  if(!BUSQUEDA.nrc){input.classList.add('guia-atencion');input.focus();setTimeout(()=>input.classList.remove('guia-atencion'),1800);alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');return}
+  const claveDestino=vistaActual==='INVITACIONES'?'INVITACIONES':'CORREOS';
+  const botonCorreo=[...document.querySelectorAll('.menu-btn')].find(b=>(b.getAttribute('onclick')||'').includes("cargarOnboarding('"+claveDestino+"'"));
+  if(botonCorreo)cargarOnboarding(claveDestino,botonCorreo);
+}
+function mostrarAreaGestion(){
+  document.getElementById('homeView').style.display='none';
+  document.getElementById('viewer').style.display='block';
+  document.getElementById('canal-splash').classList.remove('visible');
+}
+function cargar(clave,btn){
+  vistaActual=clave;
+  mostrarAreaGestion();
+  const btnPerfilTutor=document.getElementById('btn-tutor-perfil');
+  if(btnPerfilTutor)btnPerfilTutor.style.display=(vistaActual==='CURSOS_PREPARACION')?'inline-flex':'none';
+  configurarFiltros(clave);
+  const visor=document.getElementById('visor');visor.style.display='block';visor.src=urlsBase[clave]?buildURLFiltrada(clave):misReportes[clave];
+  activate(btn);document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
+  if(window.innerWidth<800)toggleSidebar();
+}
+function cargarOnboarding(clave,btn){
+  vistaActual=clave;mostrarAreaGestion();configurarFiltros(clave);
+  const BASEP=BASE;let url=BASEP+misReportes[clave];
+  if(BUSQUEDA.nrc&&catalogoNRC.length){
+    const nd=catalogoNRC.find(n=>(n.nrc||'').trim()===BUSQUEDA.nrc.trim());
+    if(nd){
+      const tutor=(nd.tutor||'').trim().toUpperCase(),fi=nd['fecha inicio']||'',ff=nd['fecha fin']||'';
+      const p=new URLSearchParams({nombreTutor:nd.tutor||'',correoTutor:TC[tutor]||'',anexoTutor:TA[tutor]||'',nrc:BUSQUEDA.nrc,fechaInicio:fi,fechaFin:ff});
+      if(clave==='CORREOS'){
+        const programa=nd['nombre programa']||'',nombreInduccion=nd['nombre curso']||'';
+        if(programa)p.set('nombrePrograma',programa);p.set('nombreCurso',nombreInduccion?`${BUSQUEDA.nrc} — ${nombreInduccion}`:BUSQUEDA.nrc);
+      }else if(clave==='INVITACIONES'){
+        if(nd['nombre curso'])p.set('nombreCurso',nd['nombre curso']);if(nd.intake)p.set('intake',nd.intake);
+      }else if(clave==='PRESENTACION'){
+        const duracion=calcularSemanas(fi,ff),diaInicio=diaSemana(fi),diaFin=diaSemana(ff);
+        if(nd['nombre curso'])p.set('nombreCurso',nd['nombre curso']);if(duracion)p.set('duracion',duracion);if(diaInicio)p.set('diaInicio',diaInicio);if(diaFin)p.set('diaFin',diaFin);
+      }else if(clave==='CIERRE'){
+        const fechaLimEst=calcularFechaLimite(ff,14),fechaLimMGPC=calcularFechaLimite(ff,10);
+        if(nd['nombre curso'])p.set('nombre_curso',nd['nombre curso']);p.set('fecha_inicio',fi);p.set('fecha_fin',ff);p.set('fecha_limite',fechaLimEst);p.set('fecha_limite_mgpc',fechaLimMGPC);
       }
-    }).catch(err=>{
-      document.getElementById('rows').innerHTML=`<tr><td colspan="13" class="empty">⚠️ ${esc(err.message)}</td></tr>`;
+      url=BASEP+misReportes[clave]+'?'+p.toString();
+    }
+  }
+  const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
+  activate(btn);document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
+  if(window.innerWidth<800)toggleSidebar();
+}
+
+function mostrarCanales(btn){
+  vistaActual=null;mostrarAreaGestion();
+  document.getElementById('homeTopSearch').style.display='none';
+  document.getElementById('gestionFilters').style.display='none';
+  document.getElementById('guia-correos').style.display='none';
+  document.getElementById('visor').style.display='none';
+  const splash=document.getElementById('canal-splash');splash.classList.add('visible');
+  splash.innerHTML=`<div style="max-width:760px;margin:0 auto;background:#fff;border:1px solid #d9e2ec;border-radius:16px;padding:24px">
+    <h2 style="margin:0 0 5px;color:#1f2940">🟣 Canales del Equipo ETOP</h2>
+    <p style="margin:0 0 18px;color:#718399;font-size:12px">Acceso directo a los canales de SharePoint por facultad.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:9px">
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/:f:/s/actasynrc-ISPAB/IgAWJC97bKY6R40jthIny3xSAWa2XnxEop22DhPrsrINps4?e=VHbaRK">Medicina ↗</a>
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/:f:/r/sites/actasynrc-EDUCACINYCS.SOCIALES_INNOVADO/Documentos%20compartidos/EDUCACI%C3%93N%20Y%20CS.%20SOCIALES_INNOVADO?csf=1&web=1&e=rz9UiB">Educación y Cs. Sociales Innovado ↗</a>
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/actasynrc-ECONOMA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx">Economía Innovado ↗</a>
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/actasynrc-INGENIERIA/Documentos%20compartidos/Forms/AllItems.aspx">Ingeniería ↗</a>
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx">Enfermería Innovado ↗</a>
+      <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/EQUIPODETUTORIAONLINEDEPOSTGRADO-ESCUELADEGOBIERNO">Escuela de Gobierno ↗</a>
+    </div></div>`;
+  activate(btn);document.getElementById('titulo-vista').textContent='🟣 Canales del Equipo';
+}
+
+/* ===== Foco del día · Power BI =====
+   Página entregada: 0e41223d6909461650ae
+   Reporte: 66b1fc8c-00c8-44f3-b327-890f57f3c7b8
+*/
+const FOCO_DIA_POWERBI = {
+  reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',
+  groupId:'308deb6f-aa2f-4c21-b5fb-33b977c17e13',
+  tenantId:'8fbed393-d03b-49f8-be79-cd5e1f590fb2',
+  pageName:'0e41223d6909461650ae'
+};
+
+function buildFocoDiaURL(){
+  const u=new URL('https://app.powerbi.com/reportEmbed');
+  u.searchParams.set('reportId',FOCO_DIA_POWERBI.reportId);
+  u.searchParams.set('groupId',FOCO_DIA_POWERBI.groupId);
+  u.searchParams.set('ctid',FOCO_DIA_POWERBI.tenantId);
+  u.searchParams.set('autoAuth','true');
+  u.searchParams.set('pageName',FOCO_DIA_POWERBI.pageName);
+  u.searchParams.set('navContentPaneEnabled','false');
+  u.searchParams.set('filterPaneEnabled','false');
+
+  // En Tutoría, el Foco del día debe mostrar solo la cartera del tutor identificado.
+  const tutor=tutorSesionETOP();
+  if(tutor){
+    const seguro=String(tutor).replace(/'/g,"''");
+    const filtro=`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`;
+    return u.toString()+'&filter='+encodeURIComponent(filtro);
+  }
+  return u.toString();
+}
+
+function refrescarFocoDia(){
+  const frame=document.getElementById('focoDiaFrame');
+  if(!frame)return;
+  const nueva=buildFocoDiaURL();
+  if(frame.dataset.url===nueva)return;
+  frame.dataset.url=nueva;
+  frame.src=nueva;
+}
+
+
+/* ===== Resumen carga tutorial · datos reales =====
+   Replica los KPI principales de carga_tutorial.html usando:
+   - nrcs.json
+   - metricas_estudiantes.json
+   La sesión de tutor restringe automáticamente la cartera.
+*/
+let resumenCargaMetricasMap=new Map();
+let resumenCargaMetricasCargadas=false;
+
+function resumenCargaNorm(v){
+  return String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function resumenCargaNum(v){
+  return new Intl.NumberFormat('es-CL',{maximumFractionDigits:1}).format(Number(v)||0);
+}
+function resumenCargaDias(fecha){
+  if(!fecha)return 99999;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const d=new Date(String(fecha).slice(0,10)+'T00:00:00');
+  return Math.round((d-hoy)/86400000);
+}
+function resumenCargaEstudiantes(nrc){
+  return Number(resumenCargaMetricasMap.get(resumenCargaNorm(nrc))||0);
+}
+async function asegurarMetricasResumenCarga(){
+  if(resumenCargaMetricasCargadas)return;
+  const url=(location.hostname.includes('github.io')?'metricas_estudiantes.json':BASE+'metricas_estudiantes.json');
+  try{
+    const r=await fetch(url+'?v='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    resumenCargaMetricasMap=new Map(
+      (Array.isArray(data)?data:[]).map(x=>[
+        resumenCargaNorm(x.nrc),
+        Number(x.total_estudiantes)||0
+      ])
+    );
+    resumenCargaMetricasCargadas=true;
+  }catch(err){
+    console.warn('No fue posible cargar metricas_estudiantes.json para Resumen carga tutorial:',err);
+    resumenCargaMetricasMap=new Map();
+    resumenCargaMetricasCargadas=true;
+  }
+}
+async function refrescarResumenCargaTutorial(){
+  const ids=['resCargaAtenciones','resCargaActivos','resCargaCierre','resCargaPromedio','resCargaPrep30','resCargaProgramas30'];
+  if(!ids.some(id=>document.getElementById(id)))return;
+  if(!catalogoNRC.length){
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});
+    return;
+  }
+  await asegurarMetricasResumenCarga();
+
+  const tutor=tutorSesionETOP();
+  let data=catalogoNRC.slice();
+  if(tutor){
+    const nt=resumenCargaNorm(tutor);
+    data=data.filter(x=>resumenCargaNorm(x.tutor)===nt);
+  }
+
+  const operativos=data.filter(x=>['ACTIVO','EN CIERRE'].includes(resumenCargaNorm(x.estado)));
+  const atenciones=operativos.reduce((s,x)=>s+resumenCargaEstudiantes(x.nrc),0);
+  const activos=operativos.filter(x=>resumenCargaNorm(x.estado)==='ACTIVO').length;
+  const cierre=operativos.filter(x=>resumenCargaNorm(x.estado)==='EN CIERRE').length;
+  const promedio=operativos.length?atenciones/operativos.length:0;
+
+  const prep30=data.filter(x=>{
+    const d=resumenCargaDias(x['fecha inicio']);
+    return resumenCargaNorm(x.estado)==='PREPARACION' && d>=0 && d<=30;
+  });
+  const uni118=prep30.filter(x=>resumenCargaNorm(x['codigo curso'])==='UNI118');
+  const programas30=new Set(
+    uni118.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean)
+  );
+
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+  set('resCargaAtenciones',resumenCargaNum(atenciones));
+  set('resCargaActivos',resumenCargaNum(activos));
+  set('resCargaCierre',resumenCargaNum(cierre));
+  set('resCargaPromedio',resumenCargaNum(promedio));
+  set('resCargaPrep30',resumenCargaNum(prep30.length));
+  set('resCargaProgramas30',resumenCargaNum(programas30.size));
+
+  const ctx=document.getElementById('resCargaContext');
+  if(ctx)ctx.textContent=tutor?('Carga actual · '+tutor):'Carga actual · equipo tutorial';
+}
+function abrirDetalleCargaTutorial(){
+  const tutor=tutorSesionETOP();
+  const p=new URLSearchParams();
+  p.set('embedded','1');
+  if(tutor)p.set('tutor',tutor);
+  mostrarAreaGestion();
+  vistaActual=null;
+  document.getElementById('homeTopSearch').style.display='none';
+  document.getElementById('gestionFilters').style.display='none';
+  document.getElementById('guia-correos').style.display='none';
+  const visor=document.getElementById('visor');
+  visor.style.display='block';
+  visor.src=BASE+'carga_tutorial.html?'+p.toString();
+  document.getElementById('titulo-vista').textContent='Carga Tutorial';
+  activate(null);
+}
+
+function showHome(btn){
+  vistaActual='INICIO';
+  refrescarFocoDia();
+  refrescarResumenCargaTutorial();
+  document.getElementById('viewer').style.display='none';
+  document.getElementById('homeView').style.display='block';
+  document.getElementById('homeTopSearch').style.display='flex';
+  document.getElementById('gestionFilters').style.display='none';
+  document.getElementById('guia-correos').style.display='none';
+  document.getElementById('titulo-vista').textContent='Inicio · Gestión Tutorial';
+  activate(btn);
+}
+function openLocal(url,title,btn){
+  mostrarAreaGestion();vistaActual=null;
+  document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
+  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;document.getElementById('titulo-vista').textContent=title;activate(btn);
+}
+
+function abrirCoordinacionPantallaCompleta(){
+  // En GitHub abre la hoja real ocupando toda la ventana.
+  // En la vista previa local abre la maqueta visual incluida con esta versión.
+  const esPreview = location.protocol === 'file:' || location.hostname.includes('sandbox');
+  location.href = esPreview
+    ? 'gestion_coordinacion_v5_visual_preview.html'
+    : 'gestion_coordinacion.html';
+}
+
+/* ===== Buscador universal =====
+   Busca datos no sensibles del catálogo NRC.
+   Un RUT ingresado por el usuario se envía directamente a Ficha del Estudiante.
+   No se indexan nombres de estudiantes en GitHub.
+*/
+let universalIdx=-1;
+let universalItems=[];
+
+function universalRut(valor){
+  let r=String(valor||'').trim().toUpperCase().replace(/\./g,'').replace(/\s+/g,'');
+  if(/^\d{6,8}[\dK]$/.test(r))r=r.slice(0,-1)+'-'+r.slice(-1);
+  return r;
+}
+function pareceRutUniversal(valor){
+  return /^\d{6,8}-[\dK]$/.test(universalRut(valor));
+}
+function limpiarContextoUniversal(){
+  Object.keys(BUSQUEDA).forEach(k=>BUSQUEDA[k]=Array.isArray(BUSQUEDA[k])?[]:null);
+  nrcConfirmado='';
+  const nrc=document.getElementById('input-nrc'),rut=document.getElementById('input-rut');
+  if(nrc)nrc.value='';
+  if(rut)rut.value='';
+}
+function cursosPermitidosUniversal(){
+  const tutor=tutorSesionETOP();
+  if(!tutor)return catalogoNRC.slice();
+  const nt=normalizarBusqueda(tutor);
+  return catalogoNRC.filter(c=>normalizarBusqueda(c.tutor)===nt);
+}
+function scoreUniversal(c,q){
+  const nrc=normalizarBusqueda(c.nrc);
+  const cod=normalizarBusqueda(c['codigo curso']);
+  const nom=normalizarBusqueda(c['nombre curso']);
+  const pro=normalizarBusqueda(c['nombre programa']);
+  const tut=normalizarBusqueda(c.tutor);
+  const int=normalizarBusqueda(c.intake);
+  if(nrc===q)return 0;
+  if(cod===q)return 1;
+  if(nrc.startsWith(q))return 2;
+  if(cod.startsWith(q))return 3;
+  if(tut===q)return 4;
+  if(nom.startsWith(q))return 5;
+  if(pro.startsWith(q))return 6;
+  if(int===q)return 7;
+  return 10;
+}
+function buscarUniversal(valor){
+  const raw=String(valor||'').trim();
+  const q=normalizarBusqueda(raw);
+  const resultados=[];
+
+  if(pareceRutUniversal(raw)){
+    resultados.push({
+      tipo:'rut',
+      key:'rut:'+universalRut(raw),
+      titulo:'Abrir Ficha del Estudiante',
+      sub:'RUT '+universalRut(raw),
+      tag:'Estudiante',
+      rut:universalRut(raw)
     });
-  </script>
+  }
+
+  if(q.length>=2){
+    const ses=tutorSesionETOP();
+    const tutores=[...TUTORES_ACTIVOS]
+      .filter(t=>!ses || normalizarBusqueda(t)===normalizarBusqueda(ses))
+      .filter(t=>normalizarBusqueda(t).includes(q))
+      .slice(0,3);
+    tutores.forEach(t=>resultados.push({
+      tipo:'tutor',key:'tutor:'+t,titulo:t,
+      sub:'Abrir Tablero de Gestión filtrado por tutor',
+      tag:'Tutor',tutor:t
+    }));
+
+    const cursos=cursosPermitidosUniversal()
+      .filter(c=>textoBuscableCurso(c).includes(q))
+      .sort((a,b)=>scoreUniversal(a,q)-scoreUniversal(b,q)||
+        normalizarBusqueda(a.nrc).localeCompare(normalizarBusqueda(b.nrc),'es',{numeric:true}))
+      .slice(0,12);
+
+    cursos.forEach(c=>resultados.push({
+      tipo:'curso',
+      key:'curso:'+String(c.nrc||''),
+      titulo:[c.nrc,c['codigo curso'],c['nombre curso']].filter(Boolean).join(' · '),
+      sub:[c['nombre programa'],c.tutor,c.estado,c.intake].filter(Boolean).join(' · '),
+      tag:c.estado||'Curso',
+      curso:c
+    }));
+  }
+
+  const vistos=new Set();
+  return resultados.filter(x=>{
+    if(vistos.has(x.key))return false;
+    vistos.add(x.key);return true;
+  }).slice(0,15);
+}
+function renderUniversalResults(items){
+  universalItems=items;
+  universalIdx=-1;
+  const box=document.getElementById('universalResults');
+  if(!box)return;
+  if(!items.length){
+    const q=(document.getElementById('universalSearch')?.value||'').trim();
+    if(!q){box.classList.remove('open');box.innerHTML='';return}
+    box.innerHTML="<div class='universal-empty'>Sin coincidencias en la cartera disponible.<br>Puede buscar por RUT, NRC, código, curso, programa o tutor.</div>";
+    box.classList.add('open');return;
+  }
+  box.innerHTML=items.map((x,i)=>{
+    const ico=x.tipo==='rut'?'◈':x.tipo==='tutor'?'👤':'⌗';
+    return "<button type='button' class='universal-result "+x.tipo+"' data-universal-index='"+i+"'>"+
+      "<span class='universal-result-ico'>"+ico+"</span>"+
+      "<span class='universal-result-main'><span class='universal-result-title'>"+esc(x.titulo)+"</span>"+
+      "<span class='universal-result-sub'>"+esc(x.sub||'')+"</span></span>"+
+      "<span class='universal-result-tag'>"+esc(x.tag||'')+"</span></button>";
+  }).join('')+
+  "<div class='universal-search-note'>Los nombres de estudiantes no se indexan en GitHub. Para estudiantes, use el RUT.</div>";
+  box.querySelectorAll('[data-universal-index]').forEach(btn=>{
+    btn.addEventListener('mousedown',e=>{
+      e.preventDefault();
+      ejecutarUniversalItem(universalItems[Number(btn.dataset.universalIndex)]);
+    });
+  });
+  box.classList.add('open');
+}
+function onUniversalInput(valor){
+  renderUniversalResults(buscarUniversal(valor));
+}
+function marcarUniversal(){
+  document.querySelectorAll('.universal-result').forEach((el,i)=>el.classList.toggle('sel',i===universalIdx));
+  const el=document.querySelectorAll('.universal-result')[universalIdx];
+  if(el)el.scrollIntoView({block:'nearest'});
+}
+function onUniversalKeydown(e){
+  const items=document.querySelectorAll('.universal-result');
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    universalIdx=Math.min(universalIdx+1,items.length-1);marcarUniversal();
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    universalIdx=Math.max(universalIdx-1,0);marcarUniversal();
+  }else if(e.key==='Enter'){
+    e.preventDefault();runUniversalSearch();
+  }else if(e.key==='Escape'){
+    document.getElementById('universalResults')?.classList.remove('open');
+  }
+}
+function destinoCursoUniversal(c){
+  const e=normalizarBusqueda(c?.estado);
+  if(e==='PREPARACION')return 'CURSOS_PREPARACION';
+  if(e==='EN CIERRE')return 'CURSOS_CIERRE';
+  if(e==='ACTIVO')return 'CURSOS_ACTIVOS';
+  return 'CALENDARIOS';
+}
+function ejecutarUniversalItem(item){
+  if(!item)return;
+  document.getElementById('universalResults')?.classList.remove('open');
+
+  if(item.tipo==='rut'){
+    limpiarContextoUniversal();
+    BUSQUEDA.rut=item.rut;
+    const r=document.getElementById('input-rut');if(r)r.value=item.rut;
+    sincronizarFiltros();actualizarBadge();
+    cargar('FICHA_ESTUDIANTE',findBtn('FICHA_ESTUDIANTE'));
+    return;
+  }
+  if(item.tipo==='tutor'){
+    limpiarContextoUniversal();
+    BUSQUEDA.tutor=item.tutor;
+    sincronizarFiltros();actualizarBadge();
+    cargar('DASHBOARD',findBtn('DASHBOARD'));
+    return;
+  }
+  if(item.tipo==='curso'){
+    limpiarContextoUniversal();
+    const nrc=String(item.curso?.nrc||'').trim();
+    BUSQUEDA.nrc=nrc;nrcConfirmado=nrc;
+    const inp=document.getElementById('input-nrc');if(inp)inp.value=nrc;
+    sincronizarFiltros();actualizarBadge();
+    const destino=destinoCursoUniversal(item.curso);
+    cargar(destino,findBtn(destino));
+  }
+}
+function runUniversalSearch(){
+  const q=(document.getElementById('universalSearch')?.value||'').trim();
+  if(!q)return;
+  const items=buscarUniversal(q);
+  if(universalIdx>=0&&items[universalIdx]){
+    ejecutarUniversalItem(items[universalIdx]);return;
+  }
+  if(items.length===1){
+    ejecutarUniversalItem(items[0]);return;
+  }
+  renderUniversalResults(items);
+}
+document.addEventListener('click',function(e){
+  const wrap=document.getElementById('universalSearchWrap');
+  if(wrap&&!wrap.contains(e.target))document.getElementById('universalResults')?.classList.remove('open');
+});
+
+/* ===== Login: misma clave global que index.html; identidad visible solo en el panel izquierdo ===== */
+const ETOP_EMAILS={
+'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl',
+'SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl',
+'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
+'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl','ALVARO ORELLANA':'tutoriaonline86@unab.cl'
+};
+const ETOP_COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
+const etopEmailNorm=v=>String(v||'').trim().toLowerCase();
+function etopTutorByEmail(email){const e=etopEmailNorm(email);return Object.keys(ETOP_EMAILS).find(n=>etopEmailNorm(ETOP_EMAILS[n])===e)||''}
+function abrirSesionETOP(){const o=document.getElementById('etop-login-overlay'),i=document.getElementById('etop-login-email'),s=sesionGlobalETOP();document.getElementById('etop-login-msg').textContent='';i.value=s?.email||localStorage.getItem(ETOP_LEGACY_EMAIL_KEY)||'';o.classList.add('open');setTimeout(()=>i.focus(),50)}
+function cerrarSesionETOP(){if(sesionGlobalETOP())document.getElementById('etop-login-overlay').classList.remove('open')}
+function guardarSesionETOP(){
+  const input=document.getElementById('etop-login-email'),msg=document.getElementById('etop-login-msg'),email=etopEmailNorm(input?.value),tutor=etopTutorByEmail(email),esCoord=ETOP_COORDINACION.has(email);
+  if(!email){msg.textContent='Ingresa tu correo institucional.';return}
+  if(!tutor&&!esCoord){msg.textContent='Este correo no está asociado a un tutor o usuario de coordinación del portal.';return}
+  const s={email,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};
+  localStorage.setItem(ETOP_GLOBAL_SESSION,JSON.stringify(s));localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
+  BUSQUEDA.tutor=null;
+  document.getElementById('etop-login-overlay').classList.remove('open');actualizarSesionETOPUI();
+  sincronizarFiltros();actualizarBadge();
+  if(vistaActual==='INICIO'){
+    refrescarFocoDia();
+    refrescarResumenCargaTutorial();
+  }else actualizarIframe();
+}
+function actualizarSesionETOPUI(){
+  const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
+  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';return}
+  st.classList.remove('off');
+  if(s.rol==='TUTOR'){box.textContent=s.tutor;st.textContent='● TUTOR ACTIVO';btn.textContent='👤 Cambiar sesión'}
+  else{box.textContent='COORDINACIÓN';st.textContent='● COORDINACIÓN';btn.textContent='👤 Cambiar sesión'}
+}
+
+document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')guardarSesionETOP()});
+
+(async function init(){
+  let s=sesionGlobalETOP();
+  if(!s){
+    const legacy=etopEmailNorm(localStorage.getItem(ETOP_LEGACY_EMAIL_KEY)),tutor=etopTutorByEmail(legacy),esCoord=ETOP_COORDINACION.has(legacy);
+    if(legacy&&(tutor||esCoord)){s={email:legacy,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};localStorage.setItem(ETOP_GLOBAL_SESSION,JSON.stringify(s))}
+  }
+  actualizarSesionETOPUI();
+  await cargarSugerenciasNRC();
+  showHome(findBtn('INICIO'));
+  if(!s)abrirSesionETOP();
+})();
+
+</script>
+
+<div id="etop-login-overlay" class="etop-login-overlay" role="dialog" aria-modal="true" aria-labelledby="etop-login-title">
+  <div class="etop-login-card">
+    <div class="etop-login-head">
+      <h3 id="etop-login-title">Identificación ETOP</h3>
+      <p>Ingrese su correo institucional. El portal recordará su perfil en este navegador y filtrará la información según su tutor.</p>
+    </div>
+    <div class="etop-login-body">
+      <label for="etop-login-email">Correo institucional</label>
+      <input id="etop-login-email" class="etop-login-input" type="email" autocomplete="email" placeholder="tutoriaonline00@unab.cl">
+      <div id="etop-login-msg" class="etop-login-msg"></div>
+      <div class="etop-login-actions">
+        <button id="etop-login-cancel" class="etop-login-cancel" type="button" onclick="cerrarSesionETOP()">Cancelar</button>
+        <button class="etop-login-save" type="button" onclick="guardarSesionETOP()">Guardar perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/gestion_kpi.js?v=20260911-kpi2"></script>
+<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_prueba.js?v=20260916-4"></script>
+<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_invitaciones_sharepoint.js?v=20260916-1"></script>
+<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_oficial.js?v=20260916-1"></script>
+<script>
+/* Asegura que cualquier herramienta agregada por los scripts de Gestión abra el área central V5. */
+document.addEventListener('click',function(e){
+  const b=e.target.closest('.menu-btn');
+  if(!b || b.dataset.key==='INICIO') return;
+  if(document.getElementById('homeView')?.style.display!=='none'){
+    document.getElementById('homeView').style.display='none';
+    document.getElementById('viewer').style.display='block';
+  }
+});
+</script>
+
 </body>
 </html>
