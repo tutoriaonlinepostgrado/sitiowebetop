@@ -216,6 +216,54 @@
 }
 
 </style>
+
+<style>
+/* ===== Buscador universal V1 ===== */
+.universal-search-wrap{position:relative;z-index:80}
+.universal-search-wrap>span{z-index:2}
+.universal-results{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);
+  max-height:min(520px,70vh);overflow:auto;background:#fff;
+  border:1px solid #d8e2ee;border-radius:12px;
+  box-shadow:0 18px 46px rgba(15,23,42,.22);z-index:9999;padding:5px;
+}
+.universal-results.open{display:block}
+.universal-result{
+  width:100%;border:0;background:#fff;display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;
+  text-align:left;padding:8px 9px;border-radius:9px;cursor:pointer;color:#24364c;
+}
+.universal-result:hover,.universal-result.sel{background:#eef6ff}
+.universal-result+.universal-result{margin-top:2px}
+.universal-result-ico{
+  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+  background:#edf4fb;color:#315f86;font-size:13px;font-weight:900
+}
+.universal-result.rut .universal-result-ico{background:#f0ecff;color:#7c3aed}
+.universal-result.tutor .universal-result-ico{background:#eef8f3;color:#23805e}
+.universal-result-main{min-width:0}
+.universal-result-title{
+  display:block;color:#1d334b;font-size:10px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-result-sub{
+  display:block;margin-top:2px;color:#74869a;font-size:8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-result-tag{
+  max-width:95px;border-radius:999px;background:#f4f7fa;color:#6f8195;
+  padding:3px 6px;font-size:7px;font-weight:800;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-empty{
+  padding:15px 12px;text-align:center;color:#728197;font-size:9px;line-height:1.4
+}
+.universal-search-note{
+  padding:7px 9px 5px;color:#8493a5;font-size:7.5px;
+  border-top:1px solid #edf1f5;margin-top:4px
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -258,9 +306,15 @@
     <div class="sep"></div>
 
     <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
-      <div class="search-pill" style="flex:1;max-width:760px">
+      <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
         <span>🔎</span>
-        <input id="universalSearch" placeholder="Buscar estudiante, RUT, NRC, curso, programa o tutor..." style="width:100%;border-radius:9px;padding-left:30px" onkeydown="if(event.key==='Enter')runUniversalSearch()">
+        <input id="universalSearch"
+               placeholder="Buscar RUT, NRC, curso, programa o tutor..."
+               autocomplete="off"
+               style="width:100%;border-radius:9px;padding-left:30px"
+               oninput="onUniversalInput(this.value)"
+               onkeydown="onUniversalKeydown(event)">
+        <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
       </div>
       <button onclick="runUniversalSearch()" class="universal-search-btn">Buscar</button>
     </div>
@@ -974,7 +1028,204 @@ function abrirCoordinacionPantallaCompleta(){
     : 'gestion_coordinacion.html';
 }
 
-function runUniversalSearch(){const q=(document.getElementById('universalSearch').value||'').trim();if(!q)return;alert('Vista previa: búsqueda universal de "'+q+'".')}
+/* ===== Buscador universal =====
+   Busca datos no sensibles del catálogo NRC.
+   Un RUT ingresado por el usuario se envía directamente a Ficha del Estudiante.
+   No se indexan nombres de estudiantes en GitHub.
+*/
+let universalIdx=-1;
+let universalItems=[];
+
+function universalRut(valor){
+  let r=String(valor||'').trim().toUpperCase().replace(/\./g,'').replace(/\s+/g,'');
+  if(/^\d{6,8}[\dK]$/.test(r))r=r.slice(0,-1)+'-'+r.slice(-1);
+  return r;
+}
+function pareceRutUniversal(valor){
+  return /^\d{6,8}-[\dK]$/.test(universalRut(valor));
+}
+function limpiarContextoUniversal(){
+  Object.keys(BUSQUEDA).forEach(k=>BUSQUEDA[k]=Array.isArray(BUSQUEDA[k])?[]:null);
+  nrcConfirmado='';
+  const nrc=document.getElementById('input-nrc'),rut=document.getElementById('input-rut');
+  if(nrc)nrc.value='';
+  if(rut)rut.value='';
+}
+function cursosPermitidosUniversal(){
+  const tutor=tutorSesionETOP();
+  if(!tutor)return catalogoNRC.slice();
+  const nt=normalizarBusqueda(tutor);
+  return catalogoNRC.filter(c=>normalizarBusqueda(c.tutor)===nt);
+}
+function scoreUniversal(c,q){
+  const nrc=normalizarBusqueda(c.nrc);
+  const cod=normalizarBusqueda(c['codigo curso']);
+  const nom=normalizarBusqueda(c['nombre curso']);
+  const pro=normalizarBusqueda(c['nombre programa']);
+  const tut=normalizarBusqueda(c.tutor);
+  const int=normalizarBusqueda(c.intake);
+  if(nrc===q)return 0;
+  if(cod===q)return 1;
+  if(nrc.startsWith(q))return 2;
+  if(cod.startsWith(q))return 3;
+  if(tut===q)return 4;
+  if(nom.startsWith(q))return 5;
+  if(pro.startsWith(q))return 6;
+  if(int===q)return 7;
+  return 10;
+}
+function buscarUniversal(valor){
+  const raw=String(valor||'').trim();
+  const q=normalizarBusqueda(raw);
+  const resultados=[];
+
+  if(pareceRutUniversal(raw)){
+    resultados.push({
+      tipo:'rut',
+      key:'rut:'+universalRut(raw),
+      titulo:'Abrir Ficha del Estudiante',
+      sub:'RUT '+universalRut(raw),
+      tag:'Estudiante',
+      rut:universalRut(raw)
+    });
+  }
+
+  if(q.length>=2){
+    const ses=tutorSesionETOP();
+    const tutores=[...TUTORES_ACTIVOS]
+      .filter(t=>!ses || normalizarBusqueda(t)===normalizarBusqueda(ses))
+      .filter(t=>normalizarBusqueda(t).includes(q))
+      .slice(0,3);
+    tutores.forEach(t=>resultados.push({
+      tipo:'tutor',key:'tutor:'+t,titulo:t,
+      sub:'Abrir Tablero de Gestión filtrado por tutor',
+      tag:'Tutor',tutor:t
+    }));
+
+    const cursos=cursosPermitidosUniversal()
+      .filter(c=>textoBuscableCurso(c).includes(q))
+      .sort((a,b)=>scoreUniversal(a,q)-scoreUniversal(b,q)||
+        normalizarBusqueda(a.nrc).localeCompare(normalizarBusqueda(b.nrc),'es',{numeric:true}))
+      .slice(0,12);
+
+    cursos.forEach(c=>resultados.push({
+      tipo:'curso',
+      key:'curso:'+String(c.nrc||''),
+      titulo:[c.nrc,c['codigo curso'],c['nombre curso']].filter(Boolean).join(' · '),
+      sub:[c['nombre programa'],c.tutor,c.estado,c.intake].filter(Boolean).join(' · '),
+      tag:c.estado||'Curso',
+      curso:c
+    }));
+  }
+
+  const vistos=new Set();
+  return resultados.filter(x=>{
+    if(vistos.has(x.key))return false;
+    vistos.add(x.key);return true;
+  }).slice(0,15);
+}
+function renderUniversalResults(items){
+  universalItems=items;
+  universalIdx=-1;
+  const box=document.getElementById('universalResults');
+  if(!box)return;
+  if(!items.length){
+    const q=(document.getElementById('universalSearch')?.value||'').trim();
+    if(!q){box.classList.remove('open');box.innerHTML='';return}
+    box.innerHTML="<div class='universal-empty'>Sin coincidencias en la cartera disponible.<br>Puede buscar por RUT, NRC, código, curso, programa o tutor.</div>";
+    box.classList.add('open');return;
+  }
+  box.innerHTML=items.map((x,i)=>{
+    const ico=x.tipo==='rut'?'◈':x.tipo==='tutor'?'👤':'⌗';
+    return "<button type='button' class='universal-result "+x.tipo+"' data-universal-index='"+i+"'>"+
+      "<span class='universal-result-ico'>"+ico+"</span>"+
+      "<span class='universal-result-main'><span class='universal-result-title'>"+esc(x.titulo)+"</span>"+
+      "<span class='universal-result-sub'>"+esc(x.sub||'')+"</span></span>"+
+      "<span class='universal-result-tag'>"+esc(x.tag||'')+"</span></button>";
+  }).join('')+
+  "<div class='universal-search-note'>Los nombres de estudiantes no se indexan en GitHub. Para estudiantes, use el RUT.</div>";
+  box.querySelectorAll('[data-universal-index]').forEach(btn=>{
+    btn.addEventListener('mousedown',e=>{
+      e.preventDefault();
+      ejecutarUniversalItem(universalItems[Number(btn.dataset.universalIndex)]);
+    });
+  });
+  box.classList.add('open');
+}
+function onUniversalInput(valor){
+  renderUniversalResults(buscarUniversal(valor));
+}
+function marcarUniversal(){
+  document.querySelectorAll('.universal-result').forEach((el,i)=>el.classList.toggle('sel',i===universalIdx));
+  const el=document.querySelectorAll('.universal-result')[universalIdx];
+  if(el)el.scrollIntoView({block:'nearest'});
+}
+function onUniversalKeydown(e){
+  const items=document.querySelectorAll('.universal-result');
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    universalIdx=Math.min(universalIdx+1,items.length-1);marcarUniversal();
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    universalIdx=Math.max(universalIdx-1,0);marcarUniversal();
+  }else if(e.key==='Enter'){
+    e.preventDefault();runUniversalSearch();
+  }else if(e.key==='Escape'){
+    document.getElementById('universalResults')?.classList.remove('open');
+  }
+}
+function destinoCursoUniversal(c){
+  const e=normalizarBusqueda(c?.estado);
+  if(e==='PREPARACION')return 'CURSOS_PREPARACION';
+  if(e==='EN CIERRE')return 'CURSOS_CIERRE';
+  if(e==='ACTIVO')return 'CURSOS_ACTIVOS';
+  return 'CALENDARIOS';
+}
+function ejecutarUniversalItem(item){
+  if(!item)return;
+  document.getElementById('universalResults')?.classList.remove('open');
+
+  if(item.tipo==='rut'){
+    limpiarContextoUniversal();
+    BUSQUEDA.rut=item.rut;
+    const r=document.getElementById('input-rut');if(r)r.value=item.rut;
+    sincronizarFiltros();actualizarBadge();
+    cargar('FICHA_ESTUDIANTE',findBtn('FICHA_ESTUDIANTE'));
+    return;
+  }
+  if(item.tipo==='tutor'){
+    limpiarContextoUniversal();
+    BUSQUEDA.tutor=item.tutor;
+    sincronizarFiltros();actualizarBadge();
+    cargar('DASHBOARD',findBtn('DASHBOARD'));
+    return;
+  }
+  if(item.tipo==='curso'){
+    limpiarContextoUniversal();
+    const nrc=String(item.curso?.nrc||'').trim();
+    BUSQUEDA.nrc=nrc;nrcConfirmado=nrc;
+    const inp=document.getElementById('input-nrc');if(inp)inp.value=nrc;
+    sincronizarFiltros();actualizarBadge();
+    const destino=destinoCursoUniversal(item.curso);
+    cargar(destino,findBtn(destino));
+  }
+}
+function runUniversalSearch(){
+  const q=(document.getElementById('universalSearch')?.value||'').trim();
+  if(!q)return;
+  const items=buscarUniversal(q);
+  if(universalIdx>=0&&items[universalIdx]){
+    ejecutarUniversalItem(items[universalIdx]);return;
+  }
+  if(items.length===1){
+    ejecutarUniversalItem(items[0]);return;
+  }
+  renderUniversalResults(items);
+}
+document.addEventListener('click',function(e){
+  const wrap=document.getElementById('universalSearchWrap');
+  if(wrap&&!wrap.contains(e.target))document.getElementById('universalResults')?.classList.remove('open');
+});
 
 /* ===== Login: misma clave global que index.html; identidad visible solo en el panel izquierdo ===== */
 const ETOP_EMAILS={
