@@ -195,6 +195,26 @@
 .nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:rgba(18,101,223,.22)!important;color:#fff!important}
 .nrc-dropdown-item .match{color:#6db4ff!important}
 
+
+/* ===== Foco del día · página real Power BI ===== */
+.foco-powerbi-card{overflow:hidden}
+.foco-powerbi-body{
+  padding:0!important;
+  height:430px;
+  min-height:430px;
+  background:#fff;
+}
+.foco-powerbi-frame{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+@media(max-width:1280px){
+  .foco-powerbi-body{height:480px;min-height:480px}
+}
+
 </style>
 </head>
 <body>
@@ -317,20 +337,20 @@
     <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
     <div class="dashboard">
       <div class="left">
-        <div class="top-summary"><div class="top-col-left"><section class="card"><div class="card-head"><h2>🎯 Foco del día</h2><span>Visual Power BI · FOCO_DIA_ETOP_HTML</span></div><div class="card-body"><div class="foco-grid">
-          <div class="foco red" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))"><div class="ico">!</div><div class="num">27</div><div><b>Riesgo accionable</b><small>Requieren gestión</small></div></div>
-          <div class="foco red"><div class="ico">●</div><div class="num">5</div><div><b>En rojo</b><small>Riesgo crítico</small></div></div>
-          <div class="foco yellow"><div class="ico">●</div><div class="num">8</div><div><b>En amarillo</b><small>Seguimiento preventivo</small></div></div>
-          <div class="foco orange"><div class="ico">●</div><div class="num">3</div><div><b>En naranjo</b><small>Riesgo intermedio</small></div></div>
-          <div class="foco orange"><div class="ico">↘</div><div class="num">6</div><div><b>No ingresaron</b><small>Ingreso = NO</small></div></div>
-          <div class="foco orange"><div class="ico">⌛</div><div class="num">4</div><div><b>Sin registro +7d</b><small>Ingreso pendiente</small></div></div>
-          <div class="foco red"><div class="ico">C</div><div class="num">7</div><div><b>Canvas sin cotejo</b><small>Revisar acceso</small></div></div>
-          <div class="foco purple"><div class="ico">↔</div><div class="num">2</div><div><b>Riesgo multicurso</b><small>Más de un curso</small></div></div>
-          <div class="foco blue"><div class="ico">↻</div><div class="num">1</div><div><b>En trámite</b><small>Proceso de retiro</small></div></div>
-          <div class="foco purple"><div class="ico">Ⅱ</div><div class="num">2</div><div><b>Seguimiento detenido</b><small>Semáforo morado</small></div></div>
-          <div class="foco gray"><div class="ico">×</div><div class="num">1</div><div><b>En retiro</b><small>Estado estudiante</small></div></div>
-          <div class="foco red" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="ico">14</div><div class="num">2</div><div><b>Cierre &lt;14 días</b><small>Cursos con riesgo</small></div></div>
-        </div><div class="note" style="margin-top:7px;padding:7px;font-size:8px">Los valores son demostrativos solo para visualizar el diseño. En la versión final este bloque será el visual HTML de Power BI y respetará automáticamente el tutor de sesión y los filtros superiores.</div></div></section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen de cartera</h2><span>Modelo semántico</span></div><div class="card-body"><div class="kpi-row">
+        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card">
+  <div class="card-head">
+    <h2>🎯 Foco del día</h2>
+    <span>Power BI · KPIs de seguimiento</span>
+  </div>
+  <div class="card-body foco-powerbi-body">
+    <iframe
+      id="focoDiaFrame"
+      class="foco-powerbi-frame"
+      title="Foco del día · Power BI"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen de cartera</h2><span>Modelo semántico</span></div><div class="card-body"><div class="kpi-row">
           <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v">12</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div><div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v">3</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div><div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">428</div><div class="l">Atenciones activas</div><div class="s">Nómina →</div></div><div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">314</div><div class="l">Estudiantes únicos</div><div class="s">Nómina →</div></div><div class="kpi" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v">5</div><div class="l">En preparación</div><div class="s">Preparación →</div></div><div class="kpi"><div class="v">94%</div><div class="l">Ingreso registrado</div><div class="s">Contexto tutor</div></div>
         </div></div></section><section class="card">
   <div class="card-head">
@@ -776,8 +796,50 @@ function mostrarCanales(btn){
     </div></div>`;
   activate(btn);document.getElementById('titulo-vista').textContent='🟣 Canales del Equipo';
 }
+
+/* ===== Foco del día · Power BI =====
+   Página entregada: 0e41223d6909461650ae
+   Reporte: 66b1fc8c-00c8-44f3-b327-890f57f3c7b8
+*/
+const FOCO_DIA_POWERBI = {
+  reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',
+  groupId:'308deb6f-aa2f-4c21-b5fb-33b977c17e13',
+  tenantId:'8fbed393-d03b-49f8-be79-cd5e1f590fb2',
+  pageName:'0e41223d6909461650ae'
+};
+
+function buildFocoDiaURL(){
+  const u=new URL('https://app.powerbi.com/reportEmbed');
+  u.searchParams.set('reportId',FOCO_DIA_POWERBI.reportId);
+  u.searchParams.set('groupId',FOCO_DIA_POWERBI.groupId);
+  u.searchParams.set('ctid',FOCO_DIA_POWERBI.tenantId);
+  u.searchParams.set('autoAuth','true');
+  u.searchParams.set('pageName',FOCO_DIA_POWERBI.pageName);
+  u.searchParams.set('navContentPaneEnabled','false');
+  u.searchParams.set('filterPaneEnabled','false');
+
+  // En Tutoría, el Foco del día debe mostrar solo la cartera del tutor identificado.
+  const tutor=tutorSesionETOP();
+  if(tutor){
+    const seguro=String(tutor).replace(/'/g,"''");
+    const filtro=`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`;
+    return u.toString()+'&filter='+encodeURIComponent(filtro);
+  }
+  return u.toString();
+}
+
+function refrescarFocoDia(){
+  const frame=document.getElementById('focoDiaFrame');
+  if(!frame)return;
+  const nueva=buildFocoDiaURL();
+  if(frame.dataset.url===nueva)return;
+  frame.dataset.url=nueva;
+  frame.src=nueva;
+}
+
 function showHome(btn){
   vistaActual='INICIO';
+  refrescarFocoDia();
   document.getElementById('viewer').style.display='none';
   document.getElementById('homeView').style.display='block';
   document.getElementById('homeTopSearch').style.display='flex';
@@ -823,7 +885,8 @@ function guardarSesionETOP(){
   localStorage.setItem(ETOP_GLOBAL_SESSION,JSON.stringify(s));localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
   BUSQUEDA.tutor=null;
   document.getElementById('etop-login-overlay').classList.remove('open');actualizarSesionETOPUI();
-  sincronizarFiltros();actualizarBadge();if(vistaActual!=='INICIO')actualizarIframe();
+  sincronizarFiltros();actualizarBadge();
+  if(vistaActual==='INICIO')refrescarFocoDia();else actualizarIframe();
 }
 function actualizarSesionETOPUI(){
   const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
