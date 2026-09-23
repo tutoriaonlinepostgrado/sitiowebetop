@@ -149,13 +149,18 @@ function getCanvasUrl(rows){for(const r of rows){const u=[r.urlCanvas,r.URL_QA2_
 function setLink(id,url){const a=$(id);if(!a)return;if(url){a.href=url;a.classList.remove('disabled')}else{a.href='#';a.classList.add('disabled')}}
 function showStatus(msg,error=false){const s=$('status');s.textContent=msg;s.className='status show'+(error?' error':'')}
 function clearStatus(){$('status').className='status';$('status').textContent=''}
-function studentsUrl(nrc){
+function studentsUrl(nrc,periodo){
   const s=String(nrc||'').split('_');
   const crn=(s[0]||'').trim();
   const codigo=(s[1]||'').trim();
-  if(!crn||!codigo)return '';
+  const per=String(periodo||s[s.length-1]||'').trim();
+  if(!crn||!codigo||!per)return '';
   const filtro=crn+'_'+codigo;
-  return 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded&FilterField1=NRC_COD_CAL_FILTRO&FilterValue1='+encodeURIComponent(filtro);
+  return 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx?env=Embedded'
+    +'&FilterField1=NRC_COD_CAL_FILTRO'
+    +'&FilterValue1='+encodeURIComponent(filtro)
+    +'&FilterField2=PERIODO_x002a_'
+    +'&FilterValue2='+encodeURIComponent(per);
 }
 function integrationUrl(nrc){const s=String(nrc||'').split('_'),crn=s[0]||'',period=s[s.length-1]||'';return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn:crn,NRC:crn}).toString():''}
 function intakeUrl(intake){return intake?BASE+'calendarios.html?intake='+encodeURIComponent(intake):''}
@@ -191,7 +196,7 @@ function render(c){
   if(!con.length)list.innerHTML='<div class="empty">No hay incidencias registradas para este NRC.</div>';
   else list.innerHTML=con.slice(0,6).map(i=>'<div class="inc"><div class="inc-top"><span class="inc-cat">'+esc(i.categoria||'Sin categoría')+'</span><span class="inc-state">'+esc(upper(i.estadoIncidencia)||'—')+'</span></div><p>'+esc(i.descripcionIncidencia||'Sin descripción')+'</p></div>').join('')+(con.length>6?'<div class="sub">+ '+(con.length-6)+' incidencias adicionales. Use “Abrir detalle”.</div>':'');
   const iUrl=incidentUrl(c),gUrl=gestionUrl(c),calUrl=calendarUrl(c);
-  setLink('aStudents',studentsUrl(c.nrc));setLink('aCanvas',canvas);setLink('aIntegration',integrationUrl(c.nrc));setLink('aInc',iUrl);setLink('aQa2',uni118?'':qa2Url(c));setLink('aIntake',intakeUrl(c.intake));setLink('aPresentation',presentationUrl(c));setLink('incDetail',iUrl);setLink('btnIncidenciasTop',iUrl);setLink('btnGestionTop',gUrl);setLink('btnCalendarios',calUrl);
+  setLink('aStudents',studentsUrl(c.nrc,c.periodo));setLink('aCanvas',canvas);setLink('aIntegration',integrationUrl(c.nrc));setLink('aInc',iUrl);setLink('aQa2',uni118?'':qa2Url(c));setLink('aIntake',intakeUrl(c.intake));setLink('aPresentation',presentationUrl(c));setLink('incDetail',iUrl);setLink('btnIncidenciasTop',iUrl);setLink('btnGestionTop',gUrl);setLink('btnCalendarios',calUrl);
   const u=new URL(location.href);u.searchParams.set('nrc',c.nrc||'');history.replaceState(null,'',u);$('searchNrc').value=c.nrc||'';clearStatus();
 }
 function buscar(){const value=$('searchNrc').value.trim();const c=findCourse(value);if(!c){showStatus('No encontré un curso que coincida con "'+value+'".',true);return}render(c)}
