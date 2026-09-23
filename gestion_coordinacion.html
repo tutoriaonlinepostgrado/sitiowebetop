@@ -529,7 +529,7 @@
         <div class="sidebar-menu">
             <div class="menu-category">Espacio Coordinación</div>
             <button class="menu-btn" onclick="cargar('BASE_COORDINACION', this)">📊 Base Madre Coordinación</button>
-            <a href="explorador_etop.html" class="menu-btn">🧭 Explorador de Cursos ETOP</a>
+            <button class="menu-btn" onclick="cargar('EXPLORADOR', this)">🧭 Explorador de Cursos ETOP</button>
             <button class="menu-btn active" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
             <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
@@ -647,6 +647,10 @@
         'INCIDENCIAS': {
             url: "incidencias.html",
             tipo: 'local'
+        },
+        'EXPLORADOR': {
+            url: "explorador_etop.html",
+            tipo: 'local'
         }
     };
 
@@ -657,7 +661,8 @@
         'CARGA_TUTORIAL': 'Carga Tutorial',
         'CALENDARIOS': 'Calendarios',
         'CURSOS_INICIAR': 'Cursos por iniciar',
-        'INCIDENCIAS': 'Incidencias'
+        'INCIDENCIAS': 'Incidencias',
+        'EXPLORADOR': 'Explorador de Cursos ETOP'
     };
 
     // Tutores activos: controla únicamente las opciones del desplegable.
