@@ -223,11 +223,26 @@
 .universal-search-wrap>span{z-index:2}
 .universal-results{
   display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);
-  max-height:min(520px,70vh);overflow:auto;background:#fff;
-  border:1px solid #d8e2ee;border-radius:12px;
-  box-shadow:0 18px 46px rgba(15,23,42,.22);z-index:9999;padding:5px;
+  max-height:min(460px,64vh);
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:#fff;
+  border:1px solid #d8e2ee;
+  border-radius:12px;
+  box-shadow:0 18px 46px rgba(15,23,42,.22);
+  z-index:9999;
+  padding:6px;
 }
 .universal-results.open{display:block}
+
+/* La regla general .search-pill span posiciona el icono de búsqueda.
+   El desplegable está dentro del mismo contenedor, por lo que sus textos
+   deben volver al flujo normal para no superponerse. */
+.universal-results span{
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+}
 .universal-result{
   width:100%;border:0;background:#fff;display:grid;
   grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;
