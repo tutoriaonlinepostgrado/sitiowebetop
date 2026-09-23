@@ -350,8 +350,13 @@
       allowfullscreen="true">
     </iframe>
   </div>
-</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen de cartera</h2><span>Modelo semántico</span></div><div class="card-body"><div class="kpi-row">
-          <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v">12</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div><div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v">3</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div><div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">428</div><div class="l">Atenciones activas</div><div class="s">Nómina →</div></div><div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v">314</div><div class="l">Estudiantes únicos</div><div class="s">Nómina →</div></div><div class="kpi" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v">5</div><div class="l">En preparación</div><div class="s">Preparación →</div></div><div class="kpi"><div class="v">94%</div><div class="l">Ingreso registrado</div><div class="s">Contexto tutor</div></div>
+</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
+          <div class="kpi" onclick="cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'))"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Estudiantes acumulados →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPromedio">—</div><div class="l">Promedio estudiantes / NRC</div><div class="s">Ver carga →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPrep30">—</div><div class="l">Preparación próximos 30 días</div><div class="s">Ver próximos →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaProgramas30">—</div><div class="l">Programas por iniciar</div><div class="s">UNI118 · próximos 30 días →</div></div>
         </div></div></section><section class="card">
   <div class="card-head">
     <h2>Accesos directos</h2>
@@ -654,6 +659,7 @@ async function cargarSugerenciasNRC(){
   try{
     const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error('HTTP '+resp.status);
     catalogoNRC=await resp.json();construirIndiceNRC();
+    if(typeof refrescarResumenCargaTutorial==='function')refrescarResumenCargaTutorial();
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const s=document.getElementById(id);s.options[0].text=s.options[0].text.replace(' ⏳','');s.disabled=false});
     sincronizarFiltros();
   }catch(err){
@@ -837,9 +843,114 @@ function refrescarFocoDia(){
   frame.src=nueva;
 }
 
+
+/* ===== Resumen carga tutorial · datos reales =====
+   Replica los KPI principales de carga_tutorial.html usando:
+   - nrcs.json
+   - metricas_estudiantes.json
+   La sesión de tutor restringe automáticamente la cartera.
+*/
+let resumenCargaMetricasMap=new Map();
+let resumenCargaMetricasCargadas=false;
+
+function resumenCargaNorm(v){
+  return String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function resumenCargaNum(v){
+  return new Intl.NumberFormat('es-CL',{maximumFractionDigits:1}).format(Number(v)||0);
+}
+function resumenCargaDias(fecha){
+  if(!fecha)return 99999;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const d=new Date(String(fecha).slice(0,10)+'T00:00:00');
+  return Math.round((d-hoy)/86400000);
+}
+function resumenCargaEstudiantes(nrc){
+  return Number(resumenCargaMetricasMap.get(resumenCargaNorm(nrc))||0);
+}
+async function asegurarMetricasResumenCarga(){
+  if(resumenCargaMetricasCargadas)return;
+  const url=(location.hostname.includes('github.io')?'metricas_estudiantes.json':BASE+'metricas_estudiantes.json');
+  try{
+    const r=await fetch(url+'?v='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    resumenCargaMetricasMap=new Map(
+      (Array.isArray(data)?data:[]).map(x=>[
+        resumenCargaNorm(x.nrc),
+        Number(x.total_estudiantes)||0
+      ])
+    );
+    resumenCargaMetricasCargadas=true;
+  }catch(err){
+    console.warn('No fue posible cargar metricas_estudiantes.json para Resumen carga tutorial:',err);
+    resumenCargaMetricasMap=new Map();
+    resumenCargaMetricasCargadas=true;
+  }
+}
+async function refrescarResumenCargaTutorial(){
+  const ids=['resCargaAtenciones','resCargaActivos','resCargaCierre','resCargaPromedio','resCargaPrep30','resCargaProgramas30'];
+  if(!ids.some(id=>document.getElementById(id)))return;
+  if(!catalogoNRC.length){
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});
+    return;
+  }
+  await asegurarMetricasResumenCarga();
+
+  const tutor=tutorSesionETOP();
+  let data=catalogoNRC.slice();
+  if(tutor){
+    const nt=resumenCargaNorm(tutor);
+    data=data.filter(x=>resumenCargaNorm(x.tutor)===nt);
+  }
+
+  const operativos=data.filter(x=>['ACTIVO','EN CIERRE'].includes(resumenCargaNorm(x.estado)));
+  const atenciones=operativos.reduce((s,x)=>s+resumenCargaEstudiantes(x.nrc),0);
+  const activos=operativos.filter(x=>resumenCargaNorm(x.estado)==='ACTIVO').length;
+  const cierre=operativos.filter(x=>resumenCargaNorm(x.estado)==='EN CIERRE').length;
+  const promedio=operativos.length?atenciones/operativos.length:0;
+
+  const prep30=data.filter(x=>{
+    const d=resumenCargaDias(x['fecha inicio']);
+    return resumenCargaNorm(x.estado)==='PREPARACION' && d>=0 && d<=30;
+  });
+  const uni118=prep30.filter(x=>resumenCargaNorm(x['codigo curso'])==='UNI118');
+  const programas30=new Set(
+    uni118.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean)
+  );
+
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+  set('resCargaAtenciones',resumenCargaNum(atenciones));
+  set('resCargaActivos',resumenCargaNum(activos));
+  set('resCargaCierre',resumenCargaNum(cierre));
+  set('resCargaPromedio',resumenCargaNum(promedio));
+  set('resCargaPrep30',resumenCargaNum(prep30.length));
+  set('resCargaProgramas30',resumenCargaNum(programas30.size));
+
+  const ctx=document.getElementById('resCargaContext');
+  if(ctx)ctx.textContent=tutor?('Carga actual · '+tutor):'Carga actual · equipo tutorial';
+}
+function abrirDetalleCargaTutorial(){
+  const tutor=tutorSesionETOP();
+  const p=new URLSearchParams();
+  p.set('embedded','1');
+  if(tutor)p.set('tutor',tutor);
+  mostrarAreaGestion();
+  vistaActual=null;
+  document.getElementById('homeTopSearch').style.display='none';
+  document.getElementById('gestionFilters').style.display='none';
+  document.getElementById('guia-correos').style.display='none';
+  const visor=document.getElementById('visor');
+  visor.style.display='block';
+  visor.src=BASE+'carga_tutorial.html?'+p.toString();
+  document.getElementById('titulo-vista').textContent='Carga Tutorial';
+  activate(null);
+}
+
 function showHome(btn){
   vistaActual='INICIO';
   refrescarFocoDia();
+  refrescarResumenCargaTutorial();
   document.getElementById('viewer').style.display='none';
   document.getElementById('homeView').style.display='block';
   document.getElementById('homeTopSearch').style.display='flex';
@@ -886,7 +997,10 @@ function guardarSesionETOP(){
   BUSQUEDA.tutor=null;
   document.getElementById('etop-login-overlay').classList.remove('open');actualizarSesionETOPUI();
   sincronizarFiltros();actualizarBadge();
-  if(vistaActual==='INICIO')refrescarFocoDia();else actualizarIframe();
+  if(vistaActual==='INICIO'){
+    refrescarFocoDia();
+    refrescarResumenCargaTutorial();
+  }else actualizarIframe();
 }
 function actualizarSesionETOPUI(){
   const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
