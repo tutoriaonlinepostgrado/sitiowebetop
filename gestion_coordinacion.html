@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espacio Coordinación - ETOP</title>
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
         :root {
             --azul-fondo: #141b2d;
             --azul-sidebar: #1f2940;
@@ -303,6 +304,213 @@
             background: rgba(255,215,0,.13);
             color: #ffd700;
             font-weight: 700;
+        }
+
+    
+        /* =========================================================
+           ETOP V5 — CAPA VISUAL
+           Solo estética. Mantiene intactos HTML funcional y JavaScript.
+           ========================================================= */
+        :root{
+            --azul-fondo:#eef3f8;
+            --azul-sidebar:#142440;
+            --amarillo-top:#3a9bff;
+            --texto-blanco:#ffffff;
+            --texto-gris:#8094ad;
+        }
+
+        body, html{
+            font-family:Inter,'Segoe UI',Arial,sans-serif !important;
+            background:#eef3f8 !important;
+            color:#17243a;
+        }
+
+        /* Sidebar */
+        .sidebar{
+            background:linear-gradient(180deg,#122541 0%,#142440 100%) !important;
+            border-right:1px solid rgba(255,255,255,.06) !important;
+        }
+        .sidebar-header{
+            background:rgba(0,0,0,.08) !important;
+            border-bottom:1px solid rgba(255,255,255,.08) !important;
+        }
+        .sidebar-header h2{
+            color:#fff !important;
+            font-size:15px !important;
+            letter-spacing:.04em !important;
+        }
+        .sidebar-header span{color:#9eb0c4 !important}
+        .sidebar-menu::-webkit-scrollbar-thumb{background:rgba(58,155,255,.28) !important}
+        .sidebar-menu::-webkit-scrollbar-thumb:hover{background:rgba(58,155,255,.50) !important}
+        .menu-category{
+            color:#72859f !important;
+            font-size:9px !important;
+            letter-spacing:.12em !important;
+        }
+
+        .menu-btn,.collapsible-header{
+            border-left:0 !important;
+            border-radius:8px !important;
+            margin:2px 7px !important;
+            width:calc(100% - 14px) !important;
+            color:#d8e3ee !important;
+        }
+        .menu-btn:hover,.collapsible-header:hover{
+            background:rgba(255,255,255,.06) !important;
+            color:#fff !important;
+        }
+        .menu-btn.active{
+            background:linear-gradient(90deg,rgba(26,124,245,.32),rgba(26,124,245,.09)) !important;
+            color:#fff !important;
+            border-left:3px solid #3a9bff !important;
+            font-weight:700 !important;
+        }
+        .collapsible-header.open{
+            background:rgba(26,124,245,.10) !important;
+            color:#dcecff !important;
+            border-left:3px solid rgba(58,155,255,.55) !important;
+        }
+        .collapsible-header .arrow,
+        .collapsible-header.open .arrow{color:#7ca9d9 !important}
+        .collapsible-body .menu-btn::before{color:#527ba7 !important}
+        .collapsible-body .menu-btn.active{
+            color:#fff !important;
+            border-left-color:#3a9bff !important;
+        }
+
+        .btn-tutoria{
+            background:rgba(18,101,223,.08) !important;
+            border-color:rgba(58,155,255,.42) !important;
+            color:#9fd0ff !important;
+        }
+        .btn-tutoria:hover{
+            background:rgba(18,101,223,.16) !important;
+            border-color:#3a9bff !important;
+        }
+        .btn-volver{
+            background:#142440 !important;
+            color:#9eb0c4 !important;
+        }
+        .btn-volver:hover{
+            background:#102039 !important;
+            color:#fff !important;
+        }
+
+        /* Área principal */
+        .content-area{background:#eef3f8 !important}
+
+        /* Barra superior: mismo color del menú izquierdo */
+        .top-bar{
+            background:linear-gradient(180deg,#122541 0%,#142440 100%) !important;
+            border-bottom:1px solid rgba(255,255,255,.08) !important;
+            color:#fff !important;
+        }
+        .toggle-btn{color:#dce7f2 !important}
+        .toggle-btn:hover{background:rgba(255,255,255,.08) !important}
+        .titulo-vista{
+            color:#fff !important;
+            font-weight:800 !important;
+        }
+        .separator-bar{background:rgba(255,255,255,.10) !important}
+
+        /* Filtros: misma lógica, solo nueva apariencia */
+        .filtro-select,.multi-btn,.pill-input,.date-filter-wrap{
+            background:rgba(255,255,255,.055) !important;
+            border-color:rgba(255,255,255,.12) !important;
+            color:#dce7f2 !important;
+        }
+        .filtro-select:hover,.filtro-select:focus,
+        .multi-btn:hover,.pill-input:hover,.pill-input:focus,.date-filter-wrap:hover{
+            background:rgba(255,255,255,.085) !important;
+            border-color:#3a9bff !important;
+            color:#fff !important;
+        }
+        .filtro-select option{
+            background:#142440 !important;
+            color:#e6edf5 !important;
+        }
+
+        /* Paneles desplegables */
+        .multi-panel,.nrc-dropdown{
+            background:#142440 !important;
+            border-color:rgba(58,155,255,.34) !important;
+            box-shadow:0 12px 30px rgba(0,0,0,.32) !important;
+        }
+        .multi-search,.multi-date-picker{
+            background:#102039 !important;
+            border-color:rgba(255,255,255,.14) !important;
+            color:#fff !important;
+        }
+        .multi-search:focus,.multi-date-picker:focus{
+            border-color:#3a9bff !important;
+        }
+        .multi-opcion{color:#dce7f2 !important}
+        .multi-opcion:hover{background:rgba(18,101,223,.20) !important}
+        .multi-opcion input{accent-color:#3a9bff !important}
+        .multi-date-help{color:#9fb0c4 !important}
+
+        /* Fecha */
+        .date-filter-wrap{color:#b9d9ff !important}
+        .date-filter-input{
+            color:#fff !important;
+            color-scheme:dark !important;
+        }
+        .date-filter-clear{color:#9ecbff !important}
+
+        /* NRC */
+        .pill-input::placeholder{color:#7f94ad !important}
+        .nrc-clear{
+            background:rgba(239,68,68,.12) !important;
+            color:#fca5a5 !important;
+        }
+        .nrc-dropdown-item{
+            color:#d6e2ee !important;
+            border-bottom-color:rgba(255,255,255,.06) !important;
+        }
+        .nrc-dropdown-item:hover,.nrc-dropdown-item.selected{
+            background:rgba(18,101,223,.22) !important;
+            color:#fff !important;
+        }
+        .nrc-dropdown-item .match{color:#6db4ff !important}
+        .nrc-dropdown::-webkit-scrollbar-thumb{background:rgba(58,155,255,.28) !important}
+
+        /* Filtro activo */
+        .multi-filtro.filtro-activo .filtro-select,
+        .multi-filtro.filtro-activo .multi-btn,
+        .multi-filtro.filtro-activo .date-filter-wrap,
+        .pill-wrap.filtro-activo .pill-input{
+            background:rgba(18,101,223,.20) !important;
+            border-color:#3a9bff !important;
+            color:#dcecff !important;
+            box-shadow:none !important;
+            font-weight:700 !important;
+        }
+
+        .multi-filtro.filtro-activo .multi-btn::before,
+        .multi-filtro.filtro-activo .date-filter-wrap::before,
+        .pill-wrap.filtro-activo::before{
+            color:#3a9bff !important;
+        }
+
+        .multi-filtro.filtro-activo .multi-btn span,
+        .multi-filtro.filtro-activo .date-filter-label{
+            color:#dcecff !important;
+        }
+
+        /* Badge y limpiar */
+        .badge-activo.visible{
+            background:rgba(18,101,223,.18) !important;
+            border-color:rgba(58,155,255,.32) !important;
+            color:#b9d9ff !important;
+        }
+        .btn-limpiar{
+            background:rgba(239,68,68,.10) !important;
+            border-color:rgba(239,68,68,.28) !important;
+            color:#fca5a5 !important;
+        }
+        .btn-limpiar:hover{
+            background:rgba(239,68,68,.18) !important;
+            border-color:rgba(239,68,68,.44) !important;
         }
 
     </style>
