@@ -11,8 +11,17 @@
 .app{display:flex;height:100vh;width:100vw}.sidebar{width:270px;min-width:270px;background:linear-gradient(180deg,#122541 0%,#142440 100%);color:#fff;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);transition:.22s;overflow:hidden}.sidebar.closed{width:0;min-width:0;opacity:0}
 .brand{min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.brand img{width:58px;height:58px;object-fit:contain}.brand-text b{display:block;font-size:16px;letter-spacing:.04em}.brand-text span{font-size:10px;color:#b9c8d9}
 .menu{flex:1;overflow:auto;padding:9px 7px 10px}.menu-cat{padding:12px 12px 5px;color:#72859f;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.menu-btn,.collapsible{width:100%;border:0;background:transparent;color:#d8e3ee;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12px;text-align:left;margin:2px 0;transition:.15s}.menu-btn:hover,.collapsible:hover{background:rgba(255,255,255,.06);color:#fff}.menu-btn.active{background:linear-gradient(90deg,rgba(26,124,245,.32),rgba(26,124,245,.09));color:#fff;border-left:3px solid #3a9bff;font-weight:700}.menu-btn .ico,.collapsible .ico{width:20px;text-align:center}.collapsible .arrow{margin-left:auto;color:#768aa3;font-size:10px}.submenu{display:none;margin-left:14px;padding-left:7px;border-left:1px solid rgba(255,255,255,.09)}.submenu.open{display:block}.submenu .menu-btn{font-size:11px;color:#afbed0;padding:7px 9px}.coord-btn{margin:10px 8px 0;border:1px solid rgba(244,196,0,.38);color:#ffe16d;background:rgba(244,196,0,.06)}
-.session-box{padding:11px 13px;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.09)}.session-box small{display:block;color:#8094ad;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.session-box b{display:block;margin-top:4px;font-size:11px}.session-box span{display:inline-flex;margin-top:5px;padding:3px 6px;border-radius:999px;background:rgba(34,197,94,.12);color:#65df91;font-size:8px;font-weight:800}
-.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}.filter-session{margin-left:auto;display:flex;align-items:center;gap:6px;background:#eef6ff;border:1px solid #d4e7ff;color:#2c659b;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:700;white-space:nowrap}.filter-session .dot{width:7px;height:7px;border-radius:50%;background:#22c55e}
+
+.session-box{padding:11px 13px 13px;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.10)}
+.session-box small{display:block;color:#8094ad;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.session-box b{display:block;margin-top:4px;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-meta{margin-top:5px}
+.session-box .session-meta span{display:inline-flex;margin:0;padding:3px 6px;border-radius:999px;background:rgba(34,197,94,.12);color:#65df91;font-size:8px;font-weight:800}
+.session-box .session-meta span.off{background:rgba(148,163,184,.12);color:#a8b5c5}
+.sidebar-login-btn{width:100%;height:30px;margin-top:8px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:#dce7f2;font-size:9px;font-weight:800;cursor:pointer}
+.sidebar-login-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(58,155,255,.45);color:#fff}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}
 .home{flex:1;overflow:auto;padding:14px}.viewer{display:none;flex:1;min-height:0;background:#fff}.viewer iframe{width:100%;height:100%;border:0}.hero{background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);border:1px solid var(--line);border-radius:16px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center}.hero .kicker{font-size:9px;color:#68809c;font-weight:800;text-transform:uppercase;letter-spacing:.11em}.hero h1{margin:4px 0 2px;font-size:22px}.hero p{margin:0;color:#728197;font-size:11px}.hero-side{text-align:right;font-size:10px;color:#728197}.hero-side b{display:block;color:#253b55;font-size:11px;margin-bottom:3px}.preview-tag{display:inline-block;background:#fff7cc;color:#8a6a00;border:1px solid #eadb86;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:800}
 .dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
 .foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
@@ -45,6 +54,11 @@
 .menu::-webkit-scrollbar:horizontal,.sidebar::-webkit-scrollbar:horizontal{height:0!important;display:none!important}
 .menu{scrollbar-width:thin}
 
+
+#gestionFilters{column-gap:6px!important;row-gap:5px!important}
+#gestionFilters .filter-badge{margin-left:2px}
+#gestionFilters #btn-clear-filter{margin-left:0}
+
 </style>
 </head>
 <body>
@@ -74,7 +88,12 @@
     <div class="submenu" id="canales"><button class="menu-btn" onclick="showChannels(this)">Ver todos los canales</button></div>
     <button class="menu-btn coord-btn" onclick="openLocal('gestion_coordinacion.html','Coordinación',this)"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
   </div>
-  <div class="session-box"><small>Tutor sesión</small><b id="sessionTutor">PAULA PARDO</b><span>● ACTIVO</span></div>
+  <div class="session-box">
+    <small>Sesión ETOP</small>
+    <b id="sessionTutor">SIN IDENTIFICAR</b>
+    <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
+    <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
+  </div>
 </aside>
 <main class="main">
   <div class="top"><button class="toggle" onclick="toggleSidebar()">☰</button><div class="view-title" id="viewTitle">Inicio · Gestión Tutorial</div><div class="sep"></div><div class="filters">
@@ -108,18 +127,14 @@
 
       <div class="filter-badge" id="filter-badge"><span id="badge-txt">—</span></div>
       <button class="clear-filter" id="btn-clear-filter" onclick="limpiarBusqueda()">✕ Limpiar</button>
-
-      <div class="filter-session"><span class="dot"></span><span id="sessionFilterLabel">Sin sesión</span></div>
-      <button id="etop-user-btn" class="etop-user-btn" onclick="abrirSesionETOP()">👤 Identificarse</button>
-
-      <div id="guia-correos" class="guia-correos">
+<div id="guia-correos" class="guia-correos">
         <div class="guia-correos-texto"><strong>¿Cómo cargar los datos?</strong> Seleccione arriba el NRC y luego cargue los datos del curso.</div>
         <button class="guia-correos-btn" onclick="cargarDatosCursoOnboarding()">↻ Cargar datos</button>
       </div>
     </div></div>
   </div>
   <section class="home" id="homeView">
-    <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><b id="helloTutor">Hola, Paula Pardo</b><div style="display:flex;gap:6px;justify-content:flex-end;align-items:center;margin-top:4px"><button id="etop-user-btn-home" class="etop-user-btn" type="button" onclick="abrirSesionETOP()">👤 Cambiar / Identificarse</button><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div></div>
+    <div class="hero"><div><div class="kicker">Universidad Andrés Bello · ETOP</div><h1>Centro de Control Tutorial</h1><p>Resumen inmediato del tutor, manteniendo las mismas vistas y filtros de Gestión. La sesión por correo filtra toda la experiencia.</p></div><div class="hero-side"><span class="preview-tag">VISTA PREVIA · SIN CAMBIOS EN GITHUB</span></div></div>
     <div class="dashboard">
       <div class="left">
         <div class="top-summary"><div class="top-col-left"><section class="card"><div class="card-head"><h2>🎯 Foco del día</h2><span>Visual Power BI · FOCO_DIA_ETOP_HTML</span></div><div class="card-body"><div class="foco-grid">
@@ -240,25 +255,40 @@ function guardarSesionETOP(){
   aplicarSesionETOP();
 }
 function aplicarSesionETOP(){
-  const s=leerSesionETOP(),btn=document.getElementById('etop-user-btn'),btnHome=document.getElementById('etop-user-btn-home'),lbl=document.getElementById('sessionFilterLabel'),
-        box=document.getElementById('sessionTutor'),hello=document.getElementById('helloTutor'),sel=document.getElementById('sel-tutor');
+  const s=leerSesionETOP();
+  const box=document.getElementById('sessionTutor');
+  const status=document.getElementById('sessionStatus');
+  const sidebarBtn=document.getElementById('sidebar-login-btn');
+  const sel=document.getElementById('sel-tutor');
+
   if(!s){
-    btn.textContent='👤 Identificarse';if(btnHome)btnHome.textContent='👤 Identificarse';lbl.textContent='Sin sesión';box.textContent='SIN SESIÓN';hello.textContent='Hola';
+    BUSQUEDA.tutor=null;
+    if(box) box.textContent='SIN IDENTIFICAR';
+    if(status){ status.textContent='● SIN SESIÓN'; status.classList.add('off'); }
+    if(sidebarBtn) sidebarBtn.textContent='👤 Identificarse';
+    if(sel) sel.disabled=false;
     return;
   }
+
+  if(status) status.classList.remove('off');
+
   if(s.rol==='TUTOR'){
     BUSQUEDA.tutor=s.tutor;
-    btn.textContent='👤 '+s.tutor.split(' ')[0]+' · Cambiar';if(btnHome)btnHome.textContent='👤 '+s.tutor.split(' ')[0]+' · Cambiar';
-    lbl.textContent='Tutor sesión: '+s.tutor;box.textContent=s.tutor;hello.textContent='Hola, '+s.tutor;
-    sel.disabled=true;
+    if(box) box.textContent=s.tutor;
+    if(status) status.textContent='● TUTOR ACTIVO';
+    if(sidebarBtn) sidebarBtn.textContent='👤 Cambiar sesión';
+    if(sel) sel.disabled=true;
   }else{
     BUSQUEDA.tutor=null;
-    btn.textContent='🏛️ Coordinación · Cambiar';if(btnHome)btnHome.textContent='🏛️ Coordinación · Cambiar';lbl.textContent='Sesión de Coordinación';box.textContent='COORDINACIÓN';hello.textContent='Hola, Coordinación';
-    sel.disabled=false;
+    if(box) box.textContent='COORDINACIÓN';
+    if(status) status.textContent='● COORDINACIÓN';
+    if(sidebarBtn) sidebarBtn.textContent='👤 Cambiar sesión';
+    if(sel) sel.disabled=false;
   }
-  if(catalogoNRC.length)sincronizarFiltros();
+
+  if(catalogoNRC.length) sincronizarFiltros();
   actualizarBadge();
-  if(vistaActual!=='INICIO'&&REPORTS[vistaActual])actualizarIframe();
+  if(vistaActual!=='INICIO'&&REPORTS[vistaActual]) actualizarIframe();
 }
 document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')guardarSesionETOP()});
 
@@ -318,7 +348,7 @@ function renderFechasGestion(){
   });
 }
 function limpiarBusqueda(){Object.assign(BUSQUEDA,{facultad:null,tipo:null,codigo:null,estado:null,intake:null,nrc:null,rut:null,fechaInicio:[]});BUSQUEDA.tutor=tutorSesionETOP()||null;document.getElementById('input-nrc').value='';document.getElementById('input-rut').value='';sincronizarFiltros();renderFechasGestion();actualizarBadge();actualizarIframe()}
-function actualizarBadge(){const p=[];if(tutorSesionETOP())p.push('Tutor sesión: '+tutorSesionETOP());for(const c of ['facultad','tipo','codigo','estado','intake'])if(BUSQUEDA[c])p.push(BUSQUEDA[c]);if(BUSQUEDA.nrc)p.push('NRC: '+BUSQUEDA.nrc);if(BUSQUEDA.rut)p.push('RUT: '+BUSQUEDA.rut);if(BUSQUEDA.fechaInicio.length)p.push('Fechas: '+BUSQUEDA.fechaInicio.length);const b=document.getElementById('filter-badge'),x=document.getElementById('btn-clear-filter');if(p.length){document.getElementById('badge-txt').textContent=p.join(' · ');b.classList.add('on');x.classList.add('on')}else{b.classList.remove('on');x.classList.remove('on')}}
+function actualizarBadge(){const p=[];for(const c of ['facultad','tipo','codigo','estado','intake'])if(BUSQUEDA[c])p.push(BUSQUEDA[c]);if(BUSQUEDA.nrc)p.push('NRC: '+BUSQUEDA.nrc);if(BUSQUEDA.rut)p.push('RUT: '+BUSQUEDA.rut);if(BUSQUEDA.fechaInicio.length)p.push('Fechas: '+BUSQUEDA.fechaInicio.length);const b=document.getElementById('filter-badge'),x=document.getElementById('btn-clear-filter');if(p.length){document.getElementById('badge-txt').textContent=p.join(' · ');b.classList.add('on');x.classList.add('on')}else{b.classList.remove('on');x.classList.remove('on')}}
 
 function onNRCInput(v){
   const q=normalizar(v),dd=document.getElementById('nrc-dropdown');BUSQUEDA.nrc=null;
