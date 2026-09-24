@@ -535,6 +535,7 @@
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
 
             <div class="menu-category">Seguimiento Operativo</div>
+            <button class="menu-btn" onclick="cargar('AUDITORIA', this)">🔎 Auditoría de seguimiento</button>
             <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">🚀 Cursos por iniciar</button>
             <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">📅 Calendarios</button>
             <button class="menu-btn" onclick="cargar('INCIDENCIAS', this)">⚠️ Incidencias</button>
@@ -628,6 +629,10 @@
             url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=7a41932f4078dbccf8cd&navContentPaneEnabled=false&filterPaneEnabled=false",
             tipo: 'pbi'
         },
+        'AUDITORIA': {
+            url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=19b86ec0a30808099650&navContentPaneEnabled=false&filterPaneEnabled=false",
+            tipo: 'pbi'
+        },
         'REPORTE_INDUCCION': {
             url: "https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=6b02932cfdc934bbad76&navContentPaneEnabled=false&filterPaneEnabled=false",
             tipo: 'pbi'
@@ -657,6 +662,7 @@
     const titulosVista = {
         'BASE_COORDINACION': 'Base Madre Coordinación',
         'DASHBOARD_MACRO': 'Dashboard Macro Facultades',
+        'AUDITORIA': '🔎 Auditoría de seguimiento',
         'REPORTE_INDUCCION': 'Reporte Inducción',
         'CARGA_TUTORIAL': 'Carga Tutorial',
         'CALENDARIOS': 'Calendarios',
