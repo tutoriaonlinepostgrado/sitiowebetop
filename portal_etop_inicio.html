@@ -86,18 +86,31 @@
 .foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
 .kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:9px;padding:8px;text-align:left;color:#334a63;min-height:66px}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:8px;line-height:1.1}.quick span{font-size:14px;display:block;margin-bottom:4px}
 .viva{height:calc(100vh - 174px);min-height:640px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}
-.audit-home-card{position:relative;overflow:hidden;border-color:#d8e4f0}
-.audit-home-card::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#f8fbff 0%,#eef5ff 62%,#fff8d9 100%);pointer-events:none}
-.audit-home-card::after{content:"";position:absolute;right:-42px;top:-58px;width:170px;height:170px;border-radius:50%;background:rgba(18,101,223,.07);pointer-events:none}
-.audit-home-content{position:relative;z-index:1;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:15px 16px}
-.audit-home-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#142440;color:#fff;font-size:19px;box-shadow:0 7px 18px rgba(20,36,64,.16)}
-.audit-home-kicker{font-size:7.5px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:#1265df}
-.audit-home-copy h2{margin:3px 0 3px;font-size:13px;color:#20364e}
-.audit-home-copy p{margin:0;max-width:620px;font-size:8.5px;line-height:1.45;color:#6f8196}
-.audit-home-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-.audit-home-meta span{display:inline-flex;align-items:center;gap:4px;border:1px solid #dbe6f2;background:rgba(255,255,255,.78);border-radius:999px;padding:3px 7px;font-size:7px;font-weight:800;color:#52677d}
-.audit-home-action{height:34px;border:0;border-radius:9px;background:#1265df;color:#fff;padding:0 13px;font-size:8.5px;font-weight:900;box-shadow:0 7px 16px rgba(18,101,223,.18);white-space:nowrap}
-.audit-home-action:hover{background:#0f57c1}
+.upcoming-card{overflow:hidden}
+.upcoming-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border-bottom:1px solid #edf1f5;background:linear-gradient(90deg,#ffffff,#f8fbff)}
+.upcoming-title-wrap{display:flex;align-items:center;gap:9px;min-width:0}
+.upcoming-ico{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;color:#1265df;font-size:14px}
+.upcoming-title b{display:block;font-size:11px;color:#20364e}
+.upcoming-title span{display:block;margin-top:1px;font-size:7.5px;color:#8493a5}
+.upcoming-all{border:1px solid #d8e5f2;background:#fff;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.upcoming-all:hover{background:#f2f7ff;border-color:#a9c8ea}
+.upcoming-table-wrap{padding:4px 12px 8px}
+.upcoming-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.upcoming-table th{padding:6px 6px 5px;text-align:left;font-size:7px;text-transform:uppercase;letter-spacing:.06em;color:#8a99ab;border-bottom:1px solid #e6edf4}
+.upcoming-table td{padding:7px 6px;border-bottom:1px solid #edf2f6;vertical-align:middle;font-size:8px;color:#40566f}
+.upcoming-table tbody tr:last-child td{border-bottom:0}
+.upcoming-table tbody tr{cursor:pointer}
+.upcoming-table tbody tr:hover{background:#f7fbff}
+.upcoming-date{width:74px}
+.upcoming-nrc{width:132px}
+.upcoming-prog{width:76px}
+.upcoming-date-badge{display:inline-flex;align-items:center;justify-content:center;min-width:58px;border-radius:7px;background:#fff8d9;border:1px solid #eadb86;color:#806900;padding:4px 6px;font-weight:900;font-size:7.5px}
+.upcoming-course{min-width:0}
+.upcoming-course b{display:block;font-size:8.5px;color:#263f59;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upcoming-course span{display:block;margin-top:2px;font-size:7px;color:#8796a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upcoming-nrc-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:7.5px;color:#486782;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upcoming-program{display:inline-flex;max-width:100%;border-radius:999px;background:#eef5fb;color:#45657f;padding:3px 6px;font-size:7px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upcoming-empty{padding:18px 8px;text-align:center;color:#8796a8;font-size:8.5px}
 .note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
 @media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{height:auto;min-height:560px}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
 
@@ -572,20 +585,31 @@
   </div>
 </section></div></div>
         
-        <section class="card audit-home-card">
-  <div class="audit-home-content">
-    <div class="audit-home-icon">🔎</div>
-    <div class="audit-home-copy">
-      <div class="audit-home-kicker">Control de calidad de registros</div>
-      <h2>Auditoría de seguimiento</h2>
-      <p>Detecta inconsistencias en el seguimiento estudiantil, prioriza los casos que requieren revisión y permite acceder al registro original para corregirlo.</p>
-      <div class="audit-home-meta">
-        <span>✓ Prioridad alta / media</span>
-        <span>✓ Motivo y acción sugerida</span>
-        <span>✓ Acceso directo a SharePoint</span>
+        <section class="card upcoming-card">
+  <div class="upcoming-head">
+    <div class="upcoming-title-wrap">
+      <div class="upcoming-ico">🚀</div>
+      <div class="upcoming-title">
+        <b>Próximos cursos por comenzar</b>
+        <span id="proximosCursosContexto">Los 5 inicios más cercanos</span>
       </div>
     </div>
-    <button class="audit-home-action" type="button" onclick="cargar('AUDITORIA',null)">Abrir auditoría →</button>
+    <button class="upcoming-all" type="button" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))">Ver todos →</button>
+  </div>
+  <div class="upcoming-table-wrap">
+    <table class="upcoming-table" aria-label="Próximos cursos por comenzar">
+      <thead>
+        <tr>
+          <th class="upcoming-date">Inicio</th>
+          <th>Curso</th>
+          <th class="upcoming-nrc">NRC</th>
+          <th class="upcoming-prog">Programa</th>
+        </tr>
+      </thead>
+      <tbody id="proximosCursosBody">
+        <tr><td colspan="4" class="upcoming-empty">Cargando próximos cursos…</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
       </div>
@@ -612,7 +636,6 @@ const misReportes={
   CURSOS_PREPARACION:BASE+"cursos_preparacion.html?v=20260829-portal1",
   CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
   FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
-  AUDITORIA:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=19b86ec0a30808099650&navContentPaneEnabled=false&filterPaneEnabled=false",
   CALENDARIOS:BASE+"calendarios.html?v=20260820-filtrotipo2",
   CORREOS:"onboarding_correos.html",
   INVITACIONES:"onboarding_invitaciones.html",
@@ -627,7 +650,6 @@ const urlsBase={
   CURSOS_PREPARACION:{local:true,filtroRut:false},
   CURSOS_CIERRE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'ab4e8f37a94c688a5869',filtroRut:false},
   FICHA_ESTUDIANTE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'0961bca799ff83e065db',filtroRut:true},
-  AUDITORIA:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'19b86ec0a30808099650',filtroRut:true},
   CALENDARIOS:{local:true,filtroRut:false}
 };
 
@@ -638,7 +660,6 @@ const titulos={
   CURSOS_PREPARACION:'Cursos en Preparación',
   CURSOS_CIERRE:'Cursos en Cierre',
   FICHA_ESTUDIANTE:'Ficha del Estudiante',
-  AUDITORIA:'🔎 Auditoría de seguimiento',
   CALENDARIOS:'📅 Calendarios',
   CORREOS:'📧 Generador de Correos de Bienvenida',
   INVITACIONES:'📅 Envío Invitación Sesión Sincrónica',
@@ -877,6 +898,7 @@ async function cargarSugerenciasNRC(){
     const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error('HTTP '+resp.status);
     catalogoNRC=await resp.json();construirIndiceNRC();
     if(typeof refrescarResumenCargaTutorial==='function')refrescarResumenCargaTutorial();
+    if(typeof refrescarProximosCursos==='function')refrescarProximosCursos();
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const s=document.getElementById(id);s.options[0].text=s.options[0].text.replace(' ⏳','');s.disabled=false});
     sincronizarFiltros();
   }catch(err){
@@ -890,6 +912,7 @@ async function cargarSugerenciasNRC(){
         {nrc:'3040_MSPE007_202483',facultad:'ENFE',tutor:'ORIETTA CORTES',tipo:'100%ONLINE','codigo curso':'MSPE007',estado:'ACTIVO',intake:'202483','fecha inicio':'2026-09-01','nombre curso':'MSPE007','nombre programa':'MSP'}
       ];
       construirIndiceNRC();sincronizarFiltros();
+      if(typeof refrescarProximosCursos==='function')refrescarProximosCursos();
     }
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const el=document.getElementById(id);if(el){el.options[0].text=el.options[0].text.replace(' ⏳','');el.disabled=false}});
   }
@@ -938,7 +961,6 @@ const FILTROS_POR_VISTA={
   CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   FICHA_ESTUDIANTE:['rut'],
-  AUDITORIA:[],
   CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CORREOS:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
 };
@@ -1170,10 +1192,78 @@ function abrirNominaAtencionesActivas(){
   cargar('NOMINA_ESTUDIANTES',findBtn('NOMINA_ESTUDIANTES'));
 }
 
+function fechaCursoETOP(valor){
+  const iso=fechaISO(valor);
+  if(!iso)return null;
+  const d=new Date(iso+'T00:00:00');
+  return isNaN(d.getTime())?null:d;
+}
+function formatoFechaProximoCurso(valor){
+  const d=fechaCursoETOP(valor);
+  if(!d)return '—';
+  return new Intl.DateTimeFormat('es-CL',{day:'2-digit',month:'short'}).format(d).replace('.','');
+}
+function proximosCursosPorComenzar(){
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const tutor=tutorSesionETOP();
+  const tutorNorm=normalizarBusqueda(tutor);
+  return catalogoNRC
+    .filter(c=>{
+      const d=fechaCursoETOP(c['fecha inicio']);
+      if(!d||d<hoy)return false;
+      if(tutor&&normalizarBusqueda(c.tutor)!==tutorNorm)return false;
+      const estado=normalizarBusqueda(c.estado);
+      if(estado.includes('CERR')||estado.includes('FINALIZ')||estado.includes('CANCEL'))return false;
+      return true;
+    })
+    .sort((a,b)=>{
+      const da=fechaCursoETOP(a['fecha inicio']);
+      const db=fechaCursoETOP(b['fecha inicio']);
+      return da-db || normalizarBusqueda(a.nrc).localeCompare(normalizarBusqueda(b.nrc),'es',{numeric:true});
+    })
+    .slice(0,5);
+}
+function abrirCursoProximo(nrc){
+  BUSQUEDA.nrc=String(nrc||'').trim()||null;
+  nrcConfirmado=BUSQUEDA.nrc||'';
+  cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'));
+}
+function refrescarProximosCursos(){
+  const body=document.getElementById('proximosCursosBody');
+  const ctx=document.getElementById('proximosCursosContexto');
+  if(!body)return;
+  const tutor=tutorSesionETOP();
+  if(ctx)ctx.textContent=tutor?('5 próximos inicios · '+tutor):'Los 5 inicios más cercanos';
+  if(!catalogoNRC.length){
+    body.innerHTML='<tr><td colspan="4" class="upcoming-empty">Cargando próximos cursos…</td></tr>';
+    return;
+  }
+  const cursos=proximosCursosPorComenzar();
+  if(!cursos.length){
+    body.innerHTML='<tr><td colspan="4" class="upcoming-empty">No hay cursos próximos por comenzar.</td></tr>';
+    return;
+  }
+  body.innerHTML=cursos.map(c=>{
+    const curso=esc(c['nombre curso']||c['codigo curso']||'Curso');
+    const codigo=esc(c['codigo curso']||'');
+    const tutorTxt=esc(c.tutor||'');
+    const nrc=esc(c.nrc||'');
+    const prog=esc(c['nombre programa']||'—');
+    const sub=[codigo,tutorTxt].filter(Boolean).join(' · ');
+    return '<tr onclick="abrirCursoProximo(\''+String(c.nrc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" title="Abrir en Cursos en Preparación">'+
+      '<td class="upcoming-date"><span class="upcoming-date-badge">'+formatoFechaProximoCurso(c['fecha inicio'])+'</span></td>'+
+      '<td><div class="upcoming-course"><b>'+curso+'</b><span>'+sub+'</span></div></td>'+
+      '<td><div class="upcoming-nrc-text">'+nrc+'</div></td>'+
+      '<td><span class="upcoming-program">'+prog+'</span></td>'+
+    '</tr>';
+  }).join('');
+}
+
 function showHome(btn){
   vistaActual='INICIO';
   refrescarFocoDia();
   refrescarResumenCargaTutorial();
+  refrescarProximosCursos();
   document.getElementById('viewer').style.display='none';
   document.getElementById('homeView').style.display='block';
   document.getElementById('homeTopSearch').style.display='flex';
