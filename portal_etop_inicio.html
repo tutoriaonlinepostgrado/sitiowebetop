@@ -101,15 +101,15 @@
 .upcoming-table tbody tr:last-child td{border-bottom:0}
 .upcoming-table tbody tr{cursor:pointer}
 .upcoming-table tbody tr:hover{background:#f7fbff}
-.upcoming-date{width:76px}
-.upcoming-nrc{width:145px}
-.upcoming-prog{width:30%}
+.upcoming-date{width:78px}
+.upcoming-course-col{width:54%}
+.upcoming-prog{width:auto}
 .upcoming-date-badge{display:inline-flex;align-items:center;justify-content:center;min-width:60px;border-radius:7px;background:#fff8d9;border:1px solid #eadb86;color:#806900;padding:4px 6px;font-weight:900;font-size:7.7px}
-.upcoming-course{min-width:0;padding-right:8px}
-.upcoming-course b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:9.1px;line-height:1.28;color:#263f59;font-weight:800}
-.upcoming-course span{display:block;margin-top:3px;font-size:7.3px;color:#8796a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.upcoming-nrc-text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:7.7px;color:#486782;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.upcoming-program{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:100%;border-radius:7px;background:#eef5fb;color:#45657f;padding:4px 7px;font-size:7.6px;line-height:1.25;font-weight:800}
+.upcoming-course{min-width:0;padding-right:12px}
+.upcoming-course b{display:block;font-size:9.2px;line-height:1.3;color:#263f59;font-weight:800;white-space:normal;overflow:visible}
+.upcoming-course span{display:block;margin-top:3px;font-size:7.3px;line-height:1.25;color:#8796a8;white-space:normal}
+.upcoming-course .upcoming-nrc-line{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#54718c}
+.upcoming-program{display:block;max-width:none;border-radius:7px;background:#eef5fb;color:#45657f;padding:5px 8px;font-size:7.8px;line-height:1.32;font-weight:800;white-space:normal;overflow:visible;word-break:normal}
 .upcoming-empty{padding:18px 8px;text-align:center;color:#8796a8;font-size:8.5px}
 .note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
 @media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{height:auto;min-height:560px}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
@@ -601,13 +601,12 @@
       <thead>
         <tr>
           <th class="upcoming-date">Inicio</th>
-          <th>Curso</th>
+          <th class="upcoming-course-col">Curso</th>
           <th class="upcoming-prog">Programa</th>
-          <th class="upcoming-nrc">NRC</th>
         </tr>
       </thead>
       <tbody id="proximosCursosBody">
-        <tr><td colspan="4" class="upcoming-empty">Cargando próximos cursos…</td></tr>
+        <tr><td colspan="3" class="upcoming-empty">Cargando próximos cursos…</td></tr>
       </tbody>
     </table>
   </div>
@@ -1235,12 +1234,12 @@ function refrescarProximosCursos(){
   const tutor=tutorSesionETOP();
   if(ctx)ctx.textContent=tutor?('5 próximos inicios · '+tutor):'Los 5 inicios más cercanos';
   if(!catalogoNRC.length){
-    body.innerHTML='<tr><td colspan="4" class="upcoming-empty">Cargando próximos cursos…</td></tr>';
+    body.innerHTML='<tr><td colspan="3" class="upcoming-empty">Cargando próximos cursos…</td></tr>';
     return;
   }
   const cursos=proximosCursosPorComenzar();
   if(!cursos.length){
-    body.innerHTML='<tr><td colspan="4" class="upcoming-empty">No hay cursos próximos por comenzar.</td></tr>';
+    body.innerHTML='<tr><td colspan="3" class="upcoming-empty">No hay cursos próximos por comenzar.</td></tr>';
     return;
   }
   body.innerHTML=cursos.map(c=>{
@@ -1249,12 +1248,12 @@ function refrescarProximosCursos(){
     const nrc=esc(c.nrc||'');
     const prog=esc(c['nombre programa']||'—');
     const intake=esc(c.intake||'');
-    const sub=[codigo,intake].filter(Boolean).join(' · ');
+    const detalle=[codigo,intake].filter(Boolean).join(' · ');
+    const lineaNrc=nrc?('<span class="upcoming-nrc-line">'+nrc+'</span>'):'';
     return '<tr onclick="abrirCursoProximo(\''+String(c.nrc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" title="Abrir en Cursos en Preparación">'+
       '<td class="upcoming-date"><span class="upcoming-date-badge">'+formatoFechaProximoCurso(c['fecha inicio'])+'</span></td>'+
-      '<td><div class="upcoming-course"><b title="'+curso+'">'+curso+'</b><span>'+sub+'</span></div></td>'+
-      '<td><span class="upcoming-program" title="'+prog+'">'+prog+'</span></td>'+
-      '<td><div class="upcoming-nrc-text" title="'+nrc+'">'+nrc+'</div></td>'+
+      '<td class="upcoming-course-col"><div class="upcoming-course"><b title="'+curso+'">'+curso+'</b><span>'+detalle+(detalle&&lineaNrc?' · ':'')+lineaNrc+'</span></div></td>'+
+      '<td class="upcoming-prog"><span class="upcoming-program" title="'+prog+'">'+prog+'</span></td>'+
     '</tr>';
   }).join('');
 }
