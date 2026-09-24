@@ -85,7 +85,20 @@
 .dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
 .foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
 .kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:9px;padding:8px;text-align:left;color:#334a63;min-height:66px}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:8px;line-height:1.1}.quick span{font-size:14px;display:block;margin-bottom:4px}
-.viva{height:calc(100vh - 174px);min-height:640px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}.note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
+.viva{height:calc(100vh - 174px);min-height:640px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}
+.audit-home-card{position:relative;overflow:hidden;border-color:#d8e4f0}
+.audit-home-card::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#f8fbff 0%,#eef5ff 62%,#fff8d9 100%);pointer-events:none}
+.audit-home-card::after{content:"";position:absolute;right:-42px;top:-58px;width:170px;height:170px;border-radius:50%;background:rgba(18,101,223,.07);pointer-events:none}
+.audit-home-content{position:relative;z-index:1;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:15px 16px}
+.audit-home-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#142440;color:#fff;font-size:19px;box-shadow:0 7px 18px rgba(20,36,64,.16)}
+.audit-home-kicker{font-size:7.5px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:#1265df}
+.audit-home-copy h2{margin:3px 0 3px;font-size:13px;color:#20364e}
+.audit-home-copy p{margin:0;max-width:620px;font-size:8.5px;line-height:1.45;color:#6f8196}
+.audit-home-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.audit-home-meta span{display:inline-flex;align-items:center;gap:4px;border:1px solid #dbe6f2;background:rgba(255,255,255,.78);border-radius:999px;padding:3px 7px;font-size:7px;font-weight:800;color:#52677d}
+.audit-home-action{height:34px;border:0;border-radius:9px;background:#1265df;color:#fff;padding:0 13px;font-size:8.5px;font-weight:900;box-shadow:0 7px 16px rgba(18,101,223,.18);white-space:nowrap}
+.audit-home-action:hover{background:#0f57c1}
+.note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
 @media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{height:auto;min-height:560px}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
 
 .etop-user-btn{display:inline-flex;align-items:center;gap:6px;height:31px;padding:0 10px;border-radius:9px;border:1px solid #d7e2ef;background:#fff;color:#315b86;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}
@@ -559,7 +572,22 @@
   </div>
 </section></div></div>
         
-        <section class="card"><div class="card-head"><h2>Salud de programas</h2><span>Vista de apoyo · propuesta</span></div><div class="card-body programs"><div class="prog"><b>MSP</b><span>5 activos</span><span>96% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MAPS</b><span>3 activos</span><span>91% ingreso</span><span class="badge">Estable</span></div><div class="prog"><b>MES</b><span>2 activos</span><span>88% ingreso</span><span class="badge">Revisar</span></div></div></section>
+        <section class="card audit-home-card">
+  <div class="audit-home-content">
+    <div class="audit-home-icon">🔎</div>
+    <div class="audit-home-copy">
+      <div class="audit-home-kicker">Control de calidad de registros</div>
+      <h2>Auditoría de seguimiento</h2>
+      <p>Detecta inconsistencias en el seguimiento estudiantil, prioriza los casos que requieren revisión y permite acceder al registro original para corregirlo.</p>
+      <div class="audit-home-meta">
+        <span>✓ Prioridad alta / media</span>
+        <span>✓ Motivo y acción sugerida</span>
+        <span>✓ Acceso directo a SharePoint</span>
+      </div>
+    </div>
+    <button class="audit-home-action" type="button" onclick="cargar('AUDITORIA',null)">Abrir auditoría →</button>
+  </div>
+</section>
       </div>
       <div class="right"><section class="card viva"><div class="viva-head"><div class="viva-logo">V</div><div class="viva-title"><b>Viva Engage</b><span>Comunidad y comunicación del equipo</span></div><span class="online">EN LÍNEA</span></div><iframe title="Viva Engage" src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"></iframe></section></div>
     </div>
@@ -584,6 +612,7 @@ const misReportes={
   CURSOS_PREPARACION:BASE+"cursos_preparacion.html?v=20260829-portal1",
   CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
   FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
+  AUDITORIA:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=19b86ec0a30808099650&navContentPaneEnabled=false&filterPaneEnabled=false",
   CALENDARIOS:BASE+"calendarios.html?v=20260820-filtrotipo2",
   CORREOS:"onboarding_correos.html",
   INVITACIONES:"onboarding_invitaciones.html",
@@ -598,6 +627,7 @@ const urlsBase={
   CURSOS_PREPARACION:{local:true,filtroRut:false},
   CURSOS_CIERRE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'ab4e8f37a94c688a5869',filtroRut:false},
   FICHA_ESTUDIANTE:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'0961bca799ff83e065db',filtroRut:true},
+  AUDITORIA:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'19b86ec0a30808099650',filtroRut:true},
   CALENDARIOS:{local:true,filtroRut:false}
 };
 
@@ -608,6 +638,7 @@ const titulos={
   CURSOS_PREPARACION:'Cursos en Preparación',
   CURSOS_CIERRE:'Cursos en Cierre',
   FICHA_ESTUDIANTE:'Ficha del Estudiante',
+  AUDITORIA:'🔎 Auditoría de seguimiento',
   CALENDARIOS:'📅 Calendarios',
   CORREOS:'📧 Generador de Correos de Bienvenida',
   INVITACIONES:'📅 Envío Invitación Sesión Sincrónica',
@@ -907,6 +938,7 @@ const FILTROS_POR_VISTA={
   CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   FICHA_ESTUDIANTE:['rut'],
+  AUDITORIA:[],
   CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CORREOS:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
 };
