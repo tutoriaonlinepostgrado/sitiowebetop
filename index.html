@@ -283,10 +283,11 @@
 
 /* ===== Foco del día · página real Power BI ===== */
 .foco-powerbi-card{overflow:hidden}
-.foco-dashboard-link{cursor:pointer;transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease}
-.foco-dashboard-link:hover{border-color:#9fbfe9;box-shadow:0 10px 28px rgba(18,101,223,.12);transform:translateY(-1px)}
-.foco-dashboard-link:focus{outline:2px solid #3a9bff;outline-offset:2px}
-.foco-dashboard-link .foco-powerbi-frame{pointer-events:none}
+.foco-dashboard-link{transition:box-shadow .15s ease,border-color .15s ease}
+.foco-dashboard-link:hover{border-color:#d0dce9;box-shadow:0 8px 24px rgba(31,45,61,.08)}
+.foco-powerbi-frame{pointer-events:auto}
+.foco-dashboard-open{margin-left:auto;border:1px solid #c8d9ee;background:#f3f8fe;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.foco-dashboard-open:hover{background:#eaf3fd;border-color:#9fc1e7}
 .foco-powerbi-body{
   padding:0!important;
   height:430px;
@@ -543,23 +544,20 @@
     </div>
     <div class="dashboard">
       <div class="left">
-        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link"
-         role="button"
-         tabindex="0"
-         title="Abrir Tablero de Gestión"
-         onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))"
-         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cargar('DASHBOARD',findBtn('DASHBOARD'))}">
+        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link">
   <div class="card-head">
-    <h2>🎯 Foco del día</h2>
-    <span>Power BI · KPIs de seguimiento · Abrir Tablero de Gestión →</span>
+    <div>
+      <h2>🎯 Foco del día</h2>
+      <span>Power BI · KPIs de seguimiento</span>
+    </div>
+    <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
   </div>
   <div class="card-body foco-powerbi-body">
     <iframe
       id="focoDiaFrame"
       class="foco-powerbi-frame"
       title="Foco del día · Power BI"
-      allowfullscreen="true"
-      tabindex="-1">
+      allowfullscreen="true">
     </iframe>
   </div>
 </section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
