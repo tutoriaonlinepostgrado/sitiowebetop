@@ -77,6 +77,81 @@
       body.embedded .icon{width:23px;height:22px;font-size:11px}
     }
   </style>
+
+<style>
+/* ===== Tabla preparación responsiva V2 · 20260924 ===== */
+
+/* Corrige el ancho acumulado de las 13 columnas (antes superaba 100%).
+   En modo embebido la tabla usa exactamente el ancho disponible del portal. */
+body.embedded .prep-workspace{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+body.embedded .table-shell{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+body.embedded table{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  table-layout:fixed!important;
+}
+body.embedded th,
+body.embedded td{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.embedded .course{
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+}
+body.embedded .intake-cell,
+body.embedded .intake-cell .nrc-link{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+body.embedded .edit-course{
+  max-width:100%;
+  padding-left:5px;
+  padding-right:5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* 100% exacto */
+body.embedded th:nth-child(1),body.embedded td:nth-child(1){width:3%!important}
+body.embedded th:nth-child(2),body.embedded td:nth-child(2){width:20%!important}
+body.embedded th:nth-child(3),body.embedded td:nth-child(3){width:16%!important}
+body.embedded th:nth-child(4),body.embedded td:nth-child(4){width:6%!important}
+body.embedded th:nth-child(5),body.embedded td:nth-child(5){width:6%!important}
+body.embedded th:nth-child(6),body.embedded td:nth-child(6){width:6%!important}
+body.embedded th:nth-child(7),body.embedded td:nth-child(7){width:9%!important}
+body.embedded th:nth-child(8),body.embedded td:nth-child(8){width:5%!important}
+body.embedded th:nth-child(9),body.embedded td:nth-child(9){width:5%!important}
+body.embedded th:nth-child(10),body.embedded td:nth-child(10){width:6%!important}
+body.embedded th:nth-child(11),body.embedded td:nth-child(11){width:5%!important}
+body.embedded th:nth-child(12),body.embedded td:nth-child(12){width:5%!important}
+body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important}
+
+@media(max-width:1250px){
+  body.embedded th{font-size:6.8px!important;padding:6px 2px!important}
+  body.embedded td{font-size:7.7px!important;padding:5px 2px!important}
+  body.embedded .course{font-size:8px!important}
+  body.embedded .date{font-size:8px!important}
+  body.embedded .badge{font-size:7px!important;padding:2px 3px!important}
+  body.embedded .icon{width:21px!important;height:21px!important;font-size:10px!important}
+  body.embedded .edit-course{height:23px;font-size:7.5px}
+}
+</style>
+
 </head>
 <body>
   <header class="top">
