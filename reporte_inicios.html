@@ -70,6 +70,41 @@ body.embedded tbody td{height:23px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
+<style>
+/* ===== Tabla reporte de inicios responsiva V2 · 20260924 ===== */
+@media (min-width:1000px){
+  .ri-tabla-contenedor{overflow-y:auto;overflow-x:hidden}
+  .ri-tabla-contenedor table{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:fixed!important;
+  }
+  .ri-tabla-contenedor th,
+  .ri-tabla-contenedor td{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .ri-tabla-contenedor th:nth-child(1),.ri-tabla-contenedor td:nth-child(1){width:8%}
+  .ri-tabla-contenedor th:nth-child(2),.ri-tabla-contenedor td:nth-child(2){width:11%}
+  .ri-tabla-contenedor th:nth-child(3),.ri-tabla-contenedor td:nth-child(3){width:7%}
+  .ri-tabla-contenedor th:nth-child(4),.ri-tabla-contenedor td:nth-child(4){width:18%}
+  .ri-tabla-contenedor th:nth-child(5),.ri-tabla-contenedor td:nth-child(5){width:7%}
+  .ri-tabla-contenedor th:nth-child(6),.ri-tabla-contenedor td:nth-child(6){width:7%}
+  .ri-tabla-contenedor th:nth-child(7),.ri-tabla-contenedor td:nth-child(7){width:12%}
+  .ri-tabla-contenedor th:nth-child(8),.ri-tabla-contenedor td:nth-child(8){width:11%}
+  .ri-tabla-contenedor th:nth-child(9),.ri-tabla-contenedor td:nth-child(9){width:7%}
+  .ri-tabla-contenedor th:nth-child(10),.ri-tabla-contenedor td:nth-child(10){width:9%}
+  .ri-tabla-contenedor th:nth-child(11),.ri-tabla-contenedor td:nth-child(11){width:3%}
+}
+@media (min-width:1000px) and (max-width:1350px){
+  .ri-tabla-contenedor th{font-size:7px;padding-left:3px;padding-right:3px}
+  .ri-tabla-contenedor td{font-size:8px;padding-left:3px;padding-right:3px}
+}
+</style>
+
 </head>
 <body>
 <div class="ri">
