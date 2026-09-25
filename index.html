@@ -574,7 +574,7 @@
 .viewer{
   box-sizing:border-box;
   padding:0!important;
-  border-top:6px solid #eef3f8;
+  border-top:0!important;
   background:#fff!important;
   overflow:hidden;
 }
@@ -645,7 +645,7 @@
     min-height:56px!important;
     padding:5px 8px!important;
   }
-  .viewer{border-top-width:5px}
+  .viewer{border-top-width:0!important}
 }
 </style>
 
@@ -866,12 +866,12 @@ function findBtn(key){return document.querySelector('[data-key="'+key+'"]')}
 function activate(btn){document.querySelectorAll('.menu-btn').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
 
 const misReportes={
-  DASHBOARD:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false",
-  NOMINA_ESTUDIANTES:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false",
-  CURSOS_ACTIVOS:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false",
+  DASHBOARD:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=a90b3a4c28d3179b1fae&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
+  NOMINA_ESTUDIANTES:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=255c88d86191d22dd1c3&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
+  CURSOS_ACTIVOS:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=9df5f2db687d901b71b9&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
   CURSOS_PREPARACION:BASE+"cursos_preparacion.html?v=20260829-portal1",
-  CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false",
-  FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false",
+  CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
+  FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
   CALENDARIOS:BASE+"calendarios.html?v=20260820-filtrotipo2",
   CORREOS:"onboarding_correos.html",
   INVITACIONES:"onboarding_invitaciones.html",
@@ -1017,6 +1017,7 @@ function buildURLFiltrada(clave){
   url.searchParams.set('ctid','8fbed393-d03b-49f8-be79-cd5e1f590fb2');
   url.searchParams.set('autoAuth','true');url.searchParams.set('pageName',cfg.page);
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
+  url.searchParams.set('pageView','fitToWidth');
   const fx=[];
   if(BUSQUEDA.facultad)fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
   const tutorEfectivo=BUSQUEDA.tutor||tutorSesionETOP();
