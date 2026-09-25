@@ -649,6 +649,134 @@
 }
 </style>
 
+
+<style>
+/* ===== Sidebar responsivo en altura · 20260924 ===== */
+
+/* La barra lateral se adapta a la ALTURA disponible.
+   Con los grupos cerrados no debe necesitar scroll visible. */
+.sidebar .menu{
+  min-height:0;
+}
+
+/* Menú normal: sin barra visible cuando no hay submenús desplegados. */
+.sidebar .menu:not(:has(.submenu.open)){
+  overflow-y:hidden!important;
+  scrollbar-width:none!important;
+}
+.sidebar .menu:not(:has(.submenu.open))::-webkit-scrollbar{
+  width:0!important;
+  height:0!important;
+  display:none!important;
+}
+
+/* Si el usuario abre Onboarding o Canales, el desplazamiento vuelve a estar
+   disponible, pero con una barra mucho más discreta. */
+.sidebar .menu:has(.submenu.open){
+  overflow-y:auto!important;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(148,163,184,.28) transparent;
+}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar{width:4px}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar-track{background:transparent}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar-thumb{
+  background:rgba(148,163,184,.24);
+  border-radius:999px;
+}
+
+/* Notebook / ventana de poca altura */
+@media (max-height:900px) and (min-width:901px){
+  .sidebar .brand{
+    min-height:56px;
+    padding:7px 11px;
+    gap:9px;
+    flex-shrink:0;
+  }
+  .sidebar .brand img{width:40px;height:40px}
+  .sidebar .brand-text b{font-size:13px}
+  .sidebar .brand-text span{font-size:8.5px}
+
+  .sidebar .menu{padding:4px 5px 5px}
+  .sidebar .menu-cat{
+    padding:6px 9px 2px;
+    font-size:7.5px;
+    line-height:1.1;
+  }
+  .sidebar .menu-btn,
+  .sidebar .collapsible{
+    gap:7px;
+    padding:5px 9px;
+    margin:0;
+    border-radius:7px;
+    font-size:10.4px;
+    line-height:1.15;
+    min-height:0;
+  }
+  .sidebar .menu-btn .ico,
+  .sidebar .collapsible .ico{width:17px;font-size:11px}
+  .sidebar .collapsible .arrow{font-size:8px}
+  .sidebar .submenu{margin-left:12px;padding-left:6px}
+  .sidebar .submenu .menu-btn{
+    font-size:9.5px;
+    padding:4px 7px;
+  }
+  .sidebar .coord-btn{
+    margin:5px 4px 0;
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+
+  .sidebar .session-box{
+    flex-shrink:0;
+    padding:7px 10px 8px;
+  }
+  .sidebar .session-box small{font-size:7.5px}
+  .sidebar .session-box b{font-size:9.5px;margin-top:3px}
+  .sidebar .session-meta{margin-top:3px}
+  .sidebar .session-box .session-meta span{
+    padding:2px 5px;
+    font-size:7.3px;
+  }
+  .sidebar .sidebar-login-btn{
+    height:26px;
+    margin-top:5px;
+    font-size:8px;
+  }
+}
+
+/* Ventanas todavía más bajas: segunda compactación, sin tocar el contenido
+   central ni las tablas Power BI. */
+@media (max-height:760px) and (min-width:901px){
+  .sidebar .brand{
+    min-height:50px;
+    padding:5px 10px;
+  }
+  .sidebar .brand img{width:36px;height:36px}
+  .sidebar .brand-text b{font-size:12px}
+  .sidebar .brand-text span{font-size:8px}
+
+  .sidebar .menu{padding:2px 5px 3px}
+  .sidebar .menu-cat{
+    padding:4px 8px 1px;
+    font-size:7px;
+  }
+  .sidebar .menu-btn,
+  .sidebar .collapsible{
+    padding:4px 8px;
+    font-size:9.8px;
+    line-height:1.1;
+  }
+  .sidebar .submenu .menu-btn{
+    font-size:9px;
+    padding:3px 6px;
+  }
+  .sidebar .coord-btn{margin-top:3px}
+
+  .sidebar .session-box{padding:5px 9px 6px}
+  .sidebar .sidebar-login-btn{height:24px;margin-top:4px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
