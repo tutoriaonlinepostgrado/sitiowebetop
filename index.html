@@ -890,6 +890,119 @@
 }
 </style>
 
+
+<style>
+/* ===== Ajuste portal: DAX edge-to-edge + correo NRC-only · 20260924 ===== */
+
+/* Power BI: se recorta únicamente el margen interno lateral del embed.
+   No se usa transform/scale, para conservar la nitidez de las tablas DAX. */
+.viewer.viewer-pbi{
+  overflow:hidden!important;
+  background:#fff!important;
+}
+.viewer.viewer-pbi > iframe#visor{
+  width:calc(100% + 36px)!important;
+  max-width:none!important;
+  margin-left:-18px!important;
+  margin-right:-18px!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+.viewer.viewer-local > iframe#visor{
+  width:100%!important;
+  max-width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+/* Hojas de correo: arriba sólo queda el selector NRC.
+   El botón X del propio NRC reemplaza al "Limpiar" general. */
+.top.email-mode{
+  align-items:center!important;
+  flex-wrap:wrap!important;
+}
+.top.email-mode #gestionFilters{
+  display:flex!important;
+  flex:0 1 clamp(240px,26vw,390px)!important;
+  width:auto!important;
+  min-width:230px!important;
+  grid-template-columns:none!important;
+  gap:0!important;
+  align-items:center!important;
+}
+.top.email-mode #gestionFilters [data-filtro]:not([data-filtro="nrc"]),
+.top.email-mode #filter-badge,
+.top.email-mode #btn-clear-filter,
+.top.email-mode #btn-tutor-perfil{
+  display:none!important;
+}
+.top.email-mode #gestionFilters [data-filtro="nrc"]{
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+.top.email-mode #gestionFilters .search-group-label{
+  display:inline-block!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  color:#9fb2c9!important;
+  letter-spacing:.08em!important;
+}
+.top.email-mode #nrc-pill-wrap{
+  width:100%!important;
+  min-width:0!important;
+}
+.top.email-mode #input-nrc{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:32px!important;
+  border-radius:9px!important;
+  padding-left:30px!important;
+  font-size:10px!important;
+}
+.top.email-mode #input-nrc:focus{width:100%!important}
+.top.email-mode #nrc-dropdown{
+  min-width:100%!important;
+  width:max(100%,310px)!important;
+}
+.top.email-mode .guia-correos{
+  margin-left:auto!important;
+  flex:1 1 360px!important;
+  justify-content:flex-end!important;
+  border-left:0!important;
+  padding-left:0!important;
+}
+
+@media(max-width:1150px){
+  .top.email-mode #gestionFilters{
+    flex:1 1 320px!important;
+    max-width:460px!important;
+  }
+  .top.email-mode .guia-correos{
+    flex:1 1 100%!important;
+    width:100%!important;
+    justify-content:flex-start!important;
+    margin-left:42px!important;
+  }
+}
+
+/* En notebook, la compensación lateral de Power BI es un poco menor. */
+@media(max-width:1200px){
+  .viewer.viewer-pbi > iframe#visor{
+    width:calc(100% + 28px)!important;
+    margin-left:-14px!important;
+    margin-right:-14px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1196,25 +1309,28 @@ function onNRCKeydown(e){
   else if(e.key==='Escape'){ocultarNRCDropdown()}
 }
 function marcarNRCItem(items){items.forEach((el,i)=>el.classList.toggle('sel',i===nrcDropIdx));if(nrcDropIdx>=0&&items[nrcDropIdx])items[nrcDropIdx].scrollIntoView({block:'nearest'})}
-function renderNRCDropdown(matches,q){
+function renderNRCDropdown(matches,q=''){
   const dd=document.getElementById('nrc-dropdown');
   if(!matches.length){ocultarNRCDropdown();return}
   dd.innerHTML='';
   matches.forEach(function(n){
     const div=document.createElement('div');div.className='nrc-dropdown-item';div.dataset.val=n;
-    const idx=n.toUpperCase().indexOf(q);
-    if(idx>=0)div.innerHTML=esc(n.slice(0,idx))+'<span class="match">'+esc(n.slice(idx,idx+q.length))+'</span>'+esc(n.slice(idx+q.length));
-    else div.textContent=n;
+    if(q){
+      const idx=n.toUpperCase().indexOf(q);
+      if(idx>=0)div.innerHTML=esc(n.slice(0,idx))+'<span class="match">'+esc(n.slice(idx,idx+q.length))+'</span>'+esc(n.slice(idx+q.length));
+      else div.textContent=n;
+    }else div.textContent=n;
     div.addEventListener('mousedown',e=>{e.preventDefault();confirmarNRC(n)});
     dd.appendChild(div);
   });
   dd.classList.add('visible');
 }
 function confirmarNRC(val){
-  const existe=catalogoNRC.some(n=>(n.nrc||'').trim()===val);
+  const existe=nrcsFiltrados('nrc').some(n=>(n.nrc||'').trim()===val);
   nrcConfirmado=existe?val:'';
-  document.getElementById('input-nrc').value=val;
-  const wrap=document.getElementById('nrc-pill-wrap');if(wrap)wrap.classList.add('nrc-con-texto');
+  document.getElementById('input-nrc').value=nrcConfirmado||'';
+  const wrap=document.getElementById('nrc-pill-wrap');
+  if(wrap)wrap.classList.toggle('nrc-con-texto',Boolean(nrcConfirmado));
   ocultarNRCDropdown();aplicarBusqueda('nrc',nrcConfirmado||null);
 }
 function limpiarFiltroNRC(evento){
@@ -1225,7 +1341,15 @@ function limpiarFiltroNRC(evento){
   if(input)input.value='';if(wrap)wrap.classList.remove('nrc-con-texto','filtro-activo');
   ocultarNRCDropdown();sincronizarFiltros();actualizarBadge();actualizarIframe();if(input)input.focus();
 }
-function mostrarNRCDropdown(){const i=document.getElementById('input-nrc');const q=i.value.trim().toUpperCase();if(q)onNRCInput(i.value)}
+function mostrarNRCDropdown(){
+  const i=document.getElementById('input-nrc');
+  const q=normalizarBusqueda(i.value);
+  if(q){onNRCInput(i.value);return}
+  const lista=[...new Set(nrcsFiltrados('nrc').map(n=>(n.nrc||'').trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}))
+    .slice(0,30);
+  renderNRCDropdown(lista,'');
+}
 function ocultarNRCDropdown(){document.getElementById('nrc-dropdown')?.classList.remove('visible')}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
@@ -1326,7 +1450,18 @@ function reconstruirSelect(id,campo){
   vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
   sel.value=valorActual;sel.disabled=false;
 }
+function validarNRCContraFiltros(){
+  if(!BUSQUEDA.nrc)return;
+  const sigueDisponible=nrcsFiltrados('nrc').some(n=>claveValor(n.nrc)===claveValor(BUSQUEDA.nrc));
+  if(sigueDisponible)return;
+  BUSQUEDA.nrc=null;nrcConfirmado='';
+  const input=document.getElementById('input-nrc'),wrap=document.getElementById('nrc-pill-wrap');
+  if(input)input.value='';
+  if(wrap)wrap.classList.remove('nrc-con-texto','filtro-activo');
+  ocultarNRCDropdown();
+}
 function sincronizarFiltros(){
+  validarNRCContraFiltros();
   reconstruirSelect('sel-facultad','facultad');reconstruirSelect('sel-tutor','tutor');reconstruirSelect('sel-tipo','tipo');
   reconstruirSelect('sel-codigo','codigo');reconstruirSelect('sel-estado','estado');reconstruirSelect('sel-intake','intake');
   renderFechasGestion();actualizarEstadoVisualFiltros();
@@ -1444,7 +1579,12 @@ const FILTROS_POR_VISTA={
 };
 function configurarFiltros(clave){
   const visibles=FILTROS_POR_VISTA[clave]||[];
-  document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>{el.style.display=visibles.includes(el.dataset.filtro)?'':'none'});
+  const modoCorreo=['CORREOS','INVITACIONES','PRESENTACION','CIERRE'].includes(clave);
+  const top=document.getElementById('topBar');
+  if(top)top.classList.toggle('email-mode',modoCorreo);
+  document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>{
+    el.style.display=visibles.includes(el.dataset.filtro)?'':'none';
+  });
   document.getElementById('gestionFilters').style.display=visibles.length?'flex':'none';
   document.getElementById('homeTopSearch').style.display='none';
   document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='INVITACIONES')?'flex':'none';
@@ -1464,18 +1604,79 @@ function mostrarAreaGestion(){
   const top=document.getElementById('topBar');
   if(top){top.classList.remove('home-mode');top.classList.add('report-mode')}
 }
+function configurarTipoVisor(clave){
+  const viewer=document.getElementById('viewer');
+  if(!viewer)return;
+  const cfg=urlsBase[clave];
+  const esPBI=Boolean(cfg&&!cfg.local);
+  viewer.classList.toggle('viewer-pbi',esPBI);
+  viewer.classList.toggle('viewer-local',!esPBI);
+}
 function cargar(clave,btn){
   vistaActual=clave;
   mostrarAreaGestion();
+  configurarTipoVisor(clave);
   const btnPerfilTutor=document.getElementById('btn-tutor-perfil');
   if(btnPerfilTutor)btnPerfilTutor.style.display=(vistaActual==='CURSOS_PREPARACION')?'inline-flex':'none';
   configurarFiltros(clave);
-  const visor=document.getElementById('visor');visor.style.display='block';visor.src=urlsBase[clave]?buildURLFiltrada(clave):misReportes[clave];
+  const visor=document.getElementById('visor');
+  visor.onload=null;
+  visor.style.display='block';
+  visor.src=urlsBase[clave]?buildURLFiltrada(clave):misReportes[clave];
   activate(btn);document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
   if(window.innerWidth<800)toggleSidebar();
 }
+function prepararVistaCorreoEnPortal(clave){
+  const visor=document.getElementById('visor');
+  if(!visor)return;
+  visor.onload=function(){
+    try{
+      const doc=visor.contentDocument;
+      if(!doc)return;
+      let style=doc.getElementById('etop-portal-responsive-style');
+      if(!style){
+        style=doc.createElement('style');
+        style.id='etop-portal-responsive-style';
+        doc.head.appendChild(style);
+      }
+      style.textContent=`
+        html,body{max-width:100%!important;overflow-x:hidden!important}
+        body{padding:clamp(10px,1.2vw,18px)!important}
+        .container{
+          width:100%!important;
+          max-width:none!important;
+          margin:0!important;
+          padding:clamp(18px,2vw,30px)!important;
+        }
+        .ew{
+          width:100%!important;
+          max-width:none!important;
+          margin:0!important;
+          padding:clamp(12px,1.4vw,20px)!important;
+        }
+        .ew>table{
+          width:min(100%,1180px)!important;
+          max-width:1180px!important;
+          margin:16px auto!important;
+        }
+        .tb{
+          padding:8px 14px!important;
+          gap:8px!important;
+          flex-wrap:wrap!important;
+        }
+        .tbr{flex-wrap:wrap!important;justify-content:flex-end!important}
+        @media(max-width:900px){
+          body{padding:8px!important}
+          .container{padding:16px!important}
+          .tb{align-items:flex-start!important}
+          .tbr{width:100%!important;justify-content:flex-start!important}
+        }
+      `;
+    }catch(e){/* vista local same-origin; si cambia el origen, no intervenir */}
+  };
+}
 function cargarOnboarding(clave,btn){
-  vistaActual=clave;mostrarAreaGestion();configurarFiltros(clave);
+  vistaActual=clave;mostrarAreaGestion();configurarTipoVisor(clave);configurarFiltros(clave);prepararVistaCorreoEnPortal(clave);
   const BASEP=BASE;let url=BASEP+misReportes[clave];
   if(BUSQUEDA.nrc&&catalogoNRC.length){
     const nd=catalogoNRC.find(n=>(n.nrc||'').trim()===BUSQUEDA.nrc.trim());
@@ -1745,7 +1946,7 @@ function showHome(btn){
   refrescarResumenCargaTutorial();
   refrescarProximosCursos();
   const top=document.getElementById('topBar');
-  if(top){top.classList.remove('report-mode');top.classList.add('home-mode')}
+  if(top){top.classList.remove('report-mode','email-mode');top.classList.add('home-mode')}
   document.getElementById('viewer').style.display='none';
   document.getElementById('homeView').style.display='block';
   document.getElementById('homeTopSearch').style.display='flex';
@@ -1756,6 +1957,8 @@ function showHome(btn){
 }
 function openLocal(url,title,btn){
   mostrarAreaGestion();vistaActual=null;
+  const top=document.getElementById('topBar');if(top)top.classList.remove('email-mode');
+  const viewer=document.getElementById('viewer');if(viewer){viewer.classList.remove('viewer-pbi');viewer.classList.add('viewer-local')}
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
   document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;document.getElementById('titulo-vista').textContent=title;activate(btn);
 }
