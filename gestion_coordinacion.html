@@ -558,6 +558,34 @@
 }
 </style>
 
+
+<style>
+/* ===== Power BI edge-to-edge coordinación · 20260924 ===== */
+.content-area{overflow:hidden}
+.content-area.pbi-edgefill #visor{
+  width:calc(100% + 36px)!important;
+  max-width:none!important;
+  margin-left:-18px!important;
+  margin-right:-18px!important;
+  border:0!important;
+  transform:none!important;
+  filter:none!important;
+}
+.content-area.local-view #visor{
+  width:100%!important;
+  max-width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+@media(max-width:1200px){
+  .content-area.pbi-edgefill #visor{
+    width:calc(100% + 28px)!important;
+    margin-left:-14px!important;
+    margin-right:-14px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -1010,11 +1038,15 @@
             div.className = 'nrc-dropdown-item';
             div.dataset.val = n;
             // resalta la parte que coincide
-            const idx = n.toUpperCase().indexOf(q);
-            if (idx >= 0) {
-                div.innerHTML = escHtml(n.slice(0, idx))
-                    + `<span class="match">${escHtml(n.slice(idx, idx + q.length))}</span>`
-                    + escHtml(n.slice(idx + q.length));
+            if (q) {
+                const idx = n.toUpperCase().indexOf(q);
+                if (idx >= 0) {
+                    div.innerHTML = escHtml(n.slice(0, idx))
+                        + `<span class="match">${escHtml(n.slice(idx, idx + q.length))}</span>`
+                        + escHtml(n.slice(idx + q.length));
+                } else {
+                    div.textContent = n;
+                }
             } else {
                 div.textContent = n;
             }
@@ -1059,8 +1091,13 @@
     }
 
     function mostrarDropdownNRC() {
-        const val = document.getElementById('pill-nrc').value;
-        if (val.trim()) onNRCInput(val);
+        const input=document.getElementById('pill-nrc');
+        const val=input.value;
+        if (val.trim()) { onNRCInput(val); return; }
+        const lista=[...new Set(nrcsFiltrados('nrc').map(x=>x.nrc).filter(Boolean))]
+            .sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}))
+            .slice(0,30);
+        renderDropdownNRC(lista,'');
     }
 
     function ocultarDropdownNRC() {
@@ -1282,7 +1319,15 @@
     ======================================================== */
     function refrescarIframe() {
         const url = buildURLFiltrada();
-        if (url) { const u=new URL(url,window.location.href); if(misReportes[claveActual]&&misReportes[claveActual].tipo==='local') u.searchParams.set('_fresh',Date.now().toString()); document.getElementById('visor').src=u.toString(); }
+        const cfg=misReportes[claveActual];
+        const area=document.querySelector('.content-area');
+        const esPBI=Boolean(cfg&&cfg.tipo==='pbi');
+        if(area){area.classList.toggle('pbi-edgefill',esPBI);area.classList.toggle('local-view',!esPBI)}
+        if (url) {
+            const u=new URL(url,window.location.href);
+            if(cfg&&cfg.tipo==='local')u.searchParams.set('_fresh',Date.now().toString());
+            document.getElementById('visor').src=u.toString();
+        }
     }
 
     function cargar(clave, btn) {
