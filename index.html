@@ -81,6 +81,14 @@
   margin:5px 0 0;
   text-shadow:0 2px 12px rgba(0,0,0,.28);
 }
+.hero-greeting-sub{
+  margin:5px 0 0!important;
+  color:#dbe8f7!important;
+  font-size:9px!important;
+  line-height:1.35;
+  max-width:620px;
+  text-shadow:0 1px 8px rgba(0,0,0,.24);
+}
 
 .dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
 .foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
@@ -1217,8 +1225,9 @@
       <div class="hero-banner-photo" aria-hidden="true"></div>
       <div class="hero-banner-fade" aria-hidden="true"></div>
       <div class="hero-banner-copy">
-        <div class="kicker">Universidad Andrés Bello · ETOP</div>
-        <h1>Centro de Control Tutorial</h1>
+        <div class="kicker" id="heroGreetingKicker">Universidad Andrés Bello · ETOP</div>
+        <h1 id="heroGreetingTitle">Centro de Control Tutorial</h1>
+        <p class="hero-greeting-sub" id="heroGreetingSub">Gestión Tutorial · panorama actualizado</p>
       </div>
     </div>
     <div class="dashboard">
@@ -2100,6 +2109,7 @@ function refrescarProximosCursos(){
 
 function showHome(btn){
   vistaActual='INICIO';
+  actualizarSaludoBanner();
   refrescarFocoDia();
   refrescarResumenCargaTutorial();
   refrescarProximosCursos();
@@ -2348,6 +2358,68 @@ const ETOP_EMAILS={
 const ETOP_COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
 const etopEmailNorm=v=>String(v||'').trim().toLowerCase();
 function etopTutorByEmail(email){const e=etopEmailNorm(email);return Object.keys(ETOP_EMAILS).find(n=>etopEmailNorm(ETOP_EMAILS[n])===e)||''}
+const ETOP_COORD_NOMBRES={
+  'patricio.collao@unab.cl':'Patricio',
+  'felipe.garcia@unab.cl':'Felipe',
+  'rita.galvez@unab.cl':'Rita',
+  'carolina.monsalve.g@unab.cl':'Carolina',
+  'tutoriaonline47@unab.cl':'Pablo',
+  'coordinaciontutorial@unab.cl':'Coordinación'
+};
+function nombreSaludoETOP(s){
+  if(!s)return '';
+  if(s.rol==='TUTOR'&&s.tutor){
+    const n=String(s.tutor).trim().split(/\s+/)[0].toLowerCase();
+    return n.charAt(0).toUpperCase()+n.slice(1);
+  }
+  const email=etopEmailNorm(s.email);
+  if(ETOP_COORD_NOMBRES[email])return ETOP_COORD_NOMBRES[email];
+  if(email&&!email.startsWith('tutoriaonline')){
+    const base=email.split('@')[0].split(/[._-]/)[0];
+    return base?base.charAt(0).toUpperCase()+base.slice(1).toLowerCase():'Coordinación';
+  }
+  return 'Coordinación';
+}
+function actualizarSaludoBanner(){
+  const titulo=document.getElementById('heroGreetingTitle');
+  const sub=document.getElementById('heroGreetingSub');
+  const kicker=document.getElementById('heroGreetingKicker');
+  if(!titulo||!sub||!kicker)return;
+
+  const s=sesionGlobalETOP();
+  const hoy=new Date();
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const dia=dias[hoy.getDay()];
+  const fecha=new Intl.DateTimeFormat('es-CL',{day:'numeric',month:'long'}).format(hoy);
+  const nombre=nombreSaludoETOP(s);
+
+  const mensajesTutor=[
+    'Revisión rápida de prioridades, cursos y próximos inicios.',
+    'Seguimiento actualizado para comenzar por lo que requiere atención.',
+    'Panorama de gestión listo para revisar la jornada.',
+    'Cursos, estudiantes y alertas reunidos en un solo lugar.',
+    'Estado actualizado para mantener el seguimiento al día.'
+  ];
+  const mensajesCoord=[
+    'Panorama general de coordinación listo para revisar.',
+    'Seguimiento del equipo, incidencias y próximos inicios en un solo lugar.',
+    'Vista actualizada para ordenar las prioridades de coordinación.',
+    'Indicadores y seguimiento disponibles para la revisión de la jornada.',
+    'Estado general actualizado para apoyar la gestión del equipo.'
+  ];
+  const semilla=(hoy.getFullYear()*372)+(hoy.getMonth()*31)+hoy.getDate();
+  const banco=s&&s.rol==='COORDINACION'?mensajesCoord:mensajesTutor;
+  const mensaje=banco[semilla%banco.length];
+
+  kicker.textContent='UNIVERSIDAD ANDRÉS BELLO · ETOP · '+dia.toUpperCase()+' '+fecha.toUpperCase();
+  if(s&&nombre){
+    titulo.textContent='Buen '+dia+', '+nombre;
+    sub.textContent=mensaje;
+  }else{
+    titulo.textContent='Centro de Control Tutorial';
+    sub.textContent=dia.charAt(0).toUpperCase()+dia.slice(1)+' '+fecha+' · Gestión Tutorial';
+  }
+}
 function abrirSesionETOP(){const o=document.getElementById('etop-login-overlay'),i=document.getElementById('etop-login-email'),s=sesionGlobalETOP();document.getElementById('etop-login-msg').textContent='';i.value=s?.email||localStorage.getItem(ETOP_LEGACY_EMAIL_KEY)||'';o.classList.add('open');setTimeout(()=>i.focus(),50)}
 function cerrarSesionETOP(){if(sesionGlobalETOP())document.getElementById('etop-login-overlay').classList.remove('open')}
 function guardarSesionETOP(){
@@ -2367,10 +2439,11 @@ function guardarSesionETOP(){
 }
 function actualizarSesionETOPUI(){
   const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
-  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';return}
+  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';actualizarSaludoBanner();return}
   st.classList.remove('off');
   if(s.rol==='TUTOR'){box.textContent=s.tutor;st.textContent='● TUTOR ACTIVO';btn.textContent='👤 Cambiar sesión'}
   else{box.textContent='COORDINACIÓN';st.textContent='● COORDINACIÓN';btn.textContent='👤 Cambiar sesión'}
+  actualizarSaludoBanner();
 }
 
 document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')guardarSesionETOP()});
