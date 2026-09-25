@@ -1000,6 +1000,76 @@
    El responsive lo resuelve el propio embed con fitToWidth. */
 </style>
 
+
+<style>
+/* ===== Filtros activos dentro del propio slicer · 20260924 ===== */
+#filter-badge,#btn-clear-filter{display:none!important}
+
+.inline-filter-wrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+.inline-filter-wrap .fsel-topbar{
+  width:100%!important;
+  max-width:none!important;
+  padding-right:30px!important;
+}
+.inline-filter-clear,.rut-pill-clear{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:17px;
+  height:17px;
+  border:0;
+  border-radius:50%;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  line-height:17px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+  z-index:4;
+  background:rgba(239,68,68,.16);
+  color:#ff9d9d;
+}
+.inline-filter-clear:hover,.rut-pill-clear:hover{
+  background:rgba(239,68,68,.32);
+  color:#fff;
+}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .inline-filter-clear{display:flex}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .fsel-topbar{
+  background-image:none!important;
+}
+#rut-pill-wrap.filtro-activo .rut-pill-clear{display:flex}
+#rut-pill-wrap.filtro-activo .search-pill-input{padding-right:29px!important}
+#rut-pill-wrap.filtro-activo .search-pill-go{display:none!important}
+
+/* Estado activo queda marcado dentro del mismo control. */
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo)::before,
+.fecha-multi-wrap.filtro-activo::before,
+.nrc-pill-wrap.filtro-activo::before,
+#rut-pill-wrap.filtro-activo::before{
+  content:"";
+  position:absolute;
+  left:5px;
+  top:5px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#3a9bff;
+  box-shadow:0 0 0 2px rgba(58,155,255,.14);
+  z-index:5;
+  pointer-events:none;
+}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .fsel-topbar{padding-left:14px!important}
+#rut-pill-wrap.filtro-activo .search-pill-input{border-color:#3a9bff!important;background:rgba(18,101,223,.20)!important;color:#dcecff!important;font-weight:700}
+#gestionFilters{align-content:center!important}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1056,24 +1126,42 @@
     </div>
 
     <div class="top-bar-search" id="gestionFilters" style="display:none">
-      <select class="fsel-topbar" id="sel-facultad" data-filtro="facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
-        <option value="">Facultad ⏳</option>
-      </select>
-      <select class="fsel-topbar" id="sel-tutor" data-filtro="tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
-        <option value="">Tutor ⏳</option>
-      </select>
-      <select class="fsel-topbar" id="sel-tipo" data-filtro="tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
-        <option value="">Tipo NRC ⏳</option>
-      </select>
-      <select class="fsel-topbar" id="sel-codigo" data-filtro="codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
-        <option value="">Código curso ⏳</option>
-      </select>
-      <select class="fsel-topbar" id="sel-estado" data-filtro="estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
-        <option value="">Estado ⏳</option>
-      </select>
-      <select class="fsel-topbar" id="sel-intake" data-filtro="intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
-        <option value="">Intake/Versión ⏳</option>
-      </select>
+      <div class="inline-filter-wrap" data-filtro="facultad">
+        <select class="fsel-topbar" id="sel-facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
+          <option value="">Facultad ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Facultad" aria-label="Quitar Facultad" onclick="limpiarFiltroSimple('facultad',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="tutor">
+        <select class="fsel-topbar" id="sel-tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
+          <option value="">Tutor ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Tutor" aria-label="Quitar Tutor" onclick="limpiarFiltroSimple('tutor',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="tipo">
+        <select class="fsel-topbar" id="sel-tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
+          <option value="">Tipo NRC ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Tipo NRC" aria-label="Quitar Tipo NRC" onclick="limpiarFiltroSimple('tipo',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="codigo">
+        <select class="fsel-topbar" id="sel-codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
+          <option value="">Código curso ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Código curso" aria-label="Quitar Código curso" onclick="limpiarFiltroSimple('codigo',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="estado">
+        <select class="fsel-topbar" id="sel-estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
+          <option value="">Estado ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Estado" aria-label="Quitar Estado" onclick="limpiarFiltroSimple('estado',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="intake">
+        <select class="fsel-topbar" id="sel-intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
+          <option value="">Intake/Versión ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Intake/Versión" aria-label="Quitar Intake/Versión" onclick="limpiarFiltroSimple('intake',event)">×</button>
+      </div>
 
       <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio">
         <input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)">
@@ -1098,7 +1186,7 @@
 
       <div class="search-group" data-filtro="rut">
         <span class="search-group-label">RUT</span>
-        <div class="search-pill-wrap">
+        <div class="search-pill-wrap" id="rut-pill-wrap">
           <span class="search-pill-icon">◈</span>
           <input type="text" class="search-pill-input" id="input-rut"
                  placeholder="Buscar RUT…" maxlength="12"
@@ -1106,6 +1194,7 @@
                  onkeydown="if(event.key==='Enter'){aplicarBusqueda('rut',this.value.trim());this.blur()}"
                  onchange="aplicarBusqueda('rut',this.value.trim())">
           <button class="search-pill-go" onclick="aplicarBusqueda('rut',document.getElementById('input-rut').value.trim())">↵</button>
+          <button type="button" class="rut-pill-clear" title="Quitar RUT" aria-label="Quitar RUT" onclick="limpiarFiltroSimple('rut',event)">×</button>
         </div>
       </div>
 
@@ -1472,6 +1561,19 @@ function renderFechasGestion(){
 function agregarFechaGestion(v){const f=fechaISO(v);if(f&&!BUSQUEDA.fechaInicio.includes(f))BUSQUEDA.fechaInicio.push(f);document.getElementById('fecha-multi-input').value='';sincronizarFiltros();actualizarBadge();actualizarIframe()}
 function quitarFechaGestion(v){BUSQUEDA.fechaInicio=BUSQUEDA.fechaInicio.filter(x=>x!==v);sincronizarFiltros();actualizarBadge();actualizarIframe()}
 function limpiarFechasGestion(){BUSQUEDA.fechaInicio=[];sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function limpiarFiltroSimple(campo,evento){
+  if(evento){evento.preventDefault();evento.stopPropagation()}
+  if(campo==='nrc'){limpiarFiltroNRC(evento);return}
+  if(campo==='fechaInicio'){
+    BUSQUEDA.fechaInicio=[];
+    const f=document.getElementById('fecha-multi-input');if(f)f.value='';
+  }else{
+    BUSQUEDA[campo]=null;
+    const ids={facultad:'sel-facultad',tutor:'sel-tutor',tipo:'sel-tipo',codigo:'sel-codigo',estado:'sel-estado',intake:'sel-intake',rut:'input-rut'};
+    const el=document.getElementById(ids[campo]);if(el)el.value='';
+  }
+  sincronizarFiltros();actualizarBadge();actualizarIframe();
+}
 function aplicarBusqueda(campo,valor){BUSQUEDA[campo]=normalizarFiltro(valor)||null;sincronizarFiltros();actualizarBadge();actualizarIframe()}
 function limpiarBusqueda(){
   BUSQUEDA.nrc=null;BUSQUEDA.rut=null;BUSQUEDA.facultad=null;BUSQUEDA.tutor=null;BUSQUEDA.tipo=null;BUSQUEDA.codigo=null;BUSQUEDA.estado=null;BUSQUEDA.intake=null;BUSQUEDA.fechaInicio=[];
@@ -1483,6 +1585,7 @@ function limpiarBusqueda(){
 function actualizarEstadoVisualFiltros(){
   [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo])=>{const el=document.getElementById(id);if(el)el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]))});
   const nr=document.getElementById('nrc-pill-wrap');if(nr)nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
+  const rw=document.getElementById('rut-pill-wrap');if(rw)rw.classList.toggle('filtro-activo',Boolean(BUSQUEDA.rut));
   const fm=document.getElementById('fecha-multi-wrap');if(fm)fm.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
 }
 function actualizarBadge(){
