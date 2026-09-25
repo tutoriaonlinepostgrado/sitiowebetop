@@ -901,15 +901,18 @@
   background:#fff!important;
 }
 .viewer.viewer-pbi > iframe#visor{
-  width:calc(100% + 36px)!important;
-  max-width:none!important;
-  margin-left:-18px!important;
-  margin-right:-18px!important;
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
   border:0!important;
   border-radius:0!important;
   box-shadow:none!important;
   transform:none!important;
   filter:none!important;
+  background:#fff!important;
 }
 .viewer.viewer-local > iframe#visor{
   width:100%!important;
@@ -993,14 +996,8 @@
   }
 }
 
-/* En notebook, la compensación lateral de Power BI es un poco menor. */
-@media(max-width:1200px){
-  .viewer.viewer-pbi > iframe#visor{
-    width:calc(100% + 28px)!important;
-    margin-left:-14px!important;
-    margin-right:-14px!important;
-  }
-}
+/* Power BI conserva siempre el 100% real del área central.
+   El responsive lo resuelve el propio embed con fitToWidth. */
 </style>
 
 </head>
@@ -1639,42 +1636,80 @@ function prepararVistaCorreoEnPortal(clave){
         style.id='etop-portal-responsive-style';
         doc.head.appendChild(style);
       }
+
+      /* Sólo presentación dentro del portal: no cambia lógica ni contenido. */
       style.textContent=`
         html,body{max-width:100%!important;overflow-x:hidden!important}
-        body{padding:clamp(10px,1.2vw,18px)!important}
+        body{padding:clamp(6px,.8vw,12px)!important}
+
+        /* Bienvenida / Invitación: mantener ancho editorial y compactar notebook. */
         .container{
-          width:100%!important;
-          max-width:none!important;
-          margin:0!important;
-          padding:clamp(18px,2vw,30px)!important;
+          width:calc(100% - 16px)!important;
+          max-width:1180px!important;
+          margin:8px auto 16px!important;
+          padding:clamp(16px,1.5vw,24px)!important;
         }
+        .header{margin-bottom:1.2rem!important;padding-bottom:.75rem!important}
+        .header h1{font-size:clamp(1.35rem,1.7vw,1.7rem)!important;line-height:1.15!important}
+        .header p{font-size:clamp(.78rem,.9vw,.9rem)!important;margin-top:.3rem!important}
+        .helper{padding:.65rem .85rem!important;margin-bottom:.75rem!important;font-size:clamp(.76rem,.85vw,.86rem)!important}
+        .form-grid{gap:.7rem!important;margin-bottom:1rem!important}
+        .file-drop{padding:.8rem!important}
+        .btn-row{margin-top:.65rem!important}
+        .table-wrap{margin-top:.65rem!important}
+
+        /* Presentación / Cierre: respetar el ancho original de la plantilla. */
         .ew{
           width:100%!important;
-          max-width:none!important;
-          margin:0!important;
-          padding:clamp(12px,1.4vw,20px)!important;
-        }
-        .ew>table{
-          width:min(100%,1180px)!important;
-          max-width:1180px!important;
-          margin:16px auto!important;
+          margin:0 auto!important;
+          padding:clamp(8px,1vw,16px)!important;
         }
         .tb{
-          padding:8px 14px!important;
-          gap:8px!important;
+          padding:7px 12px!important;
+          gap:7px!important;
           flex-wrap:wrap!important;
         }
+        .tbl{min-width:0!important}
         .tbr{flex-wrap:wrap!important;justify-content:flex-end!important}
+
+        @media(max-width:1400px), (max-height:850px){
+          html{font-size:12.5px!important}
+          body{padding:5px!important}
+          .container{
+            width:calc(100% - 12px)!important;
+            max-width:1000px!important;
+            margin:5px auto 12px!important;
+            padding:14px!important;
+          }
+          .header{margin-bottom:.85rem!important;padding-bottom:.55rem!important}
+          .header h1{font-size:1.42rem!important}
+          .header p{font-size:.79rem!important}
+          .helper{font-size:.75rem!important;padding:.55rem .75rem!important}
+          .btn{font-size:.76rem!important;padding:.38rem .82rem!important}
+          input[type="text"],input[type="date"],input[type="time"],textarea{font-size:.8rem!important;padding:.4rem .6rem!important}
+          label{font-size:.64rem!important}
+          .file-drop{padding:.62rem!important;font-size:.75rem!important}
+          .ew{padding:8px!important}
+          .tb{padding:5px 9px!important}
+          .tbt{font-size:10px!important}
+          .badge{font-size:8px!important;padding:2px 6px!important}
+          .btn-outlook,.btn-copiar{font-size:9px!important;padding:5px 9px!important}
+        }
+
         @media(max-width:900px){
-          body{padding:8px!important}
-          .container{padding:16px!important}
+          .container{max-width:none!important;width:100%!important;margin:0!important}
+          .form-grid{grid-template-columns:1fr!important}
           .tb{align-items:flex-start!important}
           .tbr{width:100%!important;justify-content:flex-start!important}
         }
       `;
-    }catch(e){/* vista local same-origin; si cambia el origen, no intervenir */}
+
+      if(clave==='PRESENTACION')style.textContent += '.ew{max-width:840px!important;}';
+      if(clave==='CIERRE')style.textContent += '.ew{max-width:990px!important;}';
+    }catch(e){/* same-origin local */}
   };
 }
+
 function cargarOnboarding(clave,btn){
   vistaActual=clave;mostrarAreaGestion();configurarTipoVisor(clave);configurarFiltros(clave);prepararVistaCorreoEnPortal(clave);
   const BASEP=BASE;let url=BASEP+misReportes[clave];
