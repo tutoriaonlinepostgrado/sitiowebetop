@@ -514,6 +514,50 @@
         }
 
     </style>
+
+<style>
+/* ===== Filtros coordinación responsivos V2 · 20260924 ===== */
+.top-bar{align-items:flex-start!important}
+
+.filtros-wrapper{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(82px,1fr));
+  gap:5px!important;
+  min-width:0!important;
+  flex:1 1 0!important;
+  align-items:center!important;
+}
+.filtros-wrapper > .separator-bar{display:none!important}
+.filtros-wrapper .multi-filtro,
+.filtros-wrapper .pill-wrap{
+  width:100%!important;
+  min-width:0!important;
+}
+.filtros-wrapper .multi-btn,
+.filtros-wrapper .date-filter-wrap,
+.filtros-wrapper .pill-input{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+.filtros-wrapper .pill-input:focus{width:100%!important}
+.filtros-wrapper .date-filter-input{
+  width:100%!important;
+  min-width:0!important;
+}
+
+@media (max-width:1599px){
+  .filtros-wrapper{grid-template-columns:repeat(5,minmax(88px,1fr))}
+}
+@media (max-width:1199px){
+  .top-bar{display:grid!important;grid-template-columns:auto max-content 1px minmax(0,1fr);align-items:center!important}
+  .filtros-wrapper{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(4,minmax(90px,1fr));width:100%}
+}
+@media (max-width:850px){
+  .filtros-wrapper{grid-template-columns:repeat(3,minmax(96px,1fr))}
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
