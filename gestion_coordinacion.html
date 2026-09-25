@@ -583,6 +583,69 @@
 /* El embed Power BI conserva su ancho real también en notebook. */
 </style>
 
+
+<style>
+/* ===== Sidebar coordinación responsivo en altura · 20260924 ===== */
+.sidebar-menu{min-height:0}
+.sidebar-menu:not(:has(.collapsible-body.open)){
+  overflow-y:hidden!important;
+  scrollbar-width:none!important;
+}
+.sidebar-menu:not(:has(.collapsible-body.open))::-webkit-scrollbar{
+  width:0!important;height:0!important;display:none!important;
+}
+.sidebar-menu:has(.collapsible-body.open){
+  overflow-y:auto!important;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(148,163,184,.26) transparent;
+}
+.sidebar-menu:has(.collapsible-body.open)::-webkit-scrollbar{width:4px}
+.sidebar-menu:has(.collapsible-body.open)::-webkit-scrollbar-track{background:transparent}
+.sidebar-menu:has(.collapsible-body.open)::-webkit-scrollbar-thumb{
+  background:rgba(148,163,184,.24);border-radius:999px;
+}
+
+@media (max-height:900px) and (min-width:901px){
+  .sidebar:not(.closed){width:230px!important}
+  .sidebar.closed{margin-left:-230px!important}
+  .sidebar-header{padding:8px 11px!important}
+  .sidebar-header h2{font-size:13px!important;letter-spacing:.03em!important}
+  .sidebar-header span{font-size:9px!important;margin-top:2px!important}
+
+  .sidebar-menu{padding-bottom:4px!important}
+  .menu-category{padding:6px 10px 2px!important;font-size:7.5px!important;line-height:1.05!important}
+  .menu-btn,.collapsible-header{
+    padding:5px 10px!important;
+    font-size:10.5px!important;
+    line-height:1.12!important;
+    gap:7px!important;
+    margin:1px 5px!important;
+    width:calc(100% - 10px)!important;
+  }
+  .collapsible-body .menu-btn{padding-left:22px!important;font-size:9.7px!important}
+  .btn-volver{
+    padding:8px 11px!important;
+    font-size:10.5px!important;
+    gap:7px!important;
+  }
+}
+@media (max-height:760px) and (min-width:901px){
+  .sidebar:not(.closed){width:218px!important}
+  .sidebar.closed{margin-left:-218px!important}
+  .sidebar-header{padding:6px 9px!important}
+  .sidebar-header h2{font-size:12px!important}
+  .sidebar-header span{font-size:8px!important}
+  .menu-category{padding:4px 9px 1px!important;font-size:7px!important}
+  .menu-btn,.collapsible-header{
+    padding:4px 9px!important;
+    font-size:9.8px!important;
+    margin:0 4px!important;
+    width:calc(100% - 8px)!important;
+  }
+  .btn-volver{padding:6px 9px!important;font-size:9.8px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -719,7 +782,7 @@
     tipo: 'local'
 },
         'INCIDENCIAS': {
-            url: "incidencias.html",
+            url: "incidencias.html?embedded=1&v=20260924-notebook1",
             tipo: 'local'
         },
         'EXPLORADOR': {
@@ -1243,13 +1306,15 @@
         }
         if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
 
-        if (condiciones.length === 0) return cfg.url;
+        const url = new URL(cfg.url);
+        // Power BI resuelve el ajuste dentro de su propio canvas.
+        // Esto evita cortar columnas sin escalar el iframe desde el portal.
+        url.searchParams.set('pageView', 'fitToWidth');
+
+        if (condiciones.length === 0) return url.toString();
 
         const filtro = condiciones.join(' and ');
 
-        // URLSearchParams codifica correctamente el filtro sin dañar la URL
-        // base del reporte. Los segmentadores nativos de Power BI siguen activos.
-        const url = new URL(cfg.url);
         // Sintaxis oficial de filtros URL de Power BI: filter=Tabla/Campo eq 'valor'.
         url.searchParams.set('filter', filtro);
 
