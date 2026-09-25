@@ -703,6 +703,34 @@
 .filtros-wrapper{align-content:center!important}
 </style>
 
+
+<style>
+/* ===== Acceso principal visible · 20260924 ===== */
+.btn-volver.portal-principal{
+  margin:7px 9px 9px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(58,155,255,.42)!important;
+  border-radius:9px!important;
+  background:rgba(58,155,255,.09)!important;
+  color:#dcecff!important;
+  font-weight:700!important;
+  justify-content:center!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+.btn-volver.portal-principal:hover{
+  background:rgba(58,155,255,.17)!important;
+  border-color:rgba(58,155,255,.70)!important;
+  color:#fff!important;
+}
+@media(max-height:900px) and (min-width:901px){
+  .btn-volver.portal-principal{
+    margin:5px 7px 7px!important;
+    padding:7px 9px!important;
+    font-size:10px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -734,13 +762,9 @@
                 ⚡ Centro de Herramientas ETOP ↗️
             </a>
 
-            <div class="menu-category"> </div>
-            <a href="gestion.html" class="btn-tutoria">
-                📋 Ir a Espacio Tutoría →
-            </a>
         </div>
 
-        <a href="index.html" class="btn-volver">⬅️ Volver al Portal Principal</a>
+        <a href="index.html" class="btn-volver portal-principal">🏠 Ir al Portal Principal →</a>
     </div>
 
     <div class="content-area">
