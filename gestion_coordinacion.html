@@ -646,6 +646,63 @@
 }
 </style>
 
+
+<style>
+/* ===== Filtros activos dentro del propio slicer · coordinación · 20260924 ===== */
+#badge-activo,#btn-limpiar{display:none!important}
+
+.multi-filtro{position:relative}
+.multi-filtro .multi-btn{padding-right:30px!important}
+.multi-inline-clear{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:17px;
+  height:17px;
+  border:0;
+  border-radius:50%;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  line-height:17px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+  z-index:4;
+  background:rgba(239,68,68,.16);
+  color:#ff9d9d;
+}
+.multi-inline-clear:hover{background:rgba(239,68,68,.32);color:#fff}
+.multi-filtro.filtro-activo .multi-inline-clear{display:flex}
+.multi-filtro.filtro-activo .multi-btn b{display:none!important}
+
+/* El propio slicer indica visualmente que está activo. */
+.multi-filtro.filtro-activo::before,
+#nrc-wrap.filtro-activo::before{
+  content:"";
+  position:absolute;
+  left:5px;
+  top:5px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#3a9bff;
+  box-shadow:0 0 0 2px rgba(58,155,255,.14);
+  z-index:5;
+  pointer-events:none;
+}
+.multi-filtro.filtro-activo .multi-btn{padding-left:14px!important}
+#nrc-wrap.filtro-activo .pill-input{
+  border-color:#3a9bff!important;
+  background:rgba(18,101,223,.20)!important;
+  color:#dcecff!important;
+  font-weight:700!important;
+}
+.filtros-wrapper{align-content:center!important}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -940,6 +997,7 @@
         }
         const buscable = campo === 'tutor' || campo === 'intake';
         host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
+          <button type="button" class="multi-inline-clear" title="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" aria-label="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" onclick="limpiarMultiUnico('${campo}',event)">×</button>
           <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
           <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${[...elegidos].some(s=>claveValor(s,campo)===claveValor(v,campo))?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
         if (abierto) host.classList.add('abierto');
@@ -962,6 +1020,14 @@
     function cambiarMulti(campo, valorCodificado, marcado) {
         const valor = decodeURIComponent(valorCodificado);
         marcado ? seleccionMulti[campo].add(valor) : seleccionMulti[campo].delete(valor);
+        sincronizarFiltros(campo);
+    }
+
+    function limpiarMultiUnico(campo, evento) {
+        if (evento) { evento.preventDefault(); evento.stopPropagation(); }
+        if (!seleccionMulti[campo]) return;
+        seleccionMulti[campo].clear();
+        document.getElementById('mf-' + campo)?.classList.remove('abierto');
         sincronizarFiltros(campo);
     }
 
