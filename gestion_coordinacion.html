@@ -563,13 +563,16 @@
 /* ===== Power BI edge-to-edge coordinación · 20260924 ===== */
 .content-area{overflow:hidden}
 .content-area.pbi-edgefill #visor{
-  width:calc(100% + 36px)!important;
-  max-width:none!important;
-  margin-left:-18px!important;
-  margin-right:-18px!important;
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
   border:0!important;
   transform:none!important;
   filter:none!important;
+  background:#fff!important;
 }
 .content-area.local-view #visor{
   width:100%!important;
@@ -577,13 +580,7 @@
   margin-left:0!important;
   margin-right:0!important;
 }
-@media(max-width:1200px){
-  .content-area.pbi-edgefill #visor{
-    width:calc(100% + 28px)!important;
-    margin-left:-14px!important;
-    margin-right:-14px!important;
-  }
-}
+/* El embed Power BI conserva su ancho real también en notebook. */
 </style>
 
 </head>
