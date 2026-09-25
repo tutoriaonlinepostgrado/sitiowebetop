@@ -777,6 +777,119 @@
 }
 </style>
 
+
+<style>
+/* ===== Filtros superiores responsivos V2 · 20260924 ===== */
+
+/* Los slicers del portal se distribuyen por columnas; se elimina el salto
+   forzado que podía producir una tercera fila. Ningún filtro se oculta. */
+.top.report-mode #gestionFilters{
+  display:grid!important;
+  flex:1 1 0!important;
+  min-width:0!important;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  gap:6px!important;
+  align-items:center!important;
+  align-content:center!important;
+}
+.top.report-mode #gestionFilters .top-filter-break{display:none!important}
+
+.top.report-mode #gestionFilters > [data-filtro],
+.top.report-mode #gestionFilters > .search-group,
+.top.report-mode #gestionFilters > .fecha-multi-wrap{
+  min-width:0!important;
+  width:100%!important;
+  max-width:none!important;
+}
+
+.top.report-mode #gestionFilters .fsel-topbar,
+.top.report-mode #gestionFilters .fecha-multi-wrap,
+.top.report-mode #gestionFilters .fecha-multi-input,
+.top.report-mode #gestionFilters .search-pill-wrap,
+.top.report-mode #gestionFilters .nrc-pill-wrap,
+.top.report-mode #gestionFilters .search-pill-input,
+.top.report-mode #gestionFilters .nrc-pill-input{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+
+.top.report-mode #gestionFilters .search-group{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:4px!important;
+  align-items:center!important;
+}
+.top.report-mode #gestionFilters .search-group-label{
+  font-size:7px!important;
+  letter-spacing:.05em!important;
+}
+.top.report-mode #gestionFilters .search-pill-input:focus,
+.top.report-mode #gestionFilters .nrc-pill-input:focus{
+  width:100%!important;
+}
+
+.top.report-mode #gestionFilters #btn-tutor-perfil{
+  width:100%;
+  min-width:0;
+  justify-content:center;
+}
+
+/* Escritorio/notebook grande: una sola fila cuando realmente cabe. */
+@media (min-width:1600px){
+  .top.report-mode #gestionFilters{
+    grid-template-columns:repeat(9,minmax(88px,1fr));
+  }
+  .top.report-mode #gestionFilters .fsel-topbar,
+  .top.report-mode #gestionFilters .fecha-multi-input{
+    height:31px;
+    font-size:9.5px;
+  }
+}
+
+/* Notebook medio: máximo dos filas para los 9 controles principales. */
+@media (min-width:1000px) and (max-width:1599px){
+  .top.report-mode{
+    gap:7px!important;
+  }
+  .top.report-mode #gestionFilters{
+    grid-template-columns:repeat(5,minmax(92px,1fr));
+    gap:5px!important;
+  }
+  .top.report-mode #gestionFilters .fsel-topbar,
+  .top.report-mode #gestionFilters .fecha-multi-input,
+  .top.report-mode #gestionFilters .search-pill-input,
+  .top.report-mode #gestionFilters .nrc-pill-input{
+    height:29px!important;
+    font-size:9px!important;
+  }
+  .top.report-mode #gestionFilters .search-pill-icon,
+  .top.report-mode #gestionFilters .nrc-pill-icon{
+    font-size:10px!important;
+  }
+}
+
+/* Ventanas más estrechas: el encabezado ocupa una fila y todos los slicers
+   usan el ancho completo de la siguiente zona. */
+@media (max-width:999px){
+  .top.report-mode{
+    display:grid!important;
+    grid-template-columns:auto max-content 1px minmax(0,1fr);
+    gap:6px!important;
+    align-items:center!important;
+  }
+  .top.report-mode #gestionFilters{
+    grid-column:1/-1;
+    grid-row:2;
+    grid-template-columns:repeat(3,minmax(105px,1fr));
+    width:100%!important;
+  }
+  .top.report-mode .guia-correos{
+    grid-column:1/-1;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
