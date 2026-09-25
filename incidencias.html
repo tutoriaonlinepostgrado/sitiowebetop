@@ -241,6 +241,46 @@ body{background:var(--bg);color:var(--text)}
 ::-webkit-scrollbar-thumb{background:#b9c5d2}
 
 </style>
+
+<style>
+/* ===== Tabla incidencias responsiva V2 · 20260924 ===== */
+@media (min-width:1000px){
+  .table-wrap{overflow-y:auto;overflow-x:hidden}
+  .inc-table{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:fixed!important;
+  }
+  .inc-table th,.inc-table td{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .inc-table th:nth-child(1),.inc-table td:nth-child(1){width:7%}
+  .inc-table th:nth-child(2),.inc-table td:nth-child(2){width:10%}
+  .inc-table th:nth-child(3),.inc-table td:nth-child(3){width:10%}
+  .inc-table th:nth-child(4),.inc-table td:nth-child(4){width:13%}
+  .inc-table th:nth-child(5),.inc-table td:nth-child(5){width:25%}
+  .inc-table th:nth-child(6),.inc-table td:nth-child(6){width:25%}
+  .inc-table th:nth-child(7),.inc-table td:nth-child(7){width:10%}
+  .inc-table .text-cell{
+    min-width:0!important;
+    max-width:none!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere;
+  }
+}
+@media (min-width:1000px) and (max-width:1350px){
+  .inc-table th{font-size:7px;padding:7px 5px}
+  .inc-table td{font-size:9px;padding:7px 5px}
+}
+@media (max-width:999px){
+  .table-wrap{overflow:auto}
+  .inc-table{min-width:900px!important}
+}
+</style>
+
 </head>
 <body>
 <nav class="topnav">
