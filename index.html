@@ -1094,6 +1094,60 @@
 #gestionFilters{align-content:center!important}
 </style>
 
+
+<style>
+/* ===== Actividad reciente CRM · tarjeta integrada en portada ===== */
+.crm-activity-card{overflow:hidden;background:#fff}
+.crm-activity-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #edf1f5;background:linear-gradient(90deg,#fff,#f8fbff)}
+.crm-activity-title-wrap{display:flex;align-items:center;gap:9px;min-width:0}
+.crm-activity-ico{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;color:#1265df;font-size:8px;font-weight:900;letter-spacing:.03em}
+.crm-activity-title{min-width:0}
+.crm-activity-title b{display:block;font-size:11px;color:#20364e}
+.crm-activity-title span{display:block;margin-top:1px;font-size:7.5px;color:#8493a5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crm-activity-open{border:1px solid #d8e5f2;background:#fff;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.crm-activity-open:hover{background:#f2f7ff;border-color:#a9c8ea}
+.crm-activity-frame-wrap{position:relative;width:100%;aspect-ratio:4/1;min-height:178px;max-height:255px;overflow:hidden;background:#fff}
+.crm-activity-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:block;opacity:0;transition:opacity .16s ease}
+.crm-activity-frame.loaded{opacity:1}
+.crm-activity-loading{position:absolute;inset:0;z-index:2;display:grid;place-items:center;background:linear-gradient(90deg,#fff,#fbfdff);color:#7f8fa2;font-size:8.5px}
+.crm-activity-loading.hidden{display:none}
+@media (min-width:1601px) and (min-height:901px){
+  .crm-activity-title b{font-size:13px}
+  .crm-activity-title span{font-size:9px}
+  .crm-activity-open{height:30px;padding:0 11px;font-size:9px}
+  .crm-activity-frame-wrap{min-height:205px;max-height:285px}
+}
+@media (max-width:1600px), (max-height:900px){
+  .crm-activity-head{padding:8px 10px}
+  .crm-activity-ico{width:27px;height:27px;font-size:7px}
+  .crm-activity-frame-wrap{min-height:165px;max-height:220px}
+}
+@media (max-height:820px) and (min-width:981px){
+  .crm-activity-frame-wrap{min-height:150px;max-height:195px}
+}
+</style>
+
+
+
+
+<style>
+/* ===== Viva Engage · ocupar toda la altura disponible de la portada ===== */
+#homeView{display:flex;flex-direction:column;min-height:0;}
+#homeView .hero{flex:0 0 auto;}
+#homeView .dashboard{flex:1 1 auto;min-height:0;align-items:stretch;}
+#homeView .right{height:100%;min-height:0;align-self:stretch;}
+#homeView .right .viva{height:100%!important;min-height:0!important;max-height:none!important;align-self:stretch;}
+#homeView .right .viva iframe{flex:1 1 auto!important;min-height:0!important;height:auto!important;}
+#homeView .footer{flex:0 0 auto;}
+
+/* En escritorio/notebook la columna derecha llega hasta el final de la zona visible.
+   Se anulan los antiguos topes de 430/390 px aplicados por media queries. */
+@media (min-width:981px){
+  #homeView .dashboard{min-height:calc(100vh - 165px);}
+  #homeView .right .viva{height:100%!important;min-height:100%!important;}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1287,30 +1341,26 @@
   </div>
 </section></div></div>
         
-        <section class="card upcoming-card">
-  <div class="upcoming-head">
-    <div class="upcoming-title-wrap">
-      <div class="upcoming-ico">🚀</div>
-      <div class="upcoming-title">
-        <b>Próximos cursos por comenzar</b>
-        <span id="proximosCursosContexto">Los 5 inicios más cercanos</span>
+        <section class="card crm-activity-card" aria-label="Actividad reciente CRM">
+  <div class="crm-activity-head">
+    <div class="crm-activity-title-wrap">
+      <div class="crm-activity-ico">CRM</div>
+      <div class="crm-activity-title">
+        <b>Actividad reciente CRM</b>
+        <span id="crmActividadContexto">Últimas gestiones registradas</span>
       </div>
     </div>
-    <button class="upcoming-all" type="button" onclick="abrirTodosCursosPreparacion()">Ver todos →</button>
+    <button class="crm-activity-open" type="button" onclick="abrirActividadCRMCompleta()">Abrir CRM →</button>
   </div>
-  <div class="upcoming-table-wrap">
-    <table class="upcoming-table" aria-label="Próximos cursos por comenzar">
-      <thead>
-        <tr>
-          <th class="upcoming-date">Inicio</th>
-          <th class="upcoming-course-col">Curso</th>
-          <th class="upcoming-prog">Programa</th>
-        </tr>
-      </thead>
-      <tbody id="proximosCursosBody">
-        <tr><td colspan="3" class="upcoming-empty">Cargando próximos cursos…</td></tr>
-      </tbody>
-    </table>
+  <div class="crm-activity-frame-wrap">
+    <div class="crm-activity-loading" id="crmActividadLoading">Cargando actividad reciente…</div>
+    <iframe
+      id="crmActividadFrame"
+      class="crm-activity-frame"
+      title="Actividad reciente CRM"
+      allowfullscreen="true"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
   </div>
 </section>
       </div>
@@ -1376,6 +1426,111 @@ const ETOP_GLOBAL_SESSION='etop_usuario_sesion';
 const ETOP_LEGACY_EMAIL_KEY='etop_preparacion_correo';
 function sesionGlobalETOP(){try{return JSON.parse(localStorage.getItem(ETOP_GLOBAL_SESSION)||'null')}catch(e){return null}}
 function tutorSesionETOP(){const s=sesionGlobalETOP();return s&&s.rol==='TUTOR'&&s.tutor?String(s.tutor).trim():''}
+
+
+/* ===== Actividad reciente CRM · Power BI embebido ===== */
+const CRM_POWERBI_EMBED_BASE = 'https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=70bbc4c63e55c1626e7e&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth';
+const CRM_DYNAMICS_TEAM_VIEW = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=activitypointer&viewid=ffcc6d10-f832-ee11-bdf4-000d3a88ba42&viewType=4230';
+/* Vista dinámica "Mis actividades": Autor = usuario actual.
+   La misma vista sirve para todos los tutores; coordinación usa la vista general ETOP. */
+const CRM_DYNAMICS_MY_VIEW = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=activitypointer&viewid=00000000-0000-0000-00aa-000010001899&viewType=1039';
+
+/* El portal usa nombres cortos; Dynamics conserva el nombre real del propietario.
+   Se incluyen aliases de cuentas Tutoriaonline cuando el CRM puede registrar con ellas. */
+const CRM_OWNER_ALIASES = {
+  'HANS NOVAKOVIC':['Tutoriaonline45 #'],
+  'KIMBERLY JORQUERA':['Tutoriaonline52 #'],
+  'MARTA GONZALEZ':['Marta Teresa Gonzalez Luque'],
+  'DANITZA JANSEN':['Danitza Alejandra Jansen Jara'],
+  'SYLVIA VALENZUELA':['Sylvia Valenzuela Herrera'],
+  'PAULA PARDO':['Paula Natalia Pardo Gaete'],
+  'MARIA FERNANDA GONZALEZ':['María Fernanda González Valenzuela'],
+  'BARBARA ROJAS':['Barbara Belen Rojas Castro'],
+  'CONSTANZA CONTRERAS':['Constanza Contreras Palma','tutoriaonline56 #'],
+  'CARLA PENA':['Tutoriaonline54 #'],
+  'NOEMI PAZ':['Noemí Paz'],
+  'ORIETTA CORTES':['Orietta Cortes Castillo'],
+  'HECTOR TAPIA':['Héctor Tapia Ruminado'],
+  'CONSUELO PARGA':['Consuelo Parga'],
+  'FRANCISCA INDA':['Francisca Inda'],
+  'JAVIERA ROJAS':['Javiera Rojas','tutoriaonline76@unab.cl'],
+  'ALYSON HERNANDEZ':['Alyson Francisca Hernández Valenzuela'],
+  'ALVARO ORELLANA':['tutoriaonline86@unab.cl']
+};
+
+function crmValorOData(v){return String(v||'').replace(/'/g,"''")}
+function crmOwnersSesion(){
+  const s=sesionGlobalETOP();
+  if(!s||s.rol!=='TUTOR')return null;
+  const clave=String(s.tutor||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+  return CRM_OWNER_ALIASES[clave]||[];
+}
+function crmFiltroSesion(){
+  const s=sesionGlobalETOP();
+  if(!s||s.rol!=='TUTOR')return '';
+  const owners=crmOwnersSesion();
+  if(!owners||!owners.length)return null;
+  const campo='ACTIVIDAD_CURSO/NOMBRE_x0020_TUTOR';
+  if(owners.length===1)return campo+" eq '"+crmValorOData(owners[0])+"'";
+  return campo+" in ("+owners.map(v=>"'"+crmValorOData(v)+"'").join(', ')+")";
+}
+function crmUrlFiltrada(base){
+  const filtro=crmFiltroSesion();
+  if(filtro===null)return null;
+  return base+(filtro?'&filter='+encodeURIComponent(filtro):'');
+}
+function refrescarActividadCRM(){
+  const frame=document.getElementById('crmActividadFrame');
+  const loading=document.getElementById('crmActividadLoading');
+  const ctx=document.getElementById('crmActividadContexto');
+  if(!frame||!loading)return;
+
+  const s=sesionGlobalETOP();
+  if(!s){
+    frame.removeAttribute('src');
+    frame.classList.remove('loaded');
+    loading.classList.remove('hidden');
+    loading.textContent='Identifíquese para ver la actividad reciente.';
+    if(ctx)ctx.textContent='Últimas gestiones registradas';
+    return;
+  }
+
+  const url=crmUrlFiltrada(CRM_POWERBI_EMBED_BASE);
+  if(url===null){
+    frame.removeAttribute('src');
+    frame.classList.remove('loaded');
+    loading.classList.remove('hidden');
+    loading.textContent='No hay equivalencia CRM configurada para este tutor.';
+    if(ctx)ctx.textContent='Actividad reciente no disponible';
+    return;
+  }
+
+  if(ctx){
+    ctx.textContent=s.rol==='TUTOR'
+      ? 'Tus 5 gestiones más recientes · NRC conciliado por fecha'
+      : 'Últimas 5 gestiones del equipo · NRC conciliado por fecha';
+  }
+
+  if(frame.dataset.currentUrl===url && frame.getAttribute('src')){
+    loading.classList.add('hidden');
+    frame.classList.add('loaded');
+    return;
+  }
+
+  frame.classList.remove('loaded');
+  loading.classList.remove('hidden');
+  loading.textContent='Cargando actividad reciente…';
+  frame.onload=()=>{loading.classList.add('hidden');frame.classList.add('loaded')};
+  frame.dataset.currentUrl=url;
+  frame.src=url;
+}
+function abrirActividadCRMCompleta(){
+  const s=sesionGlobalETOP();
+  // Tutores: vista dinámica "Mis actividades" (Autor = usuario actual).
+  // Coordinación: vista general Actividades_Etop del equipo completo.
+  const url=(s&&s.rol==='TUTOR'&&CRM_DYNAMICS_MY_VIEW) ? CRM_DYNAMICS_MY_VIEW : CRM_DYNAMICS_TEAM_VIEW;
+  window.open(url,'_blank','noopener,noreferrer');
+}
 
 const TUTORES_ACTIVOS=new Set(["HANS NOVAKOVIC","KIMBERLY JORQUERA","MARTA GONZALEZ","DANITZA JANSEN","SYLVIA VALENZUELA","PAULA PARDO","MARIA FERNANDA GONZALEZ","BARBARA ROJAS","CONSTANZA CONTRERAS","CARLA PENA","NOEMI PAZ","ORIETTA CORTES","HECTOR TAPIA","CONSUELO PARGA","FRANCISCA INDA","JAVIERA ROJAS","ALYSON HERNANDEZ"]);
 function claveTutorActivo(valor){return String(valor||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase()}
@@ -2146,10 +2301,11 @@ function showHome(btn){
   refrescarFocoDia();
   refrescarResumenCargaTutorial();
   refrescarProximosCursos();
+  refrescarActividadCRM();
   const top=document.getElementById('topBar');
   if(top){top.classList.remove('report-mode','email-mode');top.classList.add('home-mode')}
   document.getElementById('viewer').style.display='none';
-  document.getElementById('homeView').style.display='block';
+  document.getElementById('homeView').style.display='flex';
   document.getElementById('homeTopSearch').style.display='flex';
   document.getElementById('gestionFilters').style.display='none';
   document.getElementById('guia-correos').style.display='none';
@@ -2468,6 +2624,7 @@ function guardarSesionETOP(){
     refrescarFocoDia();
     refrescarResumenCargaTutorial();
     refrescarProximosCursos();
+    refrescarActividadCRM();
   }else actualizarIframe();
 }
 function actualizarSesionETOPUI(){
