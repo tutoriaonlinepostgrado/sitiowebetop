@@ -1128,23 +1128,54 @@
 </style>
 
 
+<style>
+/* ===== Ajuste V2 · Viva Engage ocupa toda la altura de la columna derecha ===== */
+.dashboard > .right{align-self:stretch!important;min-height:0!important}
+.dashboard > .right > .viva{height:100%!important;min-height:100%!important}
+.dashboard > .right > .viva iframe{min-height:0!important}
+</style>
 
 
 <style>
-/* ===== Viva Engage · ocupar toda la altura disponible de la portada ===== */
-#homeView{display:flex;flex-direction:column;min-height:0;}
-#homeView .hero{flex:0 0 auto;}
-#homeView .dashboard{flex:1 1 auto;min-height:0;align-items:stretch;}
-#homeView .right{height:100%;min-height:0;align-self:stretch;}
-#homeView .right .viva{height:100%!important;min-height:0!important;max-height:none!important;align-self:stretch;}
-#homeView .right .viva iframe{flex:1 1 auto!important;min-height:0!important;height:auto!important;}
-#homeView .footer{flex:0 0 auto;}
+/* Tablero de Gestión: barra superior compacta · 20260930 */
+.top.dashboard-mode #gestionFilters{
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+}
+.top.dashboard-mode #gestionFilters [data-filtro="motivoRiesgo"]{
+  min-width:150px!important;
+}
+.dashboard-excel-btn{
+  height:31px;border:1px solid rgba(244,196,0,.42);border-radius:8px;
+  background:rgba(244,196,0,.10);color:#ffe16d;padding:0 10px;
+  font-size:9px;font-weight:800;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.dashboard-excel-btn:hover{background:rgba(244,196,0,.17);border-color:rgba(244,196,0,.68);color:#fff0a3}
+@media (min-width:1600px){
+  .top.dashboard-mode #gestionFilters{
+    grid-template-columns:minmax(105px,.85fr) minmax(150px,1.15fr) minmax(105px,.9fr) minmax(105px,.9fr) minmax(170px,1.35fr) minmax(125px,1fr) minmax(125px,1fr) 88px!important;
+  }
+}
+@media (min-width:1000px) and (max-width:1599px){
+  .top.dashboard-mode #gestionFilters{
+    grid-template-columns:repeat(4,minmax(110px,1fr))!important;
+  }
+}
+</style>
 
-/* En escritorio/notebook la columna derecha llega hasta el final de la zona visible.
-   Se anulan los antiguos topes de 430/390 px aplicados por media queries. */
-@media (min-width:981px){
-  #homeView .dashboard{min-height:calc(100vh - 165px);}
-  #homeView .right .viva{height:100%!important;min-height:100%!important;}
+<style>
+/* Vista de exportación Power BI embebida: misma barra, sin hueco del botón Excel */
+.top.dashboard-mode.export-mode #gestionFilters{
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+}
+@media (min-width:1600px){
+  .top.dashboard-mode.export-mode #gestionFilters{
+    grid-template-columns:minmax(105px,.85fr) minmax(150px,1.15fr) minmax(105px,.9fr) minmax(105px,.9fr) minmax(170px,1.35fr) minmax(125px,1fr) minmax(125px,1fr)!important;
+  }
+}
+@media (min-width:1000px) and (max-width:1599px){
+  .top.dashboard-mode.export-mode #gestionFilters{
+    grid-template-columns:repeat(4,minmax(110px,1fr))!important;
+  }
 }
 </style>
 
@@ -1234,6 +1265,20 @@
         </select>
         <button type="button" class="inline-filter-clear" title="Quitar Estado" aria-label="Quitar Estado" onclick="limpiarFiltroSimple('estado',event)">×</button>
       </div>
+      <div class="inline-filter-wrap" data-filtro="motivoRiesgo">
+        <select class="fsel-topbar" id="sel-motivo-riesgo" onchange="aplicarBusqueda('motivoRiesgo',this.value)">
+          <option value="">Motivo de riesgo</option>
+          <option value="Semáforo rojo">Semáforo rojo</option>
+          <option value="No ingresa al curso">No ingresa al curso</option>
+          <option value="Sin cotejo Canvas">Sin cotejo Canvas</option>
+          <option value="Sin acceso Canvas">Sin acceso Canvas</option>
+          <option value="Semáforo naranjo">Semáforo naranjo</option>
+          <option value="Semáforo amarillo">Semáforo amarillo</option>
+          <option value="Ingreso al curso no informado">Ingreso al curso no informado</option>
+          <option value="Estado del estudiante no activo">Estado del estudiante no activo</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Motivo de riesgo" aria-label="Quitar Motivo de riesgo" onclick="limpiarFiltroSimple('motivoRiesgo',event)">×</button>
+      </div>
       <div class="inline-filter-wrap" data-filtro="intake">
         <select class="fsel-topbar" id="sel-intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
           <option value="">Intake/Versión ⏳</option>
@@ -1275,6 +1320,10 @@
           <button type="button" class="rut-pill-clear" title="Quitar RUT" aria-label="Quitar RUT" onclick="limpiarFiltroSimple('rut',event)">×</button>
         </div>
       </div>
+
+      <button type="button" class="dashboard-excel-btn" data-filtro="excelDashboard"
+              title="Abrir tabla nativa de Power BI para exportar a Excel"
+              onclick="abrirExportacionExcel()">⬇ Excel</button>
 
       <button type="button" class="btn-clear-filter" id="btn-tutor-perfil"
               style="display:none" onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
@@ -1394,8 +1443,12 @@ const misReportes={
   CIERRE:"enviar_correo_cierre.html"
 };
 
+const POWERBI_EXPORT_PAGE='2d86150621aea66632a5';
+const POWERBI_SERVICE_REPORT='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/';
+
 const urlsBase={
   DASHBOARD:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'a90b3a4c28d3179b1fae',filtroRut:true},
+  DASHBOARD_EXPORT:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'2d86150621aea66632a5',filtroRut:true},
   NOMINA_ESTUDIANTES:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'255c88d86191d22dd1c3',filtroRut:true},
   CURSOS_ACTIVOS:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'9df5f2db687d901b71b9',filtroRut:false},
   CURSOS_PREPARACION:{local:true,filtroRut:false},
@@ -1406,6 +1459,7 @@ const urlsBase={
 
 const titulos={
   DASHBOARD:'Tablero de Gestión',
+  DASHBOARD_EXPORT:'Descargar Excel',
   NOMINA_ESTUDIANTES:'Nómina Estudiantes',
   CURSOS_ACTIVOS:'Cursos Activos',
   CURSOS_PREPARACION:'Cursos en Preparación',
@@ -1418,7 +1472,7 @@ const titulos={
   CIERRE:'🏁 Correo de Cierre'
 };
 
-const BUSQUEDA={nrc:null,rut:null,facultad:null,tutor:null,tipo:null,codigo:null,estado:null,intake:null,fechaInicio:[]};
+const BUSQUEDA={nrc:null,rut:null,facultad:null,tutor:null,tipo:null,codigo:null,estado:null,motivoRiesgo:null,intake:null,fechaInicio:[]};
 let vistaActual='INICIO';
 let catalogoNRC=[];
 
@@ -1431,9 +1485,9 @@ function tutorSesionETOP(){const s=sesionGlobalETOP();return s&&s.rol==='TUTOR'&
 /* ===== Actividad reciente CRM · Power BI embebido ===== */
 const CRM_POWERBI_EMBED_BASE = 'https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=70bbc4c63e55c1626e7e&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth';
 const CRM_DYNAMICS_TEAM_VIEW = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=activitypointer&viewid=ffcc6d10-f832-ee11-bdf4-000d3a88ba42&viewType=4230';
-/* Vista dinámica "Mis actividades": Autor = usuario actual.
-   La misma vista sirve para todos los tutores; coordinación usa la vista general ETOP. */
-const CRM_DYNAMICS_MY_VIEW = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=activitypointer&viewid=00000000-0000-0000-00aa-000010001899&viewType=1039';
+/* Cuando exista la vista dinámica "Mis actividades ETOP" (Propietario = Usuario actual),
+   pegar aquí su URL. No requiere una vista distinta por tutor. */
+const CRM_DYNAMICS_MY_VIEW = '';
 
 /* El portal usa nombres cortos; Dynamics conserva el nombre real del propietario.
    Se incluyen aliases de cuentas Tutoriaonline cuando el CRM puede registrar con ellas. */
@@ -1526,8 +1580,8 @@ function refrescarActividadCRM(){
 }
 function abrirActividadCRMCompleta(){
   const s=sesionGlobalETOP();
-  // Tutores: vista dinámica "Mis actividades" (Autor = usuario actual).
-  // Coordinación: vista general Actividades_Etop del equipo completo.
+  // Para tutores, cuando se configure CRM_DYNAMICS_MY_VIEW, Dynamics filtrará por el usuario actual.
+  // Coordinación conserva la vista general Actividades_Etop.
   const url=(s&&s.rol==='TUTOR'&&CRM_DYNAMICS_MY_VIEW) ? CRM_DYNAMICS_MY_VIEW : CRM_DYNAMICS_TEAM_VIEW;
   window.open(url,'_blank','noopener,noreferrer');
 }
@@ -1656,6 +1710,7 @@ function buildURLFiltrada(clave){
   if(BUSQUEDA.tipo){const tipoPBI=BUSQUEDA.tipo==='100%ONLINE'?'100PCTONLINE':BUSQUEDA.tipo;fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`)}
   if(BUSQUEDA.codigo)fx.push(`NRC_TUTOR_ACTUAL/COD_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
   if(BUSQUEDA.estado)fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
+  if(BUSQUEDA.motivoRiesgo&&(clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT'))fx.push(`consolidado_esudiantes/MOTIVO_RIESGO eq '${sanitizarFiltro(BUSQUEDA.motivoRiesgo)}'`);
   if(BUSQUEDA.intake)fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
   if(BUSQUEDA.fechaInicio.length===1)fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
   if(BUSQUEDA.fechaInicio.length>1)fx.push('('+BUSQUEDA.fechaInicio.map(v=>`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ')+')');
@@ -1665,6 +1720,38 @@ function buildURLFiltrada(clave){
   const baseUrl=url.toString();
   return fx.length?baseUrl+'&filter='+encodeURIComponent(fx.join(' and ')):baseUrl;
 }
+function filtrosDashboardPowerBI(){
+  const fx=[];
+  if(BUSQUEDA.facultad)fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
+  const tutorEfectivo=BUSQUEDA.tutor||tutorSesionETOP();
+  if(tutorEfectivo)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
+  if(BUSQUEDA.tipo){const tipoPBI=BUSQUEDA.tipo==='100%ONLINE'?'100PCTONLINE':BUSQUEDA.tipo;fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`)}
+  if(BUSQUEDA.estado)fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
+  if(BUSQUEDA.motivoRiesgo)fx.push(`consolidado_esudiantes/MOTIVO_RIESGO eq '${sanitizarFiltro(BUSQUEDA.motivoRiesgo)}'`);
+  if(BUSQUEDA.nrc)fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
+  if(BUSQUEDA.rut)fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
+  return fx;
+}
+function abrirExportacionExcel(){
+  // Abre la página de exportación dentro del visor principal del portal.
+  // Usa reportEmbed para evitar la navegación y paneles de Power BI.
+  vistaActual='DASHBOARD_EXPORT';
+  mostrarAreaGestion();
+  configurarTipoVisor('DASHBOARD_EXPORT');
+  configurarFiltros('DASHBOARD_EXPORT');
+
+  const visor=document.getElementById('visor');
+  visor.onload=null;
+  visor.style.display='block';
+  visor.src='about:blank';
+
+  const nuevaURL=buildURLFiltrada('DASHBOARD_EXPORT');
+  requestAnimationFrame(()=>{visor.src=nuevaURL});
+
+  activate(findBtn('DASHBOARD'));
+  document.getElementById('titulo-vista').textContent='Descargar Excel';
+}
+
 function abrirPerfilTutor(){
   const visor=document.getElementById('visor');
   try{if(vistaActual==='CURSOS_PREPARACION'&&visor?.contentWindow?.openProfile)visor.contentWindow.openProfile()}
@@ -1749,21 +1836,21 @@ function limpiarFiltroSimple(campo,evento){
     const f=document.getElementById('fecha-multi-input');if(f)f.value='';
   }else{
     BUSQUEDA[campo]=null;
-    const ids={facultad:'sel-facultad',tutor:'sel-tutor',tipo:'sel-tipo',codigo:'sel-codigo',estado:'sel-estado',intake:'sel-intake',rut:'input-rut'};
+    const ids={facultad:'sel-facultad',tutor:'sel-tutor',tipo:'sel-tipo',codigo:'sel-codigo',estado:'sel-estado',motivoRiesgo:'sel-motivo-riesgo',intake:'sel-intake',rut:'input-rut'};
     const el=document.getElementById(ids[campo]);if(el)el.value='';
   }
   sincronizarFiltros();actualizarBadge();actualizarIframe();
 }
 function aplicarBusqueda(campo,valor){BUSQUEDA[campo]=normalizarFiltro(valor)||null;sincronizarFiltros();actualizarBadge();actualizarIframe()}
 function limpiarBusqueda(){
-  BUSQUEDA.nrc=null;BUSQUEDA.rut=null;BUSQUEDA.facultad=null;BUSQUEDA.tutor=null;BUSQUEDA.tipo=null;BUSQUEDA.codigo=null;BUSQUEDA.estado=null;BUSQUEDA.intake=null;BUSQUEDA.fechaInicio=[];
+  BUSQUEDA.nrc=null;BUSQUEDA.rut=null;BUSQUEDA.facultad=null;BUSQUEDA.tutor=null;BUSQUEDA.tipo=null;BUSQUEDA.codigo=null;BUSQUEDA.estado=null;BUSQUEDA.motivoRiesgo=null;BUSQUEDA.intake=null;BUSQUEDA.fechaInicio=[];
   nrcConfirmado='';
   document.getElementById('input-nrc').value='';document.getElementById('input-rut').value='';
-  ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-motivo-riesgo','sel-intake'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   ocultarNRCDropdown();sincronizarFiltros();actualizarBadge();actualizarIframe();
 }
 function actualizarEstadoVisualFiltros(){
-  [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-intake','intake']].forEach(([id,campo])=>{const el=document.getElementById(id);if(el)el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]))});
+  [['sel-facultad','facultad'],['sel-tutor','tutor'],['sel-tipo','tipo'],['sel-codigo','codigo'],['sel-estado','estado'],['sel-motivo-riesgo','motivoRiesgo'],['sel-intake','intake']].forEach(([id,campo])=>{const el=document.getElementById(id);if(el)el.classList.toggle('filtro-activo',Boolean(BUSQUEDA[campo]))});
   const nr=document.getElementById('nrc-pill-wrap');if(nr)nr.classList.toggle('filtro-activo',Boolean(BUSQUEDA.nrc));
   const rw=document.getElementById('rut-pill-wrap');if(rw)rw.classList.toggle('filtro-activo',Boolean(BUSQUEDA.rut));
   const fm=document.getElementById('fecha-multi-wrap');if(fm)fm.classList.toggle('filtro-activo',BUSQUEDA.fechaInicio.length>0);
@@ -1777,6 +1864,7 @@ function actualizarBadge(){
   if(filtroVisible('tipo')&&BUSQUEDA.tipo)p.push(BUSQUEDA.tipo);
   if(filtroVisible('codigo')&&BUSQUEDA.codigo)p.push(BUSQUEDA.codigo);
   if(filtroVisible('estado')&&BUSQUEDA.estado)p.push(BUSQUEDA.estado);
+  if(filtroVisible('motivoRiesgo')&&BUSQUEDA.motivoRiesgo)p.push('Riesgo: '+BUSQUEDA.motivoRiesgo);
   if(filtroVisible('intake')&&BUSQUEDA.intake)p.push('Intake: '+BUSQUEDA.intake);
   if(filtroVisible('fechaInicio')&&BUSQUEDA.fechaInicio.length)p.push(BUSQUEDA.fechaInicio.length===1?'Inicio: '+BUSQUEDA.fechaInicio[0].split('-').reverse().join('-'):`Fechas de inicio (${BUSQUEDA.fechaInicio.length})`);
   if(filtroVisible('nrc')&&BUSQUEDA.nrc)p.push('NRC: '+BUSQUEDA.nrc);
@@ -1848,7 +1936,8 @@ function calcularFechaLimite(finStr,dias){
 }
 
 const FILTROS_POR_VISTA={
-  DASHBOARD:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
+  DASHBOARD:['facultad','tutor','tipo','estado','motivoRiesgo','nrc','rut','excelDashboard'],
+  DASHBOARD_EXPORT:['facultad','tutor','tipo','estado','motivoRiesgo','nrc','rut'],
   NOMINA_ESTUDIANTES:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
   CURSOS_ACTIVOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
@@ -1861,7 +1950,11 @@ function configurarFiltros(clave){
   const visibles=FILTROS_POR_VISTA[clave]||[];
   const modoCorreo=['CORREOS','INVITACIONES','PRESENTACION','CIERRE'].includes(clave);
   const top=document.getElementById('topBar');
-  if(top)top.classList.toggle('email-mode',modoCorreo);
+  if(top){
+    top.classList.toggle('email-mode',modoCorreo);
+    top.classList.toggle('dashboard-mode',clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT');
+    top.classList.toggle('export-mode',clave==='DASHBOARD_EXPORT');
+  }
   document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>{
     el.style.display=visibles.includes(el.dataset.filtro)?'':'none';
   });
@@ -2305,7 +2398,7 @@ function showHome(btn){
   const top=document.getElementById('topBar');
   if(top){top.classList.remove('report-mode','email-mode');top.classList.add('home-mode')}
   document.getElementById('viewer').style.display='none';
-  document.getElementById('homeView').style.display='flex';
+  document.getElementById('homeView').style.display='block';
   document.getElementById('homeTopSearch').style.display='flex';
   document.getElementById('gestionFilters').style.display='none';
   document.getElementById('guia-correos').style.display='none';
@@ -2488,7 +2581,7 @@ function abrirFichaNRCUniversal(c){
   document.getElementById('guia-correos').style.display='none';
   const visor=document.getElementById('visor');
   visor.style.display='block';
-  visor.src=BASE+'nrc_360.html?embed=1&v=20260930c&nrc='+encodeURIComponent(nrc);
+  visor.src=BASE+'nrc_360.html?embed=1&nrc='+encodeURIComponent(nrc);
   document.getElementById('titulo-vista').textContent='Ficha NRC · '+nrc;
   activate(null);
 }
