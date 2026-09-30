@@ -285,54 +285,69 @@
 </div>
 
 <div class="tabs-nav">
-  <button class="tab-btn active" onclick="switchTab(0, this)">📋 Formateador Nóminas SharePoint</button>
+  <button class="tab-btn active" onclick="switchTab(0, this)">📋 Carga de Estudiantes</button>
   <button class="tab-btn" onclick="switchTab(3, this)">📅 Formateador Calendarios</button>
   <button class="tab-btn" onclick="switchTab(4, this)">📂 Notificación Carpetas Creadas</button>
 </div>
 
-<!-- TAB 1: FORMATEADOR NÓMINAS -->
+<!-- TAB 1: CARGA UNIVERSAL DE ESTUDIANTES -->
 <div class="tab-panel active" id="tab0">
-  <div class="section-title">Formateador Universal de Estudiantes</div>
-  <div class="section-sub">Sube archivos o pega los datos directamente de la web.</div>
+  <div class="section-title">Carga Universal de Estudiantes</div>
+  <div class="section-sub">Sube la nómina en su formato original. La herramienta detecta automáticamente la estructura, normaliza los estudiantes y prepara la carga a SharePoint.</div>
 
   <label>Selecciona el método de entrada:</label>
   <div class="radio-group mt05" id="tab1-radio">
-    <label class="radio-option selected" onclick="selectRadio(this, 'tab1-mode', 'diario')">
-      <input type="radio" name="tab1-mode" value="diario" checked>
+    <label class="radio-option selected" onclick="selectRadio(this, 'tab1-mode', 'universal')">
+      <input type="radio" name="tab1-mode" value="universal" checked>
       <span class="radio-dot"></span>
-      📊 Sistema Diario (Sube archivo con RUT, NRC, PERIODO...)
+      📂 Archivo universal — Excel / CSV (recomendado)
     </label>
     <label class="radio-option" onclick="selectRadio(this, 'tab1-mode', 'manual')">
       <input type="radio" name="tab1-mode" value="manual">
       <span class="radio-dot"></span>
-      🌐 Descarga Manual Web (Sube archivos Excel/CSV)
+      🌐 CSV manual de curso / Canvas (modo acumulativo)
     </label>
     <label class="radio-option" onclick="selectRadio(this, 'tab1-mode', 'texto')">
       <input type="radio" name="tab1-mode" value="texto">
       <span class="radio-dot"></span>
-      📝 Pegar texto directamente (Copia de la web y pega aquí)
+      📝 Pegar texto directamente desde la web
     </label>
   </div>
 
   <div id="t1-diario" class="dynamic-section visible">
+    <div class="helper">💡 <strong>Autodetección:</strong> admite Sistema Diario, nómina de Alumno Potencial y archivos genéricos con RUT/ID, nombre y correo. Si el archivo no trae curso/NRC, se habilitará un buscador desde <strong>nrcs.json</strong>. Los cursos <strong>SEMIPRES</strong> se excluyen automáticamente, excepto <strong>MBAES</strong>, que sí mantiene seguimiento. Además, si un NRC no existe en <strong>nrcs.json</strong>, su registro también se omite.</div>
     <div class="form-grid col3">
-      <div class="form-group"><label>📅 Fecha</label><input type="date" id="t1-fecha" /></div>
-      <div class="form-group"><label>🔍 NRCs (separados por coma)</label><input type="text" id="t1-nrcs" placeholder="Ej: 12345, 67890" /></div>
+      <div class="form-group"><label>📅 Filtrar fecha de inicio <span style="font-weight:400;text-transform:none;color:var(--soft);">(opcional)</span></label><input type="date" id="t1-fecha" /></div>
+      <div class="form-group"><label>🔍 Filtrar NRC_COD <span style="font-weight:400;text-transform:none;color:var(--soft);">(opcional)</span></label><input type="text" id="t1-nrcs" placeholder="Ej: 2239_MSP007" /></div>
     </div>
     <div class="form-group mt1">
-      <label>📥 Archivos (Excel / CSV)</label>
+      <label>📥 Nómina(s) original(es) — Excel / CSV</label>
       <div class="file-drop" id="drop1">
-        <input type="file" accept=".xlsx,.xls,.csv" multiple onchange="handleFiles(this, 'drop1', 't1-files')" />
+        <input type="file" accept=".xlsx,.xls,.csv" multiple onchange="handleFiles(this, 'drop1', 't1-files'); t1ResetCourseSelection();" />
         📂 Haz clic o arrastra tus archivos aquí
         <div class="file-name" id="drop1-names"></div>
       </div>
     </div>
+
+    <div id="t1-course-box" class="dynamic-section mt1" style="background:var(--panel-2);border:1px solid var(--line-dim);border-radius:10px;padding:1rem;">
+      <div class="helper" style="margin-bottom:0.75rem;">⚠️ La nómina no contiene información suficiente del curso. Selecciona el NRC al que pertenecen estos estudiantes.</div>
+      <div class="form-group">
+        <label>BUSCAR CURSO / NRC</label>
+        <input type="text" id="t1-course-search" placeholder="Escribe NRC, código, nombre de curso, intake o tutor..." oninput="t1BuscarCurso()" autocomplete="off" />
+        <div id="t1-course-dropdown" style="display:none;position:relative;z-index:70;">
+          <div style="background:#223246;border:1px solid rgba(246,193,40,0.25);border-radius:8px;margin-top:4px;max-height:260px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+            <div id="t1-course-options"></div>
+          </div>
+        </div>
+      </div>
+      <div id="t1-course-selected" class="alert info" style="display:none;"></div>
+    </div>
   </div>
 
   <div id="t1-manual" class="dynamic-section">
-    <div class="helper">💡 <strong>Modo acumulativo:</strong> Completa los campos, sube el CSV del curso y haz clic en "Procesar". Los registros se acumularán. Repite para cada curso.</div>
+    <div class="helper">💡 <strong>Modo acumulativo:</strong> conserva el funcionamiento anterior para CSV de curso. Completa NRC_COD y fecha, procesa y repite para otros cursos.</div>
     <div class="form-grid">
-      <div class="form-group"><label>🔖 NRC_COD (ej: 12345_MDL711)</label><input type="text" id="t1m-nrccod" placeholder="12345_MDL711" /></div>
+      <div class="form-group"><label>🔖 NRC_COD (ej: 2239_MSP007)</label><input type="text" id="t1m-nrccod" placeholder="2239_MSP007" /></div>
       <div class="form-group"><label>📅 FECHA INICIO</label><input type="date" id="t1m-fecha" /></div>
     </div>
     <div class="form-group mt1">
@@ -346,15 +361,20 @@
   </div>
 
   <div id="t1-texto" class="dynamic-section">
-    <div class="helper">💡 Ve a la web de inscripciones, selecciona todo el texto de la página (Ctrl+A) y pégalo abajo. Compatible con el nuevo formato tabular de la web UNAB.</div>
+    <div class="helper">💡 Ve a la web de inscripciones, selecciona el contenido y pégalo aquí. Este modo conserva el parser de la versión anterior.</div>
     <div class="form-group"><label>📋 Pega aquí los datos de la web:</label><textarea id="t1-rawtext" placeholder="Pega aquí el texto copiado de la web de Inscripciones de Curso..."></textarea></div>
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" onclick="processTab1()">⚡ Procesar</button>
+    <button class="btn primary" onclick="processTab1()">⚡ Procesar nómina</button>
     <button class="btn danger" onclick="clearAccumulated()" id="btn-clear-accum" style="display:none">🗑️ Limpiar Registros Acumulados</button>
   </div>
   <div id="t1-result"></div>
+  <div id="t1-actions" class="btn-row" style="display:none;">
+    <button class="btn" onclick="t1DescargarProcesados()">📥 Descargar Excel</button>
+    <button class="btn primary" onclick="t1EnviarDirectoSharePoint()">🚀 Cargar a SharePoint</button>
+  </div>
+  <div id="t1-sp-result"></div>
 </div>
 
 <!-- TAB 2: CORREOS BIENVENIDA -->
@@ -656,7 +676,7 @@
 const state = {
   t1Files:[], t1mFiles:[], t1mAccumulated:[],
   t2File:null, t3File:null, t2Data:null, t3Data:null,
-  t1Mode:'diario', t4Data:null
+  t1Mode:'universal', t1Data:null, t1DetectedFormat:'', t1SelectedCourse:null, t1OmitidosSemipres:[], t1OmitidosSinFecha:0, t1NoIdentificadosModalidad:[], t4Data:null
 };
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -666,12 +686,12 @@ function switchTab(idx, btn) {
 }
 
 function clearAll() {
-  Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'diario'});
+  Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'universal',t1Data:null,t1DetectedFormat:'',t1SelectedCourse:null,t1OmitidosSemipres:[],t1OmitidosSinFecha:0,t1NoIdentificadosModalidad:[]});
   document.querySelectorAll('input[type=text],input[type=number],input[type=date],input[type=time],input[type=url],textarea').forEach(el=>el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
-  ['t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  ['t1-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
-  selectRadio(document.querySelector('#tab1-radio .radio-option'),'tab1-mode','diario');
+  ['t1-actions','t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['t1-result','t1-sp-result','t2-result','t3-result','t2-sp-result','t3-sp-result','t4-result'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  selectRadio(document.querySelector('#tab1-radio .radio-option'),'tab1-mode','universal');
   switchTab(0,document.querySelectorAll('.tab-btn')[0]);
   ['t4-programa','t4-materia','t4-facultad','t4-tipo','t4-tutor'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   t4CoordSel.clear();t4CoordRenderChips();
@@ -694,7 +714,7 @@ function selectRadio(el,name,value){
   document.querySelectorAll(`[onclick*="${name}"]`).forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');state.t1Mode=value;
   ['t1-diario','t1-manual','t1-texto'].forEach(id=>{const s=document.getElementById(id);if(s)s.classList.remove('visible');});
-  const map={diario:'t1-diario',manual:'t1-manual',texto:'t1-texto'};
+  const map={universal:'t1-diario',diario:'t1-diario',manual:'t1-manual',texto:'t1-texto'};
   const t=document.getElementById(map[value]);if(t)t.classList.add('visible');
 }
 
@@ -733,7 +753,7 @@ function renderAccumulatedTable(){
   let html=`<div class="alert success">📊 Total acumulado: <span class="badge">${state.t1mAccumulated.length}</span> registros</div><div class="table-wrap"><table><thead><tr>`;
   cols.forEach(c=>html+=`<th>${c}</th>`);html+='<th>Acciones</th></tr></thead><tbody>';
   state.t1mAccumulated.slice(0,200).forEach((r,i)=>{html+='<tr>';cols.forEach(c=>html+=`<td>${r[c]??''}</td>`);html+=`<td><button class="btn-delete" onclick="deleteRow(${i})">🗑️</button></td></tr>`;});
-  html+='</tbody></table></div><div class="btn-row mt1"><button class="btn" onclick="downloadAccumulated()">📥 Descargar Excel</button></div>';
+  html+='</tbody></table></div>';
   el.innerHTML=html;
 }
 
@@ -860,60 +880,282 @@ async function processCSVManual(file,nrcCod,fechaInicio){
   return filas;
 }
 
+// ─── TAB 1 · CARGA UNIVERSAL DE ESTUDIANTES ─────────────────────────────────
+const T1_FLOW_URL = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/a85ccb20ca1445ae9eec63d6c8bdbb6f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UdUZM4x43rwxEjwzfeWLPmbWDdRNSmotFEMlzH4zW7c'; // Flujo ETOP_CARGA_ESTUDIANTES_DIRECTA V2.1
+
+function t1Get(obj, keys){
+  for(const k of keys){
+    if(obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return String(obj[k]).trim();
+  }
+  return '';
+}
+function t1Norm(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
+function t1Headers(rawRows){return (rawRows[0]||[]).map(x=>String(x||'').trim());}
+function t1DetectarFormato(rawRows){
+  const hIdx=t1FindHeaderIndex(rawRows), headers=(rawRows[hIdx]||[]).map(x=>String(x||'').trim()), joined=t1Norm(headers.join(' | '));
+  if(joined.includes('ALUMNO POTENCIAL') && joined.includes('DV')) return 'Alumno Potencial';
+  if((joined.includes('NRC')||joined.includes('NRC COD')) && joined.includes('PERIODO') && (joined.includes('RUT')||joined.includes('ID'))) return 'Sistema Diario';
+  if(joined.includes('IDENTIFICACION DE SIS DEL ESTUDIANTE') || joined.includes('NOMBRE DE SECCION')) return 'CSV de curso / Canvas';
+  return 'Nómina genérica';
+}
+function t1FindHeaderIndex(rawRows){
+  for(let i=0;i<Math.min(25,rawRows.length);i++){
+    const rs=t1Norm((rawRows[i]||[]).join(' | '));
+    if((rs.includes('RUT')||rs.includes(' ID ')||rs.startsWith('ID ')) && (rs.includes('CORREO')||rs.includes('EMAIL')||rs.includes('MAIL'))) return i;
+    if(rs.includes('ALUMNO POTENCIAL') && rs.includes('DV')) return i;
+  }
+  return 0;
+}
+function t1NormalizarRut(base,dv=''){
+  let b=String(base||'').replace(/\.0$/,'').replace(/\./g,'').trim().toUpperCase();
+  const d=String(dv||'').replace(/\.0$/,'').trim().toUpperCase();
+  if(d && b && !b.includes('-')) b += '-'+d;
+  return b;
+}
+function t1ParseAlumnoPotencial(rawRows){
+  const hIdx=t1FindHeaderIndex(rawRows), headers=(rawRows[hIdx]||[]).map(h=>String(h||'').trim());
+  const idx=(...terms)=>headers.findIndex(h=>terms.some(t=>t1Norm(h).includes(t1Norm(t))));
+  const iRut=idx('RUT (Alumno Potencial)','RUT'), iDv=idx('DV (Alumno Potencial)','DV'), iNom=idx('Nombre (Alumno Potencial)','Nombre'), iCor=idx('Correo Electrónico','Correo Electronico','Email','Mail');
+  const out=[];
+  for(const row of rawRows.slice(hIdx+1)){
+    if(!row||row.every(c=>!String(c||'').trim()))continue;
+    const rut=t1NormalizarRut(iRut>=0?row[iRut]:'',iDv>=0?row[iDv]:'');
+    const nombre=iNom>=0?String(row[iNom]||'').trim().toUpperCase():'';
+    const correo=iCor>=0?String(row[iCor]||'').trim().toLowerCase():'';
+    if(!rut||!correo.includes('@'))continue;
+    out.push({RUT:rut,NOMBRE:nombre,CORREO_UNAB:correo,Columna7:''});
+  }
+  return out;
+}
+function t1ParseGenerico(rawRows){
+  const hIdx=t1FindHeaderIndex(rawRows), rawHeaders=(rawRows[hIdx]||[]).map(h=>String(h||'').trim());
+  const seen=new Set(),headers=rawHeaders.map((h,i)=>{let k=h||`C${i}`;const n=t1Norm(k);if(seen.has(n))k+='_R';seen.add(n);return k;});
+  const normHeaders=headers.map(t1Norm);
+  const find=(...terms)=>normHeaders.findIndex(h=>terms.some(t=>h.includes(t1Norm(t))));
+  const iRut=find('RUT','ID ESTUDIANTE','IDENTIFICACION DE SIS','IDENTIFICACIÓN DE SIS');
+  const iDv=find('DV');
+  let iNom=find('NOMBRE DEL ESTUDIANTE','NOMBRE ESTUDIANTE','NOMBRE ALUMNO','NOMBRE');
+  const iApe=find('APELLIDO');
+  const iCorreoUnab=find('CORREO UNAB','EMAIL UNAB','CORREO INSTITUCIONAL');
+  const iCorreoPers=find('CORREO PERSONAL','EMAIL PERSONAL','CORREO ELECTRONICO','CORREO ELECTRÓNICO','EMAIL','MAIL');
+  const emailRe=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+  const rutRe=/\b(\d{7,9}-?[0-9Kk])\b/;
+  const out=[];
+  for(const row of rawRows.slice(hIdx+1)){
+    if(!row||row.every(c=>!String(c||'').trim()))continue;
+    const joined=row.map(v=>String(v??'')).join(' ');
+    const emails=joined.match(emailRe)||[];
+    let rut=t1NormalizarRut(iRut>=0?row[iRut]:'',iDv>=0?row[iDv]:'');
+    if(!rut){const m=joined.match(rutRe);if(m)rut=t1NormalizarRut(m[1]);}
+    if(!rut)continue;
+    const nomParts=[];
+    if(iNom>=0 && String(row[iNom]||'').trim())nomParts.push(String(row[iNom]).trim());
+    if(iApe>=0 && iApe!==iNom && String(row[iApe]||'').trim())nomParts.push(String(row[iApe]).trim());
+    const nombre=nomParts.join(' ').trim().toUpperCase();
+    let correoUnab=iCorreoUnab>=0?String(row[iCorreoUnab]||'').trim().toLowerCase():'';
+    let correoPersonal=iCorreoPers>=0?String(row[iCorreoPers]||'').trim().toLowerCase():'';
+    if(!correoUnab) correoUnab=emails.find(e=>e.toLowerCase().includes('@uandresbello.edu'))?.toLowerCase()||'';
+    if(!correoPersonal) correoPersonal=emails.find(e=>!e.toLowerCase().includes('@uandresbello.edu'))?.toLowerCase()||'';
+    if(!correoUnab && !correoPersonal && emails.length) correoUnab=emails[0].toLowerCase();
+    if(!correoUnab && correoPersonal) correoUnab=correoPersonal;
+    if(!correoUnab)continue;
+    out.push({RUT:rut,NOMBRE:nombre,CORREO_UNAB:correoUnab,Columna7:correoPersonal});
+  }
+  return out;
+}
+function t1CursoDesdeCatalogo(r){
+  const periodo=t1Get(r,['periodo','PERIODO']).replace(/\.0$/,'');
+  const nrcCal=t1Get(r,['nrc_cod_cal','NRC_COD_CAL','nrc','NRC']);
+  let nrcCod=t1Get(r,['nrc_cod','NRC_COD']);
+  if(!nrcCod && nrcCal){
+    nrcCod=nrcCal;
+    if(periodo && nrcCod.endsWith('_'+periodo)) nrcCod=nrcCod.slice(0,-(periodo.length+1));
+  }
+  const nombre=t1Get(r,['nombre curso','NOMBRE CURSO','nombre_curso','NOMBRE_CURSO']);
+  const fecha=t1Get(r,['fecha inicio','FECHA INICIO','fecha_inicio','FECHA_INICIO']);
+  return {PERIODO:periodo,NRC_COD:nrcCod,NRC_COD_CAL_FILTRO:nrcCal||(nrcCod&&periodo?nrcCod+'_'+periodo:''),NOMBRE_CURSO:nombre,FECHA_INICIO:fecha,_raw:r};
+}
+function t1EsMBAES(r){
+  const codigo=t1Norm(t1Get(r,['codigo curso','CODIGO CURSO','codigo_curso','CODIGO_CURSO'])).replace(/\s+/g,'');
+  const materia=t1Norm(t1Get(r,['materia','MATERIA'])).replace(/\s+/g,'');
+  return codigo.startsWith('MBAES') || materia==='MBAES';
+}
+function t1CursoPermitidoCatalogo(r){
+  const tipo=t1Norm(t1Get(r,['tipo','TIPO','tipo_nrc','TIPO_NRC'])).replace(/\s+/g,'');
+  if(tipo!=='SEMIPRES')return true;
+  return t1EsMBAES(r);
+}
+function t1CatalogoPorNrc(){
+  const mapa=new Map();
+  for(const r of (t2NrcsData||[])){
+    const c=t1CursoDesdeCatalogo(r);
+    const keys=[c.NRC_COD_CAL_FILTRO,c.NRC_COD,r.nrc,r.NRC].filter(Boolean);
+    for(const k of keys)mapa.set(t1Norm(k).replace(/\s+/g,''),r);
+  }
+  return mapa;
+}
+function t1BuscarRegistroCatalogo(row,mapa){
+  const keys=[row.NRC_COD_CAL_FILTRO,(row.NRC_COD&&row.PERIODO)?row.NRC_COD+'_'+row.PERIODO:'',row.NRC_COD].filter(Boolean);
+  for(const k of keys){const hit=mapa.get(t1Norm(k).replace(/\s+/g,''));if(hit)return hit;}
+  return null;
+}
+function t1FiltrarModalidad(rows){
+  const mapa=t1CatalogoPorNrc(),permitidos=[],omitidos=[],noIdentificados=[];
+  for(const row of rows){
+    if(!String(row.NRC_COD||'').trim() && !String(row.NRC_COD_CAL_FILTRO||'').trim()){permitidos.push(row);continue;}
+    const cat=t1BuscarRegistroCatalogo(row,mapa);
+    if(!cat){
+      noIdentificados.push({...row,_motivo:'NRC no presente en nrcs.json'});
+      continue;
+    }
+    if(t1CursoPermitidoCatalogo(cat)){permitidos.push(row);continue;}
+    omitidos.push({...row,_tipo:t1Get(cat,['tipo','TIPO']),_cursoCatalogo:t1Get(cat,['nombre curso','NOMBRE CURSO']),_nrcCatalogo:t1Get(cat,['nrc','NRC'])});
+  }
+  return {permitidos,omitidos,noIdentificados};
+}
+function t1ResumenOmitidosHTML(){
+  const sem=state.t1OmitidosSemipres||[],sinFecha=state.t1OmitidosSinFecha||0,noId=state.t1NoIdentificadosModalidad||[];
+  let html='';
+  if(sem.length){
+    const cursos=[...new Map(sem.map(r=>[(r._nrcCatalogo||r.NRC_COD_CAL_FILTRO||r.NRC_COD||''),r])).values()];
+    html+=`<div class="alert info">🚫 <strong>${sem.length}</strong> registro${sem.length===1?'':'s'} omitido${sem.length===1?'':'s'} por pertenecer a cursos SEMIPRES sin seguimiento. <strong>MBAES no se excluye.</strong>`+
+      `<details style="margin-top:.45rem;"><summary style="cursor:pointer;font-weight:700;">Ver cursos omitidos (${cursos.length})</summary><div style="margin-top:.4rem;font-size:.8rem;">${cursos.map(r=>`${r._nrcCatalogo||r.NRC_COD_CAL_FILTRO||r.NRC_COD||'—'} · ${r._cursoCatalogo||r.NOMBRE_CURSO||'Sin nombre'}`).join('<br>')}</div></details></div>`;
+  }
+  if(sinFecha)html+=`<div class="alert info">📅 <strong>${sinFecha}</strong> registro${sinFecha===1?'':'s'} omitido${sinFecha===1?'':'s'} por no tener FECHA_INICIO.</div>`;
+  if(noId.length){
+    const cursos=[...new Set(noId.map(r=>r.NRC_COD_CAL_FILTRO||((r.NRC_COD&&r.PERIODO)?r.NRC_COD+'_'+r.PERIODO:r.NRC_COD)).filter(Boolean))];
+    html+=`<div class="alert info">⛔ <strong>${noId.length}</strong> registro${noId.length===1?'':'s'} omitido${noId.length===1?'':'s'} por no encontrarse en <strong>nrcs.json</strong>. Solo se cargan estudiantes de cursos reconocidos en el catálogo.`+
+      (cursos.length?`<details style="margin-top:.45rem;"><summary style="cursor:pointer;font-weight:700;">Ver NRC no encontrados</summary><div style="margin-top:.4rem;font-size:.8rem;">${cursos.join('<br>')}</div></details>`:'')+`</div>`;
+  }
+  return html;
+}
+function t1AplicarCurso(rows,curso){return rows.map(r=>({...r,PERIODO:r.PERIODO||curso.PERIODO,NRC_COD:r.NRC_COD||curso.NRC_COD,NOMBRE_CURSO:r.NOMBRE_CURSO||curso.NOMBRE_CURSO,FECHA_INICIO:r.FECHA_INICIO||curso.FECHA_INICIO,NRC_COD_CAL_FILTRO:r.NRC_COD_CAL_FILTRO||curso.NRC_COD_CAL_FILTRO}));}
+function t1TieneCurso(rows){return rows.length>0 && rows.every(r=>String(r.NRC_COD||'').trim() && String(r.PERIODO||'').trim());}
+function t1FinalizarRows(rows){
+  const seen=new Set(),out=[];
+  for(const r of rows){
+    const nr={...r};
+    if(!nr.NRC_COD_CAL_FILTRO && nr.NRC_COD && nr.PERIODO)nr.NRC_COD_CAL_FILTRO=String(nr.NRC_COD).trim()+'_'+String(nr.PERIODO).trim();
+    nr.RUT=String(nr.RUT||'').trim().toUpperCase();nr.NOMBRE=String(nr.NOMBRE||'').trim().toUpperCase();nr.CORREO_UNAB=String(nr.CORREO_UNAB||'').trim().toLowerCase();nr.Columna7=String(nr.Columna7||'').trim().toLowerCase();
+    const key=nr.RUT+'|'+String(nr.NRC_COD_CAL_FILTRO||'').toUpperCase();
+    if(!nr.RUT||seen.has(key))continue;seen.add(key);out.push(nr);
+  }
+  return out;
+}
+function t1ResetCourseSelection(){
+  state.t1SelectedCourse=null;
+  const b=document.getElementById('t1-course-box'),s=document.getElementById('t1-course-search'),sel=document.getElementById('t1-course-selected'),dd=document.getElementById('t1-course-dropdown');
+  if(b)b.classList.remove('visible');if(s)s.value='';if(sel){sel.style.display='none';sel.innerHTML='';}if(dd)dd.style.display='none';
+  const ae=document.getElementById('t1-actions');if(ae)ae.style.display='none';
+}
+function t1BuscarCurso(){
+  const q=t1Norm(document.getElementById('t1-course-search').value),dd=document.getElementById('t1-course-dropdown'),opts=document.getElementById('t1-course-options');
+  if(q.length<2){dd.style.display='none';return;}
+  const res=(t2NrcsData||[]).filter(r=>t1CursoPermitidoCatalogo(r) && t1Norm([r.nrc,r['codigo curso'],r['nombre curso'],r.intake,r.tutor,r.facultad].join(' ')).includes(q)).slice(0,40);
+  if(!res.length){opts.innerHTML='<div style="padding:.7rem;color:var(--muted);">Sin coincidencias.</div>';dd.style.display='block';return;}
+  opts.innerHTML='';res.forEach(r=>{const c=t1CursoDesdeCatalogo(r),div=document.createElement('div');div.style.cssText='padding:.55rem .85rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);';div.onmouseenter=()=>div.style.background='rgba(246,193,40,.08)';div.onmouseleave=()=>div.style.background='transparent';div.innerHTML='<strong style="color:var(--line);font-family:IBM Plex Mono,monospace;font-size:.78rem;">'+(c.NRC_COD_CAL_FILTRO||r.nrc||'')+'</strong><br><span style="font-size:.75rem;color:var(--muted);">'+(c.NOMBRE_CURSO||'Sin nombre')+' · '+(r.intake||'')+' · '+(r.tutor||'')+'</span>';div.onclick=()=>t1SeleccionarCurso(r);opts.appendChild(div);});dd.style.display='block';
+}
+function t1SeleccionarCurso(r){
+  if(!t1CursoPermitidoCatalogo(r)){document.getElementById('t1-course-selected').style.display='block';document.getElementById('t1-course-selected').innerHTML='🚫 Este curso es SEMIPRES y no tiene seguimiento ETOP. No puede asignarse a una nómina.';return;}
+  const c=t1CursoDesdeCatalogo(r);state.t1SelectedCourse=c;
+  document.getElementById('t1-course-search').value=c.NRC_COD_CAL_FILTRO||c.NRC_COD;
+  document.getElementById('t1-course-dropdown').style.display='none';
+  const el=document.getElementById('t1-course-selected');el.style.display='block';el.innerHTML='✅ <strong>Curso seleccionado:</strong> '+(c.NRC_COD_CAL_FILTRO||c.NRC_COD)+' · '+(c.NOMBRE_CURSO||'')+' · Inicio: '+(c.FECHA_INICIO||'—');
+  if(state.t1Data && !t1TieneCurso(state.t1Data)){
+    state.t1Data=t1FinalizarRows(t1AplicarCurso(state.t1Data,c));const mod=t1FiltrarModalidad(state.t1Data);state.t1Data=mod.permitidos;state.t1OmitidosSemipres.push(...mod.omitidos);state.t1NoIdentificadosModalidad.push(...mod.noIdentificados);
+    t1MostrarResultado(state.t1Data,state.t1DetectedFormat,true);
+  }
+}
+async function t1ProcesarArchivoUniversal(file){
+  const rawRows=await readFile(file,false);if(!rawRows.length)return {format:'Vacío',rows:[]};
+  const formato=t1DetectarFormato(rawRows);
+  if(formato==='Sistema Diario'){
+    const obj=normCols(await readFile(file,true)),rows=[];let omitidosSinFecha=0;if(!obj.length)return {format:formato,rows,omitidosSinFecha};
+    const cols=Object.keys(obj[0]);
+    const colRol=findCol(cols,'ROL'),colFecha=findCol(cols,'FECHA_INICIO','FECHA INICIO','FECHAINICIO'),colNrc=findCol(cols,'NRC'),colMateria=findCol(cols,'MATERIA'),colCurso=findCol(cols,'CURSO'),colNomCurso=findCol(cols,'NOMBRE_CURSO','NOMBRE CURSO'),colPeriodo=findCol(cols,'PERIODO'),colRut=findCol(cols,'RUT'),colNombre=cols.find(c=>c.includes('NOMBRE')&&!c.includes('CURSO')&&!c.includes('TUTOR')&&!c.includes('PROGRAMA')),colCorreoU=findCol(cols,'CORREO_UNAB','CORREO UNAB','CORREO'),colCorreoP=findCol(cols,'CORREO_PERSONAL','CORREO PERSONAL','EMAIL_PERSONAL','EMAIL PERSONAL');
+    for(const r of obj){
+      if(colRol&&String(r[colRol]||'').toUpperCase().trim()!=='ESTUDIANTE')continue;
+      let nrcCod='';if(colNrc&&colMateria&&colCurso){const ns=String(r[colNrc]||'').replace('.0','').trim(),ms=String(r[colMateria]||'').trim(),cs=String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');if(ns)nrcCod=`${ns}_${ms}${cs}`;}
+      const fecha=colFecha?anyToISO(r[colFecha]):'';
+      // Si este formato trae columna FECHA_INICIO, una fila sin fecha no corresponde
+      // a un inicio de curso válido y no debe pasar a la carga de estudiantes.
+      if(colFecha && !fecha){omitidosSinFecha++;continue;}
+      rows.push({PERIODO:colPeriodo?String(r[colPeriodo]||'').replace('.0',''):'',NRC_COD:nrcCod,NOMBRE_CURSO:colNomCurso?String(r[colNomCurso]||''):'',FECHA_INICIO:fecha,RUT:colRut?String(r[colRut]||'').replace('.0',''):'',NOMBRE:colNombre?String(r[colNombre]||''):'',CORREO_UNAB:colCorreoU?String(r[colCorreoU]||''):'',Columna7:colCorreoP?String(r[colCorreoP]||''):''});
+    }
+    return {format:formato,rows,omitidosSinFecha};
+  }
+  if(formato==='Alumno Potencial')return {format:formato,rows:t1ParseAlumnoPotencial(rawRows)};
+  if(formato==='CSV de curso / Canvas'){
+    const rowsObj=await readFile(file,true),rows=[];
+    for(const r of rowsObj){const ns=String(r['Nombre de sección']||r['Nombre de secci  n']||'').trim(),rut=String(r['Identificación de SIS del estudiante']||r['Identificacion de SIS del estudiante']||'').trim(),nombre=String(r['Nombre del estudiante']||'').trim(),correo=String(r['Correo electrónico']||r['Correo electronico']||'').trim().toLowerCase();if(!rut||!correo.includes('@'))continue;let periodo='';if(ns){const m=ns.match(/^(\d{6})/);if(m)periodo=m[1];}let nc='';if(ns&&ns.includes('|'))nc=ns.split('|')[1].trim();rows.push({PERIODO:periodo,NRC_COD:'',NOMBRE_CURSO:nc,FECHA_INICIO:'',RUT:rut,NOMBRE:nombre.toUpperCase(),CORREO_UNAB:correo,Columna7:''});}
+    return {format:formato,rows};
+  }
+  return {format:formato,rows:t1ParseGenerico(rawRows)};
+}
+function t1MostrarResultado(rows,formato,cursoCompletado=false){
+  const resultEl=document.getElementById('t1-result'),ae=document.getElementById('t1-actions');
+  const faltaCurso=!t1TieneCurso(rows);
+  const unicos=new Set(rows.map(r=>r.RUT+'|'+(r.NRC_COD_CAL_FILTRO||r.NRC_COD||''))).size;
+  resultEl.innerHTML=`<div class="alert success">✅ <strong>${rows.length}</strong> registros válidos · Formato: <strong>${formato||'—'}</strong>${cursoCompletado?' · Curso aplicado desde nrcs.json':''}</div>`+t1ResumenOmitidosHTML();
+  const td=document.createElement('div');resultEl.appendChild(td);renderTable(rows,td);
+  const box=document.getElementById('t1-course-box');
+  if(faltaCurso){box.classList.add('visible');ae.style.display='none';resultEl.insertAdjacentHTML('beforeend','<div class="alert info">ℹ️ Para continuar, selecciona el curso/NRC de estos estudiantes.</div>');}
+  else{box.classList.remove('visible');ae.style.display='flex';}
+}
 async function processTab1(){
-  const resultEl=document.getElementById('t1-result');
-  resultEl.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando...</div>';
+  const resultEl=document.getElementById('t1-result'),ae=document.getElementById('t1-actions');ae.style.display='none';document.getElementById('t1-sp-result').innerHTML='';
+  resultEl.innerHTML='<div class="alert info"><span class="spinner"></span> Procesando nómina...</div>';
   try{
     const mode=state.t1Mode;let filas=[];
-    if(mode==='diario'){
+    if(mode==='universal'||mode==='diario'){
       if(!state.t1Files.length){resultEl.innerHTML='<div class="alert error">Selecciona al menos un archivo.</div>';return;}
-      let omitidasSinFecha=0;
-      const fechaF=document.getElementById('t1-fecha').value;
-      const nrcF=document.getElementById('t1-nrcs').value.trim().split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
-      for(const file of state.t1Files){
-        const rawRows=await readFile(file),rows=normCols(rawRows);if(!rows.length)continue;
-        const cols=Object.keys(rows[0]);
-        const colRol=findCol(cols,'ROL'),colFecha=findCol(cols,'FECHA_INICIO','FECHA INICIO','FECHAINICIO'),colNrc=findCol(cols,'NRC'),colMateria=findCol(cols,'MATERIA'),colCurso=findCol(cols,'CURSO'),colNomCurso=findCol(cols,'NOMBRE_CURSO','NOMBRE CURSO'),colPeriodo=findCol(cols,'PERIODO'),colRut=findCol(cols,'RUT'),colNombre=cols.find(c=>c.toUpperCase().includes('NOMBRE')&&!c.toUpperCase().includes('CURSO')&&!c.toUpperCase().includes('TUTOR')&&!c.toUpperCase().includes('PROGRAMA')),colCorreoU=findCol(cols,'CORREO_UNAB','CORREO UNAB','CORREO'),colCorreoP=findCol(cols,'CORREO_PERSONAL','CORREO PERSONAL','EMAIL_PERSONAL','EMAIL PERSONAL');
-        for(const r of rows){
-          if(colRol&&String(r[colRol]||'').toUpperCase().trim()!=='ESTUDIANTE')continue;
-          if(fechaF&&colFecha&&r[colFecha]){const fd=anyToISO(r[colFecha]);if(fd&&fd!==fechaF)continue;}
-          let nrcCod='';
-          if(colNrc&&colMateria&&colCurso){const ns=String(r[colNrc]||'').replace('.0','').trim(),ms=String(r[colMateria]||'').trim(),cs=String(r[colCurso]||'').replace('.0','').trim().padStart(3,'0');if(ns)nrcCod=`${ns}_${ms}${cs}`;}
-          const ff=colFecha?anyToISO(r[colFecha]):'';
-          if(!ff){omitidasSinFecha++;continue;}
-          filas.push({PERIODO:colPeriodo?String(r[colPeriodo]||'').replace('.0',''):'',NRC_COD:nrcCod,NOMBRE_CURSO:colNomCurso?String(r[colNomCurso]||''):'',FECHA_INICIO:ff,RUT:colRut?String(r[colRut]||'').replace('.0',''):'',NOMBRE:colNombre?String(r[colNombre]||''):'',CORREO_UNAB:colCorreoU?String(r[colCorreoU]||''):'',Columna7:colCorreoP?String(r[colCorreoP]||''):''});
-        }
-      }
-      const seen=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seen.has(k))return false;seen.add(k);return true;});
-      if(nrcF.length)filas=filas.filter(r=>nrcF.includes(r.NRC_COD?.toUpperCase()));
-      if(!filas.length){resultEl.innerHTML='<div class="alert info">No se encontraron registros.</div>';return;}
-      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros.${omitidasSinFecha?` Se omitieron ${omitidasSinFecha} fila${omitidasSinFecha===1?'':'s'} sin FECHA INICIO.`:''}</div>`;
-      const td=document.createElement('div');resultEl.appendChild(td);renderTable(filas,td);
-      const br=document.createElement('div');br.className='btn-row';const ts=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-      br.innerHTML='<button class="btn" onclick="exportXLSXConTabla(state.t1Data,\'Estudiantes_Formateados_'+ts+'.xlsx\')">✅ Descargar Excel</button>';resultEl.appendChild(br);
+      state.t1OmitidosSemipres=[];state.t1OmitidosSinFecha=0;state.t1NoIdentificadosModalidad=[];
+      const formatos=new Set();
+      for(const file of state.t1Files){const x=await t1ProcesarArchivoUniversal(file);formatos.add(x.format);filas.push(...x.rows);state.t1OmitidosSinFecha+=Number(x.omitidosSinFecha||0);}
+      const fechaF=document.getElementById('t1-fecha').value,nrcF=document.getElementById('t1-nrcs').value.trim().toUpperCase();
+      if(fechaF)filas=filas.filter(r=>!r.FECHA_INICIO||anyToISO(r.FECHA_INICIO)===fechaF);
+      if(nrcF)filas=filas.filter(r=>String(r.NRC_COD||'').toUpperCase().includes(nrcF)||String(r.NRC_COD_CAL_FILTRO||'').toUpperCase().includes(nrcF));
+      filas=t1FinalizarRows(filas);
+      const mod=t1FiltrarModalidad(filas);filas=mod.permitidos;state.t1OmitidosSemipres=mod.omitidos;state.t1NoIdentificadosModalidad=mod.noIdentificados;
+      if(!filas.length){resultEl.innerHTML='<div class="alert error">No quedaron estudiantes válidos después de aplicar las reglas de fecha y modalidad.</div>'+t1ResumenOmitidosHTML();return;}
+      state.t1DetectedFormat=[...formatos].join(' + ');state.t1Data=filas;
+      if(state.t1SelectedCourse&&!t1TieneCurso(filas)){state.t1Data=t1FinalizarRows(t1AplicarCurso(filas,state.t1SelectedCourse));const modSel=t1FiltrarModalidad(state.t1Data);state.t1Data=modSel.permitidos;state.t1OmitidosSemipres.push(...modSel.omitidos);state.t1NoIdentificadosModalidad.push(...modSel.noIdentificados);}
+      t1MostrarResultado(state.t1Data,state.t1DetectedFormat,!!state.t1SelectedCourse);
     }else if(mode==='manual'){
-      const nrcCod=document.getElementById('t1m-nrccod').value.trim();
-      const fechaInicio=document.getElementById('t1m-fecha').value;
-      if(!nrcCod){resultEl.innerHTML='<div class="alert error">Debes ingresar el NRC_COD.</div>';return;}
-      if(!fechaInicio){resultEl.innerHTML='<div class="alert error">Debes ingresar la FECHA INICIO.</div>';return;}
-      if(!state.t1mFiles.length){resultEl.innerHTML='<div class="alert error">Debes subir un archivo CSV.</div>';return;}
-      const nf=await processCSVManual(state.t1mFiles[0],nrcCod,fechaInicio);
-      if(!nf.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros válidos.</div>';return;}
-      state.t1mAccumulated.push(...nf);renderAccumulatedTable();
-      document.getElementById('btn-clear-accum').style.display='inline-flex';
-      document.getElementById('t1m-nrccod').value='';document.getElementById('t1m-fecha').value=new Date().toISOString().substring(0,10);document.getElementById('drop1m-names').textContent='';state.t1mFiles=[];
+      const nrcCod=document.getElementById('t1m-nrccod').value.trim(),fechaInicio=document.getElementById('t1m-fecha').value;
+      if(!nrcCod||!fechaInicio||!state.t1mFiles.length){resultEl.innerHTML='<div class="alert error">Completa NRC_COD, FECHA INICIO y sube el CSV.</div>';return;}
+      const nf=await processCSVManual(state.t1mFiles[0],nrcCod,fechaInicio);if(!nf.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros válidos.</div>';return;}
+      state.t1mAccumulated.push(...nf);let manualFinal=t1FinalizarRows(state.t1mAccumulated);const modManual=t1FiltrarModalidad(manualFinal);state.t1Data=modManual.permitidos;state.t1OmitidosSemipres=modManual.omitidos;state.t1NoIdentificadosModalidad=modManual.noIdentificados;state.t1OmitidosSinFecha=0;state.t1DetectedFormat='CSV manual / Canvas';state.t1mAccumulated=[...state.t1Data];renderAccumulatedTable();document.getElementById('btn-clear-accum').style.display='inline-flex';ae.style.display=state.t1Data.length?'flex':'none';if(state.t1OmitidosSemipres.length||state.t1NoIdentificadosModalidad.length)document.getElementById('t1-result').insertAdjacentHTML('afterbegin',t1ResumenOmitidosHTML());
     }else{
-      const txt=document.getElementById('t1-rawtext').value;
-      if(!txt.trim()){resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>';return;}
-      filas=parseWebTextBlocks(txt);
-      const seenF=new Set();filas=filas.filter(r=>{const k=JSON.stringify(r);if(seenF.has(k))return false;seenF.add(k);return true;});
-      if(!filas.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros. Verifica que hayas copiado la página completa incluyendo el encabezado del curso (NOMBRE/CÓDIGO).</div>';return;}
-      state.t1Data=filas;resultEl.innerHTML=`<div class="alert success">✅ Procesados <span class="badge">${filas.length}</span> registros (solo Estudiantes).</div>`;
-      const td=document.createElement('div');resultEl.appendChild(td);renderTable(filas,td);
-      const br=document.createElement('div');br.className='btn-row';const ts2=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);
-      br.innerHTML='<button class="btn" onclick="exportXLSXConTabla(state.t1Data,\'Estudiantes_Formateados_'+ts2+'.xlsx\')">✅ Descargar Excel</button>';resultEl.appendChild(br);
+      const txt=document.getElementById('t1-rawtext').value;if(!txt.trim()){resultEl.innerHTML='<div class="alert error">Pega el texto en el campo.</div>';return;}
+      filas=t1FinalizarRows(parseWebTextBlocks(txt));if(!filas.length){resultEl.innerHTML='<div class="alert error">No se encontraron registros válidos.</div>';return;}
+      state.t1OmitidosSinFecha=0;const modTexto=t1FiltrarModalidad(filas);filas=modTexto.permitidos;state.t1OmitidosSemipres=modTexto.omitidos;state.t1NoIdentificadosModalidad=modTexto.noIdentificados;if(!filas.length){resultEl.innerHTML='<div class="alert error">Todos los registros fueron excluidos por las reglas de modalidad.</div>'+t1ResumenOmitidosHTML();return;}
+      state.t1Data=filas;state.t1DetectedFormat='Texto web';t1MostrarResultado(filas,'Texto web');
     }
-  }catch(err){resultEl.innerHTML=`<div class="alert error">Error al procesar: ${err.message}</div>`;}
+  }catch(err){resultEl.innerHTML=`<div class="alert error">Error al procesar: ${err.message}</div>`;console.error(err);}
+}
+function t1DescargarProcesados(){
+  if(!state.t1Data||!state.t1Data.length)return;
+  const ts=new Date().toISOString().replace(/[-:T]/g,'').substring(0,14);exportXLSXConTabla(state.t1Data,'Estudiantes_Formateados_'+ts+'.xlsx');
+}
+async function t1EnviarDirectoSharePoint(){
+  const el=document.getElementById('t1-sp-result');
+  if(!state.t1Data||!state.t1Data.length){el.innerHTML='<div class="alert error">No hay registros procesados.</div>';return;}
+  if(!t1TieneCurso(state.t1Data)){el.innerHTML='<div class="alert error">Falta asignar curso/NRC antes de cargar.</div>';return;}
+  if(!T1_FLOW_URL){el.innerHTML='<div class="alert info">⚙️ La carga directa está preparada, pero falta conectar la URL del nuevo flujo de Power Automate.</div>';return;}
+  const payload={origen:'Centro Herramientas ETOP',fechaEnvio:new Date().toISOString(),total:state.t1Data.length,formato:state.t1DetectedFormat,estudiantes:state.t1Data};
+  el.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando '+state.t1Data.length+' estudiantes a Power Automate...</div>';
+  try{
+    const res=await fetch(T1_FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    let data={};try{data=await res.json();}catch(_){data={};}
+    if(!res.ok&&res.status!==202)throw new Error('HTTP '+res.status+' '+res.statusText);
+    if(res.status===202 || data.estado==='aceptado' || data.status==='accepted'){
+      el.innerHTML=`<div class="alert success">✅ <strong>${state.t1Data.length}</strong> estudiantes enviados correctamente. Power Automate aceptó la carga y continuará procesándola en segundo plano.</div>`;
+      return;
+    }
+    const creados=data.creados??data.created??'—',existentes=data.existentes??data.duplicates??'—',errores=data.errores??data.errors??'—';
+    el.innerHTML=`<div class="alert success">✅ Solicitud procesada. Recibidos: <strong>${state.t1Data.length}</strong> · Creados: <strong>${creados}</strong> · Ya existentes: <strong>${existentes}</strong> · Errores: <strong>${errores}</strong></div>`;
+  }catch(err){el.innerHTML='<div class="alert error">Error al cargar: '+err.message+'</div>';}
 }
 
 function isAlumnoPotencialNomina(hRow){const j=hRow.map(c=>String(c||'')).join('|').toLowerCase();return j.includes('alumno potencial')&&j.includes('dv');}
