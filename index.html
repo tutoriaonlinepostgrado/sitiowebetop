@@ -2637,7 +2637,7 @@ const ETOP_EMAILS={
 'CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PEÑA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl',
 'CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl','ALVARO ORELLANA':'tutoriaonline86@unab.cl'
 };
-const ETOP_COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
+const ETOP_COORDINACION=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','maria.cruz@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
 const etopEmailNorm=v=>String(v||'').trim().toLowerCase();
 function etopTutorByEmail(email){const e=etopEmailNorm(email);return Object.keys(ETOP_EMAILS).find(n=>etopEmailNorm(ETOP_EMAILS[n])===e)||''}
 const ETOP_COORD_NOMBRES={
@@ -2645,6 +2645,7 @@ const ETOP_COORD_NOMBRES={
   'felipe.garcia@unab.cl':'Felipe',
   'rita.galvez@unab.cl':'Rita',
   'carolina.monsalve.g@unab.cl':'Carolina',
+  'maria.cruz@unab.cl':'María',
   'tutoriaonline47@unab.cl':'Pablo',
   'coordinaciontutorial@unab.cl':'Coordinación'
 };
