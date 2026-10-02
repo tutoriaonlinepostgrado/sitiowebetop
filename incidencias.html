@@ -890,7 +890,14 @@ function renderCourse(c){
       ?`<div class="empty-panel empty-green">✅ QA2 revisado — Sin incidencias registradas.</div>`
       :`<div class="empty-panel empty-gray">⏳ QA2 aún no realizado para este NRC.</div>`;
 
-  const canvas=c.registros.find(x=>x.urlCanvas)?.urlCanvas||'';
+  // La URL de Canvas pertenece al registro QA2, no a la incidencia.
+  // Se revisan TODOS los registros del NRC (CON o SIN incidencia) y se acepta
+  // tanto el alias del JSON como el nombre interno original de SharePoint.
+  const canvasReg=c.registros.find(x=>x.urlCanvas||x.URL_QA2_FI_Url);
+  const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??'';
+  const canvas=typeof canvasRaw==='object'
+    ? String(canvasRaw.Url??canvasRaw.url??canvasRaw.Value??canvasRaw.value??'').trim()
+    : String(canvasRaw??'').trim();
   const deriveUrl=buildDeriveUrl(c);
   const masterUrl=buildMasterUrl(c);
 
