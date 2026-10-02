@@ -343,7 +343,13 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
       document.getElementById('scope').textContent=profileTutor?`${profileTutor} · desde hoy y durante los próximos 100 días.`:'Vista general · desde hoy y durante los próximos 100 días.';
       const body=document.getElementById('rows');if(!list.length){body.innerHTML='<tr><td colspan="13" class="empty">No hay cursos en preparación para los filtros seleccionados.</td></tr>';updateSelection(list);return}
       body.innerHTML=list.map(x=>{
-        const inc=byCourse.get(String(x.id))||[],canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'',incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length,isUni118=norm(x['codigo curso'])==='UNI118',pending=!isUni118&&!inc.length;
+        const inc=byCourse.get(String(x.id))||[];
+        const canvasReg=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url);
+        const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??'';
+        const canvas=typeof canvasRaw==='object'
+          ? String(canvasRaw.Url??canvasRaw.url??canvasRaw.Value??canvasRaw.value??'').trim()
+          : String(canvasRaw??'').trim();
+        const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length,isUni118=norm(x['codigo curso'])==='UNI118',pending=!isUni118&&!inc.length;
         const studentCount=byNrcStudents.get(norm(x.nrc));
         const studentLabel=Number.isFinite(studentCount)?studentCount.toLocaleString('es-CL'):'Pendiente';
         const incLabel=isUni118?'NO APLICA':pending?'PENDIENTE QA2':incidentCount?`⚠ ${incidentCount}`:'✓ OK',
