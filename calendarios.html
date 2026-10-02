@@ -387,7 +387,11 @@
       const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
       if(!x){panel.classList.remove('open');host.innerHTML='';return;}
       const byCourse=buildIncidentMaps(),inc=byCourse.get(String(x.id))||[];
-      const canvas=(inc.find(i=>String(i.urlCanvas||'').trim())||{}).urlCanvas||'';
+      const canvasReg=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
+      const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??canvasReg?.urlQa2FiUrl??canvasReg?.urlQA2FIUrl??'';
+      const canvas=typeof canvasRaw==='object'
+        ? String(canvasRaw.Url??canvasRaw.url??canvasRaw.URL??canvasRaw.href??canvasRaw.Value??canvasRaw.value??'').trim()
+        : String(canvasRaw??'').trim();
       const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
       const incidentStatus=norm(x['codigo curso'])==='UNI118'?'NO APLICA':!inc.length?'PENDIENTE QA2':incidentCount?`CON INCIDENCIA (${incidentCount})`:'SIN INCIDENCIA';
       const incidentUrl=BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||'');
