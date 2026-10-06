@@ -228,6 +228,19 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const emailNorm=v=>String(v??'').trim().toLowerCase();
     const tutorByEmail=email=>Object.keys(EMAILS).find(name=>emailNorm(EMAILS[name])===emailNorm(email))||'';
+    const DELEGACIONES_TEMPORALES=[
+      {correo:'tutoriaonline45@unab.cl',tutor:'FRANCISCA INDA',desde:'2026-10-05',hasta:'2026-10-18'}
+    ];
+    const hoyISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+    function tutoresPermitidosPerfil(email,tutorBase){
+      if(!tutorBase)return [];
+      const hoy=hoyISO(),e=emailNorm(email);
+      const extras=DELEGACIONES_TEMPORALES
+        .filter(d=>emailNorm(d.correo)===e&&hoy>=d.desde&&hoy<=d.hasta)
+        .map(d=>String(d.tutor||'').trim())
+        .filter(Boolean);
+      return [...new Set([String(tutorBase).trim(),...extras])];
+    }
     const dateOnly=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T12:00:00');return Number.isNaN(d.getTime())?null:d};
     const fmt=v=>{const d=dateOnly(v);return d?d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'};
     const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
@@ -237,15 +250,17 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
     function globalSession(){try{return JSON.parse(localStorage.getItem(GLOBAL_SESSION)||'null')}catch(e){return null}}
     const gs=globalSession();
     const hasGlobalSession=!!(gs && gs.email && (gs.rol==='COORDINACION' || (gs.rol==='TUTOR' && gs.tutor)));
-    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor=gs?.rol==='TUTOR'&&gs?.tutor?String(gs.tutor).trim():'',selected=new Set();
+    let allCourses=[],incidents=[],studentMetrics=[],profileEmail=emailNorm(gs?.email||localStorage.getItem(STORAGE)||''),profileTutor=gs?.rol==='TUTOR'&&gs?.tutor?String(gs.tutor).trim():'',profileTutors=[],selected=new Set();
+    profileTutors=tutoresPermitidosPerfil(profileEmail,profileTutor);
 
     function applyGlobalSession(){
       if(!hasGlobalSession) return false;
       profileEmail=emailNorm(gs.email);
       profileTutor=gs.rol==='TUTOR'?String(gs.tutor||'').trim():'';
+      profileTutors=tutoresPermitidosPerfil(profileEmail,profileTutor);
       localStorage.setItem(STORAGE,profileEmail);
-      document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';
-      document.getElementById('tutor').disabled=!!profileTutor;
+      document.getElementById('profile').textContent=profileTutor?(profileTutors.length>1?`👤 ${profileTutor.split(' ')[0]} + reemplazo · Cambiar`:`👤 ${profileTutor.split(' ')[0]} · Cambiar`):'👥 Vista general · Cambiar';
+      document.getElementById('tutor').disabled=profileTutors.length===1;
       closeProfile();
       apply();
       return true;
@@ -279,7 +294,8 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
     }
 
     function baseCourses(){
-      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!profileTutor||norm(x.tutor)===norm(profileTutor))&&matchPortal(x));
+      const permitidos=new Set(profileTutors.map(norm));
+      return allCourses.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=100&&(!permitidos.size||permitidos.has(norm(x.tutor)))&&matchPortal(x));
     }
     function visibleCourses(exclude=''){
       const fac=norm(document.getElementById('facultad').value),tut=norm(document.getElementById('tutor').value),tipo=norm(document.getElementById('tipo').value),codigo=norm(document.getElementById('codigo').value),fecha=document.getElementById('fecha').value,q=norm(document.getElementById('buscar').value);
@@ -340,7 +356,7 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
       document.getElementById('visibleCount').textContent=list.length.toLocaleString('es-CL');
       document.getElementById('soonCount').textContent=list.filter(x=>days(x['fecha inicio'])<=7).length.toLocaleString('es-CL');
       document.getElementById('pendingCount').textContent=list.filter(x=>norm(x['codigo curso'])!=='UNI118'&&!(byCourse.get(String(x.id))||[]).length).length.toLocaleString('es-CL');
-      document.getElementById('scope').textContent=profileTutor?`${profileTutor} · desde hoy y durante los próximos 100 días.`:'Vista general · desde hoy y durante los próximos 100 días.';
+      document.getElementById('scope').textContent=profileTutors.length?(profileTutors.length>1?`${profileTutors.join(' + ')} · reemplazo temporal · próximos 100 días.`:`${profileTutors[0]} · desde hoy y durante los próximos 100 días.`):'Vista general · desde hoy y durante los próximos 100 días.';
       const body=document.getElementById('rows');if(!list.length){body.innerHTML='<tr><td colspan="13" class="empty">No hay cursos en preparación para los filtros seleccionados.</td></tr>';updateSelection(list);return}
       body.innerHTML=list.map(x=>{
         const inc=byCourse.get(String(x.id))||[];
@@ -362,7 +378,7 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
       const selectedCourses=allCourses.filter(x=>selected.has(String(x.id))),bar=document.getElementById('selection'),n=selectedCourses.length;bar.classList.toggle('on',n>0);document.getElementById('selectionTitle').textContent=`${n} NRC seleccionado${n===1?'':'s'}`;document.getElementById('selectionDetail').textContent=n?selectedCourses.map(x=>x.nrc).join(' · '):'';document.getElementById('selectAll').checked=!!list.length&&list.every(x=>selected.has(String(x.id)));document.getElementById('selectAll').indeterminate=list.some(x=>selected.has(String(x.id)))&&!list.every(x=>selected.has(String(x.id)))
     }
     function apply(){rebuildFilters();render()}
-    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;if(all){localStorage.removeItem(STORAGE);profileEmail=''}else {localStorage.setItem(STORAGE,profileEmail);localStorage.setItem(GLOBAL_SESSION,JSON.stringify({email:profileEmail,tutor:profileTutor,rol:COORDINACION.has(profileEmail)?'COORDINACION':'TUTOR',guardado:new Date().toISOString()}));}document.getElementById('profile').textContent=profileTutor?`👤 ${profileTutor.split(' ')[0]} · Cambiar`:'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=!!profileTutor;closeProfile();apply();return true}
+    function setProfile(email,all=false){profileEmail=emailNorm(email);profileTutor=all||COORDINACION.has(profileEmail)?'':tutorByEmail(profileEmail);if(!all&&profileEmail&&!profileTutor&&!COORDINACION.has(profileEmail))return false;profileTutors=tutoresPermitidosPerfil(profileEmail,profileTutor);if(all){localStorage.removeItem(STORAGE);profileEmail='';profileTutors=[]}else {localStorage.setItem(STORAGE,profileEmail);localStorage.setItem(GLOBAL_SESSION,JSON.stringify({email:profileEmail,tutor:profileTutor,rol:COORDINACION.has(profileEmail)?'COORDINACION':'TUTOR',guardado:new Date().toISOString()}));}document.getElementById('profile').textContent=profileTutor?(profileTutors.length>1?`👤 ${profileTutor.split(' ')[0]} + reemplazo · Cambiar`:`👤 ${profileTutor.split(' ')[0]} · Cambiar`):'👥 Vista general · Cambiar';document.getElementById('tutor').disabled=profileTutors.length===1;closeProfile();apply();return true}
     function openProfile(){document.getElementById('profileModal').classList.add('on');document.getElementById('email').value=profileEmail;document.getElementById('formMsg').textContent='';setTimeout(()=>document.getElementById('email').focus(),50)}
     function closeProfile(){document.getElementById('profileModal').classList.remove('on')}
     ['facultad','tutor','tipo','codigo','fecha'].forEach(id=>document.getElementById(id).addEventListener('change',apply));document.getElementById('buscar').addEventListener('input',render);document.getElementById('clear').addEventListener('click',()=>{['facultad','tutor','tipo','codigo','fecha','buscar'].forEach(id=>document.getElementById(id).value='');apply()});
