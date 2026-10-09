@@ -69,7 +69,18 @@ el('inspect').onclick=async()=>{ultimoQAValidado=null;el('exportarQA').disabled=
 const cursos=[...chosen.values()].map(c=>({cursoId:Number(c.id),nrcCodCal:c.nrc,urlCanvas:c.urlCanvas||''}));
 const coordinadores=[...document.querySelectorAll('#coordOptions input:checked')].map(x=>x.value);
 const checklist={};
-if(el('revisionQA').value==='PRIMERA')document.querySelectorAll('#qaMatrix input[type="radio"]:checked').forEach(x=>{if(!x.closest('.allcorrect-original'))checklist[x.name]=x.value});
+if(el('revisionQA').value==='PRIMERA'){
+document.querySelectorAll('#qaMatrix input[type="radio"]:checked').forEach(x=>{if(!x.closest('.allcorrect-original'))checklist[x.name]=x.value});
+const resumenes={'0':'qa_0_8','1':'qa_1_2','2':'qa_2_5','3':'qa_3_5','4':'qa_4_4','5':'qa_5_6','6':'qa_6_3','7':'qa_7_3','9':'qa_9_4'};
+Object.entries(resumenes).forEach(([sectionId,key])=>{
+const section=el('qaMatrix').querySelector('.qa-accordion[data-section="'+sectionId+'"]');
+if(!section)throw Error('No se encontró la sección del checklist '+sectionId);
+const checked=[...section.querySelectorAll('input[type="radio"]:checked')].filter(x=>!x.closest('.allcorrect-original'));
+if(!checked.length)throw Error('Sección sin respuestas: '+sectionId);
+checklist[key]=checked.every(x=>x.value==='SI')?'SI':'NO';
+});
+if(Object.keys(checklist).length!==59)throw Error('El checklist debe contener 59 respuestas; se encontraron '+Object.keys(checklist).length);
+}
 const incidencias=[];
 try{if(el('qaEstado').value==='CON INCIDENCIA'){const cards=[...document.querySelectorAll('#incList .incident')];for(let idx=0;idx<cards.length;idx++){const d=cards[idx],selects=d.querySelectorAll('select'),file=d.querySelector('input[type=file]').files[0];let evidencia=null;if(file){if(file.size>10485760)throw Error('Archivo superior a 10 MB: '+file.name);const ext=file.name.split('.').pop().toLowerCase();if(!['pdf','doc','docx','xls','xlsx','jpg','jpeg','png','gif','webp'].includes(ext))throw Error('Formato de evidencia no permitido: '+file.name);evidencia={evidenciaId:'INC-'+(idx+1),nombreArchivo:file.name,tamanoBytes:file.size,mimeType:file.type||'application/octet-stream',contenidoBase64:await archivoBase64(file)};}incidencias.push({estado:selects[0].value,idIncidencia:selects[1].value,categoria:selects[2].value,semana:selects[3].value,descripcion:d.querySelector('textarea').value.trim(),evidencia});}}
 ultimoQAValidado={tipoQA:el('tipo').value,revision:el('revisionQA').value,estadoQA:el('qaEstado').value,cursos,coordinadores,checklist,incidencias};
