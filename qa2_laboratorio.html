@@ -48,7 +48,7 @@ el('inspect').onclick=()=>{
    const opts=d.querySelectorAll('select');
    return {estado:opts[0].value,idIncidencia:opts[1].value,categoria:opts[2].value,semana:opts[3].value,descripcion:d.querySelector('textarea').value,evidencia:d.querySelector('input[type=file]').files[0]?.name||null};
  }):[{estado:'NO APLICA',idIncidencia:'00',categoria:'NO APLICA',semana:'NO APLICA',descripcion:'Sin Incidencias registradas.',evidencia:null}];
- const preview={estadoQA:el('qaEstado').value,revision:el('revisionQA').value,cursos:coursesSelected.map(c=>({nrcCodCal:c.nrc,cursoId:c.id,urlCanvas:c.urlCanvas||''})),coordinadores,checklist,incidencias,notificacionPrevista:'UN SOLO CORREO CONSOLIDADO (pendiente)'};
+ const preview={estadoQA:el('qaEstado').value,revision:el('revisionQA').value,cursos:coursesSelected.map(c=>({nrcCodCal:c.nrc,cursoId:c.id,urlCanvas:c.urlCanvas||''})),coordinadores:coordinators,checklist,incidencias,notificacionPrevista:'UN SOLO CORREO CONSOLIDADO (pendiente)'};
  el('output').style.color='#176a3d';
  el('output').textContent='VALIDACIÓN COMPLETA — VISTA PREVIA, SIN ENVÍO\\n\\n'+JSON.stringify(preview,null,2);
  el('output').scrollIntoView({behavior:'smooth',block:'center'});
