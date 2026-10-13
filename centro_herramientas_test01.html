@@ -69,7 +69,7 @@ body.embedded tbody td{height:23px}
   body.embedded .ri-valor{font-size:15px}
 }
 
-.ri-testbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fffdf1;border:1px solid #e2cf79;padding:8px 10px;border-radius:8px;font-size:11px}
+.ri-datefilter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;font-weight:700;color:#334155}.ri-datefilter input{border:1px solid #b8cadb;border-radius:5px;padding:5px 7px;background:white;color:#24384d}.ri-datefilter button{padding:5px 9px;border:1px solid #b8cadb;background:white;border-radius:5px;cursor:pointer}.ri-testbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fffdf1;border:1px solid #e2cf79;padding:8px 10px;border-radius:8px;font-size:11px}
 .ri-testbar button,.ri-testbar input{cursor:pointer}
 .ri-testbar button{background:#244e78;color:#fff;border:0;border-radius:5px;padding:7px 10px;font-size:11px;font-weight:700}
 .ri-testbar button:disabled{opacity:.4}
@@ -145,7 +145,7 @@ body.embedded tbody td{height:23px}
     <div class="ri-tarjeta alerta"><div class="ri-etiqueta">NRC sin nómina</div><div class="ri-valor" id="kSin">0</div></div>
   </div>
 
-  <div class="ri-testbar"><strong>🧪 Prueba de recuperación de nóminas</strong><label><input type="checkbox" id="recSelectAll"> Seleccionar los cursos filtrados</label><span id="recCount">0 seleccionados</span><button id="recReview" type="button">🔍 Revisar cursos anteriores</button><span>Sin escritura en SharePoint</span></div>
+  <div class="ri-testbar"><strong>🧪 Prueba de recuperación de nóminas</strong><div class="ri-datefilter"><label for="recFechaInicio">Fecha de inicio:</label><input type="date" id="recFechaInicio" title="Filtrar cursos por su fecha de inicio"><button type="button" id="recFechaLimpiar">Limpiar fecha</button></div><label><input type="checkbox" id="recSelectAll"> Seleccionar los cursos filtrados</label><span id="recCount">0 seleccionados</span><button id="recReview" type="button">🔍 Revisar cursos anteriores</button><span>Sin escritura en SharePoint</span></div>
   <div class="ri-recovery" id="recResults" style="display:none"></div>
   <div class="ri-tabla-contenedor">
     <table>
@@ -251,6 +251,8 @@ function incidenciaTexto(x,byCourse){
 function listaActualReporte(){
   const metricMap=new Map(metricas.map(x=>[norm(x.nrc),Number(x.total_estudiantes)||0]));
   let list=filterByParams(cursos).map(x=>({...x,total:metricMap.get(norm(x.nrc))||0}));
+  const fechaPrueba=document.getElementById('recFechaInicio')?.value||'';
+  if(fechaPrueba)list=list.filter(x=>fechaISO(x['fecha inicio'])===fechaPrueba);
   if(nomina==='FALTA_NOMINA')list=list.filter(x=>x.total===0);
   if(nomina==='CON_ESTUDIANTES')list=list.filter(x=>x.total>0);
   list.sort((a,b)=>String(a.facultad||'').localeCompare(String(b.facultad||''),'es')||String(a.nrc||'').localeCompare(String(b.nrc||''),'es',{numeric:true}));
@@ -501,6 +503,8 @@ document.getElementById('recSelectAll').addEventListener('change',e=>{
  listaActualReporte().forEach(x=>{if(e.target.checked)recoverySelected.add(String(x.nrc));else recoverySelected.delete(String(x.nrc));});
  render();
 });
+document.getElementById('recFechaInicio').addEventListener('change',()=>{document.getElementById('recResults').style.display='none';render();});
+document.getElementById('recFechaLimpiar').addEventListener('click',()=>{document.getElementById('recFechaInicio').value='';document.getElementById('recResults').style.display='none';render();});
 document.getElementById('recReview').addEventListener('click',()=>{
  const chosen=cursos.filter(x=>recoverySelected.has(String(x.nrc)));
  const out=document.getElementById('recResults');out.style.display='block';
