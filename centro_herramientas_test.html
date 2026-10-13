@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ Centro de Herramientas ETOP</title>
+<title>🧪 ETOP — Pruebas Carga Masiva</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700;800&display=swap');
@@ -292,7 +292,7 @@
 
 <!-- TAB 1: CARGA UNIVERSAL DE ESTUDIANTES -->
 <div class="tab-panel active" id="tab0">
-  <div class="section-title">Carga Universal de Estudiantes</div>
+  <div class="section-title">🧪 PRUEBA — Carga Universal de Estudiantes</div><div class="alert info">Entorno de pruebas. No utilices el botón de carga a SharePoint en los métodos antiguos con datos reales. En el modo de carga masiva el envío está bloqueado.</div>
   <div class="section-sub">Sube la nómina en su formato original. La herramienta detecta automáticamente la estructura, normaliza los estudiantes y prepara la carga a SharePoint.</div>
 
   <label>Selecciona el método de entrada:</label>
@@ -311,6 +311,11 @@
       <input type="radio" name="tab1-mode" value="texto">
       <span class="radio-dot"></span>
       📝 Pegar texto directamente desde la web
+    </label>
+    <label class="radio-option" onclick="selectRadio(this, 'tab1-mode', 'version')">
+      <input type="radio" name="tab1-mode" value="version">
+      <span class="radio-dot"></span>
+      🗂️ Carga masiva por intake / versión
     </label>
   </div>
 
@@ -342,6 +347,25 @@
       </div>
       <div id="t1-course-selected" class="alert info" style="display:none;"></div>
     </div>
+  </div>
+
+  <div id="t1-version" class="dynamic-section">
+    <div class="helper">Carga provisional por versión ante indisponibilidad de Banner. Se reutiliza la detección de formatos del modo universal. Seleccione explícitamente los NRC de destino y revise la vista previa antes de enviar. No representa una confirmación de matrícula oficial.</div>
+    <div class="form-grid">
+      <div class="form-group"><label>🔎 BUSCAR INTAKE / VERSIÓN</label>
+        <input type="text" id="tv-search" list="tv-intakes" oninput="tvRenderCursos()" placeholder="Buscar por programa, intake o versión">
+        <datalist id="tv-intakes"></datalist>
+      </div>
+      <div class="form-group"><label>ORIGEN DE NÓMINA</label>
+        <select id="tv-origen"><option value="Provisional - Coordinación">Provisional — Coordinación</option><option value="Oficial - Banner">Oficial — Banner</option><option value="Otro origen verificado">Otro origen verificado</option></select>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" type="button" onclick="tvMarcar(true)">☑ Seleccionar cursos visibles</button><button class="btn" type="button" onclick="tvMarcar(false)">☐ Desmarcar todos</button></div>
+    <div id="tv-cursos" class="table-wrap" style="max-height:300px;overflow:auto;"><div class="alert info">Busque un intake para mostrar sus cursos.</div></div>
+    <div class="form-group mt1"><label>📥 NÓMINAS ORIGINALES — EXCEL / CSV (SE ACEPTAN VARIOS ARCHIVOS)</label><div class="file-drop"><input id="tv-files" type="file" multiple accept=".xlsx,.xls,.csv" onchange="tvArchivoCambiado()">📂 Seleccionar nóminas<div id="tv-file-name" class="file-name"></div></div></div>
+    <div class="form-group mt1"><label>O PEGAR NÓMINA EN TEXTO (SI NO SE SUBEN ARCHIVOS)</label><textarea id="tv-text" placeholder="Pegue aquí datos desde Excel o la web con encabezados, RUT, nombre y correo."></textarea></div>
+    <div class="helper">La selección es por NRC, no por asignatura. Los cursos SEMIPRES se excluyen salvo MBAES. La asignación masiva no garantiza que cada estudiante tenga matrícula oficial en todos los cursos: debe validarla el coordinador.</div>
+    <div id="tv-coverage" class="alert info">Cobertura de la carga actual: seleccione una versión.</div>
   </div>
 
   <div id="t1-manual" class="dynamic-section">
@@ -686,7 +710,7 @@ function switchTab(idx, btn) {
 }
 
 function clearAll() {
-  Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'universal',t1Data:null,t1DetectedFormat:'',t1SelectedCourse:null,t1OmitidosSemipres:[],t1OmitidosSinFecha:0,t1NoIdentificadosModalidad:[]});
+  Object.assign(state,{t1Files:[],t1mFiles:[],t1mAccumulated:[],t2File:null,t3File:null,t2Data:null,t3Data:null,t1Mode:'universal',t1Data:null,t1DetectedFormat:'',t1SelectedCourse:null,t1OmitidosSemipres:[],t1OmitidosSinFecha:0,t1NoIdentificadosModalidad:[],t1BulkMeta:null});
   document.querySelectorAll('input[type=text],input[type=number],input[type=date],input[type=time],input[type=url],textarea').forEach(el=>el.value='');
   ['drop1-names','drop1m-names','drop2-names','drop3-names'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
   ['t1-actions','t2-actions','t3-actions','t2-paso3','t3-paso3','btn-clear-accum'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
@@ -713,9 +737,9 @@ function deleteRow(idx){
 function selectRadio(el,name,value){
   document.querySelectorAll(`[onclick*="${name}"]`).forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');state.t1Mode=value;
-  ['t1-diario','t1-manual','t1-texto'].forEach(id=>{const s=document.getElementById(id);if(s)s.classList.remove('visible');});
-  const map={universal:'t1-diario',diario:'t1-diario',manual:'t1-manual',texto:'t1-texto'};
-  const t=document.getElementById(map[value]);if(t)t.classList.add('visible');
+  ['t1-diario','t1-manual','t1-texto','t1-version'].forEach(id=>{const s=document.getElementById(id);if(s)s.classList.remove('visible');});
+  const map={universal:'t1-diario',diario:'t1-diario',manual:'t1-manual',texto:'t1-texto',version:'t1-version'};
+  const t=document.getElementById(map[value]);if(t)t.classList.add('visible');if(value==='version')tvRenderCursos();
 }
 
 function handleFiles(input,dropId,stateKey){
@@ -1121,6 +1145,8 @@ async function processTab1(){
       state.t1DetectedFormat=[...formatos].join(' + ');state.t1Data=filas;
       if(state.t1SelectedCourse&&!t1TieneCurso(filas)){state.t1Data=t1FinalizarRows(t1AplicarCurso(filas,state.t1SelectedCourse));const modSel=t1FiltrarModalidad(state.t1Data);state.t1Data=modSel.permitidos;state.t1OmitidosSemipres.push(...modSel.omitidos);state.t1NoIdentificadosModalidad.push(...modSel.noIdentificados);}
       t1MostrarResultado(state.t1Data,state.t1DetectedFormat,!!state.t1SelectedCourse);
+    }else if(mode==='version'){
+      await tvProcesar();
     }else if(mode==='manual'){
       const nrcCod=document.getElementById('t1m-nrccod').value.trim(),fechaInicio=document.getElementById('t1m-fecha').value;
       if(!nrcCod||!fechaInicio||!state.t1mFiles.length){resultEl.innerHTML='<div class="alert error">Completa NRC_COD, FECHA INICIO y sube el CSV.</div>';return;}
@@ -1140,10 +1166,12 @@ function t1DescargarProcesados(){
 }
 async function t1EnviarDirectoSharePoint(){
   const el=document.getElementById('t1-sp-result');
+  if(state.t1Mode==='version'){el.innerHTML='<div class="alert info">🔒 Modo prueba: descarga el Excel generado para revisar la nómina. El envío masivo a SharePoint permanece deshabilitado hasta validar la prevención de duplicados.</div>';return;}
   if(!state.t1Data||!state.t1Data.length){el.innerHTML='<div class="alert error">No hay registros procesados.</div>';return;}
   if(!t1TieneCurso(state.t1Data)){el.innerHTML='<div class="alert error">Falta asignar curso/NRC antes de cargar.</div>';return;}
   if(!T1_FLOW_URL){el.innerHTML='<div class="alert info">⚙️ La carga directa está preparada, pero falta conectar la URL del nuevo flujo de Power Automate.</div>';return;}
-  const payload={origen:'Centro Herramientas ETOP',fechaEnvio:new Date().toISOString(),total:state.t1Data.length,formato:state.t1DetectedFormat,estudiantes:state.t1Data};
+  if(state.t1Mode==='version' && !confirm('CONFIRMAR CARGA MASIVA: se enviarán '+state.t1Data.length+' registros a SharePoint. ¿Ha verificado que los estudiantes corresponden a todos los NRC seleccionados y que el flujo gestiona registros existentes?'))return;
+  const payload={origen:'Centro Herramientas ETOP',fechaEnvio:new Date().toISOString(),total:state.t1Data.length,formato:state.t1DetectedFormat,metadatosCarga:state.t1Mode==='version'?state.t1BulkMeta:null,estudiantes:state.t1Data};
   el.innerHTML='<div class="alert info"><span class="spinner"></span> Enviando '+state.t1Data.length+' estudiantes a Power Automate...</div>';
   try{
     const res=await fetch(T1_FLOW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -2087,6 +2115,99 @@ function t4CoordRemove(correo){
   t4CoordRenderChips();
 }
 
+
+ // ─── CARGA MASIVA POR INTAKE / VERSION ────────────────────────────────────────
+ const tvState={selected:new Set(),sourceRows:[],courses:[],files:[],selectedIntake:''};
+ function tvEsc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+ function tvGetIntake(r){return t1Get(r,['intake','INTAKE','intake o version','INTAKE O VERSION']);}
+ function tvCatalog(){
+   const seen=new Set();
+   return (t2NrcsData||[]).filter(r=>{
+     if(!t1CursoPermitidoCatalogo(r))return false;
+     const c=t1CursoDesdeCatalogo(r),k=c.NRC_COD_CAL_FILTRO;
+     if(!k||!c.NRC_COD||!c.PERIODO||seen.has(k))return false;
+     seen.add(k);return true;
+   });
+ }
+ function tvRefreshIntakes(){
+   const el=document.getElementById('tv-intakes');if(!el)return;
+   const values=[...new Set(tvCatalog().map(tvGetIntake).filter(Boolean))].sort();
+   el.replaceChildren(...values.map(v=>{const o=document.createElement('option');o.value=v;return o;}));
+ }
+ function tvRenderCursos(){
+   const input=document.getElementById('tv-search'),el=document.getElementById('tv-cursos');
+   if(!input||!el)return;
+   const q=t1Norm(input.value);tvRefreshIntakes();
+   if(!q){tvState.courses=[];tvState.selected.clear();el.innerHTML='<div class="alert info">Escriba un intake / versión para consultar cursos.</div>';tvCoverage();return;}
+   const catalog=tvCatalog(), exact=catalog.filter(r=>t1Norm(tvGetIntake(r))===q);
+   const matches=exact.length?exact:catalog.filter(r=>t1Norm(tvGetIntake(r)).includes(q));
+   const intakes=[...new Set(matches.map(tvGetIntake))];
+   if(intakes.length!==1){
+     tvState.courses=[];tvState.selected.clear();
+     el.innerHTML='<div class="alert info">'+(intakes.length?'Hay '+intakes.length+' versiones coincidentes. Escriba o elija una versión completa para evitar mezclar cohortes.':'No se encontraron cursos elegibles.')+'</div>';tvCoverage();return;
+   }
+   const intake=intakes[0];tvState.selectedIntake=intake;tvState.courses=catalog.filter(r=>tvGetIntake(r)===intake);
+   const allowed=new Set(tvState.courses.map(r=>t1CursoDesdeCatalogo(r).NRC_COD_CAL_FILTRO));
+   tvState.selected=new Set([...tvState.selected].filter(k=>allowed.has(k)));
+   el.innerHTML='<table><thead><tr><th>Seleccionar</th><th>NRC</th><th>Curso</th><th>Inicio</th><th>Tutor</th></tr></thead><tbody>'+tvState.courses.map(r=>{
+     const c=t1CursoDesdeCatalogo(r),k=c.NRC_COD_CAL_FILTRO;
+     return '<tr><td><input type="checkbox" data-tv-nrc="'+tvEsc(k)+'" '+(tvState.selected.has(k)?'checked':'')+' onchange="tvToggle(this)"></td><td>'+tvEsc(k)+'</td><td>'+tvEsc(c.NOMBRE_CURSO)+'</td><td>'+tvEsc(c.FECHA_INICIO)+'</td><td>'+tvEsc(r.tutor||'')+'</td></tr>';
+   }).join('')+'</tbody></table>';
+   tvCoverage();
+ }
+ function tvToggle(el){const k=el.dataset.tvNrc;if(el.checked)tvState.selected.add(k);else tvState.selected.delete(k);tvCoverage();}
+ function tvMarcar(on){if(on)tvState.courses.forEach(r=>tvState.selected.add(t1CursoDesdeCatalogo(r).NRC_COD_CAL_FILTRO));else tvState.selected.clear();document.querySelectorAll('[data-tv-nrc]').forEach(x=>x.checked=on);tvCoverage();}
+ function tvArchivoCambiado(){tvState.files=[...document.getElementById('tv-files').files];document.getElementById('tv-file-name').textContent=tvState.files.map(x=>x.name).join(', ');}
+ function tvCoverage(unique){
+   const el=document.getElementById('tv-coverage');if(!el)return;
+   const total=tvState.courses.length,sel=tvState.selected.size,n=Number(unique)||0;
+   el.innerHTML='<strong>Tablero de cobertura de la carga preparada</strong><div style="margin-top:.5rem">Versión: '+tvEsc(tvState.selectedIntake||'—')+' · Cursos del catálogo: <strong>'+total+'</strong> · NRC seleccionados: <strong>'+sel+'</strong> · Sin seleccionar: <strong>'+(total-sel)+'</strong> · Estudiantes únicos: <strong>'+n+'</strong> · Registros proyectados: <strong>'+(n*sel)+'</strong></div><div style="background:#15202c;border-radius:7px;overflow:hidden;height:10px;margin-top:10px"><div style="background:#f6c128;width:'+(total?100*sel/total:0)+'%;height:100%"></div></div><div style="font-size:.79rem;margin-top:.5rem">Este indicador mide la selección de esta operación, NO la cobertura real de SharePoint.</div>';
+ }
+ function tvParsePasted(raw){
+   const lines=raw.trim().split(/\r?\n/).filter(Boolean);
+   const sep=lines[0]?.includes('\t')?'\t':lines[0]?.includes(';')?';':',';
+   const rows=lines.map(line=>line.split(sep).map(v=>v.trim().replace(/^"|"$/g,'')));
+   return t1ParseGenerico(rows);
+ }
+
+function tvParseBienvenidasCompat(rawRows){
+  const generic=t1ParseGenerico(rawRows);
+  if(generic.length)return generic;
+  const out=[];
+  const emailRe=/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+  const rutRe=/\b\d{7,9}-?[0-9Kk]\b/;
+  for(const row of rawRows){
+    const cells=row.map(x=>String(x??'').trim()),str=cells.join(' ');
+    const email=str.match(emailRe)?.[0],rut=str.match(rutRe)?.[0];
+    if(!email||!rut)continue;
+    const nombre=cells.filter(x=>x&&!x.includes('@')&&!rutRe.test(x)&&!/^\d+$/.test(x)).slice(0,3).join(' ').toUpperCase();
+    out.push({RUT:t1NormalizarRut(rut),NOMBRE:nombre,CORREO_UNAB:email.toLowerCase(),Columna7:''});
+  }
+  return out;
+}
+
+ async function tvProcesar(){
+   const result=document.getElementById('t1-result'),actions=document.getElementById('t1-actions');
+   if(!tvState.selected.size){result.innerHTML='<div class="alert error">Seleccione al menos un NRC.</div>';return;}
+   if(!tvState.files.length&&!document.getElementById('tv-text').value.trim()){result.innerHTML='<div class="alert error">Cargue un archivo o pegue la nómina.</div>';return;}
+   let rows=[],formats=new Set();
+   for(const f of tvState.files){const parsed=await t1ProcesarArchivoUniversal(f);formats.add(parsed.format);let detected=parsed.rows;if(!detected.length){detected=tvParseBienvenidasCompat(await readFile(f,false));if(detected.length)formats.add('Bienvenidas compatible');}rows.push(...detected);}
+   if(!tvState.files.length){const txt=document.getElementById('tv-text').value;rows=tvParsePasted(txt);formats.add('Texto tabular');}
+   rows=t1FinalizarRows(rows);
+   const unique=new Map();for(const r of rows){const rut=String(r.RUT||'').replace(/[^0-9K]/gi,'').toUpperCase();if(!rut||!String(r.CORREO_UNAB||'').includes('@'))continue;if(!unique.has(rut))unique.set(rut,r);}
+   if(!unique.size){result.innerHTML='<div class="alert error">No se encontraron estudiantes válidos con RUT y correo. Revise los encabezados y el formato.</div>';return;}
+   const selectedCourses=tvState.courses.filter(r=>tvState.selected.has(t1CursoDesdeCatalogo(r).NRC_COD_CAL_FILTRO));
+   const output=[];
+   for(const r of selectedCourses){const course=t1CursoDesdeCatalogo(r);for(const student of unique.values()){
+     output.push({...student,PERIODO:course.PERIODO,NRC_COD:course.NRC_COD,NOMBRE_CURSO:course.NOMBRE_CURSO,FECHA_INICIO:course.FECHA_INICIO,NRC_COD_CAL_FILTRO:course.NRC_COD_CAL_FILTRO});
+   }}
+   state.t1Data=t1FinalizarRows(output);state.t1DetectedFormat='Versión · '+[...formats].join(' + ');
+   state.t1BulkMeta={intake:tvState.selectedIntake,origen:document.getElementById('tv-origen').value,cursos:selectedCourses.length,estudiantes:unique.size};
+   tvCoverage(unique.size);
+   result.innerHTML='<div class="alert success">✅ Nómina preparada: <strong>'+unique.size+'</strong> estudiantes × <strong>'+selectedCourses.length+'</strong> NRC = <strong>'+state.t1Data.length+'</strong> registros. Formatos detectados: '+tvEsc([...formats].join(', '))+'.</div><div class="alert info">⚠️ Revise que todos los estudiantes correspondan a cada NRC marcado. Antes del envío, confirme las reglas de duplicados del flujo de Power Automate; esta vista previa solo evita duplicados dentro del archivo.</div>';
+   const table=document.createElement('div');result.appendChild(table);renderTable(state.t1Data.slice(0,200),table);actions.style.display='flex';
+ }
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (function init(){
   const today=new Date().toISOString().substring(0,10);
@@ -2096,6 +2217,7 @@ function t4CoordRemove(correo){
   cAdd();
   t4CoordInit();
   t2CargarNrcs();
+  setTimeout(tvRefreshIntakes,1200);
 })();
 </script>
 </body>
