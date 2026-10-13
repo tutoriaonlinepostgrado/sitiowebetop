@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ Centro de Herramientas ETOP</title>
+<title>🧪 ETOP - Recuperación de nóminas por NRC TEST01</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700;800&display=swap');
@@ -289,6 +289,7 @@
   <button class="tab-btn" onclick="switchTab(2, this)">📨 Envío Invitación Sesión Sincrónica</button>
   <button class="tab-btn" onclick="switchTab(3, this)">📅 Formateador Calendarios</button>
   <button class="tab-btn" onclick="switchTab(4, this)">📂 Notificación Carpetas Creadas</button>
+  <button class="tab-btn" onclick="switchTab(5, this)">🧪 Recuperar nóminas por NRC</button>
 </div>
 
 <!-- TAB 1: FORMATEADOR NÓMINAS -->
@@ -654,6 +655,25 @@
 <!-- TOAST -->
 <div class="etop-toast" id="etop-toast">✅ Correo copiado — pega en Outlook con Ctrl+V</div>
 
+
+<!-- TEST: RECUPERACIÓN DE NÓMINAS POR CURSOS POR INICIAR -->
+<div class="tab-panel" id="tab5">
+ <div class="section-title">🧪 Recuperación de nóminas — Cursos por iniciar</div>
+ <div class="section-sub">Seleccione los cursos de destino de la semana y revise los NRC anteriores de su misma versión. Modo seguro: no consulta datos personales ni escribe en SharePoint.</div>
+ <div class="form-grid col3">
+  <div class="form-group"><label>FECHA DE INICIO</label><input id="rc-fecha" type="date" onchange="rcRender()"></div>
+  <div class="form-group"><label>FACULTAD</label><select id="rc-facultad" onchange="rcRender()"><option value="">Todas las facultades</option></select></div>
+  <div class="form-group"><label>TUTOR</label><select id="rc-tutor" onchange="rcRender()"><option value="">Todos los tutores</option></select></div>
+ </div>
+ <div class="form-grid">
+  <div class="form-group"><label>INTAKE / VERSIÓN</label><input id="rc-intake" placeholder="Filtrar intake o versión" oninput="rcRender()"></div>
+  <div class="form-group"><label>BUSCAR NRC O CURSO</label><input id="rc-buscar" placeholder="Buscar NRC o asignatura" oninput="rcRender()"></div>
+ </div>
+ <div class="btn-row"><button class="btn" onclick="rcSeleccionar(true)">☑ Seleccionar visibles</button><button class="btn" onclick="rcSeleccionar(false)">☐ Desmarcar todos</button><button class="btn primary" onclick="rcAnalizar()">🔍 Revisar nóminas anteriores</button></div>
+ <div id="rc-kpis" class="alert info">Cargando catálogo de cursos…</div>
+ <div id="rc-lista"></div>
+ <div id="rc-result"></div>
+</div>
 <script>
 // ─── GLOBAL STATE ─────────────────────────────────────────────────────────────
 const state = {
@@ -1608,6 +1628,43 @@ function t4CoordRemove(correo){
   t4CoordRenderChips();
 }
 
+
+/* Prueba independiente: recuperación basada en NRC históricos del catálogo. */
+const rcSelected=new Set();let rcVisible=[];
+const rcVal=(r,keys)=>{for(const k of keys){if(r&&r[k]!=null&&String(r[k]).trim())return String(r[k]).trim();}return'';};
+const rcEscape=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const rcDate=v=>{const x=String(v||'');if(/^\d{4}-\d{2}-\d{2}/.test(x))return x.slice(0,10);const m=x.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';};
+const rcNrc=r=>rcVal(r,['nrc_cod_cal','NRC_COD_CAL','nrc','NRC']);
+const rcIntake=r=>rcVal(r,['intake','INTAKE','intake o version','INTAKE O VERSION']);
+const rcFecha=r=>rcDate(rcVal(r,['fecha inicio','FECHA_INICIO','fecha_inicio','inicio']));
+const rcFaculty=r=>rcVal(r,['facultad','FACULTAD']);
+const rcTutor=r=>rcVal(r,['tutor','TUTOR']);
+function rcCatalog(){const seen=new Set();return (t2NrcsData||[]).filter(r=>{const id=rcNrc(r);if(!id||seen.has(id))return false;seen.add(id);return true;});}
+function rcOptions(id,values,placeholder){const el=document.getElementById(id);if(!el)return;const prev=el.value;el.innerHTML='<option value="">'+placeholder+'</option>';values.sort((a,b)=>a.localeCompare(b,'es')).forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;el.appendChild(o)});el.value=prev;}
+function rcInit(){const rows=rcCatalog();rcOptions('rc-facultad',[...new Set(rows.map(rcFaculty).filter(Boolean))],'Todas las facultades');rcOptions('rc-tutor',[...new Set(rows.map(rcTutor).filter(Boolean))],'Todos los tutores');rcRender();}
+function rcRender(){
+ const fac=document.getElementById('rc-facultad')?.value||'',tut=document.getElementById('rc-tutor')?.value||'',date=document.getElementById('rc-fecha')?.value||'';
+ const ver=(document.getElementById('rc-intake')?.value||'').toUpperCase(),term=(document.getElementById('rc-buscar')?.value||'').toUpperCase();
+ rcVisible=rcCatalog().filter(r=>(!fac||rcFaculty(r)===fac)&&(!tut||rcTutor(r)===tut)&&(!date||rcFecha(r)===date)&&(!ver||rcIntake(r).toUpperCase().includes(ver))&&(!term||[rcNrc(r),rcVal(r,['nombre curso','NOMBRE_CURSO','codigo curso','CODIGO_CURSO'])].join(' ').toUpperCase().includes(term)));
+ const idset=new Set(rcCatalog().map(rcNrc));for(const id of [...rcSelected])if(!idset.has(id))rcSelected.delete(id);
+ document.getElementById('rc-kpis').textContent='Cursos del catálogo con los filtros actuales: '+rcVisible.length+' · NRC seleccionados: '+rcSelected.size+'. No se muestra estado real de matrícula.';
+ const box=document.getElementById('rc-lista');box.innerHTML='<div class="table-wrap" style="max-height:420px;overflow:auto"><table><thead><tr><th>Seleccionar</th><th>NRC</th><th>Curso</th><th>Inicio</th><th>Intake</th><th>Tutor</th></tr></thead><tbody>'+rcVisible.slice(0,400).map(r=>{const id=rcNrc(r);return '<tr><td><input type="checkbox" data-rc-id="'+rcEscape(id)+'" '+(rcSelected.has(id)?'checked':'')+' onchange="rcToggle(this)"></td><td>'+rcEscape(id)+'</td><td>'+rcEscape(rcVal(r,['nombre curso','NOMBRE_CURSO']))+'</td><td>'+rcEscape(rcFecha(r))+'</td><td>'+rcEscape(rcIntake(r))+'</td><td>'+rcEscape(rcTutor(r))+'</td></tr>'}).join('')+'</tbody></table></div>';
+ if(rcVisible.length>400)box.insertAdjacentHTML('beforeend','<div class="alert info">Se muestran los primeros 400 cursos filtrados. Ajuste la búsqueda.</div>');
+}
+function rcToggle(el){if(el.checked)rcSelected.add(el.dataset.rcId);else rcSelected.delete(el.dataset.rcId);document.getElementById('rc-kpis').textContent='Cursos visibles: '+rcVisible.length+' · NRC seleccionados: '+rcSelected.size;}
+function rcSeleccionar(yes){for(const r of rcVisible){if(yes)rcSelected.add(rcNrc(r));else rcSelected.delete(rcNrc(r));}rcRender();}
+function rcAnalizar(){
+ const all=rcCatalog(), byId=new Map(all.map(r=>[rcNrc(r),r]));const selected=[...rcSelected].map(id=>byId.get(id)).filter(Boolean);
+ const el=document.getElementById('rc-result');
+ if(!selected.length){el.innerHTML='<div class="alert error">Seleccione al menos un NRC de destino.</div>';return;}
+ const matched=selected.map(dest=>{
+ const intake=rcIntake(dest),start=rcFecha(dest);
+ const previous=all.filter(r=>rcIntake(r)===intake&&rcNrc(r)!==rcNrc(dest)&&rcFecha(r)&&start&&rcFecha(r)<start).sort((a,b)=>rcFecha(b).localeCompare(rcFecha(a)));
+ return {dest,previous};
+ });
+ el.innerHTML='<div class="section-title" style="margin-top:1.4rem">Resultado de búsqueda de cursos anteriores</div><div class="alert info">🔒 Solo se ha comprobado la coincidencia de versión y fecha en nrcs.json. La Base Semáforo aún no está conectada: no podemos confirmar cuántos estudiantes existen ni cargar una nómina.</div><div class="table-wrap"><table><thead><tr><th>NRC destino</th><th>Versión</th><th>Origen candidato más reciente</th><th>Alternativas</th><th>Validación</th></tr></thead><tbody>'+matched.map(({dest,previous})=>'<tr><td>'+rcEscape(rcNrc(dest))+'</td><td>'+rcEscape(rcIntake(dest))+'</td><td>'+rcEscape(previous[0]?rcNrc(previous[0]):'Sin candidato')+'</td><td>'+rcEscape(previous.slice(1,3).map(rcNrc).join(' · ')||'—')+'</td><td>'+ (previous.length?'Pendiente de verificar estudiantes':'Requiere revisión manual')+'</td></tr>').join('')+'</tbody></table></div>';
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (function init(){
   const today=new Date().toISOString().substring(0,10);
@@ -1617,6 +1674,7 @@ function t4CoordRemove(correo){
   cAdd();cAdd();
   t4CoordInit();
   t2CargarNrcs();
+  setTimeout(rcInit,1600);
 })();
 </script>
 </body>
