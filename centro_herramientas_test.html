@@ -1319,8 +1319,8 @@ async function t4CargarExcel(input){
     }
     if(!seleccion)throw new Error('No se encontró una hoja con encabezados reconocibles.');
     texto.value=seleccion.rows.map(r=>r.map(calValorATexto).join('\t')).join('\n');
-    const mapa=calDetectarHeader(seleccion.rows[0])||{},detectados=Object.keys(mapa).map(k=>k.toUpperCase()).join(', ');
-    status.innerHTML='✅ Archivo cargado · Hoja: <strong>'+seleccion.nombreHoja+'</strong> · Campos detectados: '+detectados+'.';
+    const header=seleccion.rows.find(r=>calDetectarHeader(r))||[];const mapa=calDetectarHeader(header)||{},detectados=Object.keys(mapa).map(k=>k.toUpperCase()).join(', ');
+    status.innerHTML='✅ Archivo cargado · Hoja: <strong>'+seleccion.nombreHoja+'</strong> · Campos detectados: '+detectados+(seleccion.versionNormalizada?' · Versión '+seleccion.versionNormalizada:'')+'.';
   }catch(err){
     status.innerHTML='<span style="color:#b42318;">No se pudo leer el archivo: '+err.message+'</span>';
     input.value='';
