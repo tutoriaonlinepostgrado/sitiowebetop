@@ -69,7 +69,7 @@ review.addEventListener("click",event=>{
  },true);
 
 function recRowsForExport(result){
- const dest=result.dest,id=String(dest.nrc),match=id.match(/^(.+)_(\\d{6})$/);
+ const dest=result.dest,id=String(dest.nrc),match=id.match(/^(.+)_(\d{6})$/);
  return result.proposed.map(p=>({
  PERIODO:match?.[2]||"",NRC_COD:match?.[1]||id,NOMBRE_CURSO:dest["nombre curso"]||"",
  FECHA_INICIO:fechaISO(dest["fecha inicio"]),RUT:p.rut,NOMBRE:p.name,
