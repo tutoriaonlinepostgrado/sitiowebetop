@@ -1283,7 +1283,7 @@ function calDetectarHeader(cols){
   const cu=cols.map(calNormalizarEncabezado),hits={};
   const KEYS={
     nrc:['nrc','numero nrc','nrc curso'],
-    codigo:['codigo de curso','codigo curso','codigo de asignatura','codigo asignatura','cod asignatura','abreviada','abreviatura','sigla','materia'],
+    codigo:['codigo asignatura','codigo de curso','codigo curso','codigo de asignatura','codigo asignatura','cod asignatura','abreviada','abreviatura','sigla','materia'],
     nombre:['nombre de curso','nombre del curso','nombre curso','nombre de asignatura','nombre asignatura','asignatura','curso'],
     inicio:['fecha de inicio','fecha inicio','inicio de curso','inicio curso','inicio','desde'],
     termino:['fecha de termino','fecha termino','fecha de fin','fecha fin','termino de curso','termino curso','termino','fin','hasta'],
@@ -1303,7 +1303,8 @@ function calDetectarHeader(cols){
 }
 function calValorATexto(v){
   if(v instanceof Date&&!isNaN(v))return String(v.getDate()).padStart(2,'0')+'-'+String(v.getMonth()+1).padStart(2,'0')+'-'+v.getFullYear();
-  return String(v??'').replace(/[\t\r\n]+/g,' ').trim();
+  if(typeof v==='number'&&v>20000&&v<80000){const d=XLSX.SSF.parse_date_code(v);if(d)return String(d.d).padStart(2,'0')+'-'+String(d.m).padStart(2,'0')+'-'+d.y;}
+  return String(v??'').replace(/[\\t\\r\\n]+/g,' ').trim();
 }
 async function t4CargarExcel(input){
   const file=input.files&&input.files[0],status=document.getElementById('t4-archivo-status'),texto=document.getElementById('t4-texto');
