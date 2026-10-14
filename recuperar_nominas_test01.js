@@ -65,16 +65,34 @@ review.addEventListener("click",event=>{
  panel.innerHTML='<div class="notice"><b>Vista previa local:</b> '+escapeHTML(fileName)+'. Los datos permanecen en el navegador, no se publican en GitHub ni se envían a SharePoint. La información es una fotografía del Excel: confirme la inscripción antes de usarla.</div>'+
  '<div style="overflow:auto"><table><thead><tr><th>NRC destino</th><th>NRC de origen</th><th>Alumnos origen</th><th>Ya en destino</th><th>Retiro por revisar</th><th>Propuestos</th><th>Alternativas</th><th>Excel</th></tr></thead><tbody>'+
  results.map((r,i)=>'<tr><td>'+escapeHTML(r.dest.nrc)+'</td><td>'+escapeHTML(r.previous?.nrc||"No detectado")+'</td><td>'+r.students.length+'</td><td>'+r.existing.size+'</td><td>'+r.excluded.length+'</td><td>'+r.proposed.length+'</td><td>'+escapeHTML(r.prior.slice(1,3).map(x=>x.nrc).join(", ")||"—")+'</td><td>'+(r.previous?'<button type="button" data-rec-export="'+i+'">Descargar Excel</button>':"Revisar")+'</td></tr>').join("")+
- '</tbody></table></div>';
+ '</tbody></table></div><div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" id="recExportAll">📥 Descargar Excel consolidado (todos los NRC seleccionados)</button><span>Archivo compatible con la Carga Universal de Estudiantes</span></div>';
  },true);
+
+function recRowsForExport(result){
+ const dest=result.dest,id=String(dest.nrc),match=id.match(/^(.+)_(\\d{6})$/);
+ return result.proposed.map(p=>({
+ PERIODO:match?.[2]||"",NRC_COD:match?.[1]||id,NOMBRE_CURSO:dest["nombre curso"]||"",
+ FECHA_INICIO:fechaISO(dest["fecha inicio"]),RUT:p.rut,NOMBRE:p.name,
+ CORREO_UNAB:p.email,Columna7:p.personal||"",NRC_COD_CAL_FILTRO:id
+ }));
+}
+
 document.getElementById("recResults").addEventListener("click",event=>{
+ if(event.target.closest("#recExportAll")){
+  const all=window.__recTestResults||[];
+  const rows=all.flatMap(r=>r.previous?recRowsForExport(r):[]);
+  if(!rows.length){alert("No hay registros nuevos para exportar. Revise los NRC de origen.");return;}
+  const unique=new Map();for(const row of rows){const k=String(row.NRC_COD_CAL_FILTRO)+"|"+rutKey(row.RUT);if(!unique.has(k))unique.set(k,row);}
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([...unique.values()]),"Estudiantes");
+  XLSX.writeFile(wb,"ETOP_NOMINAS_CONSOLIDADAS_"+new Date().toISOString().slice(0,10)+".xlsx");return;
+ }
+
  const button=event.target.closest("button[data-rec-export]");if(!button)return;
  const result=window.__recTestResults?.[Number(button.dataset.recExport)];
  if(!result?.previous||!result.proposed.length){alert("Sin estudiantes propuestos para descargar.");return}
- const dest=result.dest,id=String(dest.nrc),match=id.match(/^(.+)_(\d{6})$/);
- const output=result.proposed.map(p=>({
- PERIODO:match?.[2]||"",NRC_COD:match?.[1]||id,NOMBRE_CURSO:dest["nombre curso"]||"",FECHA_INICIO:fechaISO(dest["fecha inicio"]),RUT:p.rut,NOMBRE:p.name,CORREO_UNAB:p.email,Columna7:p.personal||"",NRC_COD_CAL_FILTRO:id
- }));
+ const output=recRowsForExport(result);
+ const id=String(result.dest.nrc);
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(output),"Estudiantes");
  XLSX.writeFile(wb,"NOMINA_REVISION_"+id.replace(/[^A-Za-z0-9_-]/g,"_")+".xlsx");
 });
