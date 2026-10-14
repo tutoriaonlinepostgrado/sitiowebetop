@@ -1337,6 +1337,14 @@ function calFmtFecha(v){
   if(m)return '20'+m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
   return s;
 }
+function calFechaCortaISO(valor, anio){
+  const m=String(valor||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').match(/^(\d{1,2})[\s./-]+(ene|feb|mar|abr|may|jun|jul|ago|sep|sept|oct|nov|dic)$/);
+  if(!m)return '';
+  const meses={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,sept:9,oct:10,nov:11,dic:12};
+  const mes=meses[m[2]],dia=Number(m[1]),y=Number(anio);
+  if(!y||dia<1||dia>new Date(y,mes,0).getDate())return '';
+  return y+'-'+String(mes).padStart(2,'0')+'-'+String(dia).padStart(2,'0');
+}
 function calSepararRangoFechas(v){
   const s=String(v||'').trim();
   if(!s)return {inicio:'',termino:''};
@@ -1400,7 +1408,7 @@ function calSumarMesesISO(fechaIso,meses){
 function parsearTextoCalendario(texto){
   texto=calConvertirTextoPlanoATabulado(texto);
   const NRC_PAT=/^\d{4,5}$/,lineas=texto.split('\n'),resultados=[];
-  let headerMap=null,mF='',mP='',mPer='';
+  let headerMap=null,mF='',mP='',mPer='',anioCurso=0,ultimaFechaInicio='';
   const seenRows=new Set();
   const now=new Date();
   const ts=now.getFullYear().toString()
@@ -1424,8 +1432,21 @@ function parsearTextoCalendario(texto){
     let codigo=get('codigo').replace(/\s+/g,'').toUpperCase(),nombre=get('nombre');
     const rangoCrudo=get('rango')||get('inicio');
     const rango=calSepararRangoFechas(rangoCrudo);
-    const inicio=rango.inicio;
-    let termino=calFmtFecha(get('termino'))||rango.termino;
+    const periodoRef=get('periodo')||mPer;
+    if(!anioCurso && /^20\d{4}$/.test(periodoRef))anioCurso=Number(periodoRef.slice(0,4));
+    let inicio=rango.inicio,termino=calFmtFecha(get('termino'))||rango.termino;
+    const cortaInicio=calFechaCortaISO(rangoCrudo,anioCurso||new Date().getFullYear());
+    if(cortaInicio){
+      const mesActual=Number(cortaInicio.slice(5,7));
+      const mesPrevio=ultimaFechaInicio?Number(ultimaFechaInicio.slice(5,7)):0;
+      if(mesPrevio&&mesActual<mesPrevio&&mesPrevio-mesActual>=5)anioCurso++;
+      inicio=calFechaCortaISO(rangoCrudo,anioCurso||new Date().getFullYear());
+    }
+    if(/^\d{4}-\d{2}-\d{2}$/.test(inicio))ultimaFechaInicio=inicio;
+    const cortaTermino=calFechaCortaISO(get('termino'),Number(inicio.slice(0,4)));
+    if(cortaTermino){
+      termino=cortaTermino<inicio?calFechaCortaISO(get('termino'),Number(inicio.slice(0,4))+1):cortaTermino;
+    }
     const versionLogica=get('version').trim();
     const periodoFila=get('periodo');
     if(/^\d{6}$/.test(periodoFila))mPer=periodoFila;
