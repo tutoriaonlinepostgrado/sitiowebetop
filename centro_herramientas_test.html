@@ -917,6 +917,7 @@ function t1Norm(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f
 function t1Headers(rawRows){return (rawRows[0]||[]).map(x=>String(x||'').trim());}
 function t1DetectarFormato(rawRows){
   const hIdx=t1FindHeaderIndex(rawRows), headers=(rawRows[hIdx]||[]).map(x=>String(x||'').trim()), joined=t1Norm(headers.join(' | '));
+  if(joined.includes('NRC COD CAL FILTRO') && joined.includes('NRC COD') && joined.includes('RUT') && joined.includes('CORREO UNAB')) return 'ETOP consolidado';
   if(joined.includes('ALUMNO POTENCIAL') && joined.includes('DV')) return 'Alumno Potencial';
   if((joined.includes('NRC')||joined.includes('NRC COD')) && joined.includes('PERIODO') && (joined.includes('RUT')||joined.includes('ID'))) return 'Sistema Diario';
   if(joined.includes('IDENTIFICACION DE SIS DEL ESTUDIANTE') || joined.includes('NOMBRE DE SECCION')) return 'CSV de curso / Canvas';
@@ -1093,6 +1094,22 @@ function t1SeleccionarCurso(r){
 async function t1ProcesarArchivoUniversal(file){
   const rawRows=await readFile(file,false);if(!rawRows.length)return {format:'Vacío',rows:[]};
   const formato=t1DetectarFormato(rawRows);
+  if(formato==='ETOP consolidado'){
+    const idx=t1FindHeaderIndex(rawRows);
+    const headers=(rawRows[idx]||[]).map(x=>String(x||'').trim());
+    const obj=rawRows.slice(idx+1).filter(row=>row.some(x=>String(x??'').trim())).map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]??''])));
+    const rows=obj.map(r=>({
+      PERIODO:t1Get(r,['PERIODO']),
+      NRC_COD:t1Get(r,['NRC_COD']),
+      NRC_COD_CAL_FILTRO:t1Get(r,['NRC_COD_CAL_FILTRO']),
+      NOMBRE_CURSO:t1Get(r,['NOMBRE_CURSO']),
+      FECHA_INICIO:anyToISO(t1Get(r,['FECHA_INICIO'])),
+      RUT:t1Get(r,['RUT']),NOMBRE:t1Get(r,['NOMBRE']),
+      CORREO_UNAB:t1Get(r,['CORREO_UNAB']),
+      Columna7:t1Get(r,['Columna7'])
+    })).filter(r=>r.RUT&&r.CORREO_UNAB.includes('@')&&r.NRC_COD&&r.PERIODO);
+    return {format:formato,rows};
+  }
   if(formato==='Sistema Diario'){
     const obj=normCols(await readFile(file,true)),rows=[];let omitidosSinFecha=0;if(!obj.length)return {format:formato,rows,omitidosSinFecha};
     const cols=Object.keys(obj[0]);
