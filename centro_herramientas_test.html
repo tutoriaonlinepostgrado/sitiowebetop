@@ -1183,7 +1183,6 @@ function t1DescargarProcesados(){
 }
 async function t1EnviarDirectoSharePoint(){
   const el=document.getElementById('t1-sp-result');
-  if(state.t1Mode==='version'){el.innerHTML='<div class="alert info">🔒 Modo prueba: descarga el Excel generado para revisar la nómina. El envío masivo a SharePoint permanece deshabilitado hasta validar la prevención de duplicados.</div>';return;}
   if(!state.t1Data||!state.t1Data.length){el.innerHTML='<div class="alert error">No hay registros procesados.</div>';return;}
   if(!t1TieneCurso(state.t1Data)){el.innerHTML='<div class="alert error">Falta asignar curso/NRC antes de cargar.</div>';return;}
   if(!T1_FLOW_URL){el.innerHTML='<div class="alert info">⚙️ La carga directa está preparada, pero falta conectar la URL del nuevo flujo de Power Automate.</div>';return;}
