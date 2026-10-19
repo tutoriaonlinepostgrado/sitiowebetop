@@ -1182,37 +1182,43 @@
 
 <style>
 
-/* ===== ETOP superbuscador V2 · resultados en tarjetas ===== */
+/* ===== ETOP · Superbuscador V2.1 compacto ===== */
 #universalSearchWrap{isolation:isolate}
-#universalResults.universal-results{padding:0!important;max-height:min(620px,75vh);border-radius:15px!important;border:1px solid #d6e2f1!important;background:#f8fbff!important;box-shadow:0 24px 64px rgba(9,31,62,.29)!important;overflow-y:auto;min-width:min(650px,90vw)}
-.universal-popup-head{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 15px;background:#142440;color:white;border-bottom:2px solid #f4c400}
-.universal-popup-head b{font-size:12px;letter-spacing:.01em}.universal-popup-head small{font-size:9px;font-weight:500;color:#a9c3de;margin-left:7px}.universal-popup-hint{font-size:8px;color:#c5d6e8;white-space:nowrap}
-.universal-group{padding:6px 9px 8px;border-bottom:1px solid #e1e9f4}
-.universal-group-head{display:flex;justify-content:space-between;align-items:center;padding:9px 8px 6px;color:#536981;font-size:9px;font-weight:900;letter-spacing:.075em;text-transform:uppercase}
-.universal-group-count{min-width:24px;text-align:center;border-radius:20px;background:#e6effb;padding:3px 7px;color:#2c5a93;font-size:9px}
-.universal-item{position:relative;margin:4px 0;background:white;border:1px solid #e4ebf4;border-radius:11px;overflow:hidden;transition:border-color .14s,box-shadow .14s}
-.universal-item:hover,.universal-item[aria-selected="true"]{border-color:#8ab9f2;box-shadow:0 4px 14px rgba(20,64,110,.09)}
-.universal-item .universal-result{display:flex!important;gap:10px;align-items:center;width:100%;padding:11px!important;text-align:left;border:0;background:transparent!important;color:#213b58!important;cursor:pointer;border-radius:0!important}
-.universal-item .universal-result-ico{flex:0 0 39px;width:39px;height:39px;border-radius:10px;display:grid;place-items:center;font-size:18px;background:#eaf2ff;color:#2463a2}
-.universal-item.rut .universal-result-ico{background:#f0ebff;color:#7040b8}
-.universal-item.tutor .universal-result-ico{background:#e7f7ef;color:#19815a}
-.universal-item.programa .universal-result-ico{background:#fff5da;color:#aa7400}
+#universalResults.universal-results{padding:0!important;max-height:min(480px,65vh);border-radius:10px!important;border:1px solid #d6e2f1!important;background:#fff!important;box-shadow:0 12px 38px rgba(9,31,62,.22)!important;overflow-y:auto;min-width:min(650px,90vw)}
+.universal-popup-head{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 12px;background:#142440;color:white;border-bottom:2px solid #f4c400}
+.universal-popup-head b{font-size:10px}.universal-popup-head small{font-size:8px;font-weight:500;color:#a9c3de;margin-left:6px}.universal-popup-hint{font-size:7px;color:#c5d6e8;white-space:nowrap}
+.universal-group{padding:2px 7px 5px;border-bottom:1px solid #e7edf5}
+.universal-group-head{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 4px;color:#526982;font-size:8px;font-weight:800;letter-spacing:.045em;text-transform:uppercase}
+.universal-group-count{min-width:20px;text-align:center;border-radius:12px;background:#e6effb;padding:2px 5px;color:#2c5a93;font-size:8px}
+.universal-item{position:relative;margin:2px 0;background:white;border-bottom:1px solid #edf1f6;overflow:hidden;transition:background .14s}
+.universal-item:last-of-type{border-bottom:0}
+.universal-item:hover,.universal-item[aria-selected="true"]{background:#f2f7fd;box-shadow:inset 3px 0 #1265df}
+.universal-item .universal-result{display:flex!important;gap:7px;align-items:center;width:100%;padding:6px 7px!important;text-align:left;border:0;background:transparent!important;color:#213b58!important;cursor:pointer;border-radius:0!important}
+.universal-item .universal-result-ico{flex:0 0 23px;width:23px;height:23px;border-radius:5px;display:grid;place-items:center;font-size:12px;background:#eaf2ff;color:#2463a2}
+.universal-item.rut .universal-result-ico{background:#f0ebff;color:#7040b8}.universal-item.tutor .universal-result-ico{background:#e7f7ef;color:#19815a}.universal-item.programa .universal-result-ico{background:#fff5da;color:#aa7400}
 .universal-item .universal-result-main{flex:1;min-width:0;text-align:left}
-.universal-item .universal-result-title{font-size:11.5px;font-weight:800;color:#21364e;white-space:normal;line-height:1.35}
-.universal-item .universal-result-sub{font-size:9px;margin-top:3px;color:#62768c;white-space:normal;line-height:1.4}
-.universal-item .universal-result-tag{font-size:8px;font-weight:800;flex-shrink:0;max-width:110px;padding:5px 8px;border-radius:999px;background:#eef4fc;color:#37628e}
-.universal-item .universal-chevron{font-size:19px;color:#9db2ca;flex-shrink:0}
-.universal-meta{display:flex!important;gap:4px;flex-wrap:wrap;margin-top:5px}
-.universal-meta-chip{position:static!important;padding:3px 6px!important;font-size:8px!important;color:#617891!important;background:#f2f5f9!important;border:1px solid #e5edf4!important;border-radius:5px!important}
-.universal-actions{display:flex!important;position:static!important;flex-wrap:wrap;gap:6px;padding:0 11px 10px 60px!important}
-.universal-action{position:static!important;display:inline-flex!important;padding:5px 9px!important;border-radius:7px!important;border:1px solid #cbdcf0!important;background:#f3f8ff!important;color:#245c96!important;font-size:8.5px!important;font-weight:800!important;cursor:pointer}
-.universal-action:hover{background:#deefff!important;border-color:#8bb9ec!important}
-.universal-more{display:flex;width:100%;align-items:center;justify-content:space-between;border:0;background:#edf5ff;color:#215d9a;font-size:9px;font-weight:800;padding:9px 12px;margin-top:6px;border-radius:8px;cursor:pointer}
-.universal-more:hover{background:#dfedfe}
-#universalResults .universal-search-note{background:#f4f7fb;padding:12px 15px;color:#6e8198;line-height:1.5;font-size:9px;border-top:1px solid #e5edf6}
-#universalResults .universal-empty{display:flex;flex-direction:column;align-items:center;gap:7px;padding:30px 20px;color:#667e98}
-.universal-empty-icon{font-size:27px;color:#3f7abd}.universal-empty b{font-size:13px;color:#284663}.universal-empty>span:last-child{font-size:10px;text-align:center;max-width:360px}
-@media(max-width:800px){#universalResults.universal-results{min-width:0;width:min(90vw,650px)}.universal-popup-hint{display:none}.universal-item .universal-result-title{font-size:10px}.universal-item .universal-result-tag{max-width:75px}.universal-actions{padding-left:12px!important}}
+.universal-item .universal-result-title{display:block;font-size:10px;font-weight:800;color:#1e3855;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.universal-item .universal-result-sub{display:block;font-size:8px;margin-top:2px;color:#667a91;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.universal-item .universal-result-tag{font-size:7px;font-weight:800;flex-shrink:0;max-width:82px;padding:3px 6px;border-radius:999px;background:#eef4fc;color:#37628e}
+.universal-chevron{display:none!important}
+.universal-meta{display:flex!important;gap:3px;flex-wrap:wrap;margin-top:3px}
+.universal-meta-chip{position:static!important;padding:2px 4px!important;font-size:7px!important;color:#617891!important;background:#f2f5f9!important;border:1px solid #e5edf4!important;border-radius:4px!important}
+/* NRC: encabezado informativo y herramientas separadas con alta visibilidad */
+.universal-item.curso .universal-result{padding:7px 8px 4px!important;align-items:flex-start}
+.universal-item.curso .universal-result-title{font-size:10.5px;color:#143a66}
+.universal-item.curso .universal-course-nrc{font-weight:900;color:#0c5397;font-size:9px}
+.universal-item.curso .universal-course-data{font-size:8px;color:#526b83;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.universal-item.curso .universal-course-data strong{color:#274c73}
+.universal-item.curso .universal-result-tag{background:#e9f2fb;color:#195c93}
+.universal-actions{display:flex!important;position:static!important;flex-wrap:nowrap;gap:4px;padding:1px 8px 7px 38px!important}
+.universal-action{position:static!important;display:inline-flex!important;justify-content:center;align-items:center;padding:4px 9px!important;border-radius:5px!important;border:1px solid #b8d4f3!important;background:#f0f7ff!important;color:#205a93!important;font-size:8px!important;font-weight:800!important;cursor:pointer;line-height:1.15;white-space:nowrap}
+.universal-action[data-ua="ficha"]{background:#1265df!important;color:#fff!important;border-color:#1265df!important}
+.universal-action:hover{background:#dceeff!important;border-color:#7db2e8!important}
+.universal-action[data-ua="ficha"]:hover{background:#0b4fae!important;color:white!important}
+.universal-more{display:flex;width:100%;align-items:center;justify-content:space-between;border:0;background:#edf5ff;color:#215d9a;font-size:8px;font-weight:800;padding:7px 9px;margin-top:3px;border-radius:5px;cursor:pointer}
+#universalResults .universal-search-note{background:#f6f9fc;padding:7px 11px;color:#6e8198;line-height:1.35;font-size:8px;border-top:1px solid #e5edf6}
+#universalResults .universal-empty{display:flex;flex-direction:column;align-items:center;gap:5px;padding:17px 13px;color:#667e98}.universal-empty-icon{font-size:20px;color:#3f7abd}.universal-empty b{font-size:11px;color:#284663}.universal-empty>span:last-child{font-size:9px;text-align:center;max-width:360px}
+@media(max-width:800px){#universalResults.universal-results{min-width:0;width:min(92vw,650px)}.universal-popup-hint{display:none}.universal-item .universal-result-tag{max-width:65px}.universal-actions{padding-left:38px!important;flex-wrap:wrap}}
 
 </style>
 </head>
@@ -2584,13 +2590,23 @@ function buscarUniversal(valor){
 function universalDestinoEtiqueta(x){return x.tipo==='curso'?'Ficha 360':x.tipo==='tutor'?'Tablero':x.tipo==='programa'?'Ver cursos':'Ficha estudiante'}
 function universalQuickButtons(x){
   if(x.tipo!=='curso')return '';
-  return '<span class="universal-actions"><span class="universal-action" data-ua="ficha" title="Abrir Ficha NRC">Ficha 360 ↗</span><span class="universal-action" data-ua="calendarios" title="Ver en Calendarios">Calendario</span><span class="universal-action" data-ua="nomina" title="Abrir Nómina filtrada">Nómina</span></span>';
+  return '<span class="universal-actions"><span class="universal-action" data-ua="ficha" title="Abrir ficha detallada del NRC">▤ Ficha NRC ↗</span><span class="universal-action" data-ua="calendarios" title="Abrir calendario de este NRC">▦ Calendario ↗</span><span class="universal-action" data-ua="nomina" title="Abrir nómina del curso">♙ Nómina ↗</span></span>';
 }
 function universalResultMarkup(x,i){
  const ico={rut:'◈',curso:'▦',programa:'▤',tutor:'♙'}[x.tipo]||'⌕';
- const subtitulo=x.tipo==='curso'? [x.nrc,x.curso['nombre programa'],x.curso.tutor].filter(Boolean).join(' · '):x.sub;
- const info=x.tipo==='curso'?[x.facultad,x.intake,x.fecha?('Inicio: '+x.fecha):''].filter(Boolean).map(z=>'<span class="universal-meta-chip">'+esc(z)+'</span>').join(''):x.tipo==='programa'?'<span class="universal-meta-chip">'+x.cantidad+' NRC relacionados</span>':'';
- return '<div class="universal-item '+x.tipo+'" role="option" aria-selected="false"><button type="button" class="universal-result '+x.tipo+'" data-universal-index="'+i+'" tabindex="-1"><span class="universal-result-ico">'+ico+'</span><span class="universal-result-main"><span class="universal-result-title">'+esc(x.titulo)+'</span><span class="universal-result-sub">'+esc(subtitulo||'')+'</span><span class="universal-meta">'+info+'</span></span><span class="universal-result-tag">'+esc(x.tag||'')+'</span><span class="universal-chevron">›</span></button>'+universalQuickButtons(x)+'</div>';
+ if(x.tipo==='curso'){
+  const c=x.curso||{};
+  const nombre=esc(String(c['nombre curso']||'Curso sin nombre'));
+  const codigo=esc(String(c['codigo curso']||''));
+  const nrc=esc(x.nrc||'');
+  const programa=esc(String(c['nombre programa']||'Sin programa informado'));
+  const tutor=esc(String(c.tutor||'No informado'));
+  const extras=[x.intake?('Intake '+x.intake):'',x.fecha?('Inicio '+x.fecha):''].filter(Boolean).map(z=>'<span class="universal-meta-chip">'+esc(z)+'</span>').join('');
+  return '<div class="universal-item curso" role="option" aria-selected="false"><button type="button" class="universal-result curso" data-universal-index="'+i+'" tabindex="-1"><span class="universal-result-ico">'+ico+'</span><span class="universal-result-main"><span class="universal-result-title">'+(codigo?'<span class="universal-course-nrc">'+codigo+'</span> · ':'')+nombre+'</span><span class="universal-course-data"><strong>NRC '+nrc+'</strong> · '+programa+' · '+tutor+'</span><span class="universal-meta">'+extras+'</span></span><span class="universal-result-tag">'+esc(x.tag||'NRC')+'</span></button>'+universalQuickButtons(x)+'</div>';
+ }
+ const subtitulo=x.sub||'';
+ const info=x.tipo==='programa'?'<span class="universal-meta-chip">'+x.cantidad+' NRC relacionados</span>':'';
+ return '<div class="universal-item '+x.tipo+'" role="option" aria-selected="false"><button type="button" class="universal-result '+x.tipo+'" data-universal-index="'+i+'" tabindex="-1"><span class="universal-result-ico">'+ico+'</span><span class="universal-result-main"><span class="universal-result-title">'+esc(x.titulo)+'</span><span class="universal-result-sub">'+esc(subtitulo)+'</span><span class="universal-meta">'+info+'</span></span><span class="universal-result-tag">'+esc(x.tag||'')+'</span></button></div>';
 }
 function renderUniversalResults(items,keepIndex=false){
  universalItems=items;if(!keepIndex)universalIdx=-1;
