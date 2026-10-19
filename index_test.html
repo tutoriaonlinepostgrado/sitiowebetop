@@ -1,1646 +1,1586 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    "primary-container": "#facc15",
-                    "on-primary-container": "#6c5700",
-                    "background": "#1f2940",
-                    "surface": "#171309",
-                    "on-background": "#ebe2d0",
-                    "on-surface": "#ebe2d0",
-                    "outline-variant": "#4d4632",
-                    "secondary-container": "#0566d9",
-                    "on-secondary-container": "#e6ecff"
-                }
-            }
-        }
-    }
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETOP · Gestión Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-    * { box-sizing: border-box; }
-    body {
-        background-color: #1f2940;
-        background-image: radial-gradient(circle at 20% 30%, rgba(250,204,21,0.03) 0%, transparent 40%),
-                          radial-gradient(circle at 80% 70%, rgba(250,204,21,0.03) 0%, transparent 40%);
-        overflow: hidden;
-        font-family: 'Inter', sans-serif;
-    }
-    .glass-panel { background: rgba(31,41,64,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(250,204,21,0.12); }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .pulse-dot { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); animation: pulse 2s infinite; }
-    @keyframes pulse {
-        0%  { transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0.7); }
-        70% { transform:scale(1);    box-shadow:0 0 0 6px rgba(34,197,94,0); }
-        100%{ transform:scale(0.95); box-shadow:0 0 0 0 rgba(34,197,94,0);   }
-    }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(250,204,21,0.1); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(250,204,21,0.3); }
-    .ann-new-badge { animation: pulse-new 2s infinite; }
-    @keyframes pulse-new { 0%,100%{opacity:1;}50%{opacity:0.6;} }
-    .admin-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:300; align-items:center; justify-content:center; }
-    .admin-overlay.open { display:flex; }
-    .admin-panel { background:#1e293b; border:1.5px solid rgba(250,204,21,0.3); border-radius:16px; padding:24px; width:100%; max-width:580px; max-height:90vh; overflow-y:auto; margin:16px; }
-    .admin-input { width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:#f1f5f9; border-radius:8px; padding:9px 12px; font-size:13px; font-family:'Inter',sans-serif; margin-bottom:10px; outline:none; transition:border-color 0.2s; }
-    .admin-input:focus { border-color:rgba(250,204,21,0.4); }
-    .admin-row { display:flex; gap:10px; }
-    .admin-row .admin-input { flex:1; }
-    .editor-toolbar { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px; }
-    .editor-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; border-radius:5px; padding:4px 9px; font-size:12px; cursor:pointer; transition:all 0.15s; }
-    .editor-btn:hover { background:rgba(250,204,21,0.15); color:#facc15; }
-    .editor-area { width:100%; min-height:110px; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:#f1f5f9; border-radius:8px; padding:10px; font-size:13px; font-family:'Inter',sans-serif; margin-bottom:10px; outline:none; }
-    .editor-area:focus { border-color:rgba(250,204,21,0.4); }
-    .btn-publicar { width:100%; background:#facc15; color:#1e293b; font-weight:700; font-size:14px; border:none; border-radius:8px; padding:11px; cursor:pointer; transition:all 0.2s; }
-    .btn-publicar:hover { background:#eab308; }
-    .btn-publicar:disabled { background:#334155; color:#64748b; cursor:not-allowed; }
-    .btn-cancelar { width:100%; background:transparent; color:#64748b; font-size:13px; border:none; padding:8px; cursor:pointer; margin-top:4px; }
-    .status-msg { font-size:12px; padding:8px 12px; border-radius:6px; margin-top:8px; display:none; }
-    .status-msg.ok      { background:rgba(34,197,94,0.15);  color:#4ade80; display:block; }
-    .status-msg.err     { background:rgba(239,68,68,0.15);  color:#f87171; display:block; }
-    .status-msg.loading { background:rgba(59,130,246,0.15); color:#60a5fa; display:block; }
-    .canal-quick { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:6px; background:rgba(124,77,255,0.06); border:1px solid transparent; text-decoration:none; transition:all 0.18s; margin-bottom:4px; }
-    .canal-quick:hover { background:rgba(124,77,255,0.15); border-color:rgba(124,77,255,0.3); }
-    .canal-quick .canal-left { display:flex; align-items:center; gap:8px; }
-    .canal-badge { width:20px; height:20px; background:#6264a7; border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .canal-badge span { color:white; font-weight:900; font-size:11px; font-family:'Segoe UI',sans-serif; }
-    .canal-nombre { font-size:11px; font-weight:500; color:#c4b5fd; }
-    .canal-arrow { font-size:10px; color:#6264a7; }
-    .banner-hero { position:relative; border-radius:14px; overflow:hidden; flex-shrink:0; border:1px solid rgba(250,204,21,0.18); background:linear-gradient(90deg,#0f274f 0%, #12366f 48%, #174791 100%); }
-    .banner-bg-accent { position:absolute; inset:0; background:radial-gradient(circle at 18% 50%, rgba(250,204,21,0.10) 0%, transparent 34%), radial-gradient(circle at 78% 28%, rgba(255,255,255,0.06) 0%, transparent 24%); }
-    .banner-side-photo { position:absolute; top:0; right:0; width:42%; height:100%; background-image:url('https://res.cloudinary.com/dk53pztfo/image/upload/v1784773664/ChatGPT_Image_22_jul_2026_10_25_47_p.m_oycgrb.png'); background-size:cover; background-position:center right; opacity:0.92; }
-    .banner-side-fade { position:absolute; top:0; right:28%; width:24%; height:100%; background:linear-gradient(90deg, rgba(15,39,79,1) 0%, rgba(15,39,79,0.88) 28%, rgba(15,39,79,0.42) 64%, rgba(15,39,79,0) 100%); }
-    .banner-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(20,27,45,0.28) 0%,rgba(20,27,45,0.08) 60%,transparent 100%); }
-    .banner-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:0 28px; z-index:2; }
-    .banner-label { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#facc15; margin-bottom:6px; opacity:0.85; }
-    .banner-title { font-size:28px; font-weight:800; color:#ffffff; line-height:1.15; letter-spacing:-0.5px; text-shadow:0 2px 12px rgba(0,0,0,0.4); }
-    .banner-title span { color:#facc15; }
-    .banner-sub { margin-top:6px; font-size:12px; color:rgba(255,255,255,0.65); font-weight:400; }
-    .nav-group { position:relative; }
-    .nav-group-trigger { display:flex; align-items:center; justify-content:space-between; gap:4px; width:100%; padding:8px 24px; font-size:14px; color:#94a3b8; background:transparent; border:none; cursor:pointer; transition:all 0.15s; text-align:left; }
-    .nav-group-trigger:hover { background:rgba(255,255,255,0.05); color:#facc15; }
-    .nav-group-trigger.active { color:#facc15; background:rgba(255,255,255,0.05); }
-    .nav-group-trigger .trigger-left { display:flex; align-items:center; gap:12px; }
-    .nav-group-trigger .chevron { font-size:16px; transition:transform 0.2s; color:#475569; flex-shrink:0; }
-    .nav-group-trigger.open .chevron { transform:rotate(180deg); color:#facc15; }
-    .nav-submenu { display:none; flex-direction:column; background:rgba(0,0,0,0.2); border-left:2px solid rgba(250,204,21,0.2); margin-left:24px; margin-right:8px; border-radius:0 0 6px 6px; }
-    .nav-submenu.open { display:flex; }
-    .nav-subitem { display:flex; align-items:center; gap:10px; padding:6px 16px; font-size:12px; color:#64748b; cursor:pointer; border:none; background:transparent; text-align:left; width:100%; transition:all 0.15s; border-radius:4px; }
-    .nav-subitem:hover { color:#facc15; background:rgba(250,204,21,0.05); }
-    .nav-subitem.active { color:#facc15; font-weight:600; }
-    .nav-subitem .material-symbols-outlined { font-size:16px; }
-
-    .header-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:9999px; border:1px solid rgba(255,255,255,0.10); }
-    .header-message { min-width:0; max-width:420px; }
-    .header-message #mensaje-dia { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    /* ── Cinta dinámica de próximos inicios ── */
-    .course-banner-wrap { background:#141b2d; border-radius:12px; overflow:hidden; border:0.5px solid rgba(255,255,255,0.1); flex-shrink:0; }
-    .course-banner-header { display:flex; align-items:center; gap:8px; padding:9px 14px 7px; border-bottom:0.5px solid rgba(255,255,255,0.08); min-height:34px; }
-    .course-banner-dot { width:8px; height:8px; border-radius:50%; background:#4ade80; box-shadow:0 0 0 0 rgba(74,222,128,.55); animation:course-dot-pulse 2s infinite; }
-    @keyframes course-dot-pulse { 0%{box-shadow:0 0 0 0 rgba(74,222,128,.45)} 70%{box-shadow:0 0 0 7px rgba(74,222,128,0)} 100%{box-shadow:0 0 0 0 rgba(74,222,128,0)} }
-    .course-banner-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#94a3b8; }
-    .course-banner-counter { margin-left:auto; font-size:9px; color:#64748b; font-family:monospace; white-space:nowrap; }
-    .course-banner-link { margin-left:8px; font-size:9px; color:#facc15; text-decoration:none; white-space:nowrap; transition:color .15s; }
-    .course-banner-link:hover { color:#fde047; }
-    .top-course-banner { height:110px; display:flex; flex-direction:column; }
-    .course-ticker-window { position:relative; flex:1; min-height:0; overflow:hidden; display:flex; align-items:center; }
-    .course-ticker-window::before,.course-ticker-window::after { content:""; position:absolute; top:0; bottom:0; width:34px; z-index:2; pointer-events:none; }
-    .course-ticker-window::before { left:0; background:linear-gradient(90deg,#141b2d,transparent); }
-    .course-ticker-window::after { right:0; background:linear-gradient(270deg,#141b2d,transparent); }
-    .course-ticker-track { display:flex; align-items:center; width:max-content; will-change:transform; animation:ticker-cursos var(--ticker-duration,80s) linear infinite; }
-    .course-ticker-window:hover .course-ticker-track { animation-play-state:paused; }
-    .course-ticker-group { display:flex; align-items:center; flex-shrink:0; }
-    .course-ticker-item { display:flex; align-items:center; gap:8px; flex-shrink:0; min-height:48px; padding:7px 18px; border-right:1px solid rgba(255,255,255,.09); color:#cbd5e1; cursor:default; }
-    .course-ticker-item:hover { background:rgba(255,255,255,.035); }
-    .course-ticker-programa { max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#f1f5f9; font-size:11px; font-weight:700; }
-    .course-ticker-curso { max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#94a3b8; font-size:10px; }
-    .course-ticker-tutor { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#64748b; font-size:9px; }
-    .course-ticker-nrc { color:#475569; font-size:9px; font-family:monospace; white-space:nowrap; }
-    .course-badge-fecha { font-size:9px; font-weight:700; padding:4px 8px; border-radius:20px; white-space:nowrap; }
-    .course-badge-hoy    { background:rgba(74,222,128,.15);  color:#4ade80; border:.5px solid rgba(74,222,128,.3); }
-    .course-badge-prox3  { background:rgba(251,191,36,.12);  color:#fbbf24; border:.5px solid rgba(251,191,36,.25); }
-    .course-badge-prox7  { background:rgba(96,165,250,.12);  color:#60a5fa; border:.5px solid rgba(96,165,250,.25); }
-    .course-badge-prox14 { background:rgba(167,139,250,.12); color:#a78bfa; border:.5px solid rgba(167,139,250,.25); }
-    .course-ticker-empty { width:100%; padding:0 18px; color:#94a3b8; font-size:11px; }
-    @keyframes ticker-cursos { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-    @media (prefers-reduced-motion:reduce) {
-        .course-banner-dot { animation:none; }
-        .course-ticker-window { overflow-x:auto; }
-        .course-ticker-track { animation:none; }
-        .course-ticker-group[aria-hidden="true"] { display:none; }
-    }
-
-    /* ── Eventos UNAB ── */
-    .eventos-unab-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-    .evento-unab-card { display:flex; gap:9px; align-items:flex-start; padding:9px; border-radius:9px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.025); text-decoration:none; transition:all .18s; min-width:0; }
-    .evento-unab-card:hover { border-color:rgba(250,204,21,.30); background:rgba(250,204,21,.045); transform:translateY(-1px); }
-    .evento-unab-date { width:36px; min-width:36px; border-radius:8px; overflow:hidden; text-align:center; border:1px solid rgba(96,165,250,.20); background:rgba(59,130,246,.09); }
-    .evento-unab-day { display:block; color:#e2e8f0; font-size:14px; font-weight:800; line-height:19px; padding-top:3px; }
-    .evento-unab-month { display:block; color:#60a5fa; font-size:7px; font-weight:800; letter-spacing:.08em; padding:1px 0 4px; text-transform:uppercase; }
-    .evento-unab-title { color:#e2e8f0; font-size:9px; font-weight:600; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .evento-unab-meta { color:#64748b; font-size:8px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-
-    /* ── Menú lateral colapsable ── */
-    #portal-sidebar{
-        width:260px;
-        transition:width .24s ease, opacity .18s ease, border-color .18s ease;
-        overflow:hidden;
-    }
-    #portal-sidebar.sidebar-collapsed{
-        width:0 !important;
-        opacity:0;
-        border-right-color:transparent;
-        pointer-events:none;
-    }
-    #btn-menu-lateral{
-        width:36px;
-        height:36px;
-        border:1px solid rgba(250,204,21,.18);
-        border-radius:8px;
-        background:rgba(255,255,255,.035);
-        color:#facc15;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        flex-shrink:0;
-        transition:background .15s,border-color .15s;
-    }
-    #btn-menu-lateral:hover{
-        background:rgba(250,204,21,.10);
-        border-color:rgba(250,204,21,.38);
-    }
-
-
-    /* =========================================================
-       RESPONSIVE PORTAL ETOP
-       Monitor grande → Notebook → Tablet/Móvil
-       ========================================================= */
-
-    @media (max-width: 1550px) {
-        header.h-16 {
-            padding-left: 18px !important;
-            padding-right: 18px !important;
-        }
-
-        #portal-sidebar {
-            width: 220px;
-        }
-
-        #portal-sidebar a,
-        #portal-sidebar .nav-group-trigger {
-            padding-left: 18px !important;
-            padding-right: 14px !important;
-            font-size: 13px !important;
-        }
-
-        main.flex-1 {
-            padding: 16px !important;
-        }
-
-        #vista-normal {
-            gap: 12px !important;
-        }
-
-        .header-message {
-            max-width: 300px;
-        }
-
-        .banner-content {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-        }
-
-        .course-ticker-programa { max-width: 145px; }
-        .course-ticker-curso    { max-width: 165px; }
-        .course-ticker-tutor    { max-width: 110px; }
-
-        .eventos-unab-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 1366px) {
-        body {
-            overflow: hidden;
-        }
-
-        /* En notebook, priorizamos el área de trabajo */
-        #portal-sidebar {
-            width: 0 !important;
-            opacity: 0;
-            border-right-color: transparent;
-            pointer-events: none;
-            position: relative;
-            z-index: 80;
-        }
-
-        #portal-sidebar.sidebar-mobile-open {
-            position: fixed !important;
-            left: 0;
-            top: 58px;
-            bottom: 0;
-            width: 240px !important;
-            opacity: 1 !important;
-            pointer-events: auto !important;
-            border-right-color: rgba(255,255,255,.08) !important;
-            background: #1f2940;
-            box-shadow: 12px 0 30px rgba(0,0,0,.30);
-            overflow-y: auto;
-        }
-
-        #btn-menu-lateral {
-            display: flex !important;
-        }
-
-        header.h-16 {
-            height: 58px !important;
-            min-height: 58px;
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-        }
-
-        header.h-16 > div:first-child {
-            gap: 10px !important;
-        }
-
-        header.h-16 img[alt="ETOP"] {
-            height: 34px !important;
-        }
-
-        header.h-16 img[alt="UNAB Online"] {
-            height: 32px !important;
-        }
-
-        .header-pill {
-            padding: 5px 9px;
-        }
-
-        .header-message {
-            display: none;
-        }
-
-        header.h-16 > div:last-child {
-            padding-left: 10px !important;
-        }
-
-        main.flex-1 {
-            padding: 12px !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }
-
-        #vista-normal {
-            overflow: visible !important;
-            min-height: 100%;
-        }
-
-        #vista-normal > .col-span-12 {
-            overflow: visible !important;
-        }
-
-        /* Franja superior */
-        #vista-normal > .col-span-12 > .grid:first-child {
-            height: 102px !important;
-        }
-
-        .banner-hero {
-            height: 102px !important;
-        }
-
-        .top-course-banner {
-            height: 102px;
-        }
-
-        .banner-title {
-            font-size: 19px !important;
-        }
-
-        .banner-label {
-            font-size: 8px;
-        }
-
-        .banner-sub {
-            font-size: 10px !important;
-        }
-
-        .course-banner-header {
-            padding: 7px 10px 6px;
-        }
-
-        .course-ticker-item {
-            padding-left: 12px;
-            padding-right: 12px;
-            gap: 6px;
-        }
-
-        .course-ticker-programa { max-width: 130px; font-size:10px; }
-        .course-ticker-curso    { max-width: 145px; font-size:9px; }
-        .course-ticker-tutor    { display:none; }
-
-        /* Contenido principal pasa de 3 columnas a 2 columnas */
-        #vista-normal > .col-span-12 > .grid:nth-child(2) {
-            overflow: visible !important;
-            align-items: stretch;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > aside.col-span-3 {
-            grid-column: span 4 / span 4 !important;
-            overflow: visible !important;
-            min-height: 520px !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-5 {
-            grid-column: span 8 / span 8 !important;
-            min-height: 520px !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-4 {
-            grid-column: 1 / -1 !important;
-            min-height: auto !important;
-            max-height: none !important;
-            overflow: visible !important;
-            display: grid !important;
-            grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-            column-gap: 16px;
-        }
-
-        /* La tarjeta de noticias destacadas ocupa la columna izquierda */
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-4 > * {
-            min-width: 0;
-        }
-
-        .eventos-unab-grid {
-            grid-template-columns: repeat(2, minmax(0,1fr));
-        }
-    }
-
-    @media (max-width: 1100px) {
-        main.flex-1 {
-            padding: 10px !important;
-        }
-
-        /* Banner superior en una sola columna */
-        #vista-normal > .col-span-12 > .grid:first-child {
-            grid-template-columns: 1fr !important;
-            height: auto !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:first-child > .col-span-6 {
-            grid-column: 1 / -1 !important;
-        }
-
-        .banner-hero {
-            height: 105px !important;
-        }
-
-        .top-course-banner {
-            height: 94px;
-        }
-
-        .banner-content {
-            max-width: 62% !important;
-        }
-
-        /* Paneles principales en una sola columna */
-        #vista-normal > .col-span-12 > .grid:nth-child(2) {
-            grid-template-columns: 1fr !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > aside.col-span-3,
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-5,
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-4 {
-            grid-column: 1 / -1 !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > aside.col-span-3 {
-            min-height: 470px !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-5 {
-            height: 520px;
-            min-height: 520px !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-4 {
-            display: flex !important;
-            max-height: none !important;
-        }
-
-        .eventos-unab-grid {
-            grid-template-columns: repeat(2,minmax(0,1fr));
-        }
-    }
-
-    @media (max-width: 760px) {
-        header.h-16 {
-            height: 54px !important;
-            min-height: 54px;
-        }
-
-        #portal-sidebar.sidebar-mobile-open {
-            top: 54px;
-            width: min(260px, 86vw) !important;
-        }
-
-        header.h-16 img[alt="UNAB Online"],
-        header.h-16 .text-slate-500.font-light,
-        header.h-16 .text-slate-300.font-medium,
-        header.h-16 .header-pill:not(.header-message) {
-            display: none !important;
-        }
-
-        header.h-16 > div:last-child .text-right {
-            display: none;
-        }
-
-        main.flex-1 {
-            padding: 7px !important;
-        }
-
-        .banner-side-photo {
-            width: 52%;
-        }
-
-        .banner-side-fade {
-            right: 38%;
-            width: 24%;
-        }
-
-        .banner-content {
-            max-width: 70% !important;
-            padding-left: 14px !important;
-        }
-
-        .banner-title {
-            font-size: 18px !important;
-        }
-
-        .course-banner-label {
-            font-size: 8px;
-        }
-
-        .course-banner-counter {
-            display: none;
-        }
-
-        .course-ticker-curso,
-        .course-ticker-nrc {
-            display: none;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > aside.col-span-3 {
-            min-height: 430px !important;
-        }
-
-        #vista-normal > .col-span-12 > .grid:nth-child(2) > section.col-span-5 {
-            height: 480px;
-            min-height: 480px !important;
-        }
-
-        .eventos-unab-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .admin-panel {
-            padding: 16px;
-        }
-    }
-
-
-    /* Prioridad de navegación lateral:
-       primero el menú principal; "Mi espacio" queda después y baja si falta altura */
-    #portal-sidebar {
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    #portal-sidebar > nav {
-        flex: 0 0 auto !important;
-        overflow: visible !important;
-        min-height: max-content;
-    }
-
-    #portal-sidebar > nav + div {
-        flex: 0 0 auto;
-        margin-top: 14px !important;
-    }
-
-    /* En pantallas con poca altura, reducimos solo la zona secundaria */
-    @media (max-height: 760px) {
-        #portal-sidebar {
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-        }
-
-        #portal-sidebar > nav {
-            padding-top: 4px !important;
-        }
-
-        #portal-sidebar > nav + div {
-            margin-top: 10px !important;
-            padding-top: 8px !important;
-        }
-
-        #portal-sidebar > nav + div a {
-            padding-top: 4px !important;
-            padding-bottom: 4px !important;
-        }
-    }
-
-    @media (max-height: 650px) {
-        #portal-sidebar > nav + div {
-            margin-top: 8px !important;
-        }
-
-        #portal-sidebar > nav + div .px-6.py-1 {
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-        }
-    }
-
-
-    .sidebar-secondary-label{
-        display:inline-flex;
-        align-items:center;
-        font-size:10px;
-        font-weight:700;
-        letter-spacing:.18em;
-        text-transform:uppercase;
-        color:rgba(148,163,184,.78);
-        padding:4px 10px;
-        border-radius:9999px;
-        background:rgba(255,255,255,.03);
-        border:1px solid rgba(255,255,255,.05);
-    }
-    @media (max-height:760px){
-        .sidebar-secondary-label{
-            font-size:9px;
-            padding:3px 8px;
-        }
-    }
-
-
-    .mi-espacio-grid{
-        display:grid;
-        grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:7px;
-        padding:0 14px 10px;
-    }
-    .mi-espacio-btn{
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        gap:3px;
-        min-height:56px;
-        padding:7px 4px;
-        border-radius:9px;
-        text-decoration:none;
-        color:#94a3b8;
-        background:rgba(255,255,255,.025);
-        border:1px solid rgba(255,255,255,.045);
-        transition:all .16s ease;
-    }
-    .mi-espacio-btn:hover{
-        color:#facc15;
-        background:rgba(250,204,21,.07);
-        border-color:rgba(250,204,21,.18);
-        transform:translateY(-1px);
-    }
-    .mi-espacio-btn .material-symbols-outlined{
-        font-size:19px;
-        line-height:1;
-    }
-    .mi-espacio-btn span:last-child{
-        font-size:9px;
-        font-weight:600;
-        line-height:1.1;
-        white-space:nowrap;
-    }
-    @media(max-height:700px){
-        .mi-espacio-grid{
-            gap:5px;
-            padding-bottom:6px;
-        }
-        .mi-espacio-btn{
-            min-height:48px;
-            padding:5px 3px;
-        }
-        .mi-espacio-btn .material-symbols-outlined{
-            font-size:17px;
-        }
-        .mi-espacio-btn span:last-child{
-            font-size:8px;
-        }
-    }
-
-
-    /* Scrollbars ETOP: más discretas y coherentes con el diseño */
-    html{
-        scrollbar-color: rgba(250,204,21,.24) rgba(255,255,255,.04);
-        scrollbar-width: thin;
-    }
-
-    body,
-    #portal-sidebar,
-    #portal-sidebar nav,
-    main.flex-1,
-    .custom-scrollbar{
-        scrollbar-width: thin;
-        scrollbar-color: rgba(250,204,21,.22) rgba(255,255,255,.03);
-    }
-
-    body::-webkit-scrollbar,
-    #portal-sidebar::-webkit-scrollbar,
-    #portal-sidebar nav::-webkit-scrollbar,
-    main.flex-1::-webkit-scrollbar,
-    .custom-scrollbar::-webkit-scrollbar{
-        width: 9px;
-        height: 9px;
-    }
-
-    body::-webkit-scrollbar-track,
-    #portal-sidebar::-webkit-scrollbar-track,
-    #portal-sidebar nav::-webkit-scrollbar-track,
-    main.flex-1::-webkit-scrollbar-track,
-    .custom-scrollbar::-webkit-scrollbar-track{
-        background: rgba(255,255,255,.025);
-        border-radius: 999px;
-        margin: 6px 0;
-    }
-
-    body::-webkit-scrollbar-thumb,
-    #portal-sidebar::-webkit-scrollbar-thumb,
-    #portal-sidebar nav::-webkit-scrollbar-thumb,
-    main.flex-1::-webkit-scrollbar-thumb,
-    .custom-scrollbar::-webkit-scrollbar-thumb{
-        background: linear-gradient(180deg, rgba(250,204,21,.28), rgba(148,163,184,.30));
-        border-radius: 999px;
-        border: 2px solid transparent;
-        background-clip: padding-box;
-        min-height: 40px;
-    }
-
-    body::-webkit-scrollbar-thumb:hover,
-    #portal-sidebar::-webkit-scrollbar-thumb:hover,
-    #portal-sidebar nav::-webkit-scrollbar-thumb:hover,
-    main.flex-1::-webkit-scrollbar-thumb:hover,
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover{
-        background: linear-gradient(180deg, rgba(250,204,21,.48), rgba(148,163,184,.45));
-        background-clip: padding-box;
-    }
-
-    body::-webkit-scrollbar-corner,
-    #portal-sidebar::-webkit-scrollbar-corner,
-    #portal-sidebar nav::-webkit-scrollbar-corner,
-    main.flex-1::-webkit-scrollbar-corner,
-    .custom-scrollbar::-webkit-scrollbar-corner{
-        background: transparent;
-    }
-
-    /* En contenedores internos, aún más fino */
-    #portal-sidebar,
-    main.flex-1{
-        scrollbar-gutter: stable;
-    }
-
-    @media (max-width: 1366px){
-        body::-webkit-scrollbar,
-        #portal-sidebar::-webkit-scrollbar,
-        #portal-sidebar nav::-webkit-scrollbar,
-        main.flex-1::-webkit-scrollbar,
-        .custom-scrollbar::-webkit-scrollbar{
-            width: 8px;
-            height: 8px;
-        }
-    }
-
+:root{--navy:#142440;--navy2:#1d3153;--blue:#1265df;--yellow:#f4c400;--bg:#eef3f8;--card:#fff;--line:#d9e2ec;--text:#17243a;--muted:#728197;--red:#dc3545;--orange:#e58b00;--green:#11a36a;--purple:#7c3aed;--shadow:0 8px 24px rgba(31,45,61,.08)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}body{overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;height:100vh;width:100vw}.sidebar{width:270px;min-width:270px;background:linear-gradient(180deg,#122541 0%,#142440 100%);color:#fff;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);transition:.22s;overflow:hidden}.sidebar.closed{width:0;min-width:0;opacity:0}
+.brand{min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.brand img{width:58px;height:58px;object-fit:contain}.brand-text b{display:block;font-size:16px;letter-spacing:.04em}.brand-text span{font-size:10px;color:#b9c8d9}
+.menu{flex:1;overflow:auto;padding:9px 7px 10px}.menu-cat{padding:12px 12px 5px;color:#72859f;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.menu-btn,.collapsible{width:100%;border:0;background:transparent;color:#d8e3ee;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12px;text-align:left;margin:2px 0;transition:.15s}.menu-btn:hover,.collapsible:hover{background:rgba(255,255,255,.06);color:#fff}.menu-btn.active{background:linear-gradient(90deg,rgba(26,124,245,.32),rgba(26,124,245,.09));color:#fff;border-left:3px solid #3a9bff;font-weight:700}.menu-btn .ico,.collapsible .ico{width:20px;text-align:center}.collapsible .arrow{margin-left:auto;color:#768aa3;font-size:10px}.submenu{display:none;margin-left:14px;padding-left:7px;border-left:1px solid rgba(255,255,255,.09)}.submenu.open{display:block}.submenu .menu-btn{font-size:11px;color:#afbed0;padding:7px 9px}.coord-btn{margin:10px 8px 0;border:1px solid rgba(244,196,0,.38);color:#ffe16d;background:rgba(244,196,0,.06)}
+
+.session-box{padding:11px 13px 13px;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.10)}
+.session-box small{display:block;color:#8094ad;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.session-box b{display:block;margin-top:4px;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-meta{margin-top:5px}
+.session-box .session-meta span{display:inline-flex;margin:0;padding:3px 6px;border-radius:999px;background:rgba(34,197,94,.12);color:#65df91;font-size:8px;font-weight:800}
+.session-box .session-meta span.off{background:rgba(148,163,184,.12);color:#a8b5c5}
+.sidebar-login-btn{width:100%;height:30px;margin-top:8px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:#dce7f2;font-size:9px;font-weight:800;cursor:pointer}
+.sidebar-login-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(58,155,255,.45);color:#fff}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:58px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;padding:0 14px;box-shadow:0 2px 10px rgba(15,23,42,.03);z-index:10}.toggle{border:1px solid #dbe4ef;background:#f8fafc;border-radius:8px;width:34px;height:34px;color:#335271;font-size:18px}.view-title{font-weight:800;font-size:14px;white-space:nowrap}.sep{width:1px;height:25px;background:#e3e9f0;margin:0 2px}.filters{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.fsel{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;max-width:125px;outline:none}.search-pill{position:relative}.search-pill input{height:31px;width:115px;border:1px solid #d6e0eb;border-radius:999px;background:#fff;padding:0 10px 0 27px;font-size:10px;outline:none;color:#42576e;transition:.15s}.search-pill input:focus{width:145px;border-color:#77a8eb}.search-pill span{position:absolute;left:9px;top:7px;color:#8ba0b8;font-size:12px}
+.home{flex:1;overflow:auto;padding:14px}.viewer{display:none;flex:1;min-height:0;background:#fff}.viewer iframe{width:100%;height:100%;border:0}.hero{background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);border:1px solid var(--line);border-radius:16px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center}.hero .kicker{font-size:9px;color:#68809c;font-weight:800;text-transform:uppercase;letter-spacing:.11em}.hero h1{margin:4px 0 2px;font-size:22px}.hero p{margin:0;color:#728197;font-size:11px}.hero-side{text-align:right;font-size:10px;color:#728197}.hero-side b{display:block;color:#253b55;font-size:11px;margin-bottom:3px}.preview-tag{display:inline-block;background:#fff7cc;color:#8a6a00;border:1px solid #eadb86;border-radius:999px;padding:3px 7px;font-size:8px;font-weight:800}
+
+/* Banner de Inicio inspirado en el banner principal de index.html */
+.hero.hero-index-banner{
+  position:relative;
+  min-height:112px;
+  overflow:hidden;
+  background:linear-gradient(90deg,#0f274f 0%,#12366f 48%,#174791 100%);
+  border:1px solid rgba(244,196,0,.20);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  padding:0;
+}
+.hero-index-banner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 50%,rgba(244,196,0,.10) 0%,transparent 34%),
+    radial-gradient(circle at 78% 28%,rgba(255,255,255,.06) 0%,transparent 24%);
+  pointer-events:none;
+}
+.hero-banner-photo{
+  position:absolute;
+  top:0;
+  right:0;
+  width:42%;
+  height:100%;
+  background-image:url('https://res.cloudinary.com/dk53pztfo/image/upload/v1784773664/ChatGPT_Image_22_jul_2026_10_25_47_p.m_oycgrb.png');
+  background-size:cover;
+  background-position:center right;
+  opacity:.92;
+}
+.hero-banner-fade{
+  position:absolute;
+  top:0;
+  right:28%;
+  width:24%;
+  height:100%;
+  background:linear-gradient(90deg,rgba(15,39,79,1) 0%,rgba(15,39,79,.88) 28%,rgba(15,39,79,.42) 64%,rgba(15,39,79,0) 100%);
+}
+.hero-banner-copy{
+  position:relative;
+  z-index:2;
+  padding:0 22px;
+}
+.hero.hero-index-banner .kicker{
+  color:#f4c400;
+  font-size:9px;
+  letter-spacing:.14em;
+  opacity:.92;
+}
+.hero.hero-index-banner h1{
+  color:#fff;
+  font-size:24px;
+  margin:5px 0 0;
+  text-shadow:0 2px 12px rgba(0,0,0,.28);
+}
+.hero-greeting-sub{
+  margin:5px 0 0!important;
+  color:#dbe8f7!important;
+  font-size:9px!important;
+  line-height:1.35;
+  max-width:620px;
+  text-shadow:0 1px 8px rgba(0,0,0,.24);
+}
+
+.dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(335px,.65fr);gap:13px}.top-summary{display:grid;grid-template-columns:1fr 1fr;gap:13px;align-items:start}.top-col-left,.top-col-right{display:grid;gap:10px;align-content:start}.left{display:grid;gap:13px;align-content:start}.right{display:grid;gap:13px;align-content:stretch;min-height:0}.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:10px 12px;border-bottom:1px solid #edf1f5;display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:12px;margin:0}.card-head span{font-size:8px;color:#7a899b}.card-body{padding:12px 14px}
+.foco-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.foco{min-height:56px;border-radius:10px;padding:6px 7px;display:grid;grid-template-columns:22px 30px 1fr;align-items:center;gap:6px;border:1px solid}.foco .ico{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:900}.foco .num{font-size:15px;font-weight:900;line-height:1}.foco b{display:block;font-size:8px;line-height:1.05}.foco small{display:block;font-size:6.4px;color:#7d8da0;margin-top:1px;line-height:1.05}.red{background:#fff3f4;border-color:#f8d9dd}.red .ico{background:#ffe0e4;color:#d5324b}.red .num{color:#d5324b}.orange{background:#fff8ec;border-color:#f6e4bb}.orange .ico{background:#ffebc1;color:#d17900}.orange .num{color:#d17900}.yellow{background:#fffbeb;border-color:#f5e7a8}.yellow .ico{background:#fff1af;color:#b27800}.yellow .num{color:#b27800}.blue{background:#f1f7ff;border-color:#d7e7fb}.blue .ico{background:#dceaff;color:#2563eb}.blue .num{color:#2563eb}.purple{background:#f8f3ff;border-color:#e5d6fb}.purple .ico{background:#eadfff;color:#7c3aed}.purple .num{color:#7c3aed}.gray{background:#f5f7fa;border-color:#e2e7ed}.gray .ico{background:#e8edf3;color:#667085}.gray .num{color:#475467}
+.kpi-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{background:#18243b;color:#fff;border:1px solid #2c3b55;border-radius:11px;padding:11px;min-height:82px}.kpi .v{font-size:21px;font-weight:900}.kpi .l{font-size:8.5px;color:#c1cfdf;margin-top:3px}.kpi .s{font-size:7.5px;color:#71859f;margin-top:4px}.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.quick button{border:1px solid #dfe7f0;background:#f9fbfd;border-radius:9px;padding:8px;text-align:left;color:#334a63;min-height:66px}.quick button:hover{border-color:#9fbfe9;background:#f1f7ff}.quick b{display:block;font-size:8px;line-height:1.1}.quick span{font-size:14px;display:block;margin-bottom:4px}
+.viva{height:calc(100vh - 174px);min-height:640px;display:flex;flex-direction:column}.viva-head{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid #edf1f5}.viva-logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5b5fc7,#7b5bd6);color:#fff;font-weight:900}.viva-title b{display:block;font-size:12px}.viva-title span{font-size:9px;color:#79889b}.online{margin-left:auto;background:#eaf8ef;color:#14814f;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:900}.viva iframe{border:0;width:100%;flex:1;min-height:500px;background:#fff}.programs{display:grid;gap:6px}.prog{display:grid;grid-template-columns:1fr 65px 65px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f6}.prog:last-child{border-bottom:0}.prog b{font-size:9px}.prog span{font-size:8px;color:#78899d}.badge{font-size:8px;background:#eef8f3;color:#23805e;border-radius:999px;padding:3px 6px;text-align:center}
+.upcoming-card{overflow:hidden}
+.upcoming-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border-bottom:1px solid #edf1f5;background:linear-gradient(90deg,#ffffff,#f8fbff)}
+.upcoming-title-wrap{display:flex;align-items:center;gap:9px;min-width:0}
+.upcoming-ico{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;color:#1265df;font-size:14px}
+.upcoming-title b{display:block;font-size:11px;color:#20364e}
+.upcoming-title span{display:block;margin-top:1px;font-size:7.5px;color:#8493a5}
+.upcoming-all{border:1px solid #d8e5f2;background:#fff;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.upcoming-all:hover{background:#f2f7ff;border-color:#a9c8ea}
+.upcoming-table-wrap{padding:4px 12px 8px}
+.upcoming-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.upcoming-table th{padding:7px 7px 6px;text-align:left;font-size:7.2px;text-transform:uppercase;letter-spacing:.06em;color:#8a99ab;border-bottom:1px solid #e6edf4}
+.upcoming-table td{padding:8px 7px;border-bottom:1px solid #edf2f6;vertical-align:middle;font-size:8.3px;color:#40566f}
+.upcoming-table tbody tr:last-child td{border-bottom:0}
+.upcoming-table tbody tr{cursor:pointer}
+.upcoming-table tbody tr:hover{background:#f7fbff}
+.upcoming-date{width:78px}
+.upcoming-course-col{width:54%}
+.upcoming-prog{width:auto}
+.upcoming-date-badge{display:inline-flex;align-items:center;justify-content:center;min-width:60px;border-radius:7px;background:#fff8d9;border:1px solid #eadb86;color:#806900;padding:4px 6px;font-weight:900;font-size:7.7px}
+.upcoming-course{min-width:0;padding-right:12px}
+.upcoming-course b{display:block;font-size:9.2px;line-height:1.3;color:#263f59;font-weight:800;white-space:normal;overflow:visible}
+.upcoming-course span{display:block;margin-top:3px;font-size:7.3px;line-height:1.25;color:#8796a8;white-space:normal}
+.upcoming-course .upcoming-nrc-line{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#54718c}
+.upcoming-program{display:block;max-width:none;border-radius:7px;background:#eef5fb;color:#45657f;padding:5px 8px;font-size:7.8px;line-height:1.32;font-weight:800;white-space:normal;overflow:visible;word-break:normal}
+.upcoming-empty{padding:18px 8px;text-align:center;color:#8796a8;font-size:8.5px}
+
+@media (min-width:1601px) and (min-height:901px){
+  .upcoming-title b{font-size:13px}
+  .upcoming-title span{font-size:9px}
+  .upcoming-all{font-size:9px;height:30px;padding:0 11px}
+  .upcoming-table th{font-size:9px;padding:8px 8px 7px}
+  .upcoming-table td{font-size:10px;padding:9px 8px}
+  .upcoming-date{width:92px}
+  .upcoming-date-badge{min-width:70px;font-size:9px;padding:5px 7px}
+  .upcoming-course b{font-size:11px;line-height:1.3}
+  .upcoming-course span{font-size:9px;line-height:1.3}
+  .upcoming-program{font-size:9px;padding:6px 9px}
+  .upcoming-empty{font-size:10px}
+}
+.note{font-size:9px;color:#6f8196;line-height:1.45;padding:9px;border-radius:9px;background:#f8fafc;border:1px solid #e5ebf2}.footer{text-align:right;color:#8492a3;font-size:8px;padding:10px 2px}
+@media(max-width:1280px){.dashboard{grid-template-columns:1fr}.top-summary{grid-template-columns:1fr}.viva{height:auto;min-height:560px}.viva{min-height:480px}.kpi-row{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.sidebar{position:fixed;z-index:40;left:0;top:0;bottom:0}.sidebar.closed{transform:translateX(-100%);width:270px;min-width:270px;opacity:1}.top{overflow-x:auto}.filter-session{display:none}.foco-grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}}
+
+.etop-user-btn{display:inline-flex;align-items:center;gap:6px;height:31px;padding:0 10px;border-radius:9px;border:1px solid #d7e2ef;background:#fff;color:#315b86;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap}
+.etop-user-btn:hover{background:#f5f9ff;border-color:#aac7e9}
+.etop-login-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(2,6,23,.70);align-items:center;justify-content:center;padding:18px}
+.etop-login-overlay.open{display:flex}
+.etop-login-card{width:min(430px,100%);background:#fff;border:1px solid #d8e2ed;border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,.32);overflow:hidden}
+.etop-login-head{padding:18px 20px;border-bottom:3px solid #f4c400;background:#142440}
+.etop-login-head h3{margin:0;color:#fff;font-size:17px}.etop-login-head p{margin:5px 0 0;color:#b7c5d6;font-size:11px;line-height:1.45}
+.etop-login-body{padding:20px}.etop-login-body label{display:block;color:#334155;font-size:11px;font-weight:700;margin-bottom:6px}
+.etop-login-input{width:100%;height:40px;border-radius:9px;border:1px solid #cad6e4;background:#fff;color:#1f2937;padding:0 11px;outline:none;font-size:13px}
+.etop-login-input:focus{border-color:#1265df;box-shadow:0 0 0 3px rgba(18,101,223,.10)}
+.etop-login-msg{min-height:18px;margin-top:7px;color:#dc2626;font-size:10px}
+.etop-login-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.etop-login-save{height:36px;border:0;border-radius:8px;background:#1265df;color:#fff;padding:0 16px;font-size:11px;font-weight:800;cursor:pointer}.etop-login-cancel{height:36px;border:1px solid #d7e0ea;border-radius:8px;background:#fff;color:#52677d;padding:0 13px;font-size:11px;font-weight:700;cursor:pointer}
+.guia-correos{display:none;align-items:center;gap:8px;margin-left:5px}.guia-correos-texto{font-size:8px;color:#718399;max-width:260px}.guia-correos-texto strong{color:#294866}.guia-correos-btn{height:28px;padding:0 9px;border:1px solid #d9c768;border-radius:7px;background:#fff9d9;color:#7f6700;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.filter-badge{display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#eef6ff;border:1px solid #d6e8ff;font-size:8px;font-weight:700;color:#315f91;white-space:nowrap}.filter-badge.on{display:inline-flex}
+.clear-filter{display:none;height:26px;border:1px solid #f0caca;background:#fff4f4;color:#b42318;border-radius:7px;padding:0 8px;font-size:8px;font-weight:800}.clear-filter.on{display:inline-flex;align-items:center}
+.nrc-dropdown{position:absolute;top:35px;left:0;z-index:100;background:white;border:1px solid #d6e0eb;border-radius:8px;min-width:260px;max-height:230px;overflow:auto;box-shadow:0 10px 30px rgba(15,23,42,.15);display:none}
+.nrc-dropdown.show{display:block}.nrc-item{padding:7px 10px;font-size:9px;color:#334155;border-bottom:1px solid #eef2f7;cursor:pointer}.nrc-item:hover{background:#f2f7ff}
+.date-chip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 7px;border-radius:999px;border:1px solid #d7e2ef;background:#fff;font-size:8px;color:#52677d}.date-chip button{border:0;background:transparent;color:#b42318;padding:0;cursor:pointer}
+
+.sidebar,.menu{overflow-x:hidden!important}
+.menu-btn,.collapsible,.coord-btn{max-width:100%;min-width:0}
+.menu::-webkit-scrollbar:horizontal,.sidebar::-webkit-scrollbar:horizontal{height:0!important;display:none!important}
+.menu{scrollbar-width:thin}
+
+#gestionFilters{column-gap:6px!important;row-gap:5px!important}
+#gestionFilters .filter-badge{margin-left:2px}
+#gestionFilters #btn-clear-filter{margin-left:0}
+
+/* ===== Filtros V5 con comportamiento idéntico a gestion_base.html ===== */
+.top{height:auto;min-height:58px;align-items:flex-start;padding:8px 14px;flex-wrap:nowrap}
+.top .toggle,.top .view-title,.top .sep{margin-top:2px}
+.top-bar-search{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;flex-wrap:wrap;row-gap:6px;align-content:flex-start}
+.fsel-topbar{height:31px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;padding:0 24px 0 8px;font-size:10px;font-weight:500;cursor:pointer;outline:none;appearance:none;max-width:132px;min-width:92px;background-image:linear-gradient(45deg,transparent 50%,#718399 50%),linear-gradient(135deg,#718399 50%,transparent 50%);background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+.fsel-topbar:hover,.fsel-topbar:focus{border-color:#77a8eb;color:#244b75}
+.fsel-topbar:disabled{opacity:.5;cursor:not-allowed}
+.fsel-topbar.filtro-activo,.fecha-multi-wrap.filtro-activo .fecha-multi-input,.nrc-pill-wrap.filtro-activo .nrc-pill-input{border-color:#77a8eb!important;background-color:#eef6ff!important;color:#1265df!important;font-weight:700}
+.fecha-multi-wrap{display:flex;align-items:center;gap:5px;min-width:0}
+.fecha-multi-input{height:31px;width:126px;padding:0 7px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:#485b70;font-size:10px;outline:none;color-scheme:light}
+.fecha-chips{display:flex;align-items:center;gap:4px;max-width:270px;overflow-x:auto;scrollbar-width:thin}
+.fecha-chip{display:inline-flex;align-items:center;gap:4px;height:25px;padding:0 7px;border:1px solid #bcd4f1;border-radius:13px;background:#eef6ff;color:#315f91;font-size:8px;font-weight:700;white-space:nowrap}
+.fecha-chip button{border:0;background:none;color:#1265df;font-size:12px;line-height:1;cursor:pointer;padding:0}
+.fecha-chip-clear{height:25px;border:0;background:none;color:#718399;font-size:8px;cursor:pointer;white-space:nowrap}
+.fecha-chip-clear:hover{color:#1265df}
+.top-filter-break{flex-basis:100%;height:0}
+.search-group{display:flex;align-items:center;gap:5px}
+.search-group-label{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#718399;white-space:nowrap}
+.search-pill-wrap,.nrc-pill-wrap{position:relative;display:flex;align-items:center}
+.search-pill-icon,.nrc-pill-icon{position:absolute;left:9px;pointer-events:none;font-size:12px;color:#8ba0b8;line-height:1;z-index:1}
+.search-pill-input,.nrc-pill-input{height:31px;border-radius:999px;background:#fff;border:1px solid #d6e0eb;color:#42576e;padding:0 28px 0 27px;font-size:10px;font-weight:500;outline:none;transition:.15s;width:118px}
+.search-pill-input:focus,.nrc-pill-input:focus{width:148px;border-color:#77a8eb;box-shadow:0 0 0 3px rgba(18,101,223,.06)}
+.search-pill-go{position:absolute;right:6px;height:18px;padding:0 6px;border-radius:9px;background:#eef6ff;border:1px solid #bfd8f8;color:#1265df;font-size:8px;font-weight:700;cursor:pointer;opacity:0;pointer-events:none}
+.search-pill-input:focus + .search-pill-go{opacity:1;pointer-events:auto}
+.nrc-pill-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:18px;height:18px;border:0;border-radius:50%;background:#fff0f0;color:#cf3a3a;cursor:pointer;display:none;padding:0;line-height:18px;font-size:12px;z-index:3}
+.nrc-pill-wrap.filtro-activo .nrc-pill-clear,.nrc-pill-wrap.nrc-con-texto .nrc-pill-clear{display:block}
+.nrc-pill-wrap.filtro-activo .nrc-pill-input,.nrc-pill-wrap.nrc-con-texto .nrc-pill-input{padding-right:28px}
+.nrc-dropdown{position:absolute;top:calc(100% + 5px);left:0;background:#fff;border:1px solid #cfdbe8;border-radius:9px;max-height:230px;overflow-y:auto;z-index:9999;min-width:260px;display:none;box-shadow:0 12px 30px rgba(15,23,42,.16)}
+.nrc-dropdown.visible{display:block}
+.nrc-dropdown-item{padding:7px 11px;font-size:10px;color:#42576e;cursor:pointer;border-bottom:1px solid #edf1f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:#eef6ff;color:#183e69}
+.nrc-dropdown-item .match{color:#1265df;font-weight:800}
+.filter-badge{display:none;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#eef6ff;border:1px solid #d6e8ff;font-size:8px;font-weight:700;color:#315f91;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.filter-badge.on{display:flex}
+.btn-clear-filter{display:none;align-items:center;height:27px;padding:0 8px;border-radius:7px;border:1px solid #f0caca;background:#fff4f4;color:#b42318;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.btn-clear-filter.on{display:flex}
+#btn-tutor-perfil{border-color:#c9d9ed;background:#f3f8fe;color:#315f91}
+.guia-correos{display:none;align-items:center;gap:7px;margin-left:7px;padding-left:7px;border-left:1px solid #e3e9f0;min-width:0}
+.guia-correos-texto{max-width:300px;color:#718399;font-size:8px;line-height:1.25}.guia-correos-texto strong{color:#315f91}
+.guia-correos-btn{height:28px;padding:0 10px;border:1px solid #c8d9ee;border-radius:7px;background:#f3f8fe;color:#315f91;font-size:8px;font-weight:800;cursor:pointer;white-space:nowrap}
+.universal-search-btn{height:31px;border:0;border-radius:8px;background:#1265df;color:white;padding:0 16px;font-size:10px;font-weight:800}
+.nrc-pill-input.guia-atencion{border-color:#e0a800!important;box-shadow:0 0 0 4px rgba(244,196,0,.14)!important}
+.canal-splash-v5{display:none;position:absolute;inset:0;overflow:auto;background:#eef3f8;padding:28px}
+.canal-splash-v5.visible{display:block}
+.viewer{position:relative}
+@media(min-width:1500px){
+  .top-filter-break{display:none}
+  .top-bar-search{flex-wrap:nowrap}
+}
+@media(max-width:1499px){
+  .top{padding-top:6px;padding-bottom:6px}
+  .top-bar-search{flex-wrap:wrap}
+  .top-filter-break{display:block}
+}
+
+.channel-link{display:block;padding:11px 12px;border:1px solid #dfe7f0;border-radius:9px;background:#f9fbfd;color:#334a63;text-decoration:none;font-size:10px;font-weight:700}.channel-link:hover{background:#eef6ff;border-color:#9fbfe9}
+
+/* ===== V5 · barra superior del mismo color que el menú izquierdo ===== */
+.top{
+  background:linear-gradient(180deg,#122541 0%,#142440 100%)!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+  color:#fff!important;
+}
+.view-title{color:#fff!important}
+.sep{background:rgba(255,255,255,.10)!important}
+.toggle{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.05)!important;
+  color:#dbe8f5!important;
+}
+.toggle:hover{background:rgba(255,255,255,.10)!important}
+#homeTopSearch .search-pill input,
+.fsel-topbar,.fecha-multi-input,.search-pill-input,.nrc-pill-input{
+  background:rgba(255,255,255,.055)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+#homeTopSearch .search-pill input::placeholder,
+.search-pill-input::placeholder,.nrc-pill-input::placeholder{color:#7f94ad!important}
+.fsel-topbar option{background:#142440!important;color:#e6edf5!important}
+.fsel-topbar:hover,.fsel-topbar:focus,
+.fecha-multi-input:focus,.search-pill-input:focus,.nrc-pill-input:focus{
+  border-color:#3a9bff!important;
+  background:rgba(255,255,255,.085)!important;
+  color:#fff!important;
+}
+.fsel-topbar.filtro-activo,
+.fecha-multi-wrap.filtro-activo .fecha-multi-input,
+.nrc-pill-wrap.filtro-activo .nrc-pill-input{
+  background:rgba(18,101,223,.20)!important;
+  border-color:#3a9bff!important;
+  color:#dcecff!important;
+}
+.search-group-label{color:#7188a4!important}
+.search-pill-icon,.nrc-pill-icon{color:#7188a4!important}
+.fecha-chip{
+  background:rgba(18,101,223,.20)!important;
+  border-color:rgba(58,155,255,.42)!important;
+  color:#dcecff!important;
+}
+.fecha-chip button{color:#76b8ff!important}
+.fecha-chip-clear{color:#8ea2ba!important}
+.filter-badge{
+  background:rgba(18,101,223,.18)!important;
+  border-color:rgba(58,155,255,.32)!important;
+  color:#b9d9ff!important;
+}
+.btn-clear-filter{
+  background:rgba(239,68,68,.10)!important;
+  border-color:rgba(239,68,68,.28)!important;
+  color:#fca5a5!important;
+}
+#btn-tutor-perfil{
+  background:rgba(255,255,255,.05)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#dce7f2!important;
+}
+.guia-correos{border-left-color:rgba(255,255,255,.10)!important}
+.guia-correos-texto{color:#9fb0c4!important}
+.guia-correos-texto strong{color:#dce7f2!important}
+.guia-correos-btn{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(58,155,255,.30)!important;
+  color:#b9d9ff!important;
+}
+.universal-search-btn{background:#1265df!important;color:#fff!important}
+.nrc-dropdown{
+  background:#142440!important;
+  border-color:rgba(58,155,255,.32)!important;
+}
+.nrc-dropdown-item{color:#d6e2ee!important;border-bottom-color:rgba(255,255,255,.06)!important}
+.nrc-dropdown-item:hover,.nrc-dropdown-item.sel{background:rgba(18,101,223,.22)!important;color:#fff!important}
+.nrc-dropdown-item .match{color:#6db4ff!important}
+
+/* ===== Foco del día · página real Power BI ===== */
+.foco-powerbi-card{overflow:hidden}
+.foco-dashboard-link{transition:box-shadow .15s ease,border-color .15s ease}
+.foco-dashboard-link:hover{border-color:#d0dce9;box-shadow:0 8px 24px rgba(31,45,61,.08)}
+.foco-powerbi-frame{pointer-events:auto}
+.foco-dashboard-open{margin-left:auto;border:1px solid #c8d9ee;background:#f3f8fe;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.foco-dashboard-open:hover{background:#eaf3fd;border-color:#9fc1e7}
+.foco-powerbi-body{
+  padding:0!important;
+  height:430px;
+  min-height:430px;
+  background:#fff;
+}
+.foco-powerbi-frame{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+@media(max-width:1280px){
+  .foco-powerbi-body{height:480px;min-height:480px}
+}
 </style>
+
+<style>
+/* ===== Buscador universal V1 ===== */
+.universal-search-wrap{
+  position:relative;
+  z-index:80;
+}
+.universal-search-wrap>span{z-index:2}
+
+.universal-search-wrap::before{
+  content:"UNIVERSAL";
+  position:absolute;
+  left:30px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  pointer-events:none;
+  padding:3px 7px;
+  border-radius:999px;
+  border:1px solid rgba(91,166,255,.34);
+  background:rgba(18,101,223,.18);
+  color:#9fcbff;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+}
+#homeTopSearch .universal-search-wrap input{
+  padding-left:94px!important;
+  border-color:rgba(91,166,255,.34)!important;
+  background:linear-gradient(90deg,rgba(18,101,223,.12),rgba(255,255,255,.055))!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.015);
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease!important;
+}
+#homeTopSearch .universal-search-wrap:hover input{
+  border-color:rgba(91,166,255,.52)!important;
+}
+#homeTopSearch .universal-search-wrap input:focus{
+  border-color:#4fa3ff!important;
+  background:rgba(255,255,255,.085)!important;
+  box-shadow:0 0 0 3px rgba(18,101,223,.13)!important;
+}
+#homeTopSearch .universal-search-btn{
+  box-shadow:0 4px 12px rgba(18,101,223,.18);
+}
+.universal-results{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);
+  max-height:min(460px,64vh);
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:#fff;
+  border:1px solid #d8e2ee;
+  border-radius:12px;
+  box-shadow:0 18px 46px rgba(15,23,42,.22);
+  z-index:9999;
+  padding:6px;
+}
+.universal-results.open{display:block}
+.universal-results span{
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+}
+.universal-result{
+  width:100%;border:0;background:#fff;display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;
+  text-align:left;padding:8px 9px;border-radius:9px;cursor:pointer;color:#24364c;
+}
+.universal-result:hover,.universal-result.sel{background:#eef6ff}
+.universal-result+.universal-result{margin-top:2px}
+.universal-result-ico{
+  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+  background:#edf4fb;color:#315f86;font-size:13px;font-weight:900
+}
+.universal-result.rut .universal-result-ico{background:#f0ecff;color:#7c3aed}
+.universal-result.tutor .universal-result-ico{background:#eef8f3;color:#23805e}
+.universal-result-main{min-width:0}
+.universal-result-title{
+  display:block;color:#1d334b;font-size:10px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-result-sub{
+  display:block;margin-top:2px;color:#74869a;font-size:8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-result-tag{
+  max-width:95px;border-radius:999px;background:#f4f7fa;color:#6f8195;
+  padding:3px 6px;font-size:7px;font-weight:800;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.universal-empty{
+  padding:15px 12px;text-align:center;color:#728197;font-size:9px;line-height:1.4
+}
+.universal-search-note{
+  padding:7px 9px 5px;color:#8493a5;font-size:7.5px;
+  border-top:1px solid #edf1f5;margin-top:4px
+}
+</style>
+
+<style>
+/* ===== Responsive ETOP · notebook y escritorio ===== */
+@media (max-width:1600px), (max-height:900px){
+  .sidebar{width:238px;min-width:238px}
+  .brand{min-height:64px;gap:10px;padding:9px 13px}
+  .brand img{width:47px;height:47px}
+  .brand-text b{font-size:14px}
+  .brand-text span{font-size:9px}
+
+  .menu{padding:6px 6px 8px}
+  .menu-cat{padding:9px 10px 4px;font-size:8px}
+  .menu-btn,.collapsible{gap:8px;padding:7px 10px;border-radius:8px;font-size:11px;margin:1px 0}
+  .menu-btn .ico,.collapsible .ico{width:18px}
+  .submenu .menu-btn{font-size:10px;padding:6px 8px}
+  .coord-btn{margin-top:7px}
+  .session-box{padding:8px 11px 9px}
+  .session-box small{font-size:8px}
+  .session-box b{font-size:10px}
+  .session-meta{margin-top:3px}
+  .sidebar-login-btn{height:27px;margin-top:6px;font-size:8px}
+
+  .top{height:50px;min-height:50px;gap:8px;padding:0 10px}
+  .toggle{width:31px;height:31px;font-size:16px}
+  .view-title{font-size:13px}
+  .sep{height:22px}
+  #homeTopSearch .universal-search-btn{height:32px;padding:0 13px;font-size:9px}
+
+  .home{padding:10px}
+  .hero{margin-bottom:9px}
+  .hero.hero-index-banner{min-height:88px;border-radius:13px}
+  .hero-banner-copy{padding:0 18px}
+  .hero.hero-index-banner .kicker{font-size:8px}
+  .hero.hero-index-banner h1{font-size:21px;margin-top:4px}
+  .hero-banner-photo{width:40%}
+  .hero-banner-fade{right:27%;width:25%}
+
+  .dashboard{gap:10px}
+  .left,.right{gap:10px}
+  .top-summary{gap:10px}
+  .top-col-left,.top-col-right{gap:8px}
+  .card{border-radius:12px}
+  .card-head{padding:8px 10px}
+  .card-head h2{font-size:11px}
+  .card-body{padding:9px 10px}
+
+  .foco-powerbi-body{height:340px;min-height:340px}
+  .foco-dashboard-open{height:25px;padding:0 8px;font-size:7px}
+
+  .kpi-row{gap:6px}
+  .kpi{min-height:66px;padding:8px;border-radius:9px}
+  .kpi .v{font-size:18px}
+  .kpi .l{font-size:7.7px;margin-top:2px}
+  .kpi .s{font-size:6.8px;margin-top:3px}
+
+  .quick{gap:5px}
+  .quick button{min-height:52px;padding:6px;border-radius:8px}
+  .quick span{font-size:12px;margin-bottom:3px}
+  .quick b{font-size:7.3px}
+
+  .upcoming-head{padding:8px 10px}
+  .upcoming-ico{width:27px;height:27px;font-size:12px}
+  .upcoming-table-wrap{padding:3px 9px 6px}
+  .upcoming-table th{padding:5px 6px}
+  .upcoming-table td{padding:6px}
+
+  .viva{height:430px;min-height:430px}
+  .viva-head{padding:9px 11px}
+  .viva-logo{width:31px;height:31px;border-radius:8px}
+  .viva iframe{min-height:350px}
+  .footer{padding:7px 2px}
+}
+
+@media (max-width:1500px){
+  .dashboard{grid-template-columns:1fr}
+  .top-summary{grid-template-columns:minmax(0,1.2fr) minmax(310px,.8fr)}
+  .right{grid-column:1}
+  .viva{height:390px;min-height:390px}
+}
+
+@media (min-width:981px) and (max-width:1280px){
+  .top-summary{grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr)}
+  .foco-powerbi-body{height:320px;min-height:320px}
+  .kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width:980px){
+  .top-summary{grid-template-columns:1fr}
+  .foco-powerbi-body{height:360px;min-height:360px}
+}
+
+@media (max-height:820px) and (min-width:981px){
+  .top{height:46px;min-height:46px}
+  .home{padding:8px}
+  .hero.hero-index-banner{min-height:76px;margin-bottom:8px}
+  .hero.hero-index-banner h1{font-size:19px}
+  .hero.hero-index-banner .kicker{font-size:7.5px}
+  .foco-powerbi-body{height:300px;min-height:300px}
+  .card-head{padding:7px 9px}
+  .kpi{min-height:61px;padding:7px}
+  .quick button{min-height:48px}
+  .upcoming-table td{padding:5px 6px}
+}
+</style>
+
+<style>
+/* ===== Ajuste fino barra superior y visor · 20260924 ===== */
+.top.home-mode{
+  height:54px!important;
+  min-height:54px!important;
+  padding:0 12px!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+}
+.top.home-mode .toggle,
+.top.home-mode .view-title,
+.top.home-mode .sep{
+  margin-top:0!important;
+  align-self:center!important;
+}
+.top.home-mode #homeTopSearch{
+  align-self:center!important;
+  align-items:center!important;
+  min-height:34px;
+}
+.top.home-mode #homeTopSearch .universal-search-wrap{
+  align-self:center;
+}
+.top.home-mode #homeTopSearch .universal-search-btn{
+  align-self:center;
+  height:34px;
+}
+
+.top.report-mode{
+  height:auto!important;
+  min-height:58px!important;
+  padding:6px 10px!important;
+  align-items:flex-start!important;
+}
+.top.report-mode .toggle,
+.top.report-mode .view-title,
+.top.report-mode .sep{
+  margin-top:2px!important;
+}
+
+.viewer{
+  box-sizing:border-box;
+  padding:0!important;
+  border-top:0!important;
+  background:#fff!important;
+  overflow:hidden;
+}
+.viewer > iframe#visor{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:#fff;
+  transform:none!important;
+  filter:none!important;
+}
+
+@media (min-width:1500px){
+  .top.report-mode{
+    min-height:58px!important;
+    padding:6px 10px!important;
+    align-items:center!important;
+  }
+  .top.report-mode .toggle,
+  .top.report-mode .view-title,
+  .top.report-mode .sep{
+    margin-top:0!important;
+    align-self:center!important;
+  }
+  .top.report-mode .top-bar-search{
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    align-content:center!important;
+  }
+  .top.report-mode .fsel-topbar{
+    min-width:90px;
+    max-width:145px;
+    width:clamp(96px,7.2vw,145px);
+  }
+  .top.report-mode .fecha-multi-input{width:126px}
+  .top.report-mode .search-pill-input,
+  .top.report-mode .nrc-pill-input{width:116px}
+}
+
+@media (max-width:1499px){
+  .top.report-mode{
+    height:auto!important;
+    min-height:58px!important;
+    padding:6px 9px!important;
+    align-items:flex-start!important;
+  }
+  .top.report-mode .top-bar-search{
+    flex-wrap:wrap!important;
+    align-content:flex-start!important;
+  }
+}
+
+@media (max-height:820px) and (min-width:981px){
+  .top.home-mode{
+    height:50px!important;
+    min-height:50px!important;
+    padding:0 10px!important;
+  }
+  .top.report-mode{
+    height:auto!important;
+    min-height:56px!important;
+    padding:5px 8px!important;
+  }
+  .viewer{border-top-width:0!important}
+}
+</style>
+
+<style>
+/* ===== Sidebar responsivo en altura · 20260924 ===== */
+.sidebar .menu{
+  min-height:0;
+}
+.sidebar .menu:not(:has(.submenu.open)){
+  overflow-y:hidden!important;
+  scrollbar-width:none!important;
+}
+.sidebar .menu:not(:has(.submenu.open))::-webkit-scrollbar{
+  width:0!important;
+  height:0!important;
+  display:none!important;
+}
+.sidebar .menu:has(.submenu.open){
+  overflow-y:auto!important;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(148,163,184,.28) transparent;
+}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar{width:4px}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar-track{background:transparent}
+.sidebar .menu:has(.submenu.open)::-webkit-scrollbar-thumb{
+  background:rgba(148,163,184,.24);
+  border-radius:999px;
+}
+
+@media (max-height:900px) and (min-width:901px){
+  .sidebar .brand{
+    min-height:56px;
+    padding:7px 11px;
+    gap:9px;
+    flex-shrink:0;
+  }
+  .sidebar .brand img{width:40px;height:40px}
+  .sidebar .brand-text b{font-size:13px}
+  .sidebar .brand-text span{font-size:8.5px}
+
+  .sidebar .menu{padding:4px 5px 5px}
+  .sidebar .menu-cat{
+    padding:6px 9px 2px;
+    font-size:7.5px;
+    line-height:1.1;
+  }
+  .sidebar .menu-btn,
+  .sidebar .collapsible{
+    gap:7px;
+    padding:5px 9px;
+    margin:0;
+    border-radius:7px;
+    font-size:10.4px;
+    line-height:1.15;
+    min-height:0;
+  }
+  .sidebar .menu-btn .ico,
+  .sidebar .collapsible .ico{width:17px;font-size:11px}
+  .sidebar .collapsible .arrow{font-size:8px}
+  .sidebar .submenu{margin-left:12px;padding-left:6px}
+  .sidebar .submenu .menu-btn{
+    font-size:9.5px;
+    padding:4px 7px;
+  }
+  .sidebar .coord-btn{
+    margin:5px 4px 0;
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+
+  .sidebar .session-box{
+    flex-shrink:0;
+    padding:7px 10px 8px;
+  }
+  .sidebar .session-box small{font-size:7.5px}
+  .sidebar .session-box b{font-size:9.5px;margin-top:3px}
+  .sidebar .session-meta{margin-top:3px}
+  .sidebar .session-box .session-meta span{
+    padding:2px 5px;
+    font-size:7.3px;
+  }
+  .sidebar .sidebar-login-btn{
+    height:26px;
+    margin-top:5px;
+    font-size:8px;
+  }
+}
+
+@media (max-height:760px) and (min-width:901px){
+  .sidebar .brand{
+    min-height:50px;
+    padding:5px 10px;
+  }
+  .sidebar .brand img{width:36px;height:36px}
+  .sidebar .brand-text b{font-size:12px}
+  .sidebar .brand-text span{font-size:8px}
+
+  .sidebar .menu{padding:2px 5px 3px}
+  .sidebar .menu-cat{
+    padding:4px 8px 1px;
+    font-size:7px;
+  }
+  .sidebar .menu-btn,
+  .sidebar .collapsible{
+    padding:4px 8px;
+    font-size:9.8px;
+    line-height:1.1;
+  }
+  .sidebar .submenu .menu-btn{
+    font-size:9px;
+    padding:3px 6px;
+  }
+  .sidebar .coord-btn{margin-top:3px}
+
+  .sidebar .session-box{padding:5px 9px 6px}
+  .sidebar .sidebar-login-btn{height:24px;margin-top:4px}
+}
+</style>
+
+<style>
+/* ===== Filtros superiores responsivos V2 · 20260924 ===== */
+.top.report-mode #gestionFilters{
+  display:grid!important;
+  flex:1 1 0!important;
+  min-width:0!important;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  gap:6px!important;
+  align-items:center!important;
+  align-content:center!important;
+}
+.top.report-mode #gestionFilters .top-filter-break{display:none!important}
+
+.top.report-mode #gestionFilters > [data-filtro],
+.top.report-mode #gestionFilters > .search-group,
+.top.report-mode #gestionFilters > .fecha-multi-wrap{
+  min-width:0!important;
+  width:100%!important;
+  max-width:none!important;
+}
+
+.top.report-mode #gestionFilters .fsel-topbar,
+.top.report-mode #gestionFilters .fecha-multi-wrap,
+.top.report-mode #gestionFilters .fecha-multi-input,
+.top.report-mode #gestionFilters .search-pill-wrap,
+.top.report-mode #gestionFilters .nrc-pill-wrap,
+.top.report-mode #gestionFilters .search-pill-input,
+.top.report-mode #gestionFilters .nrc-pill-input{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+
+.top.report-mode #gestionFilters .search-group{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:4px!important;
+  align-items:center!important;
+}
+.top.report-mode #gestionFilters .search-group-label{
+  font-size:7px!important;
+  letter-spacing:.05em!important;
+}
+.top.report-mode #gestionFilters .search-pill-input:focus,
+.top.report-mode #gestionFilters .nrc-pill-input:focus{
+  width:100%!important;
+}
+
+.top.report-mode #gestionFilters #btn-tutor-perfil{
+  width:100%;
+  min-width:0;
+  justify-content:center;
+}
+
+@media (min-width:1600px){
+  .top.report-mode #gestionFilters{
+    grid-template-columns:repeat(9,minmax(88px,1fr));
+  }
+  .top.report-mode #gestionFilters .fsel-topbar,
+  .top.report-mode #gestionFilters .fecha-multi-input{
+    height:31px;
+    font-size:9.5px;
+  }
+}
+
+@media (min-width:1000px) and (max-width:1599px){
+  .top.report-mode{
+    gap:7px!important;
+  }
+  .top.report-mode #gestionFilters{
+    grid-template-columns:repeat(5,minmax(92px,1fr));
+    gap:5px!important;
+  }
+  .top.report-mode #gestionFilters .fsel-topbar,
+  .top.report-mode #gestionFilters .fecha-multi-input,
+  .top.report-mode #gestionFilters .search-pill-input,
+  .top.report-mode #gestionFilters .nrc-pill-input{
+    height:29px!important;
+    font-size:9px!important;
+  }
+  .top.report-mode #gestionFilters .search-pill-icon,
+  .top.report-mode #gestionFilters .nrc-pill-icon{
+    font-size:10px!important;
+  }
+}
+
+@media (max-width:999px){
+  .top.report-mode{
+    display:grid!important;
+    grid-template-columns:auto max-content 1px minmax(0,1fr);
+    gap:6px!important;
+    align-items:center!important;
+  }
+  .top.report-mode #gestionFilters{
+    grid-column:1/-1;
+    grid-row:2;
+    grid-template-columns:repeat(3,minmax(105px,1fr));
+    width:100%!important;
+  }
+  .top.report-mode .guia-correos{
+    grid-column:1/-1;
+  }
+}
+</style>
+
+<style>
+/* ===== Ajuste portal: DAX edge-to-edge + correo NRC-only · 20260924 ===== */
+.viewer.viewer-pbi{
+  overflow:hidden!important;
+  background:#fff!important;
+}
+.viewer.viewer-pbi > iframe#visor{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+  background:#fff!important;
+}
+.viewer.viewer-local > iframe#visor{
+  width:100%!important;
+  max-width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+.top.email-mode{
+  align-items:center!important;
+  flex-wrap:wrap!important;
+}
+.top.email-mode #gestionFilters{
+  display:flex!important;
+  flex:0 1 clamp(240px,26vw,390px)!important;
+  width:auto!important;
+  min-width:230px!important;
+  grid-template-columns:none!important;
+  gap:0!important;
+  align-items:center!important;
+}
+.top.email-mode #gestionFilters [data-filtro]:not([data-filtro="nrc"]),
+.top.email-mode #filter-badge,
+.top.email-mode #btn-clear-filter,
+.top.email-mode #btn-tutor-perfil{
+  display:none!important;
+}
+.top.email-mode #gestionFilters [data-filtro="nrc"]{
+  display:flex!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+.top.email-mode #gestionFilters .search-group-label{
+  display:inline-block!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  color:#9fb2c9!important;
+  letter-spacing:.08em!important;
+}
+.top.email-mode #nrc-pill-wrap{
+  width:100%!important;
+  min-width:0!important;
+}
+.top.email-mode #input-nrc{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:32px!important;
+  border-radius:9px!important;
+  padding-left:30px!important;
+  font-size:10px!important;
+}
+.top.email-mode #input-nrc:focus{width:100%!important}
+.top.email-mode #nrc-dropdown{
+  min-width:100%!important;
+  width:max(100%,310px)!important;
+}
+.top.email-mode .guia-correos{
+  margin-left:auto!important;
+  flex:1 1 360px!important;
+  justify-content:flex-end!important;
+  border-left:0!important;
+  padding-left:0!important;
+}
+
+@media(max-width:1150px){
+  .top.email-mode #gestionFilters{
+    flex:1 1 320px!important;
+    max-width:460px!important;
+  }
+  .top.email-mode .guia-correos{
+    flex:1 1 100%!important;
+    width:100%!important;
+    justify-content:flex-start!important;
+    margin-left:42px!important;
+  }
+}
+</style>
+
+<style>
+/* ===== Filtros activos dentro del propio slicer · 20260924 ===== */
+#filter-badge,#btn-clear-filter{display:none!important}
+
+.inline-filter-wrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+.inline-filter-wrap .fsel-topbar{
+  width:100%!important;
+  max-width:none!important;
+  padding-right:30px!important;
+}
+.inline-filter-clear,.rut-pill-clear{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:17px;
+  height:17px;
+  border:0;
+  border-radius:50%;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  line-height:17px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+  z-index:4;
+  background:rgba(239,68,68,.16);
+  color:#ff9d9d;
+}
+.inline-filter-clear:hover,.rut-pill-clear:hover{
+  background:rgba(239,68,68,.32);
+  color:#fff;
+}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .inline-filter-clear{display:flex}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .fsel-topbar{
+  background-image:none!important;
+}
+#rut-pill-wrap.filtro-activo .rut-pill-clear{display:flex}
+#rut-pill-wrap.filtro-activo .search-pill-input{padding-right:29px!important}
+#rut-pill-wrap.filtro-activo .search-pill-go{display:none!important}
+
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo)::before,
+.fecha-multi-wrap.filtro-activo::before,
+.nrc-pill-wrap.filtro-activo::before,
+#rut-pill-wrap.filtro-activo::before{
+  content:"";
+  position:absolute;
+  left:5px;
+  top:5px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#3a9bff;
+  box-shadow:0 0 0 2px rgba(58,155,255,.14);
+  z-index:5;
+  pointer-events:none;
+}
+.inline-filter-wrap:has(.fsel-topbar.filtro-activo) .fsel-topbar{padding-left:14px!important}
+#rut-pill-wrap.filtro-activo .search-pill-input{border-color:#3a9bff!important;background:rgba(18,101,223,.20)!important;color:#dcecff!important;font-weight:700}
+#gestionFilters{align-content:center!important}
+</style>
+
+<style>
+/* ===== Actividad reciente CRM · tarjeta integrada en portada ===== */
+.crm-activity-card{overflow:hidden;background:#fff}
+.crm-activity-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #edf1f5;background:linear-gradient(90deg,#fff,#f8fbff)}
+.crm-activity-title-wrap{display:flex;align-items:center;gap:9px;min-width:0}
+.crm-activity-ico{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;color:#1265df;font-size:8px;font-weight:900;letter-spacing:.03em}
+.crm-activity-title{min-width:0}
+.crm-activity-title b{display:block;font-size:11px;color:#20364e}
+.crm-activity-title span{display:block;margin-top:1px;font-size:7.5px;color:#8493a5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crm-activity-open{border:1px solid #d8e5f2;background:#fff;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.crm-activity-open:hover{background:#f2f7ff;border-color:#a9c8ea}
+.crm-activity-frame-wrap{position:relative;width:100%;aspect-ratio:4/1;min-height:178px;max-height:255px;overflow:hidden;background:#fff}
+.crm-activity-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:block;opacity:0;transition:opacity .16s ease}
+.crm-activity-frame.loaded{opacity:1}
+.crm-activity-loading{position:absolute;inset:0;z-index:2;display:grid;place-items:center;background:linear-gradient(90deg,#fff,#fbfdff);color:#7f8fa2;font-size:8.5px}
+.crm-activity-loading.hidden{display:none}
+@media (min-width:1601px) and (min-height:901px){
+  .crm-activity-title b{font-size:13px}
+  .crm-activity-title span{font-size:9px}
+  .crm-activity-open{height:30px;padding:0 11px;font-size:9px}
+  .crm-activity-frame-wrap{min-height:205px;max-height:285px}
+}
+@media (max-width:1600px), (max-height:900px){
+  .crm-activity-head{padding:8px 10px}
+  .crm-activity-ico{width:27px;height:27px;font-size:7px}
+  .crm-activity-frame-wrap{min-height:165px;max-height:220px}
+}
+@media (max-height:820px) and (min-width:981px){
+  .crm-activity-frame-wrap{min-height:150px;max-height:195px}
+}
+</style>
+
+<style>
+/* ===== Ajuste V2 · Viva Engage ocupa toda la altura de la columna derecha ===== */
+.dashboard > .right{align-self:stretch!important;min-height:0!important}
+.dashboard > .right > .viva{height:100%!important;min-height:100%!important}
+.dashboard > .right > .viva iframe{min-height:0!important}
+</style>
+
+<style>
+/* Tablero de Gestión: barra superior compacta · 20260930 */
+.top.dashboard-mode #gestionFilters{
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+}
+.top.dashboard-mode #gestionFilters [data-filtro="motivoRiesgo"]{
+  min-width:150px!important;
+}
+.dashboard-excel-btn{
+  height:31px;border:1px solid rgba(244,196,0,.42);border-radius:8px;
+  background:rgba(244,196,0,.10);color:#ffe16d;padding:0 10px;
+  font-size:9px;font-weight:800;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.dashboard-excel-btn:hover{background:rgba(244,196,0,.17);border-color:rgba(244,196,0,.68);color:#fff0a3}
+@media (min-width:1600px){
+  .top.dashboard-mode #gestionFilters{
+    grid-template-columns:minmax(105px,.85fr) minmax(150px,1.15fr) minmax(105px,.9fr) minmax(105px,.9fr) minmax(170px,1.35fr) minmax(125px,1fr) minmax(125px,1fr) 88px!important;
+  }
+}
+@media (min-width:1000px) and (max-width:1599px){
+  .top.dashboard-mode #gestionFilters{
+    grid-template-columns:repeat(4,minmax(110px,1fr))!important;
+  }
+}
+</style>
+
+<style>
+/* Vista de exportación Power BI embebida: misma barra, sin hueco del botón Excel */
+.top.dashboard-mode.export-mode #gestionFilters{
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+}
+@media (min-width:1600px){
+  .top.dashboard-mode.export-mode #gestionFilters{
+    grid-template-columns:minmax(105px,.85fr) minmax(150px,1.15fr) minmax(105px,.9fr) minmax(105px,.9fr) minmax(170px,1.35fr) minmax(125px,1fr) minmax(125px,1fr)!important;
+  }
+}
+@media (min-width:1000px) and (max-width:1599px){
+  .top.dashboard-mode.export-mode #gestionFilters{
+    grid-template-columns:repeat(4,minmax(110px,1fr))!important;
+  }
+}
+</style>
+
 </head>
-<body class="text-white h-screen flex flex-col">
-<header class="h-16 flex items-center justify-between px-8 bg-[#1f2940] border-b border-white/5 z-50 flex-shrink-0">
-    <div class="flex items-center gap-4 min-w-0">
-        <button id="btn-menu-lateral" type="button" onclick="toggleMenuLateral()" title="Mostrar u ocultar menú lateral" aria-label="Mostrar u ocultar menú lateral" aria-expanded="true">
-            <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
-        </button>
-        <div class="flex items-center gap-3 flex-shrink-0">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP" class="h-11 w-auto object-contain">
-            <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1761008038/aplicacion-azul-300x300_hvezae.png" alt="UNAB Online" class="h-10 w-auto object-contain">
-            <span class="text-slate-500 font-light text-xl">|</span>
-            <span class="text-slate-300 font-medium text-sm tracking-widest uppercase">Portal</span>
-        </div>
-        <div class="header-pill flex-shrink-0">
-            <div class="w-2 h-2 rounded-full bg-green-500 pulse-dot"></div>
-            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Sistema Activo</span>
-        </div>
-        <div class="header-pill header-message min-w-0">
-            <span class="text-[10px] text-[#facc15]/80 uppercase font-bold tracking-wider whitespace-nowrap">💡 Mensaje del día</span>
-            <p id="mensaje-dia" class="text-[10px] text-slate-300 leading-relaxed italic min-w-0"></p>
-        </div>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP"><div class="brand-text"><b>ESPACIO TUTORÍA</b><span>Gestión Tutorial · ETOP</span></div></div>
+  <div class="menu">
+    <div class="menu-cat">Operación diaria</div>
+    <button class="menu-btn active" data-key="INICIO" onclick="showHome(this)"><span class="ico">🏠</span>Inicio</button>
+    <button class="menu-btn" data-key="DASHBOARD" onclick="cargar('DASHBOARD',this)"><span class="ico">📊</span>Tablero de Gestión</button>
+    <button class="menu-btn" data-key="NOMINA_ESTUDIANTES" onclick="cargar('NOMINA_ESTUDIANTES',this)"><span class="ico">📋</span>Nómina Estudiantes</button>
+    <button class="menu-btn" data-key="CURSOS_ACTIVOS" onclick="cargar('CURSOS_ACTIVOS',this)"><span class="ico">🟢</span>Cursos Activos</button>
+    <button class="menu-btn" data-key="CURSOS_PREPARACION" onclick="cargar('CURSOS_PREPARACION',this)"><span class="ico">⏳</span>Cursos en Preparación</button>
+    <button class="menu-btn" data-key="CURSOS_CIERRE" onclick="cargar('CURSOS_CIERRE',this)"><span class="ico">🏁</span>Cursos en Cierre</button>
+    <button class="menu-btn" data-key="FICHA_ESTUDIANTE" onclick="cargar('FICHA_ESTUDIANTE',this)"><span class="ico">👤</span>Ficha del Estudiante</button>
+    <button class="menu-btn" data-key="CALENDARIOS" onclick="cargar('CALENDARIOS',this)"><span class="ico">📅</span>Calendarios</button>
+    <div class="menu-cat">Onboarding</div>
+    <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
+    <div class="submenu" id="onboarding">
+      <button class="menu-btn" data-key="CORREOS" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
+      <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
+      <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
+      <button class="menu-btn" data-key="CIERRE" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
     </div>
-    <div class="border-l border-white/10 pl-4 flex items-center gap-3 flex-shrink-0">
-        <div class="text-right">
-            <p class="text-xs font-semibold text-white">Equipo ETOP</p>
-            <p class="text-[10px] text-slate-400">Universidad Andrés Bello</p>
-        </div>
-        <div class="w-8 h-8 rounded-full bg-[#facc15] flex items-center justify-center text-[#1e293b] font-bold text-xs">ET</div>
+    <div class="menu-cat">Canales del equipo</div>
+    <button class="collapsible" onclick="toggleSub('canales')"><span class="ico">🟣</span>Canales SharePoint<span class="arrow">▼</span></button>
+    <div class="submenu" id="canales"><button class="menu-btn" onclick="mostrarCanales(this)">Ver todos los canales</button></div>
+    <button class="menu-btn coord-btn" onclick="abrirCoordinacionPantallaCompleta()"><span class="ico">🏛️</span>Ir a Espacio Coordinación →</button>
+  </div>
+  <div class="session-box">
+    <small>Sesión ETOP</small>
+    <b id="sessionTutor">SIN IDENTIFICAR</b>
+    <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
+    <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
+  </div>
+</aside>
+<main class="main">
+  <div class="top" id="topBar">
+    <button class="toggle" onclick="toggleSidebar()">☰</button>
+    <div class="view-title" id="titulo-vista">Inicio · Gestión Tutorial</div>
+    <div class="sep"></div>
+
+    <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
+      <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
+        <span>🔎</span>
+        <input id="universalSearch"
+               placeholder="Buscar RUT sin guion, NRC, curso, programa o tutor... (Ctrl+K)"
+               autocomplete="off"
+               style="width:100%;border-radius:9px"
+               oninput="onUniversalInput(this.value)"
+               onkeydown="onUniversalKeydown(event)">
+        <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
+      </div>
+      <button onclick="runUniversalSearch()" class="universal-search-btn">Buscar</button>
     </div>
-</header>
-<div class="flex flex-1 overflow-hidden">
-    <aside id="portal-sidebar" class="w-[260px] bg-[#1f2940] border-r border-white/5 flex flex-col py-4 flex-shrink-0">
-        <nav class="flex-1 space-y-0.5 overflow-y-auto pt-2">
-            <a href="gestion.html" class="flex items-center gap-3 px-6 py-2 text-[#facc15] font-semibold bg-white/5 border-l-2 border-[#facc15] transition-all text-sm">
-                <span class="material-symbols-outlined">dashboard</span>Gestión Tutorial
-            </a>
-            <a href="gestion_coordinacion.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">account_balance</span>Coordinación
-            </a>
-            <div class="nav-group">
-                <button id="btn-qa2-trigger" onclick="toggleQA2Menu()" class="nav-group-trigger">
-                    <div class="trigger-left">
-                        <span class="material-symbols-outlined">bug_report</span>
-                        <span>Gestión QA2</span>
-                    </div>
-                    <span class="material-symbols-outlined chevron">expand_more</span>
-                </button>
-                <div id="qa2-submenu" class="nav-submenu">
-                    <button onclick="mostrarVistaQA2()" id="sub-incidencias" class="nav-subitem">
-                        <span class="material-symbols-outlined">report_problem</span>Incidencias
-                    </button>
-                </div>
-            </div>
-            <a href="comunicaciones_etop.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">campaign</span>Comunicaciones
-            </a>
-            <a href="aplicaciones.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">apps</span>Aplicaciones
-            </a>
-            <a href="recursos_aprendizaje.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">school</span>Recursos
-            </a>
-            <a href="https://teams.microsoft.com/l/chat/19:6c4c4332216843759e886e83d89479b3@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D" target="_blank" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">chat</span>Chat de Equipo
-            </a>
-            <a href="reporte_completo.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-                <span class="material-symbols-outlined">menu_book</span>Índice del Sitio
-            </a>
-            <a href="equipo_etop_mejorado.html" class="flex items-center gap-3 px-6 py-2 text-slate-400 hover:bg-white/5 hover:text-[#facc15] transition-colors text-sm">
-    <span class="material-symbols-outlined">groups</span>Equipo ETOP
-</a>
-        </nav>
-        <div class="pt-4 mt-4">
-            <div class="px-6 pb-2">
-                <span class="sidebar-secondary-label">Mi espacio</span>
-            </div>
-            <div class="mi-espacio-grid">
-                <a href="https://outlook.office.com/mail/" target="_blank" class="mi-espacio-btn" title="Abrir Outlook">
-                    <span class="material-symbols-outlined">mail</span>
-                    <span>Outlook</span>
-                </a>
-                <a href="https://outlook.office.com/calendar/" target="_blank" class="mi-espacio-btn" title="Abrir Calendario">
-                    <span class="material-symbols-outlined">calendar_month</span>
-                    <span>Calendario</span>
-                </a>
-                <a href="https://m365.cloud.microsoft/chat" target="_blank" class="mi-espacio-btn" title="Abrir Copilot">
-                    <span class="material-symbols-outlined">smart_toy</span>
-                    <span>Copilot</span>
-                </a>
-            </div>
+
+    <div class="top-bar-search" id="gestionFilters" style="display:none">
+      <div class="inline-filter-wrap" data-filtro="facultad">
+        <select class="fsel-topbar" id="sel-facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
+          <option value="">Facultad ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Facultad" aria-label="Quitar Facultad" onclick="limpiarFiltroSimple('facultad',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="tutor">
+        <select class="fsel-topbar" id="sel-tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
+          <option value="">Tutor ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Tutor" aria-label="Quitar Tutor" onclick="limpiarFiltroSimple('tutor',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="tipo">
+        <select class="fsel-topbar" id="sel-tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
+          <option value="">Tipo NRC ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Tipo NRC" aria-label="Quitar Tipo NRC" onclick="limpiarFiltroSimple('tipo',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="codigo">
+        <select class="fsel-topbar" id="sel-codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
+          <option value="">Código curso ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Código curso" aria-label="Quitar Código curso" onclick="limpiarFiltroSimple('codigo',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="estado">
+        <select class="fsel-topbar" id="sel-estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
+          <option value="">Estado ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Estado" aria-label="Quitar Estado" onclick="limpiarFiltroSimple('estado',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="motivoRiesgo">
+        <select class="fsel-topbar" id="sel-motivo-riesgo" onchange="aplicarBusqueda('motivoRiesgo',this.value)">
+          <option value="">Motivo de riesgo</option>
+          <option value="Semáforo rojo">Semáforo rojo</option>
+          <option value="No ingresa al curso">No ingresa al curso</option>
+          <option value="Sin cotejo Canvas">Sin cotejo Canvas</option>
+          <option value="Sin acceso Canvas">Sin acceso Canvas</option>
+          <option value="Semáforo naranjo">Semáforo naranjo</option>
+          <option value="Semáforo amarillo">Semáforo amarillo</option>
+          <option value="Ingreso al curso no informado">Ingreso al curso no informado</option>
+          <option value="Estado del estudiante no activo">Estado del estudiante no activo</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Motivo de riesgo" aria-label="Quitar Motivo de riesgo" onclick="limpiarFiltroSimple('motivoRiesgo',event)">×</button>
+      </div>
+      <div class="inline-filter-wrap" data-filtro="intake">
+        <select class="fsel-topbar" id="sel-intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
+          <option value="">Intake/Versión ⏳</option>
+        </select>
+        <button type="button" class="inline-filter-clear" title="Quitar Intake/Versión" aria-label="Quitar Intake/Versión" onclick="limpiarFiltroSimple('intake',event)">×</button>
+      </div>
+
+      <div class="fecha-multi-wrap" id="fecha-multi-wrap" data-filtro="fechaInicio">
+        <input type="date" class="fecha-multi-input" id="fecha-multi-input" title="Agregar fecha de inicio" onchange="agregarFechaGestion(this.value)">
+        <div class="fecha-chips" id="fecha-multi-chips"></div>
+      </div>
+
+      <div class="top-filter-break" aria-hidden="true"></div>
+
+      <div class="search-group" data-filtro="nrc">
+        <span class="search-group-label">NRC</span>
+        <div class="nrc-pill-wrap" id="nrc-pill-wrap">
+          <span class="nrc-pill-icon">⌗</span>
+          <input type="text" class="nrc-pill-input" id="input-nrc"
+                 placeholder="Buscar NRC…" maxlength="40" autocomplete="off"
+                 oninput="onNRCInput(this.value)"
+                 onkeydown="onNRCKeydown(event)"
+                 onfocus="mostrarNRCDropdown()">
+          <button type="button" class="nrc-pill-clear" id="nrc-pill-clear" title="Quitar filtro NRC" aria-label="Quitar filtro NRC" onclick="limpiarFiltroNRC(event)">×</button>
+          <div class="nrc-dropdown" id="nrc-dropdown"></div>
         </div>
-    </aside>
-    <main class="flex-1 p-6 overflow-hidden" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;">
-        <!-- VISTA NORMAL -->
-        <div id="vista-normal" class="grid grid-cols-12 gap-6 overflow-hidden" style="grid-row:1;grid-column:1;">
+      </div>
 
-            <!-- PORTADA PRINCIPAL -->
-            <div class="col-span-12 flex flex-col gap-3 overflow-hidden">
-                <!-- FRANJA SUPERIOR: PORTAL + BANNER DE CURSOS -->
-                <div class="grid grid-cols-12 gap-3 flex-shrink-0" style="height:110px;">
-                    <!-- PORTAL ETOP -->
-                    <div class="col-span-6 banner-hero" style="height:110px;">
-                        <div class="banner-bg-accent"></div>
-                        <div class="banner-side-photo"></div>
-                        <div class="banner-side-fade"></div>
-                        <div class="banner-overlay"></div>
-                        <div class="banner-content" style="padding:0 24px; max-width:56%;">
-                            <p class="banner-label" style="margin-bottom:2px;">Universidad Andrés Bello · ETOP</p>
-                            <h1 class="banner-title" style="font-size:22px;">Portal <span>ETOP</span></h1>
-                            <p class="banner-sub" style="margin-top:2px;font-size:11px;">Equipo de Tutoría Online de Postgrado · Panel de Gestión</p>
-                        </div>
-                    </div>
-
-                    <!-- BANNER DINÁMICO DE CURSOS -->
-                    <div class="col-span-6">
-                        <div class="course-banner-wrap top-course-banner" id="course-banner">
-                            <div class="course-banner-header">
-                                <div class="course-banner-dot"></div>
-                                <span class="course-banner-label">Próximos inicios de cursos</span>
-                                <span class="course-banner-counter" id="course-ctr">Consultando…</span>
-                                <a class="course-banner-link" href="calendarios.html">Ver todos ↗</a>
-                            </div>
-                            <div class="course-ticker-window" id="course-ticker-window" aria-label="Próximos inicios de cursos; la animación se pausa al pasar el cursor">
-                                <div class="course-ticker-track" id="course-track">
-                                    <div class="course-ticker-empty">⏳ Cargando próximos inicios…</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTENIDO PRINCIPAL: VIVA / NOTICIAS / INDICADORES + MANUAL -->
-                <div class="grid grid-cols-12 gap-3 flex-1 overflow-hidden" style="min-height:0;">
-
-                    <!-- IZQUIERDA: MANUAL ARRIBA + GRÁFICO ABAJO -->
-                    <aside class="col-span-3 flex flex-col gap-3 overflow-hidden" style="min-height:0;">
-
-                        <!-- MANUAL DE APOYO: 35% -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col" style="height:35%;min-height:170px;">
-                            <div class="px-3 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[#facc15] text-base">play_circle</span>
-                                    <div>
-                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Manual de Apoyo</h3>
-                                        <p class="text-[8px] text-slate-500">Apoyo estudiantil y orientaciones</p>
-                                    </div>
-                                </div>
-                                <span class="material-symbols-outlined text-slate-600 text-sm">open_in_full</span>
-                            </div>
-                            <div style="flex:1;min-height:0;overflow:hidden;background:#0f172a;">
-                                <iframe
-                                    src="https://unabportal365.sharepoint.com/sites/actasynrc/_layouts/15/embed.aspx?UniqueId=a92a8c30-61cc-4cce-bfc0-4cc9adf79103&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create"
-                                    style="width:100%;height:100%;border:none;display:block;"
-                                    allowfullscreen
-                                    title="Manual de Apoyo Estudiantil">
-                                </iframe>
-                            </div>
-                        </section>
-
-                        <!-- CURSOS POR FACULTAD: 65% -->
-                        <section class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1" style="min-height:0;">
-                            <div class="px-3 pt-3 pb-1 flex items-start justify-between gap-2 flex-shrink-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[#facc15] text-base">bar_chart</span>
-                                    <div>
-                                        <h3 class="text-[10px] font-bold text-white uppercase tracking-wider">Cursos por Facultad</h3>
-                                        <p class="text-[8px] text-slate-500">Estado actual de los NRC</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="chart-legend" class="flex items-center gap-2 px-3 py-1 flex-wrap" style="font-size:8px;color:#64748b;"></div>
-                            <div style="flex:1;min-height:0;padding:4px 8px 10px;">
-                                <canvas id="chartFacultad" role="img" aria-label="Barras apiladas de cursos por facultad" style="width:100%;height:100%;"></canvas>
-                            </div>
-                        </section>
-                    </aside>
-
-                    <!-- CENTRO: VIVA ENGAGE -->
-                    <section class="col-span-5 glass-panel rounded-xl overflow-hidden flex flex-col" style="min-height:0;">
-                        <div class="px-4 py-3 border-b border-white/5 flex items-center justify-between flex-shrink-0">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[#facc15] text-lg">forum</span>
-                                <div>
-                                    <h2 class="text-[11px] font-bold text-white uppercase tracking-wider">Viva Engage</h2>
-                                    <p class="text-[9px] text-slate-500">Comunidad y comunicación del equipo</p>
-                                </div>
-                            </div>
-                            <span class="text-[8px] font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded-full">EN LÍNEA</span>
-                        </div>
-                        <iframe
-                            name="embed-feed"
-                            title="Viva Engage"
-                            src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"
-                            style="border:0;overflow:hidden;width:100%;height:100%;min-height:0;flex:1;display:block;">
-                        </iframe>
-                    </section>
-
-                    <!-- DERECHA: NOVEDADES + EVENTOS -->
-                    <section class="col-span-4 glass-panel rounded-xl p-4 flex flex-col overflow-y-auto custom-scrollbar" style="min-height:0;">
-
-                        <!-- NOVEDADES Y NOTICIAS ETOP -->
-                        <div class="flex items-center justify-between mb-3 flex-shrink-0">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[#facc15] text-lg">newspaper</span>
-                                <div>
-                                    <h2 class="text-[11px] font-bold text-white uppercase tracking-wider">Novedades y Noticias ETOP</h2>
-                                    <p class="text-[9px] text-slate-500">Información destacada y actualizaciones del equipo</p>
-                                </div>
-                            </div>
-                            <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
-                               class="text-[9px] text-[#facc15] hover:text-yellow-300 transition-colors whitespace-nowrap">Ver noticias UNAB ↗</a>
-                        </div>
-
-                        <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
-                           class="block rounded-xl overflow-hidden border border-white/10 hover:border-[#facc15]/40 transition-all mb-3 flex-shrink-0"
-                           style="background:linear-gradient(135deg,rgba(5,102,217,0.28),rgba(124,77,255,0.14));">
-                            <div class="p-3 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(59,130,246,0.18);">
-                                    <span class="material-symbols-outlined text-blue-300 text-xl">campaign</span>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-[8px] font-bold uppercase tracking-wider text-[#1f2940] bg-[#facc15] px-2 py-0.5 rounded">Destacada</span>
-                                        <span class="text-[8px] text-slate-400">Actualidad institucional</span>
-                                    </div>
-                                    <p class="text-[11px] font-semibold text-white leading-snug">Últimas noticias de la Universidad Andrés Bello</p>
-                                </div>
-                                <span class="material-symbols-outlined text-slate-500 text-base">arrow_outward</span>
-                            </div>
-                        </a>
-
-                        <div class="flex items-center justify-between mb-2 flex-shrink-0">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.18em]">Últimas publicaciones</span>
-                            <span class="text-[8px] text-slate-600">SharePoint ETOP</span>
-                        </div>
-                        <div id="ann-grid" class="grid gap-2 flex-shrink-0" style="min-height:0;"></div>
-
-                        <!-- EVENTOS UNAB -->
-                        <div class="flex items-center justify-between mt-4 mb-2 pt-3 border-t border-white/5 flex-shrink-0">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[#facc15] text-base">event</span>
-                                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.18em]">Eventos UNAB</span>
-                            </div>
-                            <a href="https://agenda.unab.cl/" target="_blank" rel="noopener noreferrer" class="text-[8px] text-[#facc15] hover:text-yellow-300">Ver agenda completa ↗</a>
-                        </div>
-                        <div id="eventos-unab" class="eventos-unab-grid flex-shrink-0">
-                            <div class="col-span-2 rounded-lg border border-white/5 p-3 text-center">
-                                <span class="material-symbols-outlined text-[#facc15] animate-pulse text-lg">sync</span>
-                                <p class="text-[9px] text-slate-500 mt-1">Cargando eventos UNAB...</p>
-                            </div>
-                        </div>
-
-                        <!-- ACCESOS RÁPIDOS -->
-                        <div class="grid grid-cols-3 gap-2 pt-3 mt-3 border-t border-white/5 flex-shrink-0">
-                            <a href="https://noticias.unab.cl/noticias/" target="_blank" rel="noopener noreferrer"
-                               class="rounded-lg p-2 text-center border border-white/5 hover:border-violet-400/30 transition-all" style="background:rgba(124,77,255,0.10);">
-                                <span class="material-symbols-outlined text-violet-400 text-xl block mb-1">language</span>
-                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Noticias<br>UNAB</span>
-                            </a>
-                            <a href="https://www.facebook.com/groups/878663466860906" target="_blank" rel="noopener noreferrer"
-                               class="rounded-lg p-2 text-center border border-white/5 hover:border-blue-400/30 transition-all" style="background:rgba(37,99,235,0.10);">
-                                <span class="text-blue-400 text-xl font-extrabold block mb-1" style="line-height:24px;">f</span>
-                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Grupo<br>Facebook</span>
-                            </a>
-                            <a href="#" title="Reemplazar # por la URL de Intranet UNAB"
-                               class="rounded-lg p-2 text-center border border-white/5 hover:border-cyan-400/30 transition-all" style="background:rgba(6,182,212,0.10);">
-                                <span class="material-symbols-outlined text-cyan-400 text-xl block mb-1">account_balance</span>
-                                <span class="text-[9px] font-semibold text-slate-300 leading-tight block">Intranet<br>UNAB</span>
-                            </a>
-                        </div>
-                    </section>
-
-
-                </div>
-            </div>
+      <div class="search-group" data-filtro="rut">
+        <span class="search-group-label">RUT</span>
+        <div class="search-pill-wrap" id="rut-pill-wrap">
+          <span class="search-pill-icon">◈</span>
+          <input type="text" class="search-pill-input" id="input-rut"
+                 placeholder="Buscar RUT…" maxlength="12"
+                 oninput="this.value=this.value.replace(/[^0-9kK\-]/g,'')"
+                 onkeydown="if(event.key==='Enter'){aplicarBusqueda('rut',this.value.trim());this.blur()}"
+                 onchange="aplicarBusqueda('rut',this.value.trim())">
+          <button class="search-pill-go" onclick="aplicarBusqueda('rut',document.getElementById('input-rut').value.trim())">↵</button>
+          <button type="button" class="rut-pill-clear" title="Quitar RUT" aria-label="Quitar RUT" onclick="limpiarFiltroSimple('rut',event)">×</button>
         </div>
-        <!-- FIN VISTA NORMAL -->
+      </div>
 
-        <!-- VISTA QA2 -->
-        <div id="vista-qa2" style="display:none;grid-row:1;grid-column:1;flex-direction:column;height:100%;">
-            <div class="glass-panel rounded-xl overflow-hidden" style="flex:1;min-height:0;">
-                <iframe id="iframe-qa2" src="" style="width:100%;height:100%;border:none;display:block;" allowfullscreen title="Incidencias"></iframe>
-            </div>
-        </div>
-    </main>
+      <button type="button" class="dashboard-excel-btn" data-filtro="excelDashboard"
+              title="Abrir tabla nativa de Power BI para exportar a Excel"
+              onclick="abrirExportacionExcel()">⬇ Excel</button>
+
+      <button type="button" class="btn-clear-filter" id="btn-tutor-perfil"
+              style="display:none" onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
+
+      <div class="filter-badge" id="filter-badge">
+        <span id="badge-txt">—</span>
+      </div>
+      <button class="btn-clear-filter" id="btn-clear-filter" onclick="limpiarBusqueda()">✕ Limpiar</button>
+    </div>
+
+    <div class="guia-correos" id="guia-correos">
+      <div class="guia-correos-texto"><strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.</div>
+      <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoOnboarding()">↻ Cargar datos del curso</button>
+    </div>
+  </div>
+  <section class="home" id="homeView">
+    <div class="hero hero-index-banner">
+      <div class="hero-banner-photo" aria-hidden="true"></div>
+      <div class="hero-banner-fade" aria-hidden="true"></div>
+      <div class="hero-banner-copy">
+        <div class="kicker" id="heroGreetingKicker">Universidad Andrés Bello · ETOP</div>
+        <h1 id="heroGreetingTitle">Centro de Control Tutorial</h1>
+        <p class="hero-greeting-sub" id="heroGreetingSub">Gestión Tutorial · panorama actualizado</p>
+      </div>
+    </div>
+    <div class="dashboard">
+      <div class="left">
+        <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link">
+  <div class="card-head">
+    <div>
+      <h2>🎯 Foco del día</h2>
+      <span>Power BI · KPIs de seguimiento</span>
+    </div>
+    <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
+  </div>
+  <div class="card-body foco-powerbi-body">
+    <iframe
+      id="focoDiaFrame"
+      class="foco-powerbi-frame"
+      title="Foco del día · Power BI"
+      allowfullscreen="true">
+    </iframe>
+  </div>
+</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
+          <div class="kpi" onclick="abrirNominaAtencionesActivas()"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Nómina · estado ACTIVO →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPromedio">—</div><div class="l">Promedio estudiantes / NRC</div><div class="s">Ver carga →</div></div>
+          <div class="kpi" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v" id="resCargaPrep30">—</div><div class="l">Preparación próximos 30 días</div><div class="s">Abrir cursos en preparación →</div></div>
+          <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaProgramas30">—</div><div class="l">Programas por iniciar</div><div class="s">UNI118 · próximos 30 días →</div></div>
+        </div></div></section><section class="card">
+  <div class="card-head">
+    <h2>Accesos directos</h2>
+    <span>Herramientas rescatadas de la portada actual</span>
+  </div>
+  <div class="card-body">
+    <div class="quick" style="grid-template-columns:repeat(5,1fr)">
+      <button onclick="openLocal('incidencias.html','Gestión QA2',this)"><span>🧪</span><b>Gestión QA2</b></button>
+      <button onclick="openLocal('comunicaciones_etop.html','Comunicaciones',this)"><span>📣</span><b>Comunicaciones</b></button>
+      <button onclick="openLocal('aplicaciones.html','Aplicaciones',this)"><span>🧩</span><b>Aplicaciones</b></button>
+      <button onclick="openLocal('recursos_aprendizaje.html','Recursos',this)"><span>📚</span><b>Recursos</b></button>
+      <button onclick="openLocal('equipo_etop_mejorado.html','Equipo ETOP',this)"><span>👥</span><b>Equipo ETOP</b></button>
+    </div>
+  </div>
+</section></div></div>
+        
+        <section class="card crm-activity-card" aria-label="Actividad reciente CRM">
+  <div class="card-head crm-activity-head">
+    <div class="crm-activity-title-wrap">
+      <div class="crm-activity-ico">CRM</div>
+      <div class="crm-activity-title">
+        <b>Actividad reciente CRM</b>
+        <span id="crmActividadContexto">Últimas gestiones registradas</span>
+      </div>
+    </div>
+    <button class="crm-activity-open" type="button" onclick="abrirActividadCRMCompleta()">Abrir CRM →</button>
+  </div>
+  <div class="crm-activity-frame-wrap">
+    <div class="crm-activity-loading" id="crmActividadLoading">Cargando actividad reciente…</div>
+    <iframe
+      id="crmActividadFrame"
+      class="crm-activity-frame"
+      title="Actividad reciente CRM"
+      allowfullscreen="true"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+  </div>
+</section>
+      </div>
+      <div class="right"><section class="card viva"><div class="viva-head"><div class="viva-logo">V</div><div class="viva-title"><b>Viva Engage</b><span>Comunidad y comunicación del equipo</span></div><span class="online">EN LÍNEA</span></div><iframe title="Viva Engage" loading="lazy" src="https://engage.cloud.microsoft/embed/groups/eyJfdHlwZSI6Ikdyb3VwIiwiaWQiOiI1ODQ5ODY5NTE2OCJ9"></iframe></section></div>
+    </div>
+    <div class="footer">ETOP · Gestión Tutorial</div>
+  </section>
+  <section class="viewer" id="viewer"><iframe id="visor" title="Vista Gestión" allowfullscreen="true"></iframe><div id="canal-splash" class="canal-splash-v5"></div></section>
+</main>
 </div>
 
-<!-- ADMIN -->
-<div class="admin-overlay" id="admin-overlay">
-    <div class="admin-panel">
-        <div id="admin-login-section">
-            <h3 style="color:#facc15;font-size:15px;font-weight:700;margin-bottom:16px;">⚙️ Administración del Portal</h3>
-            <p style="color:#94a3b8;font-size:13px;margin-bottom:14px;">Ingresa la clave de coordinador</p>
-            <input type="password" id="admin-pass" class="admin-input" placeholder="Clave de acceso" onkeypress="if(event.key==='Enter')verificarClave()">
-            <button class="btn-publicar" onclick="verificarClave()">Ingresar</button>
-            <button class="btn-cancelar" onclick="cerrarAdmin()">Cancelar</button>
-            <div id="login-status" class="status-msg"></div>
-        </div>
-        <div id="admin-editor-section" style="display:none;">
-            <h3 style="color:#facc15;font-size:15px;font-weight:700;margin-bottom:16px;">📢 Nueva Publicación</h3>
-            <input type="text" id="ann-titulo" class="admin-input" placeholder="Título *">
-            <div class="admin-row">
-                <select id="ann-tipo" class="admin-input">
-                    <option value="aviso">📋 Aviso</option>
-                    <option value="info">ℹ️ Info</option>
-                    <option value="logro">🏆 Logro</option>
-                    <option value="urgente">🚨 Urgente</option>
-                </select>
-                <input type="text" id="ann-autor" class="admin-input" placeholder="Tu nombre *">
-            </div>
-            <div class="editor-toolbar">
-                <button class="editor-btn" onclick="fmt('bold')"><b>N</b></button>
-                <button class="editor-btn" onclick="fmt('italic')"><i>K</i></button>
-                <button class="editor-btn" onclick="fmt('underline')"><u>S</u></button>
-                <button class="editor-btn" onclick="fmtBlock('h3')">T</button>
-                <button class="editor-btn" onclick="fmt('insertUnorderedList')">• Lista</button>
-                <button class="editor-btn" onclick="insertLink()">🔗</button>
-            </div>
-            <div id="ann-cuerpo" class="editor-area" contenteditable="true"></div>
-            <input type="text" id="ann-imagen" class="admin-input" placeholder="URL de imagen (opcional)">
-            <div id="publish-status" class="status-msg"></div>
-            <button class="btn-publicar" id="btn-pub" onclick="publicarAnuncio()">📢 Publicar</button>
-            <button class="btn-cancelar" onclick="cerrarAdmin()">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const FLOW_LEER  = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/033d4b3364af4f0394cabafbbf59c300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LEoBoI-3mLGoahjIBsuu7r32jhnFp1RlrgVtDTjB9V0';
-const FLOW_NOTICIAS = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3c4be34d940843a0aefc9c9c28b3f16b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=P_ZTHBe5wWsRwBtyLfTMFbK28FYOUmlB96hFoCvBOio';
-const FLOW_CREAR = 'https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/879689098af34bea90d8edcc323c335d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xKKyWbfkMX0sYeZo3wE-IsDDhTqsZc_v1Q1EuByaU4k';
-const ADMIN_PASS = 'etop2025';
-const STORAGE_KEY = 'etop_anuncios_leidos';
-const NRCS_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
-const NRCS_ONBOARDING_JSON = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs_onboarding.json';
-const AGENDA_UNAB_URL = 'https://agenda.unab.cl/';
-const AGENDA_PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(AGENDA_UNAB_URL);
-const URL_QA2_INCIDENCIAS = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/incidencias.html?v=20260820-3';
-const MENSAJES = [
-    "El acompañamiento genuino marca la diferencia en la vida de un estudiante.",
-    "Cada contacto a tiempo puede cambiar el rumbo académico de alguien.",
-    "La trazabilidad de tu gestión es el reflejo de tu compromiso profesional.",
-    "Un equipo coordinado multiplica el impacto de cada tutor.",
-    "La proactividad hoy evita la deserción mañana.",
-    "Conocer al estudiante antes de que pida ayuda es el verdadero Sello ETOP.",
-    "Tu gestión importa — cada registro cuenta.",
-    "La empatía y el dato van de la mano en la tutoría de excelencia.",
-    "Un correo a tiempo vale más que diez llamadas tardías.",
-    "El semáforo verde no se mantiene solo — requiere de tu seguimiento constante.",
-    "Registrar bien hoy facilita el trabajo de todo el equipo mañana.",
-    "La calidad del acompañamiento define la experiencia del estudiante.",
-    "Cada estudiante en rojo es una oportunidad de hacer la diferencia.",
-    "Tu trabajo diario construye la reputación de ETOP.",
-    "La constancia en el seguimiento es la clave de la retención.",
-    "Un equipo que se comunica bien, gestiona mejor.",
-    "El detalle en las observaciones salva historiales académicos.",
-    "Anticiparse al problema es más valioso que resolverlo tarde.",
-    "El Sello ETOP se vive en cada interacción con el estudiante.",
-    "La tecnología es tu aliada — úsala para llegar más lejos.",
-    "Un tutor informado es un tutor efectivo.",
-    "La dedicación de hoy es el logro académico de mañana.",
-    "Cada NRC bien gestionado es un programa fortalecido.",
-    "El seguimiento no es una tarea — es una vocación.",
-    "La calidad del dato determina la calidad de la decisión.",
-    "Ser tutor ETOP es ser parte de algo que trasciende el aula.",
-    "El compromiso con el estudiante comienza antes de que inicie el curso.",
-    "Un equipo que aprende junto, crece junto.",
-    "La excelencia en tutoría se construye día a día.",
-    "Hoy es una nueva oportunidad para marcar la diferencia."
-];
-const TIPO_CONFIG = {
-    aviso:   { label:'📋 Aviso',   color:'#facc15' },
-    info:    { label:'ℹ️ Info',    color:'#3b82f6' },
-    logro:   { label:'🏆 Logro',   color:'#22c55e' },
-    urgente: { label:'🚨 Urgente', color:'#ef4444' }
+const BASE = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+function toggleSub(id) { document.getElementById(id).classList.toggle('open'); }
+function findBtn(key) { return document.querySelector('[data-key="' + key + '"]'); }
+function activate(btn) {
+  document.querySelectorAll('.menu-btn').forEach(x => x.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+/* ===== 1. MAESTRO UNIFICADO DE EQUIPO ETOP ===== */
+const MAESTRO_TUTORES = {
+  'HANS NOVAKOVIC':          { email: 'tutoriaonline45@unab.cl', anexo: '600 585 8550 Anexo 7261', activo: true, crm: ['Tutoriaonline45 #'] },
+  'KIMBERLY JORQUERA':       { email: 'tutoriaonline52@unab.cl', anexo: '600 585 8550 Anexo 7284', activo: true, crm: ['Tutoriaonline52 #'] },
+  'MARTA GONZALEZ':          { email: 'marta.gonzalez@unab.cl',  anexo: '600 585 8550 Anexo 5216', activo: true, crm: ['Marta Teresa Gonzalez Luque'] },
+  'DANITZA JANSEN':          { email: 'danitza.jansen@unab.cl',  anexo: '600 585 8550 Anexo 5866', activo: true, crm: ['Danitza Alejandra Jansen Jara'] },
+  'SYLVIA VALENZUELA':       { email: 'sylvia.valenzuela@unab.cl', anexo: '600 585 8550 Anexo 5873', activo: true, crm: ['Sylvia Valenzuela Herrera'] },
+  'PAULA PARDO':             { email: 'tutoriaonline82@unab.cl', anexo: '600 585 8550 Anexo 1285', activo: true, crm: ['Paula Natalia Pardo Gaete'] },
+  'MARIA FERNANDA GONZALEZ': { email: 'tutoriaonline41@unab.cl', anexo: '600 585 8550 Anexo 5644', activo: true, crm: ['María Fernanda González Valenzuela'] },
+  'BARBARA ROJAS':           { email: 'barbara.rojas.c@unab.cl', anexo: '600 585 8550 Anexo 7260', activo: true, crm: ['Barbara Belen Rojas Castro'] },
+  'CONSTANZA CONTRERAS':     { email: 'tutoriaonline56@unab.cl', anexo: '600 585 8550 Anexo 8201', activo: true, crm: ['Constanza Contreras Palma', 'tutoriaonline56 #'] },
+  'CARLA PENA':              { email: 'tutoriaonline54@unab.cl', anexo: '600 585 8550 Anexo 7361', activo: true, crm: ['Tutoriaonline54 #'] },
+  'NOEMI PAZ':               { email: 'tutoriaonline08@unab.cl', anexo: '600 585 8550 Anexo 1288', activo: true, crm: ['Noemí Paz'] },
+  'ORIETTA CORTES':          { email: 'tutoriaonline04@unab.cl', anexo: '600 585 8550 Anexo 1280', activo: true, crm: ['Orietta Cortes Castillo'] },
+  'HECTOR TAPIA':            { email: 'tutoriaonline23@unab.cl', anexo: '600 585 8550 Anexo 5685', activo: true, crm: ['Héctor Tapia Ruminado'] },
+  'CONSUELO PARGA':          { email: 'tutoriaonline70@unab.cl', anexo: '600 585 8550 Anexo 1273', activo: true, crm: ['Consuelo Parga'] },
+  'FRANCISCA INDA':          { email: 'tutoriaonline75@unab.cl', anexo: '600 585 8550 Anexo 1278', activo: true, crm: ['Francisca Inda'] },
+  'JAVIERA ROJAS':           { email: 'tutoriaonline76@unab.cl', anexo: '600 585 8550 Anexo 1279', activo: true, crm: ['Javiera Rojas', 'tutoriaonline76@unab.cl'] },
+  'ALYSON HERNANDEZ':        { email: 'tutoriaonline72@unab.cl', anexo: '600 585 8550 Anexo 5245', activo: true, crm: ['Alyson Francisca Hernández Valenzuela'] },
+  'ALVARO ORELLANA':         { email: 'tutoriaonline86@unab.cl', anexo: '600 585 8550',            activo: true, crm: ['tutoriaonline86@unab.cl'] }
 };
 
+const TUTORES_ACTIVOS = new Set(Object.keys(MAESTRO_TUTORES).filter(k => MAESTRO_TUTORES[k].activo));
+const ETOP_EMAILS = Object.fromEntries(Object.entries(MAESTRO_TUTORES).map(([k, v]) => [k, v.email]));
+ETOP_EMAILS['CARLA PEÑA'] = MAESTRO_TUTORES['CARLA PENA'].email;
 
-// ── BANNER DINÁMICO DE PRÓXIMOS INICIOS ──
-let courseBannerTimer = null;
-let courseProgressTimer = null;
+const TC = {
+  ...ETOP_EMAILS,
+  'CAROLINA MONSALVE': 'carolina.monsalve.g@unab.cl',
+  'PATRICIO COLLAO': 'patricio.collao@unab.cl',
+  'FELIPE GARCIA': 'felipe.garcia@unab.cl',
+  'RITA GALVEZ': 'rita.galvez@unab.cl',
+  'MIGUEL ROSALES': 'tutoriaonline16@unab.cl',
+  'PABLO ALDERETE': 'tutoriaonline47@unab.cl',
+  'DANIELA CORNEJO': 'tutoriaonline36@unab.cl'
+};
 
-function valorCampo(obj, nombres, defecto='') {
-    for (const nombre of nombres) {
-        const valor = obj?.[nombre];
-        if (valor !== undefined && valor !== null && String(valor).trim() !== '') return String(valor).trim();
-    }
-    return defecto;
+const TA = Object.fromEntries(Object.entries(MAESTRO_TUTORES).map(([k, v]) => [k, v.anexo]));
+TA['CARLA PEÑA'] = MAESTRO_TUTORES['CARLA PENA'].anexo;
+
+const CRM_OWNER_ALIASES = Object.fromEntries(Object.entries(MAESTRO_TUTORES).map(([k, v]) => [k, v.crm]));
+
+/* ===== 2. REPORTES Y VISTAS ===== */
+const PBI_REPORT_ID = '66b1fc8c-00c8-44f3-b327-890f57f3c7b8';
+const PBI_GROUP_ID  = '308deb6f-aa2f-4c21-b5fb-33b977c17e13';
+const PBI_TENANT_ID = '8fbed393-d03b-49f8-be79-cd5e1f590fb2';
+const POWERBI_EXPORT_PAGE = '2d86150621aea66632a5';
+const POWERBI_SERVICE_REPORT = `https://app.powerbi.com/groups/${PBI_GROUP_ID}/reports/${PBI_REPORT_ID}/`;
+
+function buildBasePBIUrl(pageName) {
+  return `https://app.powerbi.com/reportEmbed?reportId=${PBI_REPORT_ID}&groupId=${PBI_GROUP_ID}&ctid=${PBI_TENANT_ID}&autoAuth=true&pageName=${pageName}&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth`;
 }
 
-function parseFechaCurso(valor) {
-    if (!valor) return null;
-    if (valor instanceof Date && !isNaN(valor)) {
-        return new Date(valor.getFullYear(), valor.getMonth(), valor.getDate());
-    }
+const misReportes = {
+  DASHBOARD:          buildBasePBIUrl('a90b3a4c28d3179b1fae'),
+  NOMINA_ESTUDIANTES: buildBasePBIUrl('255c88d86191d22dd1c3'),
+  CURSOS_ACTIVOS:     buildBasePBIUrl('9df5f2db687d901b71b9'),
+  CURSOS_PREPARACION: BASE + 'cursos_preparacion.html?v=20261001-canvasfix',
+  CURSOS_CIERRE:      buildBasePBIUrl('ab4e8f37a94c688a5869'),
+  FICHA_ESTUDIANTE:   buildBasePBIUrl('0961bca799ff83e065db'),
+  CALENDARIOS:        BASE + 'calendarios.html?v=20261001-canvasfix',
+  CORREOS:            'onboarding_correos.html',
+  INVITACIONES:       'onboarding_invitaciones.html',
+  PRESENTACION:       'presentacion_tutorial_innovado.html',
+  CIERRE:             'enviar_correo_cierre.html'
+};
 
-    const texto = String(valor).trim();
+const urlsBase = {
+  DASHBOARD:          { reportId: PBI_REPORT_ID, page: 'a90b3a4c28d3179b1fae', filtroRut: true },
+  DASHBOARD_EXPORT:   { reportId: PBI_REPORT_ID, page: POWERBI_EXPORT_PAGE,    filtroRut: true },
+  NOMINA_ESTUDIANTES: { reportId: PBI_REPORT_ID, page: '255c88d86191d22dd1c3', filtroRut: true },
+  CURSOS_ACTIVOS:     { reportId: PBI_REPORT_ID, page: '9df5f2db687d901b71b9', filtroRut: false },
+  CURSOS_PREPARACION: { local: true, filtroRut: false },
+  CURSOS_CIERRE:      { reportId: PBI_REPORT_ID, page: 'ab4e8f37a94c688a5869', filtroRut: false },
+  FICHA_ESTUDIANTE:   { reportId: PBI_REPORT_ID, page: '0961bca799ff83e065db', filtroRut: true },
+  CALENDARIOS:        { local: true, filtroRut: false }
+};
 
-    // Una fecha ISO sin hora representa un día de calendario local.
-    // Evita que 2026-08-31 se convierta en 2026-08-30 por la zona horaria.
-    const isoLocal = texto.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (isoLocal) {
-        const fecha = new Date(Number(isoLocal[1]), Number(isoLocal[2]) - 1, Number(isoLocal[3]));
-        return isNaN(fecha) ? null : fecha;
-    }
+const titulos = {
+  DASHBOARD:          'Tablero de Gestión',
+  DASHBOARD_EXPORT:   'Descargar Excel',
+  NOMINA_ESTUDIANTES: 'Nómina Estudiantes',
+  CURSOS_ACTIVOS:     'Cursos Activos',
+  CURSOS_PREPARACION: 'Cursos en Preparación',
+  CURSOS_CIERRE:      'Cursos en Cierre',
+  FICHA_ESTUDIANTE:   'Ficha del Estudiante',
+  CALENDARIOS:        '📅 Calendarios',
+  CORREOS:            '📧 Generador de Correos de Bienvenida',
+  INVITACIONES:       '📅 Envío Invitación Sesión Sincrónica',
+  PRESENTACION:       '👩‍🏫 Presentación Tutorial',
+  CIERRE:             '🏁 Correo de Cierre'
+};
 
-    const dmy = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
-    if (dmy) {
-        const fecha = new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]));
-        return isNaN(fecha) ? null : fecha;
-    }
+const BUSQUEDA = { nrc: null, rut: null, facultad: null, tutor: null, tipo: null, codigo: null, estado: null, motivoRiesgo: null, intake: null, fechaInicio: [] };
+let vistaActual = 'INICIO';
+let catalogoNRC = [];
 
-    const fechaInterpretada = new Date(texto);
-    if (isNaN(fechaInterpretada)) return null;
-    return new Date(fechaInterpretada.getFullYear(), fechaInterpretada.getMonth(), fechaInterpretada.getDate());
+/* ===== 3. SESIÓN Y DELEGACIONES TEMPORALES ===== */
+const ETOP_GLOBAL_SESSION = 'etop_usuario_sesion';
+const ETOP_LEGACY_EMAIL_KEY = 'etop_preparacion_correo';
+const etopEmailNorm = v => String(v || '').trim().toLowerCase();
+
+function sesionGlobalETOP() {
+  try { return JSON.parse(localStorage.getItem(ETOP_GLOBAL_SESSION) || 'null'); }
+  catch (e) { return null; }
+}
+function tutorSesionETOP() {
+  const s = sesionGlobalETOP();
+  return s && s.rol === 'TUTOR' && s.tutor ? String(s.tutor).trim() : '';
 }
 
-function normalizarCurso(item, origen) {
-    const fechaTexto = valorCampo(item, ['fecha inicio','fecha_inicio','FECHA_INICIO','FechaInicio','fechaInicio','inicio','INICIO','field_6','FINICIO_Nomina']);
-    const fecha = parseFechaCurso(fechaTexto);
-    const programa = valorCampo(item, ['nombre_programa','NOMBRE_PROGRAMA','programa','PROGRAMA','NombrePrograma','nombrePrograma','INTAKE O VERSION','intake'], 'Programa sin especificar');
-    const curso = valorCampo(item, ['nombre_curso','NOMBRE_CURSO','NOMBRE_CURSO**','curso','CURSO','NombreCurso','nombreCurso','field_5','materia'], 'Curso sin especificar');
-    const tutor = valorCampo(item, ['nombre_tutor','NOMBRE_TUTOR','NOMBRE TUTOR','tutor','TUTOR','Tutor','tutor_nombre'], 'Por asignar');
-    const nrc = valorCampo(item, ['nrc','NRC','NRC_COD_CAL','nrc_cod_cal','codigo_nrc','CODIGO_NRC','NRC_COD'], '—');
-    const estado = valorCampo(item, ['estado','ESTADO','ESTADO_CAL','estado_cal'], '').toUpperCase();
-    return { fecha, fechaTexto, programa, curso, tutor, nrc, estado, origen };
+const ETOP_DELEGACIONES_TEMPORALES = [
+  { correo: 'tutoriaonline45@unab.cl', tutor: 'FRANCISCA INDA', desde: '2026-10-05', hasta: '2026-10-18' }
+];
+function fechaHoyETOP() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function tutoresSesionETOP() {
+  const s = sesionGlobalETOP();
+  if (!s || s.rol !== 'TUTOR' || !s.tutor) return [];
+  const base = String(s.tutor).trim();
+  const email = etopEmailNorm(s.email);
+  const hoy = fechaHoyETOP();
+  const extras = ETOP_DELEGACIONES_TEMPORALES
+    .filter(d => etopEmailNorm(d.correo) === email && hoy >= d.desde && hoy <= d.hasta)
+    .map(d => String(d.tutor || '').trim())
+    .filter(Boolean);
+  return [...new Set([base, ...extras])];
+}
+function tutorFiltroAutomaticoETOP() {
+  const tutores = tutoresSesionETOP();
+  return tutores.length === 1 ? tutores[0] : '';
+}
+function tieneDelegacionETOP() {
+  return tutoresSesionETOP().length > 1;
 }
 
-function diasDesdeHoy(fecha) {
-    const hoy = new Date();
-    // Compara únicamente días de calendario, sin desfases horarios ni cambios de DST.
-    const hoyUTC = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    const fechaUTC = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
-    return Math.round((fechaUTC - hoyUTC) / 86400000);
+/* Helper OData que soporta 1 tutor (eq) o múltiples tutores por delegación (in) */
+function construirFiltroODataTutor(campoTabla) {
+  const lista = BUSQUEDA.tutor ? [BUSQUEDA.tutor] : tutoresSesionETOP();
+  if (lista.length === 1) {
+    return `${campoTabla} eq '${sanitizarFiltro(lista[0])}'`;
+  }
+  if (lista.length > 1) {
+    return `${campoTabla} in (${lista.map(t => `'${sanitizarFiltro(t)}'`).join(', ')})`;
+  }
+  return '';
 }
 
-function badgeInicio(fecha) {
-    const dias = diasDesdeHoy(fecha);
-    if (dias === 0) return { clase:'course-badge-hoy', texto:'Hoy' };
-    if (dias === 1) return { clase:'course-badge-prox3', texto:'Mañana' };
-    if (dias <= 3) return { clase:'course-badge-prox3', texto:`En ${dias} días` };
-    if (dias <= 7) return { clase:'course-badge-prox7', texto:`En ${dias} días` };
-    return { clase:'course-badge-prox14', texto:fecha.toLocaleDateString('es-CL',{day:'2-digit',month:'short'}) };
+/* ===== 4. ACTIVIDAD RECIENTE CRM · POWER BI EMBEBIDO ===== */
+const CRM_POWERBI_EMBED_BASE = buildBasePBIUrl('70bbc4c63e55c1626e7e');
+const CRM_DYNAMICS_TEAM_VIEW = 'https://saeunab.crm2.dynamics.com/main.aspx?appid=64de11b9-8eee-eb11-94ee-002248376bc5&forceUCI=1&pagetype=entitylist&etn=activitypointer&viewid=ffcc6d10-f832-ee11-bdf4-000d3a88ba42&viewType=4230';
+const CRM_DYNAMICS_MY_VIEW = '';
+
+function crmValorOData(v) { return String(v || '').replace(/'/g, "''"); }
+function crmOwnersSesion() {
+  const s = sesionGlobalETOP();
+  if (!s || s.rol !== 'TUTOR') return null;
+  const tutores = tutoresSesionETOP();
+  const owners = [];
+  tutores.forEach(t => {
+    const clave = claveTutorActivo(t);
+    if (CRM_OWNER_ALIASES[clave]) owners.push(...CRM_OWNER_ALIASES[clave]);
+  });
+  return [...new Set(owners)];
 }
-
-function escaparHTML(valor='') {
-    return String(valor).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function crmFiltroSesion() {
+  const s = sesionGlobalETOP();
+  if (!s || s.rol !== 'TUTOR') return '';
+  const owners = crmOwnersSesion();
+  if (!owners || !owners.length) return null;
+  const campo = 'ACTIVIDAD_CURSO/NOMBRE_x0020_TUTOR';
+  if (owners.length === 1) return campo + " eq '" + crmValorOData(owners[0]) + "'";
+  return campo + " in (" + owners.map(v => "'" + crmValorOData(v) + "'").join(', ') + ")";
 }
-
-async function cargarBannerCursos() {
-    const track = document.getElementById('course-track');
-    const ctr   = document.getElementById('course-ctr');
-    if (!track || !ctr) return;
-
-    try {
-        const [rNrcs, rOnboarding] = await Promise.allSettled([
-            fetch(NRCS_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('nrcs HTTP '+r.status); return r.json(); }),
-            fetch(NRCS_ONBOARDING_JSON + '?t=' + Date.now()).then(r => { if(!r.ok) throw new Error('onboarding HTTP '+r.status); return r.json(); })
-        ]);
-
-        const base = rNrcs.status === 'fulfilled' ? (Array.isArray(rNrcs.value) ? rNrcs.value : (rNrcs.value.value || [])) : [];
-        const onboarding = rOnboarding.status === 'fulfilled' ? (Array.isArray(rOnboarding.value) ? rOnboarding.value : (rOnboarding.value.value || [])) : [];
-        const lookup = {};
-        onboarding.forEach(item => { if (item.nrc) lookup[item.nrc] = item; });
-
-        const hoy = new Date();
-        const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-        const limite = new Date(inicioHoy);
-        limite.setDate(limite.getDate() + 14);
-        const vistos = new Set();
-
-        const cursos = base.map(item => {
-            const extra = lookup[item.nrc] || {};
-            const fechaTexto = item['fecha inicio'] || item['fecha_inicio'] || '';
-            return {
-                fecha: parseFechaCurso(fechaTexto),
-                programa: extra['nombre programa'] || extra['nombre_programa'] || item.facultad || 'Sin programa',
-                curso: extra['nombre curso'] || extra['nombre_curso'] || item['codigo curso'] || '',
-                tutor: item.tutor || 'Por asignar',
-                nrc: item.nrc || '',
-                estado: (item.estado || '').toUpperCase()
-            };
-        })
-        .filter(x => x.fecha && x.fecha >= inicioHoy && x.fecha <= limite)
-        .filter(x => !['CERRADO','CANCELADO','ANULADO'].includes(x.estado))
-        .sort((a,b) => a.fecha - b.fecha)
-        .filter(x => {
-            const clave = (x.nrc + '|' + x.fecha.toISOString().slice(0,10)).toLowerCase();
-            if (vistos.has(clave)) return false;
-            vistos.add(clave);
-            return true;
-        })
-        .slice(0,15);
-
-        if (!cursos.length) {
-            track.innerHTML = '<div class="course-ticker-empty">📅 No hay inicios programados para los próximos 14 días.</div>';
-            ctr.textContent = '0 próximos';
-            track.style.animation = 'none';
-            return;
-        }
-
-        const items = cursos.map(curso => {
-            const badge = badgeInicio(curso.fecha);
-            const fechaExacta = curso.fecha.toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'});
-            const detalle = fechaExacta + ' · ' + curso.programa + ' · ' + curso.curso + ' · NRC ' + curso.nrc + ' · Tutor: ' + curso.tutor;
-            return '<div class="course-ticker-item" title="' + escaparHTML(detalle) + '">' +
-                '<span class="course-badge-fecha ' + badge.clase + '">' + badge.texto + '</span>' +
-                '<span class="course-ticker-programa">' + escaparHTML(curso.programa) + '</span>' +
-                '<span class="course-ticker-curso">' + escaparHTML(curso.curso) + '</span>' +
-                '<span class="course-ticker-tutor">Tutor: ' + escaparHTML(curso.tutor) + '</span>' +
-                '<span class="course-ticker-nrc">NRC ' + escaparHTML(curso.nrc) + '</span>' +
-            '</div>';
-        }).join('');
-
-        track.innerHTML =
-            '<div class="course-ticker-group">' + items + '</div>' +
-            '<div class="course-ticker-group" aria-hidden="true">' + items + '</div>';
-        track.style.setProperty('--ticker-duration', Math.max(65, cursos.length * 10) + 's');
-        ctr.textContent = cursos.length + (cursos.length === 1 ? ' próximo' : ' próximos');
-    } catch(e) {
-        console.error('Error cargando próximos inicios:',e);
-        track.innerHTML = '<div class="course-ticker-empty">⚠️ No fue posible cargar los próximos inicios.</div>';
-        ctr.textContent = 'Sin datos';
-        track.style.animation = 'none';
-    }
+function crmUrlFiltrada(base) {
+  const filtro = crmFiltroSesion();
+  if (filtro === null) return null;
+  return base + (filtro ? '&filter=' + encodeURIComponent(filtro) : '');
 }
+function refrescarActividadCRM() {
+  const frame = document.getElementById('crmActividadFrame');
+  const loading = document.getElementById('crmActividadLoading');
+  const ctx = document.getElementById('crmActividadContexto');
+  if (!frame || !loading) return;
 
-// ── EVENTOS UNAB DESDE AGENDA.UNAB.CL ──
-function extraerFechaEvento(texto) {
-    const meses = {enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
-    const limpio = String(texto || '').replace(/\s+/g,' ').trim();
-    let m = limpio.match(/(?:Fecha:\s*)?([A-Za-zÁÉÍÓÚáéíóú]+)\s+(\d{1,2})(?:\s+@?\s*(\d{1,2}:\d{2}))?/i);
-    if (!m) m = limpio.match(/(\d{1,2})\s+([A-Za-zÁÉÍÓÚáéíóú]+)(?:\s+(\d{1,2}:\d{2}))?/i);
-    if (!m) return {fecha:null, texto:limpio};
-    const mesTexto = (isNaN(Number(m[1])) ? m[1] : m[2]).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    const dia = Number(isNaN(Number(m[1])) ? m[2] : m[1]);
-    const hora = m[3] || '';
-    const mes = meses[mesTexto];
-    if (mes === undefined) return {fecha:null, texto:limpio};
-    const ahora = new Date();
-    let fecha = new Date(ahora.getFullYear(), mes, dia);
-    if (fecha < new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() - 45)) fecha.setFullYear(ahora.getFullYear() + 1);
-    return {fecha, texto:hora ? `${dia} ${mesTexto} · ${hora} hrs` : `${dia} ${mesTexto}`};
-}
+  const s = sesionGlobalETOP();
+  if (!s) {
+    frame.removeAttribute('src');
+    frame.classList.remove('loaded');
+    loading.classList.remove('hidden');
+    loading.textContent = 'Identifíquese para ver la actividad reciente.';
+    if (ctx) ctx.textContent = 'Últimas gestiones registradas';
+    return;
+  }
 
-async function cargarEventosUNAB() {
-    const cont = document.getElementById('eventos-unab');
-    if (!cont) return;
-    try {
-        const r = await fetch(AGENDA_PROXY_URL + '&t=' + Date.now());
-        if (!r.ok) throw new Error('Agenda HTTP ' + r.status);
-        const html = await r.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const candidatos = [...doc.querySelectorAll('article, .evento, .event, .event-item, .card-event, .item-evento, .post-item')];
-        const encontrados = [];
-        const vistos = new Set();
+  const url = crmUrlFiltrada(CRM_POWERBI_EMBED_BASE);
+  if (url === null) {
+    frame.removeAttribute('src');
+    frame.classList.remove('loaded');
+    loading.classList.remove('hidden');
+    loading.textContent = 'No hay equivalencia CRM configurada para este tutor.';
+    if (ctx) ctx.textContent = 'Actividad reciente no disponible';
+    return;
+  }
 
-        function agregarDesdeNodo(nodo) {
-            const h = nodo.querySelector('h1,h2,h3,h4,h5') || nodo.matches('h1,h2,h3,h4,h5') && nodo;
-            if (!h) return;
-            const titulo = h.textContent.replace(/\s+/g,' ').trim();
-            if (!titulo || titulo.length < 8 || vistos.has(titulo.toLowerCase())) return;
-            const enlaceNodo = h.closest('a') || nodo.querySelector('a[href]');
-            const href = enlaceNodo?.getAttribute('href') || AGENDA_UNAB_URL;
-            const url = new URL(href, AGENDA_UNAB_URL).href;
-            const textoNodo = nodo.textContent.replace(/\s+/g,' ').trim();
-            const fechaInfo = extraerFechaEvento(textoNodo);
-            vistos.add(titulo.toLowerCase());
-            encontrados.push({titulo, url, fecha:fechaInfo.fecha, fechaTexto:fechaInfo.texto});
-        }
+  if (ctx) {
+    ctx.textContent = s.rol === 'TUTOR'
+      ? 'Tus 5 gestiones más recientes · NRC conciliado por fecha'
+      : 'Últimas 5 gestiones del equipo · NRC conciliado por fecha';
+  }
 
-        candidatos.forEach(agregarDesdeNodo);
-        if (!encontrados.length) {
-            [...doc.querySelectorAll('h3,h4')].forEach(h => agregarDesdeNodo(h.closest('a,div,li,section,article') || h));
-        }
-
-        const hoy = new Date();
-        const base = new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
-        const eventos = encontrados
-            .filter(e => !e.fecha || e.fecha >= base)
-            .sort((a,b) => (a.fecha?.getTime() || Infinity) - (b.fecha?.getTime() || Infinity))
-            .slice(0,4);
-
-        if (!eventos.length) throw new Error('No se encontraron eventos en la estructura actual');
-
-        cont.innerHTML = eventos.map(e => {
-            const fecha = e.fecha;
-            const dia = fecha ? String(fecha.getDate()).padStart(2,'0') : '—';
-            const mes = fecha ? fecha.toLocaleDateString('es-CL',{month:'short'}).replace('.','') : 'Agenda';
-            return `<a class="evento-unab-card" href="${escaparHTML(e.url)}" target="_blank" rel="noopener noreferrer">
-                <div class="evento-unab-date"><span class="evento-unab-day">${dia}</span><span class="evento-unab-month">${escaparHTML(mes)}</span></div>
-                <div class="min-w-0"><div class="evento-unab-title">${escaparHTML(e.titulo)}</div><div class="evento-unab-meta">${escaparHTML(e.fechaTexto || 'Agenda UNAB')}</div></div>
-            </a>`;
-        }).join('');
-    } catch(e) {
-        console.warn('No fue posible leer Agenda UNAB:', e);
-        cont.innerHTML = `<a href="${AGENDA_UNAB_URL}" target="_blank" rel="noopener noreferrer" class="col-span-2 evento-unab-card">
-            <div class="evento-unab-date"><span class="evento-unab-day">UNAB</span><span class="evento-unab-month">Agenda</span></div>
-            <div class="min-w-0"><div class="evento-unab-title">Consulta los próximos eventos de la Universidad Andrés Bello</div><div class="evento-unab-meta">Abrir agenda completa ↗</div></div>
-        </a>`;
-    }
-}
-
-// ── GRÁFICO FACULTADES ──
-async function cargarGrafico() {
-    try {
-        const r = await fetch(NRCS_JSON + '?t=' + Date.now());
-        const data = await r.json();
-        const facultades = {};
-        data.forEach(nrc => {
-            const fac = nrc.facultad || 'OTRO';
-            const est = (nrc.estado || '').toUpperCase();
-            if (!facultades[fac]) facultades[fac] = { ACTIVO:0, 'EN CIERRE':0, PREPARACION:0 };
-            if (facultades[fac][est] !== undefined) facultades[fac][est]++;
-        });
-        const labels = Object.keys(facultades).sort();
-        const activos  = labels.map(f => facultades[f]['ACTIVO']      || 0);
-        const cierre   = labels.map(f => facultades[f]['EN CIERRE']   || 0);
-        const prep     = labels.map(f => facultades[f]['PREPARACION'] || 0);
-
-        const canvas = document.getElementById('chartFacultad');
-        const chart = new Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [
-                    { label:'Activo',      data:activos, backgroundColor:'#3b82f6', borderRadius:0 },
-                    { label:'En Cierre',   data:cierre,  backgroundColor:'#8b5cf6', borderRadius:0 },
-                    { label:'Preparación', data:prep,    backgroundColor:'#facc15', borderRadius:3 }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { bottom: 8 } },
-                plugins: {
-                    legend:{ display:false }
-                },
-                scales: {
-                    x: {
-                        stacked: true,
-                        ticks: {
-                            color:'#64748b',
-                            font:{ size:9, family:'Inter' },
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 45
-                        },
-                        grid: { display:false },
-                        border: { display:false }
-                    },
-                    y: {
-                        stacked: true,
-                        ticks: { color:'#64748b', font:{ size:9, family:'Inter' } },
-                        grid: { color:'rgba(255,255,255,0.04)' },
-                        border: { display:false }
-                    }
-                }
-            }
-        });
-
-        // ── Leyenda interactiva HTML ──
-        const legendEl = document.getElementById('chart-legend');
-        const datasets = [
-            { label:'Activo',      color:'#3b82f6' },
-            { label:'En Cierre',   color:'#8b5cf6' },
-            { label:'Preparación', color:'#facc15' }
-        ];
-        datasets.forEach((d, i) => {
-            const item = document.createElement('span');
-            item.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:opacity 0.15s;user-select:none';
-            item.innerHTML = `<span style="width:8px;height:8px;border-radius:2px;background:${d.color};display:inline-block;flex-shrink:0"></span>${d.label}`;
-            item.addEventListener('click', () => {
-                const meta = chart.getDatasetMeta(i);
-                meta.hidden = !meta.hidden;
-                item.style.opacity = meta.hidden ? '0.35' : '1';
-                chart.update();
-            });
-            legendEl.appendChild(item);
-        });
-    } catch(e) {
-        console.warn('Error cargando gráfico:', e);
-    }
-}
-
-function getMensajeDelDia() {
-    document.getElementById('mensaje-dia').textContent = '"' + MENSAJES[new Date().getDate() % MENSAJES.length] + '"';
-}
-function toggleMenuLateral() {
-    const sidebar = document.getElementById('portal-sidebar');
-    const btn = document.getElementById('btn-menu-lateral');
-    if (!sidebar || !btn) return;
-
-    if (window.matchMedia('(max-width: 1366px)').matches) {
-        const abierto = sidebar.classList.toggle('sidebar-mobile-open');
-        sidebar.classList.remove('sidebar-collapsed');
-        btn.setAttribute('aria-expanded', String(abierto));
-        btn.title = abierto ? 'Ocultar menú lateral' : 'Mostrar menú lateral';
-    } else {
-        sidebar.classList.remove('sidebar-mobile-open');
-        const oculto = sidebar.classList.toggle('sidebar-collapsed');
-        btn.setAttribute('aria-expanded', String(!oculto));
-        btn.title = oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
-    }
-}
-
-function toggleQA2Menu() {
-    const trigger = document.getElementById('btn-qa2-trigger');
-    const submenu = document.getElementById('qa2-submenu');
-    const isOpen  = submenu.classList.contains('open');
-    trigger.classList.toggle('open', !isOpen);
-    submenu.classList.toggle('open', !isOpen);
-}
-function mostrarVistaQA2() {
-    const vistaNormal = document.getElementById('vista-normal');
-    const vistaQA2    = document.getElementById('vista-qa2');
-    const iframe      = document.getElementById('iframe-qa2');
-
-    iframe.src = URL_QA2_INCIDENCIAS;
-
-    document.getElementById('sub-incidencias').classList.add('active');
-    document.getElementById('btn-qa2-trigger').classList.add('open','active');
-    document.getElementById('qa2-submenu').classList.add('open');
-
-    vistaNormal.style.display = 'none';
-    vistaQA2.style.display = 'flex';
-}
-function ocultarQA2() {
-    document.getElementById('vista-qa2').style.display  = 'none';
-    document.getElementById('vista-normal').style.display = 'grid';
-    document.getElementById('btn-qa2-trigger').classList.remove('open','active');
-    document.getElementById('qa2-submenu').classList.remove('open');
-    document.getElementById('sub-incidencias').classList.remove('active');
-}
-function getLeidosIds() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
-function marcarLeido(id) { const l=getLeidosIds(); if(!l.includes(id)){l.push(id);localStorage.setItem(STORAGE_KEY,JSON.stringify(l));} }
-async function cargarAnuncios() {
-    const grid = document.getElementById('ann-grid');
-    if (!grid) return;
-
-    grid.innerHTML = `
-        <div class="flex items-center justify-center h-full min-h-[120px]">
-            <div class="text-center">
-                <span class="material-symbols-outlined text-[#facc15] animate-pulse">sync</span>
-                <p class="text-[10px] text-slate-500 mt-1">Cargando novedades...</p>
-            </div>
-        </div>`;
-
-    try {
-        if (!FLOW_NOTICIAS || FLOW_NOTICIAS.includes('PEGA_AQUI')) {
-            throw new Error('Falta configurar FLOW_NOTICIAS');
-        }
-
-        const r = await fetch(FLOW_NOTICIAS, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-        });
-
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-
-        const data = await r.json();
-        const items = Array.isArray(data) ? data : (data.value || []);
-
-        grid.innerHTML = '';
-
-        if (!items.length) {
-            grid.innerHTML = `
-                <div class="rounded-lg border border-white/5 p-4 text-center">
-                    <span class="material-symbols-outlined text-slate-600 text-2xl">newspaper</span>
-                    <p class="text-[10px] text-slate-500 mt-1">No hay novedades publicadas.</p>
-                </div>`;
-            return;
-        }
-
-        const ordenadas = [...items].sort((a, b) => {
-            const destacadaA = Boolean(a.Destacada ?? a.DestacadaPortal);
-            const destacadaB = Boolean(b.Destacada ?? b.DestacadaPortal);
-            if (destacadaA !== destacadaB) return destacadaB - destacadaA;
-
-            const fechaA = new Date(a.Fecha || a.Modified || a.FirstPublishedDate || 0).getTime();
-            const fechaB = new Date(b.Fecha || b.Modified || b.FirstPublishedDate || 0).getTime();
-            return fechaB - fechaA;
-        });
-
-        ordenadas.slice(0, 4).forEach((item, index) => {
-            const id = String(item.ID || item.Id || index);
-            const titulo = item.Titulo || item.Title || 'Novedad ETOP';
-            const resumen = item.Resumen || item.Description || '';
-            const categoria = item.Categoria || item.CategoriaPortal || 'ETOP';
-            const destacada = Boolean(item.Destacada ?? item.DestacadaPortal);
-            const url = item.URL || item.PaginaURL || item['{Link}'] || '#';
-            const imagen = item.Imagen || item.BannerImageUrl || '';
-            const autor = item.Autor || 'Equipo ETOP';
-            const fechaRaw = item.Fecha || item.Modified || item.FirstPublishedDate;
-            const fecha = fechaRaw
-                ? new Date(fechaRaw).toLocaleDateString('es-CL', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                })
-                : '';
-
-            const card = document.createElement('a');
-            card.href = url;
-            card.target = '_blank';
-            card.rel = 'noopener noreferrer';
-            card.className = 'block rounded-lg overflow-hidden border border-white/10 hover:border-[#facc15]/35 transition-all flex-shrink-0';
-            card.style.background = destacada
-                ? 'linear-gradient(135deg,rgba(250,204,21,0.10),rgba(59,130,246,0.10))'
-                : 'rgba(255,255,255,0.025)';
-
-            card.innerHTML = `
-                <div class="flex min-h-[92px]">
-                    ${imagen ? `
-                        <div class="w-[34%] flex-shrink-0 bg-slate-900 overflow-hidden">
-                            <img src="${imagen}" alt="" loading="lazy"
-                                 class="w-full h-full object-cover"
-                                 onerror="this.closest('div').style.display='none'">
-                        </div>` : ''}
-                    <div class="p-3 flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2 mb-1.5">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                ${destacada ? `
-                                    <span class="text-[7px] font-bold uppercase tracking-wider text-[#1f2940] bg-[#facc15] px-1.5 py-0.5 rounded">Destacada</span>` : ''}
-                                <span class="text-[8px] font-bold uppercase tracking-wider text-blue-300 bg-blue-500/10 px-1.5 py-0.5 rounded truncate">${categoria}</span>
-                            </div>
-                            <span class="text-[8px] text-slate-500 whitespace-nowrap">${fecha}</span>
-                        </div>
-                        <h3 class="text-[11px] font-semibold text-white leading-snug line-clamp-2">${titulo}</h3>
-                        ${resumen ? `<p class="text-[9px] text-slate-400 leading-relaxed mt-1 line-clamp-2">${resumen}</p>` : ''}
-                        <div class="flex items-center justify-between mt-2">
-                            <span class="text-[8px] text-slate-600 truncate">${autor}</span>
-                            <span class="text-[8px] text-[#facc15] font-semibold">Leer más ↗</span>
-                        </div>
-                    </div>
-                </div>`;
-
-            card.addEventListener('click', () => marcarLeido(id));
-            grid.appendChild(card);
-        });
-    } catch (e) {
-        console.error('Error cargando novedades SharePoint:', e);
-        grid.innerHTML = `
-            <div class="rounded-lg border border-red-400/10 bg-red-500/5 p-4 text-center">
-                <span class="material-symbols-outlined text-red-400 text-xl">cloud_off</span>
-                <p class="text-[10px] text-red-300 mt-1">No fue posible cargar las novedades.</p>
-                <p class="text-[8px] text-slate-600 mt-1">Revisa la URL del flujo y sus permisos.</p>
-            </div>`;
-    }
-}
-function abrirAdmin() { document.getElementById('admin-overlay').classList.add('open'); }
-function cerrarAdmin() {
-    document.getElementById('admin-overlay').classList.remove('open');
-    document.getElementById('admin-login-section').style.display='block';
-    document.getElementById('admin-editor-section').style.display='none';
-    document.getElementById('admin-pass').value='';
-    setStatus('login-status','','');
-}
-function verificarClave() {
-    if(document.getElementById('admin-pass').value===ADMIN_PASS){
-        document.getElementById('admin-login-section').style.display='none';
-        document.getElementById('admin-editor-section').style.display='block';
-    } else setStatus('login-status','Clave incorrecta','err');
-}
-function fmt(cmd){document.getElementById('ann-cuerpo').focus();document.execCommand(cmd,false,null);}
-function fmtBlock(tag){document.getElementById('ann-cuerpo').focus();document.execCommand('formatBlock',false,tag);}
-function insertLink(){const url=prompt('URL:');if(url){document.getElementById('ann-cuerpo').focus();document.execCommand('createLink',false,url);}}
-async function publicarAnuncio() {
-    const titulo=document.getElementById('ann-titulo').value.trim();
-    const cuerpo=document.getElementById('ann-cuerpo').innerHTML.trim();
-    const tipo=document.getElementById('ann-tipo').value;
-    const autor=document.getElementById('ann-autor').value.trim();
-    const imagen=document.getElementById('ann-imagen').value.trim();
-    if(!titulo||!autor){setStatus('publish-status','Título y autor son obligatorios','err');return;}
-    if(!cuerpo||cuerpo==='<br>'){setStatus('publish-status','El contenido no puede estar vacío','err');return;}
-    const btn=document.getElementById('btn-pub');
-    btn.disabled=true;
-    setStatus('publish-status','⏳ Publicando...','loading');
-    try {
-        const r=await fetch(FLOW_CREAR,{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({Titulo:titulo,Cuerpo:cuerpo,TipoAnuncio:tipo,Autor:autor,ImagenURL:imagen,FechaPublicacion:new Date().toISOString()})});
-        if(!r.ok) throw new Error('Error '+r.status);
-        setStatus('publish-status','✅ ¡Publicado!','ok');
-        document.getElementById('ann-titulo').value='';
-        document.getElementById('ann-cuerpo').innerHTML='';
-        document.getElementById('ann-imagen').value='';
-        setTimeout(()=>{cerrarAdmin();cargarAnuncios();},2000);
-    } catch(e){setStatus('publish-status','❌ Error al publicar.','err');}
-    finally{btn.disabled=false;}
-}
-function setStatus(id,msg,tipo){const el=document.getElementById(id);el.textContent=msg;el.className='status-msg '+tipo;}
-
-window.addEventListener('resize', () => {
-    const sidebar = document.getElementById('portal-sidebar');
-    const btn = document.getElementById('btn-menu-lateral');
-    if (!sidebar || !btn) return;
-
-    if (window.innerWidth > 1366) {
-        sidebar.classList.remove('sidebar-mobile-open');
-        btn.setAttribute('aria-expanded', String(!sidebar.classList.contains('sidebar-collapsed')));
-    } else if (!sidebar.classList.contains('sidebar-mobile-open')) {
-        btn.setAttribute('aria-expanded', 'false');
-    }
-});
-
-getMensajeDelDia();
-cargarBannerCursos();
-cargarAnuncios();
-cargarEventosUNAB();
-cargarGrafico();
-</script>
-</body>
-</html>
+  if (frame.dataset.currentUrl === url && frame.getAttribute('src')) {
+    loading.classList.add('hidden');
+    frame.classList.add('loaded');
+    return;
+  }
