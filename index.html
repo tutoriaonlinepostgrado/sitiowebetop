@@ -1245,6 +1245,72 @@
 }
 </style>
 
+<style>
+
+/* ETOP · Ajuste fino de escala visual de filtros · 2026-10-22
+   SOLO controles cerrados: preservar búsqueda, casillas y menú abierto. */
+.top.report-mode{padding:5px 10px!important;gap:7px!important}
+.top.report-mode .view-title{font-size:12px!important;font-weight:750!important}
+.top.report-mode #gestionFilters,
+.top.dashboard-mode #gestionFilters{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  column-gap:6px!important;
+  row-gap:4px!important;
+}
+#gestionFilters .main-multi-trigger{
+  height:26px!important;min-height:26px!important;
+  padding:0 22px 0 8px!important;
+  border-radius:6px!important;
+  font-size:10px!important;font-weight:500!important;
+  line-height:1.1!important;letter-spacing:0!important;
+}
+#gestionFilters .main-multi-trigger>span{
+  font-size:10px!important;line-height:1.1!important;
+}
+#gestionFilters .main-multi-trigger>b{
+  right:8px!important;font-size:10px!important;
+}
+#gestionFilters .main-multi-active .main-multi-trigger{
+  padding-left:12px!important;
+}
+#gestionFilters .main-multi-active::before{
+  top:10px!important;left:5px!important;
+}
+.top.report-mode #gestionFilters .fecha-multi-input,
+.top.report-mode #gestionFilters .search-pill-input,
+.top.report-mode #gestionFilters .nrc-pill-input,
+.top.report-mode #gestionFilters .dashboard-excel-btn,
+.top.report-mode #gestionFilters #btn-tutor-perfil{
+  height:26px!important;min-height:26px!important;
+  font-size:10px!important;font-weight:500!important;
+  border-radius:6px!important;
+}
+.top.report-mode #gestionFilters .fecha-chip{
+  height:22px!important;font-size:9px!important;
+}
+.top.report-mode #gestionFilters .search-group-label{
+  font-size:8px!important;
+}
+.top.report-mode #gestionFilters .inline-filter-clear{
+  height:15px!important;width:15px!important;font-size:10px!important;
+}
+@media(max-width:1499px) and (min-width:1000px){
+ .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
+   grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:999px) and (min-width:621px){
+ .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:620px){
+ .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+}
+
+</style>
 </head>
 <body>
 <div class="app">
