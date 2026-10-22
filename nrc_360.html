@@ -51,7 +51,7 @@ body.embedded .top,body.embedded .searchbar,body.embedded .footer{display:none!i
 .hero-information .fact span{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hero-information .course-timeline{margin-top:13px;max-width:none}
 .shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.shortcut{display:flex;align-items:center;gap:5px;border:1px solid #d6e2ef;background:#fff;border-radius:8px;color:#2d5076;padding:9px 10px;font-size:10px;font-weight:750;text-decoration:none;min-height:37px}
 .shortcut:hover{border-color:#8db4de;background:#f1f7fd}.shortcut span{margin-left:auto;opacity:.65}.shortcut.primary{grid-column:1/-1;background:#eaf3fc;border-color:#bdd5ef;color:#235b93}.shortcut.disabled{pointer-events:none;opacity:.42}
-#workspace.grid{grid-template-columns:minmax(0,1.67fr) minmax(335px,.85fr);gap:13px;align-items:start}#workspace .stack{gap:13px}
+#workspace.grid{grid-template-columns:minmax(0,1.45fr) minmax(430px,.95fr);gap:13px;align-items:stretch}#workspace .stack{gap:13px}
 .card-head h2{font-size:12.5px}.cohort-counter{border-radius:999px;padding:5px 9px;background:#eff4f9;border:1px solid #dae5ef;font-size:10px;font-weight:800;white-space:nowrap;color:#45627e}
 .cohort-tools{display:flex;align-items:center;gap:10px;padding:10px 13px;background:#fbfcfe}.cohort-tools input{flex:1;min-width:0;height:32px;border:1px solid #d6e1ed;border-radius:7px;padding:0 9px;font-size:11px;color:#334f6d}.cohort-tools span{font-size:9px;color:#8191a5}
 .cohort-scroller{width:100%;overflow:auto}.cohort-table{width:100%;border-collapse:collapse;table-layout:fixed}.cohort-table th{text-align:left;text-transform:uppercase;background:#eff4f9;color:#72869a;font-size:9px;padding:9px 10px;border-bottom:1px solid #dae4ef}
@@ -62,11 +62,19 @@ body.embedded .top,body.embedded .searchbar,body.embedded .footer{display:none!i
 .cohort-state{display:inline-block;border-radius:999px;background:#eef3f9;color:#516e8d;font-size:8.5px;font-weight:800;padding:3px 6px;white-space:nowrap}.cohort-state.ACTIVO{background:#e8f5ed;color:#27734e}.cohort-state.CERRADO{background:#f8ebee;color:#9e4754}.cohort-state.PREPARACION{background:#edf3fa;color:#4b6c95}.cohort-state.EN-CIERRE{background:#fff2dc;color:#98611d}
 .cohort-date{font:10px Consolas,monospace;color:#657c94;white-space:nowrap}.cohort-row-actions{display:flex;flex-wrap:wrap;gap:4px}.cohort-action{font-size:9px;font-weight:750;border:1px solid #cadce9;border-radius:6px;color:#275e93;background:#fff;padding:5px 7px;white-space:nowrap;cursor:pointer}.cohort-action:hover{background:#edf6ff}
 .cohort-footer{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 13px;font-size:9px;color:#7d8ca0;background:#fafcff}.cohort-footer a{font-weight:800;color:#275f94}
-.qa-card .card-body{padding:13px}.kpi-stack{min-width:0}.pbi-card .card-body{padding:10px}.kpi-source{font-size:9px;font-weight:800;color:#24618f;border:1px solid #d7e4ef;border-radius:999px;padding:4px 8px}
-.pbi-card .pbi-wrap{height:740px;overflow:hidden;background:#fff;border-radius:8px;border:1px solid #dce5ef}.pbi-card .pbi-frame{height:100%;width:100%}.pbi-help{font-size:9.5px;line-height:1.5;color:#788a9d;padding:2px 2px 0}.pbi-help a{color:#235f95;font-weight:800}
+.qa-card .card-body{padding:13px}
+.kpi-stack{min-width:0;align-self:stretch;align-content:stretch;grid-template-rows:minmax(0,1fr);height:100%}
+.pbi-card{display:flex;flex-direction:column;height:100%;min-height:calc(100vh - 210px)}
+.pbi-card .card-body{flex:1;display:flex;flex-direction:column;min-height:0;padding:10px}
+.kpi-source{font-size:9px;font-weight:800;color:#24618f;border:1px solid #d7e4ef;border-radius:999px;padding:4px 8px}
+.pbi-card .pbi-wrap{flex:1;min-height:calc(100vh - 290px);height:auto;overflow:hidden;background:#fff;border-radius:8px;border:1px solid #dce5ef}
+.pbi-card .pbi-frame{display:block;width:100%;height:100%;border:0}
+.pbi-help{font-size:9.5px;line-height:1.5;color:#788a9d;padding:8px 2px 0}.pbi-help a{color:#235f95;font-weight:800}
 @media(max-width:1180px){.hero-detail-grid{grid-template-columns:1fr}.hero-shortcuts{border-left:0;border-top:1px solid #e5ecf3}.shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}.shortcut.primary{grid-column:span 2}}
-@media(max-width:1050px){#workspace.grid{grid-template-columns:1fr}.pbi-card .pbi-wrap{height:700px}}
-@media(max-width:750px){.wrap{padding:10px}.hero-head{padding:12px}.hero-information .fact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcut.primary{grid-column:1/-1}.cohort-table{min-width:670px}.cohort-tools span{display:none}.pbi-card .pbi-wrap{height:690px}}
+@media(max-width:1250px) and (min-width:1051px){#workspace.grid{grid-template-columns:minmax(0,1fr) minmax(400px,.8fr)}}
+@media(max-width:1050px){#workspace.grid{grid-template-columns:1fr}.kpi-stack{height:auto}.pbi-card{height:auto;min-height:0}.pbi-card .pbi-wrap{height:720px;min-height:720px;flex:none}}
+
+@media(max-width:750px){.wrap{padding:10px}.hero-head{padding:12px}.hero-information .fact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcut.primary{grid-column:1/-1}.cohort-table{min-width:670px}.cohort-tools span{display:none}.pbi-card .pbi-wrap{height:690px;min-height:690px}}
 body.embedded .wrap{max-width:1600px;padding:10px 12px}body.embedded .hero{margin-bottom:12px}
 
 </style>
@@ -153,7 +161,7 @@ function calendarUrl(c){return BASE+'calendarios.html?nrc='+encodeURIComponent(c
 function metricFor(nrc){const m=metrics.find(x=>norm(x.nrc)===norm(nrc)||norm(x.NRC_COD_CAL)===norm(nrc));if(!m)return null;return Number(m.total_estudiantes??m.total??m.estudiantes??0)}
 function findCourse(term){const q=norm(term);if(!q)return null;return courses.find(c=>norm(c.nrc)===q)||courses.find(c=>String(c.nrc||'').split('_')[0]===String(term).trim())||courses.find(c=>norm(c['codigo curso'])===q)||courses.find(c=>norm(c['nombre curso']).includes(q))}
 
-const PBI_SEGUIMIENTO_BASE='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth';
+const PBI_SEGUIMIENTO_BASE='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=actualSize';
 function seguimientoUrl(nrc){
   if(!nrc)return '';
   const u=new URL(PBI_SEGUIMIENTO_BASE);
