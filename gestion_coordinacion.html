@@ -773,54 +773,30 @@
 
 <style>
 
-/* ETOP · Ajuste fino de escala visual en Coordinación · 2026-10-22
-   SOLO controles cerrados: lista de opciones y búsqueda sin cambios. */
-.top-bar{padding:5px 10px!important;gap:7px!important}
-.titulo-vista,.top-bar .view-title{font-size:12px!important;font-weight:750!important}
-.filtros-wrapper{
-  grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  column-gap:6px!important;row-gap:4px!important;
+/* ETOP · Coordinación: compactación final · 22-10-2026 */
+.top-bar{padding:4px 9px!important;gap:6px!important;align-items:center!important}
+.titulo-vista,.top-bar .view-title{font-size:11.5px!important}
+.filtros-wrapper{column-gap:5px!important;row-gap:4px!important;align-content:center!important}
+.filtros-wrapper .multi-btn,.filtros-wrapper .date-filter-wrap,.filtros-wrapper .pill-input{
+height:25px!important;min-height:25px!important;font-size:9.8px!important;font-weight:550!important;line-height:1.1!important;border-radius:6px!important}
+.filtros-wrapper .multi-btn{padding:0 20px 0 8px!important}
+.filtros-wrapper .multi-btn span,.filtros-wrapper .date-filter-label,.filtros-wrapper .date-filter-input{font-size:9.8px!important;line-height:1.1!important}
+.filtros-wrapper .multi-btn b{font-size:9px!important}
+.filtros-wrapper .multi-filtro.filtro-activo .multi-btn{padding-left:12px!important}
+.filtros-wrapper .multi-filtro.filtro-activo::before,.filtros-wrapper #nrc-wrap.filtro-activo::before{top:9px!important;width:4px!important;height:4px!important}
+.filtros-wrapper .multi-inline-clear{width:14px!important;height:14px!important;font-size:9px!important}
+.filtros-wrapper .multi-panel{padding:6px!important;border-radius:8px!important}
+.filtros-wrapper .multi-search{height:29px!important;min-height:29px!important;padding:0 8px!important;margin-bottom:4px!important;font-size:10px!important;border-radius:6px!important}
+.filtros-wrapper .multi-opciones{max-height:240px!important}
+.filtros-wrapper .multi-opcion{display:flex!important;align-items:center!important;gap:7px!important;padding:4px 6px!important;margin:0!important;min-height:24px!important;font-size:10px!important;line-height:1.18!important;border-radius:5px!important}
+.filtros-wrapper .multi-opcion span{line-height:1.18!important}
+.filtros-wrapper .multi-opcion input{flex:0 0 auto;width:13px!important;height:13px!important;margin:0!important}
+@media(min-width:1500px){
+.filtros-wrapper{grid-template-columns:minmax(78px,.75fr) minmax(102px,1fr) minmax(72px,.72fr) minmax(98px,.95fr) minmax(75px,.73fr) minmax(110px,1.06fr) minmax(154px,1.35fr) minmax(114px,1.05fr)!important}
 }
-.filtros-wrapper .multi-btn,
-.filtros-wrapper .date-filter-wrap,
-.filtros-wrapper .pill-input{
-  height:26px!important;min-height:26px!important;
-  font-size:10px!important;font-weight:500!important;
-  line-height:1.1!important;border-radius:6px!important;
-}
-.filtros-wrapper .multi-btn{
-  padding:0 22px 0 8px!important;
-}
-.filtros-wrapper .multi-btn span,
-.filtros-wrapper .date-filter-label,
-.filtros-wrapper .date-filter-input{
-  font-size:10px!important;
-  font-weight:500!important;
-  line-height:1.1!important;
-}
-.filtros-wrapper .multi-btn b{
-  font-size:10px!important;
-}
-.filtros-wrapper .multi-filtro.filtro-activo .multi-btn{
-  padding-left:12px!important;
-}
-.filtros-wrapper .multi-filtro.filtro-activo::before,
-.filtros-wrapper #nrc-wrap.filtro-activo::before{
-  top:10px!important;
-}
-.filtros-wrapper .multi-inline-clear{
-  width:15px!important;height:15px!important;font-size:10px!important;
-}
-@media(max-width:1499px) and (min-width:1000px){
- .filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-}
-@media(max-width:999px) and (min-width:621px){
- .filtros-wrapper{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-}
-@media(max-width:620px){
- .filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-
+@media(min-width:1101px) and (max-width:1499px){.filtros-wrapper{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
+@media(min-width:721px) and (max-width:1100px){.filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:720px){.filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 </head>
 <body>
