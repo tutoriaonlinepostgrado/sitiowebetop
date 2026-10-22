@@ -53,6 +53,10 @@ body.embedded .top,body.embedded .searchbar,body.embedded .footer{display:none!i
 .shortcut:hover{border-color:#8db4de;background:#f1f7fd}.shortcut span{margin-left:auto;opacity:.65}.shortcut.primary{grid-column:1/-1;background:#eaf3fc;border-color:#bdd5ef;color:#235b93}.shortcut.disabled{pointer-events:none;opacity:.42}
 #workspace.grid{grid-template-columns:minmax(0,1.45fr) minmax(430px,.95fr);gap:13px;align-items:stretch}#workspace .stack{gap:13px}
 .card-head h2{font-size:12.5px}.cohort-counter{border-radius:999px;padding:5px 9px;background:#eff4f9;border:1px solid #dae5ef;font-size:10px;font-weight:800;white-space:nowrap;color:#45627e}
+.cohort-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.cohort-toggle{border:1px solid #c4d7eb;background:#eef6ff;border-radius:8px;color:#285d91;min-height:31px;padding:6px 10px;font:800 10px "Segoe UI",Arial,sans-serif;cursor:pointer;white-space:nowrap}
+.cohort-toggle:hover{background:#e0efff;border-color:#90b8e1}.cohort-toggle:focus-visible{outline:2px solid #d6a900;outline-offset:2px}
+.cohort-neighbors{font-size:9px;color:#697e92;margin:0 13px 9px;line-height:1.4}
 .cohort-tools{display:flex;align-items:center;gap:10px;padding:10px 13px;background:#fbfcfe}.cohort-tools input{flex:1;min-width:0;height:32px;border:1px solid #d6e1ed;border-radius:7px;padding:0 9px;font-size:11px;color:#334f6d}.cohort-tools span{font-size:9px;color:#8191a5}
 .cohort-scroller{width:100%;overflow:auto}.cohort-table{width:100%;border-collapse:collapse;table-layout:fixed}.cohort-table th{text-align:left;text-transform:uppercase;background:#eff4f9;color:#72869a;font-size:9px;padding:9px 10px;border-bottom:1px solid #dae4ef}
 .cohort-table th:nth-child(1){width:32%}.cohort-table th:nth-child(2){width:15%}.cohort-table th:nth-child(3){width:19%}.cohort-table th:nth-child(4){width:18%}.cohort-table th:nth-child(5){width:16%}
@@ -102,8 +106,9 @@ body.embedded .wrap{max-width:1600px;padding:10px 12px}body.embedded .hero{margi
 <a class="shortcut" id="aPresentation" href="#" target="_blank" rel="noopener">📊 Presentación Tutorial <span>↗</span></a>
 <a class="shortcut" href="comunicaciones_etop.html" target="_blank" rel="noopener">✉️ Comunicaciones <span>↗</span></a></div></div></div></section>
 <section id="workspace" class="grid">
-<div class="stack"><section class="card cohort-card"><div class="card-head"><div><h2>📚 Cursos del mismo Intake/Versión</h2><span class="sub" id="cohortTitle">Cursos asociados a la versión consultada</span></div><span class="cohort-counter" id="cohortCount">—</span></div>
+<div class="stack"><section class="card cohort-card"><div class="card-head"><div><h2>📚 Cursos del mismo Intake/Versión</h2><span class="sub" id="cohortTitle">Cursos asociados a la versión consultada</span></div><div class="cohort-head-actions"><span class="cohort-counter" id="cohortCount">—</span><button type="button" id="cohortToggle" class="cohort-toggle" aria-expanded="false" aria-controls="cohortRows" hidden>Ver calendario completo ↓</button></div></div>
 <div class="cohort-tools"><input id="cohortSearch" type="search" placeholder="Filtrar por NRC, nombre o tutor…" aria-label="Buscar dentro del Intake"><span>Selecciona un curso para abrir su ficha</span></div>
+<div class="cohort-neighbors" id="cohortViewHint">Curso anterior · Curso consultado · Curso siguiente</div>
 <div class="cohort-scroller"><table class="cohort-table"><thead><tr><th>Curso / NRC</th><th>Estado</th><th>Fechas</th><th>Tutor/a</th><th>Acciones</th></tr></thead><tbody id="cohortRows"><tr><td colspan="5" class="empty">Cargando cursos…</td></tr></tbody></table></div>
 <div class="cohort-footer"><span>Fuente: Calendarios ETOP · nrcs.json</span><a id="cohortCalendar" href="#" target="_blank" rel="noopener">Ver Intake en Calendarios ↗</a></div></section>
 <section class="card qa-card"><div class="card-head"><div class="qa-status"><h2>🧾 Historial QA2 e incidencias</h2><span id="qaState" class="qa-state-chip">—</span></div><a id="incDetail" class="btn" href="#" target="_blank" rel="noopener">Abrir incidencias ↗</a></div><div class="card-body"><div id="qaHistory" class="qa-history"></div></div></section></div>
@@ -118,6 +123,7 @@ const SOURCES={nrcs:BASE+'nrcs.json',incidents:BASE+'incidencias.json',metrics:B
 const FORM_QA2='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
 const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
 let courses=[],incidents=[],metrics=[],current=null,currentInc=[];
+let cohortExpanded=false;
 const $=id=>document.getElementById(id);
 const norm=v=>String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 const upper=v=>String(v??'').toUpperCase().trim();
@@ -261,13 +267,29 @@ function cursosDelIntake(c){
   return conjunto.some(x=>norm(x.nrc)===norm(c.nrc))?conjunto:[c,...conjunto];
 }
 function renderIntake(c){
-  const todos=cursosDelIntake(c),filtro=norm($('cohortSearch').value);
-  const lista=todos.filter(x=>!filtro||norm([x.nrc,x['nombre curso'],x.tutor,x['codigo curso']].join(' ')).includes(filtro));
-  lista.sort((a,b)=>{
+  const todos=cursosDelIntake(c);
+  const ordenados=[...todos].sort((a,b)=>{
     const d=String(a['fecha inicio']||'').localeCompare(String(b['fecha inicio']||''));
     return d||String(a.nrc||'').localeCompare(String(b.nrc||''));
   });
-  $('cohortCount').textContent=todos.length+' '+(todos.length===1?'curso':'cursos');
+  const posicion=ordenados.findIndex(x=>norm(x.nrc)===norm(c.nrc));
+  const desde=Math.max(0,posicion-1);
+  const hasta=Math.min(ordenados.length,posicion+2);
+  const texto=$('cohortSearch').value.trim();
+  const filtro=norm(texto);
+  const lista=filtro
+    ? ordenados.filter(x=>norm([x.nrc,x['nombre curso'],x.tutor,x['codigo curso']].join(' ')).includes(filtro))
+    : cohortExpanded ? ordenados : ordenados.slice(desde,hasta);
+  const mostrarDesplegable=ordenados.length>3&&!filtro;
+  const toggle=$('cohortToggle');
+  toggle.hidden=!mostrarDesplegable;
+  toggle.setAttribute('aria-expanded',String(cohortExpanded));
+  toggle.textContent=cohortExpanded?'Mostrar solo cursos cercanos ↑':'Ver calendario completo ('+ordenados.length+') ↓';
+  $('cohortViewHint').textContent=filtro
+    ? lista.length+' '+(lista.length===1?'coincidencia':'coincidencias')+' en los '+ordenados.length+' cursos de esta versión'
+    : cohortExpanded ? 'Calendario completo ordenado por fecha de inicio'
+    : 'Vista resumida: curso anterior · curso consultado · curso siguiente';
+  $('cohortCount').textContent=ordenados.length+' '+(ordenados.length===1?'curso':'cursos');
   $('cohortTitle').textContent='Intake: '+(c.intake||'No informado');
   setLink('cohortCalendar',intakeUrl(c.intake));
   $('cohortRows').innerHTML=lista.length?lista.map(x=>{
@@ -317,6 +339,7 @@ function render(c){
   else if(con.length)$('qaState').textContent='CON '+con.length+' INCIDENCIA'+(con.length===1?'':'S');
   else $('qaState').textContent='SIN INCIDENCIA';
   renderQaHistory(currentInc,uni118);
+  cohortExpanded=false;
   $('cohortSearch').value='';
   renderIntake(c);
   $('pbiDirect').href=seguimientoUrl(c.nrc);
@@ -325,6 +348,10 @@ function render(c){
   const u=new URL(location.href);u.searchParams.set('nrc',c.nrc||'');history.replaceState(null,'',u);$('searchNrc').value=c.nrc||'';clearStatus();
 }
 $('cohortSearch').addEventListener('input',()=>{if(current)renderIntake(current)});
+$('cohortToggle').addEventListener('click',()=>{
+  cohortExpanded=!cohortExpanded;
+  if(current)renderIntake(current);
+});
 $('cohortRows').addEventListener('click',abrirCursoDeIntake);
 $('cohortRows').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();abrirCursoDeIntake(e)}});
 function buscar(){const value=$('searchNrc').value.trim();const c=findCourse(value);if(!c){showStatus('No encontré un curso que coincida con "'+value+'".',true);return}render(c)}
