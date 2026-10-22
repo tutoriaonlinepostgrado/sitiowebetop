@@ -81,6 +81,52 @@ body.embedded .top,body.embedded .searchbar,body.embedded .footer{display:none!i
 @media(max-width:750px){.wrap{padding:10px}.hero-head{padding:12px}.hero-information .fact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.shortcut.primary{grid-column:1/-1}.cohort-table{min-width:670px}.cohort-tools span{display:none}.pbi-card .pbi-wrap{height:690px;min-height:690px}}
 body.embedded .wrap{max-width:1600px;padding:10px 12px}body.embedded .hero{margin-bottom:12px}
 
+
+/* Ajustes ficha 360: datos y acciones paralelos, KPI ampliado */
+.hero-detail-grid{grid-template-columns:minmax(0,1.53fr) minmax(360px,.92fr);align-items:stretch;border-top:0}
+.hero-information{padding:15px 16px 13px}
+.hero-shortcuts{padding:15px 13px 13px;display:flex;flex-direction:column;justify-content:flex-start}
+.hero-head{padding:0 0 12px;gap:12px;min-width:0}
+.hero-head .hero-main{min-width:0}
+.hero-information .section-label,.hero-shortcuts .section-label{margin-bottom:8px}
+.hero-head .meta{gap:5px;max-width:100%}
+.hero-head .pill{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-content:start}
+.shortcut{min-height:31px;padding:6px 8px;font-size:9.5px;line-height:1.25;border-radius:7px;min-width:0}
+.shortcut.primary{min-height:32px}
+.shortcut:last-child:not(.primary){grid-column:1/-1}
+#workspace.grid{grid-template-columns:minmax(0,1.32fr) minmax(475px,1fr);gap:13px;align-items:start}
+#workspace .kpi-stack{min-width:0;align-self:start;align-content:start;grid-template-rows:auto;height:auto}
+.pbi-card{height:auto;min-height:0;display:flex;flex-direction:column}
+.pbi-card .card-body{padding:8px;flex:none;display:flex;flex-direction:column}
+.pbi-card .pbi-wrap{width:100%;height:clamp(565px,68vh,700px);min-height:0;flex:none;overflow:hidden}
+.pbi-card .pbi-frame{width:100%;height:100%;transform:scale(1.18);transform-origin:center top}
+.pbi-help{margin:6px 2px 3px;padding:3px 0 0}
+@media(max-width:1250px) and (min-width:1051px){
+  #workspace.grid{grid-template-columns:minmax(0,1fr) minmax(430px,.9fr)}
+}
+@media(max-width:1080px){
+  .hero-detail-grid{grid-template-columns:1fr}
+  .hero-shortcuts{border-left:0;border-top:1px solid #e5ecf3}
+  .shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .shortcut.primary{grid-column:span 2}
+  .shortcut:last-child:not(.primary){grid-column:auto}
+}
+@media(max-width:1050px){
+  #workspace.grid{grid-template-columns:1fr}
+  #workspace .kpi-stack{height:auto}
+  .pbi-card{height:auto;min-height:0}
+  .pbi-card .pbi-wrap{height:clamp(560px,65vh,700px);min-height:0;flex:none}
+  .pbi-card .pbi-frame{transform:scale(1.1)}
+}
+@media(max-width:750px){
+  .hero-head{padding:0 0 12px}
+  .shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .shortcut.primary,.shortcut:last-child:not(.primary){grid-column:1/-1}
+  .pbi-card .pbi-wrap{height:610px;min-height:0}
+  .pbi-card .pbi-frame{transform:none}
+}
+
 </style>
 </head>
 <body>
@@ -90,9 +136,9 @@ body.embedded .wrap{max-width:1600px;padding:10px 12px}body.embedded .hero{margi
 <section class="searchbar"><input id="searchNrc" placeholder="Buscar por NRC_COD_CAL, código o nombre del curso" aria-label="Buscar curso"><button onclick="buscar()">Abrir NRC</button><div class="hint">Datos actuales del portal ETOP. Puedes seleccionar otro NRC de la misma versión para cambiar la ficha.</div></section>
 <div id="status" class="status"></div>
 <section id="hero" class="hero">
-<div class="hero-head"><div class="hero-main"><div class="kicker">Ficha integral del curso</div><div id="heroNrc" class="nrc">—</div><div id="heroCourse" class="course">—</div>
+<div class="hero-detail-grid"><div class="hero-information"><div class="hero-head"><div class="hero-main"><div class="kicker">Ficha integral del curso</div><div id="heroNrc" class="nrc">—</div><div id="heroCourse" class="course">—</div>
 <div class="meta"><span class="pill" id="heroProgram">Programa: —</span><span class="pill" id="heroTutor">Tutor: —</span><span class="pill" id="heroIntake">Intake: —</span><span class="pill" id="heroFaculty">Facultad: —</span></div></div><div id="heroState" class="state">—</div></div>
-<div class="hero-detail-grid"><div class="hero-information"><h3 class="section-label">Datos operativos del NRC</h3><div class="fact-grid">
+<h3 class="section-label">Datos operativos del NRC</h3><div class="fact-grid">
 <div class="fact"><b>Inicio</b><span id="fStart">—</span></div><div class="fact"><b>Fin</b><span id="fEnd">—</span></div><div class="fact"><b>Código curso</b><span id="fCode">—</span></div><div class="fact"><b>Materia</b><span id="fMateria">—</span></div>
 <div class="fact"><b>Periodo</b><span id="fPeriod">—</span></div><div class="fact"><b>Tipo NRC</b><span id="fType">—</span></div><div class="fact"><b>ID curso</b><span id="fId">—</span></div><div class="fact"><b>Semanas</b><span id="fWeeks">—</span></div></div>
 <div class="course-timeline"><div class="timeline-head"><span id="timelineStatus" class="timeline-status">Estado temporal del curso</span><span id="timelineWeek">—</span></div><div class="timeline-track"><div id="timelineFill" class="timeline-fill"></div></div><div class="timeline-foot"><span id="timelineStart">Inicio —</span><span id="timelineEnd">Fin —</span></div></div></div>
