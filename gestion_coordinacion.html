@@ -731,6 +731,46 @@
 }
 </style>
 
+
+<style>
+/* Coordinación · armonización de filtros con portal principal */
+.top-bar{padding:8px 12px!important;gap:9px!important;align-items:flex-start!important}
+.titulo-vista{font-size:13px!important;font-weight:750!important}
+.filtros-wrapper{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:5px 7px!important;
+  align-items:center!important;
+  align-content:center!important;
+}
+.filtros-wrapper .multi-btn,
+.filtros-wrapper .date-filter-wrap,
+.filtros-wrapper .pill-input{
+  height:30px!important;min-height:30px!important;
+  font-size:11px!important;font-weight:600!important;
+  border-radius:8px!important;
+  border-color:rgba(180,203,228,.19)!important;
+  color:#dce7f2!important;
+}
+.filtros-wrapper .multi-btn{padding:0 25px 0 11px!important}
+.filtros-wrapper .multi-btn b{font-size:11px!important;opacity:.65}
+.filtros-wrapper .date-filter-label,.filtros-wrapper .date-filter-input{font-size:11px!important}
+.filtros-wrapper .multi-filtro.filtro-activo .multi-btn{padding-left:14px!important}
+.filtros-wrapper .multi-search{height:33px!important;font-size:11px!important;border-radius:7px!important}
+.filtros-wrapper .multi-opcion{font-size:11px!important;line-height:1.25!important;padding:8px 6px!important}
+.filtros-wrapper .multi-opcion input{width:14px;height:14px;accent-color:#5da9ff}
+.filtros-wrapper .multi-panel{min-width:250px;max-width:min(340px,90vw);width:max(100%,250px);background:#172741!important;border-color:#426587!important}
+@media(max-width:1399px) and (min-width:1000px){
+  .filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .filtros-wrapper .multi-btn{font-size:10px!important}
+}
+@media(max-width:999px){
+  .filtros-wrapper{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+  .filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -1019,7 +1059,7 @@
             </div>`;
             return;
         }
-        const buscable = campo === 'tutor' || campo === 'intake';
+        const buscable = campo !== 'fechaInicio';
         host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
           <button type="button" class="multi-inline-clear" title="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" aria-label="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" onclick="limpiarMultiUnico('${campo}',event)">×</button>
           <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
