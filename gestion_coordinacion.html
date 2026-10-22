@@ -799,6 +799,69 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 @media(min-width:721px) and (max-width:1100px){.filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 @media(max-width:720px){.filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
+
+<style>
+/* Coordinación: campo fecha sin leyenda y NRC multiselección */
+#mf-fechaInicio .compact-date{
+ display:flex!important;align-items:center!important;position:relative!important;
+ height:25px!important;min-height:25px!important;
+ padding:0 6px!important;border-radius:6px!important;
+ background:rgba(255,255,255,.055)!important;border:1px solid rgba(180,203,228,.19)!important;
+ overflow:hidden!important;
+}
+#mf-fechaInicio .compact-date .date-filter-input{
+ width:100%!important;flex:1 1 auto!important;min-width:0!important;
+ height:23px!important;min-height:23px!important;
+ padding:0!important;border:0!important;box-shadow:none!important;
+ font-size:10px!important;color:#dce7f2!important;background:transparent!important;color-scheme:dark;
+}
+#mf-fechaInicio .compact-date .date-filter-input:focus{outline:none!important}
+#mf-fechaInicio .date-selected-count{
+ position:absolute;left:2px;bottom:1px;font-size:8px;font-weight:800;
+ padding:1px 3px;border-radius:7px;background:#315e9b;color:#fff;pointer-events:none;
+}
+#mf-fechaInicio .compact-date .date-filter-clear{font-size:11px!important;margin-left:2px!important;padding:0!important}
+.filtros-wrapper #nrc-wrap{position:relative;min-width:0!important}
+.filtros-wrapper #nrc-wrap .pill-input{
+ height:25px!important;min-height:25px!important;
+ padding:0 35px 0 8px!important;width:100%!important;max-width:none!important;
+ font-size:9.8px!important;border-radius:6px!important;
+}
+.filtros-wrapper #nrc-wrap .pill-input:focus{width:100%!important}
+#nrc-selected-count{
+ position:absolute;right:25px;top:50%;transform:translateY(-50%);
+ font-size:9px;font-weight:800;background:rgba(58,155,255,.18);
+ color:#a8d1ff;min-width:13px;text-align:center;border-radius:4px;
+ pointer-events:none;line-height:14px;
+}
+#nrc-selected-count[hidden]{display:none!important}
+#nrc-wrap .nrc-clear{right:4px!important;width:16px!important;height:16px!important}
+#nrc-wrap .nrc-dropdown{
+ width:max(100%,280px)!important;max-width:min(340px,90vw)!important;
+ max-height:270px!important;overflow-y:auto!important;
+ border-color:#426587!important;background:#172741!important;border-radius:8px!important;padding:5px!important;
+}
+#nrc-wrap .nrc-dropdown-item{
+ display:flex!important;align-items:center!important;gap:7px!important;
+ min-height:22px!important;padding:3px 5px!important;margin:0!important;
+ border-bottom:0!important;border-radius:4px!important;cursor:pointer!important;
+ color:#e5edf7!important;font-size:10.5px!important;line-height:1.15!important;
+}
+#nrc-wrap .nrc-dropdown-item:hover,#nrc-wrap .nrc-dropdown-item.selected{background:#263d5a!important}
+#nrc-wrap .nrc-dropdown-item input[type=checkbox]{
+ width:13px!important;height:13px!important;margin:0!important;flex:0 0 auto!important;accent-color:#5da9ff;
+}
+#nrc-wrap .nrc-dropdown-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#nrc-wrap .nrc-dropdown-empty{padding:10px 7px;font-size:10px;color:#a8b7cb}
+@media(min-width:1500px){
+ .filtros-wrapper{
+ grid-template-columns:minmax(84px,.84fr) minmax(105px,1.04fr)
+ minmax(70px,.72fr) minmax(96px,.96fr) minmax(78px,.79fr)
+ minmax(115px,1.12fr) minmax(120px,.96fr) minmax(145px,1.35fr)!important;
+ }
+}
+</style>
+
 </head>
 <body>
 <div class="app-container">
@@ -862,8 +925,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
     </div>
                 <div class="multi-filtro" id="mf-fechaInicio">
         <div class="date-filter-wrap" style="opacity:.55">
-            <span class="date-filter-label">📅 Fecha de inicio</span>
-            <input type="date" class="date-filter-input" disabled aria-label="Fecha de inicio">
+            <input type="date" class="date-filter-input" lang="es-CL" disabled aria-label="Fecha de inicio">
         </div>
     </div>
 
@@ -879,7 +941,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
                         maxlength="30"
                         title="Buscar NRC — filtra por cualquier parte del código"
                         autocomplete="off">
-                    <button type="button" class="nrc-clear" id="nrc-clear" title="Quitar solo filtro NRC" aria-label="Quitar solo filtro NRC" onclick="limpiarSoloNRC(event)">×</button>
+                    <span id="nrc-selected-count" class="nrc-selected-count" hidden aria-hidden="true"></span><button type="button" class="nrc-clear" id="nrc-clear" title="Quitar todos los NRC seleccionados" aria-label="Quitar todos los NRC seleccionados" onclick="limpiarSoloNRC(event)">×</button>
                     <div class="nrc-dropdown" id="nrc-dropdown"></div>
                 </div>
                 <div class="separator-bar"></div>
@@ -977,8 +1039,8 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         const s=sesionGlobalETOP();
         return s && s.rol==='TUTOR' && s.tutor ? String(s.tutor).trim() : '';
     }
-    let nrcConfirmado = '';   // NRC exacto seleccionado
-    let nrcBusquedaTexto = ''; // solo texto de búsqueda; no filtra hasta seleccionar NRC
+    const seleccionNRC = new Set(); // selección múltiple NRC
+    let nrcBusquedaTexto = ''; // búsqueda, independiente de NRC ya seleccionados
     const CAMPOS_MULTI = ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio'];
     const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', codigo:'Código curso', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
@@ -1079,11 +1141,9 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         const mostrarValor=v=>campo==='fechaInicio'?v.split('-').reverse().join('-'):v;
         const texto = n === 0 ? ETIQUETAS_MULTI[campo] : n === 1 ? mostrarValor([...elegidos][0]) : `${ETIQUETAS_MULTI[campo]} (${n})`;
         if (campo === 'fechaInicio') {
-            const resumen = n ? (n === 1 ? mostrarValor([...elegidos][0]) : n + ' fechas') : 'Fecha de inicio';
-            host.innerHTML = `<div class="date-filter-wrap" title="${escHtml([...elegidos].map(mostrarValor).join(', '))}">
-                <span class="date-filter-label">📅 ${escHtml(resumen)}</span>
-                <input type="date" class="date-filter-input" aria-label="Agregar fecha de inicio" onchange="agregarFechaInicio(this.value)">
-                ${n ? '<button type="button" class="date-filter-clear" title="Quitar fechas" onclick="limpiarFechasInicio(event)">×</button>' : ''}
+            host.innerHTML = `<div class="date-filter-wrap compact-date" title="${escHtml(n ? 'Fechas seleccionadas: '+[...elegidos].map(mostrarValor).join(', ') : 'Seleccionar fecha de inicio')}">
+                <input type="date" lang="es-CL" class="date-filter-input" aria-label="Seleccionar fecha de inicio (día, mes y año)" onchange="agregarFechaInicio(this.value)">
+                ${n ? '<span class="date-selected-count" title="'+n+' fecha(s) seleccionada(s)">'+n+'</span><button type="button" class="date-filter-clear" title="Quitar fechas" aria-label="Quitar fechas" onclick="limpiarFechasInicio(event)">×</button>' : ''}
             </div>`;
             return;
         }
@@ -1178,148 +1238,94 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         }));
     }
 
-    function onNRCInput(val) {
-        nrcDropdownIdx = -1;
-        nrcBusquedaTexto = val.trim();
 
-        // Si se edita un NRC confirmado, se desconfirma.
-        // NO recalculamos filtros ni iframe mientras se escribe.
-        if (val.trim() !== nrcConfirmado) nrcConfirmado = '';
-
-        const q = normalizarBusqueda(val);
-
-        if (nrcBusquedaTimer) {
-            clearTimeout(nrcBusquedaTimer);
-            nrcBusquedaTimer = null;
-        }
-
-        if (!q) {
-            ocultarDropdownNRC();
-            actualizarEstadoVisualFiltros();
-            return;
-        }
-
-        // Pequeño debounce para que escribir rápido no dispare búsquedas innecesarias.
-        nrcBusquedaTimer = setTimeout(() => {
-            const permitidos = new Set(
-                nrcsFiltrados('nrc').map(x => x.nrc)
-            );
-
-            const matches = nrcIndiceBusqueda
-                .filter(item => permitidos.has(item.ref.nrc) && item.texto.includes(q))
-                .sort((a,b) => {
-                    const ar = a.nrcNorm === q ? 0 : a.nrcNorm.startsWith(q) ? 1 : 2;
-                    const br = b.nrcNorm === q ? 0 : b.nrcNorm.startsWith(q) ? 1 : 2;
-                    return ar - br || a.nrcNorm.localeCompare(b.nrcNorm, 'es', { numeric:true });
-                })
-                .slice(0, 30)
-                .map(item => item.ref.nrc);
-
-            renderDropdownNRC(matches, q);
-        }, 90);
+    function actualizarResumenNRC() {
+        const input=document.getElementById('pill-nrc');
+        const count=document.getElementById('nrc-selected-count');
+        const n=seleccionNRC.size;
+        if(!input)return;
+        input.placeholder=n===0?'🔍 NRC':n===1?[...seleccionNRC][0]:'NRC ('+n+' seleccionados)';
+        input.title=n?[...seleccionNRC].join('\n'):'Buscar y seleccionar varios NRC';
+        if(count){count.hidden=n===0;count.textContent=n?String(n):'';}
+        document.getElementById('nrc-wrap')?.classList.toggle('filtro-activo',n>0);
     }
-
-    function onNRCKeydown(e) {
-        const dd = document.getElementById('nrc-dropdown');
-        const items = dd.querySelectorAll('.nrc-dropdown-item');
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            nrcDropdownIdx = Math.min(nrcDropdownIdx + 1, items.length - 1);
+    function sugerenciasNRC(valor=''){
+        const q=normalizarBusqueda(valor);
+        const permitidos=new Set(nrcsFiltrados('nrc').map(x=>x.nrc));
+        return [...new Set(nrcIndiceBusqueda
+           .filter(item=>permitidos.has(item.ref.nrc)&&(!q||item.texto.includes(q)))
+           .sort((a,b)=>{
+               const sa=seleccionNRC.has(a.ref.nrc)?0:1,sb=seleccionNRC.has(b.ref.nrc)?0:1;
+               if(sa!==sb)return sa-sb;
+               const pa=!q?0:a.nrcNorm===q?0:a.nrcNorm.startsWith(q)?1:2;
+               const pb=!q?0:b.nrcNorm===q?0:b.nrcNorm.startsWith(q)?1:2;
+               return pa-pb||a.nrcNorm.localeCompare(b.nrcNorm,'es',{numeric:true});
+           }).map(item=>item.ref.nrc))].slice(0,30);
+    }
+    function onNRCInput(val){
+        nrcDropdownIdx=-1;
+        nrcBusquedaTexto=val.trim();
+        if(nrcBusquedaTimer){clearTimeout(nrcBusquedaTimer);nrcBusquedaTimer=null;}
+        nrcBusquedaTimer=setTimeout(()=>renderDropdownNRC(sugerenciasNRC(nrcBusquedaTexto)),90);
+    }
+    function onNRCKeydown(e){
+        const items=document.querySelectorAll('#nrc-dropdown .nrc-dropdown-item[data-val]');
+        if(e.key==='ArrowDown'){
+            e.preventDefault();nrcDropdownIdx=Math.min(nrcDropdownIdx+1,items.length-1);
             actualizarSeleccionDropdown(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            nrcDropdownIdx = Math.max(nrcDropdownIdx - 1, -1);
+        }else if(e.key==='ArrowUp'){
+            e.preventDefault();nrcDropdownIdx=Math.max(nrcDropdownIdx-1,0);
             actualizarSeleccionDropdown(items);
-        } else if (e.key === 'Enter') {
+        }else if(e.key==='Enter'){
             e.preventDefault();
-            if (nrcDropdownIdx >= 0 && items[nrcDropdownIdx]) {
-                seleccionarNRC(items[nrcDropdownIdx].dataset.val);
-            } else {
-                seleccionarNRC(document.getElementById('pill-nrc').value.trim());
-            }
-        } else if (e.key === 'Escape') {
-            ocultarDropdownNRC();
+            const elegido=nrcDropdownIdx>=0&&items[nrcDropdownIdx]?items[nrcDropdownIdx].dataset.val:nrcsData.find(x=>normalizarBusqueda(x.nrc)===normalizarBusqueda(e.target.value))?.nrc;
+            if(elegido)seleccionarNRC(elegido,!seleccionNRC.has(elegido));
+        }else if(e.key==='Escape')ocultarDropdownNRC();
+    }
+    function actualizarSeleccionDropdown(items){
+        items.forEach((el,i)=>el.classList.toggle('selected',i===nrcDropdownIdx));
+        if(nrcDropdownIdx>=0&&items[nrcDropdownIdx])items[nrcDropdownIdx].scrollIntoView({block:'nearest'});
+    }
+    function renderDropdownNRC(matches){
+        const dd=document.getElementById('nrc-dropdown');if(!dd)return;
+        dd.innerHTML='';
+        if(!matches.length){
+            const empty=document.createElement('div');empty.className='nrc-dropdown-empty';
+            empty.textContent='No hay NRC coincidentes';dd.appendChild(empty);
         }
-    }
-
-    function actualizarSeleccionDropdown(items) {
-        items.forEach((el, i) => el.classList.toggle('selected', i === nrcDropdownIdx));
-        if (nrcDropdownIdx >= 0 && items[nrcDropdownIdx]) items[nrcDropdownIdx].scrollIntoView({ block: 'nearest' });
-    }
-
-    function renderDropdownNRC(matches, q) {
-        const dd = document.getElementById('nrc-dropdown');
-        if (!matches.length) { ocultarDropdownNRC(); return; }
-        dd.innerHTML = '';
-        matches.forEach(n => {
-            const div = document.createElement('div');
-            div.className = 'nrc-dropdown-item';
-            div.dataset.val = n;
-            // resalta la parte que coincide
-            if (q) {
-                const idx = n.toUpperCase().indexOf(q);
-                if (idx >= 0) {
-                    div.innerHTML = escHtml(n.slice(0, idx))
-                        + `<span class="match">${escHtml(n.slice(idx, idx + q.length))}</span>`
-                        + escHtml(n.slice(idx + q.length));
-                } else {
-                    div.textContent = n;
-                }
-            } else {
-                div.textContent = n;
-            }
-            div.addEventListener('mousedown', () => seleccionarNRC(n));
-            dd.appendChild(div);
+        matches.forEach(n=>{
+            const label=document.createElement('label');label.className='nrc-dropdown-item';label.dataset.val=n;
+            const check=document.createElement('input');check.type='checkbox';check.checked=seleccionNRC.has(n);
+            check.setAttribute('aria-label','Seleccionar NRC '+n);
+            check.addEventListener('change',()=>seleccionarNRC(n,check.checked));
+            const name=document.createElement('span');name.className='nrc-dropdown-text';name.textContent=n;
+            label.appendChild(check);label.appendChild(name);dd.appendChild(label);
         });
         dd.classList.add('visible');
     }
-
-    function seleccionarNRC(val) {
-        if (nrcBusquedaTimer) {
-            clearTimeout(nrcBusquedaTimer);
-            nrcBusquedaTimer = null;
-        }
-
-        const existe = nrcsData.some(x => x.nrc === val);
-        nrcConfirmado = existe ? val : '';
-        nrcBusquedaTexto = existe ? val : '';
-        document.getElementById('pill-nrc').value = val;
+    function seleccionarNRC(valor,marcado=true){
+        const nrc=nrcsData.find(x=>claveValor(x.nrc)===claveValor(valor))?.nrc;if(!nrc)return;
+        if(marcado)seleccionNRC.add(nrc);else seleccionNRC.delete(nrc);
+        nrcDropdownIdx=-1;
+        sincronizarFiltros('nrc');
+        renderDropdownNRC(sugerenciasNRC(nrcBusquedaTexto));
+    }
+    function limpiarSoloNRC(evento){
+        if(evento){evento.preventDefault();evento.stopPropagation();}
+        if(nrcBusquedaTimer){clearTimeout(nrcBusquedaTimer);nrcBusquedaTimer=null;}
+        seleccionNRC.clear();nrcBusquedaTexto='';
+        document.getElementById('pill-nrc').value='';
         ocultarDropdownNRC();
-
-        // Aquí sí: selección real tipo slicer.
         sincronizarFiltros('nrc');
     }
-
-    function limpiarSoloNRC(evento) {
-        if (evento) {
-            evento.preventDefault();
-            evento.stopPropagation();
-        }
-        if (nrcBusquedaTimer) {
-            clearTimeout(nrcBusquedaTimer);
-            nrcBusquedaTimer = null;
-        }
-        nrcConfirmado = '';
-        nrcBusquedaTexto = '';
-        document.getElementById('pill-nrc').value = '';
-        ocultarDropdownNRC();
-
-        // Conserva todos los demás filtros.
-        sincronizarFiltros('nrc');
-    }
-
-    function mostrarDropdownNRC() {
+    function mostrarDropdownNRC(){
         const input=document.getElementById('pill-nrc');
-        const val=input.value;
-        if (val.trim()) { onNRCInput(val); return; }
-        const lista=[...new Set(nrcsFiltrados('nrc').map(x=>x.nrc).filter(Boolean))]
-            .sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}))
-            .slice(0,30);
-        renderDropdownNRC(lista,'');
+        if(!input||input.disabled)return;
+        if(nrcBusquedaTimer){clearTimeout(nrcBusquedaTimer);nrcBusquedaTimer=null;}
+        renderDropdownNRC(sugerenciasNRC(input.value));
     }
-
-    function ocultarDropdownNRC() {
-        document.getElementById('nrc-dropdown').classList.remove('visible');
+    function ocultarDropdownNRC(){
+        document.getElementById('nrc-dropdown')?.classList.remove('visible');
     }
 
     function escHtml(s) {
@@ -1340,7 +1346,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
             estado   : [...seleccionMulti.estado],
             intake   : [...seleccionMulti.intake],
             fechaInicio : [...seleccionMulti.fechaInicio],
-            nrc      : nrcConfirmado,
+            nrc      : [...seleccionNRC],
             nrcQuery : nrcBusquedaTexto
         };
     }
@@ -1361,9 +1367,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 
             // NRC se comporta como un slicer:
             // solo filtra cuando existe una selección exacta confirmada.
-            if (excluir !== 'nrc' && f.nrc) {
-                if (claveValor(x.nrc) !== claveValor(f.nrc)) return false;
-            }
+            if (excluir !== 'nrc' && f.nrc.length && !f.nrc.some(n=>claveValor(x.nrc)===claveValor(n))) return false;
 
             return true;
         });
@@ -1379,6 +1383,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         )].sort((a,b) => String(a).localeCompare(String(b),'es',{numeric:true}));
 
         nrcListaCompleta = nrcsActivos;
+        actualizarResumenNRC();
 
         actualizarBadge();
         refrescarIframe();
@@ -1436,7 +1441,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
                 if (f.estado.length)   urlLocal.searchParams.set('estado', f.estado.join('|'));
                 if (f.intake.length)   urlLocal.searchParams.set('intake', f.intake.join('|'));
                 if (f.fechaInicio.length) urlLocal.searchParams.set('fechaInicio', f.fechaInicio.join('|'));
-                if (f.nrc) urlLocal.searchParams.set('nrc', f.nrc);
+                if (f.nrc.length) urlLocal.searchParams.set('nrc', f.nrc.join('|'));
             }
             return urlLocal.toString();
         }
@@ -1462,7 +1467,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
             if (fechasValidas.length === 1) condiciones.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechasValidas[0]}T00:00:00'`);
             if (fechasValidas.length > 1) condiciones.push(`(${fechasValidas.map(v => `NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${v}T00:00:00'`).join(' or ')})`);
         }
-        if (f.nrc)      condiciones.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizar(f.nrc)}'`);
+        if (f.nrc.length) condiciones.push(condicionMultiple('NRC_TUTOR_ACTUAL/NRC_COD_CAL',f.nrc));
 
         const url = new URL(cfg.url);
         // Power BI resuelve el ajuste dentro de su propio canvas.
@@ -1493,7 +1498,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 
         const nrcWrap = document.getElementById('nrc-wrap');
         if (nrcWrap) {
-            nrcWrap.classList.toggle('filtro-activo', Boolean(nrcConfirmado));
+            nrcWrap.classList.toggle('filtro-activo', seleccionNRC.size>0);
         }
     }
 
@@ -1504,7 +1509,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         const tutorSesion=tutorSesionETOP();
         if (tutorSesion) partes.push('Tutor sesión: ' + tutorSesion);
         CAMPOS_MULTI.forEach(c => { if (f[c].length) partes.push(f[c].length === 1 ? (c==='fechaInicio' ? f[c][0].split('-').reverse().join('-') : f[c][0]) : `${ETIQUETAS_MULTI[c]} (${f[c].length})`); });
-        if (f.nrc) partes.push('NRC: ' + f.nrc);
+        if (f.nrc.length) partes.push(f.nrc.length===1?'NRC: '+f.nrc[0]:'NRC ('+f.nrc.length+')');
 
         const badge   = document.getElementById('badge-activo');
         const limpiar = document.getElementById('btn-limpiar');
@@ -1526,7 +1531,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
     function limpiarTodo() {
         CAMPOS_MULTI.forEach(c => seleccionMulti[c].clear());
         document.getElementById('pill-nrc').value = '';
-        nrcConfirmado = '';
+        seleccionNRC.clear();
         nrcBusquedaTexto = '';
         ocultarDropdownNRC();
         poblarFiltros();
