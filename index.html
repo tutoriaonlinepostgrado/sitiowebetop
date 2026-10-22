@@ -1247,69 +1247,40 @@
 
 <style>
 
-/* ETOP · Ajuste fino de escala visual de filtros · 2026-10-22
-   SOLO controles cerrados: preservar búsqueda, casillas y menú abierto. */
-.top.report-mode{padding:5px 10px!important;gap:7px!important}
-.top.report-mode .view-title{font-size:12px!important;font-weight:750!important}
-.top.report-mode #gestionFilters,
-.top.dashboard-mode #gestionFilters{
-  grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  column-gap:6px!important;
-  row-gap:4px!important;
+/* ETOP · Compactación final · 22-10-2026 */
+.top.report-mode{padding:4px 9px!important;gap:6px!important;align-items:center!important}
+.top.report-mode .view-title{font-size:11.5px!important}
+.top.report-mode #gestionFilters{column-gap:5px!important;row-gap:4px!important;align-content:center!important}
+#gestionFilters .main-multi-trigger{height:25px!important;min-height:25px!important;padding:0 20px 0 8px!important;border-radius:6px!important;font-size:9.8px!important;font-weight:550!important;line-height:1.1!important}
+#gestionFilters .main-multi-trigger>span{font-size:9.8px!important;line-height:1.1!important}
+#gestionFilters .main-multi-trigger>b{right:7px!important;font-size:9px!important}
+#gestionFilters .main-multi-active .main-multi-trigger{padding-left:12px!important}
+#gestionFilters .main-multi-active::before{top:9px!important;width:4px!important;height:4px!important}
+.top.report-mode #gestionFilters .fecha-multi-input,.top.report-mode #gestionFilters .nrc-pill-input,.top.report-mode #gestionFilters .search-pill-input,.top.report-mode #gestionFilters #btn-tutor-perfil{
+height:25px!important;min-height:25px!important;font-size:9.8px!important;line-height:1.1!important;border-radius:6px!important}
+.top.report-mode #gestionFilters .search-group-label{font-size:8px!important;letter-spacing:.02em!important}
+.top.report-mode #gestionFilters .fecha-chip{height:21px!important;font-size:8.5px!important}
+.top.report-mode #gestionFilters .inline-filter-clear{width:14px!important;height:14px!important;right:4px!important;font-size:9px!important}
+#gestionFilters .main-multi-panel{padding:6px!important;border-radius:8px!important}
+#gestionFilters .main-multi-search{height:29px!important;min-height:29px!important;padding:0 8px!important;margin-bottom:4px!important;font-size:10px!important;border-radius:6px!important}
+#gestionFilters .main-multi-options{max-height:240px!important}
+#gestionFilters .main-multi-item{display:flex!important;align-items:center!important;gap:7px!important;padding:4px 6px!important;margin:0!important;min-height:24px!important;border-radius:5px!important;font-size:10px!important;line-height:1.18!important}
+#gestionFilters .main-multi-item span{line-height:1.18!important}
+#gestionFilters .main-multi-item input{flex:0 0 auto;width:13px!important;height:13px!important;margin:0!important}
+.top.report-mode #gestionFilters .dashboard-excel-btn{display:flex!important;justify-content:center!important;align-items:center!important;width:28px!important;min-width:28px!important;max-width:28px!important;height:25px!important;min-height:25px!important;padding:0!important;justify-self:center!important;border-radius:6px!important}
+.top.report-mode #gestionFilters .dashboard-excel-btn svg{width:16px;height:16px;display:block}
+@media(min-width:1500px){
+.top.report-mode:not(.dashboard-mode) #gestionFilters{
+grid-template-columns:minmax(77px,.75fr) minmax(102px,1fr) minmax(80px,.8fr) minmax(86px,.85fr) minmax(76px,.75fr) minmax(107px,1.05fr) minmax(119px,1.15fr) minmax(127px,1.2fr) minmax(97px,.95fr)!important}
+.top.report-mode.dashboard-mode #gestionFilters{
+grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) minmax(70px,.7fr) minmax(150px,1.2fr) minmax(133px,1.22fr) minmax(105px,.95fr) 28px!important}
 }
-#gestionFilters .main-multi-trigger{
-  height:26px!important;min-height:26px!important;
-  padding:0 22px 0 8px!important;
-  border-radius:6px!important;
-  font-size:10px!important;font-weight:500!important;
-  line-height:1.1!important;letter-spacing:0!important;
+@media(min-width:1101px) and (max-width:1499px){
+.top.report-mode #gestionFilters{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.top.report-mode.dashboard-mode #gestionFilters{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
-#gestionFilters .main-multi-trigger>span{
-  font-size:10px!important;line-height:1.1!important;
-}
-#gestionFilters .main-multi-trigger>b{
-  right:8px!important;font-size:10px!important;
-}
-#gestionFilters .main-multi-active .main-multi-trigger{
-  padding-left:12px!important;
-}
-#gestionFilters .main-multi-active::before{
-  top:10px!important;left:5px!important;
-}
-.top.report-mode #gestionFilters .fecha-multi-input,
-.top.report-mode #gestionFilters .search-pill-input,
-.top.report-mode #gestionFilters .nrc-pill-input,
-.top.report-mode #gestionFilters .dashboard-excel-btn,
-.top.report-mode #gestionFilters #btn-tutor-perfil{
-  height:26px!important;min-height:26px!important;
-  font-size:10px!important;font-weight:500!important;
-  border-radius:6px!important;
-}
-.top.report-mode #gestionFilters .fecha-chip{
-  height:22px!important;font-size:9px!important;
-}
-.top.report-mode #gestionFilters .search-group-label{
-  font-size:8px!important;
-}
-.top.report-mode #gestionFilters .inline-filter-clear{
-  height:15px!important;width:15px!important;font-size:10px!important;
-}
-@media(max-width:1499px) and (min-width:1000px){
- .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
-   grid-template-columns:repeat(4,minmax(0,1fr))!important;
- }
-}
-@media(max-width:999px) and (min-width:621px){
- .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
-   grid-template-columns:repeat(3,minmax(0,1fr))!important;
- }
-}
-@media(max-width:620px){
- .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
-   grid-template-columns:repeat(2,minmax(0,1fr))!important;
- }
-}
-
+@media(min-width:721px) and (max-width:1100px){.top.report-mode #gestionFilters{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:720px){.top.report-mode #gestionFilters{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 </head>
 <body>
@@ -1490,7 +1461,7 @@
 
       <button type="button" class="dashboard-excel-btn" data-filtro="excelDashboard"
               title="Abrir tabla nativa de Power BI para exportar a Excel"
-              onclick="abrirExportacionExcel()">⬇ Excel</button>
+              aria-label="Abrir exportación a Excel" onclick="abrirExportacionExcel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M9 8v13M14 12l4 5M18 12l-4 5"/></svg></button>
 
       <button type="button" class="btn-clear-filter" id="btn-tutor-perfil"
               style="display:none" onclick="abrirPerfilTutor()">👤 Tutor / Cambiar</button>
