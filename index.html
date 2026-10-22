@@ -1179,6 +1179,72 @@
 }
 </style>
 
+
+<style>
+/* ETOP · Barra de filtros consistente, multitipo y compacta */
+#gestionFilters .inline-filter-wrap{position:relative;min-width:0!important}
+#gestionFilters .inline-filter-wrap:has(>.main-multi-trigger)>.fsel-topbar{display:none!important}
+#gestionFilters .main-multi-trigger{
+  display:flex!important;align-items:center;justify-content:space-between;gap:7px;
+  width:100%;min-width:0;max-width:100%;height:30px!important;padding:0 26px 0 11px!important;
+  border:1px solid rgba(180,203,228,.19);border-radius:8px;background:rgba(255,255,255,.055);
+  color:#dce7f2;font-size:11px;font-weight:600;text-align:left;line-height:1.15;cursor:pointer;
+}
+#gestionFilters .main-multi-trigger>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gestionFilters .main-multi-trigger>b{font-size:11px;font-weight:500;opacity:.65;position:absolute;right:10px}
+#gestionFilters .main-multi-trigger:disabled{opacity:.45;cursor:not-allowed}
+#gestionFilters .main-multi-trigger:hover:not(:disabled),
+#gestionFilters .main-multi-open .main-multi-trigger{background:rgba(255,255,255,.10);border-color:#5aa5ff}
+#gestionFilters .main-multi-active .main-multi-trigger{color:#dcecff;background:rgba(18,101,223,.20);border-color:#3a9bff;padding-left:14px!important}
+#gestionFilters .main-multi-active::before{
+  content:"";position:absolute;left:6px;top:12px;width:5px;height:5px;background:#3a9bff;border-radius:50%;z-index:3;pointer-events:none;
+}
+#gestionFilters .main-multi-active>.inline-filter-clear{display:flex!important}
+#gestionFilters .main-multi-panel{
+  display:none;position:absolute;top:calc(100% + 5px);left:0;z-index:10000;
+  width:max(100%,250px);max-width:min(340px,90vw);
+  padding:8px;background:#172741;border:1px solid #426587;border-radius:10px;
+  box-shadow:0 15px 36px rgba(0,0,0,.34);color:#e6effa;
+}
+#gestionFilters .main-multi-open>.main-multi-panel{display:block}
+#gestionFilters .main-multi-search{
+  width:100%;height:33px;padding:0 9px;margin:0 0 6px;background:#101f36;
+  border:1px solid #365373;color:#fff;border-radius:7px;outline:none;font-size:11px;
+}
+#gestionFilters .main-multi-search:focus{border-color:#6aabf3}
+#gestionFilters .main-multi-options{max-height:258px;overflow-y:auto;scrollbar-width:thin}
+#gestionFilters .main-multi-item{
+  display:flex;align-items:center;gap:9px;padding:8px 6px;font-size:11px;line-height:1.25;
+  cursor:pointer;border-radius:6px;overflow-wrap:anywhere;color:#e5edf7;
+}
+#gestionFilters .main-multi-item:hover{background:#263d5a}
+#gestionFilters .main-multi-item[hidden]{display:none!important}
+#gestionFilters .main-multi-item input{flex:0 0 auto;width:14px;height:14px;accent-color:#5da9ff}
+#gestionFilters .main-multi-empty{font-size:11px;color:#a9b9ca;padding:4px 8px}
+.top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px 7px!important;
+  align-items:center!important;align-content:center!important;
+}
+.top.report-mode{padding:8px 12px!important;gap:9px!important}
+.top.report-mode .view-title{font-size:13px!important;font-weight:750!important}
+.top.report-mode #gestionFilters .fecha-multi-input,
+.top.report-mode #gestionFilters .nrc-pill-input,
+.top.report-mode #gestionFilters .search-pill-input,
+.top.report-mode #gestionFilters .dashboard-excel-btn{height:30px!important;font-size:11px!important}
+.top.report-mode #gestionFilters .search-group-label{font-size:9px!important;letter-spacing:.04em!important}
+.top.report-mode #gestionFilters .inline-filter-clear{width:16px;height:16px;right:5px}
+@media(max-width:1399px) and (min-width:1000px){
+  .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .top.report-mode #gestionFilters .main-multi-trigger{font-size:10px}
+}
+@media(max-width:999px){
+  .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+  .top.report-mode #gestionFilters,.top.dashboard-mode #gestionFilters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1239,30 +1305,55 @@
         <select class="fsel-topbar" id="sel-facultad" onchange="aplicarBusqueda('facultad',this.value)" disabled>
           <option value="">Facultad ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="facultad" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('facultad',event)" disabled><span>Facultad</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-facultad" role="group" aria-label="Seleccionar Facultad">
+          <input class="main-multi-search" type="search" placeholder="Buscar facultad…" oninput="buscarOpcionPrincipal('facultad',this.value)" aria-label="Buscar Facultad">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Facultad" aria-label="Quitar Facultad" onclick="limpiarFiltroSimple('facultad',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="tutor">
         <select class="fsel-topbar" id="sel-tutor" onchange="aplicarBusqueda('tutor',this.value)" disabled>
           <option value="">Tutor ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="tutor" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('tutor',event)" disabled><span>Tutor</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-tutor" role="group" aria-label="Seleccionar Tutor">
+          <input class="main-multi-search" type="search" placeholder="Buscar tutor…" oninput="buscarOpcionPrincipal('tutor',this.value)" aria-label="Buscar Tutor">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Tutor" aria-label="Quitar Tutor" onclick="limpiarFiltroSimple('tutor',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="tipo">
         <select class="fsel-topbar" id="sel-tipo" onchange="aplicarBusqueda('tipo',this.value)" disabled>
           <option value="">Tipo NRC ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="tipo" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('tipo',event)" disabled><span>Tipo NRC</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-tipo" role="group" aria-label="Seleccionar Tipo NRC">
+          <input class="main-multi-search" type="search" placeholder="Buscar tipo nrc…" oninput="buscarOpcionPrincipal('tipo',this.value)" aria-label="Buscar Tipo NRC">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Tipo NRC" aria-label="Quitar Tipo NRC" onclick="limpiarFiltroSimple('tipo',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="codigo">
         <select class="fsel-topbar" id="sel-codigo" onchange="aplicarBusqueda('codigo',this.value)" disabled>
           <option value="">Código curso ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="codigo" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('codigo',event)" disabled><span>Código curso</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-codigo" role="group" aria-label="Seleccionar Código curso">
+          <input class="main-multi-search" type="search" placeholder="Buscar código curso…" oninput="buscarOpcionPrincipal('codigo',this.value)" aria-label="Buscar Código curso">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Código curso" aria-label="Quitar Código curso" onclick="limpiarFiltroSimple('codigo',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="estado">
         <select class="fsel-topbar" id="sel-estado" onchange="aplicarBusqueda('estado',this.value)" disabled>
           <option value="">Estado ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="estado" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('estado',event)" disabled><span>Estado</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-estado" role="group" aria-label="Seleccionar Estado">
+          <input class="main-multi-search" type="search" placeholder="Buscar estado…" oninput="buscarOpcionPrincipal('estado',this.value)" aria-label="Buscar Estado">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Estado" aria-label="Quitar Estado" onclick="limpiarFiltroSimple('estado',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="motivoRiesgo">
@@ -1277,12 +1368,22 @@
           <option value="Ingreso al curso no informado">Ingreso al curso no informado</option>
           <option value="Estado del estudiante no activo">Estado del estudiante no activo</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="motivoRiesgo" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('motivoRiesgo',event)" disabled><span>Motivo de riesgo</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-motivoRiesgo" role="group" aria-label="Seleccionar Motivo de riesgo">
+          <input class="main-multi-search" type="search" placeholder="Buscar motivo de riesgo…" oninput="buscarOpcionPrincipal('motivoRiesgo',this.value)" aria-label="Buscar Motivo de riesgo">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Motivo de riesgo" aria-label="Quitar Motivo de riesgo" onclick="limpiarFiltroSimple('motivoRiesgo',event)">×</button>
       </div>
       <div class="inline-filter-wrap" data-filtro="intake">
         <select class="fsel-topbar" id="sel-intake" onchange="aplicarBusqueda('intake',this.value)" disabled>
           <option value="">Intake/Versión ⏳</option>
         </select>
+        <button type="button" class="main-multi-trigger" data-main-multi-trigger="intake" aria-haspopup="true" aria-expanded="false" onclick="abrirMultiPrincipal('intake',event)" disabled><span>Intake/Versión</span><b>⌄</b></button>
+        <div class="main-multi-panel" id="main-multi-intake" role="group" aria-label="Seleccionar Intake/Versión">
+          <input class="main-multi-search" type="search" placeholder="Buscar intake/versión…" oninput="buscarOpcionPrincipal('intake',this.value)" aria-label="Buscar Intake/Versión">
+          <div class="main-multi-options"></div>
+        </div>
         <button type="button" class="inline-filter-clear" title="Quitar Intake/Versión" aria-label="Quitar Intake/Versión" onclick="limpiarFiltroSimple('intake',event)">×</button>
       </div>
 
@@ -1708,18 +1809,110 @@ document.addEventListener('click',function(e){
 
 function normalizarFiltro(valor){return String(valor||'').replace(/\s+/g,' ').trim()}
 function sanitizarFiltro(valor){return normalizarFiltro(valor).replace(/'/g,"''")}
+
+/* Selección múltiple transversal del portal principal, sin alterar rol ni fecha/RUT/NRC. */
+const CAMPOS_MULTI_PRINCIPAL=['facultad','tutor','tipo','codigo','estado','motivoRiesgo','intake'];
+const NOMBRES_MULTI_PRINCIPAL={facultad:'Facultad',tutor:'Tutor',tipo:'Tipo NRC',codigo:'Código curso',estado:'Estado',motivoRiesgo:'Motivo de riesgo',intake:'Intake/Versión'};
+const SELECCION_MULTI_PRINCIPAL=Object.fromEntries(CAMPOS_MULTI_PRINCIPAL.map(c=>[c,new Set()]));
+const escMultiPrincipal=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function valoresMultiPrincipal(campo){
+  if(SELECCION_MULTI_PRINCIPAL[campo])return [...SELECCION_MULTI_PRINCIPAL[campo]];
+  return BUSQUEDA[campo]?[BUSQUEDA[campo]]:[];
+}
+function reconciliarMultiPrincipal(){
+  CAMPOS_MULTI_PRINCIPAL.forEach(campo=>{
+    const set=SELECCION_MULTI_PRINCIPAL[campo],primero=[...set][0]||null,scalar=BUSQUEDA[campo]||null;
+    if(claveValor(primero)!==claveValor(scalar)){set.clear();if(scalar)set.add(scalar)}
+  });
+}
+function coincideMultiPrincipal(n,campo){
+  const elegidos=valoresMultiPrincipal(campo);
+  return !elegidos.length||elegidos.some(v=>coincide(n,campo,v));
+}
+function cambiarMultiPrincipal(campo,valor,marcado){
+  const set=SELECCION_MULTI_PRINCIPAL[campo];if(!set)return;
+  const actual=[...set].find(x=>claveValor(x,campo)===claveValor(valor,campo));
+  if(marcado){if(!actual)set.add(valor)}else if(actual)set.delete(actual);
+  BUSQUEDA[campo]=[...set][0]||null;
+  sincronizarFiltros();actualizarBadge();actualizarIframe();
+}
+function limpiarMultiPrincipal(campo,event){
+  if(event){event.preventDefault();event.stopPropagation()}
+  if(!SELECCION_MULTI_PRINCIPAL[campo])return;
+  SELECCION_MULTI_PRINCIPAL[campo].clear();BUSQUEDA[campo]=null;
+  document.querySelector('#gestionFilters [data-filtro="'+campo+'"]')?.classList.remove('main-multi-open');
+  sincronizarFiltros();actualizarBadge();actualizarIframe();
+}
+function buscarOpcionPrincipal(campo,v){
+  const q=claveValor(v);
+  document.querySelectorAll('#main-multi-'+campo+' .main-multi-item').forEach(el=>{
+    el.hidden=!!q&&!claveValor(el.dataset.value).includes(q);
+  });
+}
+function actualizarAriaMultiPrincipal(){
+  document.querySelectorAll('#gestionFilters [data-main-multi-trigger]').forEach(btn=>btn.setAttribute('aria-expanded',String(!!btn.closest('.main-multi-open'))));
+}
+function abrirMultiPrincipal(campo,e){
+  if(e)e.stopPropagation();
+  const host=document.querySelector('#gestionFilters [data-filtro="'+campo+'"]');if(!host)return;
+  const open=!host.classList.contains('main-multi-open');
+  document.querySelectorAll('#gestionFilters .main-multi-open').forEach(el=>el.classList.remove('main-multi-open'));
+  if(open){host.classList.add('main-multi-open');host.querySelector('.main-multi-search')?.focus()}
+  actualizarAriaMultiPrincipal();
+}
+function renderizarMultiPrincipal(campo){
+  const host=document.querySelector('#gestionFilters [data-filtro="'+campo+'"]');
+  const btn=host?.querySelector('.main-multi-trigger'),panel=host?.querySelector('.main-multi-panel');
+  if(!btn||!panel)return;
+  const search=panel.querySelector('.main-multi-search')?.value||'',selected=valoresMultiPrincipal(campo);
+  const mapa=new Map();
+  if(campo==='motivoRiesgo'){
+    document.querySelectorAll('#sel-motivo-riesgo option').forEach(o=>{if(o.value)mapa.set(claveValor(o.value),o.value)});
+  }else{
+    nrcsFiltrados(campo).forEach(n=>{
+      const v=String(campoRegistro(n,campo)||'').trim();
+      if(!v||(campo==='tutor'&&!esTutorActivo(v)))return;
+      const key=claveValor(v,campo);if(!mapa.has(key))mapa.set(key,v);
+    });
+  }
+  selected.forEach(v=>mapa.set(claveValor(v,campo),v));
+  const lista=[...mapa.values()].sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+  btn.disabled=campo!=='motivoRiesgo'&&!catalogoNRC.length;
+  btn.querySelector('span').textContent=!selected.length?NOMBRES_MULTI_PRINCIPAL[campo]:selected.length===1?selected[0]:NOMBRES_MULTI_PRINCIPAL[campo]+' ('+selected.length+')';
+  btn.title=selected.length?selected.join(' · '):NOMBRES_MULTI_PRINCIPAL[campo];
+  host.classList.toggle('main-multi-active',selected.length>0);
+  const opts=panel.querySelector('.main-multi-options');
+  opts.innerHTML=lista.length?lista.map(v=>{
+    const checked=selected.some(x=>claveValor(x,campo)===claveValor(v,campo));
+    return '<label class="main-multi-item" data-value="'+escMultiPrincipal(v)+'"><input type="checkbox" data-field="'+campo+'" data-value="'+escMultiPrincipal(encodeURIComponent(v))+'"'+(checked?' checked':'')+' onchange="cambiarMultiPrincipal(this.dataset.field,decodeURIComponent(this.dataset.value),this.checked)"><span>'+escMultiPrincipal(v)+'</span></label>';
+  }).join(''):'<p class="main-multi-empty">Sin opciones disponibles</p>';
+  buscarOpcionPrincipal(campo,search);actualizarAriaMultiPrincipal();
+}
+function filtroOrPrincipal(campo,columna,convertir){
+  const elegidos=valoresMultiPrincipal(campo).map(v=>convertir?convertir(v):v).filter(Boolean);
+  if(!elegidos.length)return '';
+  const terms=elegidos.map(v=>columna+" eq '"+sanitizarFiltro(v)+"'");
+  return terms.length===1?terms[0]:'('+terms.join(' or ')+')';
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#gestionFilters .main-multi-panel')&&!e.target.closest('#gestionFilters .main-multi-trigger')){
+    document.querySelectorAll('#gestionFilters .main-multi-open').forEach(el=>el.classList.remove('main-multi-open'));
+    actualizarAriaMultiPrincipal();
+  }
+});
+
 function buildURLFiltrada(clave){
   const cfg=urlsBase[clave];if(!cfg)return misReportes[clave];
   if(cfg.local){
     const url=new URL(misReportes[clave],window.location.href);
-    if(BUSQUEDA.facultad)url.searchParams.set('facultad',BUSQUEDA.facultad);
+    if(valoresMultiPrincipal('facultad').length)url.searchParams.set('facultad',valoresMultiPrincipal('facultad').join('|'));
     const tutoresPermitidos=tutoresSesionETOP();
-    if(BUSQUEDA.tutor)url.searchParams.set('tutor',BUSQUEDA.tutor);
+    if(valoresMultiPrincipal('tutor').length)url.searchParams.set('tutor',valoresMultiPrincipal('tutor').join('|'));
     else if(tutoresPermitidos.length)url.searchParams.set('tutor',tutoresPermitidos.join('|'));
-    if(BUSQUEDA.tipo)url.searchParams.set('tipo',BUSQUEDA.tipo);
-    if(BUSQUEDA.codigo)url.searchParams.set('codigo',BUSQUEDA.codigo);
-    if(BUSQUEDA.estado)url.searchParams.set('estado',BUSQUEDA.estado);
-    if(BUSQUEDA.intake)url.searchParams.set('intake',BUSQUEDA.intake);
+    if(valoresMultiPrincipal('tipo').length)url.searchParams.set('tipo',valoresMultiPrincipal('tipo').join('|'));
+    if(valoresMultiPrincipal('codigo').length)url.searchParams.set('codigo',valoresMultiPrincipal('codigo').join('|'));
+    if(valoresMultiPrincipal('estado').length)url.searchParams.set('estado',valoresMultiPrincipal('estado').join('|'));
+    if(valoresMultiPrincipal('intake').length)url.searchParams.set('intake',valoresMultiPrincipal('intake').join('|'));
     if(BUSQUEDA.fechaInicio.length)url.searchParams.set('fechaInicio',BUSQUEDA.fechaInicio.join('|'));
     if(BUSQUEDA.nrc)url.searchParams.set('nrc',BUSQUEDA.nrc);
     if(clave==='CURSOS_PREPARACION')url.searchParams.set('embed','1');
@@ -1734,14 +1927,13 @@ function buildURLFiltrada(clave){
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
-  if(BUSQUEDA.facultad)fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
-  const tutorEfectivo=BUSQUEDA.tutor||tutorFiltroAutomaticoETOP();
-  if(tutorEfectivo)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
-  if(BUSQUEDA.tipo){const tipoPBI=BUSQUEDA.tipo==='100%ONLINE'?'100PCTONLINE':BUSQUEDA.tipo;fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`)}
-  if(BUSQUEDA.codigo)fx.push(`NRC_TUTOR_ACTUAL/COD_CURSO eq '${sanitizarFiltro(BUSQUEDA.codigo)}'`);
-  if(BUSQUEDA.estado)fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
-  if(BUSQUEDA.motivoRiesgo&&(clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT'))fx.push(`consolidado_esudiantes/MOTIVO_RIESGO eq '${sanitizarFiltro(BUSQUEDA.motivoRiesgo)}'`);
-  if(BUSQUEDA.intake)fx.push(`NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION eq '${sanitizarFiltro(BUSQUEDA.intake)}'`);
+  {const c=filtroOrPrincipal('facultad','NRC_TUTOR_ACTUAL/FACULTAD');if(c)fx.push(c)}
+  {const elegidos=valoresMultiPrincipal('tutor');if(elegidos.length){const c=filtroOrPrincipal('tutor','NRC_TUTOR_ACTUAL/NOMBRE_TUTOR');if(c)fx.push(c)}else{const automatico=tutorFiltroAutomaticoETOP();if(automatico)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(automatico)}'`)}}
+  {const c=filtroOrPrincipal('tipo','NRC_TUTOR_ACTUAL/TIPO_NRC_URL',v=>v==='100%ONLINE'?'100PCTONLINE':v);if(c)fx.push(c)}
+  {const c=filtroOrPrincipal('codigo','NRC_TUTOR_ACTUAL/COD_CURSO');if(c)fx.push(c)}
+  {const c=filtroOrPrincipal('estado','NRC_TUTOR_ACTUAL/ESTADO_CAL');if(c)fx.push(c)}
+  if(clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT'){const c=filtroOrPrincipal('motivoRiesgo','consolidado_esudiantes/MOTIVO_RIESGO');if(c)fx.push(c)}
+  {const c=filtroOrPrincipal('intake','NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION');if(c)fx.push(c)}
   if(BUSQUEDA.fechaInicio.length===1)fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
   if(BUSQUEDA.fechaInicio.length>1)fx.push('('+BUSQUEDA.fechaInicio.map(v=>`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ')+')');
   if(BUSQUEDA.nrc)fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
@@ -1752,12 +1944,11 @@ function buildURLFiltrada(clave){
 }
 function filtrosDashboardPowerBI(){
   const fx=[];
-  if(BUSQUEDA.facultad)fx.push(`NRC_TUTOR_ACTUAL/FACULTAD eq '${sanitizarFiltro(BUSQUEDA.facultad)}'`);
-  const tutorEfectivo=BUSQUEDA.tutor||tutorFiltroAutomaticoETOP();
-  if(tutorEfectivo)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(tutorEfectivo)}'`);
-  if(BUSQUEDA.tipo){const tipoPBI=BUSQUEDA.tipo==='100%ONLINE'?'100PCTONLINE':BUSQUEDA.tipo;fx.push(`NRC_TUTOR_ACTUAL/TIPO_NRC_URL eq '${sanitizarFiltro(tipoPBI)}'`)}
-  if(BUSQUEDA.estado)fx.push(`NRC_TUTOR_ACTUAL/ESTADO_CAL eq '${sanitizarFiltro(BUSQUEDA.estado)}'`);
-  if(BUSQUEDA.motivoRiesgo)fx.push(`consolidado_esudiantes/MOTIVO_RIESGO eq '${sanitizarFiltro(BUSQUEDA.motivoRiesgo)}'`);
+  {const c=filtroOrPrincipal('facultad','NRC_TUTOR_ACTUAL/FACULTAD');if(c)fx.push(c)}
+  {const elegidos=valoresMultiPrincipal('tutor');if(elegidos.length){const c=filtroOrPrincipal('tutor','NRC_TUTOR_ACTUAL/NOMBRE_TUTOR');if(c)fx.push(c)}else{const automatico=tutorFiltroAutomaticoETOP();if(automatico)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(automatico)}'`)}}
+  {const c=filtroOrPrincipal('tipo','NRC_TUTOR_ACTUAL/TIPO_NRC_URL',v=>v==='100%ONLINE'?'100PCTONLINE':v);if(c)fx.push(c)}
+  {const c=filtroOrPrincipal('estado','NRC_TUTOR_ACTUAL/ESTADO_CAL');if(c)fx.push(c)}
+  {const c=filtroOrPrincipal('motivoRiesgo','consolidado_esudiantes/MOTIVO_RIESGO');if(c)fx.push(c)}
   if(BUSQUEDA.nrc)fx.push(`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(BUSQUEDA.nrc)}'`);
   if(BUSQUEDA.rut)fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
   return fx;
@@ -1806,12 +1997,12 @@ function nrcsFiltrados(excluir=null){
   const tutoresSesion=tutoresSesionETOP().map(t=>claveValor(t));
   return catalogoNRC.filter(n=>{
     if(tutoresSesion.length&&!tutoresSesion.includes(claveValor(n.tutor)))return false;
-    if(excluir!=='facultad'&&filtroVisible('facultad')&&BUSQUEDA.facultad&&!coincide(n,'facultad',BUSQUEDA.facultad))return false;
-    if(excluir!=='tutor'&&filtroVisible('tutor')&&BUSQUEDA.tutor&&!coincide(n,'tutor',BUSQUEDA.tutor))return false;
-    if(excluir!=='tipo'&&filtroVisible('tipo')&&BUSQUEDA.tipo&&!coincide(n,'tipo',BUSQUEDA.tipo))return false;
-    if(excluir!=='codigo'&&filtroVisible('codigo')&&BUSQUEDA.codigo&&!coincide(n,'codigo',BUSQUEDA.codigo))return false;
-    if(excluir!=='estado'&&filtroVisible('estado')&&BUSQUEDA.estado&&!coincide(n,'estado',BUSQUEDA.estado))return false;
-    if(excluir!=='intake'&&filtroVisible('intake')&&BUSQUEDA.intake&&!coincide(n,'intake',BUSQUEDA.intake))return false;
+    if(excluir!=='facultad'&&filtroVisible('facultad')&&!coincideMultiPrincipal(n,'facultad'))return false;
+    if(excluir!=='tutor'&&filtroVisible('tutor')&&!coincideMultiPrincipal(n,'tutor'))return false;
+    if(excluir!=='tipo'&&filtroVisible('tipo')&&!coincideMultiPrincipal(n,'tipo'))return false;
+    if(excluir!=='codigo'&&filtroVisible('codigo')&&!coincideMultiPrincipal(n,'codigo'))return false;
+    if(excluir!=='estado'&&filtroVisible('estado')&&!coincideMultiPrincipal(n,'estado'))return false;
+    if(excluir!=='intake'&&filtroVisible('intake')&&!coincideMultiPrincipal(n,'intake'))return false;
     if(excluir!=='fechaInicio'&&filtroVisible('fechaInicio')&&BUSQUEDA.fechaInicio.length&&!BUSQUEDA.fechaInicio.map(fechaISO).includes(fechaISO(n['fecha inicio'])))return false;
     if(excluir!=='nrc'&&filtroVisible('nrc')&&BUSQUEDA.nrc&&claveValor(n.nrc)!==claveValor(BUSQUEDA.nrc))return false;
     return true;
@@ -1844,10 +2035,12 @@ function validarNRCContraFiltros(){
   ocultarNRCDropdown();
 }
 function sincronizarFiltros(){
+  reconciliarMultiPrincipal();
   validarNRCContraFiltros();
   reconstruirSelect('sel-facultad','facultad');reconstruirSelect('sel-tutor','tutor');reconstruirSelect('sel-tipo','tipo');
   reconstruirSelect('sel-codigo','codigo');reconstruirSelect('sel-estado','estado');reconstruirSelect('sel-intake','intake');
   renderFechasGestion();actualizarEstadoVisualFiltros();
+  CAMPOS_MULTI_PRINCIPAL.forEach(renderizarMultiPrincipal);
 }
 function renderFechasGestion(){
   if(!catalogoNRC.length)return;
@@ -1861,6 +2054,7 @@ function limpiarFechasGestion(){BUSQUEDA.fechaInicio=[];sincronizarFiltros();act
 function limpiarFiltroSimple(campo,evento){
   if(evento){evento.preventDefault();evento.stopPropagation()}
   if(campo==='nrc'){limpiarFiltroNRC(evento);return}
+  if(SELECCION_MULTI_PRINCIPAL[campo]){limpiarMultiPrincipal(campo,evento);return}
   if(campo==='fechaInicio'){
     BUSQUEDA.fechaInicio=[];
     const f=document.getElementById('fecha-multi-input');if(f)f.value='';
@@ -1871,10 +2065,11 @@ function limpiarFiltroSimple(campo,evento){
   }
   sincronizarFiltros();actualizarBadge();actualizarIframe();
 }
-function aplicarBusqueda(campo,valor){BUSQUEDA[campo]=normalizarFiltro(valor)||null;sincronizarFiltros();actualizarBadge();actualizarIframe()}
+function aplicarBusqueda(campo,valor){BUSQUEDA[campo]=normalizarFiltro(valor)||null;if(SELECCION_MULTI_PRINCIPAL[campo]){SELECCION_MULTI_PRINCIPAL[campo].clear();if(BUSQUEDA[campo])SELECCION_MULTI_PRINCIPAL[campo].add(BUSQUEDA[campo])}sincronizarFiltros();actualizarBadge();actualizarIframe()}
 function limpiarBusqueda(){
   BUSQUEDA.nrc=null;BUSQUEDA.rut=null;BUSQUEDA.facultad=null;BUSQUEDA.tutor=null;BUSQUEDA.tipo=null;BUSQUEDA.codigo=null;BUSQUEDA.estado=null;BUSQUEDA.motivoRiesgo=null;BUSQUEDA.intake=null;BUSQUEDA.fechaInicio=[];
   nrcConfirmado='';
+  CAMPOS_MULTI_PRINCIPAL.forEach(c=>SELECCION_MULTI_PRINCIPAL[c].clear());
   document.getElementById('input-nrc').value='';document.getElementById('input-rut').value='';
   ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-motivo-riesgo','sel-intake'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   ocultarNRCDropdown();sincronizarFiltros();actualizarBadge();actualizarIframe();
