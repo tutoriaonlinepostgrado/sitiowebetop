@@ -771,6 +771,57 @@
 }
 </style>
 
+<style>
+
+/* ETOP · Ajuste fino de escala visual en Coordinación · 2026-10-22
+   SOLO controles cerrados: lista de opciones y búsqueda sin cambios. */
+.top-bar{padding:5px 10px!important;gap:7px!important}
+.titulo-vista,.top-bar .view-title{font-size:12px!important;font-weight:750!important}
+.filtros-wrapper{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  column-gap:6px!important;row-gap:4px!important;
+}
+.filtros-wrapper .multi-btn,
+.filtros-wrapper .date-filter-wrap,
+.filtros-wrapper .pill-input{
+  height:26px!important;min-height:26px!important;
+  font-size:10px!important;font-weight:500!important;
+  line-height:1.1!important;border-radius:6px!important;
+}
+.filtros-wrapper .multi-btn{
+  padding:0 22px 0 8px!important;
+}
+.filtros-wrapper .multi-btn span,
+.filtros-wrapper .date-filter-label,
+.filtros-wrapper .date-filter-input{
+  font-size:10px!important;
+  font-weight:500!important;
+  line-height:1.1!important;
+}
+.filtros-wrapper .multi-btn b{
+  font-size:10px!important;
+}
+.filtros-wrapper .multi-filtro.filtro-activo .multi-btn{
+  padding-left:12px!important;
+}
+.filtros-wrapper .multi-filtro.filtro-activo::before,
+.filtros-wrapper #nrc-wrap.filtro-activo::before{
+  top:10px!important;
+}
+.filtros-wrapper .multi-inline-clear{
+  width:15px!important;height:15px!important;font-size:10px!important;
+}
+@media(max-width:1499px) and (min-width:1000px){
+ .filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:999px) and (min-width:621px){
+ .filtros-wrapper{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+ .filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+</style>
 </head>
 <body>
 <div class="app-container">
