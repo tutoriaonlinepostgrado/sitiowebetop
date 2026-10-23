@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+/* Compatibilidad: todos los antiguos enlaces NRC 360 abren Calendarios unificado. */
+(function(){
+  const p=new URLSearchParams(location.search);
+  const u=new URL('calendarios.html',location.href);
+  const n=p.get('nrc');
+  if(n)u.searchParams.set('nrc',n);
+  if(p.get('embed')==='1')u.searchParams.set('embedded','1');
+  location.replace(u.toString());
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>NRC 360 · ETOP</title>
