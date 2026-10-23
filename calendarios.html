@@ -308,11 +308,11 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
 }
 .cal-pbi-controls>a:hover,.cal-pbi-controls>button:hover{background:#e2effb}
 .cal-pbi-viewport{
- width:100%;height:auto;aspect-ratio:3.1/1;
+ position:relative;width:100%;height:auto;aspect-ratio:3.1/1;
  min-height:280px;max-height:440px;
  overflow:hidden;background:#fff;border:1px solid #dce5ef;border-radius:8px;
 }
-.cal-pbi-viewport iframe{display:block!important;width:100%!important;height:100%!important;margin:0!important;border:0!important}
+.cal-pbi-viewport iframe{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;margin:0!important;border:0!important}
 .cal-kpi-section.cal-pbi-collapsed .cal-pbi-viewport{display:none}
 @media(max-width:1450px){
  .course-panel:not(.editing) .cal-kpi-section{padding:7px 9px 9px!important}
