@@ -932,6 +932,80 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
   .content-area{min-width:0!important;width:100%!important}
 }
 </style>
+<style>
+
+/* ETOP · Barra única responsiva para notebook · 2026-10-23 */
+/* Se corrige la regla antigua que llevaba los ocho filtros a grid-row:2. */
+.content-area{container-type:inline-size}
+.content-area .top-bar{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  align-content:center!important;
+  gap:5px!important;
+  width:100%!important;box-sizing:border-box!important;
+  min-height:36px!important;height:auto!important;
+  padding:5px 7px!important;
+}
+.content-area .top-bar > .toggle-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 28px!important;width:28px!important;min-width:28px!important;height:28px!important;
+  align-self:center!important;padding:0!important;margin:0!important;line-height:1!important;
+}
+.content-area .top-bar > .filtros-wrapper{
+  display:grid!important;
+  grid-column:auto!important;grid-row:auto!important;
+  flex:1 1 0!important;min-width:0!important;width:auto!important;
+  max-width:100%!important;
+  align-items:center!important;align-content:center!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;margin:0!important;
+}
+.content-area .filtros-wrapper > .separator-bar{display:none!important}
+.content-area .filtros-wrapper > .multi-filtro,
+.content-area .filtros-wrapper > .pill-wrap{
+  min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important;
+}
+.content-area .filtros-wrapper .multi-btn,
+.content-area .filtros-wrapper .date-filter-wrap,
+.content-area .filtros-wrapper .pill-input{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  box-sizing:border-box!important;height:25px!important;min-height:25px!important;
+}
+.content-area .filtros-wrapper .multi-btn{padding-left:6px!important;padding-right:15px!important}
+.content-area .filtros-wrapper .multi-btn span{
+  display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  white-space:nowrap!important;min-width:0!important;font-size:9.5px!important;
+}
+.content-area .filtros-wrapper .multi-btn b{right:5px!important}
+.content-area .filtros-wrapper .pill-input{font-size:9px!important;padding-left:5px!important}
+.content-area .filtros-wrapper #nrc-wrap .pill-input{padding-left:6px!important}
+/* Se adapta al ancho real del panel, tanto con el menú abierto como cerrado. */
+@container (min-width:800px){
+  .content-area .top-bar > .filtros-wrapper{
+    grid-template-columns:
+      minmax(60px,.77fr) minmax(85px,1.10fr) minmax(49px,.57fr)
+      minmax(57px,.67fr) minmax(55px,.63fr) minmax(90px,1.15fr)
+      minmax(105px,1.28fr) minmax(105px,1.33fr)!important;
+    row-gap:0!important;
+  }
+}
+@container (min-width:560px) and (max-width:799px){
+  .content-area .top-bar > .filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@container (max-width:559px){
+  .content-area .top-bar{align-items:flex-start!important}
+  .content-area .top-bar > .filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+/* Respaldo si el navegador no admite consultas de contenedor. */
+@supports not (container-type:inline-size){
+  @media(min-width:1050px){
+    .content-area .top-bar > .filtros-wrapper{grid-template-columns:repeat(8,minmax(0,1fr))!important}
+  }
+}
+
+</style>
 </head>
 <body>
 <div class="app-container">
