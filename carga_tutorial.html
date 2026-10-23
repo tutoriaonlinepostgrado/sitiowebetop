@@ -64,6 +64,26 @@ body.embedded .top{display:none}.embedded .wrap{padding-top:10px}
 }
 </style>
 
+<style>
+
+/* ETOP · Carga Tutorial: notebooks 13 pulgadas */
+@media(max-width:1450px){
+ .wrap{padding:9px 11px 15px}
+ .head{margin-bottom:8px;gap:8px}
+ .head h1{font-size:18px}
+ .head p{font-size:10px}
+ .grid,.bottom{gap:8px;margin-bottom:8px}
+ .card-head{padding:8px}
+ .table-wrap{max-width:100%;overflow:auto!important}
+ .table-wrap table{max-width:100%}
+ .tabs{overflow-x:auto;scrollbar-width:thin}
+ .tab-btn{white-space:nowrap}
+ .filters{gap:5px}
+ .filter{min-width:0}
+}
+@media(max-width:1000px){.grid,.bottom{grid-template-columns:1fr!important}}
+
+</style>
 </head>
 <body>
 <header class="top"><div class="top-main"><div class="brand"><strong>ETOP · Carga Tutorial</strong><span>Coordinación · asignación y monitoreo</span></div><div class="filters"><select id="facultad" class="filter"><option value="">Todas las facultades</option></select><select id="tutor" class="filter"><option value="">Todos los tutores</option></select><select id="tipo" class="filter"><option value="">Todos los tipos NRC</option></select><select id="estado" class="filter"><option value="">Todos los estados</option></select><select id="intake" class="filter"><option value="">Todos los intake</option></select><select id="codigo" class="filter"><option value="">Todos los códigos</option></select><input id="fecha" class="filter" type="date" title="Fecha de inicio"><button id="clear" class="clear">Limpiar filtros</button></div></div></header>
