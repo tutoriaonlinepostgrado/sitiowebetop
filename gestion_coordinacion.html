@@ -1670,7 +1670,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(side&&window.matchMedia('(max-width: 1450px)').matches)side.classList.add('closed');
  document.addEventListener('click',e=>{
    if(window.innerWidth>1450)return;
-   if(e.target.closest('#sidebar .sidebar-link, #sidebar .menu-item, #sidebar .submenu-item, #sidebar [data-pagina]'))side?.classList.add('closed');
+   if(e.target.closest('#sidebar .menu-btn, #sidebar .sidebar-link, #sidebar .menu-item, #sidebar .submenu-item, #sidebar [data-pagina]'))side?.classList.add('closed');
  });
 });
 
