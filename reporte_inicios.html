@@ -103,6 +103,46 @@ body.embedded tbody td{height:23px}
   .ri-tabla-contenedor th{font-size:7px;padding-left:3px;padding-right:3px}
   .ri-tabla-contenedor td{font-size:8px;padding-left:3px;padding-right:3px}
 }
+
+/* ETOP · Reporte de inicios responsive para notebooks */
+.ri-view-toolbar{display:flex;align-items:center;gap:9px;font-size:9px;color:#718399}
+#ri-view-toggle{height:26px;background:#edf5fc;color:#2d6190;border:1px solid #c4d8e9;border-radius:6px;padding:0 10px;font-size:9px;font-weight:800;cursor:pointer}
+.ri-tabla-contenedor thead th:last-child{position:sticky;right:0;z-index:5;background:#dce8f3}
+.ri-tabla-contenedor tbody td:last-child{position:sticky;right:0;z-index:4;background:#fff}
+.ri-tabla-contenedor tbody tr:nth-child(even) td:last-child{background:#f5f9fc}
+@media(max-width:1450px){
+ body{padding:6px}
+ .ri{gap:5px}
+ .ri-tarjetas{gap:5px}
+ .ri-tarjeta{padding:6px 9px}
+ .ri-valor{font-size:17px}
+ .ri-tabla-contenedor{overflow:auto!important}
+ body:not(.ri-full) .ri-tabla-contenedor th:nth-child(1),body:not(.ri-full) .ri-tabla-contenedor td:nth-child(1),
+ body:not(.ri-full) .ri-tabla-contenedor th:nth-child(7),body:not(.ri-full) .ri-tabla-contenedor td:nth-child(7){display:none!important}
+ body:not(.ri-full) .ri-tabla-contenedor table{min-width:0!important;width:100%!important;table-layout:fixed!important}
+ body:not(.ri-full) .ri-tabla-contenedor th,body:not(.ri-full) .ri-tabla-contenedor td{overflow:hidden;text-overflow:ellipsis;font-size:9px!important;padding:6px 4px!important}
+ body:not(.ri-full) th:nth-child(2){width:15%!important}
+ body:not(.ri-full) th:nth-child(3){width:9%!important}
+ body:not(.ri-full) th:nth-child(4){width:25%!important}
+ body:not(.ri-full) th:nth-child(5){width:9%!important}
+ body:not(.ri-full) th:nth-child(6){width:9%!important}
+ body:not(.ri-full) th:nth-child(8){width:14%!important}
+ body:not(.ri-full) th:nth-child(9){width:8%!important}
+ body:not(.ri-full) th:nth-child(10){width:8%!important}
+ body:not(.ri-full) th:nth-child(11){width:3%!important}
+}
+@media(min-width:1451px){
+ body.ri-compact .ri-tabla-contenedor th:nth-child(1),body.ri-compact .ri-tabla-contenedor td:nth-child(1),
+ body.ri-compact .ri-tabla-contenedor th:nth-child(7),body.ri-compact .ri-tabla-contenedor td:nth-child(7){display:none!important}
+}
+@media(max-width:800px){
+ .ri-cabecera{flex-wrap:wrap;gap:7px}
+ .ri-view-toolbar span{display:none}
+ .ri-titulo{font-size:12px}
+ .ri-tarjetas{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .ri-tabla-contenedor thead th:last-child,.ri-tabla-contenedor tbody td:last-child{min-width:29px}
+}
+
 </style>
 
 </head>
@@ -133,6 +173,7 @@ body.embedded tbody td{height:23px}
     <div class="ri-tarjeta alerta"><div class="ri-etiqueta">NRC sin nómina</div><div class="ri-valor" id="kSin">0</div></div>
   </div>
 
+  <div class="ri-view-toolbar"><button id="ri-view-toggle" type="button" onclick="alternarReporteInicios()">Vista completa</button><span>Vista notebook: columnas prioritarias · botón de estudiantes siempre visible</span></div>
   <div class="ri-tabla-contenedor">
     <table>
       <thead><tr>
@@ -494,6 +535,13 @@ Promise.all([
     actualizarProfileBtn();render();openProfile();
   }
 }).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11" class="error">⚠️ ${esc(err.message)}</td></tr>`});
+</script>
+<script>
+function reporteIniciosCompacto(){return document.body.classList.contains('ri-compact')||(!document.body.classList.contains('ri-full')&&innerWidth<=1450)}
+function rotuloReporteInicios(){const b=document.getElementById('ri-view-toggle');if(b)b.textContent=reporteIniciosCompacto()?'Vista completa (11 columnas)':'Vista compacta (9 columnas)'}
+function alternarReporteInicios(){const c=!reporteIniciosCompacto();document.body.classList.toggle('ri-compact',c);document.body.classList.toggle('ri-full',!c);rotuloReporteInicios()}
+document.addEventListener('DOMContentLoaded',rotuloReporteInicios);
+window.addEventListener('resize',rotuloReporteInicios);
 </script>
 </body>
 </html>
