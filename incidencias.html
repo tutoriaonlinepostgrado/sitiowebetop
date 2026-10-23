@@ -383,6 +383,24 @@ html.embedded .pagination{margin-top:9px!important}
   }
   html.embedded .stats-grid{grid-template-columns:repeat(2,minmax(100px,1fr))!important}
 }
+
+/* ETOP · Incidencias: ancho notebook y acceso a filtros dentro del iframe */
+.notebook-filter-btn{display:none;height:29px;padding:0 10px;border-radius:7px;border:1px solid #456586;background:#203751;color:#dbe7f5;font-size:10px;font-weight:750;cursor:pointer;margin:0 0 8px}
+@media(max-width:1450px){
+ .shell.filters-collapsed{grid-template-columns:0 minmax(0,1fr)!important}
+ .shell.filters-collapsed .sidebar{width:0!important;min-width:0!important;padding:0!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important}
+ .content{min-width:0;padding:10px 12px 20px}
+ .stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+ .stat{min-width:0;min-height:52px;padding:7px 9px}
+ .stat-num{font-size:18px}
+ .notebook-filter-btn{display:inline-flex;align-items:center}
+ html.embedded .shell.filters-collapsed{grid-template-columns:0 minmax(0,1fr)!important}
+ html.embedded .shell.filters-collapsed .sidebar{width:0!important;padding:0!important;opacity:0!important;pointer-events:none!important}
+ html.embedded .content{padding:7px 9px!important}
+ html.embedded .notebook-filter-btn{display:inline-flex!important}
+}
+@media(max-width:800px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 
 </head>
@@ -465,7 +483,7 @@ html.embedded .pagination{margin-top:9px!important}
     <button class="btn full" onclick="clearFilters()">↻ Limpiar filtros</button>
   </aside>
 
-  <main class="content">
+  <main class="content"><button type="button" class="notebook-filter-btn" id="btnFiltroNotebook" onclick="toggleFiltros()" aria-label="Mostrar u ocultar filtros de incidencias">⚲ Filtros</button>
     <section id="indicadores" class="indicadores-panel">
       <div class="indicadores-header">
         <div class="indicadores-title">⌁ Resumen <span id="statActive" class="active-summary"></span></div>
@@ -992,6 +1010,14 @@ $('drawerBackdrop').addEventListener('click',e=>{if(e.target===$('drawerBackdrop
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 
 load();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.innerWidth<=1450){
+    const shell=document.getElementById('appShell');
+    if(shell&&!shell.classList.contains('filters-collapsed'))toggleFiltros();
+  }
+});
 </script>
 </body>
 </html>
