@@ -855,9 +855,9 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 #nrc-wrap .nrc-dropdown-empty{padding:10px 7px;font-size:10px;color:#a8b7cb}
 @media(min-width:1500px){
  .filtros-wrapper{
- grid-template-columns:minmax(84px,.84fr) minmax(105px,1.04fr)
- minmax(70px,.72fr) minmax(96px,.96fr) minmax(78px,.79fr)
- minmax(115px,1.12fr) minmax(120px,.96fr) minmax(145px,1.35fr)!important;
+ grid-template-columns:minmax(84px,.84fr) minmax(123px,1.2fr)
+ minmax(56px,.55fr) minmax(70px,.64fr) minmax(60px,.59fr)
+ minmax(135px,1.28fr) minmax(134px,1.25fr) minmax(161px,1.65fr)!important;
  }
 }
 </style>
@@ -951,7 +951,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         <button type="button" class="filtro-select multi-btn" disabled><span>Tipo</span><b>⌄</b></button>
     </div>
                 <div class="multi-filtro" id="mf-codigo">
-        <button type="button" class="filtro-select multi-btn" disabled><span>Código curso</span><b>⌄</b></button>
+        <button type="button" class="filtro-select multi-btn" disabled><span>Código</span><b>⌄</b></button>
     </div>
                 <div class="multi-filtro" id="mf-estado">
         <button type="button" class="filtro-select multi-btn" disabled><span>Estado</span><b>⌄</b></button>
@@ -1095,7 +1095,8 @@ function establecerTituloVistaETOP(nombre){
     const seleccionNRC = new Set(); // selección múltiple NRC
     let nrcBusquedaTexto = ''; // búsqueda, independiente de NRC ya seleccionados
     const CAMPOS_MULTI = ['facultad','tutor','tipo','codigo','estado','intake','fechaInicio'];
-    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', codigo:'Código curso', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
+    const ETIQUETAS_MULTI = { facultad:'Facultad', tutor:'Tutor', tipo:'Tipo', codigo:'Código', estado:'Estado', intake:'Intake o versión', fechaInicio:'Fecha de inicio' };
+    const ETIQUETAS_COMPLETAS_MULTI={tipo:'Tipo NRC',codigo:'Código curso'};
     const seleccionMulti = Object.fromEntries(CAMPOS_MULTI.map(c => [c, new Set()]));
 
     const NRCS_JSON_URL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/nrcs.json';
@@ -1201,7 +1202,7 @@ function establecerTituloVistaETOP(nombre){
             return;
         }
         const buscable = campo !== 'fechaInicio';
-        host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
+        host.innerHTML = `<button type="button" class="filtro-select multi-btn" onclick="toggleMulti('${campo}',event)" title="${escHtml(n === 0 ? (ETIQUETAS_COMPLETAS_MULTI[campo]||texto) : texto)}"><span>${escHtml(texto)}</span><b>⌄</b></button>
           <button type="button" class="multi-inline-clear" title="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" aria-label="Quitar ${escHtml(ETIQUETAS_MULTI[campo])}" onclick="limpiarMultiUnico('${campo}',event)">×</button>
           <div class="multi-panel">${buscable ? `<input class="multi-search" value="${escHtml(busqueda)}" placeholder="Buscar ${ETIQUETAS_MULTI[campo].toLowerCase()}..." oninput="filtrarOpcionesMulti('${campo}',this.value)">` : ''}
           <div class="multi-opciones">${valores.length ? valores.map(v => `<label class="multi-opcion" data-texto="${escHtml(v.toLowerCase())}"><input type="checkbox" ${[...elegidos].some(s=>claveValor(s,campo)===claveValor(v,campo))?'checked':''} onchange="cambiarMulti('${campo}','${encodeURIComponent(v).replace(/'/g,'%27')}',this.checked)"><span>${escHtml(mostrarValor(v))}</span></label>`).join('') : '<div class="multi-vacio">Sin opciones disponibles</div>'}</div></div>`;
