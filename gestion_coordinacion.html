@@ -862,6 +862,31 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 }
 </style>
 
+<style>
+/* ETOP · Títulos compactos y más espacio para filtros de Coordinación · 2026-10-23 */
+.top-bar{gap:4px!important}
+.top-bar .toggle-btn{
+  box-sizing:border-box!important;width:28px!important;height:28px!important;
+  min-width:28px!important;flex:0 0 28px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:0!important;margin:0!important;font-size:17px!important;
+  border-radius:6px!important;line-height:1!important;
+}
+.top-bar .titulo-vista{
+  font-size:10px!important;font-weight:700!important;line-height:1.2!important;
+  letter-spacing:-.1px!important;max-width:155px!important;min-width:0!important;
+  flex:0 1 auto!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;margin:0!important;
+}
+.top-bar>.separator-bar{
+  width:1px!important;min-width:1px!important;flex:0 0 1px!important;
+  height:18px!important;margin:0 1px!important;
+}
+.top-bar>.filtros-wrapper{flex:1 1 0!important;min-width:0!important}
+@media(max-width:750px){
+  .top-bar .titulo-vista{max-width:130px!important}
+}
+</style>
 </head>
 <body>
 <div class="app-container">
