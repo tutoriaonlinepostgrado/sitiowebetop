@@ -2276,6 +2276,7 @@ function configurarFiltros(clave){
   if(catalogoNRC.length)sincronizarFiltros();actualizarBadge();
 }
 function cargarDatosCursoOnboarding(){
+  if(valoresNrcPrincipal().length>1){alert('Para cargar los datos de un curso de inducción, deja seleccionado un solo NRC.');return;}
   const input=document.getElementById('input-nrc');
   if(!BUSQUEDA.nrc){input.classList.add('guia-atencion');input.focus();setTimeout(()=>input.classList.remove('guia-atencion'),1800);alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');return}
   const claveDestino=vistaActual==='INVITACIONES'?'INVITACIONES':'CORREOS';
@@ -2419,6 +2420,7 @@ function prepararVistaCorreoEnPortal(clave){
 }
 
 function cargarOnboarding(clave,btn){
+  if(valoresNrcPrincipal().length>1){alert('Esta herramienta trabaja con un curso a la vez. Selecciona solo un NRC para continuar.');return;}
   vistaActual=clave;mostrarAreaGestion();configurarTipoVisor(clave);configurarFiltros(clave);prepararVistaCorreoEnPortal(clave);
   const BASEP=BASE;let url=BASEP+misReportes[clave];
   if(BUSQUEDA.nrc&&catalogoNRC.length){
