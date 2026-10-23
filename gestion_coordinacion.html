@@ -887,6 +887,10 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
   .top-bar .titulo-vista{max-width:130px!important}
 }
 </style>
+<style>
+/* Coordinación: siglas de la hoja activa */
+.top-bar .titulo-vista{flex:0 0 auto!important;width:auto!important;max-width:58px!important;min-width:0!important;font-size:10px!important;font-weight:800!important;letter-spacing:.035em!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;margin:0!important;cursor:help}
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -926,7 +930,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
     <div class="content-area">
         <div class="top-bar">
             <button class="toggle-btn" onclick="toggleSidebar()" title="Abrir/Cerrar Menú">☰</button>
-            <span class="titulo-vista" id="titulo-vista">Dashboard Macro Facultades</span>
+            <span class="titulo-vista" id="titulo-vista" title="Dashboard Macro Facultades" aria-label="Dashboard Macro Facultades">DMF</span>
             <div class="separator-bar"></div>
 
             <div class="filtros-wrapper">
@@ -982,6 +986,23 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 </div>
 
 <script>
+
+/* Mostrar siglas, conservar nombre completo en tooltip y lector de pantalla. */
+function siglasTituloETOP(texto){
+  const palabras=(String(texto||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .match(/[A-Za-z]+[0-9]*/g)||[]);
+  const omitir=new Set(['DE','DEL','LA','LAS','EL','LOS','Y','E','EN','PARA','POR','CON','AL','A','O','UN','UNA']);
+  const visibles=palabras.filter(p=>!/\d/.test(p)&&!omitir.has(p.toUpperCase()));
+  return visibles.map(p=>p.charAt(0).toUpperCase()).join('').slice(0,4)||'V';
+}
+function establecerTituloVistaETOP(nombre){
+  const el=document.getElementById('titulo-vista');if(!el)return;
+  const completo=String(nombre||'Vista de Reporte');
+  el.textContent=siglasTituloETOP(completo);
+  el.title=completo;
+  el.setAttribute('aria-label',completo);
+}
+
     /* ========================================================
        MAPA DE REPORTES
        Solo los reportes Power BI (powerbi.com/reportEmbed)
@@ -1585,7 +1606,7 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
-        document.getElementById('titulo-vista').textContent = titulosVista[clave] || 'Vista de Reporte';
+        establecerTituloVistaETOP(titulosVista[clave] || 'Vista de Reporte');
         if (window.innerWidth < 800) toggleSidebar();
     }
 
