@@ -508,7 +508,8 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
     window.addEventListener('resize',textoModoCal);
     function renderCoursePanel(x){
       const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
-      if(!x){panel.classList.remove('open');host.innerHTML='';return;}
+      if(!x){panel.classList.remove('open','editing');host.innerHTML='';return;}
+      panel.classList.remove('editing');
       const byCourse=buildIncidentMaps(),inc=byCourse.get(String(x.id))||[];
       const canvasReg=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
       const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??canvasReg?.urlQa2FiUrl??canvasReg?.urlQA2FIUrl??'';
