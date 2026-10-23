@@ -1337,6 +1337,10 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
   .top.report-mode .view-title{max-width:130px!important}
 }
 </style>
+<style>
+/* ETOP: siglas de la hoja activa */
+.top .view-title{flex:0 0 auto!important;max-width:58px!important;width:auto!important;min-width:0!important;font-size:10px!important;font-weight:800!important;letter-spacing:.035em!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;margin:0!important;cursor:help}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1375,7 +1379,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 <main class="main">
   <div class="top" id="topBar">
     <button class="toggle" onclick="toggleSidebar()">☰</button>
-    <div class="view-title" id="titulo-vista">Inicio · Gestión Tutorial</div>
+    <div class="view-title" id="titulo-vista" title="Inicio · Gestión Tutorial" aria-label="Inicio · Gestión Tutorial">IGT</div>
     <div class="sep"></div>
 
     <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
@@ -1615,6 +1619,23 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 </main>
 </div>
 <script>
+
+/* Mostrar siglas, conservar nombre completo en tooltip y lector de pantalla. */
+function siglasTituloETOP(texto){
+  const palabras=(String(texto||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .match(/[A-Za-z]+[0-9]*/g)||[]);
+  const omitir=new Set(['DE','DEL','LA','LAS','EL','LOS','Y','E','EN','PARA','POR','CON','AL','A','O','UN','UNA']);
+  const visibles=palabras.filter(p=>!/\d/.test(p)&&!omitir.has(p.toUpperCase()));
+  return visibles.map(p=>p.charAt(0).toUpperCase()).join('').slice(0,4)||'V';
+}
+function establecerTituloVistaETOP(nombre){
+  const el=document.getElementById('titulo-vista');if(!el)return;
+  const completo=String(nombre||'Vista de Reporte');
+  el.textContent=siglasTituloETOP(completo);
+  el.title=completo;
+  el.setAttribute('aria-label',completo);
+}
+
 
 const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
 
@@ -2077,7 +2098,7 @@ function abrirExportacionExcel(){
   requestAnimationFrame(()=>{visor.src=nuevaURL});
 
   activate(findBtn('DASHBOARD'));
-  document.getElementById('titulo-vista').textContent='Descargar Excel';
+  establecerTituloVistaETOP('Descargar Excel');
 }
 
 function abrirPerfilTutor(){
@@ -2333,7 +2354,7 @@ function cargar(clave,btn){
   visor.onload=null;
   visor.style.display='block';
   visor.src=urlsBase[clave]?buildURLFiltrada(clave):misReportes[clave];
-  activate(btn);document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
+  activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
 }
 function prepararVistaCorreoEnPortal(clave){
@@ -2468,7 +2489,7 @@ function cargarOnboarding(clave,btn){
     }
   }
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
-  activate(btn);document.getElementById('titulo-vista').textContent=titulos[clave]||'Vista de Reporte';
+  activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
 }
 
@@ -2490,7 +2511,7 @@ function mostrarCanales(btn){
       <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/actasynrc-ENFERMERIA_INNOVADO/Documentos%20compartidos/Forms/AllItems.aspx">Enfermería Innovado ↗</a>
       <a class="channel-link" target="_blank" href="https://unabportal365.sharepoint.com/sites/EQUIPODETUTORIAONLINEDEPOSTGRADO-ESCUELADEGOBIERNO">Escuela de Gobierno ↗</a>
     </div></div>`;
-  activate(btn);document.getElementById('titulo-vista').textContent='🟣 Canales del Equipo';
+  activate(btn);establecerTituloVistaETOP('🟣 Canales del Equipo');
 }
 
 /* ===== Foco del día · Power BI =====
@@ -2638,7 +2659,7 @@ function abrirDetalleCargaTutorial(){
   const visor=document.getElementById('visor');
   visor.style.display='block';
   visor.src=BASE+'carga_tutorial.html?'+p.toString();
-  document.getElementById('titulo-vista').textContent='Carga Tutorial';
+  establecerTituloVistaETOP('Carga Tutorial');
   activate(null);
 }
 
@@ -2745,7 +2766,7 @@ function showHome(btn){
   document.getElementById('homeTopSearch').style.display='flex';
   document.getElementById('gestionFilters').style.display='none';
   document.getElementById('guia-correos').style.display='none';
-  document.getElementById('titulo-vista').textContent='Inicio · Gestión Tutorial';
+  establecerTituloVistaETOP('Inicio · Gestión Tutorial');
   activate(btn);
 }
 function openLocal(url,title,btn){
@@ -2753,7 +2774,7 @@ function openLocal(url,title,btn){
   const top=document.getElementById('topBar');if(top)top.classList.remove('email-mode');
   const viewer=document.getElementById('viewer');if(viewer){viewer.classList.remove('viewer-pbi');viewer.classList.add('viewer-local')}
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
-  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;document.getElementById('titulo-vista').textContent=title;activate(btn);
+  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;establecerTituloVistaETOP(title);activate(btn);
 }
 
 function abrirCoordinacionPantallaCompleta(){
@@ -2926,7 +2947,7 @@ function abrirFichaNRCUniversal(c){
   const visor=document.getElementById('visor');
   visor.style.display='block';
   visor.src=BASE+'nrc_360.html?embed=1&v=20261022-acciones-kpi-v2&nrc='+encodeURIComponent(nrc);
-  document.getElementById('titulo-vista').textContent='Ficha NRC · '+nrc;
+  establecerTituloVistaETOP('Ficha NRC · '+nrc);
   activate(null);
 }
 function ejecutarUniversalItem(item){
