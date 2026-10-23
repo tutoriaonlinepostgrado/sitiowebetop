@@ -898,6 +898,31 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 .top-bar{gap:5px!important;align-items:center!important}
 .top-bar>.filtros-wrapper{min-width:0!important;flex:1 1 0!important}
 </style>
+<style>
+
+/* ETOP 2026 · Coordinación responsive: filtros y contenido para notebook. */
+@media(min-width:1201px) and (max-width:1450px){
+ .filtros-wrapper{grid-template-columns:minmax(80px,.88fr) minmax(110px,1.10fr)
+ minmax(54px,.56fr) minmax(65px,.68fr) minmax(60px,.62fr)
+ minmax(120px,1.15fr) minmax(128px,1.24fr) minmax(140px,1.40fr)!important;
+ row-gap:0!important}
+ .top-bar{min-height:44px!important;gap:5px!important;padding:5px 8px!important}
+}
+@media(max-width:1450px){
+ .sidebar{max-width:min(280px,88vw)}
+ .content-area{min-width:0!important}
+ .iframe-container,iframe{max-width:100%}
+ .top-bar{align-content:center!important}
+ .filtros-wrapper{min-width:0!important}
+}
+@media(max-width:1150px){
+ .filtros-wrapper{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .top-bar{height:auto!important;min-height:46px!important}
+}
+@media(max-width:720px){
+ .filtros-wrapper{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -1636,6 +1661,19 @@ function establecerTituloVistaETOP(nombre){
         const btnInicio = document.querySelector('.menu-btn.active');
         if (btnInicio) cargar('DASHBOARD_MACRO', btnInicio);
     };
+</script>
+<script>
+
+/* Liberar espacio útil en notebooks; el menú permanece accesible con ☰. */
+document.addEventListener('DOMContentLoaded',()=>{
+ const side=document.getElementById('sidebar');
+ if(side&&window.matchMedia('(max-width: 1450px)').matches)side.classList.add('closed');
+ document.addEventListener('click',e=>{
+   if(window.innerWidth>1450)return;
+   if(e.target.closest('#sidebar .sidebar-link, #sidebar .menu-item, #sidebar .submenu-item, #sidebar [data-pagina]'))side?.classList.add('closed');
+ });
+});
+
 </script>
 </body>
 </html>
