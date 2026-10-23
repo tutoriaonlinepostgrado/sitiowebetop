@@ -273,6 +273,32 @@
   }
   .etop-toast.show { opacity: 1; transform: translateY(0); }
 </style>
+<style>
+
+/* ETOP · Centro de Herramientas: formularios y tablas fluidas notebook */
+@media(max-width:1450px){
+ .header{padding:1rem 1rem .75rem;gap:10px}
+ .header h1{font-size:1.3rem}
+ .header p{font-size:.81rem}
+ .tabs-nav{padding:0 1rem;overflow-x:auto;scrollbar-width:thin}
+ .tab-btn{font-size:.78rem;padding:.65rem .8rem}
+ .tab-panel{padding:1rem}
+ .section-title{font-size:1.25rem}
+ .section-sub{font-size:.83rem;margin-bottom:.85rem}
+ .form-grid,.form-grid.col3{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+ .form-group{min-width:0}
+ input,select,textarea{max-width:100%;min-width:0}
+ .table-wrap{max-width:100%;overflow-x:auto}
+ .carpetas-layout{max-width:100%;min-width:0}
+}
+@media(max-width:800px){
+ .header{flex-wrap:wrap}
+ .form-grid,.form-grid.col3{grid-template-columns:1fr!important}
+ .tab-panel{padding:.7rem}
+ .tabs-nav{padding:0 .5rem}
+}
+
+</style>
 </head>
 <body>
 
