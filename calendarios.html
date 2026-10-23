@@ -244,9 +244,6 @@
 .panel-actions-grid{gap:4px}.panel-action{min-height:27px;padding:5px 6px;font-size:9px}.panel-action .pa-icon{font-size:12px}
 .panel-status{padding:5px 7px;font-size:9px}
 .cal-kpi-section h3{font-size:9px;font-weight:800;text-transform:uppercase;color:#718599;margin:0 0 8px}
-.cal-kpi-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
-.cal-kpi-mini>div{min-width:0;border-radius:7px;background:#edf4fb;padding:8px 6px}
-.cal-kpi-mini strong{display:block;color:#245e98;font-size:19px}.cal-kpi-mini span{display:block;font-size:8px;color:#668095;line-height:1.2}
 .cal-kpi-section>a{display:block;margin:11px 0;color:#265e93;font-size:9px;font-weight:800;text-decoration:none}
 .cal-kpi-section summary{font-size:9px;color:#4c6f90;cursor:pointer}
 .cal-kpi-section iframe{width:100%;height:340px;background:#fff;border:1px solid #d9e3ef;margin-top:7px}
@@ -280,6 +277,51 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
 @media(min-width:1451px){body.cal-compact .cal-optional{display:none!important}body.cal-compact table{min-width:0!important;table-layout:fixed}}
 @media(max-width:1100px){.course-panel:not(.editing) #course-panel-content{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr)}.course-panel:not(.editing) .cal-kpi-section{grid-column:1/-1;grid-row:2;border-left:0;border-top:1px solid #e7edf5}.cal-qa-duo{grid-template-columns:1fr}}
 @media(max-width:750px){.course-panel:not(.editing) #course-panel-content{grid-template-columns:1fr}.course-panel:not(.editing) .course-panel-head,.course-panel:not(.editing) .course-panel-body,.course-panel:not(.editing) .cal-kpi-section{grid-column:1;grid-row:auto;border-left:0}.course-meta-grid,.cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.cal-edit .powerapps-table{font-size:0}.cal-edit .powerapps-table:before{content:"✏️";font-size:14px}}
+
+
+/* ETOP Calendarios · Reporte KPI horizontal y sin contadores duplicados */
+@media(min-width:751px){
+ .course-panel:not(.editing) #course-panel-content{
+   grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
+ }
+ .course-panel:not(.editing) .course-panel-head{grid-column:1!important;grid-row:1!important}
+ .course-panel:not(.editing) .course-panel-body{grid-column:2!important;grid-row:1!important}
+}
+.course-panel:not(.editing) .cal-kpi-section{
+ grid-column:1/-1!important;grid-row:2!important;
+ min-width:0!important;padding:9px 12px 12px!important;
+ border-left:0!important;border-top:1px solid #e4ebf3!important;
+ background:#fbfdff;
+}
+.course-panel:not(.editing) .cal-qa-section{
+ grid-column:1/-1!important;grid-row:3!important;
+}
+.cal-pbi-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 7px}
+.cal-kpi-section .cal-pbi-bar h3{margin:0!important;font-size:11px!important;font-weight:800;color:#315878;text-transform:none}
+.cal-pbi-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.cal-pbi-controls>a,.cal-pbi-controls>button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:27px;padding:4px 9px;margin:0!important;
+ border:1px solid #cadbec;border-radius:6px;background:#eef5fc;
+ font:750 9px 'Segoe UI',sans-serif;color:#275b88;
+ text-decoration:none;cursor:pointer;white-space:nowrap;
+}
+.cal-pbi-controls>a:hover,.cal-pbi-controls>button:hover{background:#e2effb}
+.cal-pbi-viewport{
+ width:100%;height:auto;aspect-ratio:3.1/1;
+ min-height:280px;max-height:440px;
+ overflow:hidden;background:#fff;border:1px solid #dce5ef;border-radius:8px;
+}
+.cal-pbi-viewport iframe{display:block!important;width:100%!important;height:100%!important;margin:0!important;border:0!important}
+.cal-kpi-section.cal-pbi-collapsed .cal-pbi-viewport{display:none}
+@media(max-width:1450px){
+ .course-panel:not(.editing) .cal-kpi-section{padding:7px 9px 9px!important}
+ .cal-pbi-viewport{aspect-ratio:3.25/1;min-height:265px;max-height:370px}
+}
+@media(max-width:750px){
+ .course-panel:not(.editing) .cal-kpi-section,.course-panel:not(.editing) .cal-qa-section{grid-column:1!important;grid-row:auto!important}
+ .cal-pbi-viewport{aspect-ratio:2.1/1;min-height:255px;max-height:370px}
+}
 
 </style>
 
@@ -463,11 +505,19 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
     }
 
     function calKpiUrl(nrc){
-      const u=new URL('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=actualSize');
+      const u=new URL('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=8d8ee906409055360001&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth');
       u.searchParams.set('filter',"NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '"+String(nrc||'').replace(/'/g,"''")+"'");
       return u.toString();
     }
-    function completarFichaSuperior(x,inc,incidentCount,incidentStatus){
+
+    function alternarKpiIntegrado(boton){
+      const bloque=boton.closest('.cal-kpi-section');
+      if(!bloque)return;
+      const oculto=bloque.classList.toggle('cal-pbi-collapsed');
+      boton.textContent=oculto?'Mostrar KPI ↓':'Ocultar KPI ↑';
+      boton.setAttribute('aria-expanded',String(!oculto));
+    }
+    function completarFichaSuperior(x,inc,incidentStatus){
       const host=document.getElementById('course-panel-content');
       const section=host.querySelector('.course-panel-head');
       if(!section)return;
@@ -477,15 +527,18 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
       section.insertAdjacentHTML('beforeend','<div class="cal-facts">'+facts.map(pair=>
         '<div><small>'+esc(pair[0])+'</small><b title="'+esc(pair[1]||'—')+'">'+esc(pair[1]||'—')+'</b></div>'
       ).join('')+'</div><div class="cal-program"><b>Programa: </b>'+esc(x['nombre programa']||'—')+'</div>');
-      const n=metricMap.has(norm(x.nrc))?studentCount(x).toLocaleString('es-CL'):'—';
+
       const url=calKpiUrl(x.nrc);
       const kpi=document.createElement('section');
       kpi.className='cal-kpi-section';
-      kpi.innerHTML='<h3>Seguimiento · ETOP / Power BI</h3>'+
-        '<div class="cal-kpi-mini"><div><strong>'+n+'</strong><span>Estudiantes (base ETOP)</span></div>'+
-        '<div><strong>'+incidentCount+'</strong><span>Incidencias QA2</span></div></div>'+
-        '<a href="'+esc(url)+'" target="_blank" rel="noopener">📊 KPI oficiales Power BI ↗</a>'+
-        '<details><summary>Ver informe integrado ↓</summary><iframe loading="lazy" src="'+esc(url)+'" title="KPI oficiales NRC"></iframe></details>';
+      kpi.setAttribute('aria-label','Informe Power BI de seguimiento estudiantil');
+      kpi.innerHTML='<div class="cal-pbi-bar">'+
+        '<h3>📊 KPI de seguimiento estudiantil</h3>'+
+        '<div class="cal-pbi-controls">'+
+        '<button type="button" aria-expanded="true" onclick="alternarKpiIntegrado(this)">Ocultar KPI ↑</button>'+
+        '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Abrir en Power BI ↗</a>'+
+        '</div></div>'+
+        '<div class="cal-pbi-viewport"><iframe title="Reporte horizontal KPI del NRC '+esc(x.nrc)+'" loading="eager" src="'+esc(url)+'" allowfullscreen></iframe></div>';
       host.appendChild(kpi);
       const qa=document.createElement('details');qa.className='cal-qa-section';
       let records='';
@@ -564,7 +617,7 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
             </div>
           </div>
         </div>`;
-      completarFichaSuperior(x,inc,incidentCount,incidentStatus);
+      completarFichaSuperior(x,inc,incidentStatus);
       panel.classList.add('open');
     }
     function abrirPowerAppsEnFicha(){
