@@ -402,6 +402,51 @@
       const activo=norm(detailFilters[campo])===norm(valor);
       return `<button type="button" class="course-meta-filter ${activo?'active':''}" title="Filtrar calendario por ${esc(label)}: ${esc(valor)}" onclick="aplicarFiltroFicha('${campo}',decodeURIComponent('${encodeURIComponent(valor)}'))"><span class="course-meta-label">${esc(label)}</span><span class="course-meta-value">${activo?'✓ ':''}${esc(valor)}</span></button>`;
     }
+
+    function calKpiUrl(nrc){
+      const u=new URL('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=actualSize');
+      u.searchParams.set('filter',"NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '"+String(nrc||'').replace(/'/g,"''")+"'");
+      return u.toString();
+    }
+    function completarFichaSuperior(x,inc,incidentCount,incidentStatus){
+      const host=document.getElementById('course-panel-content');
+      const section=host.querySelector('.course-panel-head');
+      if(!section)return;
+      const facts=[['Inicio',fmtDate(x['fecha inicio'])],['Fin',fmtDate(x['fecha fin'])],
+        ['Código curso',x['codigo curso']],['Materia',x.materia],['Periodo',x.periodo],
+        ['Tipo NRC',x.tipo],['ID curso',x.id],['Semanas',weeks(x['fecha inicio'],x['fecha fin'])]];
+      section.insertAdjacentHTML('beforeend','<div class="cal-facts">'+facts.map(pair=>
+        '<div><small>'+esc(pair[0])+'</small><b title="'+esc(pair[1]||'—')+'">'+esc(pair[1]||'—')+'</b></div>'
+      ).join('')+'</div><div class="cal-program"><b>Programa: </b>'+esc(x['nombre programa']||'—')+'</div>');
+      const n=metricMap.has(norm(x.nrc))?studentCount(x).toLocaleString('es-CL'):'—';
+      const url=calKpiUrl(x.nrc);
+      const kpi=document.createElement('section');
+      kpi.className='cal-kpi-section';
+      kpi.innerHTML='<h3>Seguimiento · ETOP / Power BI</h3>'+
+        '<div class="cal-kpi-mini"><div><strong>'+n+'</strong><span>Estudiantes (base ETOP)</span></div>'+
+        '<div><strong>'+incidentCount+'</strong><span>Incidencias QA2</span></div></div>'+
+        '<a href="'+esc(url)+'" target="_blank" rel="noopener">📊 KPI oficiales Power BI ↗</a>'+
+        '<details><summary>Ver informe integrado ↓</summary><iframe loading="lazy" src="'+esc(url)+'" title="KPI oficiales NRC"></iframe></details>';
+      host.appendChild(kpi);
+      const qa=document.createElement('details');qa.className='cal-qa-section';
+      let records='';
+      if(norm(x['codigo curso'])==='UNI118')records='UNI118 está excluido de QA2.';
+      else if(!inc.length)records='No se encontraron registros QA2 asociados al NRC.';
+      else records=inc.map(i=>{
+        const ev=i.urlEvidencia;const link=typeof ev==='object'?String(ev?.Url||ev?.url||''):String(ev||'');
+        return '<article class="cal-qa-record"><b>'+esc(i.estadoIncidencia||i.qaIncidencias||'QA2')+'</b> · '+esc(i.tipoQA||'QA2')+
+          '<div class="cal-qa-duo"><p><strong>Descripción</strong>'+esc(i.descripcionIncidencia||'Sin descripción registrada.')+'</p>'+
+          '<p><strong>Solución / gestión</strong>'+esc(i.descripcionSolucion||'Sin solución registrada.')+'</p></div>'+
+          (/^https:\/\//.test(link)?'<a target="_blank" rel="noopener" href="'+esc(link)+'">🔎 Ver evidencia ↗</a>':'')+'</article>';
+      }).join('');
+      qa.innerHTML='<summary>🧾 Historial QA2 e incidencias · '+esc(incidentStatus)+' <span>Desplegar ↓</span></summary>'+
+        '<div class="cal-qa-list">'+records+'</div>';
+      host.appendChild(qa);
+    }
+    function modoCalCompacto(){return document.body.classList.contains('cal-compact')||(!document.body.classList.contains('cal-full')&&window.innerWidth<=1450)}
+    function textoModoCal(){const b=document.getElementById('cal-modo');if(b)b.textContent=modoCalCompacto()?'Vista completa (12 columnas)':'Vista compacta (8 columnas)'}
+    function alternarVistaCal(){const compacto=!modoCalCompacto();document.body.classList.toggle('cal-compact',compacto);document.body.classList.toggle('cal-full',!compacto);textoModoCal()}
+    window.addEventListener('resize',textoModoCal);
     function renderCoursePanel(x){
       const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
       if(!x){panel.classList.remove('open');host.innerHTML='';return;}
@@ -459,6 +504,7 @@
             </div>
           </div>
         </div>`;
+      completarFichaSuperior(x,inc,incidentCount,incidentStatus);
       panel.classList.add('open');
     }
     function abrirPowerAppsEnFicha(){
@@ -479,7 +525,7 @@
           <div class="powerapp-open-note">Edición del registro seleccionado sin salir de Calendarios.</div>
           <iframe class="powerapp-iframe" src="${esc(url)}" title="Editor de curso Power Apps" allow="clipboard-read; clipboard-write"></iframe>
         </div>`;
-      panel.classList.add('open');
+      panel.classList.add('open','editing');
     }
     function volverFichaCurso(){
       const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
@@ -504,7 +550,7 @@
     }
     function cerrarFichaCurso(){
       selectedCourseNrc='';
-      document.getElementById('course-panel').classList.remove('open');
+      document.getElementById('course-panel').classList.remove('open','editing');
       document.getElementById('course-panel-content').innerHTML='';
       document.querySelectorAll('#rows tr.row-selected').forEach(tr=>tr.classList.remove('row-selected'));
     }
@@ -566,7 +612,8 @@
     document.getElementById('search').addEventListener('input',applySearch);
     document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
     document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
-    function abrirNrcInicialDesdeUrl(){const nrc=q.get('nrc');if(!nrc)return;const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));if(!x)return;selectedCourseNrc=x.nrc||'';renderCoursePanel(x);document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));}
+    function abrirNrcInicialDesdeUrl(){const seleccion=(q.get('nrc')||'').split('|').map(norm).filter(Boolean);const x=seleccion.length?allCourses.find(c=>seleccion.includes(norm(c.nrc))):cursosVisibles()[0];if(!x)return;selectedCourseNrc=x.nrc||'';renderCoursePanel(x);document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));}
+    textoModoCal();
     Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
   </script>
 </body>
