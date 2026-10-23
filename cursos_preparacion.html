@@ -150,6 +150,36 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
   body.embedded .icon{width:21px!important;height:21px!important;font-size:10px!important}
   body.embedded .edit-course{height:23px;font-size:7.5px}
 }
+
+/* ETOP 2026 · Cursos en Preparación adaptados a notebooks. */
+.prep-display-toolbar{display:flex;align-items:center;gap:9px;margin:0 18px 7px}
+.prep-display-mode{height:28px;border:1px solid #b9cde1;border-radius:7px;background:#f0f6fc;color:#305e86;font-size:10px;font-weight:800;padding:0 10px;cursor:pointer}
+.prep-display-toolbar span{font-size:9px;color:#718398}
+body.embedded .prep-display-toolbar{margin:0 0 7px}
+th:last-child,td:last-child{position:sticky!important;right:0!important;z-index:2;background:#edf3fa!important}
+thead th:last-child{z-index:13!important}tbody tr:nth-child(even) td:last-child{background:#f8fafc!important}
+tbody tr:hover td:last-child{background:#e7eff7!important}
+@media(max-width:1400px){
+  .summary{gap:6px;padding:8px 10px!important;grid-template-columns:minmax(230px,1fr) repeat(3,minmax(80px,110px))}
+  .summary-card{padding:8px 10px}.summary-card h1{font-size:15px}.summary-card p{font-size:9px}.kpi strong{font-size:19px}
+  .table-shell{margin:0 10px 12px}
+  body:not(.prep-full) th:nth-child(3),body:not(.prep-full) td:nth-child(3),
+  body:not(.prep-full) th:nth-child(5),body:not(.prep-full) td:nth-child(5),
+  body:not(.prep-full) th:nth-child(11),body:not(.prep-full) td:nth-child(11),
+  body:not(.prep-full) th:nth-child(12),body:not(.prep-full) td:nth-child(12){display:none!important}
+  body:not(.prep-full) .table-shell{overflow:auto!important}
+  body:not(.prep-full) table{min-width:0!important;width:100%!important;table-layout:fixed!important}
+  body:not(.prep-full) th,body:not(.prep-full) td{overflow:hidden!important;text-overflow:ellipsis!important;padding:7px 5px!important}
+  body:not(.prep-full) th:nth-child(1){width:4%!important}body:not(.prep-full) th:nth-child(2){width:30%!important}
+  body:not(.prep-full) th:nth-child(4){width:12%!important}body:not(.prep-full) th:nth-child(6){width:12%!important}
+  body:not(.prep-full) th:nth-child(7){width:11%!important}body:not(.prep-full) th:nth-child(8){width:8%!important}
+  body:not(.prep-full) th:nth-child(9){width:7%!important}body:not(.prep-full) th:nth-child(10){width:7%!important}
+  body:not(.prep-full) th:nth-child(13){width:9%!important}
+  body:not(.prep-full) .edit-course{width:100%;min-width:0;padding:0 3px;font-size:8px;white-space:nowrap}
+}
+@media(min-width:1401px){body.prep-compact th:nth-child(3),body.prep-compact td:nth-child(3),body.prep-compact th:nth-child(5),body.prep-compact td:nth-child(5),body.prep-compact th:nth-child(11),body.prep-compact td:nth-child(11),body.prep-compact th:nth-child(12),body.prep-compact td:nth-child(12){display:none!important}}
+@media(max-width:700px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-card:first-child{grid-column:1/-1}.prep-display-toolbar span{display:none}.table-shell th:last-child,.table-shell td:last-child{min-width:60px}}
+
 </style>
 
 </head>
@@ -183,6 +213,7 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
     <button class="btn-qa2" id="openMultiple" type="button">Realizar QA2 seleccionados ↗</button>
   </section>
 
+  <div class="prep-display-toolbar"><button type="button" class="prep-display-mode" id="prep-display-mode" onclick="toggleVistaPreparacion()">Vista completa</button><span>En notebook se priorizan las columnas operativas. Editar curso siempre está visible.</span></div>
   <div class="prep-workspace">
     <main class="table-shell">
       <table>
@@ -411,5 +442,12 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
       document.getElementById('rows').innerHTML=`<tr><td colspan="13" class="empty">⚠️ ${esc(err.message)}</td></tr>`;
     });
   </script>
+<script>
+function vistaPreparacionCompacta(){return document.body.classList.contains('prep-compact')||(!document.body.classList.contains('prep-full')&&innerWidth<=1400)}
+function actualizarVistaPreparacion(){const b=document.getElementById('prep-display-mode');if(b)b.textContent=vistaPreparacionCompacta()?'Vista completa (13 columnas)':'Vista compacta (9 columnas)'}
+function toggleVistaPreparacion(){const c=!vistaPreparacionCompacta();document.body.classList.toggle('prep-compact',c);document.body.classList.toggle('prep-full',!c);actualizarVistaPreparacion()}
+window.addEventListener('resize',actualizarVistaPreparacion);
+document.addEventListener('DOMContentLoaded',actualizarVistaPreparacion);
+</script>
 </body>
 </html>
