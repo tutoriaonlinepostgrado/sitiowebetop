@@ -559,8 +559,9 @@ body.cal-full .cal-optional{display:table-cell!important}
  .course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{height:32px!important;min-height:32px!important}
  .summary{gap:3px 6px!important}
 }
-@media(min-width:1150px) and (max-width:1450px){
+@media(min-width:940px) and (max-width:1450px){
  .summary{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"states search" "bulk bulk"!important}
+ .search-row #search{width:clamp(120px,14vw,200px)!important;flex:0 1 auto!important}
 }
 @media(max-width:930px){
  .course-panel:not(.editing) #course-panel-content{grid-template-columns:minmax(0,1fr)!important}
