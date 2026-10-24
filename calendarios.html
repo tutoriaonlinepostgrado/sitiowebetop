@@ -222,410 +222,366 @@
   .bulk-course-check,#select-visible{width:15px;height:15px;accent-color:#235f8c;cursor:pointer;vertical-align:middle}
   @media(max-width:650px){.bulk-toolbar{gap:7px}.bulk-hint{flex-basis:100%}}
 
-/* Calendarios 360 · responsive + editor Power Apps al extremo derecho */
+
+/* ================================================================
+   ETOP Calendarios · Ficha integrada limpia · 2026-10-23
+   Inspirada en propuesta Gemini, conservando toda la lógica ETOP.
+   El editor Power Apps y QA2 no se sustituyen por simulaciones.
+   ================================================================ */
+:root{--etop-ink:#1e293b;--etop-muted:#64748b;--etop-brand:#285e98;--etop-edge:#dce5ef}
 .header{display:none!important}
-.course-panel{display:none!important;position:relative!important;inset:auto!important;flex:none!important;width:100%!important;max-height:none!important;overflow:visible!important;margin:0 0 8px;border-top:3px solid #d6a900}
+body{padding:8px!important;max-width:1800px;margin:0 auto}
+.course-panel{
+  display:none!important;position:relative!important;inset:auto!important;
+  flex:none!important;width:100%!important;max-height:none!important;overflow:visible!important;
+  margin:0 0 9px!important;
+  border:1px solid var(--etop-edge)!important;border-top:3px solid #d6a900!important;
+  border-radius:9px!important;box-shadow:0 1px 4px #1424400b!important;background:#fff!important
+}
 .course-panel.open{display:block!important}
-.course-panel:not(.editing) #course-panel-content{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(255px,1.15fr) minmax(210px,.8fr)}
-.course-panel:not(.editing) .course-panel-head{grid-column:1;grid-row:1;display:block;position:relative;min-width:0;padding:10px}
-.course-panel:not(.editing) .course-panel-body{grid-column:2;grid-row:1;min-width:0;padding:10px;border-left:1px solid #e9eff5}
-.course-panel:not(.editing) .cal-kpi-section{grid-column:3;grid-row:1;padding:10px;min-width:0;border-left:1px solid #e9eff5;background:#fafcff}
-.course-panel:not(.editing) .cal-qa-section{grid-column:1/-1;border-top:1px solid #e8eef4}
-.course-panel-head .course-panel-close{position:absolute;top:8px;right:8px}
-.course-panel-head .course-panel-course{padding-right:25px}
-.course-meta-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
-.course-meta-filter{min-width:0;padding:5px 6px}.course-meta-label{font-size:7px}.course-meta-value{font-size:8px}
-.cal-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
-.cal-facts>div{padding:6px;border-radius:6px;background:#f9fbfe;border:1px solid #dce5f0;min-width:0}
-.cal-facts small{display:block;color:#7e90a4;font-size:7px;font-weight:800;text-transform:uppercase}
-.cal-facts b{display:block;color:#2e5377;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-program{font-size:9px;color:#6a7f93;margin-top:7px}
-.course-panel-body .panel-section{margin-bottom:9px}.course-panel-body .panel-section-title{font-size:8px;margin-bottom:5px}
-.panel-actions-grid{gap:4px}.panel-action{min-height:27px;padding:5px 6px;font-size:9px}.panel-action .pa-icon{font-size:12px}
-.panel-status{padding:5px 7px;font-size:9px}
-.cal-kpi-section h3{font-size:9px;font-weight:800;text-transform:uppercase;color:#718599;margin:0 0 8px}
-.cal-kpi-section>a{display:block;margin:11px 0;color:#265e93;font-size:9px;font-weight:800;text-decoration:none}
-.cal-kpi-section summary{font-size:9px;color:#4c6f90;cursor:pointer}
-.cal-kpi-section iframe{width:100%;height:340px;background:#fff;border:1px solid #d9e3ef;margin-top:7px}
-.cal-qa-section>summary{font-size:10px;color:#315a83;padding:9px 12px;cursor:pointer;font-weight:800}
-.cal-qa-section>summary span{float:right;color:#8498aa}.cal-qa-list{max-height:310px;overflow:auto;background:#f8fafc;padding:10px}
-.cal-qa-record{background:#fff;border:1px solid #dce5f0;border-left:3px solid #d6a900;border-radius:6px;padding:8px;font-size:10px;margin-bottom:6px}
-.cal-qa-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cal-qa-duo p{white-space:pre-wrap;font-size:10px;line-height:1.3}
-.cal-qa-duo strong{font-size:8px;display:block;text-transform:uppercase;color:#8598ab}.cal-qa-record a{font-size:10px;color:#315f86}
-.course-panel.editing{position:fixed!important;inset:12px!important;width:auto!important;max-height:calc(100dvh - 24px)!important;overflow:auto!important;z-index:500!important;box-shadow:0 24px 65px #14244066}
-.course-panel.editing #course-panel-content{display:block}.course-panel.editing .powerapp-panel-view{height:calc(100dvh - 110px);min-height:360px}
-.calendar-workspace{display:block;min-width:0}.calendar-workspace .table-wrap{width:100%;max-height:calc(100dvh - 130px)}
-.summary{position:relative;top:auto!important;padding:5px 0 7px;margin-bottom:5px}.summary-row{margin-bottom:5px}
-.kpi{min-width:75px;padding:5px 9px}.kpi-v{font-size:15px}.bulk-toolbar{margin:4px 0!important;padding:5px!important}
-.cal-mode{height:29px;border:1px solid #c7d7e9;border-radius:7px;background:#f0f6fc;color:#2b6292;font-size:9px;font-weight:800;padding:0 9px;cursor:pointer}
-.cal-edit{position:sticky;right:0;z-index:3;background:#edf3fa;box-shadow:-5px 0 10px #14244010}
-tbody .cal-edit{background:#fff}tbody tr:nth-child(even) .cal-edit{background:#f8fafc}tbody tr:hover .cal-edit{background:#f2f6fa}thead .cal-edit{z-index:6}
-@media(max-width:1450px){
-body{padding:6px!important}
-body:not(.cal-full) .cal-optional{display:none!important}
-body:not(.cal-full) table{min-width:0!important;width:100%;table-layout:fixed}
-body:not(.cal-full) th,body:not(.cal-full) td{padding:7px 5px;font-size:9px;overflow:hidden;text-overflow:ellipsis}
-body:not(.cal-full) td.course{white-space:normal;line-height:1.22}
-body:not(.cal-full) th:nth-child(1){width:4%}body:not(.cal-full) th:nth-child(2){width:17%}body:not(.cal-full) th:nth-child(3){width:9%}
-body:not(.cal-full) th:nth-child(4){width:24%}body:not(.cal-full) th:nth-child(6){width:10%}body:not(.cal-full) th:nth-child(7){width:10%}
-body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(12){width:13%}
-.course-panel:not(.editing) #course-panel-content{grid-template-columns:minmax(0,1.35fr) minmax(220px,1fr) minmax(180px,.75fr)}
-.course-panel:not(.editing) .course-panel-head,.course-panel:not(.editing) .course-panel-body,.course-panel:not(.editing) .cal-kpi-section{padding:7px}
-.panel-action{min-height:25px;padding:4px 5px;font-size:8.5px}
-.cal-edit .powerapps-table{min-width:0;width:100%;padding:0 3px;font-size:8px}
-}
-@media(min-width:1451px){body.cal-compact .cal-optional{display:none!important}body.cal-compact table{min-width:0!important;table-layout:fixed}}
-@media(max-width:1100px){.course-panel:not(.editing) #course-panel-content{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr)}.course-panel:not(.editing) .cal-kpi-section{grid-column:1/-1;grid-row:2;border-left:0;border-top:1px solid #e7edf5}.cal-qa-duo{grid-template-columns:1fr}}
-@media(max-width:750px){.course-panel:not(.editing) #course-panel-content{grid-template-columns:1fr}.course-panel:not(.editing) .course-panel-head,.course-panel:not(.editing) .course-panel-body,.course-panel:not(.editing) .cal-kpi-section{grid-column:1;grid-row:auto;border-left:0}.course-meta-grid,.cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.cal-edit .powerapps-table{font-size:0}.cal-edit .powerapps-table:before{content:"✏️";font-size:14px}}
-
-
-/* ETOP Calendarios · Reporte KPI horizontal y sin contadores duplicados */
-@media(min-width:751px){
- .course-panel:not(.editing) #course-panel-content{
-   grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
- }
- .course-panel:not(.editing) .course-panel-head{grid-column:1!important;grid-row:1!important}
- .course-panel:not(.editing) .course-panel-body{grid-column:2!important;grid-row:1!important}
-}
-.course-panel:not(.editing) .cal-kpi-section{
- grid-column:1/-1!important;grid-row:2!important;
- min-width:0!important;padding:9px 12px 12px!important;
- border-left:0!important;border-top:1px solid #e4ebf3!important;
- background:#fbfdff;
-}
-.course-panel:not(.editing) .cal-qa-section{
- grid-column:1/-1!important;grid-row:3!important;
-}
-.cal-pbi-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 7px}
-.cal-kpi-section .cal-pbi-bar h3{margin:0!important;font-size:11px!important;font-weight:800;color:#315878;text-transform:none}
-.cal-pbi-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.cal-pbi-controls>a,.cal-pbi-controls>button{
- display:inline-flex;align-items:center;justify-content:center;
- min-height:27px;padding:4px 9px;margin:0!important;
- border:1px solid #cadbec;border-radius:6px;background:#eef5fc;
- font:750 9px 'Segoe UI',sans-serif;color:#275b88;
- text-decoration:none;cursor:pointer;white-space:nowrap;
-}
-.cal-pbi-controls>a:hover,.cal-pbi-controls>button:hover{background:#e2effb}
-.cal-pbi-viewport{
- position:relative;width:100%;height:auto;aspect-ratio:3.1/1;
- min-height:280px;max-height:440px;
- overflow:hidden;background:#fff;border:1px solid #dce5ef;border-radius:8px;
-}
-.cal-pbi-viewport iframe{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;margin:0!important;border:0!important}
-.cal-kpi-section.cal-pbi-collapsed .cal-pbi-viewport{display:none}
-@media(max-width:1450px){
- .course-panel:not(.editing) .cal-kpi-section{padding:7px 9px 9px!important}
- .cal-pbi-viewport{aspect-ratio:3.25/1;min-height:265px;max-height:370px}
-}
-@media(max-width:750px){
- .course-panel:not(.editing) .cal-kpi-section,.course-panel:not(.editing) .cal-qa-section{grid-column:1!important;grid-row:auto!important}
- .cal-pbi-viewport{aspect-ratio:2.1/1;min-height:255px;max-height:370px}
-}
-
-
-/* ETOP · Calendarios definitivo: Datos + Power BI vertical + iconos · 2026-10-23 */
 .course-panel:not(.editing) #course-panel-content{
-  display:grid!important;
-  grid-template-columns:minmax(0,1.30fr) minmax(330px,.92fr)!important;
-  grid-template-rows:auto auto auto!important;
-  align-items:stretch!important;
-  min-width:0!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(325px,390px)!important;
+ grid-template-rows:auto auto auto!important;align-items:stretch!important;min-width:0
 }
-.course-panel:not(.editing) .course-panel-head{
-  grid-column:1!important;grid-row:1!important;
-  border-left:0!important;border-right:1px solid #e6edf5!important;
-  padding:12px 13px!important;
-  background:#fff!important;
-  min-width:0!important;
-}
-.course-panel:not(.editing) .cal-kpi-section{
-  grid-column:2!important;grid-row:1!important;
-  border-left:0!important;border-top:0!important;border-bottom:0!important;
-  min-width:0!important;
-  padding:10px 12px 9px!important;background:#fbfdff!important;
-}
-.course-panel:not(.editing) .cal-icon-toolbar{
-  grid-column:1/-1!important;grid-row:2!important;
-  display:flex!important;align-items:center!important;justify-content:space-between!important;
-  padding:8px 13px!important;gap:12px!important;
-  border-top:1px solid #e1eaf3!important;
-  background:#f9fbfd!important;
-  min-width:0!important;
-}
-.course-panel:not(.editing) .cal-qa-section{
-  grid-column:1/-1!important;grid-row:3!important;
-  border-top:1px solid #e6edf5!important;
-  margin:0!important;
-}
-.cal-icon-caption{display:flex;align-items:center;gap:9px;flex:0 0 auto;min-width:0}
-.cal-icon-caption strong{font-size:10px;color:#3d5a78;text-transform:uppercase;letter-spacing:.035em;white-space:nowrap}
-.cal-icon-caption span{color:#889aad;font-size:9px;white-space:nowrap}
-.cal-icon-links{
-  display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;
-  gap:6px;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:thin;
-}
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  width:36px!important;height:35px!important;min-width:36px!important;min-height:35px!important;
-  max-width:36px!important;flex:0 0 36px!important;
-  padding:0!important;margin:0!important;border:1px solid #d0deec!important;
-  border-radius:8px!important;background:#fff!important;color:#356087!important;
-  grid-column:auto!important;font-size:0!important;text-decoration:none!important;
-  cursor:pointer!important;transition:background .12s,border-color .12s;
-}
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only:hover{
-  background:#e9f4ff!important;border-color:#75a6d2!important;
-}
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only.primary{
-  background:#eaf4fd!important;border-color:#abd1ed!important;
-}
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only.disabled,
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only:disabled{
-  opacity:.38!important;cursor:not-allowed!important;
-}
-.course-panel:not(.editing) .cal-icon-links .pa-icon{
-  display:block!important;flex:none!important;font-size:17px!important;line-height:1!important;
-}
-.cal-pbi-bar{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin-bottom:7px!important}
-.cal-kpi-section .cal-pbi-bar h3{
-  font-size:10px!important;text-transform:uppercase!important;
-  letter-spacing:.035em!important;color:#5f7a96!important;font-weight:800!important;
-}
-.cal-pbi-controls>a{font-size:9px!important;border-radius:18px!important;min-height:24px!important;background:#eff6ff!important}
-.cal-pbi-viewport{
-  position:relative!important;display:block!important;
-  width:100%!important;height:clamp(285px,25.5vw,410px)!important;
-  min-height:0!important;max-height:none!important;aspect-ratio:auto!important;
-  overflow:hidden!important;border-radius:8px!important;background:#fff!important;
-}
-.cal-pbi-viewport iframe{
-  position:absolute!important;inset:0!important;
-  width:100%!important;height:100%!important;border:0!important;margin:0!important;
-  display:block!important;
-}
-.cal-pbi-note{font-size:8px;color:#8598aa;margin:6px 0 0;line-height:1.2}
-.course-panel:not(.editing) .course-meta-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-.course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-@media(max-width:1450px){
- .course-panel:not(.editing) #course-panel-content{
-  grid-template-columns:minmax(0,1.3fr) minmax(310px,.92fr)!important;
- }
- .course-panel:not(.editing) .course-panel-head{padding:9px!important}
- .course-panel:not(.editing) .cal-kpi-section{padding:8px 9px!important}
- .cal-pbi-viewport{height:clamp(270px,27vw,350px)!important}
-}
-@media(max-width:1180px){
- .course-panel:not(.editing) #course-panel-content{
-  grid-template-columns:minmax(0,1.24fr) minmax(275px,.9fr)!important;
- }
- .course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .cal-icon-caption span{display:none}
- .course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{
-  width:33px!important;min-width:33px!important;max-width:33px!important;
-  height:32px!important;min-height:32px!important;flex-basis:33px!important;
- }
- .cal-icon-links{gap:5px}
-}
-@media(max-width:849px){
- .course-panel:not(.editing) #course-panel-content{
-  grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;
- }
- .course-panel:not(.editing) .course-panel-head{grid-column:1!important;grid-row:1!important;border-right:0!important}
- .course-panel:not(.editing) .cal-kpi-section{grid-column:1!important;grid-row:2!important;border-top:1px solid #e7edf5!important}
- .course-panel:not(.editing) .cal-icon-toolbar{grid-column:1!important;grid-row:3!important;flex-wrap:wrap}
- .course-panel:not(.editing) .cal-qa-section{grid-column:1!important;grid-row:4!important}
- .course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(4,minmax(0,1fr))!important}
- .cal-pbi-viewport{height:330px!important}
- .cal-icon-links{justify-content:flex-start;flex-wrap:wrap;overflow:visible}
-}
-@media(max-width:540px){
- .course-panel:not(.editing) .course-meta-grid,
- .course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .course-panel:not(.editing) .cal-icon-toolbar{padding:8px!important}
- .cal-pbi-viewport{height:300px!important}
-}
-
-
-/* Calendarios ETOP · Acabado fiel a maqueta aprobada · 2026-10-23 */
-/* Jerarquía: encabezado horizontal / datos + KPI / acciones / historial / tabla. */
-.course-panel:not(.editing) #course-panel-content{
-  display:grid!important;
-  grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr)!important;
-  grid-template-rows:auto auto auto auto!important;
-  align-items:stretch!important;
-  width:100%!important;
-  min-width:0!important;
-}
+/* Identificación común: franja de una línea, nunca otra tarjeta gigante. */
 .course-panel:not(.editing) .cal-hero-top{
-  grid-column:1/-1!important;
-  grid-row:1!important;
-  display:flex!important;align-items:center!important;justify-content:space-between!important;
-  gap:10px!important;
-  min-height:45px!important;padding:8px 12px!important;
-  border-bottom:1px solid #e1e9f2!important;
-  background:#fff!important;
+ grid-column:1/-1!important;grid-row:1!important;min-width:0;
+ padding:8px 12px!important;border-bottom:1px solid var(--etop-edge)!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important
 }
 .cal-hero-identity{
-  display:flex;align-items:center;gap:7px 9px;flex-wrap:wrap;min-width:0;
+ display:flex!important;align-items:center!important;min-width:0!important;gap:7px 9px!important;flex-wrap:wrap!important
 }
 .cal-hero-identity .course-panel-kicker{
-  flex-basis:100%;margin:0!important;font-size:8px!important;
-  letter-spacing:.09em;color:#987200!important;line-height:1.1!important;
+ flex-basis:100%;font-size:8px!important;line-height:1!important;margin:0!important;color:#9d781b!important;font-weight:800!important
 }
 .cal-hero-identity .course-panel-nrc{
-  font-size:11px!important;line-height:1.2!important;margin:0!important;
-  white-space:nowrap;color:#24578a!important;
+ font-size:11px!important;font-weight:800!important;font-family:Consolas,monospace!important;
+ padding:3px 6px!important;margin:0!important;white-space:nowrap!important;
+ color:#265f9c!important;background:#eff6ff!important;border:1px solid #dce8f8!important;border-radius:5px
 }
 .cal-hero-identity .course-panel-course{
-  font-size:11px!important;line-height:1.2!important;margin:0!important;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  max-width:min(480px,47vw);
+ font-size:12px!important;line-height:1.2!important;font-weight:750!important;
+ padding:0!important;margin:0!important;white-space:normal!important;max-width:650px;color:#24354b!important
 }
-.cal-hero-identity .badge{font-size:8px!important;padding:4px 7px!important;flex:none}
+.cal-hero-identity .badge{font-size:9px!important;border-radius:9px;padding:3px 7px!important}
 .course-panel:not(.editing) .cal-hero-top .course-panel-close{
-  position:static!important;flex:0 0 26px!important;
-  width:26px!important;height:26px!important;
-  min-width:26px!important;font-size:15px!important;
+ display:inline-flex!important;align-items:center;justify-content:center;
+ position:static!important;flex:0 0 27px!important;width:27px!important;height:27px!important;
+ font-size:16px!important;margin:0!important;padding:0!important
 }
+/* Zona de datos Gemini */
 .course-panel:not(.editing) .course-panel-head{
-  grid-column:1!important;grid-row:2!important;
-  padding:9px 11px 11px!important;margin:0!important;
-  border-right:1px solid #e0e9f3!important;border-bottom:0!important;
-  min-width:0!important;overflow:hidden!important;
-  background:#fff!important;
+ display:block!important;position:relative!important;grid-column:1!important;grid-row:2!important;
+ min-width:0!important;overflow:hidden!important;padding:10px 13px 9px!important;
+ border-right:1px solid var(--etop-edge)!important;border-bottom:0!important;border-top:0!important;
+ background:#fff!important
 }
-.course-panel:not(.editing) .cal-data-heading{
-  font-size:9px!important;font-weight:800!important;letter-spacing:.055em!important;
-  color:#607d9a!important;margin:0 0 7px!important;
+.cal-data-heading,.cal-action-heading{
+ color:#64748b!important;font-size:9px!important;letter-spacing:.045em!important;
+ font-weight:850!important;margin:0 0 6px!important;text-transform:uppercase!important
 }
+.course-panel:not(.editing) .course-panel-head > div:first-of-type{min-width:0}
 .course-panel:not(.editing) .course-meta-grid{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:5px!important;margin:0 0 8px!important;
+ display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+ gap:5px!important;margin:0 0 9px!important
 }
 .course-panel:not(.editing) .course-meta-filter{
-  min-width:0!important;min-height:28px!important;padding:5px 7px!important;
-  background:#f5f8fc!important;border-radius:7px!important;
+ flex:0 1 auto!important;min-width:0!important;max-width:100%!important;
+ padding:5px 7px!important;border-radius:6px!important;
+ background:#f1f5f9!important;border:1px solid #e2e8f0!important;
+ display:inline-flex!important;align-items:baseline!important;gap:5px!important;
+ box-shadow:none!important;text-align:left!important
 }
+.course-panel:not(.editing) .course-meta-filter:hover{background:#eaf2fb!important;border-color:#a1bfdc!important}
+.course-panel:not(.editing) .course-meta-filter.active{border-color:#9a7a1f!important;background:#fff9e7!important}
 .course-panel:not(.editing) .course-meta-label{
-  font-size:7px!important;margin-bottom:1px!important;
+ display:inline!important;margin:0!important;white-space:nowrap!important;
+ font-size:9px!important;letter-spacing:0!important;color:#72849a!important
 }
 .course-panel:not(.editing) .course-meta-value{
-  font-size:9px!important;white-space:nowrap!important;
-  overflow:hidden!important;text-overflow:ellipsis!important;
+ display:inline!important;font-size:9px!important;max-width:235px!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#334155!important
 }
 .course-panel:not(.editing) .cal-facts{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:5px!important;
-  margin-top:0!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:6px!important;margin:0!important
 }
 .course-panel:not(.editing) .cal-facts>div{
-  padding:7px 7px!important;min-width:0!important;
-  border:1px solid #d8e4f0!important;border-radius:7px!important;
-  background:#f5f8fc!important;
+ display:block!important;min-width:0!important;min-height:42px!important;
+ padding:6px 8px!important;background:#f8fafc!important;
+ border:1px solid #e2e8f0!important;border-radius:7px!important
 }
 .course-panel:not(.editing) .cal-facts small{
-  font-size:7px!important;line-height:1.2!important;margin:0!important;
+ display:block!important;line-height:1.2!important;font-weight:750!important;
+ font-size:8px!important;color:#8696a9!important;text-transform:uppercase!important;letter-spacing:.025em!important
 }
 .course-panel:not(.editing) .cal-facts b{
-  font-size:9.5px!important;margin-top:3px!important;
-  color:#294c70!important;line-height:1.25!important;
+ display:block!important;margin-top:3px!important;font-size:10.5px!important;
+ font-weight:750!important;color:#243b56!important;line-height:1.1!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important
 }
 .course-panel:not(.editing) .cal-program{
-  margin-top:8px!important;font-size:9px!important;
-  color:#5a7188!important;
+ font-size:9px!important;color:#66788e!important;margin-top:6px!important
 }
+.cal-progress{
+ border:1px solid #e1e8f0;border-radius:7px;background:#fff;margin-top:8px;padding:7px 9px
+}
+.cal-progress-labels,.cal-progress-dates{
+ display:flex;align-items:center;justify-content:space-between;gap:5px;min-width:0
+}
+.cal-progress-labels{font-size:9.5px;font-weight:750;color:#41546b}
+.cal-progress-dates{font-size:8px;color:#8795a7;margin-top:5px}
+.cal-progress-track{height:6px;border-radius:50px;background:#e9eff6;overflow:hidden;margin-top:6px}
+.cal-progress-fill{height:100%;border-radius:50px;background:#327fc4;width:0%}
+/* Los accesos se ubican EN EL ESPACIO LIBRE bajo los datos del NRC. */
+.course-panel:not(.editing) .cal-icon-toolbar{
+ display:block!important;position:static!important;
+ border:0!important;background:none!important;
+ margin-top:9px!important;padding:0!important;min-width:0!important
+}
+.cal-icon-caption{
+ display:flex;align-items:center;justify-content:space-between;gap:7px;
+ margin-bottom:6px!important
+}
+.cal-icon-caption strong{
+ color:#64748b!important;font-size:9px!important;letter-spacing:.05em!important;
+ text-transform:uppercase!important
+}
+.cal-icon-caption span{font-size:8px!important;color:#93a1b1}
+.course-panel:not(.editing) .cal-icon-links{
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:5px!important;width:100%!important;max-width:none!important;
+ overflow:visible!important;align-items:stretch!important
+}
+.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ height:34px!important;min-height:34px!important;padding:4px 2px!important;
+ margin:0!important;border-radius:7px!important;background:#fff!important;
+ border:1px solid #d9e3ef!important;color:#42617d!important;
+ align-items:center!important;justify-content:center!important;
+ box-shadow:none!important;grid-column:auto!important;font-size:0!important;cursor:pointer!important
+}
+.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only:hover{background:#eef6ff!important;border-color:#8bb4d9!important}
+.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only.primary{background:#e9f4ff!important;border-color:#bad6ee!important}
+.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only.disabled,
+.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only:disabled{opacity:.4!important;cursor:not-allowed!important}
+.course-panel:not(.editing) .cal-icon-links .pa-icon{display:block!important;font-size:16px!important;line-height:1!important}
+.course-panel:not(.editing) .cal-icon-links .pa-short{
+ display:block!important;font-size:8px!important;font-weight:750!important;
+ line-height:1!important;text-align:center!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;width:100%!important
+}
+.course-panel:not(.editing) .course-filter-clear{
+ width:auto!important;height:24px!important;padding:0 7px!important;
+ margin:6px 0 0!important;border-radius:5px!important;font-size:9px!important
+}
+/* Power BI vertical: lienzo editado por el usuario a 420 x 330. */
 .course-panel:not(.editing) .cal-kpi-section{
-  grid-column:2!important;grid-row:2!important;
-  padding:9px 11px 11px!important;margin:0!important;
-  border:0!important;border-bottom:0!important;background:#fff!important;
-  min-width:0!important;overflow:hidden!important;
+ grid-column:2!important;grid-row:2!important;min-width:0!important;
+ padding:10px 11px 9px!important;margin:0!important;
+ border:0!important;background:#f8fafc!important
+}
+.cal-pbi-bar{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:7px!important;margin:0 0 8px!important
 }
 .cal-kpi-section .cal-pbi-bar h3{
-  color:#607d9a!important;font-size:9px!important;font-weight:800!important;
-  text-transform:uppercase!important;letter-spacing:.055em!important;
+ font-size:10px!important;color:#64748b!important;text-transform:uppercase!important;
+ letter-spacing:.045em!important;font-weight:800!important;margin:0!important
+}
+.cal-pbi-controls{display:flex;align-items:center;gap:5px}
+.cal-pbi-controls a{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ min-height:25px!important;font:750 9px 'Segoe UI',sans-serif!important;
+ padding:3px 7px!important;border-radius:6px!important;text-decoration:none!important;
+ border:1px solid #d0e0f0!important;background:#fff!important;color:#2367a2!important
 }
 .cal-pbi-viewport{
-  width:100%!important;height:clamp(315px,27vw,400px)!important;
-  min-height:0!important;max-height:none!important;
-  overflow:hidden!important;aspect-ratio:auto!important;
-  position:relative!important;border:1px solid #dae5ef!important;
-  border-radius:8px!important;
+ position:relative!important;width:100%!important;
+ height:312px!important;min-height:0!important;max-height:none!important;
+ aspect-ratio:auto!important;border:1px solid #dbe5ef!important;
+ border-radius:7px!important;background:#fff!important;overflow:hidden!important
 }
 .cal-pbi-viewport iframe{
-  position:absolute!important;inset:0!important;
-  width:100%!important;height:100%!important;
-  border:0!important;margin:0!important;
-  transform:scale(1.12)!important;transform-origin:center 16px!important;
+ display:block!important;position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;border:0!important;margin:0!important;
+ transform:none!important;transform-origin:initial!important
 }
-.cal-pbi-note{margin:5px 0 0!important;font-size:8px!important}
-.course-panel:not(.editing) .cal-icon-toolbar{
-  grid-column:1/-1!important;grid-row:3!important;
-  min-height:51px!important;
-  padding:7px 11px!important;
-  gap:8px!important;justify-content:space-between!important;
-}
+.cal-pbi-note{margin:5px 0 0!important;color:#8898aa;font-size:8px!important}
+/* QA2 se expande a petición del usuario y no consume altura normalmente. */
 .course-panel:not(.editing) .cal-qa-section{
-  grid-column:1/-1!important;grid-row:4!important;
+ grid-column:1/-1!important;grid-row:3!important;min-width:0;
+ border-top:1px solid #e4eaf2!important;background:#fff!important
 }
-.course-panel:not(.editing) .cal-icon-caption strong{font-size:9px!important}
-.course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{
-  height:33px!important;min-height:33px!important;
-  width:33px!important;min-width:33px!important;max-width:33px!important;
-  flex-basis:33px!important;
+.cal-qa-section>summary{
+ padding:7px 12px!important;font-size:10px!important;font-weight:800!important;
+ color:#426888!important;cursor:pointer!important
 }
-.course-panel:not(.editing) .cal-icon-links .pa-icon{font-size:16px!important}
-.course-panel:not(.editing) .cal-icon-links{gap:5px!important}
-@media (max-width:1450px){
-  .course-panel:not(.editing) #course-panel-content{
-    grid-template-columns:minmax(0,1.5fr) minmax(290px,1fr)!important;
-  }
-  .cal-pbi-viewport{height:clamp(300px,30vw,385px)!important}
-  .course-panel:not(.editing) .cal-hero-top{min-height:42px!important;padding:7px 10px!important}
-  .course-panel:not(.editing) .course-panel-head,
-  .course-panel:not(.editing) .cal-kpi-section{padding:8px!important}
+.cal-qa-section>summary span{float:right!important;color:#8394a5!important}
+.cal-qa-list{max-height:270px!important;overflow:auto!important;padding:9px!important;background:#f8fafc!important}
+.cal-qa-record{background:#fff;border:1px solid #e1e9f1;border-left:3px solid #d6a900;border-radius:6px;padding:8px;font-size:10px;margin-bottom:6px}
+.cal-qa-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cal-qa-duo p{white-space:pre-wrap;font-size:10px;line-height:1.35}
+.cal-qa-duo strong{display:block;font-size:8px;text-transform:uppercase;color:#7f92a7}
+.cal-qa-record a{color:#1c639e;font-size:10px}
+/* Editar Power Apps se mantiene en pantalla completa. */
+.course-panel.editing{
+ position:fixed!important;inset:12px!important;z-index:500!important;
+ width:auto!important;max-height:calc(100dvh - 24px)!important;overflow:auto!important;
+ box-shadow:0 24px 70px #14244066!important
 }
-@media (max-width:1180px){
-  .course-panel:not(.editing) .cal-facts{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-  .course-panel:not(.editing) .course-meta-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  }
-  .cal-pbi-viewport{height:340px!important}
-  .course-panel:not(.editing) #course-panel-content{
-    grid-template-columns:minmax(0,1.5fr) minmax(265px,1fr)!important;
-  }
-  .cal-hero-identity .course-panel-course{max-width:350px}
-  .cal-icon-caption span{display:none!important}
+.course-panel.editing #course-panel-content{display:block!important}
+.course-panel.editing .course-panel-head{
+ position:relative!important;padding:11px!important;display:flex!important;background:#fff!important
 }
-@media (max-width:849px){
-  .course-panel:not(.editing) #course-panel-content{
-    grid-template-columns:minmax(0,1fr)!important;
-  }
-  .course-panel:not(.editing) .cal-hero-top{grid-column:1!important;grid-row:1!important}
-  .course-panel:not(.editing) .course-panel-head{
-    grid-column:1!important;grid-row:2!important;border-right:0!important;
-  }
-  .course-panel:not(.editing) .cal-kpi-section{
-    grid-column:1!important;grid-row:3!important;border-top:1px solid #e7edf4!important;
-  }
-  .course-panel:not(.editing) .cal-icon-toolbar{
-    grid-column:1!important;grid-row:4!important;
-  }
-  .course-panel:not(.editing) .cal-qa-section{
-    grid-column:1!important;grid-row:5!important;
-  }
-  .cal-pbi-viewport{height:350px!important}
-  .cal-hero-identity .course-panel-course{white-space:normal;max-width:100%}
-  .course-panel:not(.editing) .cal-icon-links{flex-wrap:wrap!important;overflow:visible!important}
+.course-panel.editing .powerapp-panel-view{height:calc(100dvh - 115px)!important;min-height:350px!important}
+.calendar-workspace{display:block!important;min-width:0!important}
+.calendar-workspace .table-wrap{
+ width:100%!important;max-width:100%!important;
+ max-height:clamp(185px,46vh,540px)!important;overflow:auto!important;
+ border-radius:8px!important;scrollbar-width:thin!important
 }
-@media (max-width:560px){
-  .course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .course-panel:not(.editing) .course-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .cal-pbi-viewport{height:330px!important}
+/* Resumen de cursos Gemini adaptado a herramientas originales ETOP. */
+.summary{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ grid-template-areas:"states search" "bulk bulk"!important;
+ gap:5px 9px!important;align-items:center!important;
+ position:relative!important;top:auto!important;z-index:10!important;
+ padding:3px 1px 5px!important;margin:0 0 5px!important;
+ border-bottom:0!important;background:transparent!important
+}
+.summary-row{grid-area:states!important;display:flex!important;align-items:center!important;min-width:0!important;gap:8px!important;margin:0!important}
+.summary-row>div:first-child{display:none!important}
+.kpis{display:flex!important;flex-wrap:wrap!important;gap:5px!important;margin:0!important;min-width:0!important}
+.kpi{min-width:65px!important;min-height:34px!important;padding:4px 8px!important;box-shadow:none!important}
+.kpi-v{font-size:14px!important;line-height:1.05!important}
+.kpi-l{font-size:8px!important;letter-spacing:0!important}
+.kpi.total{text-align:center!important}
+.search-row{
+ grid-area:search!important;display:flex!important;align-items:center!important;
+ gap:5px!important;justify-content:flex-end!important;flex-wrap:nowrap!important;min-width:0!important
+}
+.search-label{display:none!important}
+#search{
+ width:clamp(130px,17vw,245px)!important;min-width:0!important;
+ font-size:10px!important;height:30px!important;padding:5px 8px!important
+}
+#count{white-space:nowrap!important;font-size:9px!important;color:#788a9e!important;margin:0!important}
+.btn-export{
+ height:30px!important;white-space:nowrap!important;padding:0 9px!important;font-size:10px!important
+}
+.cal-mode{
+ height:30px!important;white-space:nowrap!important;
+ border:1px solid #d0deec!important;border-radius:6px!important;
+ padding:0 9px!important;background:#eff6ff!important;color:#245c91!important;
+ font-size:9px!important;font-weight:800!important;cursor:pointer!important
+}
+.bulk-toolbar{
+ grid-area:bulk!important;display:flex!important;align-items:center!important;
+ gap:5px!important;flex-wrap:nowrap!important;
+ border:0!important;border-top:1px solid #e2e8f0!important;
+ padding:5px 2px 0!important;margin:0!important
+}
+.bulk-count{font-size:10px!important;font-weight:750!important;white-space:nowrap!important;color:#52657a!important}
+.bulk-hint{display:none!important}
+.bulk-btn{
+ height:26px!important;min-height:26px!important;padding:3px 8px!important;
+ border:1px solid #275f91!important;border-radius:6px!important;
+ background:#275f91!important;color:#fff!important;
+ font:750 9px 'Segoe UI',sans-serif!important;cursor:pointer!important
+}
+.bulk-btn.secondary{background:#fff!important;border-color:#cad6e3!important;color:#52657a!important}
+.bulk-btn:disabled{opacity:.4!important;cursor:not-allowed!important}
+.bulk-select-col,.bulk-select-cell{
+ width:30px!important;min-width:30px!important;max-width:30px!important;text-align:center!important
+}
+.bulk-course-check,#select-visible{width:15px!important;height:15px!important;accent-color:#235f8c!important;vertical-align:middle}
+tbody tr[data-nrc]{cursor:pointer}
+tbody tr.row-selected{background:#eaf4ff!important;box-shadow:inset 3px 0 0 #2b79be!important}
+.cal-edit{position:sticky!important;right:0!important;z-index:3!important;background:#edf3fa!important;box-shadow:-4px 0 9px #1424400b}
+tbody .cal-edit{background:#fff!important}
+tbody tr:nth-child(even) .cal-edit{background:#f8fafc!important}
+tbody tr:hover .cal-edit{background:#edf5fd!important}
+thead .cal-edit{z-index:6!important}
+.calendar-workspace th{padding:7px 6px!important;font-size:9px!important;white-space:nowrap}
+.calendar-workspace td{padding:7px 6px!important;font-size:10px!important}
+.calendar-workspace table{table-layout:fixed!important;width:100%!important;min-width:0!important;max-width:100%!important}
+.calendar-workspace td.course,.calendar-workspace td.tutor{white-space:normal!important;line-height:1.2!important}
+.calendar-workspace .powerapps-table{
+ min-width:0!important;max-width:100%!important;width:100%!important;
+ font:750 9px 'Segoe UI',sans-serif!important;padding:3px 4px!important;white-space:nowrap
+}
+.calendar-workspace th:nth-child(1){width:3%}
+.calendar-workspace th:nth-child(2){width:14%}
+.calendar-workspace th:nth-child(3){width:8%}
+.calendar-workspace th:nth-child(4){width:24%}
+.calendar-workspace th:nth-child(5){width:7%}
+.calendar-workspace th:nth-child(6){width:9%}
+.calendar-workspace th:nth-child(7){width:9%}
+.calendar-workspace th:nth-child(8){width:5%}
+.calendar-workspace th:nth-child(9){width:12%}
+.calendar-workspace th:nth-child(10){width:8%}
+.calendar-workspace th:nth-child(11){width:7%}
+.calendar-workspace th:nth-child(12){width:10%}
+/* Vista compacta automática para notebooks. 8 columnas prioritarias. */
+@media(max-width:1450px){
+ body:not(.cal-full) .cal-optional{display:none!important}
+ body.cal-compact .cal-optional{display:none!important}
+ .calendar-workspace th:nth-child(1){width:4%}
+ .calendar-workspace th:nth-child(2){width:17%}
+ .calendar-workspace th:nth-child(3){width:9%}
+ .calendar-workspace th:nth-child(4){width:25%}
+ .calendar-workspace th:nth-child(6){width:12%}
+ .calendar-workspace th:nth-child(7){width:12%}
+ .calendar-workspace th:nth-child(9){width:12%}
+ .calendar-workspace th:nth-child(12){width:9%}
+ .summary{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"states" "search" "bulk"!important}
+ .search-row{justify-content:flex-start!important}
+ .search-row #search{flex:1 1 160px!important;width:auto!important}
+}
+/* Si se fuerza completa, todas las columnas son consultables con scroll. */
+body.cal-full .cal-optional{display:table-cell!important}
+@media(max-width:1450px){
+ body.cal-full .calendar-workspace table{min-width:1120px!important;table-layout:auto!important}
+}
+/* Ajustes por altura real de notebooks. */
+@media(max-height:820px) and (min-width:900px){
+ body{padding:5px!important}
+ .course-panel:not(.editing) .cal-hero-top{padding:6px 10px!important}
+ .course-panel:not(.editing) .course-panel-head{padding:8px 10px!important}
+ .course-panel:not(.editing) .cal-kpi-section{padding:8px 9px!important}
+ .cal-pbi-viewport{height:278px!important}
+ .course-panel:not(.editing) .cal-facts>div{min-height:38px!important;padding:5px 7px!important}
+ .cal-progress{padding:6px 8px!important;margin-top:7px!important}
+ .course-panel:not(.editing) .cal-icon-toolbar{margin-top:7px!important}
+ .course-panel:not(.editing) .cal-icon-links .panel-action.cal-icon-only{height:32px!important;min-height:32px!important}
+ .summary{gap:3px 6px!important}
+}
+@media(min-width:1150px) and (max-width:1450px){
+ .summary{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"states search" "bulk bulk"!important}
+}
+@media(max-width:930px){
+ .course-panel:not(.editing) #course-panel-content{grid-template-columns:minmax(0,1fr)!important}
+ .course-panel:not(.editing) .cal-hero-top{grid-column:1!important;grid-row:1!important}
+ .course-panel:not(.editing) .course-panel-head{grid-column:1!important;grid-row:2!important;border-right:0!important}
+ .course-panel:not(.editing) .cal-kpi-section{grid-column:1!important;grid-row:3!important;border-top:1px solid var(--etop-edge)!important}
+ .course-panel:not(.editing) .cal-qa-section{grid-column:1!important;grid-row:4!important}
+ .cal-pbi-viewport{height:312px!important}
+ .calendar-workspace table{min-width:950px!important;table-layout:auto!important}
+}
+@media(max-width:620px){
+ .course-panel:not(.editing) .cal-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .course-panel:not(.editing) .cal-icon-links{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .summary{grid-template-columns:minmax(0,1fr)!important}
+ .search-row{flex-wrap:wrap!important;justify-content:flex-start!important}
+ .search-row #search{min-width:0!important;width:100%!important;flex:1 1 100%!important}
+ .kpis{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:100%!important}
+ .kpi{min-width:0!important}
+ .bulk-toolbar{flex-wrap:wrap!important}
+ .cal-pbi-viewport{height:302px!important}
+ .calendar-workspace table{min-width:950px!important}
 }
 
 </style>
@@ -810,7 +766,7 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
     }
 
     function calKpiUrl(nrc){
-      const u=new URL('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=actualSize');
+      const u=new URL('https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToPage');
       u.searchParams.set('filter',"NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '"+String(nrc||'').replace(/'/g,"''")+"'");
       return u.toString();
     }
@@ -833,7 +789,7 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
         '<div><small>'+esc(pair[0])+'</small><b title="'+esc(pair[1]||'—')+'">'+esc(pair[1]||'—')+'</b></div>'
       ).join('')+'</div>'+
        (String(x['nombre programa']||x.nombre_programa||x.programa||'').trim()?
-       '<div class="cal-program"><b>Programa: </b>'+esc(x['nombre programa']||x.nombre_programa||x.programa)+'</div>':''));
+       '<div class="cal-program" title="'+esc(x['nombre programa']||x.nombre_programa||x.programa)+'"><b>Programa: </b>'+esc(x['nombre programa']||x.nombre_programa||x.programa)+'</div>':''));
       // La identificación ocupa una única franja superior, independientemente
       // de la anchura de pantalla. Debajo solo aparecen los datos del curso.
       const top=document.createElement('div');
@@ -856,8 +812,22 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
       host.insertBefore(top,section);
       const heading=document.createElement('h3');
       heading.className='cal-data-heading';
-      heading.textContent='DATOS DEL NRC';
+      heading.textContent='Datos operativos';
       section.insertBefore(heading,section.firstChild);
+      const inicio=dateValue(x['fecha inicio']),termino=dateValue(x['fecha fin']);
+      const hoy=new Date();hoy.setHours(0,0,0,0);
+      if(inicio&&termino&&termino>=inicio){
+        const diasTotal=Math.round((termino-inicio)/86400000)+1;
+        const diasTranscurridos=Math.max(0,Math.min(diasTotal,Math.round((hoy-inicio)/86400000)+1));
+        const porcentaje=Math.round(diasTranscurridos/diasTotal*100);
+        const fase=hoy<inicio?'Por iniciar':hoy>termino?'Curso finalizado':'En impartición';
+        const p=document.createElement('div');
+        p.className='cal-progress';
+        p.innerHTML='<div class="cal-progress-labels"><span>'+fase+'</span><span>Avance temporal: '+porcentaje+'%</span></div>'+
+          '<div class="cal-progress-track"><div class="cal-progress-fill" style="width:'+porcentaje+'%"></div></div>'+
+          '<div class="cal-progress-dates"><span>Inicio: '+esc(fmtDate(x['fecha inicio']))+'</span><span>Término: '+esc(fmtDate(x['fecha fin']))+'</span></div>';
+        section.appendChild(p);
+      }
 
       const url=calKpiUrl(x.nrc);
       const kpi=document.createElement('section');
@@ -905,7 +875,7 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
       host.innerHTML=`
         <div class="course-panel-head">
           <div>
-            <div class="course-panel-kicker">Accesos y ficha del curso</div>
+            <div class="course-panel-kicker">Ficha del curso</div>
             <div class="course-panel-nrc">${esc(x.nrc||'—')}</div>
             <div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div>
             <div class="course-meta-grid">
@@ -963,12 +933,25 @@ body:not(.cal-full) th:nth-child(9){width:13%}body:not(.cal-full) th:nth-child(1
           accion.classList.add('cal-icon-only');
           accion.title=texto;
           accion.setAttribute('aria-label',texto);
-          accion.querySelector('span:not(.pa-icon)')?.remove();
+          const cortos={
+            'Editar curso en Power Apps':'Editar',
+            'Base de cursos del Intake':'Intake',
+            'Base Semáforo / estudiantes':'Estudiantes',
+            'Abrir curso en Canvas':'Canvas',
+            'Verificar integración Canvas':'Integración',
+            'Incidencias / QA2':'Incidencias',
+            'Formulario QA2':'Formulario QA2',
+            'Presentación Tutorial':'Presentación',
+            'Hub Comunicaciones':'Comunicaciones',
+            'Anuncio bienvenida curso':'Bienvenida'
+          };
+          const etiqueta=accion.querySelector('span:not(.pa-icon)');
+          if(etiqueta){etiqueta.textContent=cortos[texto]||texto;etiqueta.className='pa-short';}
           botones.appendChild(accion);
         }
         barra.appendChild(botones);
         accionesOriginales.remove();
-        host.insertBefore(barra,host.querySelector('.cal-qa-section'));
+        host.querySelector('.course-panel-head')?.appendChild(barra);
       }
       panel.classList.add('open');
     }
