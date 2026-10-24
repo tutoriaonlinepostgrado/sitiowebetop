@@ -1479,7 +1479,7 @@ const misReportes={
   CURSOS_PREPARACION:BASE+"cursos_preparacion.html?v=20261023-notebook",
   CURSOS_CIERRE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=ab4e8f37a94c688a5869&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
   FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
-  CALENDARIOS:BASE+"calendarios.html?v=20261023-ficha-compacta-v2",
+  CALENDARIOS:BASE+"calendarios.html?v=20261023-gemini-responsive-kpi-v5",
   CORREOS:"onboarding_correos.html",
   INVITACIONES:"onboarding_invitaciones.html",
   PRESENTACION:"presentacion_tutorial_innovado.html",
@@ -2636,7 +2636,7 @@ function onUniversalKeydown(e){
  else if(e.key==='Enter'){e.preventDefault();if(universalIdx>=0&&universalItems[universalIdx])ejecutarUniversalItem(universalItems[universalIdx]);else runUniversalSearch()}
  else if(e.key==='Escape'){document.getElementById('universalResults')?.classList.remove('open')}
 }
-function abrirFichaNRCUniversal(c){const nrc=String(c?.nrc||'').trim();if(!nrc)return;mostrarAreaGestion();vistaActual=null;document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';const visor=document.getElementById('visor');visor.style.display='block';visor.src=BASE+'calendarios.html?v=20261023-ficha-compacta-v2&embedded=1&nrc='+encodeURIComponent(nrc);document.getElementById('titulo-vista').textContent='Ficha NRC · '+nrc;activate(null)}
+function abrirFichaNRCUniversal(c){const nrc=String(c?.nrc||'').trim();if(!nrc)return;mostrarAreaGestion();vistaActual=null;document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';const visor=document.getElementById('visor');visor.style.display='block';visor.src=BASE+'calendarios.html?v=20261023-gemini-responsive-kpi-v5&embedded=1&nrc='+encodeURIComponent(nrc);document.getElementById('titulo-vista').textContent='Ficha NRC · '+nrc;activate(null)}
 function universalAbrirVista(clave,params){limpiarContextoUniversal();Object.assign(BUSQUEDA,params);if(params.nrc){nrcConfirmado=params.nrc;const input=document.getElementById('input-nrc');if(input)input.value=params.nrc}if(params.rut){const inp=document.getElementById('input-rut');if(inp)inp.value=params.rut}cargar(clave,findBtn(clave))}
 function universalAccion(x,accion){
  if(!x)return;document.getElementById('universalResults')?.classList.remove('open');
