@@ -79,107 +79,91 @@
   </style>
 
 <style>
-/* ===== Tabla preparación responsiva V2 · 20260924 ===== */
+/* ETOP · Cursos en preparación · Vista completa en notebook y escritorio.
+   Las 13 columnas permanecen visibles. No existe modo compacto. */
+.prep-workspace{width:calc(100% - 36px);max-width:100%;min-width:0}
+.prep-workspace .table-shell{
+  width:100%;max-width:100%;min-width:0;
+  overflow-y:auto;overflow-x:auto;scrollbar-width:thin
+}
+body.embedded .prep-workspace{width:100%;max-width:100%;min-width:0}
+body.embedded .prep-workspace .table-shell{width:100%;max-width:100%;overflow-y:auto;overflow-x:auto}
 
-/* Corrige el ancho acumulado de las 13 columnas (antes superaba 100%).
-   En modo embebido la tabla usa exactamente el ancho disponible del portal. */
-body.embedded .prep-workspace{
-  width:100%;
-  max-width:100%;
-  min-width:0;
+/* Reparto del 100 % entre las 13 columnas, en cualquier dispositivo. */
+.prep-workspace table{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  table-layout:fixed!important;border-collapse:separate;border-spacing:0
 }
-body.embedded .table-shell{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  overflow-y:auto;
-  overflow-x:hidden;
+.prep-workspace th,.prep-workspace td{
+  min-width:0!important;box-sizing:border-box;
+  overflow:hidden;text-overflow:ellipsis;
 }
-body.embedded table{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  table-layout:fixed!important;
+.prep-workspace th{font-size:9px;padding:8px 5px;letter-spacing:.015em}
+.prep-workspace td{font-size:10px;padding:7px 5px}
+.prep-workspace td .course{
+  max-width:none!important;white-space:normal!important;
+  overflow-wrap:anywhere;line-height:1.25
 }
-body.embedded th,
-body.embedded td{
-  min-width:0!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
+.prep-workspace td .intake-cell,
+.prep-workspace td.intake-cell,
+.prep-workspace .intake-cell .nrc-link{
+  max-width:100%!important;min-width:0!important;display:block;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
-body.embedded .course{
-  white-space:normal!important;
-  overflow-wrap:anywhere;
+.prep-workspace .edit-course{
+  max-width:100%;width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;padding:0 3px
 }
-body.embedded .intake-cell,
-body.embedded .intake-cell .nrc-link{
-  min-width:0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-body.embedded .edit-course{
-  max-width:100%;
-  padding-left:5px;
-  padding-right:5px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
+/* Conjunto proporcional: 3 + 20 + 16 + 6 + 6 + 6 + 9 + 5 + 5 + 6 + 5 + 5 + 8 = 100. */
+.prep-workspace th:nth-child(1){width:3%!important}
+.prep-workspace th:nth-child(2){width:20%!important}
+.prep-workspace th:nth-child(3){width:16%!important}
+.prep-workspace th:nth-child(4){width:6%!important}
+.prep-workspace th:nth-child(5){width:6%!important}
+.prep-workspace th:nth-child(6){width:6%!important}
+.prep-workspace th:nth-child(7){width:9%!important}
+.prep-workspace th:nth-child(8){width:5%!important}
+.prep-workspace th:nth-child(9){width:5%!important}
+.prep-workspace th:nth-child(10){width:6%!important}
+.prep-workspace th:nth-child(11){width:5%!important}
+.prep-workspace th:nth-child(12){width:5%!important}
+.prep-workspace th:nth-child(13){width:8%!important}
 
-/* 100% exacto */
-body.embedded th:nth-child(1),body.embedded td:nth-child(1){width:3%!important}
-body.embedded th:nth-child(2),body.embedded td:nth-child(2){width:20%!important}
-body.embedded th:nth-child(3),body.embedded td:nth-child(3){width:16%!important}
-body.embedded th:nth-child(4),body.embedded td:nth-child(4){width:6%!important}
-body.embedded th:nth-child(5),body.embedded td:nth-child(5){width:6%!important}
-body.embedded th:nth-child(6),body.embedded td:nth-child(6){width:6%!important}
-body.embedded th:nth-child(7),body.embedded td:nth-child(7){width:9%!important}
-body.embedded th:nth-child(8),body.embedded td:nth-child(8){width:5%!important}
-body.embedded th:nth-child(9),body.embedded td:nth-child(9){width:5%!important}
-body.embedded th:nth-child(10),body.embedded td:nth-child(10){width:6%!important}
-body.embedded th:nth-child(11),body.embedded td:nth-child(11){width:5%!important}
-body.embedded th:nth-child(12),body.embedded td:nth-child(12){width:5%!important}
-body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important}
-
-@media(max-width:1250px){
-  body.embedded th{font-size:6.8px!important;padding:6px 2px!important}
-  body.embedded td{font-size:7.7px!important;padding:5px 2px!important}
-  body.embedded .course{font-size:8px!important}
-  body.embedded .date{font-size:8px!important}
-  body.embedded .badge{font-size:7px!important;padding:2px 3px!important}
-  body.embedded .icon{width:21px!important;height:21px!important;font-size:10px!important}
-  body.embedded .edit-course{height:23px;font-size:7.5px}
+/* La columna de edición se mantiene visible, sin tapar las demás. */
+.prep-workspace th:last-child,.prep-workspace td:last-child{
+  position:sticky!important;right:0!important;z-index:2;
+  background:#edf3fa!important;box-shadow:-3px 0 7px rgba(30,56,82,.055)
 }
+.prep-workspace thead th:last-child{z-index:13!important}
+.prep-workspace tbody tr:nth-child(even) td:last-child{background:#f8fafc!important}
+.prep-workspace tbody tr:hover td:last-child{background:#e7eff7!important}
 
-/* ETOP 2026 · Cursos en Preparación adaptados a notebooks. */
-.prep-display-toolbar{display:flex;align-items:center;gap:9px;margin:0 18px 7px}
-.prep-display-mode{height:28px;border:1px solid #b9cde1;border-radius:7px;background:#f0f6fc;color:#305e86;font-size:10px;font-weight:800;padding:0 10px;cursor:pointer}
-.prep-display-toolbar span{font-size:9px;color:#718398}
-body.embedded .prep-display-toolbar{margin:0 0 7px}
-th:last-child,td:last-child{position:sticky!important;right:0!important;z-index:2;background:#edf3fa!important}
-thead th:last-child{z-index:13!important}tbody tr:nth-child(even) td:last-child{background:#f8fafc!important}
-tbody tr:hover td:last-child{background:#e7eff7!important}
+/* Notebook: todas las columnas, con tipografía aún legible. */
 @media(max-width:1400px){
-  .summary{gap:6px;padding:8px 10px!important;grid-template-columns:minmax(230px,1fr) repeat(3,minmax(80px,110px))}
-  .summary-card{padding:8px 10px}.summary-card h1{font-size:15px}.summary-card p{font-size:9px}.kpi strong{font-size:19px}
-  .table-shell{margin:0 10px 12px}
-  body:not(.prep-full) th:nth-child(3),body:not(.prep-full) td:nth-child(3),
-  body:not(.prep-full) th:nth-child(5),body:not(.prep-full) td:nth-child(5),
-  body:not(.prep-full) th:nth-child(11),body:not(.prep-full) td:nth-child(11),
-  body:not(.prep-full) th:nth-child(12),body:not(.prep-full) td:nth-child(12){display:none!important}
-  body:not(.prep-full) .table-shell{overflow:auto!important}
-  body:not(.prep-full) table{min-width:0!important;width:100%!important;table-layout:fixed!important}
-  body:not(.prep-full) th,body:not(.prep-full) td{overflow:hidden!important;text-overflow:ellipsis!important;padding:7px 5px!important}
-  body:not(.prep-full) th:nth-child(1){width:4%!important}body:not(.prep-full) th:nth-child(2){width:30%!important}
-  body:not(.prep-full) th:nth-child(4){width:12%!important}body:not(.prep-full) th:nth-child(6){width:12%!important}
-  body:not(.prep-full) th:nth-child(7){width:11%!important}body:not(.prep-full) th:nth-child(8){width:8%!important}
-  body:not(.prep-full) th:nth-child(9){width:7%!important}body:not(.prep-full) th:nth-child(10){width:7%!important}
-  body:not(.prep-full) th:nth-child(13){width:9%!important}
-  body:not(.prep-full) .edit-course{width:100%;min-width:0;padding:0 3px;font-size:8px;white-space:nowrap}
+ .summary{gap:6px;padding:8px 10px!important;
+   grid-template-columns:minmax(210px,1fr) repeat(3,minmax(80px,110px))}
+ .summary-card{padding:8px 10px}
+ .summary-card h1{font-size:15px}
+ .summary-card p{font-size:9px}
+ .kpi strong{font-size:19px}
+ .prep-workspace{width:calc(100% - 20px);margin:0 10px 12px}
+ body.embedded .prep-workspace{width:100%;margin:0 0 6px}
+ .prep-workspace th{font-size:8px!important;padding:7px 3px!important}
+ .prep-workspace td{font-size:9px!important;padding:6px 3px!important}
+ .prep-workspace .course{font-size:9px!important}
+ .prep-workspace .date{font-size:9px!important}
+ .prep-workspace .badge{padding:2px 3px!important;font-size:8px!important}
+ .prep-workspace .icon{width:23px!important;height:23px!important;font-size:11px!important}
+ .prep-workspace .edit-course{height:24px!important;font-size:8px!important}
 }
-@media(min-width:1401px){body.prep-compact th:nth-child(3),body.prep-compact td:nth-child(3),body.prep-compact th:nth-child(5),body.prep-compact td:nth-child(5),body.prep-compact th:nth-child(11),body.prep-compact td:nth-child(11),body.prep-compact th:nth-child(12),body.prep-compact td:nth-child(12){display:none!important}}
-@media(max-width:700px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-card:first-child{grid-column:1/-1}.prep-display-toolbar span{display:none}.table-shell th:last-child,.table-shell td:last-child{min-width:60px}}
-
+/* Anchos muy estrechos: no se oculta nada; scroll horizontal controlado
+   en lugar de convertir el contenido en texto microscópico. */
+@media(max-width:960px){
+ .prep-workspace table{min-width:1020px!important;max-width:none!important}
+ .prep-workspace td{font-size:9.5px!important}
+ .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .summary-card:first-child{grid-column:1/-1}
+}
 </style>
 
 </head>
@@ -213,7 +197,7 @@ tbody tr:hover td:last-child{background:#e7eff7!important}
     <button class="btn-qa2" id="openMultiple" type="button">Realizar QA2 seleccionados ↗</button>
   </section>
 
-  <div class="prep-display-toolbar"><button type="button" class="prep-display-mode" id="prep-display-mode" onclick="toggleVistaPreparacion()">Vista completa</button><span>En notebook se priorizan las columnas operativas. Editar curso siempre está visible.</span></div>
+  
   <div class="prep-workspace">
     <main class="table-shell">
       <table>
@@ -442,12 +426,6 @@ tbody tr:hover td:last-child{background:#e7eff7!important}
       document.getElementById('rows').innerHTML=`<tr><td colspan="13" class="empty">⚠️ ${esc(err.message)}</td></tr>`;
     });
   </script>
-<script>
-function vistaPreparacionCompacta(){return document.body.classList.contains('prep-compact')||(!document.body.classList.contains('prep-full')&&innerWidth<=1400)}
-function actualizarVistaPreparacion(){const b=document.getElementById('prep-display-mode');if(b)b.textContent=vistaPreparacionCompacta()?'Vista completa (13 columnas)':'Vista compacta (9 columnas)'}
-function toggleVistaPreparacion(){const c=!vistaPreparacionCompacta();document.body.classList.toggle('prep-compact',c);document.body.classList.toggle('prep-full',!c);actualizarVistaPreparacion()}
-window.addEventListener('resize',actualizarVistaPreparacion);
-document.addEventListener('DOMContentLoaded',actualizarVistaPreparacion);
-</script>
+
 </body>
 </html>
