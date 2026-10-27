@@ -427,6 +427,21 @@ a { text-decoration: none; }
 .is-unavailable{opacity:.45;pointer-events:none;cursor:not-allowed}
 @media(max-width:1040px){.stepper-pills{display:flex!important;max-width:100%;overflow-x:auto}.step-mini{flex:0 0 125px}.stepper-strip{flex-wrap:wrap}.topbar{height:auto;min-height:54px;padding:6px 12px}}
 @media(max-width:800px){.top-right{flex-wrap:wrap;justify-content:flex-end}#courseSearch{width:135px}.stepper-label{max-width:100%}.primary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.secondary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.support-grid{grid-template-columns:1fr}.tasks-row{grid-template-columns:1fr}}
+
+/* Comunicaciones contextuales por NRC */
+.comm-panel{margin-top:14px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:15px;color:#fff}
+.comm-panel[hidden]{display:none}
+.comm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.comm-head h3{font-size:13px;margin:0}.comm-head p{font-size:11px;color:#cbd5e1;margin:3px 0 0}
+.comm-head a{color:#fbbf24;font-size:11px;text-decoration:underline}
+.comm-stages{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.comm-stage{border:1px solid #66768a;border-radius:7px;padding:7px 10px;color:#f1f5f9;background:#243c58;font-size:11px}
+.comm-stage.selected{background:#f59e0b;border-color:#f59e0b;color:#091526;font-weight:800}
+.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px}
+.comm-link{display:flex;align-items:center;justify-content:space-between;gap:9px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;color:#0f172a;min-height:65px;text-decoration:none}
+.comm-link:hover{border-color:#f59e0b;box-shadow:0 0 0 1px #f59e0b}
+.comm-link b{display:block;font-size:11.5px}.comm-link small{display:block;color:#64748b;font-size:10px;margin-top:4px}
+.comm-hint{font-size:10px;color:#cbd5e1;margin:12px 0 0}
 </style>
 </head>
 <body>
@@ -543,6 +558,7 @@ a { text-decoration: none; }
     <!-- NIVEL 2: ACCESOS COMPLEMENTARIOS Y GESTIÓN DE DATOS -->
     <div class="secondary-tools-label">Herramientas complementarias y administración del NRC</div>
     <div class="secondary-tools-grid" id="secondaryToolsGrid"></div>
+    <section id="communicationPanel" class="comm-panel" hidden aria-label="Comunicaciones según etapa del NRC"></section>
   </section>
 
   <!-- 4. BLOQUES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPAS) -->
@@ -653,6 +669,61 @@ function renderStages(c){const actual=currStage(c),i=viewStep===null?actual:view
  $('stageTasks').innerHTML=stepInfo[i][3].map(x=>'<li class="task-item"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></li>').join('');
  $('resetStage').disabled=viewStep===null;
 }
+
+const COMM_CATALOG={
+ preparacion:[
+ ['Correo bienvenida masivo','com_correos_masivo.html','Correo', ['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']],
+ ['Invitación sincrónica masiva','com_invitaciones_masivo.html','Correo',['nombreTutor','correoTutor','nombreCurso','fechaInicio']],
+ ['Bienvenida a estudiante rezagado','correo_bienvenida.html','Correo',['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']],
+ ['Invitación sincrónica a rezagado','invitacion_sincronica.html','Correo',['nombreTutor','correoTutor','nombreCurso']],
+ ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']]],
+ induccion:[
+ ['Anuncio bienvenida inducción','anuncio_bienvenida_induccion.html','Anuncio',[]],
+ ['Anuncio lunes · Invitación sincrónica','anuncio_lunes_invitacion_sincronica.html','Anuncio',[]],
+ ['Anuncio martes · Zoom','anuncio_martes_zoom.html','Anuncio',[]],
+ ['Anuncio miércoles · Grabación','anuncio_miercoles_grabacion.html','Anuncio',[]],
+ ['Anuncio jueves · Gestiona tu caso','anuncio_jueves_gestiona.html','Anuncio',[]],
+ ['Anuncio cierre de inducción','anuncio_cierre_induccion.html','Anuncio',[]]],
+ imparticion:[
+ ['Anuncio bienvenida del curso','anuncio_bienvenida_curso_malla.html','Anuncio',['nombre_tutor','nombre_curso','fecha_inicio','fecha_fin']],
+ ['Anuncio autoinscripción a grupo','anuncio_auto_inscripcion_grupo.html','Anuncio',[]],
+ ['Mailing tutor a docente','mailing_tutor_docente.html','Correo',[]],
+ ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']],
+ ['Seguimiento tareas pendientes','mensaje_seguimiento_tareas.html','Seguimiento',['nrc','nombre_curso']],
+ ['Seguimiento sin ingreso','seguimiento_no_ingreso.html','Seguimiento',['nrc','nombre_curso']]],
+ cierre:[['Correo cierre de curso','enviar_correo_cierre.html','Correo',['nrc','nombre_curso','fecha_inicio','fecha_fin']]]
+};
+const COMM_LABELS={preparacion:'Preparación',induccion:'Inducción',imparticion:'Impartición',cierre:'Cierre'};
+let commOverride=null;
+function commStage(c){
+ if(norm(c['codigo curso'])==='UNI118')return 'induccion';
+ const st=status(c);
+ if(st==='PREPARACION'||st==='PREPARACIÓN')return 'preparacion';
+ if(st==='ACTIVO')return 'imparticion';
+ if(st==='EN CIERRE'||st==='CERRADO')return 'cierre';
+ const p=progress(c);
+ return !p||p.before?'preparacion':p.after?'cierre':'imparticion';
+}
+function commLink(item,c){
+ const starts=String(c['fecha inicio']||'').slice(0,10),ends=String(c['fecha fin']||'').slice(0,10);
+ const day=v=>v?new Date(v+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long'}):'';
+ const diff=starts&&ends?Math.max(1,Math.ceil((new Date(ends)-new Date(starts)+86400000)/604800000)):'';
+ const params={nrc:c.nrc||'',nombreTutor:c.tutor||'',correoTutor:c['correo tutor']||c.correoTutor||'',anexoTutor:c['anexo tutor']||c.anexoTutor||'',nombrePrograma:c['nombre programa']||c.programa||'',nombreCurso:title(c),fechaInicio:starts,fechaFin:ends,diaInicio:day(starts),diaFin:day(ends),duracion:diff,nombre_tutor:c.tutor||'',nombre_curso:title(c),fecha_inicio:fmt(c['fecha inicio']),fecha_fin:fmt(c['fecha fin'])};
+ const q=new URLSearchParams();
+ item[3].forEach(k=>{if(params[k]!==''&&params[k]!==null&&params[k]!==undefined)q.set(k,String(params[k]))});
+ return BASE+item[1]+(q.size?'?'+q.toString():'');
+}
+function renderCommunications(c){
+ const panel=$('communicationPanel');
+ panel.hidden=cat!=='comunicacion';
+ if(panel.hidden)return;
+ const recommended=commStage(c),selected=commOverride||recommended;
+ panel.innerHTML='<div class="comm-head"><div><h3>Comunicaciones · '+esc(COMM_LABELS[selected])+'</h3><p>Etapa recomendada: '+esc(COMM_LABELS[recommended])+' · NRC '+esc(c.nrc)+'</p></div><a href="'+esc(BASE+'comunicaciones_etop.html')+'" target="_blank" rel="noopener noreferrer">Ver catálogo completo</a></div>'
+ +'<div class="comm-stages">'+Object.keys(COMM_CATALOG).map(k=>'<button type="button" class="comm-stage '+(k===selected?'selected':'')+'" data-comm-stage="'+k+'" aria-pressed="'+(k===selected)+'">'+esc(COMM_LABELS[k])+(k===recommended?' · Recomendada':'')+'</button>').join('')+'</div>'
+ +'<div class="comm-grid">'+COMM_CATALOG[selected].map(item=>'<a class="comm-link" target="_blank" rel="noopener noreferrer" href="'+esc(commLink(item,c))+'"><span><b>'+esc(item[0])+'</b><small>'+esc(item[2])+'</small></span>'+icon('external')+'</a>').join('')+'</div>'
+ +'<p class="comm-hint">Las plantillas se abren para revisión. No se envían mensajes ni se publican anuncios automáticamente. Los campos que no existen en la ficha quedan sin completar.</p>';
+}
+
 function renderActions(c){
  const info=qa(c);
  const main=[
@@ -678,8 +749,8 @@ function renderHistory(c){const info=qa(c);$('qaHistoryHeading').textContent='Hi
  if(!courseQa.length){$('qaHistoryEntries').textContent='No hay registros QA2 para este NRC. No equivale a una revisión sin incidencias.';return}
  $('qaHistoryEntries').innerHTML=courseQa.map(x=>{const type=x.qaIncidencias??'Registro QA2',desc=x.descripcionIncidencia??x.descripcion??'',sol=x.solucionIncidencia??x.solucion??'',evidence=validUrl(x.evidenciaUrl??x.urlEvidencia??x.URL_EVIDENCIA);return '<article><strong>'+esc(type)+'</strong>'+(desc?'<p>'+esc(desc)+'</p>':'')+(sol?'<p>Gestión: '+esc(sol)+'</p>':'')+(evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Abrir evidencia ↗</a>':'')+'</article>'}).join('');
 }
-function render(c){current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
- renderTop(c);renderActions(c);renderStages(c);renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
+function render(c){if(!current||norm(current.nrc)!==norm(c.nrc))commOverride=null;current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
+ renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
  $('courseSearch').value=c.nrc;const here=new URL(location.href);here.searchParams.set('nrc',c.nrc);history.replaceState(null,'',here);setStatus('');
 }
 function find(v){const k=norm(v);return courses.find(c=>norm(c.nrc)===k)||courses.find(c=>norm(c.nrc).startsWith(k+'_'))||courses.find(c=>norm(c['codigo curso'])===k)||courses.find(c=>norm(title(c))===k)}
@@ -688,7 +759,8 @@ $('searchNrc').addEventListener('click',search);$('courseSearch').addEventListen
 $('prev').addEventListener('click',()=>{if(index>0){viewStep=null;render(cohort[index-1])}});
 $('next').addEventListener('click',()=>{if(index<cohort.length-1){viewStep=null;render(cohort[index+1])}});
 $('intakeTrack').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b){viewStep=null;render(cohort[+b.dataset.index])}});
-$('toolFilters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;cat=b.dataset.filter;document.querySelectorAll('.cat-filter').forEach(x=>x.classList.toggle('active',x.dataset.filter===cat));if(current)renderActions(current)});
+$('toolFilters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;cat=b.dataset.filter;document.querySelectorAll('.cat-filter').forEach(x=>x.classList.toggle('active',x.dataset.filter===cat));if(current){renderActions(current);renderCommunications(current)}});
+$('communicationPanel').addEventListener('click',e=>{const btn=e.target.closest('[data-comm-stage]');if(btn&&current){commOverride=btn.dataset.commStage;renderCommunications(current)}});
 $('stageTabs').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(b&&current){viewStep=+b.dataset.stage;renderStages(current)}});
 $('resetStage').addEventListener('click',()=>{viewStep=null;if(current)renderStages(current)});
 $('secondaryToolsGrid').addEventListener('click',e=>{const a=e.target.closest('a[href="#qaHistoryPanel"]');if(a){e.preventDefault();$('qaHistoryPanel').open=true;$('qaHistoryPanel').scrollIntoView({behavior:'smooth'})}});
