@@ -442,6 +442,21 @@ a { text-decoration: none; }
 .comm-link:hover{border-color:#f59e0b;box-shadow:0 0 0 1px #f59e0b}
 .comm-link b{display:block;font-size:11.5px}.comm-link small{display:block;color:#64748b;font-size:10px;margin-top:4px}
 .comm-hint{font-size:10px;color:#cbd5e1;margin:12px 0 0}
+
+/* Editor autenticado de fechas: SharePoint mantiene la fuente de verdad */
+.date-edit-trigger{font-size:10.5px;font-weight:700;color:#1d4ed8;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:4px 9px}
+.date-edit-trigger:disabled{opacity:.45}
+.date-editor{margin-top:10px;border-top:1px dashed #cbd5e1;padding-top:10px}
+.date-editor[hidden]{display:none}
+.date-editor-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+.date-editor label{font-size:10px;color:#475569;font-weight:700;display:grid;gap:4px}
+.date-editor input{width:100%;min-width:0;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;color:#0f172a}
+.date-editor-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.date-editor-open{background:#1d4ed8;color:#fff;border-radius:6px;padding:7px 11px;font-size:11px;font-weight:700}
+.date-editor-cancel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:7px 11px;font-size:11px}
+.date-editor-note{font-size:10px;color:#64748b;margin-top:8px;line-height:1.4}
+.date-editor-error{font-size:11px;color:#b91c1c;min-height:16px;margin-top:4px}
+@media(max-width:520px){.date-editor-fields{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -519,7 +534,7 @@ a { text-decoration: none; }
       <div class="hero-timeline-box">
         <div class="tl-head">
           <span id="progressStatus" class="tl-status"></span>
-          <span id="duration"></span>
+          <span id="duration"></span><button type="button" id="toggleDateEditor" class="date-edit-trigger" disabled>✏️ Editar fechas</button>
         </div>
         <div class="tl-bar"><div class="tl-fill" id="progressFill"></div></div>
         <div class="tl-foot">
@@ -527,38 +542,20 @@ a { text-decoration: none; }
           <strong id="progressPercent" style="color:var(--ink)"></strong>
           <span id="progressEnd"></span>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================
-       3. CENTRO DE HERRAMIENTAS PROTAGONISTA (EL CORAZÓN DE LA HOJA)
-       ======================================================================== -->
-  <section class="command-center" aria-label="Centro de Herramientas del Tutor">
-    <div class="command-header">
-      <div class="command-title-group">
-        <div class="command-icon-badge"><svg class="ic"><use href="#icon-zap"/></svg></div>
-        <div>
-          <h2>CENTRO DE HERRAMIENTAS DEL TUTOR</h2>
-          <p>Accesos directos sincronizados con el NRC seleccionado · Haz clic para lanzar</p>
+        <div class="date-editor" id="dateEditorPanel" hidden>
+          <div class="date-editor-fields">
+            <label>Fecha de inicio<input type="date" id="editStartDate"></label>
+            <label>Fecha de término<input type="date" id="editEndDate"></label>
+          </div>
+          <div class="date-editor-actions">
+            <button type="button" id="continueDateEdit" class="date-editor-open">Continuar en Power Apps ↗</button>
+            <button type="button" id="cancelDateEdit" class="date-editor-cancel">Cancelar</button>
+          </div>
+          <p id="dateEditError" class="date-editor-error" role="alert"></p>
+          <p class="date-editor-note">Las fechas introducidas aquí son una referencia visual. El cambio debe realizarse y guardarse en Power Apps con tu sesión institucional. La ficha mostrará las fechas oficiales cuando se actualice nrcs.json.</p>
         </div>
       </div>
-
-      <div class="command-filter-pills" id="toolFilters">
-        <button class="cat-filter active" data-filter="all">Todas (11)</button>
-        <button class="cat-filter" data-filter="seguimiento">Seguimiento Académico</button>
-        <button class="cat-filter" data-filter="gestion">Gestión y QA2</button>
-        <button class="cat-filter" data-filter="comunicacion">Comunicaciones</button>
-      </div>
     </div>
-
-    <!-- NIVEL 1: LAS 4 HERRAMIENTAS TRONCALES DEL DÍA A DÍA -->
-    <div class="primary-tools-grid" id="primaryToolsGrid"></div>
-
-    <!-- NIVEL 2: ACCESOS COMPLEMENTARIOS Y GESTIÓN DE DATOS -->
-    <div class="secondary-tools-label">Herramientas complementarias y administración del NRC</div>
-    <div class="secondary-tools-grid" id="secondaryToolsGrid"></div>
-    <section id="communicationPanel" class="comm-panel" hidden aria-label="Comunicaciones según etapa del NRC"></section>
   </section>
 
   <!-- 4. BLOQUES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPAS) -->
@@ -592,6 +589,36 @@ a { text-decoration: none; }
     </section>
 
   </div>
+  <!-- ========================================================================
+       3. CENTRO DE HERRAMIENTAS PROTAGONISTA (EL CORAZÓN DE LA HOJA)
+       ======================================================================== -->
+  <section class="command-center" aria-label="Centro de Herramientas del Tutor">
+    <div class="command-header">
+      <div class="command-title-group">
+        <div class="command-icon-badge"><svg class="ic"><use href="#icon-zap"/></svg></div>
+        <div>
+          <h2>CENTRO DE HERRAMIENTAS DEL TUTOR</h2>
+          <p>Accesos directos sincronizados con el NRC seleccionado · Haz clic para lanzar</p>
+        </div>
+      </div>
+
+      <div class="command-filter-pills" id="toolFilters">
+        <button class="cat-filter active" data-filter="all">Todas (11)</button>
+        <button class="cat-filter" data-filter="seguimiento">Seguimiento Académico</button>
+        <button class="cat-filter" data-filter="gestion">Gestión y QA2</button>
+        <button class="cat-filter" data-filter="comunicacion">Comunicaciones</button>
+      </div>
+    </div>
+
+    <!-- NIVEL 1: LAS 4 HERRAMIENTAS TRONCALES DEL DÍA A DÍA -->
+    <div class="primary-tools-grid" id="primaryToolsGrid"></div>
+
+    <!-- NIVEL 2: ACCESOS COMPLEMENTARIOS Y GESTIÓN DE DATOS -->
+    <div class="secondary-tools-label">Herramientas complementarias y administración del NRC</div>
+    <div class="secondary-tools-grid" id="secondaryToolsGrid"></div>
+    <section id="communicationPanel" class="comm-panel" hidden aria-label="Comunicaciones según etapa del NRC"></section>
+  </section>
+
   <details class="qa-history" id="qaHistoryPanel"><summary id="qaHistoryHeading">Historial QA2 e incidencias · Ver detalles</summary><div id="qaHistoryEntries" class="qa-entries">Selecciona un NRC.</div><a id="qaHistoryExternal" target="_blank" rel="noopener">Consultar incidencias en ETOP ↗</a></details>
   <p class="data-foot">Datos institucionales ETOP · Las etapas son orientaciones temporales, no tareas acreditadas.</p>
 </main>
@@ -749,8 +776,8 @@ function renderHistory(c){const info=qa(c);$('qaHistoryHeading').textContent='Hi
  if(!courseQa.length){$('qaHistoryEntries').textContent='No hay registros QA2 para este NRC. No equivale a una revisión sin incidencias.';return}
  $('qaHistoryEntries').innerHTML=courseQa.map(x=>{const type=x.qaIncidencias??'Registro QA2',desc=x.descripcionIncidencia??x.descripcion??'',sol=x.solucionIncidencia??x.solucion??'',evidence=validUrl(x.evidenciaUrl??x.urlEvidencia??x.URL_EVIDENCIA);return '<article><strong>'+esc(type)+'</strong>'+(desc?'<p>'+esc(desc)+'</p>':'')+(sol?'<p>Gestión: '+esc(sol)+'</p>':'')+(evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Abrir evidencia ↗</a>':'')+'</article>'}).join('');
 }
-function render(c){if(!current||norm(current.nrc)!==norm(c.nrc))commOverride=null;current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
- renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
+function render(c){if(!current||norm(current.nrc)!==norm(c.nrc)){commOverride=null;closeDateEditor()}current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
+ renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);$('toggleDateEditor').disabled=!c.id;renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
  $('courseSearch').value=c.nrc;const here=new URL(location.href);here.searchParams.set('nrc',c.nrc);history.replaceState(null,'',here);setStatus('');
 }
 function find(v){const k=norm(v);return courses.find(c=>norm(c.nrc)===k)||courses.find(c=>norm(c.nrc).startsWith(k+'_'))||courses.find(c=>norm(c['codigo curso'])===k)||courses.find(c=>norm(title(c))===k)}
@@ -764,6 +791,27 @@ $('communicationPanel').addEventListener('click',e=>{const btn=e.target.closest(
 $('stageTabs').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(b&&current){viewStep=+b.dataset.stage;renderStages(current)}});
 $('resetStage').addEventListener('click',()=>{viewStep=null;if(current)renderStages(current)});
 $('secondaryToolsGrid').addEventListener('click',e=>{const a=e.target.closest('a[href="#qaHistoryPanel"]');if(a){e.preventDefault();$('qaHistoryPanel').open=true;$('qaHistoryPanel').scrollIntoView({behavior:'smooth'})}});
+
+function closeDateEditor(){$('dateEditorPanel').hidden=true;$('dateEditError').textContent=''}
+$('toggleDateEditor').addEventListener('click',()=>{
+ if(!current||!current.id)return;
+ const p=$('dateEditorPanel');p.hidden=!p.hidden;
+ if(!p.hidden){$('editStartDate').value=String(current['fecha inicio']||'').slice(0,10);$('editEndDate').value=String(current['fecha fin']||'').slice(0,10);$('dateEditError').textContent=''}
+});
+$('cancelDateEdit').addEventListener('click',closeDateEditor);
+$('continueDateEdit').addEventListener('click',()=>{
+ if(!current||!current.id)return;
+ const a=$('editStartDate').value,b=$('editEndDate').value;
+ if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(a)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(b)||b<a){
+ $('dateEditError').textContent='Ingresa fechas válidas. El término no puede ser anterior al inicio.';return;
+ }
+ const url=urlApps(current);
+ if(!url){$('dateEditError').textContent='El NRC no tiene ID de SharePoint para abrir el editor.';return}
+ // No se envían fechas a un endpoint público ni se confirma guardado sin respuesta autenticada.
+ $('dateEditError').textContent='Confirma las fechas en Power Apps. Esta pantalla no ha modificado SharePoint.';
+ window.open(url,'_blank','noopener,noreferrer');
+});
+
 async function load(){setStatus('Cargando cursos, incidencias y métricas…');try{
  const stamp='?t='+Date.now(),r=await Promise.all([fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})]);
  if(!r[0].ok)throw Error('No se pudo cargar nrcs.json');
