@@ -372,7 +372,7 @@ body.embedded th:nth-child(13),body.embedded td:nth-child(13){width:8%!important
       body.innerHTML=list.map(x=>{
         const inc=byCourse.get(String(x.id))||[];
         const canvasReg=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url);
-        const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??'';
+        const canvasRaw=x.URL_CANVAS||x.url_canvas||x['url canvas']||canvasReg?.urlCanvas||canvasReg?.URL_QA2_FI_Url||'';
         const canvas=typeof canvasRaw==='object'
           ? String(canvasRaw.Url??canvasRaw.url??canvasRaw.Value??canvasRaw.value??'').trim()
           : String(canvasRaw??'').trim();
