@@ -858,7 +858,7 @@ let commStepOverride = null;
 let editingAction = null;
 
 const stateOf = c => now < startDay(c.start) ? 'PREPARACION' : now > endDay(c.end) ? 'CERRADO' : 'ACTIVO';
-const currentStep = c => c.code === 'UNI118' ? 1 : now < startDay(c.start) ? 0 : now < endDay(c.end) ? 2 : 3;
+const currentStep = c => now < startDay(c.start) ? 0 : now > endDay(c.end) ? 3 : c.code === 'UNI118' ? 1 : 2;
 const progress = c => Math.min(100, Math.max(0, Math.round(((now - startDay(c.start)) / (endDay(c.end) - startDay(c.start))) * 100)));
 
 function switchScreen(screenName, scroll = false) {
