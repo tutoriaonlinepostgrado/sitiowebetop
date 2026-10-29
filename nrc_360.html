@@ -718,6 +718,7 @@ const ACCESS = {
   'Cotejo Integración': {url: '', context: true},
   'Informe Power BI': {url: '', context: false},
   'Editar NRC': {url: '', context: false},
+  'Editar ficha Inducción': {url: '', context: false},
   'Historial QA2': {url: PORTAL+'incidencias.html', context: true},
   'Cursos del Intake': {url: PORTAL+'calendarios.html', context: true},
   'Presentación': {url: '', context: false},
@@ -906,7 +907,7 @@ function openTool(name) {
 
   if (!ACCESS[name]) return;
   const dest = urlFor(name, courses[activeIndex]);
-  if (!dest) { if(name==='Abrir Aula Canvas'){alert('No hay URL de Canvas registrada para este NRC. Revisa el QA2 o la ficha del curso.');return;} editLink(name); return; }
+  if (!dest) { if(name==='Editar ficha Inducción'){alert('No se encontró un ID de SharePoint válido para este curso de Inducción.');return;} if(name==='Abrir Aula Canvas'){alert('No hay URL de Canvas registrada para este NRC. Revisa el QA2 o la ficha del curso.');return;} editLink(name); return; }
   const opened = window.open(dest, '_blank');
   if (opened) opened.opener = null;
 }
