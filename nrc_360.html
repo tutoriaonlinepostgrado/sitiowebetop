@@ -499,6 +499,7 @@ a { text-decoration: none; }
 }
 .qa-status-list{display:grid;gap:9px}.qa-status-row{display:flex;align-items:flex-start;gap:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px}.qa-number{background:#fee2e2;color:#b91c1c;border-radius:50%;width:25px;height:25px;text-align:center;line-height:25px;flex:none;font-weight:800}.qa-detail{flex:1;min-width:0}.qa-detail strong{font-size:12px}.qa-detail p{font-size:12px;color:#475569;margin:4px 0}.qa-detail small{font-size:10px;color:#64748b}.qa-state{font-size:11px;font-weight:700;background:#e2e8f0;border-radius:99px;padding:4px 9px}.qa-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.qa-empty{padding:14px;background:#f8fafc;border-radius:8px}
 .tl-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.tl-header .btn-link-subtle{justify-self:end}.tl-percent{font-size:13px;font-weight:800;color:#0f172a}.embedded-timeline-app{margin-top:4px;padding-top:2px}
+.intake-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:10px}.intake-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px;text-align:left}.intake-table th{background:#f1f5f9;color:#475569;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;padding:11px 12px;white-space:nowrap}.intake-table td{padding:10px 12px;border-top:1px solid #e2e8f0;vertical-align:middle}.intake-table tbody tr:hover{background:#f8fafc}.intake-table tbody tr.selected{background:#eff6ff}.intake-nrc{font-family:var(--font-mono);font-weight:700;white-space:nowrap}.intake-table td:nth-child(3){min-width:200px}.intake-table td:nth-child(4),.intake-table td:nth-child(5){white-space:nowrap}
 </style>
 </head>
 <body>
@@ -688,7 +689,7 @@ a { text-decoration: none; }
             <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
           </div>
         </div>
-        <div class="intake-cards-grid" id="intakeScreenGrid"></div>
+        <div class="intake-table-wrap" id="intakeScreenGrid"></div>
       </div>
 
       <!-- VISTA 3: COMUNICACIONES -->
@@ -726,7 +727,7 @@ a { text-decoration: none; }
 'use strict';
 const PORTAL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
 const ACCESS = {
-  'Panel de Estudiantes': {url: PORTAL+'gestion.html', context: true},
+  'Panel de Estudiantes': {url: '', context: true},
   'Abrir Aula Canvas': {url: '', context: false},
   'Gestión y Formulario QA2': {url: PORTAL+'cursos_preparacion.html', context: true},
   'Hub de Comunicaciones': {url: PORTAL+'centro_herramientas_etop.html', context: true},
@@ -873,8 +874,18 @@ function switchScreen(screenName, scroll = false) {
   if (scroll) $('dynamicConsoleSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+function studentsUrl(nrc){
+ const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
+ u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');
+ u.searchParams.set('FilterValue1',String(nrc||''));
+ u.searchParams.set('FilterType1','Text');
+ u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+ u.searchParams.set('env','Embedded');
+ return u.href;
+}
 const courseContext = c => ({nrc:c.nrc, code:c.code, intake:c.intake});
 const urlFor = (name, c) => {
+  if(name==='Panel de Estudiantes')return studentsUrl(c.nrc);
   const raw = name==='Editar NRC' && c.id ? 'https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ids='+encodeURIComponent(c.id) : (Object.prototype.hasOwnProperty.call(savedLinks,name) ? savedLinks[name] : ACCESS[name]?.url);
   if (!raw) return '';
   const data = courseContext(c);
@@ -956,7 +967,7 @@ function renderTools(c) {
   ];
 
   const secondaryTools = [
-    { title: 'Cursos del Intake', sub: 'Ver los 6 cursos', icon: 'book', cat: 'gestion', isScreen: true },
+    { title: 'Cursos del Intake', sub: 'Ver tabla del intake', icon: 'book', cat: 'gestion', isScreen: true },
     { title: 'Historial QA2', sub: 'Detalle QA2 aquí', icon: 'alert', cat: 'gestion', isScreen: true },
     { title: 'Cotejo Integración', sub: 'Banner vs Canvas', icon: 'link', cat: 'seguimiento' },
     { title: 'Informe Power BI', sub: 'Reporte oficial V5', icon: 'chart', cat: 'seguimiento' },
@@ -998,22 +1009,17 @@ function renderTools(c) {
 }
 
 function renderIntakeScreen() {
-  $('intakeScreenGrid').innerHTML = courses.map((x, i) => {
-    const st = stateOf(x);
-    return `
-      <button type="button" class="intake-item-card ${i === activeIndex ? 'active-nrc' : ''}" data-select-course="${i}">
-        <div class="iic-head">
-          <span class="iic-code">PASO ${i + 1} · ${esc(x.code)}</span>
-          <span class="state-pill ${st}">${st === 'PREPARACION' ? 'PREPARACIÓN' : st}</span>
-        </div>
-        <div class="iic-title">${esc(x.name)}</div>
-        <div class="iic-foot">
-          <span>📅 ${dateStr(x.start)} al ${dateStr(x.end)}</span>
-          <strong>${esc(x.tutor)}</strong>
-        </div>
-      </button>
-    `;
-  }).join('');
+ $('intakeScreenGrid').innerHTML = `<table class="intake-table"><thead><tr>
+ <th>N°</th><th>NRC</th><th>Curso</th><th>Inicio</th><th>Término</th><th>Estado</th><th>Tutor/a</th><th></th>
+ </tr></thead><tbody>${courses.map((x,i)=>{const st=stateOf(x);return `
+ <tr class="${i===activeIndex?'selected':''}">
+ <td>${i+1}</td><td><span class="intake-nrc">${esc(x.nrc)}</span></td>
+ <td><strong>${esc(x.name)}</strong></td>
+ <td>${x.start?dateStr(x.start):'—'}</td><td>${x.end?dateStr(x.end):'—'}</td>
+ <td><span class="state-pill ${st}">${st==='PREPARACION'?'PREPARACIÓN':st}</span></td>
+ <td>${esc(x.tutor||'—')}</td>
+ <td><button type="button" class="btn-pill-soft" data-select-course="${i}">${i===activeIndex?'Actual':'Ver ficha'}</button></td>
+ </tr>`}).join('')}</tbody></table>`;
 }
 
 function renderCommunicationsScreen(c) {
