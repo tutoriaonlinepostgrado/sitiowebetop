@@ -1072,25 +1072,7 @@ function renderQaScreen(c) {
     </div>`;
 }
 
-function renderStages(c) {
-  const current = currentStep(c);
-  const choice = viewStep === null ? current : viewStep;
-  $('stageTabs').innerHTML = steps.map((s, i) => `
-    <button class="stage-chip-btn ${i === current ? 'current' : ''} ${i === choice && viewStep !== null ? 'viewing' : ''}" data-stage="${i}">
-      ${i + 1}. ${esc(s.short)}
-    </button>
-  `).join('');
-  const st = steps[choice];
-  $('stageBadgeLabel').textContent = choice === current ? 'ETAPA ACTUAL' : 'CONSULTANDO ETAPA';
-  $('stageName').textContent = st.title;
-  $('stageDescription').textContent = '· ' + st.desc;
-  $('stageTasks').innerHTML = st.tasks.map(([t, d], idx) => `
-    <li class="focus-task">
-      <span class="task-num">${idx + 1}</span>
-      <div><b>${esc(t)}</b><span>${esc(d)}</span></div>
-    </li>
-  `).join('');
-}
+function renderStages(c) { /* Sección Etapa actual retirada de la interfaz */ }
 
 function renderKpi(c) {
   const kpis = [
