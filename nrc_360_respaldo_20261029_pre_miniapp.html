@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ETOP · Ficha NRC 2.0 · Centro de Operaciones</title>
+<style>
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --surface-subtle: #f8fafc;
+  --navy-950: #091526;
+  --navy-900: #0f233f;
+  --navy-800: #1a365d;
+  --ink: #0f172a;
+  --ink-secondary: #475569;
+  --ink-muted: #64748b;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --brand: #1d4ed8;
+  --brand-soft: #eff6ff;
+  --brand-border: #bfdbfe;
+  --gold-accent: #f59e0b;
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, a { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+button:disabled { cursor: not-allowed; opacity: 0.4; }
+a { text-decoration: none; }
+
+.ic {
+  width: 16px; height: 16px; flex: 0 0 16px;
+  stroke: currentColor; stroke-width: 1.85;
+  stroke-linecap: round; stroke-linejoin: round; fill: none;
+}
+
+/* 1. TOPBAR */
+.topbar {
+  height: 52px;
+  background: var(--navy-950);
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 max(18px, calc((100vw - 1500px) / 2));
+  border-bottom: 2px solid var(--gold-accent);
+  position: sticky; top: 0; z-index: 40;
+}
+.brand-group { display: flex; align-items: center; gap: 11px; }
+.brand-logo {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #091526; font-weight: 900; font-size: 12px;
+  display: grid; place-items: center;
+}
+.brand-title b { display: block; font-size: 12.5px; letter-spacing: 0.02em; color: #f8fafc; }
+.brand-title small { display: block; font-size: 10px; color: #94a3b8; }
+
+.top-right { display: flex; align-items: center; gap: 10px; }
+.btn-top {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f8fafc; padding: 5px 11px; border-radius: var(--radius-sm);
+  font-size: 11px; font-weight: 600;
+}
+.btn-top:hover { background: rgba(255, 255, 255, 0.16); }
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  max-width: 1500px; margin: 0 auto;
+  padding: 12px 18px 36px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* 2. CABECERA COMPACTA INTEGRADA (STEPPER + IDENTIDAD DEL CURSO) */
+.header-deck {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.stepper-strip {
+  background: var(--surface-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.stepper-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; color: var(--ink-secondary);
+  white-space: nowrap;
+}
+.stepper-pills {
+  display: flex; align-items: center; gap: 6px; flex: 1; max-width: 920px;
+}
+.step-mini {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 8px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-size: 10.5px; text-align: left; transition: all 0.15s;
+}
+.step-mini:hover { border-color: #93c5fd; }
+.step-mini.done { border-left: 3px solid var(--success); }
+.step-mini.selected {
+  background: var(--brand-soft); border-color: var(--brand);
+  font-weight: 700; color: var(--brand);
+}
+.step-mini-code { font-family: var(--font-mono); font-weight: 800; font-size: 10px; }
+.step-mini-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-secondary); }
+.step-mini.selected .step-mini-name { color: var(--brand); }
+
+.stepper-arrows { display: flex; align-items: center; gap: 4px; }
+.btn-nav-sm {
+  height: 26px; padding: 0 8px; border-radius: 5px;
+  border: 1px solid var(--border); background: #fff;
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 600; color: var(--ink-secondary);
+}
+.btn-nav-sm:hover:not(:disabled) { background: var(--brand-soft); color: var(--brand); }
+
+/* Fila Identidad + Progreso dentro del Header Deck */
+.hero-row {
+  padding: 14px 18px;
+  display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: center;
+}
+.hero-identity { min-width: 0; }
+.badges-inline { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
+.nrc-badge {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 800;
+  background: var(--navy-900); color: #fff; padding: 3px 8px; border-radius: 5px;
+}
+.state-pill {
+  padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 800;
+}
+.state-pill.ACTIVO { background: var(--success-bg); color: var(--success); border: 1px solid #a7f3d0; }
+.state-pill.PREPARACION { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.state-pill.CERRADO { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; }
+
+.course-main-title {
+  font-size: 19px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px;
+}
+.meta-inline-list {
+  display: flex; flex-wrap: wrap; gap: 14px; font-size: 11.5px; color: var(--ink-secondary);
+}
+.meta-inline-list span b { color: var(--ink); font-weight: 700; }
+
+.hero-timeline-box {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+.tl-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 700; }
+.tl-status { color: var(--brand); font-weight: 800; }
+.tl-bar { height: 7px; background: #e2e8f0; border-radius: 999px; margin: 7px 0; overflow: hidden; }
+.tl-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #1d4ed8); border-radius: 999px; transition: width 0.3s; }
+.tl-foot { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-muted); }
+
+/* ==========================================================================
+   3. CENTRO DE HERRAMIENTAS PROTAGONISTA ("COMMAND DOCK")
+   ========================================================================== */
+.command-center {
+  background: linear-gradient(180deg, #0f233f 0%, #091526 100%);
+  border: 1px solid #1e3a5f;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+.command-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
+}
+.command-title-group { display: flex; align-items: center; gap: 10px; }
+.command-icon-badge {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fbbf24; display: grid; place-items: center;
+}
+.command-title-group h2 {
+  font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.01em;
+}
+.command-title-group p { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+
+.command-filter-pills { display: flex; gap: 6px; }
+.cat-filter {
+  padding: 5px 11px; border-radius: 999px; font-size: 11px; font-weight: 700;
+  color: #cbd5e1; background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12); transition: all 0.15s;
+}
+.cat-filter:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.cat-filter.active {
+  background: var(--gold-accent); color: #091526; border-color: var(--gold-accent);
+}
+
+/* NIVEL 1: 4 HERRAMIENTAS ESENCIALES (TARJETAS HERO DE ACCIÓN) */
+.primary-tools-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px; margin-bottom: 12px;
+}
+.hero-tool-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.97);
+  color: var(--ink);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 98px;
+  transition: all 0.16s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.hero-tool-card:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: var(--gold-accent);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+.hero-tool-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  margin-bottom: 8px;
+}
+.hero-tool-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: grid; place-items: center; flex: 0 0 38px;
+}
+.hero-tool-icon .ic { width: 20px; height: 20px; }
+
+/* Colores por dominio para las 4 principales */
+.hero-tool-card.t-blue .hero-tool-icon { background: #dbeafe; color: #1d4ed8; }
+.hero-tool-card.t-emerald .hero-tool-icon { background: #d1fae5; color: #047857; }
+.hero-tool-card.t-amber .hero-tool-icon { background: #fef3c7; color: #b45309; }
+.hero-tool-card.t-purple .hero-tool-icon { background: #ede9fe; color: #6d28d9; }
+
+.tool-live-badge {
+  font-size: 9.5px; font-weight: 800; padding: 2px 7px;
+  border-radius: 999px; background: var(--surface-subtle);
+  border: 1px solid var(--border); color: var(--ink-secondary);
+}
+.tool-live-badge.recommended {
+  background: #fef3c7; border-color: #fde68a; color: #92400e;
+}
+.tool-live-badge.alert {
+  background: var(--danger-bg); border-color: #fecaca; color: var(--danger);
+}
+
+.hero-tool-title {
+  font-size: 13.5px; font-weight: 800; color: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hero-tool-desc { font-size: 11px; color: var(--ink-secondary); margin-top: 2px; }
+
+/* NIVEL 2: HERRAMIENTAS SECUNDARIAS Y UTILIDADES (DOCK DE ACCESO RÁPIDO) */
+.secondary-tools-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.secondary-tools-label::after {
+  content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.12);
+}
+.secondary-tools-grid {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px;
+}
+.sec-tool-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+  padding: 9px 10px;
+  color: #f8fafc;
+  text-align: left;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.15s;
+  min-width: 0;
+}
+.sec-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.38);
+  transform: translateY(-1px);
+}
+.sec-tool-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1); color: #93c5fd;
+  display: grid; place-items: center; flex: 0 0 28px;
+}
+.sec-tool-copy { min-width: 0; flex: 1; }
+.sec-tool-copy b {
+  display: block; font-size: 11px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sec-tool-copy small {
+  display: block; font-size: 9.5px; color: #cbd5e1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hidden-by-filter { display: none !important; }
+
+/* ==========================================================================
+   4. PANELES INFERIORES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPA + QA2)
+   ========================================================================== */
+.support-grid {
+  display: grid; grid-template-columns: 1.35fr 1fr; gap: 12px; align-items: start;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-header {
+  padding: 11px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-size: 12.5px; font-weight: 800; color: var(--ink);
+  display: flex; align-items: center; gap: 7px;
+}
+.card-title .ic { color: var(--brand); }
+.card-body { padding: 14px 16px; }
+
+/* Planner de Hitos */
+.stage-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+.stage-tab {
+  padding: 7px 9px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface-subtle);
+  text-align: left;
+}
+.stage-tab strong { display: block; font-size: 11px; color: var(--ink); }
+.stage-tab small { font-size: 9.5px; color: var(--ink-muted); }
+.stage-tab.current { background: var(--brand-soft); border-color: var(--brand); }
+.stage-tab.current strong { color: var(--brand); }
+.stage-tab.viewing { outline: 2px solid var(--gold-accent); outline-offset: -2px; }
+
+.tasks-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; list-style: none; }
+.task-item {
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface-subtle);
+}
+.task-item b { display: block; font-size: 11px; color: var(--ink); margin-bottom: 3px; }
+.task-item span { font-size: 10.5px; color: var(--ink-secondary); line-height: 1.35; display: block; }
+
+/* KPI & Semáforo */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 12px; }
+.kpi-mini {
+  padding: 8px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface-subtle);
+}
+.kpi-mini.alert { background: var(--danger-bg); border-color: #fecaca; }
+.kpi-mini strong { display: block; font-size: 19px; font-weight: 800; font-family: var(--font-mono); line-height: 1.1; }
+.kpi-mini.alert strong { color: var(--danger); }
+.kpi-mini span { font-size: 10px; color: var(--ink-secondary); font-weight: 600; }
+
+.sem-stacked {
+  height: 8px; border-radius: 999px; background: var(--border);
+  display: flex; overflow: hidden; gap: 2px; margin-bottom: 10px;
+}
+.sem-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sem-pill {
+  padding: 6px 8px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); display: flex; align-items: center; gap: 7px;
+}
+.sem-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 9px; }
+
+/* Modal */
+.modal {
+  position: fixed; inset: 0; background: rgba(9, 21, 38, 0.55);
+  backdrop-filter: blur(2px); z-index: 100; display: none; place-items: center; padding: 18px;
+}
+.modal.show { display: grid; }
+.modal-box {
+  background: #fff; border-radius: var(--radius-lg); padding: 22px;
+  max-width: 440px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+.btn-primary {
+  background: var(--brand); color: #fff; font-weight: 700;
+  padding: 8px 16px; border-radius: var(--radius-sm); font-size: 12px;
+}
+
+/* Responsividad para 13" y pantallas menores */
+@media (max-width: 1320px) {
+  .secondary-tools-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 1040px) {
+  .hero-row, .support-grid { grid-template-columns: 1fr; }
+  .primary-tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .secondary-tools-grid { grid-template-columns: repeat(3, 1fr); }
+  .stepper-pills { display: none; }
+}
+
+/* Integraciones reales ETOP: se respeta el diseño Gemini. */
+#courseSearch{min-width:120px;width:clamp(135px,14vw,230px);height:30px;padding:0 9px;border:1px solid #94a3b8;border-radius:6px;color:#143257;background:#fff;font-size:11px}
+#searchNrc{height:30px}.stepper-pills{min-width:0;max-width:none;overflow-x:auto;scrollbar-width:thin}.step-mini{min-width:112px;flex:0 0 135px}
+.stepper-label{min-width:0;max-width:33%;overflow:hidden;text-overflow:ellipsis}.stepper-label span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.powerbi-holder{height:clamp(300px,36vh,390px);border-radius:8px;border:1px solid var(--border);background:white;overflow:hidden}
+.powerbi-holder iframe{width:100%;height:100%;border:0;display:block}.kpi-help{font-size:10px;color:#64748b;padding-top:7px}.kpi-help a{color:#1d4ed8;font-weight:700}
+.qa-history{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}.qa-history>summary{padding:12px 16px;font-weight:800;color:#274b72;cursor:pointer}
+.qa-entries{max-height:330px;overflow:auto;padding:12px;border-top:1px solid var(--border)}.qa-entries article{padding:10px;margin-bottom:7px;border:1px solid var(--border);border-radius:7px;background:#f8fafc}.qa-entries p{font-size:11px;margin-top:5px;white-space:pre-wrap}.qa-entries a{display:inline-block;margin-top:5px;color:#1d4ed8;font-size:11px}
+#qaHistoryExternal{display:block;border-top:1px solid var(--border);padding:8px 14px;color:#1d4ed8;font-weight:700;font-size:10px}
+.data-foot{font-size:10px;color:#64748b}.load-status{background:#eff6ff;color:#31577a;padding:7px 14px;font-size:11px;border-radius:7px}.load-status.error{background:#fff1f2;color:#b91c1c}
+.is-unavailable{opacity:.45;pointer-events:none;cursor:not-allowed}
+@media(max-width:1040px){.stepper-pills{display:flex!important;max-width:100%;overflow-x:auto}.step-mini{flex:0 0 125px}.stepper-strip{flex-wrap:wrap}.topbar{height:auto;min-height:54px;padding:6px 12px}}
+@media(max-width:800px){.top-right{flex-wrap:wrap;justify-content:flex-end}#courseSearch{width:135px}.stepper-label{max-width:100%}.primary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.secondary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.support-grid{grid-template-columns:1fr}.tasks-row{grid-template-columns:1fr}}
+
+/* Comunicaciones contextuales por NRC */
+.comm-panel{margin-top:14px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:15px;color:#fff}
+.comm-panel[hidden]{display:none}
+.comm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.comm-head h3{font-size:13px;margin:0}.comm-head p{font-size:11px;color:#cbd5e1;margin:3px 0 0}
+.comm-head a{color:#fbbf24;font-size:11px;text-decoration:underline}
+.comm-stages{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.comm-stage{border:1px solid #66768a;border-radius:7px;padding:7px 10px;color:#f1f5f9;background:#243c58;font-size:11px}
+.comm-stage.selected{background:#f59e0b;border-color:#f59e0b;color:#091526;font-weight:800}
+.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px}
+.comm-link{display:flex;align-items:center;justify-content:space-between;gap:9px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;color:#0f172a;min-height:65px;text-decoration:none}
+.comm-link:hover{border-color:#f59e0b;box-shadow:0 0 0 1px #f59e0b}
+.comm-link b{display:block;font-size:11.5px}.comm-link small{display:block;color:#64748b;font-size:10px;margin-top:4px}
+.comm-hint{font-size:10px;color:#cbd5e1;margin:12px 0 0}
+
+/* Editor autenticado de fechas: SharePoint mantiene la fuente de verdad */
+.date-edit-trigger{font-size:10.5px;font-weight:700;color:#1d4ed8;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:4px 9px}
+.date-edit-trigger:disabled{opacity:.45}
+.date-editor{margin-top:10px;border-top:1px dashed #cbd5e1;padding-top:10px}
+.date-editor[hidden]{display:none}
+.date-editor-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+.date-editor label{font-size:10px;color:#475569;font-weight:700;display:grid;gap:4px}
+.date-editor input{width:100%;min-width:0;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;color:#0f172a}
+.date-editor-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.date-editor-open{background:#1d4ed8;color:#fff;border-radius:6px;padding:7px 11px;font-size:11px;font-weight:700}
+.date-editor-cancel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:7px 11px;font-size:11px}
+.date-editor-note{font-size:10px;color:#64748b;margin-top:8px;line-height:1.4}
+.date-editor-error{font-size:11px;color:#b91c1c;min-height:16px;margin-top:4px}
+@media(max-width:520px){.date-editor-fields{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+<defs>
+  <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></symbol>
+  <symbol id="icon-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v8a4 4 0 0 0 4 4h6M16 5h2a4 4 0 0 1 0 8H9"/></symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.1a4 4 0 0 1 0 7.8M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+  <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h17M8 16v-4M13 16V7M18 16V9"/></symbol>
+  <symbol id="icon-milestone" viewBox="0 0 24 24"><path d="M4 21V3M4 5h15l-3 4 3 4H4M8 21h8"/></symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24"><path d="M13 5h6v6M19 5l-9 9M19 14v5H5V5h7"/></symbol>
+  <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="icon-clipboard" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="17" rx="2"/><rect x="8" y="2" width="8" height="6" rx="1"/><path d="M8 13h8M8 17h5"/></symbol>
+  <symbol id="icon-canvas" viewBox="0 0 24 24"><path d="M3 11 12 5l9 6-9 6-9-6ZM7 14v5c3 2 7 2 10 0v-5M21 12v5"/></symbol>
+  <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 .5l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7-.5l-3 3a5 5 0 0 0 7 7l2-2"/></symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3ZM12 9v5M12 18h.01"/></symbol>
+  <symbol id="icon-pencil" viewBox="0 0 24 24"><path d="M4 20h4l12-12-4-4L4 16v4ZM14 6l4 4"/></symbol>
+  <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></symbol>
+  <symbol id="icon-megaphone" viewBox="0 0 24 24"><path d="M3 10h4l12-6v16L7 14H3v-4ZM7 14l2 6h4l-2-5"/></symbol>
+  <symbol id="icon-presentation" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="14" rx="1"/><path d="M12 17v4M8 21h8M8 13l3-3 2 2 3-4"/></symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24"><path d="M3 4h8a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H3V4ZM21 4h-4a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h4V4Z"/></symbol>
+  <symbol id="icon-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+</defs>
+</svg>
+
+<!-- 1. TOPBAR -->
+<header class="topbar">
+  <div class="brand-group">
+    <div class="brand-logo">ET</div>
+    <div class="brand-title">
+      <b>ESPACIO TUTORÍA · FICHA OPERATIVA NRC</b>
+      <small>Centro de Herramientas y Seguimiento · ETOP</small>
+    </div>
+  </div>
+  <div class="top-right"><input id="courseSearch" list="courseSuggestions" placeholder="Buscar NRC..." aria-label="Buscar NRC" autocomplete="off"><datalist id="courseSuggestions"></datalist><button type="button" id="searchNrc" class="btn-top">Buscar</button>
+    <a id="calendariosLink" class="btn-top" target="_blank" rel="noopener" href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html">
+      <svg class="ic"><use href="#icon-calendar"/></svg>
+      <span>Volver a Calendarios</span>
+      <svg class="ic"><use href="#icon-external"/></svg>
+    </a>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- 2. ENCABEZADO INTEGRADO (STEPPER + IDENTIDAD DEL CURSO) -->
+  <div id="loadStatus" class="load-status" role="status">Cargando fuentes ETOP…</div>
+  <section class="header-deck">
+    <div class="stepper-strip">
+      <div class="stepper-label">
+        <svg class="ic" style="color:var(--brand)"><use href="#icon-route"/></svg>
+        <span>Intake: <b id="intakeName">—</b></span>
+      </div>
+      <div class="stepper-pills" id="intakeTrack"></div>
+      <div class="stepper-arrows">
+        <button class="btn-nav-sm" id="prev"><svg class="ic"><use href="#icon-chevron-left"/></svg> Ant.</button>
+        <button class="btn-nav-sm" id="next">Sig. <svg class="ic"><use href="#icon-chevron-right"/></svg></button>
+      </div>
+    </div>
+
+    <div class="hero-row">
+      <div class="hero-identity">
+        <div class="badges-inline">
+          <span id="heroNrc" class="nrc-badge"></span>
+          <span id="heroStatus" class="state-pill"></span>
+          <span id="qaHeroBadge" class="state-pill"></span>
+        </div>
+        <h1 id="courseTitle" class="course-main-title"></h1>
+        <div class="meta-inline-list" id="heroMetaList"></div>
+      </div>
+
+      <div class="hero-timeline-box">
+        <div class="tl-head">
+          <span id="progressStatus" class="tl-status"></span>
+          <span id="duration"></span><button type="button" id="toggleDateEditor" class="date-edit-trigger" disabled>✏️ Editar fechas</button>
+        </div>
+        <div class="tl-bar"><div class="tl-fill" id="progressFill"></div></div>
+        <div class="tl-foot">
+          <span id="progressStart"></span>
+          <strong id="progressPercent" style="color:var(--ink)"></strong>
+          <span id="progressEnd"></span>
+        </div>
+        <div class="date-editor" id="dateEditorPanel" hidden>
+          <div class="date-editor-fields">
+            <label>Fecha de inicio<input type="date" id="editStartDate"></label>
+            <label>Fecha de término<input type="date" id="editEndDate"></label>
+          </div>
+          <div class="date-editor-actions">
+            <button type="button" id="continueDateEdit" class="date-editor-open">Continuar en Power Apps ↗</button>
+            <button type="button" id="cancelDateEdit" class="date-editor-cancel">Cancelar</button>
+          </div>
+          <p id="dateEditError" class="date-editor-error" role="alert"></p>
+          <p class="date-editor-note">Las fechas seleccionadas se enviarán a Power Apps para su confirmación y guardado autenticado. La ficha mostrará las fechas oficiales cuando se actualice nrcs.json.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. BLOQUES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPAS) -->
+  <div class="support-grid">
+
+    <!-- Izquierda: Guía de Hitos ETOP -->
+    <section class="card">
+      <div class="card-header">
+        <h2 class="card-title"><svg class="ic"><use href="#icon-milestone"/></svg> Hitos del Acompañamiento Tutorial</h2>
+        <button class="btn-nav-sm" id="resetStage">Etapa actual</button>
+      </div>
+      <div class="card-body">
+        <div class="stage-tabs" id="stageTabs"></div>
+        <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+          <strong id="stageName" style="font-size:12px"></strong>
+          <span id="stageDescription" style="font-size:11px;color:var(--ink-secondary)"></span>
+        </div>
+        <ul class="tasks-row" id="stageTasks"></ul>
+      </div>
+    </section>
+
+    <!-- Derecha: Resumen Semáforo y KPI -->
+    <section class="card">
+      <div class="card-header">
+        <h2 class="card-title"><svg class="ic"><use href="#icon-chart"/></svg> Estado Estudiantil y Calidad QA2</h2>
+        <span style="font-size:10.5px;color:var(--ink-muted);font-weight:600">KPI V5</span>
+      </div>
+      <div class="card-body">
+        <div class="powerbi-holder"><iframe id="pbiSeguimiento" title="Power BI - seguimiento estudiantil del NRC" loading="lazy" allowfullscreen></iframe></div><p class="kpi-help">Informe oficial filtrado por NRC · <a id="pbiDirect" target="_blank" rel="noopener">Abrir en Power BI ↗</a></p>
+      </div>
+    </section>
+
+  </div>
+  <!-- ========================================================================
+       3. CENTRO DE HERRAMIENTAS PROTAGONISTA (EL CORAZÓN DE LA HOJA)
+       ======================================================================== -->
+  <section class="command-center" aria-label="Centro de Herramientas del Tutor">
+    <div class="command-header">
+      <div class="command-title-group">
+        <div class="command-icon-badge"><svg class="ic"><use href="#icon-zap"/></svg></div>
+        <div>
+          <h2>CENTRO DE HERRAMIENTAS DEL TUTOR</h2>
+          <p>Accesos directos sincronizados con el NRC seleccionado · Haz clic para lanzar</p>
+        </div>
+      </div>
+
+      <div class="command-filter-pills" id="toolFilters">
+        <button class="cat-filter active" data-filter="all">Todas (11)</button>
+        <button class="cat-filter" data-filter="seguimiento">Seguimiento Académico</button>
+        <button class="cat-filter" data-filter="gestion">Gestión y QA2</button>
+        <button class="cat-filter" data-filter="comunicacion">Comunicaciones</button>
+      </div>
+    </div>
+
+    <!-- NIVEL 1: LAS 4 HERRAMIENTAS TRONCALES DEL DÍA A DÍA -->
+    <div class="primary-tools-grid" id="primaryToolsGrid"></div>
+
+    <!-- NIVEL 2: ACCESOS COMPLEMENTARIOS Y GESTIÓN DE DATOS -->
+    <div class="secondary-tools-label">Herramientas complementarias y administración del NRC</div>
+    <div class="secondary-tools-grid" id="secondaryToolsGrid"></div>
+    <section id="communicationPanel" class="comm-panel" hidden aria-label="Comunicaciones según etapa del NRC"></section>
+  </section>
+
+  <details class="qa-history" id="qaHistoryPanel"><summary id="qaHistoryHeading">Historial QA2 e incidencias · Ver detalles</summary><div id="qaHistoryEntries" class="qa-entries">Selecciona un NRC.</div><a id="qaHistoryExternal" target="_blank" rel="noopener">Consultar incidencias en ETOP ↗</a></details>
+  <p class="data-foot">Datos institucionales ETOP · Las etapas son orientaciones temporales, no tareas acreditadas.</p>
+</main>
+<!-- MODAL -->
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 id="modalTitle" style="font-size:16px;font-weight:800"></h3>
+      <button type="button" id="closeModal"><svg class="ic"><use href="#icon-x"/></svg></button>
+    </div>
+    <p id="modalText" style="font-size:12.5px;color:var(--ink-secondary);line-height:1.55;margin-bottom:16px"></p>
+    <div style="text-align:right">
+      <button class="btn-primary" id="modalOk">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+'use strict';
+const BASE=new URL('./',location.href).href;
+const PBI='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToPage';
+const POWERAPPS_FECHAS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/f184b097-3146-4f9c-9a68-419270cb3ca1?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=880e23f7-8f39-42a1-ac6a-b0ede6467466';
+const POWERAPPS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
+const $=id=>document.getElementById(id);
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=v=>{if(!v)return null;const x=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(x.getTime())?null:x};
+const fmt=v=>date(v)?.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'})||'—';
+const title=c=>String(c['nombre curso']||'Sin nombre').replace(/\*/g,'').trim();
+const icon=k=>'<svg class="ic" aria-hidden="true"><use href="#icon-'+k+'"/></svg>';
+const validUrl=v=>{try{const z=typeof v==='object'&&v?(v.Url??v.url??v.URL??v.href??v.Value??v.value??''):v;const u=new URL(String(z||''));return /^https?:$/.test(u.protocol)?u.href:''}catch{return ''}};
+const stepInfo=[
+ ['Preparación','Semana -1','Alistamiento del NRC',[['Banner / Canvas','Verificar nómina y accesos.'],['Bienvenida','Coordinar con el docente y preparar la comunicación inicial.'],['QA2','Revisar material del aula, excepto UNI118.']]],
+ ['Inducción','Semana 0','Acompañamiento inicial',[['Bienvenida','Confirmar anuncio y orientación a estudiantes.'],['Primer ingreso','Contactar estudiantes que no ingresan.'],['Presentación','Promover la sesión de inicio de la versión.']]],
+ ['Impartición','Durante el NRC','Seguimiento tutorial activo',[['Actividad','Revisar participación y tareas.'],['Semáforo','Atender alertas y casos prioritarios.'],['Comunicaciones','Mantener contacto y acompañamiento.']]],
+ ['Cierre','Días +7 / +14','Cierre académico y administrativo',[['Pendientes','Coordinar entregas pendientes.'],['Día +7','Recordar calificaciones al docente.'],['Día +14','Revisar ventana Canvas posterior al término.']]]
+];
+let courses=[],incidents=[],metrics=new Map(),current=null,cohort=[],index=0,viewStep=null,cat='all',courseQa=[];
+const query=new URLSearchParams(location.search);
+function urlPbi(nrc){const u=new URL(PBI);u.searchParams.set('filter',"NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '"+String(nrc).replace(/'/g,"''")+"'");return u.href}
+function urlStudents(nrc){const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');u.searchParams.set('FilterValue1',nrc);u.searchParams.set('FilterType1','Text');u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');u.searchParams.set('env','Embedded');return u.href}
+function urlIntake(c){if(!c.intake)return '';const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');u.searchParams.set('env','WebViewList');u.searchParams.set('FilterField1','field_8');u.searchParams.set('FilterValue1',c.intake);return u.href}
+function urlIntegration(nrc){const a=String(nrc).split('_'),id=a[0],term=a[a.length-1];return id&&term?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:term,periodo:term,nrc:id,nrc_code:id,crn:id,NRC:id}).toString():''}
+function urlAppsFechas(c,inicio,fin){if(!c?.id)return '';const u=new URL(POWERAPPS_FECHAS);u.searchParams.set('ids',String(c.id));u.searchParams.set('nrc',String(c.nrc||''));u.searchParams.set('inicio',inicio);u.searchParams.set('fin',fin);return u.href}
+function urlApps(c){if(!c.id)return '';const u=new URL(POWERAPPS);u.searchParams.set('ids',String(c.id));return u.href}
+function urlQa(c){return c.id&&norm(c['codigo curso'])!=='UNI118'?BASE+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc):''}
+function urlPresentation(c){return BASE+'presentacion_tutorial_innovado.html?'+new URLSearchParams({nombreTutor:c.tutor||'',nombreCurso:c['nombre curso']||'',nrc:c.nrc,fechaInicio:c['fecha inicio']||'',fechaFin:c['fecha fin']||''}).toString()}
+function urlAnnouncement(c){return BASE+'anuncio_bienvenida_curso_malla.html?'+new URLSearchParams({nombre_tutor:c.tutor||'',nombre_curso:c['nombre curso']||'',fecha_inicio:fmt(c['fecha inicio']),fecha_fin:fmt(c['fecha fin'])}).toString()}
+function urlCalendar(c){return BASE+'calendarios.html?nrc='+encodeURIComponent(c.nrc)}
+function urlInc(c){return BASE+'incidencias.html?nrc='+encodeURIComponent(c.nrc)}
+function status(c){return norm(c.estado)||'SIN ESTADO'}
+function qaRows(c){return incidents.filter(x=>(c.id&&String(x.cursoId??x.idCurso??'')===String(c.id))||norm(x.nrc??x.NRC_COD_CAL??x.nrcCodCal)===norm(c.nrc))}
+function qa(c){if(norm(c['codigo curso'])==='UNI118')return ['QA2 NO APLICA','na'];if(!courseQa.length)return ['QA2 PENDIENTE','pending'];const n=courseQa.filter(x=>norm(x.qaIncidencias??x['QA INCIDENCIAS'])==='CON INCIDENCIA').length;if(n)return ['QA2 · '+n+' INCIDENCIA'+(n===1?'':'S'),'incident'];return ['QA2 SIN INCIDENCIA','ok']}
+function canvas(){for(const x of courseQa){const u=validUrl(x.urlCanvas??x.URL_QA2_FI_Url??x.urlQa2FiUrl??x.urlQA2FIUrl);if(u)return u}return ''}
+function sameIntake(c){const k=norm(c.intake);if(!k)return [c];const all=courses.filter(x=>norm(x.intake)===k);const p=norm(c['nombre programa']||c.programa);const group=p?all.filter(x=>!norm(x['nombre programa']||x.programa)||norm(x['nombre programa']||x.programa)===p):all;const map=new Map();[...(group.length?group:all),c].forEach(x=>map.set(norm(x.nrc),x));return [...map.values()].sort((a,b)=>(date(a['fecha inicio'])?.getTime()??Infinity)-(date(b['fecha inicio'])?.getTime()??Infinity)||String(a.nrc).localeCompare(String(b.nrc)))}
+function setStatus(text,error){const el=$('loadStatus');el.textContent=text;el.classList.toggle('error',!!error);el.hidden=!text}
+function setHref(id,url){const a=$(id);if(url){a.href=url;a.removeAttribute('aria-disabled')}else{a.removeAttribute('href');a.setAttribute('aria-disabled','true')}}
+function progress(c){const a=date(c['fecha inicio']),b=date(c['fecha fin']),t=new Date();t.setHours(0,0,0,0);if(!a||!b||b<a)return null;const total=Math.max(1,Math.round((b-a)/86400000)+1);const done=Math.max(0,Math.min(total,Math.round((t-a)/86400000)+1));return {p:Math.round(done/total*100),weeks:Math.ceil(total/7),week:Math.min(Math.ceil(total/7),Math.floor(done/7)+1),before:t<a,after:t>b,start:a,end:b}}
+function renderTop(c){
+ $('intakeName').textContent=c.intake||'No informado';
+ $('prev').disabled=index===0;$('next').disabled=index===cohort.length-1;
+ $('intakeTrack').innerHTML=cohort.map((x,i)=>'<button class="step-mini '+(status(x)==='CERRADO'?'done ':'')+(i===index?'selected':'')+'" data-index="'+i+'" title="'+esc(title(x))+'"><span class="step-mini-code">'+esc(x['codigo curso']||x.nrc.split('_')[1])+'</span><span class="step-mini-name">'+esc(title(x))+'</span></button>').join('');
+ $('heroNrc').textContent=c.nrc;$('courseTitle').textContent=title(c);
+ const state=status(c);$('heroStatus').textContent=state==='PREPARACION'?'PREPARACIÓN':state;$('heroStatus').className='state-pill '+(state==='EN CIERRE'?'PREPARACION':state);
+ const info=qa(c);$('qaHeroBadge').textContent=info[0];$('qaHeroBadge').className='qa-pill '+info[1];
+ const meta=[['Tutor',c.tutor],['Programa',c['nombre programa']||c.programa],['Código',c['codigo curso']],['Facultad',c.facultad],['Tipo NRC',c.tipo],['Período',c.periodo]];
+ $('heroMetaList').innerHTML=meta.filter(x=>x[1]).map(x=>'<span>'+esc(x[0])+': <b>'+esc(x[1])+'</b></span>').join('');
+ const p=progress(c);$('progressStart').textContent='Inicio: '+fmt(c['fecha inicio']);$('progressEnd').textContent='Fin: '+fmt(c['fecha fin']);
+ $('duration').textContent=p?p.weeks+' semanas':'Fechas no disponibles';$('progressFill').style.width=p?p.p+'%':'0%';$('progressPercent').textContent=p?p.p+'% temporal':'—';
+ $('progressStatus').textContent=!p?'Sin fechas':p.before?'Próximo a iniciar':p.after?'Curso finalizado':'Semana '+p.week+' de '+p.weeks;
+}
+function currStage(c){const p=progress(c);if(norm(c['codigo curso'])==='UNI118')return 1;if(!p||p.before)return 0;if(p.after)return 3;const first=cohort.find(x=>norm(x['codigo curso'])!=='UNI118');if(first&&norm(first.nrc)===norm(c.nrc)&&p.week===1)return 1;return 2}
+function renderStages(c){const actual=currStage(c),i=viewStep===null?actual:viewStep;
+ $('stageTabs').innerHTML=stepInfo.map((t,n)=>'<button class="stage-tab '+(n===actual?'current ':'')+(viewStep!==null&&i===n?'viewing':'')+'" data-stage="'+n+'"><strong>'+(n+1)+'. '+t[0]+'</strong><small>'+t[1]+'</small></button>').join('');
+ $('stageName').textContent='Etapa '+(i+1)+' · '+stepInfo[i][0];$('stageDescription').textContent=stepInfo[i][2];
+ $('stageTasks').innerHTML=stepInfo[i][3].map(x=>'<li class="task-item"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></li>').join('');
+ $('resetStage').disabled=viewStep===null;
+}
+
+const COMM_CATALOG={
+ preparacion:[
+ ['Correo bienvenida masivo','com_correos_masivo.html','Correo', ['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']],
+ ['Invitación sincrónica masiva','com_invitaciones_masivo.html','Correo',['nombreTutor','correoTutor','nombreCurso','fechaInicio']],
+ ['Bienvenida a estudiante rezagado','correo_bienvenida.html','Correo',['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']],
+ ['Invitación sincrónica a rezagado','invitacion_sincronica.html','Correo',['nombreTutor','correoTutor','nombreCurso']],
+ ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']]],
+ induccion:[
+ ['Anuncio bienvenida inducción','anuncio_bienvenida_induccion.html','Anuncio',[]],
+ ['Anuncio lunes · Invitación sincrónica','anuncio_lunes_invitacion_sincronica.html','Anuncio',[]],
+ ['Anuncio martes · Zoom','anuncio_martes_zoom.html','Anuncio',[]],
+ ['Anuncio miércoles · Grabación','anuncio_miercoles_grabacion.html','Anuncio',[]],
+ ['Anuncio jueves · Gestiona tu caso','anuncio_jueves_gestiona.html','Anuncio',[]],
+ ['Anuncio cierre de inducción','anuncio_cierre_induccion.html','Anuncio',[]]],
+ imparticion:[
+ ['Anuncio bienvenida del curso','anuncio_bienvenida_curso_malla.html','Anuncio',['nombre_tutor','nombre_curso','fecha_inicio','fecha_fin']],
+ ['Anuncio autoinscripción a grupo','anuncio_auto_inscripcion_grupo.html','Anuncio',[]],
+ ['Mailing tutor a docente','mailing_tutor_docente.html','Correo',[]],
+ ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']],
+ ['Seguimiento tareas pendientes','mensaje_seguimiento_tareas.html','Seguimiento',['nrc','nombre_curso']],
+ ['Seguimiento sin ingreso','seguimiento_no_ingreso.html','Seguimiento',['nrc','nombre_curso']]],
+ cierre:[['Correo cierre de curso','enviar_correo_cierre.html','Correo',['nrc','nombre_curso','fecha_inicio','fecha_fin']]]
+};
+const COMM_LABELS={preparacion:'Preparación',induccion:'Inducción',imparticion:'Impartición',cierre:'Cierre'};
+let commOverride=null;
+function commStage(c){
+ if(norm(c['codigo curso'])==='UNI118')return 'induccion';
+ const st=status(c);
+ if(st==='PREPARACION'||st==='PREPARACIÓN')return 'preparacion';
+ if(st==='ACTIVO')return 'imparticion';
+ if(st==='EN CIERRE'||st==='CERRADO')return 'cierre';
+ const p=progress(c);
+ return !p||p.before?'preparacion':p.after?'cierre':'imparticion';
+}
+function commLink(item,c){
+ const starts=String(c['fecha inicio']||'').slice(0,10),ends=String(c['fecha fin']||'').slice(0,10);
+ const day=v=>v?new Date(v+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long'}):'';
+ const diff=starts&&ends?Math.max(1,Math.ceil((new Date(ends)-new Date(starts)+86400000)/604800000)):'';
+ const params={nrc:c.nrc||'',nombreTutor:c.tutor||'',correoTutor:c['correo tutor']||c.correoTutor||'',anexoTutor:c['anexo tutor']||c.anexoTutor||'',nombrePrograma:c['nombre programa']||c.programa||'',nombreCurso:title(c),fechaInicio:starts,fechaFin:ends,diaInicio:day(starts),diaFin:day(ends),duracion:diff,nombre_tutor:c.tutor||'',nombre_curso:title(c),fecha_inicio:fmt(c['fecha inicio']),fecha_fin:fmt(c['fecha fin'])};
+ const q=new URLSearchParams();
+ item[3].forEach(k=>{if(params[k]!==''&&params[k]!==null&&params[k]!==undefined)q.set(k,String(params[k]))});
+ return BASE+item[1]+(q.size?'?'+q.toString():'');
+}
+function renderCommunications(c){
+ const panel=$('communicationPanel');
+ panel.hidden=cat!=='comunicacion';
+ if(panel.hidden)return;
+ const recommended=commStage(c),selected=commOverride||recommended;
+ panel.innerHTML='<div class="comm-head"><div><h3>Comunicaciones · '+esc(COMM_LABELS[selected])+'</h3><p>Etapa recomendada: '+esc(COMM_LABELS[recommended])+' · NRC '+esc(c.nrc)+'</p></div><a href="'+esc(BASE+'comunicaciones_etop.html')+'" target="_blank" rel="noopener noreferrer">Ver catálogo completo</a></div>'
+ +'<div class="comm-stages">'+Object.keys(COMM_CATALOG).map(k=>'<button type="button" class="comm-stage '+(k===selected?'selected':'')+'" data-comm-stage="'+k+'" aria-pressed="'+(k===selected)+'">'+esc(COMM_LABELS[k])+(k===recommended?' · Recomendada':'')+'</button>').join('')+'</div>'
+ +'<div class="comm-grid">'+COMM_CATALOG[selected].map(item=>'<a class="comm-link" target="_blank" rel="noopener noreferrer" href="'+esc(commLink(item,c))+'"><span><b>'+esc(item[0])+'</b><small>'+esc(item[2])+'</small></span>'+icon('external')+'</a>').join('')+'</div>'
+ +'<p class="comm-hint">Las plantillas se abren para revisión. No se envían mensajes ni se publican anuncios automáticamente. Los campos que no existen en la ficha quedan sin completar.</p>';
+}
+
+function renderActions(c){
+ const info=qa(c);
+ const main=[
+ ['Panel de Estudiantes','Base Semáforo del NRC','users','seguimiento','t-blue',urlStudents(c.nrc),metrics.has(norm(c.nrc))?metrics.get(norm(c.nrc))+' estudiantes':'SharePoint'],
+ ['Abrir Aula Canvas',canvas()?'Aula Canvas del NRC':'URL del aula aún no disponible','canvas','seguimiento','t-emerald',canvas(),canvas()?'LMS directo':'Sin URL'],
+ ['Gestión y Formulario QA2',norm(c['codigo curso'])==='UNI118'?'No aplica a UNI118':'Revisión de calidad del aula','clipboard','gestion','t-amber',urlQa(c),info[0]],
+ ['Hub de Comunicaciones','Plantillas institucionales','mail','comunicacion','t-purple',BASE+'comunicaciones_etop.html','ETOP']
+ ];
+ const secondary=[
+ ['Cotejo Integración','Banner vs Canvas','link','seguimiento',urlIntegration(c.nrc)],
+ ['Informe Power BI','Seguimiento oficial V5','chart','seguimiento',urlPbi(c.nrc)],
+ ['Editar NRC','Power Apps','pencil','gestion',urlApps(c)],
+ ['Historial QA2','Ver registros y evidencias','alert','gestion','#qaHistoryPanel'],
+ ['Cursos del Intake','Base SharePoint','book','gestion',urlIntake(c)],
+ ['Presentación','Material tutorial','presentation','comunicacion',urlPresentation(c)],
+ ['Anuncio Bienvenida','Material de bienvenida','megaphone','comunicacion',urlAnnouncement(c)]
+ ];
+ $('primaryToolsGrid').innerHTML=main.map(t=>'<a class="hero-tool-card '+t[4]+(t[5]?'':' is-unavailable')+(cat!=='all'&&cat!==t[3]?' hidden-by-filter':'')+'" '+(t[5]?'href="'+esc(t[5])+'" target="_blank" rel="noopener noreferrer"':'aria-disabled="true"')+'><div class="hero-tool-top"><div class="hero-tool-icon">'+icon(t[2])+'</div><span class="tool-live-badge">'+esc(t[6])+'</span></div><div class="hero-tool-title">'+esc(t[0])+icon('external')+'</div><div class="hero-tool-desc">'+esc(t[1])+'</div></a>').join('');
+ $('secondaryToolsGrid').innerHTML=secondary.map(t=>'<a class="sec-tool-btn '+(t[4]?'':'is-unavailable')+(cat!=='all'&&cat!==t[3]?' hidden-by-filter':'')+'" '+(t[4]?'href="'+esc(t[4])+'" '+(t[4].startsWith('#')?'':'target="_blank" rel="noopener noreferrer"'):'aria-disabled="true"')+'><span class="sec-tool-icon">'+icon(t[2])+'</span><span class="sec-tool-copy"><b>'+esc(t[0])+'</b><small>'+esc(t[1])+'</small></span></a>').join('');
+}
+function renderHistory(c){const info=qa(c);$('qaHistoryHeading').textContent='Historial QA2 e incidencias · '+info[0];setHref('qaHistoryExternal',urlInc(c));
+ if(norm(c['codigo curso'])==='UNI118'){$('qaHistoryEntries').textContent='UNI118 está excluido de QA2.';return}
+ if(!courseQa.length){$('qaHistoryEntries').textContent='No hay registros QA2 para este NRC. No equivale a una revisión sin incidencias.';return}
+ $('qaHistoryEntries').innerHTML=courseQa.map(x=>{const type=x.qaIncidencias??'Registro QA2',desc=x.descripcionIncidencia??x.descripcion??'',sol=x.solucionIncidencia??x.solucion??'',evidence=validUrl(x.evidenciaUrl??x.urlEvidencia??x.URL_EVIDENCIA);return '<article><strong>'+esc(type)+'</strong>'+(desc?'<p>'+esc(desc)+'</p>':'')+(sol?'<p>Gestión: '+esc(sol)+'</p>':'')+(evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Abrir evidencia ↗</a>':'')+'</article>'}).join('');
+}
+function render(c){if(!current||norm(current.nrc)!==norm(c.nrc)){commOverride=null;closeDateEditor()}current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
+ renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);$('toggleDateEditor').disabled=!c.id;renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
+ $('courseSearch').value=c.nrc;const here=new URL(location.href);here.searchParams.set('nrc',c.nrc);history.replaceState(null,'',here);setStatus('');
+}
+function find(v){const k=norm(v);return courses.find(c=>norm(c.nrc)===k)||courses.find(c=>norm(c.nrc).startsWith(k+'_'))||courses.find(c=>norm(c['codigo curso'])===k)||courses.find(c=>norm(title(c))===k)}
+function search(){const v=$('courseSearch').value.trim();const c=find(v);if(c){viewStep=null;render(c)}else setStatus('No se encontró el NRC solicitado. Usa el código completo.',true)}
+$('searchNrc').addEventListener('click',search);$('courseSearch').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+$('prev').addEventListener('click',()=>{if(index>0){viewStep=null;render(cohort[index-1])}});
+$('next').addEventListener('click',()=>{if(index<cohort.length-1){viewStep=null;render(cohort[index+1])}});
+$('intakeTrack').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b){viewStep=null;render(cohort[+b.dataset.index])}});
+$('toolFilters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;cat=b.dataset.filter;document.querySelectorAll('.cat-filter').forEach(x=>x.classList.toggle('active',x.dataset.filter===cat));if(current){renderActions(current);renderCommunications(current)}});
+$('communicationPanel').addEventListener('click',e=>{const btn=e.target.closest('[data-comm-stage]');if(btn&&current){commOverride=btn.dataset.commStage;renderCommunications(current)}});
+$('stageTabs').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(b&&current){viewStep=+b.dataset.stage;renderStages(current)}});
+$('resetStage').addEventListener('click',()=>{viewStep=null;if(current)renderStages(current)});
+$('secondaryToolsGrid').addEventListener('click',e=>{const a=e.target.closest('a[href="#qaHistoryPanel"]');if(a){e.preventDefault();$('qaHistoryPanel').open=true;$('qaHistoryPanel').scrollIntoView({behavior:'smooth'})}});
+
+function closeDateEditor(){$('dateEditorPanel').hidden=true;$('dateEditError').textContent=''}
+$('toggleDateEditor').addEventListener('click',()=>{
+ if(!current||!current.id)return;
+ const p=$('dateEditorPanel');p.hidden=!p.hidden;
+ if(!p.hidden){$('editStartDate').value=String(current['fecha inicio']||'').slice(0,10);$('editEndDate').value=String(current['fecha fin']||'').slice(0,10);$('dateEditError').textContent=''}
+});
+$('cancelDateEdit').addEventListener('click',closeDateEditor);
+$('continueDateEdit').addEventListener('click',()=>{
+ if(!current||!current.id)return;
+ const a=$('editStartDate').value,b=$('editEndDate').value;
+ if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(a)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(b)||b<a){
+ $('dateEditError').textContent='Ingresa fechas válidas. El término no puede ser anterior al inicio.';return;
+ }
+ const url=urlAppsFechas(current,a,b);
+ if(!url){$('dateEditError').textContent='El NRC no tiene ID de SharePoint para abrir el editor.';return}
+ // No se envían fechas a un endpoint público ni se confirma guardado sin respuesta autenticada.
+ $('dateEditError').textContent='Confirma las fechas precargadas en Power Apps y pulsa Guardar cambios. Esta ficha no ha modificado SharePoint.';
+ window.open(url,'_blank','noopener,noreferrer');
+});
+
+async function load(){setStatus('Cargando cursos, incidencias y métricas…');try{
+ const stamp='?t='+Date.now(),r=await Promise.all([fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})]);
+ if(!r[0].ok)throw Error('No se pudo cargar nrcs.json');
+ courses=await r[0].json();if(!Array.isArray(courses))courses=[];courses=courses.filter(x=>x&&x.nrc);
+ incidents=r[1].ok?await r[1].json():[];if(!Array.isArray(incidents))incidents=[];
+ const m=r[2].ok?await r[2].json():[];metrics=new Map((Array.isArray(m)?m:[]).map(x=>[norm(x.nrc),Number(x.total_estudiantes)||0]));
+ $('courseSuggestions').innerHTML=courses.slice(0,4000).map(c=>'<option value="'+esc(c.nrc)+'" label="'+esc(title(c))+'"></option>').join('');
+ const requested=query.get('nrc');if(requested){const x=find(requested);if(x)render(x);else setStatus('NRC solicitado no encontrado. Utiliza la búsqueda.',true)}
+ else setStatus('Catálogo cargado ('+courses.length+' NRC). Busca uno para abrir la ficha.');
+ }catch(e){console.error(e);setStatus('Error al cargar ETOP: '+e.message,true)}}
+load();
+
+</script>
+</body>
+</html>
