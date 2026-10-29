@@ -457,6 +457,16 @@ a { text-decoration: none; }
 .date-editor-note{font-size:10px;color:#64748b;margin-top:8px;line-height:1.4}
 .date-editor-error{font-size:11px;color:#b91c1c;min-height:16px;margin-top:4px}
 @media(max-width:520px){.date-editor-fields{grid-template-columns:1fr}}
+
+/* Editor Power Apps permanente dentro del bloque central, sin panel adicional */
+.hero-row{grid-template-columns:minmax(0,1.05fr) minmax(0,1.45fr);align-items:start}
+.hero-timeline-box{min-width:0;background:#fff;padding:10px 12px;border-color:#e2e8f0}
+.timeline-embedded-app{margin-top:9px;border-top:1px solid #e2e8f0;padding-top:6px;min-width:0}
+.timeline-embedded-app iframe{border:0;width:100%;height:177px;display:block;background:#fff}
+.timeline-embedded-app.date-app-unavailable iframe{display:none}
+.date-app-status{color:#b91c1c;font-size:11px}
+.date-app-caption{color:#64748b;font-size:9px;margin:2px 0 0}
+@media(max-width:850px){.hero-row{grid-template-columns:1fr}.timeline-embedded-app iframe{height:195px}}
 </style>
 </head>
 <body>
@@ -534,7 +544,7 @@ a { text-decoration: none; }
       <div class="hero-timeline-box">
         <div class="tl-head">
           <span id="progressStatus" class="tl-status"></span>
-          <span id="duration"></span><button type="button" id="toggleDateEditor" class="date-edit-trigger" disabled>✏️ Editar fechas</button>
+          <span id="duration"></span>
         </div>
         <div class="tl-bar"><div class="tl-fill" id="progressFill"></div></div>
         <div class="tl-foot">
@@ -542,17 +552,10 @@ a { text-decoration: none; }
           <strong id="progressPercent" style="color:var(--ink)"></strong>
           <span id="progressEnd"></span>
         </div>
-        <div class="date-editor" id="dateEditorPanel" hidden>
-          <div class="date-editor-fields">
-            <label>Fecha de inicio<input type="date" id="editStartDate"></label>
-            <label>Fecha de término<input type="date" id="editEndDate"></label>
-          </div>
-          <div class="date-editor-actions">
-            <button type="button" id="continueDateEdit" class="date-editor-open">Continuar en Power Apps ↗</button>
-            <button type="button" id="cancelDateEdit" class="date-editor-cancel">Cancelar</button>
-          </div>
-          <p id="dateEditError" class="date-editor-error" role="alert"></p>
-          <p class="date-editor-note">Las fechas seleccionadas se enviarán a Power Apps para su confirmación y guardado autenticado. La ficha mostrará las fechas oficiales cuando se actualice nrcs.json.</p>
+        <div class="timeline-embedded-app" id="timelineEmbeddedApp">
+          <iframe id="embeddedDateApp" title="Editar fechas del NRC en SharePoint" loading="lazy"
+                  allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <p id="dateAppStatus" class="date-app-status"></p><p class="date-app-caption">Fechas oficiales de SharePoint · Guardar o descartar dentro del formulario</p>
         </div>
       </div>
     </div>
@@ -779,7 +782,7 @@ function renderHistory(c){const info=qa(c);$('qaHistoryHeading').textContent='Hi
  $('qaHistoryEntries').innerHTML=courseQa.map(x=>{const type=x.qaIncidencias??'Registro QA2',desc=x.descripcionIncidencia??x.descripcion??'',sol=x.solucionIncidencia??x.solucion??'',evidence=validUrl(x.evidenciaUrl??x.urlEvidencia??x.URL_EVIDENCIA);return '<article><strong>'+esc(type)+'</strong>'+(desc?'<p>'+esc(desc)+'</p>':'')+(sol?'<p>Gestión: '+esc(sol)+'</p>':'')+(evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Abrir evidencia ↗</a>':'')+'</article>'}).join('');
 }
 function render(c){if(!current||norm(current.nrc)!==norm(c.nrc)){commOverride=null;closeDateEditor()}current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
- renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);$('toggleDateEditor').disabled=!c.id;renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
+ renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);renderEmbeddedDates(c);renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
  $('courseSearch').value=c.nrc;const here=new URL(location.href);here.searchParams.set('nrc',c.nrc);history.replaceState(null,'',here);setStatus('');
 }
 function find(v){const k=norm(v);return courses.find(c=>norm(c.nrc)===k)||courses.find(c=>norm(c.nrc).startsWith(k+'_'))||courses.find(c=>norm(c['codigo curso'])===k)||courses.find(c=>norm(title(c))===k)}
@@ -794,26 +797,24 @@ $('stageTabs').addEventListener('click',e=>{const b=e.target.closest('[data-stag
 $('resetStage').addEventListener('click',()=>{viewStep=null;if(current)renderStages(current)});
 $('secondaryToolsGrid').addEventListener('click',e=>{const a=e.target.closest('a[href="#qaHistoryPanel"]');if(a){e.preventDefault();$('qaHistoryPanel').open=true;$('qaHistoryPanel').scrollIntoView({behavior:'smooth'})}});
 
-function closeDateEditor(){$('dateEditorPanel').hidden=true;$('dateEditError').textContent=''}
-$('toggleDateEditor').addEventListener('click',()=>{
- if(!current||!current.id)return;
- const p=$('dateEditorPanel');p.hidden=!p.hidden;
- if(!p.hidden){$('editStartDate').value=String(current['fecha inicio']||'').slice(0,10);$('editEndDate').value=String(current['fecha fin']||'').slice(0,10);$('dateEditError').textContent=''}
-});
-$('cancelDateEdit').addEventListener('click',closeDateEditor);
-$('continueDateEdit').addEventListener('click',()=>{
- if(!current||!current.id)return;
- const a=$('editStartDate').value,b=$('editEndDate').value;
- if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(a)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(b)||b<a){
- $('dateEditError').textContent='Ingresa fechas válidas. El término no puede ser anterior al inicio.';return;
- }
- const url=urlAppsFechas(current,a,b);
- if(!url){$('dateEditError').textContent='El NRC no tiene ID de SharePoint para abrir el editor.';return}
- // No se envían fechas a un endpoint público ni se confirma guardado sin respuesta autenticada.
- $('dateEditError').textContent='Confirma las fechas precargadas en Power Apps y pulsa Guardar cambios. Esta ficha no ha modificado SharePoint.';
- window.open(url,'_blank','noopener,noreferrer');
-});
-
+function closeDateEditor(){}
+function renderEmbeddedDates(c){
+  const frame=$('embeddedDateApp');
+  const id=Number(c?.id);
+  if(!Number.isSafeInteger(id)||id<=0){
+    frame.removeAttribute('src');
+    $('timelineEmbeddedApp').classList.add('date-app-unavailable');
+    $('dateAppStatus').textContent='Este NRC no tiene ID de SharePoint; no se puede editar aquí.';
+    return;
+  }
+  $('timelineEmbeddedApp').classList.remove('date-app-unavailable');
+  $('dateAppStatus').textContent='';
+  const url=new URL(POWERAPPS_FECHAS);
+  url.searchParams.set('ids',String(id));
+  url.searchParams.set('nrc',String(c.nrc||''));
+  // Solo se pasa ID de registro: Power Apps obtiene las fechas vigentes desde SharePoint.
+  if(frame.src!==url.href)frame.src=url.href;
+}
 async function load(){setStatus('Cargando cursos, incidencias y métricas…');try{
  const stamp='?t='+Date.now(),r=await Promise.all([fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})]);
  if(!r[0].ok)throw Error('No se pudo cargar nrcs.json');
