@@ -880,6 +880,14 @@ function integrationUrl(nrc){
  return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
 }
 const urlFor = (name, c) => {
+ if(name==='Editar ficha Inducción'){
+   const id=String(c.raw?.ID_MADRE??c.raw?.id_madre??c.id??'').trim();
+   if(norm(c.code)!=='UNI118'||!/^\d+$/.test(id))return '';
+   const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx');
+   u.searchParams.set('ID',id);u.searchParams.set('env','WebViewList');
+   u.searchParams.set('loadFormWithNucleus','1');u.searchParams.set('id','*');
+   return u.href;
+ }
  if(name==='Gestión y Formulario QA2')return PORTAL+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc);
  if(name==='Abrir Aula Canvas')return canvasForCourse(c);
  if(name==='Cotejo Integración')return integrationUrl(c.nrc);
@@ -969,6 +977,7 @@ function renderTools(c) {
     { title: 'Historial QA2', sub: 'Detalle QA2 aquí', icon: 'alert', cat: 'gestion', isScreen: true },
     { title: 'Cotejo Integración', sub: 'Banner vs Canvas', icon: 'link', cat: 'seguimiento' },
     { title: 'Informe Power BI', sub: 'Reporte oficial V5', icon: 'chart', cat: 'seguimiento' },
+    ...(norm(c.code)==='UNI118' ? [{ title: 'Editar ficha Inducción', sub: 'Ficha SharePoint · URL Canvas', icon: 'pencil', cat: 'gestion' }] : []),
     { title: 'Editar NRC', sub: 'Power Apps', icon: 'pencil', cat: 'gestion' },
     { title: 'Presentación', sub: 'Material sincrónico', icon: 'presentation', cat: 'comunicacion' },
     { title: 'Anuncio Bienvenida', sub: 'Publicar en aula', icon: 'megaphone', cat: 'comunicacion' }
