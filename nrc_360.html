@@ -1167,7 +1167,7 @@ document.querySelector('.workspace-screen').addEventListener('click', e => {
   if (act) openTool(act.dataset.action);
 });
 
-$('stageTabs').addEventListener('click', e => {
+document.getElementById('stageTabs')?.addEventListener('click', e => {
   const b = e.target.closest('[data-stage]');
   if (b) { viewStep = (Number(b.dataset.stage) === currentStep(courses[activeIndex])) ? null : Number(b.dataset.stage); renderStages(courses[activeIndex]); }
 });
