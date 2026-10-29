@@ -497,6 +497,7 @@ a { text-decoration: none; }
   .core-tools-grid, .intake-cards-grid, .comm-templates-grid { grid-template-columns: repeat(2, 1fr); }
   .quick-links-row { grid-template-columns: repeat(2, 1fr); }
 }
+.qa-status-list{display:grid;gap:9px}.qa-status-row{display:flex;align-items:flex-start;gap:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px}.qa-number{background:#fee2e2;color:#b91c1c;border-radius:50%;width:25px;height:25px;text-align:center;line-height:25px;flex:none;font-weight:800}.qa-detail{flex:1;min-width:0}.qa-detail strong{font-size:12px}.qa-detail p{font-size:12px;color:#475569;margin:4px 0}.qa-detail small{font-size:10px;color:#64748b}.qa-state{font-size:11px;font-weight:700;background:#e2e8f0;border-radius:99px;padding:4px 9px}.qa-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.qa-empty{padding:14px;background:#f8fafc;border-radius:8px}
 </style>
 </head>
 <body>
@@ -807,8 +808,9 @@ function mergeMetrics(c){
  c.entered=m?.ingreso?.si??m?.ingresaron??null;
  c.no=m?.ingreso?.no??m?.sin_ingreso??null;
  c.colors=m?.semaforo||m?.colors||{};
- const q=qaRows.filter(x=>norm(x.nrc||x.nrc_cod_cal||x.NRC_COD_CAL)===norm(c.nrc));
- c.qa=c.code==='UNI118'?'na':q.length?'incident':'pending';
+ const q=qaRows.filter(x=>String(x.cursoId??'')===String(c.id));
+ c.qaRows=q.filter(x=>norm(x.qaIncidencias)==='CON INCIDENCIA');
+ c.qa=c.qaRows.length?'incident':c.code==='UNI118'?'na':q.some(x=>norm(x.qaIncidencias)==='SIN INCIDENCIA')?'ok':'pending';
 }
 async function loadRealData(){
  try{
@@ -1052,32 +1054,28 @@ function renderCommunicationsScreen(c) {
 }
 
 function renderQaScreen(c) {
-  const qaTitle = c.code === 'UNI118' ? 'Excluido de revisión QA2' : c.qa === 'incident' ? '⚠️ Incidencia QA2 Registrada' : c.qa === 'ok' ? '✓ Auditoría QA2 Conforme' : '⏳ Revisión QA2 Pendiente';
-  $('screen-qa').innerHTML = `
+  const rows=c.qaRows||[];
+  const summary=rows.length?`Incidencias registradas: ${rows.length}`:c.qa==='na'?'Excluido de revisión QA2':c.qa==='ok'?'QA2 conforme':'QA2 pendiente';
+  const status=x=>{const t=norm(x.estadoIncidencia);return t==='CORREGIDA'?'Corregida':t==='DERIVADO'?'Derivada':'Pendiente'};
+  $('screen-qa').innerHTML=`
     <div class="pane-head">
-      <div>
-        <div class="pane-title">Estado de Calidad QA2 · ${esc(c.nrc)}</div>
-        <div class="pane-sub">Revisión de alistamiento de aula virtual</div>
-      </div>
+      <div><div class="pane-title">Estado de Calidad QA2 · ${esc(c.nrc)}</div>
+      <div class="pane-sub">Revisión de alistamiento de aula virtual · ${esc(summary)}</div></div>
       <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
     </div>
-    <div class="qa-clean-box">
-      <div>
-        <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">${qaTitle}</h3>
-        <p style="font-size:12.5px;color:var(--ink-secondary)">Desde aquí puedes consultar el historial de evidencias reportadas o abrir el formulario de preparación para actualizar el estado QA2 de este curso.</p>
+    <div class="qa-status-list">
+      ${rows.length?rows.map((i,n)=>`<div class="qa-status-row">
+        <span class="qa-number">${n+1}</span><div class="qa-detail">
+        <strong>${esc(i.categoria||i.CATEGORIA||'Incidencia QA2')}</strong>
+        <p>${esc(i.descripcionIncidencia||i.descripcion||'Sin descripción registrada')}</p>
+        <small>Semana: ${esc(i.semanaUnidad||i.semana||'—')} · ID: ${esc(i.idIncidencia||'—')}</small>
+        </div><span class="qa-state">${esc(status(i))}</span></div>`).join(''):
+        `<div class="qa-empty">${esc(summary)}. No hay descripciones de incidencias disponibles para este curso.</div>`}
+      <div class="qa-links">
+        <a class="btn-pill-soft" href="${PORTAL}incidencias.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener">Abrir historial y evidencias ↗</a>
+        <a class="btn-icon-nav" href="${PORTAL}cursos_preparacion.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener">Formulario QA2 ↗</a>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="${PORTAL}incidencias.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener noreferrer" class="comm-card">
-          <div><b>Abrir Historial de Incidencias</b><small>Ver evidencias en incidencias.html</small></div>
-          <svg class="ic" style="color:var(--brand)"><use href="#icon-external"/></svg>
-        </a>
-        <a href="${PORTAL}cursos_preparacion.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener noreferrer" class="comm-card">
-          <div><b>Ir al Formulario QA2</b><small>Registrar revisión en cursos_preparacion.html</small></div>
-          <svg class="ic" style="color:var(--brand)"><use href="#icon-external"/></svg>
-        </a>
-      </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function renderStages(c) {
