@@ -637,7 +637,7 @@
     function canvasUrlFromQA(x,byCourse){
       const inc=byCourse.get(String(x.id))||[];
       const rec=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
-      const raw=x.URL_CANVAS||x.url_canvas||x['url canvas']||rec?.urlCanvas||rec?.URL_QA2_FI_Url||rec?.urlQa2FiUrl||rec?.urlQA2FIUrl||'';
+      const raw=norm(x['codigo curso'])==='UNI118'?(x.URL_CANVAS||x.url_canvas||x['url canvas']||''):(rec?.urlCanvas||rec?.URL_QA2_FI_Url||rec?.urlQa2FiUrl||rec?.urlQA2FIUrl||'');
       const val=typeof raw==='object'?raw.Url??raw.url??raw.href??raw.Value??'':raw;
       try{const u=new URL(String(val||''));return u.protocol==='https:'?u.href:''}catch{return ''}
     }
