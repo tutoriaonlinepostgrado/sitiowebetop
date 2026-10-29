@@ -871,7 +871,7 @@ const courseContext = c => ({nrc:c.nrc, code:c.code, intake:c.intake});
 function safeUrl(raw){const v=typeof raw==='object'&&raw?raw.Url??raw.url??raw.href??raw.Value??'':raw;try{const u=new URL(String(v||'').trim());return u.protocol==='https:'?u.href:''}catch{return ''}}
 function canvasForCourse(c){
  const records=qaRows.filter(x=>String(x.cursoId??'')===String(c.id));
- const sources=[c.raw?.URL_CANVAS,c.raw?.url_canvas,c.canvas,c.raw?.urlCanvas,c.raw?.['url canvas'],...records.map(x=>x.urlCanvas??x.URL_QA2_FI_Url??x.urlQa2FiUrl??x.urlQA2FIUrl)];
+ const sources=norm(c.raw?.['codigo curso']||c.raw?.COD_CURSO||c.raw?.codigoCurso)==='UNI118'?[c.raw?.URL_CANVAS,c.raw?.url_canvas,c.raw?.['url canvas']]:[c.canvas,c.raw?.urlCanvas,...records.map(x=>x.urlCanvas??x.URL_QA2_FI_Url??x.urlQa2FiUrl??x.urlQA2FIUrl)];
  for(const v of sources){const u=safeUrl(v);if(u)return u}
  return '';
 }
