@@ -552,7 +552,7 @@ a { text-decoration: none; }
             <button type="button" id="cancelDateEdit" class="date-editor-cancel">Cancelar</button>
           </div>
           <p id="dateEditError" class="date-editor-error" role="alert"></p>
-          <p class="date-editor-note">Las fechas introducidas aquí son una referencia visual. El cambio debe realizarse y guardarse en Power Apps con tu sesión institucional. La ficha mostrará las fechas oficiales cuando se actualice nrcs.json.</p>
+          <p class="date-editor-note">Las fechas seleccionadas se enviarán a Power Apps para su confirmación y guardado autenticado. La ficha mostrará las fechas oficiales cuando se actualice nrcs.json.</p>
         </div>
       </div>
     </div>
@@ -641,6 +641,7 @@ a { text-decoration: none; }
 'use strict';
 const BASE=new URL('./',location.href).href;
 const PBI='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToPage';
+const POWERAPPS_FECHAS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/f184b097-3146-4f9c-9a68-419270cb3ca1?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=880e23f7-8f39-42a1-ac6a-b0ede6467466';
 const POWERAPPS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
 const $=id=>document.getElementById(id);
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
@@ -662,6 +663,7 @@ function urlPbi(nrc){const u=new URL(PBI);u.searchParams.set('filter',"NRC_TUTOR
 function urlStudents(nrc){const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');u.searchParams.set('FilterValue1',nrc);u.searchParams.set('FilterType1','Text');u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');u.searchParams.set('env','Embedded');return u.href}
 function urlIntake(c){if(!c.intake)return '';const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');u.searchParams.set('env','WebViewList');u.searchParams.set('FilterField1','field_8');u.searchParams.set('FilterValue1',c.intake);return u.href}
 function urlIntegration(nrc){const a=String(nrc).split('_'),id=a[0],term=a[a.length-1];return id&&term?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:term,periodo:term,nrc:id,nrc_code:id,crn:id,NRC:id}).toString():''}
+function urlAppsFechas(c,inicio,fin){if(!c?.id)return '';const u=new URL(POWERAPPS_FECHAS);u.searchParams.set('ids',String(c.id));u.searchParams.set('nrc',String(c.nrc||''));u.searchParams.set('inicio',inicio);u.searchParams.set('fin',fin);return u.href}
 function urlApps(c){if(!c.id)return '';const u=new URL(POWERAPPS);u.searchParams.set('ids',String(c.id));return u.href}
 function urlQa(c){return c.id&&norm(c['codigo curso'])!=='UNI118'?BASE+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc):''}
 function urlPresentation(c){return BASE+'presentacion_tutorial_innovado.html?'+new URLSearchParams({nombreTutor:c.tutor||'',nombreCurso:c['nombre curso']||'',nrc:c.nrc,fechaInicio:c['fecha inicio']||'',fechaFin:c['fecha fin']||''}).toString()}
@@ -805,10 +807,10 @@ $('continueDateEdit').addEventListener('click',()=>{
  if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(a)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(b)||b<a){
  $('dateEditError').textContent='Ingresa fechas válidas. El término no puede ser anterior al inicio.';return;
  }
- const url=urlApps(current);
+ const url=urlAppsFechas(current,a,b);
  if(!url){$('dateEditError').textContent='El NRC no tiene ID de SharePoint para abrir el editor.';return}
  // No se envían fechas a un endpoint público ni se confirma guardado sin respuesta autenticada.
- $('dateEditError').textContent='Confirma las fechas en Power Apps. Esta pantalla no ha modificado SharePoint.';
+ $('dateEditError').textContent='Confirma las fechas precargadas en Power Apps y pulsa Guardar cambios. Esta ficha no ha modificado SharePoint.';
  window.open(url,'_blank','noopener,noreferrer');
 });
 
