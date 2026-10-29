@@ -720,9 +720,9 @@ const PORTAL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
 const ACCESS = {
   'Panel de Estudiantes': {url: '', context: true},
   'Abrir Aula Canvas': {url: '', context: false},
-  'Gestión y Formulario QA2': {url: PORTAL+'cursos_preparacion.html', context: true},
+  'Gestión y Formulario QA2': {url: PORTAL+'qa2_portal_integracion.html', context: true},
   'Hub de Comunicaciones': {url: PORTAL+'centro_herramientas_etop.html', context: true},
-  'Cotejo Integración': {url: PORTAL+'gestion.html', context: true},
+  'Cotejo Integración': {url: '', context: true},
   'Informe Power BI': {url: '', context: false},
   'Editar NRC': {url: '', context: false},
   'Historial QA2': {url: PORTAL+'incidencias.html', context: true},
@@ -875,7 +875,21 @@ function studentsUrl(nrc){
  return u.href;
 }
 const courseContext = c => ({nrc:c.nrc, code:c.code, intake:c.intake});
+function safeUrl(raw){const v=typeof raw==='object'&&raw?raw.Url??raw.url??raw.href??raw.Value??'':raw;try{const u=new URL(String(v||'').trim());return u.protocol==='https:'?u.href:''}catch{return ''}}
+function canvasForCourse(c){
+ const records=qaRows.filter(x=>String(x.cursoId??'')===String(c.id));
+ const sources=[c.canvas,c.raw?.urlCanvas,c.raw?.['url canvas'],...records.map(x=>x.urlCanvas??x.URL_QA2_FI_Url??x.urlQa2FiUrl??x.urlQA2FIUrl)];
+ for(const v of sources){const u=safeUrl(v);if(u)return u}
+ return '';
+}
+function integrationUrl(nrc){
+ const parts=String(nrc||'').split('_'),period=parts[parts.length-1]||'',crn=parts[0]||'';
+ return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
+}
 const urlFor = (name, c) => {
+ if(name==='Gestión y Formulario QA2')return PORTAL+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc);
+ if(name==='Abrir Aula Canvas')return canvasForCourse(c);
+ if(name==='Cotejo Integración')return integrationUrl(c.nrc);
   if(name==='Panel de Estudiantes')return studentsUrl(c.nrc);
   const raw = name==='Editar NRC' && c.id ? 'https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ids='+encodeURIComponent(c.id) : (Object.prototype.hasOwnProperty.call(savedLinks,name) ? savedLinks[name] : ACCESS[name]?.url);
   if (!raw) return '';
@@ -891,7 +905,7 @@ function openTool(name) {
 
   if (!ACCESS[name]) return;
   const dest = urlFor(name, courses[activeIndex]);
-  if (!dest) { editLink(name); return; }
+  if (!dest) { if(name==='Abrir Aula Canvas'){alert('No hay URL de Canvas registrada para este NRC. Revisa el QA2 o la ficha del curso.');return;} editLink(name); return; }
   const opened = window.open(dest, '_blank');
   if (opened) opened.opener = null;
 }
@@ -953,7 +967,7 @@ function renderTools(c) {
   const primaryTools = [
     { title: 'Panel de Estudiantes', desc: 'Gestión y semáforo por alumno', icon: 'users', theme: 'c-blue', cat: 'seguimiento', badge: c.active===null?'Sin dato':`${c.active} activos`, badgeCls: status === 'ACTIVO' ? 'recommended' : '' },
     { title: 'Abrir Aula Canvas', desc: 'Ir al curso en plataforma LMS', icon: 'canvas', theme: 'c-green', cat: 'seguimiento', badge: 'Aula Virtual', badgeCls: '' },
-    { title: 'Gestión y Formulario QA2', desc: 'Registrar revisión o incidencia', icon: 'clipboard', theme: 'c-amber', cat: 'gestion', badge: qaAlert ? '⚠️ 1 Incidencia' : 'QA2 al día', badgeCls: qaAlert ? 'alert' : '' },
+    { title: 'Gestión y Formulario QA2', desc: 'Registrar revisión o incidencia', icon: 'clipboard', theme: 'c-amber', cat: 'gestion', badge: qaAlert ? `⚠️ ${c.qaRows?.length||0} incidencia(s)` : c.qa==='pending'?'QA2 pendiente':'QA2 al día', badgeCls: qaAlert ? 'alert' : '' },
     { title: 'Hub de Comunicaciones', desc: 'Ver plantillas de esta etapa aquí', icon: 'mail', theme: 'c-purple', cat: 'comunicacion', badge: 'Ver plantillas ▾', badgeCls: 'recommended' }
   ];
 
