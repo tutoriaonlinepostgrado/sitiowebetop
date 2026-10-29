@@ -144,6 +144,7 @@
     }
 .course-panel{display:none!important}.table-layout,.table-shell{width:100%;min-width:0}.table-wrap{flex:1 1 auto;width:100%;max-width:100%}.column-filter{display:block;margin-top:5px;max-width:100%;width:100%;min-width:64px;font:10px Arial,sans-serif;border:1px solid #cbd5e1;border-radius:5px;padding:3px;background:#fff;color:#334155}.actions{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap}.actions .action{font-size:10px;padding:5px 6px}.course-icon{min-width:25px;text-align:center;text-decoration:none}.course-icon.unavailable{opacity:.35;cursor:default}
 .column-filter{display:none!important}.header-filter-link{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.header-filter-link:hover{color:#1d4ed8}.table-wrap{overflow-x:auto!important}table{min-width:1430px!important;table-layout:auto}th:last-child,td:last-child{min-width:260px;white-space:nowrap}td:last-child .actions{display:flex;flex-wrap:nowrap;gap:3px;align-items:center}td:last-child .action{box-sizing:border-box;min-width:0;max-width:none;line-height:1.15}td:last-child .action-text{font-size:10px;white-space:nowrap;padding:5px 6px}td:last-child .course-icon{font-size:13px;width:25px;height:25px;display:inline-flex;align-items:center;justify-content:center;padding:2px}
+.header-filter-link{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}.header-filter-active{background:#fff3cd;border-radius:3px}th:last-child,td:last-child{width:335px!important;min-width:335px!important;max-width:335px!important;overflow:visible!important}.actions{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;justify-content:flex-start!important;align-items:center!important;min-width:315px!important}.actions .action{position:static!important;flex:0 0 auto!important;white-space:nowrap!important;min-width:unset!important;transform:none!important}.actions .action-text{padding:4px 6px!important;font-size:10px!important}.actions .course-icon{width:29px!important;min-width:29px!important;max-width:29px!important;padding:0!important}.table-wrap{overflow-x:auto!important}table{min-width:1700px!important}
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -290,7 +291,7 @@
     const selectedNrcs=new Set();
     const SP_MULTI_URL='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/AllItems.aspx';
     const SP_MULTI_VIEW='f4c009bb-0552-43a5-9718-9c1d37d8f98b';
-    const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:'',programa:'',tipo:''};
+    const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:'',programa:'',tipo:'',correo:''};
     const columnFilters={nrc:'',estado:'','nombre curso':'',facultad:'',tutor:'',tipo:'',periodo:''};
     const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -307,7 +308,7 @@
     function filterCourses(data,{ignoreNrc=false}={}){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio'),codigos=qList('codigo'),programas=qList('programa'),nrcs=qList('nrc');const fechaDesde=dateValue(q.get('fechaDesde')),fechaHasta=dateValue(q.get('fechaHasta')),vista=q.get('vista')||'';return data.filter(x=>{const fi=dateValue(x['fecha inicio']),st=norm(x.estado);const base=(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(st))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(!codigos.length||codigos.includes(norm(x['codigo curso'])))&&(!programas.length||programas.includes(norm(x['nombre programa'])))&&(!fechaDesde||(fi&&fi>=fechaDesde))&&(!fechaHasta||(fi&&fi<=fechaHasta))&&(ignoreNrc||!nrcs.length||nrcs.includes(norm(x.nrc)));if(!base)return false;if(vista==='sinTutor')return ['ACTIVO','EN CIERRE'].includes(st)&&!String(x.tutor||'').trim();if(vista==='ceroEstudiantes')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)===0;if(vista==='mas30')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)>30;return true;});}
     function reconstruirUniversoDesdeFicha(){
       const explorando=Object.values(detailFilters).some(Boolean);
-      courses=filterCourses(allCourses,{ignoreNrc:explorando});
+      courses=explorando?allCourses:filterCourses(allCourses);
     }
     function updateHeader(list=courses){
       const tutor=selected(list,'tutor','Varios / No definido');
@@ -317,17 +318,25 @@
       document.getElementById('h-tipo').textContent=selected(list,'tipo','Varios');
       document.getElementById('h-intake').textContent=selected(list,'intake','Múltiples versiones');
       document.getElementById('h-facultad').textContent=selected(list,'facultad','Varias');
-      const clickable=[
-        ['h-tutor','tutor',list.length&&uniq(list,'tutor').length===1?tutor:''],
-        ['h-intake','intake',list.length&&uniq(list,'intake').length===1?list[0].intake:''],
-        ['h-facultad','facultad',list.length&&uniq(list,'facultad').length===1?list[0].facultad:''],
-        ['h-programa','programa',list.length&&uniq(list,'nombre programa').length===1?list[0]['nombre programa']:''],
-        ['h-tipo','tipo',list.length&&uniq(list,'tipo').length===1?list[0].tipo:'']
+      // La cabecera mantiene el curso de referencia para filtrar incluso cuando el resultado contiene varios valores.
+      const reference=allCourses.find(x=>norm(x.nrc)===norm(q.get('nrc')||''))||allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc))||list[0];
+      const fields=[
+       ['h-tutor','tutor','tutor'],['h-programa','programa','nombre programa'],
+       ['h-correo','correo',null],['h-tipo','tipo','tipo'],
+       ['h-intake','intake','intake'],['h-facultad','facultad','facultad']
       ];
-      clickable.forEach(([id,key,val])=>{
-        const el=document.getElementById(id);el.classList.toggle('header-filter-link',!!val);
-        el.title=val?'Filtrar por '+key+': '+val:'';
-        el.onclick=val?()=>aplicarFiltroFicha(key,val):null;
+      fields.forEach(([id,key,prop])=>{
+        const el=document.getElementById(id);
+        const value=prop?String(reference?.[prop]||'').trim():String(EMAILS[norm(reference?.tutor)]||'').trim();
+        const display=value||el.textContent;
+        el.textContent=display;
+        el.classList.toggle('header-filter-link',!!value);
+        el.classList.toggle('header-filter-active',!!detailFilters[key]);
+        el.title=value?'Filtrar todos los cursos por '+key+': '+value:'Sin dato para filtrar';
+        el.setAttribute('role','button');el.tabIndex=value?0:-1;
+        const handler=()=>{if(value)aplicarFiltroFicha(key,value)};
+        el.onclick=handler;
+        el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handler()}};
       });
     }
     function badge(state){const s=norm(state);if(s==='PREPARACION')return['PREP','prep'];if(s==='ACTIVO')return['ACTIVO','active'];if(s==='EN CIERRE')return['CIERRE','closing'];if(s==='CERRADO')return['CERRADO','closed-b'];return[state||'—','unknown'];}
@@ -341,7 +350,8 @@
         (!detailFilters.facultad || norm(x.facultad)===norm(detailFilters.facultad)) &&
         (!detailFilters.codigo || norm(x['codigo curso'])===norm(detailFilters.codigo)) &&
         (!detailFilters.programa || norm(x['nombre programa'])===norm(detailFilters.programa)) &&
-        (!detailFilters.tipo || norm(x.tipo)===norm(detailFilters.tipo))
+        (!detailFilters.tipo || norm(x.tipo)===norm(detailFilters.tipo)) &&
+        (!detailFilters.correo || norm(EMAILS[norm(x.tutor)]||'')===norm(detailFilters.correo))
       );
     }
    function studentsUrl(nrc){
@@ -415,7 +425,7 @@
       reconstruirUniversoDesdeFicha();
       render();
       const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
-      if(seleccionado)renderCoursePanel(seleccionado);
+
     }
     function metaFilterButton(campo,label,valor){
       if(!valor)return '';
