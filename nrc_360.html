@@ -4,35 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>ETOP · Ficha NRC 2.0 · Centro de Operaciones</title>
+<title>ETOP · Ficha 360 NRC · Vista Simplificada</title>
 <style>
 :root {
-  --bg: #eef2f6;
+  --bg: #f4f6f9;
   --surface: #ffffff;
   --surface-subtle: #f8fafc;
-  --navy-950: #091526;
-  --navy-900: #0f233f;
-  --navy-800: #1a365d;
+  --surface-hover: #f1f5f9;
+  --navy-950: #0a1424;
+  --navy-900: #11223d;
   --ink: #0f172a;
   --ink-secondary: #475569;
   --ink-muted: #64748b;
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
-  --brand: #1d4ed8;
+  --brand: #2563eb;
+  --brand-dark: #1d4ed8;
   --brand-soft: #eff6ff;
   --brand-border: #bfdbfe;
-  --gold-accent: #f59e0b;
+  --gold: #d97706;
+  --gold-soft: #fffbeb;
+  --gold-border: #fde68a;
   --success: #059669;
   --success-bg: #ecfdf5;
   --danger: #dc2626;
   --danger-bg: #fef2f2;
-  --warning: #d97706;
-  --warning-bg: #fffbeb;
-  --radius-sm: 7px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.03);
+  --shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
   --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
 }
@@ -41,7 +43,7 @@
 body {
   font-family: var(--font-sans);
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--ink);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -57,416 +59,444 @@ a { text-decoration: none; }
   stroke-linecap: round; stroke-linejoin: round; fill: none;
 }
 
-/* 1. TOPBAR */
+/* 1. TOPBAR MINIMALISTA */
 .topbar {
   height: 52px;
   background: var(--navy-950);
   color: #fff;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 max(18px, calc((100vw - 1500px) / 2));
-  border-bottom: 2px solid var(--gold-accent);
+  padding: 0 max(24px, calc((100vw - 1340px) / 2));
   position: sticky; top: 0; z-index: 40;
 }
-.brand-group { display: flex; align-items: center; gap: 11px; }
+.brand-group { display: flex; align-items: center; gap: 10px; }
 .brand-logo {
-  width: 30px; height: 30px; border-radius: 7px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #091526; font-weight: 900; font-size: 12px;
-  display: grid; place-items: center;
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--brand); color: #fff;
+  font-weight: 800; font-size: 12px; display: grid; place-items: center;
 }
-.brand-title b { display: block; font-size: 12.5px; letter-spacing: 0.02em; color: #f8fafc; }
-.brand-title small { display: block; font-size: 10px; color: #94a3b8; }
+.brand-title { font-size: 13px; font-weight: 700; color: #f8fafc; letter-spacing: 0.01em; }
+.brand-title span { color: #94a3b8; font-weight: 400; margin-left: 6px; font-size: 12px; }
 
-.top-right { display: flex; align-items: center; gap: 10px; }
+.top-right { display: flex; align-items: center; gap: 8px; }
 .btn-top {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: #f8fafc; padding: 5px 11px; border-radius: var(--radius-sm);
-  font-size: 11px; font-weight: 600;
+  font-size: 11.5px; font-weight: 600; transition: all 0.15s;
 }
-.btn-top:hover { background: rgba(255, 255, 255, 0.16); }
+.btn-top:hover { background: rgba(255, 255, 255, 0.15); }
 
-/* CONTENEDOR PRINCIPAL */
+/* CONTENEDOR MÁS CENTRADO Y RESPIRABLE (1340px) */
 .container {
-  max-width: 1500px; margin: 0 auto;
-  padding: 12px 18px 36px;
-  display: flex; flex-direction: column; gap: 12px;
+  max-width: 1340px; margin: 0 auto;
+  padding: 18px 24px 44px;
+  display: flex; flex-direction: column; gap: 16px;
 }
 
-/* 2. CABECERA COMPACTA INTEGRADA (STEPPER + IDENTIDAD DEL CURSO) */
-.header-deck {
+/* ==========================================================================
+   2. TARJETA MAESTRA DEL CURSO (IDENTIDAD + FECHAS + SALUD ESTUDIANTIL EN 1)
+   ========================================================================== */
+.master-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
-.stepper-strip {
+
+/* Barra superior sutil de navegación de Intake */
+.master-nav {
   background: var(--surface-subtle);
   border-bottom: 1px solid var(--border);
-  padding: 8px 16px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
 }
-.stepper-label {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 10.5px; font-weight: 700; color: var(--ink-secondary);
-  white-space: nowrap;
+.intake-info {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11.5px; color: var(--ink-secondary);
 }
-.stepper-pills {
-  display: flex; align-items: center; gap: 6px; flex: 1; max-width: 920px;
+.intake-badge {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--ink); background: #e2e8f0; padding: 2px 8px; border-radius: 5px;
 }
-.step-mini {
-  flex: 1; min-width: 0;
-  display: flex; align-items: center; gap: 6px;
-  padding: 5px 8px; border-radius: var(--radius-sm);
+.nav-controls { display: flex; align-items: center; gap: 6px; }
+.btn-pill-soft {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px; border-radius: var(--radius-sm);
+  background: var(--brand-soft); border: 1px solid var(--brand-border);
+  color: var(--brand); font-size: 11.5px; font-weight: 700;
+}
+.btn-pill-soft:hover { background: #dbeafe; }
+.btn-icon-nav {
+  height: 27px; padding: 0 9px; border-radius: var(--radius-sm);
   border: 1px solid var(--border); background: #fff;
-  font-size: 10.5px; text-align: left; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11.5px; font-weight: 600; color: var(--ink-secondary);
 }
-.step-mini:hover { border-color: #93c5fd; }
-.step-mini.done { border-left: 3px solid var(--success); }
-.step-mini.selected {
-  background: var(--brand-soft); border-color: var(--brand);
-  font-weight: 700; color: var(--brand);
-}
-.step-mini-code { font-family: var(--font-mono); font-weight: 800; font-size: 10px; }
-.step-mini-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-secondary); }
-.step-mini.selected .step-mini-name { color: var(--brand); }
+.btn-icon-nav:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
 
-.stepper-arrows { display: flex; align-items: center; gap: 4px; }
-.btn-nav-sm {
-  height: 26px; padding: 0 8px; border-radius: 5px;
-  border: 1px solid var(--border); background: #fff;
-  display: inline-flex; align-items: center; gap: 3px;
-  font-size: 10.5px; font-weight: 600; color: var(--ink-secondary);
+/* Cuerpo de la Tarjeta Maestra: 3 zonas limpias */
+.master-body {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.05fr;
+  gap: 24px;
+  align-items: center;
 }
-.btn-nav-sm:hover:not(:disabled) { background: var(--brand-soft); color: var(--brand); }
-
-/* Fila Identidad + Progreso dentro del Header Deck */
-.hero-row {
-  padding: 14px 18px;
-  display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: center;
-}
-.hero-identity { min-width: 0; }
-.badges-inline { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
-.nrc-badge {
-  font-family: var(--font-mono); font-size: 11px; font-weight: 800;
-  background: var(--navy-900); color: #fff; padding: 3px 8px; border-radius: 5px;
+.zone-identity { min-width: 0; }
+.badges-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.nrc-tag {
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 800;
+  background: var(--navy-900); color: #fff; padding: 3px 9px; border-radius: 6px;
 }
 .state-pill {
-  padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 800;
+  padding: 2px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700;
 }
-.state-pill.ACTIVO { background: var(--success-bg); color: var(--success); border: 1px solid #a7f3d0; }
-.state-pill.PREPARACION { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-.state-pill.CERRADO { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; }
+.state-pill.ACTIVO { background: var(--success-bg); color: var(--success); }
+.state-pill.PREPARACION { background: var(--surface-hover); color: var(--ink-secondary); }
+.state-pill.CERRADO { background: var(--danger-bg); color: var(--danger); }
 
-.course-main-title {
-  font-size: 19px; font-weight: 800; color: var(--ink);
-  letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px;
+.course-title {
+  font-size: 20px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 10px;
 }
-.meta-inline-list {
-  display: flex; flex-wrap: wrap; gap: 14px; font-size: 11.5px; color: var(--ink-secondary);
+.course-meta-line {
+  display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-secondary);
 }
-.meta-inline-list span b { color: var(--ink); font-weight: 700; }
+.course-meta-line b { color: var(--ink); font-weight: 600; }
 
-.hero-timeline-box {
-  background: var(--surface-subtle);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
+/* Zona Central: Cronograma + Edición de Fechas */
+.zone-timeline {
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 0 22px;
 }
-.tl-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 700; }
-.tl-status { color: var(--brand); font-weight: 800; }
-.tl-bar { height: 7px; background: #e2e8f0; border-radius: 999px; margin: 7px 0; overflow: hidden; }
-.tl-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #1d4ed8); border-radius: 999px; transition: width 0.3s; }
-.tl-foot { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-muted); }
+.tl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tl-phase { font-size: 12px; font-weight: 700; color: var(--brand); }
+.btn-link-subtle {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--ink-muted);
+  padding: 2px 6px; border-radius: 5px;
+}
+.btn-link-subtle:hover { background: var(--surface-hover); color: var(--brand); }
+.tl-bar { height: 7px; background: var(--surface-hover); border-radius: 999px; overflow: hidden; margin: 8px 0; }
+.tl-fill { height: 100%; background: var(--brand); border-radius: 999px; transition: width 0.3s; }
+.tl-dates { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-secondary); font-weight: 500; }
+
+/* Zona Derecha: Resumen Estudiantil Compacto (Sustituye a la tarjeta pesada de KPI) */
+.zone-health { display: flex; flex-direction: column; gap: 10px; }
+.health-top { display: flex; justify-content: space-between; align-items: center; }
+.health-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-muted); }
+.kpi-inline-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.kpi-stat {
+  background: var(--surface-subtle); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 6px 8px; text-align: center;
+}
+.kpi-stat.alert { background: var(--danger-bg); border-color: #fecaca; }
+.kpi-stat strong { display: block; font-size: 16px; font-weight: 800; font-family: var(--font-mono); line-height: 1.1; }
+.kpi-stat.alert strong { color: var(--danger); }
+.kpi-stat span { font-size: 9.5px; color: var(--ink-secondary); font-weight: 600; }
+
+.sem-compact-row { display: flex; align-items: center; gap: 10px; }
+.sem-bar-mini { flex: 1; height: 7px; border-radius: 999px; background: var(--border); display: flex; overflow: hidden; gap: 2px; }
+.sem-legend-mini { display: flex; gap: 8px; font-size: 11px; font-weight: 600; color: var(--ink-secondary); }
+.sem-dot-item { display: inline-flex; align-items: center; gap: 4px; }
+.dot-sm { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Editor Inline de Fechas (Desplegable limpio) */
+.date-drawer {
+  background: var(--brand-soft);
+  border-top: 1px solid var(--brand-border);
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.date-drawer[hidden] { display: none !important; }
+.date-inputs { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.date-inputs label { font-size: 11px; font-weight: 700; color: var(--ink-secondary); display: flex; align-items: center; gap: 6px; }
+.date-inputs input {
+  height: 30px; padding: 0 9px; border-radius: 6px;
+  border: 1px solid var(--border-strong); background: #fff;
+  font-family: var(--font-mono); font-size: 11.5px;
+}
+.btn-save {
+  height: 30px; padding: 0 12px; border-radius: 6px;
+  background: var(--brand); color: #fff; font-size: 11.5px; font-weight: 700;
+}
+.btn-cancel {
+  height: 30px; padding: 0 10px; border-radius: 6px;
+  background: #fff; border: 1px solid var(--border); font-size: 11.5px; font-weight: 600;
+}
 
 /* ==========================================================================
-   3. CENTRO DE HERRAMIENTAS PROTAGONISTA ("COMMAND DOCK")
+   3. GUÍA DE ACOMPAÑAMIENTO EN MODO "ENFOQUE HOY" (1 SOLA TIRA SILENCIOSA)
    ========================================================================== */
-.command-center {
-  background: linear-gradient(180deg, #0f233f 0%, #091526 100%);
-  border: 1px solid #1e3a5f;
+.focus-guide {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px 18px;
-  color: #fff;
-  box-shadow: var(--shadow-md);
-  position: relative;
+  padding: 14px 20px;
+  box-shadow: var(--shadow-xs);
 }
-.command-header {
+.focus-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
+  gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
 }
-.command-title-group { display: flex; align-items: center; gap: 10px; }
-.command-icon-badge {
-  width: 34px; height: 34px; border-radius: 8px;
-  background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.45);
-  color: #fbbf24; display: grid; place-items: center;
+.focus-title-wrap { display: flex; align-items: center; gap: 10px; }
+.stage-badge-active {
+  background: var(--gold-soft); border: 1px solid var(--gold-border);
+  color: var(--gold); font-size: 11px; font-weight: 800;
+  padding: 3px 10px; border-radius: 999px;
 }
-.command-title-group h2 {
-  font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.01em;
-}
-.command-title-group p { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+.focus-title { font-size: 13px; font-weight: 800; color: var(--ink); }
+.focus-sub { font-size: 11.5px; color: var(--ink-muted); }
 
-.command-filter-pills { display: flex; gap: 6px; }
-.cat-filter {
-  padding: 5px 11px; border-radius: 999px; font-size: 11px; font-weight: 700;
-  color: #cbd5e1; background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12); transition: all 0.15s;
+/* Selector discreto de etapas (Pills suaves) */
+.stage-pills-bar { display: flex; align-items: center; gap: 4px; }
+.stage-chip-btn {
+  padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  color: var(--ink-secondary); background: var(--surface-subtle);
+  border: 1px solid var(--border); transition: all 0.15s;
 }
-.cat-filter:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
-.cat-filter.active {
-  background: var(--gold-accent); color: #091526; border-color: var(--gold-accent);
+.stage-chip-btn:hover { border-color: var(--border-strong); color: var(--ink); }
+.stage-chip-btn.current {
+  background: var(--ink); color: #fff; border-color: var(--ink); font-weight: 700;
+}
+.stage-chip-btn.viewing {
+  border-color: var(--gold); color: var(--gold); background: var(--gold-soft);
 }
 
-/* NIVEL 1: 4 HERRAMIENTAS ESENCIALES (TARJETAS HERO DE ACCIÓN) */
-.primary-tools-grid {
+/* Las 3 tareas en línea horizontal limpia */
+.focus-tasks-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; list-style: none;
+}
+.focus-task {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex; align-items: flex-start; gap: 9px;
+}
+.task-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--brand-soft); color: var(--brand);
+  font-size: 10.5px; font-weight: 800; display: grid; place-items: center; flex: 0 0 20px;
+  margin-top: 1px;
+}
+.focus-task b { display: block; font-size: 12px; font-weight: 700; color: var(--ink); }
+.focus-task span { display: block; font-size: 11px; color: var(--ink-secondary); margin-top: 2px; line-height: 1.35; }
+
+/* ==========================================================================
+   4. PANTALLA DINÁMICA INTERACTIVA (DISEÑO CLARO, MODERNO Y DESPEJADO)
+   ========================================================================== */
+.workspace-screen {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Barra de Pestañas de la Pantalla Interactiva */
+.workspace-bar {
+  background: var(--surface-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ws-tabs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ws-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 700; color: var(--ink-secondary);
+  background: transparent; border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.ws-tab:hover { background: var(--surface-hover); color: var(--ink); }
+.ws-tab.active {
+  background: var(--surface);
+  color: var(--brand);
+  border-color: var(--border);
+  box-shadow: var(--shadow-xs);
+}
+.ws-badge {
+  font-size: 10px; font-weight: 800; padding: 1px 6px;
+  border-radius: 999px; background: var(--surface-hover); color: var(--ink-secondary);
+}
+.ws-tab.active .ws-badge { background: var(--brand-soft); color: var(--brand); }
+
+.ws-viewport { padding: 22px; min-height: 270px; }
+.view-pane[hidden] { display: none !important; }
+
+.pane-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+}
+.pane-title { font-size: 14px; font-weight: 800; color: var(--ink); }
+.pane-sub { font-size: 11.5px; color: var(--ink-muted); }
+
+/* Filtro rápido de categorías */
+.filter-chips { display: flex; gap: 6px; }
+.f-chip {
+  padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  color: var(--ink-secondary); background: var(--surface-subtle);
+  border: 1px solid var(--border);
+}
+.f-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* Las 4 Herramientas Esenciales del Tutor (Tarjetas limpias con mucho aire) */
+.core-tools-grid {
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px; margin-bottom: 12px;
+  gap: 12px; margin-bottom: 20px;
 }
-.hero-tool-card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.97);
-  color: var(--ink);
-  border: 2px solid transparent;
+.core-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 13px 14px;
+  padding: 16px;
   text-align: left;
   display: flex; flex-direction: column; justify-content: space-between;
-  min-height: 98px;
+  min-height: 108px;
   transition: all 0.16s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-.hero-tool-card:hover {
+.core-card:hover {
+  border-color: var(--brand);
+  box-shadow: 0 6px 18px -4px rgba(37, 99, 235, 0.12);
   transform: translateY(-2px);
-  background: #ffffff;
-  border-color: var(--gold-accent);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
 }
-.hero-tool-top {
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
-  margin-bottom: 8px;
+.core-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.core-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: grid; place-items: center;
 }
-.hero-tool-icon {
-  width: 38px; height: 38px; border-radius: 9px;
-  display: grid; place-items: center; flex: 0 0 38px;
-}
-.hero-tool-icon .ic { width: 20px; height: 20px; }
+.core-icon .ic { width: 20px; height: 20px; }
+.core-card.c-blue .core-icon { background: #eff6ff; color: #2563eb; }
+.core-card.c-green .core-icon { background: #ecfdf5; color: #059669; }
+.core-card.c-amber .core-icon { background: #fffbeb; color: #d97706; }
+.core-card.c-purple .core-icon { background: #f5f3ff; color: #7c3aed; }
 
-/* Colores por dominio para las 4 principales */
-.hero-tool-card.t-blue .hero-tool-icon { background: #dbeafe; color: #1d4ed8; }
-.hero-tool-card.t-emerald .hero-tool-icon { background: #d1fae5; color: #047857; }
-.hero-tool-card.t-amber .hero-tool-icon { background: #fef3c7; color: #b45309; }
-.hero-tool-card.t-purple .hero-tool-icon { background: #ede9fe; color: #6d28d9; }
-
-.tool-live-badge {
-  font-size: 9.5px; font-weight: 800; padding: 2px 7px;
+.core-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
   border-radius: 999px; background: var(--surface-subtle);
   border: 1px solid var(--border); color: var(--ink-secondary);
 }
-.tool-live-badge.recommended {
-  background: #fef3c7; border-color: #fde68a; color: #92400e;
-}
-.tool-live-badge.alert {
-  background: var(--danger-bg); border-color: #fecaca; color: var(--danger);
-}
+.core-tag.recommended { background: var(--gold-soft); border-color: var(--gold-border); color: var(--gold); }
+.core-tag.alert { background: var(--danger-bg); border-color: #fecaca; color: var(--danger); }
 
-.hero-tool-title {
-  font-size: 13.5px; font-weight: 800; color: var(--ink);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.hero-tool-desc { font-size: 11px; color: var(--ink-secondary); margin-top: 2px; }
+.core-name { font-size: 13.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; justify-content: space-between; }
+.core-desc { font-size: 11.5px; color: var(--ink-muted); margin-top: 3px; }
 
-/* NIVEL 2: HERRAMIENTAS SECUNDARIAS Y UTILIDADES (DOCK DE ACCESO RÁPIDO) */
-.secondary-tools-label {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 8px;
+/* Herramientas Complementarias: Botones píldora estilizados y ligeros */
+.more-tools-divider {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--ink-muted); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
 }
-.secondary-tools-label::after {
-  content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.12);
-}
-.secondary-tools-grid {
+.more-tools-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+.quick-links-row {
   display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px;
 }
-.sec-tool-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+.quick-btn {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 9px 10px;
-  color: #f8fafc;
   text-align: left;
   display: flex; align-items: center; gap: 8px;
-  transition: all 0.15s;
-  min-width: 0;
+  transition: all 0.15s; min-width: 0;
 }
-.sec-tool-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.38);
-  transform: translateY(-1px);
+.quick-btn:hover {
+  background: #fff; border-color: var(--brand); color: var(--brand);
+  box-shadow: var(--shadow-xs);
 }
-.sec-tool-icon {
-  width: 28px; height: 28px; border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1); color: #93c5fd;
-  display: grid; place-items: center; flex: 0 0 28px;
-}
-.sec-tool-copy { min-width: 0; flex: 1; }
-.sec-tool-copy b {
-  display: block; font-size: 11px; font-weight: 700; color: #fff;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.sec-tool-copy small {
-  display: block; font-size: 9.5px; color: #cbd5e1;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+.quick-icon { color: var(--ink-secondary); display: grid; place-items: center; }
+.quick-btn:hover .quick-icon { color: var(--brand); }
+.quick-copy { min-width: 0; flex: 1; }
+.quick-copy b { display: block; font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.quick-copy small { display: block; font-size: 10px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hidden-by-filter { display: none !important; }
 
-/* ==========================================================================
-   4. PANELES INFERIORES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPA + QA2)
-   ========================================================================== */
-.support-grid {
-  display: grid; grid-template-columns: 1.35fr 1fr; gap: 12px; align-items: start;
-}
-.card {
-  background: var(--surface);
+/* --- VISTA 2: CURSOS DEL INTAKE --- */
+.intake-cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.intake-item-card {
+  background: var(--surface-subtle);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
-.card-header {
-  padding: 11px 16px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.card-title {
-  font-size: 12.5px; font-weight: 800; color: var(--ink);
-  display: flex; align-items: center; gap: 7px;
-}
-.card-title .ic { color: var(--brand); }
-.card-body { padding: 14px 16px; }
-
-/* Planner de Hitos */
-.stage-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-.stage-tab {
-  padding: 7px 9px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
   text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: 8px; transition: all 0.15s;
 }
-.stage-tab strong { display: block; font-size: 11px; color: var(--ink); }
-.stage-tab small { font-size: 9.5px; color: var(--ink-muted); }
-.stage-tab.current { background: var(--brand-soft); border-color: var(--brand); }
-.stage-tab.current strong { color: var(--brand); }
-.stage-tab.viewing { outline: 2px solid var(--gold-accent); outline-offset: -2px; }
+.intake-item-card:hover { background: #fff; border-color: var(--brand); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.intake-item-card.active-nrc {
+  background: var(--brand-soft); border: 2px solid var(--brand);
+}
+.iic-head { display: flex; justify-content: space-between; align-items: center; }
+.iic-code { font-family: var(--font-mono); font-size: 11px; font-weight: 800; color: var(--brand); }
+.iic-title { font-size: 13.5px; font-weight: 800; color: var(--ink); }
+.iic-foot {
+  font-size: 11px; color: var(--ink-secondary);
+  display: flex; justify-content: space-between;
+  padding-top: 8px; border-top: 1px solid var(--border);
+}
 
-.tasks-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; list-style: none; }
-.task-item {
-  padding: 9px 10px; border-radius: var(--radius-sm);
+/* --- VISTA 3: COMUNICACIONES --- */
+.comm-stage-bar { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.comm-stage-btn {
+  padding: 6px 13px; border-radius: var(--radius-sm);
   border: 1px solid var(--border); background: var(--surface-subtle);
+  font-size: 11.5px; font-weight: 600; color: var(--ink-secondary);
 }
-.task-item b { display: block; font-size: 11px; color: var(--ink); margin-bottom: 3px; }
-.task-item span { font-size: 10.5px; color: var(--ink-secondary); line-height: 1.35; display: block; }
+.comm-stage-btn.selected { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
+.comm-templates-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.comm-card {
+  background: var(--surface-subtle); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  transition: all 0.15s;
+}
+.comm-card:hover { background: #fff; border-color: var(--brand); box-shadow: var(--shadow-xs); }
+.comm-card b { display: block; font-size: 12px; color: var(--ink); }
+.comm-card small { display: block; font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; }
 
-/* KPI & Semáforo */
-.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 12px; }
-.kpi-mini {
-  padding: 8px 10px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--surface-subtle);
+/* --- VISTA 4: QA2 --- */
+.qa-clean-box {
+  background: var(--surface-subtle); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 18px;
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: center;
 }
-.kpi-mini.alert { background: var(--danger-bg); border-color: #fecaca; }
-.kpi-mini strong { display: block; font-size: 19px; font-weight: 800; font-family: var(--font-mono); line-height: 1.1; }
-.kpi-mini.alert strong { color: var(--danger); }
-.kpi-mini span { font-size: 10px; color: var(--ink-secondary); font-weight: 600; }
 
-.sem-stacked {
-  height: 8px; border-radius: 999px; background: var(--border);
-  display: flex; overflow: hidden; gap: 2px; margin-bottom: 10px;
-}
-.sem-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.sem-pill {
-  padding: 6px 8px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); display: flex; align-items: center; gap: 7px;
-}
-.sem-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 9px; }
-
-/* Modal */
+/* MODAL */
 .modal {
-  position: fixed; inset: 0; background: rgba(9, 21, 38, 0.55);
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(2px); z-index: 100; display: none; place-items: center; padding: 18px;
 }
 .modal.show { display: grid; }
 .modal-box {
   background: #fff; border-radius: var(--radius-lg); padding: 22px;
-  max-width: 440px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-}
-.btn-primary {
-  background: var(--brand); color: #fff; font-weight: 700;
-  padding: 8px 16px; border-radius: var(--radius-sm); font-size: 12px;
+  max-width: 450px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-/* Responsividad para 13" y pantallas menores */
-@media (max-width: 1320px) {
-  .secondary-tools-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1220px) {
+  .master-body { grid-template-columns: 1fr 1fr; }
+  .zone-health { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 14px; }
+  .zone-timeline { border-right: none; padding-right: 0; }
+  .quick-links-row { grid-template-columns: repeat(4, 1fr); }
 }
-@media (max-width: 1040px) {
-  .hero-row, .support-grid { grid-template-columns: 1fr; }
-  .primary-tools-grid { grid-template-columns: repeat(2, 1fr); }
-  .secondary-tools-grid { grid-template-columns: repeat(3, 1fr); }
-  .stepper-pills { display: none; }
+/* Power Apps integrado en la columna central */
+.master-body{grid-template-columns:minmax(0,1.2fr) minmax(0,1.65fr) minmax(0,1.1fr);gap:14px;align-items:start}
+.zone-timeline{padding:0 12px;min-width:0}
+.embedded-timeline-app{margin-top:8px;border-top:1px solid var(--border);padding-top:4px}
+.embedded-timeline-app iframe{border:0;width:100%;height:177px;background:#fff;display:block}
+.app-unlinked{padding:12px;color:#b91c1c;font-size:11px}
+@media (max-width: 1050px){.master-body{grid-template-columns:1fr}.zone-timeline{border-left:0;border-right:0;border-top:1px solid var(--border);padding:14px 0}}
+@media (max-width: 900px) {
+  .master-body, .focus-tasks-grid, .qa-clean-box { grid-template-columns: 1fr; }
+  .zone-timeline { border-left: none; padding: 14px 0 0; border-top: 1px solid var(--border); }
+  .core-tools-grid, .intake-cards-grid, .comm-templates-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-links-row { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* Integraciones reales ETOP: se respeta el diseño Gemini. */
-#courseSearch{min-width:120px;width:clamp(135px,14vw,230px);height:30px;padding:0 9px;border:1px solid #94a3b8;border-radius:6px;color:#143257;background:#fff;font-size:11px}
-#searchNrc{height:30px}.stepper-pills{min-width:0;max-width:none;overflow-x:auto;scrollbar-width:thin}.step-mini{min-width:112px;flex:0 0 135px}
-.stepper-label{min-width:0;max-width:33%;overflow:hidden;text-overflow:ellipsis}.stepper-label span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.powerbi-holder{height:clamp(300px,36vh,390px);border-radius:8px;border:1px solid var(--border);background:white;overflow:hidden}
-.powerbi-holder iframe{width:100%;height:100%;border:0;display:block}.kpi-help{font-size:10px;color:#64748b;padding-top:7px}.kpi-help a{color:#1d4ed8;font-weight:700}
-.qa-history{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}.qa-history>summary{padding:12px 16px;font-weight:800;color:#274b72;cursor:pointer}
-.qa-entries{max-height:330px;overflow:auto;padding:12px;border-top:1px solid var(--border)}.qa-entries article{padding:10px;margin-bottom:7px;border:1px solid var(--border);border-radius:7px;background:#f8fafc}.qa-entries p{font-size:11px;margin-top:5px;white-space:pre-wrap}.qa-entries a{display:inline-block;margin-top:5px;color:#1d4ed8;font-size:11px}
-#qaHistoryExternal{display:block;border-top:1px solid var(--border);padding:8px 14px;color:#1d4ed8;font-weight:700;font-size:10px}
-.data-foot{font-size:10px;color:#64748b}.load-status{background:#eff6ff;color:#31577a;padding:7px 14px;font-size:11px;border-radius:7px}.load-status.error{background:#fff1f2;color:#b91c1c}
-.is-unavailable{opacity:.45;pointer-events:none;cursor:not-allowed}
-@media(max-width:1040px){.stepper-pills{display:flex!important;max-width:100%;overflow-x:auto}.step-mini{flex:0 0 125px}.stepper-strip{flex-wrap:wrap}.topbar{height:auto;min-height:54px;padding:6px 12px}}
-@media(max-width:800px){.top-right{flex-wrap:wrap;justify-content:flex-end}#courseSearch{width:135px}.stepper-label{max-width:100%}.primary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.secondary-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.support-grid{grid-template-columns:1fr}.tasks-row{grid-template-columns:1fr}}
-
-/* Comunicaciones contextuales por NRC */
-.comm-panel{margin-top:14px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:15px;color:#fff}
-.comm-panel[hidden]{display:none}
-.comm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-.comm-head h3{font-size:13px;margin:0}.comm-head p{font-size:11px;color:#cbd5e1;margin:3px 0 0}
-.comm-head a{color:#fbbf24;font-size:11px;text-decoration:underline}
-.comm-stages{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
-.comm-stage{border:1px solid #66768a;border-radius:7px;padding:7px 10px;color:#f1f5f9;background:#243c58;font-size:11px}
-.comm-stage.selected{background:#f59e0b;border-color:#f59e0b;color:#091526;font-weight:800}
-.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px}
-.comm-link{display:flex;align-items:center;justify-content:space-between;gap:9px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;color:#0f172a;min-height:65px;text-decoration:none}
-.comm-link:hover{border-color:#f59e0b;box-shadow:0 0 0 1px #f59e0b}
-.comm-link b{display:block;font-size:11.5px}.comm-link small{display:block;color:#64748b;font-size:10px;margin-top:4px}
-.comm-hint{font-size:10px;color:#cbd5e1;margin:12px 0 0}
-
-/* Editor autenticado de fechas: SharePoint mantiene la fuente de verdad */
-.date-edit-trigger{font-size:10.5px;font-weight:700;color:#1d4ed8;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:4px 9px}
-.date-edit-trigger:disabled{opacity:.45}
-.date-editor{margin-top:10px;border-top:1px dashed #cbd5e1;padding-top:10px}
-.date-editor[hidden]{display:none}
-.date-editor-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
-.date-editor label{font-size:10px;color:#475569;font-weight:700;display:grid;gap:4px}
-.date-editor input{width:100%;min-width:0;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;color:#0f172a}
-.date-editor-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.date-editor-open{background:#1d4ed8;color:#fff;border-radius:6px;padding:7px 11px;font-size:11px;font-weight:700}
-.date-editor-cancel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:7px 11px;font-size:11px}
-.date-editor-note{font-size:10px;color:#64748b;margin-top:8px;line-height:1.4}
-.date-editor-error{font-size:11px;color:#b91c1c;min-height:16px;margin-top:4px}
-@media(max-width:520px){.date-editor-fields{grid-template-columns:1fr}}
-
-/* Editor Power Apps permanente dentro del bloque central, sin panel adicional */
-.hero-row{grid-template-columns:minmax(0,1.05fr) minmax(0,1.45fr);align-items:start}
-.hero-timeline-box{min-width:0;background:#fff;padding:10px 12px;border-color:#e2e8f0}
-.timeline-embedded-app{margin-top:9px;border-top:1px solid #e2e8f0;padding-top:6px;min-width:0}
-.timeline-embedded-app iframe{border:0;width:100%;height:177px;display:block;background:#fff}
-.timeline-embedded-app.date-app-unavailable iframe{display:none}
-.date-app-status{color:#b91c1c;font-size:11px}
-.date-app-caption{color:#64748b;font-size:9px;margin:2px 0 0}
-@media(max-width:850px){.hero-row{grid-template-columns:1fr}.timeline-embedded-app iframe{height:195px}}
 </style>
 </head>
 <body>
@@ -477,7 +507,6 @@ a { text-decoration: none; }
   <symbol id="icon-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v8a4 4 0 0 0 4 4h6M16 5h2a4 4 0 0 1 0 8H9"/></symbol>
   <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.1a4 4 0 0 1 0 7.8M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
   <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h17M8 16v-4M13 16V7M18 16V9"/></symbol>
-  <symbol id="icon-milestone" viewBox="0 0 24 24"><path d="M4 21V3M4 5h15l-3 4 3 4H4M8 21h8"/></symbol>
   <symbol id="icon-external" viewBox="0 0 24 24"><path d="M13 5h6v6M19 5l-9 9M19 14v5H5V5h7"/></symbol>
   <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
@@ -495,136 +524,185 @@ a { text-decoration: none; }
 </defs>
 </svg>
 
-<!-- 1. TOPBAR -->
+<!-- 1. TOPBAR SUTIL -->
 <header class="topbar">
   <div class="brand-group">
     <div class="brand-logo">ET</div>
-    <div class="brand-title">
-      <b>ESPACIO TUTORÍA · FICHA OPERATIVA NRC</b>
-      <small>Centro de Herramientas y Seguimiento · ETOP</small>
-    </div>
+    <div class="brand-title">ESPACIO TUTORÍA <span>· Ficha 360 del Curso</span></div>
   </div>
-  <div class="top-right"><input id="courseSearch" list="courseSuggestions" placeholder="Buscar NRC..." aria-label="Buscar NRC" autocomplete="off"><datalist id="courseSuggestions"></datalist><button type="button" id="searchNrc" class="btn-top">Buscar</button>
+  <div class="top-right">
+    <span class="btn-top" style="pointer-events:none">Fechas vinculadas a SharePoint</span>
     <a id="calendariosLink" class="btn-top" target="_blank" rel="noopener" href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html">
       <svg class="ic"><use href="#icon-calendar"/></svg>
-      <span>Volver a Calendarios</span>
-      <svg class="ic"><use href="#icon-external"/></svg>
+      <span>Calendarios</span>
     </a>
   </div>
 </header>
 
 <main class="container">
 
-  <!-- 2. ENCABEZADO INTEGRADO (STEPPER + IDENTIDAD DEL CURSO) -->
-  <div id="loadStatus" class="load-status" role="status">Cargando fuentes ETOP…</div>
-  <section class="header-deck">
-    <div class="stepper-strip">
-      <div class="stepper-label">
+  <!-- ========================================================================
+       BLOQUE 1: TARJETA MAESTRA UNIFICADA (Curso + Fechas + Salud Estudiantil)
+       Elimina cajas sueltas y permite leer todo el estado en una sola línea
+       ======================================================================== -->
+  <section class="master-card">
+    <div class="master-nav">
+      <div class="intake-info">
         <svg class="ic" style="color:var(--brand)"><use href="#icon-route"/></svg>
-        <span>Intake: <b id="intakeName">—</b></span>
+        <span>Intake: <strong class="intake-badge" id="intakeName">—</strong></span>
+        <span id="coursePosCounter" style="color:var(--ink-muted)"></span>
       </div>
-      <div class="stepper-pills" id="intakeTrack"></div>
-      <div class="stepper-arrows">
-        <button class="btn-nav-sm" id="prev"><svg class="ic"><use href="#icon-chevron-left"/></svg> Ant.</button>
-        <button class="btn-nav-sm" id="next">Sig. <svg class="ic"><use href="#icon-chevron-right"/></svg></button>
+      <div class="nav-controls">
+        <button type="button" class="btn-pill-soft" id="openIntakeScreenBtn">
+          <svg class="ic"><use href="#icon-book"/></svg>
+          <span id="changeCourseLabel">Cambiar curso</span>
+        </button>
+        <button class="btn-icon-nav" id="prev"><svg class="ic"><use href="#icon-chevron-left"/></svg> Anterior</button>
+        <button class="btn-icon-nav" id="next">Siguiente <svg class="ic"><use href="#icon-chevron-right"/></svg></button>
       </div>
     </div>
 
-    <div class="hero-row">
-      <div class="hero-identity">
-        <div class="badges-inline">
-          <span id="heroNrc" class="nrc-badge"></span>
+    <div class="master-body">
+      <!-- Zona 1: Identidad -->
+      <div class="zone-identity">
+        <div class="badges-row">
+          <span id="heroNrc" class="nrc-tag"></span>
           <span id="heroStatus" class="state-pill"></span>
           <span id="qaHeroBadge" class="state-pill"></span>
         </div>
-        <h1 id="courseTitle" class="course-main-title"></h1>
-        <div class="meta-inline-list" id="heroMetaList"></div>
+        <h1 id="courseTitle" class="course-title"></h1>
+        <div class="course-meta-line" id="heroMetaList"></div>
       </div>
 
-      <div class="hero-timeline-box">
-        <div class="tl-head">
-          <span id="progressStatus" class="tl-status"></span>
-          <span id="duration"></span>
+      <!-- Zona 2: Cronograma + Botón Editar Fechas -->
+      <div class="zone-timeline">
+        <div class="tl-header">
+          <span id="progressStatus" class="tl-phase"></span>
+          <span class="btn-link-subtle"><span id="duration"></span></span>
         </div>
         <div class="tl-bar"><div class="tl-fill" id="progressFill"></div></div>
-        <div class="tl-foot">
+        <div class="tl-dates">
           <span id="progressStart"></span>
           <strong id="progressPercent" style="color:var(--ink)"></strong>
           <span id="progressEnd"></span>
         </div>
-        <div class="timeline-embedded-app" id="timelineEmbeddedApp">
-          <iframe id="embeddedDateApp" title="Editar fechas del NRC en SharePoint" loading="lazy"
-                  allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          <p id="dateAppStatus" class="date-app-status"></p><p class="date-app-caption">Fechas oficiales de SharePoint · Guardar o descartar dentro del formulario</p>
+        <div class="embedded-timeline-app">
+          <iframe id="embeddedDateApp" title="Editar fechas del NRC en Power Apps" loading="lazy"></iframe>
+          <div id="appUnlinked" class="app-unlinked" hidden>Este NRC no tiene ID de SharePoint disponible.</div>
+        </div>
+      </div>
+
+      <!-- Zona 3: Salud Estudiantil Integrada (Compacta y clara) -->
+      <div class="zone-health">
+        <div class="health-top">
+          <span class="health-label">Seguimiento Estudiantil</span>
+          <span style="font-size:10.5px;color:var(--ink-muted);font-weight:600">KPI V5</span>
+        </div>
+        <div class="kpi-inline-group" id="kpiPrimary"></div>
+        <div class="sem-compact-row">
+          <div class="sem-bar-mini" id="semBar"></div>
+          <div class="sem-legend-mini" id="semaphore"></div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- 4. BLOQUES DE APOYO (SEGUIMIENTO + GUÍA DE ETAPAS) -->
-  <div class="support-grid">
-
-    <!-- Izquierda: Guía de Hitos ETOP -->
-    <section class="card">
-      <div class="card-header">
-        <h2 class="card-title"><svg class="ic"><use href="#icon-milestone"/></svg> Hitos del Acompañamiento Tutorial</h2>
-        <button class="btn-nav-sm" id="resetStage">Etapa actual</button>
-      </div>
-      <div class="card-body">
-        <div class="stage-tabs" id="stageTabs"></div>
-        <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
-          <strong id="stageName" style="font-size:12px"></strong>
-          <span id="stageDescription" style="font-size:11px;color:var(--ink-secondary)"></span>
-        </div>
-        <ul class="tasks-row" id="stageTasks"></ul>
-      </div>
     </section>
 
-    <!-- Derecha: Resumen Semáforo y KPI -->
-    <section class="card">
-      <div class="card-header">
-        <h2 class="card-title"><svg class="ic"><use href="#icon-chart"/></svg> Estado Estudiantil y Calidad QA2</h2>
-        <span style="font-size:10.5px;color:var(--ink-muted);font-weight:600">KPI V5</span>
-      </div>
-      <div class="card-body">
-        <div class="powerbi-holder"><iframe id="pbiSeguimiento" title="Power BI - seguimiento estudiantil del NRC" loading="lazy" allowfullscreen></iframe></div><p class="kpi-help">Informe oficial filtrado por NRC · <a id="pbiDirect" target="_blank" rel="noopener">Abrir en Power BI ↗</a></p>
-      </div>
-    </section>
-
-  </div>
   <!-- ========================================================================
-       3. CENTRO DE HERRAMIENTAS PROTAGONISTA (EL CORAZÓN DE LA HOJA)
+       BLOQUE 2: GUÍA DE HITOS EN MODO "ENFOQUE HOY" (Cero ruido visual)
+       Muestra únicamente las 3 prioridades de la etapa actual en una fila
        ======================================================================== -->
-  <section class="command-center" aria-label="Centro de Herramientas del Tutor">
-    <div class="command-header">
-      <div class="command-title-group">
-        <div class="command-icon-badge"><svg class="ic"><use href="#icon-zap"/></svg></div>
-        <div>
-          <h2>CENTRO DE HERRAMIENTAS DEL TUTOR</h2>
-          <p>Accesos directos sincronizados con el NRC seleccionado · Haz clic para lanzar</p>
-        </div>
+  <section class="focus-guide">
+    <div class="focus-header">
+      <div class="focus-title-wrap">
+        <span class="stage-badge-active" id="stageBadgeLabel">ETAPA ACTUAL</span>
+        <span class="focus-title" id="stageName"></span>
+        <span class="focus-sub" id="stageDescription"></span>
       </div>
-
-      <div class="command-filter-pills" id="toolFilters">
-        <button class="cat-filter active" data-filter="all">Todas (11)</button>
-        <button class="cat-filter" data-filter="seguimiento">Seguimiento Académico</button>
-        <button class="cat-filter" data-filter="gestion">Gestión y QA2</button>
-        <button class="cat-filter" data-filter="comunicacion">Comunicaciones</button>
-      </div>
+      <div class="stage-pills-bar" id="stageTabs"></div>
     </div>
-
-    <!-- NIVEL 1: LAS 4 HERRAMIENTAS TRONCALES DEL DÍA A DÍA -->
-    <div class="primary-tools-grid" id="primaryToolsGrid"></div>
-
-    <!-- NIVEL 2: ACCESOS COMPLEMENTARIOS Y GESTIÓN DE DATOS -->
-    <div class="secondary-tools-label">Herramientas complementarias y administración del NRC</div>
-    <div class="secondary-tools-grid" id="secondaryToolsGrid"></div>
-    <section id="communicationPanel" class="comm-panel" hidden aria-label="Comunicaciones según etapa del NRC"></section>
+    <ul class="focus-tasks-grid" id="stageTasks"></ul>
   </section>
 
-  <details class="qa-history" id="qaHistoryPanel"><summary id="qaHistoryHeading">Historial QA2 e incidencias · Ver detalles</summary><div id="qaHistoryEntries" class="qa-entries">Selecciona un NRC.</div><a id="qaHistoryExternal" target="_blank" rel="noopener">Consultar incidencias en ETOP ↗</a></details>
-  <p class="data-foot">Datos institucionales ETOP · Las etapas son orientaciones temporales, no tareas acreditadas.</p>
+  <!-- ========================================================================
+       BLOQUE 3: PANTALLA DINÁMICA INTERACTIVA (DISEÑO CLARO Y LIGERO)
+       ======================================================================== -->
+  <section class="workspace-screen" id="dynamicConsoleSection">
+    <div class="workspace-bar">
+      <div class="ws-tabs" id="screenModeTabs">
+        <button type="button" class="ws-tab active" data-screen="tools">
+          <svg class="ic"><use href="#icon-zap"/></svg>
+          <span>Centro de Herramientas</span>
+          <span class="ws-badge">11</span>
+        </button>
+        <button type="button" class="ws-tab" data-screen="intake">
+          <svg class="ic"><use href="#icon-book"/></svg>
+          <span>Cursos del Intake</span>
+          <span class="ws-badge" id="intakeCount">0</span>
+        </button>
+        <button type="button" class="ws-tab" data-screen="comms">
+          <svg class="ic"><use href="#icon-mail"/></svg>
+          <span>Plantillas y Comunicaciones</span>
+        </button>
+        <button type="button" class="ws-tab" data-screen="qa">
+          <svg class="ic"><use href="#icon-clipboard"/></svg>
+          <span>Estado QA2</span>
+        </button>
+      </div>
+
+      <button id="configureLinks" class="btn-icon-nav" type="button">⚙ Configurar URLs</button>
+    </div>
+
+    <div class="ws-viewport">
+
+      <!-- VISTA 1: CENTRO DE HERRAMIENTAS -->
+      <div id="screen-tools" class="view-pane">
+        <div class="pane-head">
+          <div>
+            <div class="pane-title">Herramientas Operativas del Tutor</div>
+            <div class="pane-sub">Selecciona una herramienta para abrir su sistema o desplegar su módulo aquí</div>
+          </div>
+          <div class="filter-chips" id="toolFilters">
+            <button type="button" class="f-chip active" data-filter="all">Todas</button>
+            <button type="button" class="f-chip" data-filter="seguimiento">Seguimiento</button>
+            <button type="button" class="f-chip" data-filter="gestion">Gestión y QA2</button>
+            <button type="button" class="f-chip" data-filter="comunicacion">Comunicaciones</button>
+          </div>
+        </div>
+
+        <div class="core-tools-grid" id="primaryToolsGrid"></div>
+        <div class="more-tools-divider">Accesos rápidos complementarios</div>
+        <div class="quick-links-row" id="secondaryToolsGrid"></div>
+      </div>
+
+      <!-- VISTA 2: CURSOS DEL INTAKE -->
+      <div id="screen-intake" class="view-pane" hidden>
+        <div class="pane-head">
+          <div>
+            <div class="pane-title">Malla de Cursos del Intake · <span id="intakeScreenTitle">—</span></div>
+            <div class="pane-sub">Haz clic en cualquier curso para cargar su información en la Ficha 360</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <a href="https://tutoriaonlinepostgrado.github.io/sitiowebetop/calendarios.html" target="_blank" rel="noopener noreferrer" class="btn-pill-soft">
+              <span>Abrir en Calendarios</span> <svg class="ic"><use href="#icon-external"/></svg>
+            </a>
+            <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
+          </div>
+        </div>
+        <div class="intake-cards-grid" id="intakeScreenGrid"></div>
+      </div>
+
+      <!-- VISTA 3: COMUNICACIONES -->
+      <div id="screen-comms" class="view-pane" hidden></div>
+
+      <!-- VISTA 4: QA2 -->
+      <div id="screen-qa" class="view-pane" hidden></div>
+
+    </div>
+  </section>
+
 </main>
+
 <!-- MODAL -->
 <div id="modal" class="modal" role="dialog" aria-modal="true">
   <div class="modal-box">
@@ -633,200 +711,494 @@ a { text-decoration: none; }
       <button type="button" id="closeModal"><svg class="ic"><use href="#icon-x"/></svg></button>
     </div>
     <p id="modalText" style="font-size:12.5px;color:var(--ink-secondary);line-height:1.55;margin-bottom:16px"></p>
+    <div id="linkEditor" style="display:none;margin-bottom:14px">
+      <label id="linkEditorLabel" for="linkInput" style="display:block;font-size:11px;font-weight:700;margin-bottom:5px">URL de destino (admite {nrc}, {code}, {intake})</label>
+      <input id="linkInput" type="url" placeholder="https://..." style="width:100%;border:1px solid #cbd5e1;border-radius:7px;padding:9px;font-size:12px">
+      <p id="linkHelp" style="font-size:11px;color:#64748b;margin-top:5px">Se guardará localmente en este navegador.</p>
+      <button id="saveLink" type="button" class="btn-save" style="margin-top:10px">Guardar configuración</button>
+    </div>
     <div style="text-align:right">
-      <button class="btn-primary" id="modalOk">Cerrar</button>
+      <button class="btn-cancel" id="modalOk">Cerrar</button>
     </div>
   </div>
 </div>
 
 <script>
-
 'use strict';
-const BASE=new URL('./',location.href).href;
-const PBI='https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=c485279046a369730a22&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToPage';
-const POWERAPPS_FECHAS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/f184b097-3146-4f9c-9a68-419270cb3ca1?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=880e23f7-8f39-42a1-ac6a-b0ede6467466';
-const POWERAPPS='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
-const $=id=>document.getElementById(id);
-const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const date=v=>{if(!v)return null;const x=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(x.getTime())?null:x};
-const fmt=v=>date(v)?.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'})||'—';
-const title=c=>String(c['nombre curso']||'Sin nombre').replace(/\*/g,'').trim();
-const icon=k=>'<svg class="ic" aria-hidden="true"><use href="#icon-'+k+'"/></svg>';
-const validUrl=v=>{try{const z=typeof v==='object'&&v?(v.Url??v.url??v.URL??v.href??v.Value??v.value??''):v;const u=new URL(String(z||''));return /^https?:$/.test(u.protocol)?u.href:''}catch{return ''}};
-const stepInfo=[
- ['Preparación','Semana -1','Alistamiento del NRC',[['Banner / Canvas','Verificar nómina y accesos.'],['Bienvenida','Coordinar con el docente y preparar la comunicación inicial.'],['QA2','Revisar material del aula, excepto UNI118.']]],
- ['Inducción','Semana 0','Acompañamiento inicial',[['Bienvenida','Confirmar anuncio y orientación a estudiantes.'],['Primer ingreso','Contactar estudiantes que no ingresan.'],['Presentación','Promover la sesión de inicio de la versión.']]],
- ['Impartición','Durante el NRC','Seguimiento tutorial activo',[['Actividad','Revisar participación y tareas.'],['Semáforo','Atender alertas y casos prioritarios.'],['Comunicaciones','Mantener contacto y acompañamiento.']]],
- ['Cierre','Días +7 / +14','Cierre académico y administrativo',[['Pendientes','Coordinar entregas pendientes.'],['Día +7','Recordar calificaciones al docente.'],['Día +14','Revisar ventana Canvas posterior al término.']]]
-];
-let courses=[],incidents=[],metrics=new Map(),current=null,cohort=[],index=0,viewStep=null,cat='all',courseQa=[];
-const query=new URLSearchParams(location.search);
-function urlPbi(nrc){const u=new URL(PBI);u.searchParams.set('filter',"NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '"+String(nrc).replace(/'/g,"''")+"'");return u.href}
-function urlStudents(nrc){const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');u.searchParams.set('FilterValue1',nrc);u.searchParams.set('FilterType1','Text');u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');u.searchParams.set('env','Embedded');return u.href}
-function urlIntake(c){if(!c.intake)return '';const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');u.searchParams.set('env','WebViewList');u.searchParams.set('FilterField1','field_8');u.searchParams.set('FilterValue1',c.intake);return u.href}
-function urlIntegration(nrc){const a=String(nrc).split('_'),id=a[0],term=a[a.length-1];return id&&term?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:term,periodo:term,nrc:id,nrc_code:id,crn:id,NRC:id}).toString():''}
-function urlAppsFechas(c,inicio,fin){if(!c?.id)return '';const u=new URL(POWERAPPS_FECHAS);u.searchParams.set('ids',String(c.id));u.searchParams.set('nrc',String(c.nrc||''));u.searchParams.set('inicio',inicio);u.searchParams.set('fin',fin);return u.href}
-function urlApps(c){if(!c.id)return '';const u=new URL(POWERAPPS);u.searchParams.set('ids',String(c.id));return u.href}
-function urlQa(c){return c.id&&norm(c['codigo curso'])!=='UNI118'?BASE+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc):''}
-function urlPresentation(c){return BASE+'presentacion_tutorial_innovado.html?'+new URLSearchParams({nombreTutor:c.tutor||'',nombreCurso:c['nombre curso']||'',nrc:c.nrc,fechaInicio:c['fecha inicio']||'',fechaFin:c['fecha fin']||''}).toString()}
-function urlAnnouncement(c){return BASE+'anuncio_bienvenida_curso_malla.html?'+new URLSearchParams({nombre_tutor:c.tutor||'',nombre_curso:c['nombre curso']||'',fecha_inicio:fmt(c['fecha inicio']),fecha_fin:fmt(c['fecha fin'])}).toString()}
-function urlCalendar(c){return BASE+'calendarios.html?nrc='+encodeURIComponent(c.nrc)}
-function urlInc(c){return BASE+'incidencias.html?nrc='+encodeURIComponent(c.nrc)}
-function status(c){return norm(c.estado)||'SIN ESTADO'}
-function qaRows(c){return incidents.filter(x=>(c.id&&String(x.cursoId??x.idCurso??'')===String(c.id))||norm(x.nrc??x.NRC_COD_CAL??x.nrcCodCal)===norm(c.nrc))}
-function qa(c){if(norm(c['codigo curso'])==='UNI118')return ['QA2 NO APLICA','na'];if(!courseQa.length)return ['QA2 PENDIENTE','pending'];const n=courseQa.filter(x=>norm(x.qaIncidencias??x['QA INCIDENCIAS'])==='CON INCIDENCIA').length;if(n)return ['QA2 · '+n+' INCIDENCIA'+(n===1?'':'S'),'incident'];return ['QA2 SIN INCIDENCIA','ok']}
-function canvas(){for(const x of courseQa){const u=validUrl(x.urlCanvas??x.URL_QA2_FI_Url??x.urlQa2FiUrl??x.urlQA2FIUrl);if(u)return u}return ''}
-function sameIntake(c){const k=norm(c.intake);if(!k)return [c];const all=courses.filter(x=>norm(x.intake)===k);const p=norm(c['nombre programa']||c.programa);const group=p?all.filter(x=>!norm(x['nombre programa']||x.programa)||norm(x['nombre programa']||x.programa)===p):all;const map=new Map();[...(group.length?group:all),c].forEach(x=>map.set(norm(x.nrc),x));return [...map.values()].sort((a,b)=>(date(a['fecha inicio'])?.getTime()??Infinity)-(date(b['fecha inicio'])?.getTime()??Infinity)||String(a.nrc).localeCompare(String(b.nrc)))}
-function setStatus(text,error){const el=$('loadStatus');el.textContent=text;el.classList.toggle('error',!!error);el.hidden=!text}
-function setHref(id,url){const a=$(id);if(url){a.href=url;a.removeAttribute('aria-disabled')}else{a.removeAttribute('href');a.setAttribute('aria-disabled','true')}}
-function progress(c){const a=date(c['fecha inicio']),b=date(c['fecha fin']),t=new Date();t.setHours(0,0,0,0);if(!a||!b||b<a)return null;const total=Math.max(1,Math.round((b-a)/86400000)+1);const done=Math.max(0,Math.min(total,Math.round((t-a)/86400000)+1));return {p:Math.round(done/total*100),weeks:Math.ceil(total/7),week:Math.min(Math.ceil(total/7),Math.floor(done/7)+1),before:t<a,after:t>b,start:a,end:b}}
-function renderTop(c){
- $('intakeName').textContent=c.intake||'No informado';
- $('prev').disabled=index===0;$('next').disabled=index===cohort.length-1;
- $('intakeTrack').innerHTML=cohort.map((x,i)=>'<button class="step-mini '+(status(x)==='CERRADO'?'done ':'')+(i===index?'selected':'')+'" data-index="'+i+'" title="'+esc(title(x))+'"><span class="step-mini-code">'+esc(x['codigo curso']||x.nrc.split('_')[1])+'</span><span class="step-mini-name">'+esc(title(x))+'</span></button>').join('');
- $('heroNrc').textContent=c.nrc;$('courseTitle').textContent=title(c);
- const state=status(c);$('heroStatus').textContent=state==='PREPARACION'?'PREPARACIÓN':state;$('heroStatus').className='state-pill '+(state==='EN CIERRE'?'PREPARACION':state);
- const info=qa(c);$('qaHeroBadge').textContent=info[0];$('qaHeroBadge').className='qa-pill '+info[1];
- const meta=[['Tutor',c.tutor],['Programa',c['nombre programa']||c.programa],['Código',c['codigo curso']],['Facultad',c.facultad],['Tipo NRC',c.tipo],['Período',c.periodo]];
- $('heroMetaList').innerHTML=meta.filter(x=>x[1]).map(x=>'<span>'+esc(x[0])+': <b>'+esc(x[1])+'</b></span>').join('');
- const p=progress(c);$('progressStart').textContent='Inicio: '+fmt(c['fecha inicio']);$('progressEnd').textContent='Fin: '+fmt(c['fecha fin']);
- $('duration').textContent=p?p.weeks+' semanas':'Fechas no disponibles';$('progressFill').style.width=p?p.p+'%':'0%';$('progressPercent').textContent=p?p.p+'% temporal':'—';
- $('progressStatus').textContent=!p?'Sin fechas':p.before?'Próximo a iniciar':p.after?'Curso finalizado':'Semana '+p.week+' de '+p.weeks;
-}
-function currStage(c){const p=progress(c);if(norm(c['codigo curso'])==='UNI118')return 1;if(!p||p.before)return 0;if(p.after)return 3;const first=cohort.find(x=>norm(x['codigo curso'])!=='UNI118');if(first&&norm(first.nrc)===norm(c.nrc)&&p.week===1)return 1;return 2}
-function renderStages(c){const actual=currStage(c),i=viewStep===null?actual:viewStep;
- $('stageTabs').innerHTML=stepInfo.map((t,n)=>'<button class="stage-tab '+(n===actual?'current ':'')+(viewStep!==null&&i===n?'viewing':'')+'" data-stage="'+n+'"><strong>'+(n+1)+'. '+t[0]+'</strong><small>'+t[1]+'</small></button>').join('');
- $('stageName').textContent='Etapa '+(i+1)+' · '+stepInfo[i][0];$('stageDescription').textContent=stepInfo[i][2];
- $('stageTasks').innerHTML=stepInfo[i][3].map(x=>'<li class="task-item"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></li>').join('');
- $('resetStage').disabled=viewStep===null;
-}
-
-const COMM_CATALOG={
- preparacion:[
- ['Correo bienvenida masivo','com_correos_masivo.html','Correo', ['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']],
- ['Invitación sincrónica masiva','com_invitaciones_masivo.html','Correo',['nombreTutor','correoTutor','nombreCurso','fechaInicio']],
- ['Bienvenida a estudiante rezagado','correo_bienvenida.html','Correo',['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']],
- ['Invitación sincrónica a rezagado','invitacion_sincronica.html','Correo',['nombreTutor','correoTutor','nombreCurso']],
- ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']]],
- induccion:[
- ['Anuncio bienvenida inducción','anuncio_bienvenida_induccion.html','Anuncio',[]],
- ['Anuncio lunes · Invitación sincrónica','anuncio_lunes_invitacion_sincronica.html','Anuncio',[]],
- ['Anuncio martes · Zoom','anuncio_martes_zoom.html','Anuncio',[]],
- ['Anuncio miércoles · Grabación','anuncio_miercoles_grabacion.html','Anuncio',[]],
- ['Anuncio jueves · Gestiona tu caso','anuncio_jueves_gestiona.html','Anuncio',[]],
- ['Anuncio cierre de inducción','anuncio_cierre_induccion.html','Anuncio',[]]],
- imparticion:[
- ['Anuncio bienvenida del curso','anuncio_bienvenida_curso_malla.html','Anuncio',['nombre_tutor','nombre_curso','fecha_inicio','fecha_fin']],
- ['Anuncio autoinscripción a grupo','anuncio_auto_inscripcion_grupo.html','Anuncio',[]],
- ['Mailing tutor a docente','mailing_tutor_docente.html','Correo',[]],
- ['Presentación tutorial','presentacion_tutorial_innovado.html','Material',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']],
- ['Seguimiento tareas pendientes','mensaje_seguimiento_tareas.html','Seguimiento',['nrc','nombre_curso']],
- ['Seguimiento sin ingreso','seguimiento_no_ingreso.html','Seguimiento',['nrc','nombre_curso']]],
- cierre:[['Correo cierre de curso','enviar_correo_cierre.html','Correo',['nrc','nombre_curso','fecha_inicio','fecha_fin']]]
+const PORTAL = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const ACCESS = {
+  'Panel de Estudiantes': {url: PORTAL+'gestion.html', context: true},
+  'Abrir Aula Canvas': {url: '', context: false},
+  'Gestión y Formulario QA2': {url: PORTAL+'cursos_preparacion.html', context: true},
+  'Hub de Comunicaciones': {url: PORTAL+'centro_herramientas_etop.html', context: true},
+  'Cotejo Integración': {url: PORTAL+'gestion.html', context: true},
+  'Informe Power BI': {url: '', context: false},
+  'Editar NRC': {url: '', context: false},
+  'Historial QA2': {url: PORTAL+'incidencias.html', context: true},
+  'Cursos del Intake': {url: PORTAL+'calendarios.html', context: true},
+  'Presentación': {url: '', context: false},
+  'Anuncio Bienvenida': {url: '', context: false}
 };
-const COMM_LABELS={preparacion:'Preparación',induccion:'Inducción',imparticion:'Impartición',cierre:'Cierre'};
-let commOverride=null;
-function commStage(c){
- if(norm(c['codigo curso'])==='UNI118')return 'induccion';
- const st=status(c);
- if(st==='PREPARACION'||st==='PREPARACIÓN')return 'preparacion';
- if(st==='ACTIVO')return 'imparticion';
- if(st==='EN CIERRE'||st==='CERRADO')return 'cierre';
- const p=progress(c);
- return !p||p.before?'preparacion':p.after?'cierre':'imparticion';
+const STORAGE_KEY = 'etop_ficha_nrc_access_v1';
+
+let savedLinks = {};
+try {
+  savedLinks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
+} catch(e) {}
+
+const COMM_BASE = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const COMM_CATALOG = {
+  preparacion: [
+    ['Correos Bienvenida — Masivo','com_correos_masivo.html','masivo',['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']],
+    ['Invitación Sincrónica — Masivo','com_invitaciones_masivo.html','masivo',['nombreTutor','correoTutor','nombreCurso','fechaInicio']],
+    ['Correo Bienvenida — Rezagado','correo_bienvenida.html','correo',['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']],
+    ['Invitación Sincrónica — Rezagado','invitacion_sincronica.html','correo',['nombreTutor','correoTutor','nombreCurso']],
+    ['Presentación Tutorial — Docente','presentacion_tutorial_innovado.html','correo',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']]
+  ],
+  induccion: [
+    ['Anuncio Bienvenida Inducción','anuncio_bienvenida_induccion.html','anuncio',[]],
+    ['Anuncio Lunes — Invitación Sincrónica','anuncio_lunes_invitacion_sincronica.html','anuncio',[]],
+    ['Anuncio Martes — Activa Zoom','anuncio_martes_zoom.html','anuncio',[]],
+    ['Anuncio Miércoles — Grabación','anuncio_miercoles_grabacion.html','anuncio',[]],
+    ['Anuncio Jueves — Gestiona tu Caso','anuncio_jueves_gestiona.html','anuncio',[]],
+    ['Anuncio Cierre Semana Inducción','anuncio_cierre_induccion.html','anuncio',[]]
+  ],
+  imparticion: [
+    ['Anuncio Bienvenida Curso Malla','anuncio_bienvenida_curso_malla.html','anuncio',['nombre_tutor','nombre_curso','fecha_inicio','fecha_fin']],
+    ['Anuncio Auto Inscripción Grupo','anuncio_auto_inscripcion_grupo.html','anuncio',[]],
+    ['Mailing Tutor — Docente','mailing_tutor_docente.html','correo',[]],
+    ['Presentación Tutorial Innovado','presentacion_tutorial_innovado.html','correo',['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']],
+    ['Seguimiento Tareas Pendientes','mensaje_seguimiento_tareas.html','seguimiento',['nrc','nombre_curso']],
+    ['Seguimiento No Ingreso','seguimiento_no_ingreso.html','seguimiento',['nrc','nombre_curso']]
+  ],
+  cierre: [
+    ['Correo Cierre de Curso','enviar_correo_cierre.html','correo',['nrc','nombre_curso','fecha_inicio','fecha_fin']]
+  ]
+};
+const COMM_LABELS = {preparacion:'Preparación',induccion:'Inducción',imparticion:'Impartición',cierre:'Cierre'};
+const TUTOR_EMAIL = {'MARTA GONZALEZ':'marta.gonzalez@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl'};
+const TUTOR_EXT = {'MARTA GONZALEZ':'600 585 8550 Anexo 5216','PAULA PARDO':'600 585 8550 Anexo 1285'};
+
+const DATA_BASE = 'https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+const POWERAPPS_FECHAS = "https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/f184b097-3146-4f9c-9a68-419270cb3ca1?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=880e23f7-8f39-42a1-ac6a-b0ede6467466";
+let courses = [], allCourses = [], metricsMap = new Map(), qaRows = [];
+const qs = new URLSearchParams(location.search);
+const norm = x => String(x ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+const iso = s => {const v=String(s||'');const m=v.match(/\d{4}-\d{2}-\d{2}/);return m?m[0]:''};
+const nc = x => ({ id:x.id, nrc:x.nrc||'', code:x['codigo curso']||'',name:x['nombre curso']||'Curso sin nombre',
+ start:iso(x['fecha inicio']),end:iso(x['fecha fin']),tutor:x.tutor||'',intake:x.intake||'',program:x['nombre programa']||'',estado:x.estado||'', qa:'pending',
+ total:null,active:null,entered:null,no:null,colors:{},canvas:x['url canvas']||'',raw:x});
+function setCohort(c){
+ const group=allCourses.filter(x=>norm(x.intake)===norm(c.intake));
+ courses=(group.length?group:[c]).sort((a,b)=>String(a.start).localeCompare(String(b.start))||String(a.nrc).localeCompare(String(b.nrc)));
+ activeIndex=Math.max(0,courses.findIndex(x=>norm(x.nrc)===norm(c.nrc)));
 }
-function commLink(item,c){
- const starts=String(c['fecha inicio']||'').slice(0,10),ends=String(c['fecha fin']||'').slice(0,10);
- const day=v=>v?new Date(v+'T12:00:00').toLocaleDateString('es-CL',{weekday:'long'}):'';
- const diff=starts&&ends?Math.max(1,Math.ceil((new Date(ends)-new Date(starts)+86400000)/604800000)):'';
- const params={nrc:c.nrc||'',nombreTutor:c.tutor||'',correoTutor:c['correo tutor']||c.correoTutor||'',anexoTutor:c['anexo tutor']||c.anexoTutor||'',nombrePrograma:c['nombre programa']||c.programa||'',nombreCurso:title(c),fechaInicio:starts,fechaFin:ends,diaInicio:day(starts),diaFin:day(ends),duracion:diff,nombre_tutor:c.tutor||'',nombre_curso:title(c),fecha_inicio:fmt(c['fecha inicio']),fecha_fin:fmt(c['fecha fin'])};
- const q=new URLSearchParams();
- item[3].forEach(k=>{if(params[k]!==''&&params[k]!==null&&params[k]!==undefined)q.set(k,String(params[k]))});
- return BASE+item[1]+(q.size?'?'+q.toString():'');
+function loadAppFrame(c){
+ const frame=$('embeddedDateApp');
+ if(!c?.id||!Number.isSafeInteger(Number(c.id))){frame.removeAttribute('src');$('appUnlinked').hidden=false;return;}
+ $('appUnlinked').hidden=true;
+ const u=new URL(POWERAPPS_FECHAS);u.searchParams.set('ids',String(c.id));u.searchParams.set('nrc',c.nrc);
+ if(frame.src!==u.href)frame.src=u.href;
 }
-function renderCommunications(c){
- const panel=$('communicationPanel');
- panel.hidden=cat!=='comunicacion';
- if(panel.hidden)return;
- const recommended=commStage(c),selected=commOverride||recommended;
- panel.innerHTML='<div class="comm-head"><div><h3>Comunicaciones · '+esc(COMM_LABELS[selected])+'</h3><p>Etapa recomendada: '+esc(COMM_LABELS[recommended])+' · NRC '+esc(c.nrc)+'</p></div><a href="'+esc(BASE+'comunicaciones_etop.html')+'" target="_blank" rel="noopener noreferrer">Ver catálogo completo</a></div>'
- +'<div class="comm-stages">'+Object.keys(COMM_CATALOG).map(k=>'<button type="button" class="comm-stage '+(k===selected?'selected':'')+'" data-comm-stage="'+k+'" aria-pressed="'+(k===selected)+'">'+esc(COMM_LABELS[k])+(k===recommended?' · Recomendada':'')+'</button>').join('')+'</div>'
- +'<div class="comm-grid">'+COMM_CATALOG[selected].map(item=>'<a class="comm-link" target="_blank" rel="noopener noreferrer" href="'+esc(commLink(item,c))+'"><span><b>'+esc(item[0])+'</b><small>'+esc(item[2])+'</small></span>'+icon('external')+'</a>').join('')+'</div>'
- +'<p class="comm-hint">Las plantillas se abren para revisión. No se envían mensajes ni se publican anuncios automáticamente. Los campos que no existen en la ficha quedan sin completar.</p>';
+function mergeMetrics(c){
+ const m=metricsMap.get(norm(c.nrc));
+ c.total=m?.total_estudiantes??null;
+ c.active=m?.estado?.activos??m?.activos??null;
+ c.entered=m?.ingreso?.si??m?.ingresaron??null;
+ c.no=m?.ingreso?.no??m?.sin_ingreso??null;
+ c.colors=m?.semaforo||m?.colors||{};
+ const q=qaRows.filter(x=>norm(x.nrc||x.nrc_cod_cal||x.NRC_COD_CAL)===norm(c.nrc));
+ c.qa=c.code==='UNI118'?'na':q.length?'incident':'pending';
+}
+async function loadRealData(){
+ try{
+  const [a,b,d]=await Promise.all([fetch(DATA_BASE+'nrcs.json',{cache:'no-store'}),fetch(DATA_BASE+'metricas_estudiantes.json',{cache:'no-store'}),fetch(DATA_BASE+'incidencias.json',{cache:'no-store'})]);
+  if(!a.ok)throw Error('No se pudo cargar nrcs.json');
+  allCourses=(await a.json()).map(nc).filter(x=>x.nrc);
+  if(b.ok){const ms=await b.json();metricsMap=new Map(ms.map(x=>[norm(x.nrc),x]));}
+  if(d.ok){const list=await d.json();qaRows=Array.isArray(list)?list:[]}
+  allCourses.forEach(mergeMetrics);
+  const q=norm(qs.get('nrc'));const selected=allCourses.find(x=>norm(x.nrc)===q)||allCourses.find(x=>x.id)||allCourses[0];
+  if(!selected)throw Error('No hay NRC disponibles');
+  setCohort(selected);render();
+ }catch(e){document.querySelector('.master-card').insertAdjacentHTML('afterbegin','<p style="padding:12px;color:#b91c1c">'+esc(e.message)+'</p>')}
+}
+const steps = [
+  {short:'Preparación',period:'Sem -1',title:'Preparación (-1)',desc:'Alistamiento previo al inicio',tasks:[['Verificar accesos','Cotejar nómina Banner y aula Canvas.'],['Bienvenida docente','Preparar correo inicial y contactar al profesor.'],['Auditoría QA2','Revisar materiales del aula y registrar QA2.']]},
+  {short:'Inducción',period:'Sem 0',title:'Inducción (0)',desc:'Acompañamiento de arranque',tasks:[['Anuncio inicial','Confirmar publicación y primer acceso a Canvas.'],['Alumnos sin acceso','Contactar rezagados en su primer ingreso.'],['Sesión sincrónica','Realizar o facilitar presentación tutorial.']]},
+  {short:'Impartición',period:'Sem 1–4',title:'Impartición',desc:'Monitoreo activo del curso',tasks:[['Actividad en aula','Revisar participación en foros y entregas.'],['Gestión Semáforo','Contactar alumnos en amarillo o rojo.'],['Comunicaciones','Enviar recordatorios semanales del curso.']]},
+  {short:'Cierre',period:'Días +7/+14',title:'Cierre',desc:'Cierre administrativo y notas',tasks:[['Casos pendientes','Coordinar situaciones rezagadas con docente.'],['Notas (+7 días)','Recordar publicación de calificaciones.'],['Cierre (+14 días)','Verificar cierre de ventana operativa Canvas.']]}
+];
+
+const semConfig = {
+  verde: ['Verde', '#10b981'],
+  amarillo: ['Alerta', '#f59e0b'],
+  rojo: ['Riesgo', '#ef4444'],
+  morado: ['Elevado', '#8b5cf6'],
+  naranjo: ['Retiro', '#f97316'],
+  calipso: ['Resuelto', '#06b6d4']
+};
+
+const $ = id => document.getElementById(id);
+const icon = name => `<svg class="ic" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const startDay = s => new Date(`${s}T00:00:00`);
+const endDay = s => new Date(`${s}T23:59:59`);
+const dateStr = s => startDay(s).toLocaleDateString('es-CL', {day:'2-digit', month:'2-digit', year:'numeric'});
+const tutorKey = name => String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
+const dmy = s => s ? s.slice(8,10)+'-'+s.slice(5,7)+'-'+s.slice(0,4) : '';
+const dayName = s => s ? ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][new Date(s+'T12:00:00').getDay()] : '';
+
+const now = new Date();
+let activeIndex = 2;
+let viewStep = null;
+let currentFilter = 'all';
+let activeScreen = 'tools';
+let commStepOverride = null;
+let editingAction = null;
+
+const stateOf = c => now < startDay(c.start) ? 'PREPARACION' : now > endDay(c.end) ? 'CERRADO' : 'ACTIVO';
+const currentStep = c => c.code === 'UNI118' ? 1 : now < startDay(c.start) ? 0 : now < endDay(c.end) ? 2 : 3;
+const progress = c => Math.min(100, Math.max(0, Math.round(((now - startDay(c.start)) / (endDay(c.end) - startDay(c.start))) * 100)));
+
+function switchScreen(screenName, scroll = false) {
+  activeScreen = screenName;
+  document.querySelectorAll('#screenModeTabs .ws-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.screen === screenName);
+  });
+  ['tools', 'intake', 'comms', 'qa'].forEach(k => {
+    const el = $('screen-' + k);
+    if (el) el.hidden = (k !== screenName);
+  });
+  if (scroll) $('dynamicConsoleSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function renderActions(c){
- const info=qa(c);
- const main=[
- ['Panel de Estudiantes','Base Semáforo del NRC','users','seguimiento','t-blue',urlStudents(c.nrc),metrics.has(norm(c.nrc))?metrics.get(norm(c.nrc))+' estudiantes':'SharePoint'],
- ['Abrir Aula Canvas',canvas()?'Aula Canvas del NRC':'URL del aula aún no disponible','canvas','seguimiento','t-emerald',canvas(),canvas()?'LMS directo':'Sin URL'],
- ['Gestión y Formulario QA2',norm(c['codigo curso'])==='UNI118'?'No aplica a UNI118':'Revisión de calidad del aula','clipboard','gestion','t-amber',urlQa(c),info[0]],
- ['Hub de Comunicaciones','Plantillas institucionales','mail','comunicacion','t-purple',BASE+'comunicaciones_etop.html','ETOP']
- ];
- const secondary=[
- ['Cotejo Integración','Banner vs Canvas','link','seguimiento',urlIntegration(c.nrc)],
- ['Informe Power BI','Seguimiento oficial V5','chart','seguimiento',urlPbi(c.nrc)],
- ['Editar NRC','Power Apps','pencil','gestion',urlApps(c)],
- ['Historial QA2','Ver registros y evidencias','alert','gestion','#qaHistoryPanel'],
- ['Cursos del Intake','Base SharePoint','book','gestion',urlIntake(c)],
- ['Presentación','Material tutorial','presentation','comunicacion',urlPresentation(c)],
- ['Anuncio Bienvenida','Material de bienvenida','megaphone','comunicacion',urlAnnouncement(c)]
- ];
- $('primaryToolsGrid').innerHTML=main.map(t=>'<a class="hero-tool-card '+t[4]+(t[5]?'':' is-unavailable')+(cat!=='all'&&cat!==t[3]?' hidden-by-filter':'')+'" '+(t[5]?'href="'+esc(t[5])+'" target="_blank" rel="noopener noreferrer"':'aria-disabled="true"')+'><div class="hero-tool-top"><div class="hero-tool-icon">'+icon(t[2])+'</div><span class="tool-live-badge">'+esc(t[6])+'</span></div><div class="hero-tool-title">'+esc(t[0])+icon('external')+'</div><div class="hero-tool-desc">'+esc(t[1])+'</div></a>').join('');
- $('secondaryToolsGrid').innerHTML=secondary.map(t=>'<a class="sec-tool-btn '+(t[4]?'':'is-unavailable')+(cat!=='all'&&cat!==t[3]?' hidden-by-filter':'')+'" '+(t[4]?'href="'+esc(t[4])+'" '+(t[4].startsWith('#')?'':'target="_blank" rel="noopener noreferrer"'):'aria-disabled="true"')+'><span class="sec-tool-icon">'+icon(t[2])+'</span><span class="sec-tool-copy"><b>'+esc(t[0])+'</b><small>'+esc(t[1])+'</small></span></a>').join('');
-}
-function renderHistory(c){const info=qa(c);$('qaHistoryHeading').textContent='Historial QA2 e incidencias · '+info[0];setHref('qaHistoryExternal',urlInc(c));
- if(norm(c['codigo curso'])==='UNI118'){$('qaHistoryEntries').textContent='UNI118 está excluido de QA2.';return}
- if(!courseQa.length){$('qaHistoryEntries').textContent='No hay registros QA2 para este NRC. No equivale a una revisión sin incidencias.';return}
- $('qaHistoryEntries').innerHTML=courseQa.map(x=>{const type=x.qaIncidencias??'Registro QA2',desc=x.descripcionIncidencia??x.descripcion??'',sol=x.solucionIncidencia??x.solucion??'',evidence=validUrl(x.evidenciaUrl??x.urlEvidencia??x.URL_EVIDENCIA);return '<article><strong>'+esc(type)+'</strong>'+(desc?'<p>'+esc(desc)+'</p>':'')+(sol?'<p>Gestión: '+esc(sol)+'</p>':'')+(evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Abrir evidencia ↗</a>':'')+'</article>'}).join('');
-}
-function render(c){if(!current||norm(current.nrc)!==norm(c.nrc)){commOverride=null;closeDateEditor()}current=c;cohort=sameIntake(c);index=Math.max(0,cohort.findIndex(x=>norm(x.nrc)===norm(c.nrc)));courseQa=qaRows(c);
- renderTop(c);renderActions(c);renderCommunications(c);renderStages(c);renderEmbeddedDates(c);renderHistory(c);setHref('calendariosLink',urlCalendar(c));const u=urlPbi(c.nrc);$('pbiSeguimiento').src=u;setHref('pbiDirect',u);
- $('courseSearch').value=c.nrc;const here=new URL(location.href);here.searchParams.set('nrc',c.nrc);history.replaceState(null,'',here);setStatus('');
-}
-function find(v){const k=norm(v);return courses.find(c=>norm(c.nrc)===k)||courses.find(c=>norm(c.nrc).startsWith(k+'_'))||courses.find(c=>norm(c['codigo curso'])===k)||courses.find(c=>norm(title(c))===k)}
-function search(){const v=$('courseSearch').value.trim();const c=find(v);if(c){viewStep=null;render(c)}else setStatus('No se encontró el NRC solicitado. Usa el código completo.',true)}
-$('searchNrc').addEventListener('click',search);$('courseSearch').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
-$('prev').addEventListener('click',()=>{if(index>0){viewStep=null;render(cohort[index-1])}});
-$('next').addEventListener('click',()=>{if(index<cohort.length-1){viewStep=null;render(cohort[index+1])}});
-$('intakeTrack').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b){viewStep=null;render(cohort[+b.dataset.index])}});
-$('toolFilters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;cat=b.dataset.filter;document.querySelectorAll('.cat-filter').forEach(x=>x.classList.toggle('active',x.dataset.filter===cat));if(current){renderActions(current);renderCommunications(current)}});
-$('communicationPanel').addEventListener('click',e=>{const btn=e.target.closest('[data-comm-stage]');if(btn&&current){commOverride=btn.dataset.commStage;renderCommunications(current)}});
-$('stageTabs').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(b&&current){viewStep=+b.dataset.stage;renderStages(current)}});
-$('resetStage').addEventListener('click',()=>{viewStep=null;if(current)renderStages(current)});
-$('secondaryToolsGrid').addEventListener('click',e=>{const a=e.target.closest('a[href="#qaHistoryPanel"]');if(a){e.preventDefault();$('qaHistoryPanel').open=true;$('qaHistoryPanel').scrollIntoView({behavior:'smooth'})}});
+const courseContext = c => ({nrc:c.nrc, code:c.code, intake:c.intake});
+const urlFor = (name, c) => {
+  const raw = name==='Editar NRC' && c.id ? 'https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ids='+encodeURIComponent(c.id) : (Object.prototype.hasOwnProperty.call(savedLinks,name) ? savedLinks[name] : ACCESS[name]?.url);
+  if (!raw) return '';
+  const data = courseContext(c);
+  const resolved = String(raw).replace(/\{(nrc|code|intake)\}/gi, (_, key) => encodeURIComponent(data[key.toLowerCase()]));
+  try { const u = new URL(resolved); return ['https:', 'http:'].includes(u.protocol) ? u.href : ''; } catch { return ''; }
+};
 
-function closeDateEditor(){}
-function renderEmbeddedDates(c){
-  const frame=$('embeddedDateApp');
-  const id=Number(c?.id);
-  if(!Number.isSafeInteger(id)||id<=0){
-    frame.removeAttribute('src');
-    $('timelineEmbeddedApp').classList.add('date-app-unavailable');
-    $('dateAppStatus').textContent='Este NRC no tiene ID de SharePoint; no se puede editar aquí.';
-    return;
+function openTool(name) {
+  if (name === 'Cursos del Intake') { switchScreen('intake', true); return; }
+  if (name === 'Hub de Comunicaciones') { switchScreen('comms', true); return; }
+  if (name === 'Historial QA2') { switchScreen('qa', true); return; }
+
+  if (!ACCESS[name]) return;
+  const dest = urlFor(name, courses[activeIndex]);
+  if (!dest) { editLink(name); return; }
+  const opened = window.open(dest, '_blank');
+  if (opened) opened.opener = null;
+}
+
+function showModal(title, text) {
+  $('linkEditor').style.display = 'none';
+  $('linkEditorLabel').textContent = 'URL de destino (admite {nrc}, {code}, {intake})';
+  $('modalTitle').textContent = title;
+  $('modalText').textContent = text;
+  $('modal').classList.add('show');
+}
+function closeModal() { $('modal').classList.remove('show'); }
+function editLink(name) {
+  editingAction = name;
+  showModal('Configurar · '+name, 'Pega la URL de destino para esta herramienta. Puedes usar {nrc}, {code} o {intake}.');
+  $('linkEditor').style.display = 'block';
+  $('linkInput').value = Object.prototype.hasOwnProperty.call(savedLinks,name) ? savedLinks[name] : (ACCESS[name]?.url || '');
+  $('linkInput').focus();
+}
+function saveLink() {
+  if (!editingAction) return;
+  const raw = $('linkInput').value.trim();
+
+  const action = editingAction;
+  savedLinks[action] = raw;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(savedLinks)); } catch {}
+  closeModal(); renderTools(courses[activeIndex]); openTool(action);
+}
+
+$('closeModal').addEventListener('click', closeModal);
+$('modalOk').addEventListener('click', closeModal);
+$('saveLink').addEventListener('click', saveLink);
+$('configureLinks').addEventListener('click', () => {
+  const name = prompt('Escribe el nombre de la herramienta a configurar:\n'+Object.keys(ACCESS).join('\n'));
+  if (name && ACCESS[name]) editLink(name);
+});
+$('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+
+function commStageOf(c) {
+  if(c.code==='UNI118') return 'induccion';
+  if(now < startDay(c.start)) return 'preparacion';
+  if(now <= endDay(c.end)) return 'imparticion';
+  return 'cierre';
+}
+function commUrl(item,c) {
+  const [,, , keys]=item;
+  const email=c.raw?.['correo tutor']||TUTOR_EMAIL[tutorKey(c.tutor)]||'';
+  const ext=TUTOR_EXT[tutorKey(c.tutor)]||'';
+  const params={nrc:c.nrc,nombreTutor:c.tutor,correoTutor:email,anexoTutor:ext,nombrePrograma:c.program||'',nombreCurso:c.nrc+' — '+c.name,fechaInicio:c.start,fechaFin:c.end,diaInicio:dayName(c.start),diaFin:dayName(c.end),duracion:String(Math.max(1,Math.ceil((endDay(c.end)-startDay(c.start))/604800000))),nombre_tutor:c.tutor,nombre_curso:c.name,fecha_inicio:dmy(c.start),fecha_fin:dmy(c.end)};
+  const qs=new URLSearchParams();
+  keys.forEach(k=>{if(params[k])qs.set(k,params[k]);});
+  return COMM_BASE+item[1]+(qs.size?'?'+qs.toString():'');
+}
+
+function renderTools(c) {
+  const status = stateOf(c);
+  const qaAlert = c.qa === 'incident';
+
+  const primaryTools = [
+    { title: 'Panel de Estudiantes', desc: 'Gestión y semáforo por alumno', icon: 'users', theme: 'c-blue', cat: 'seguimiento', badge: c.active===null?'Sin dato':`${c.active} activos`, badgeCls: status === 'ACTIVO' ? 'recommended' : '' },
+    { title: 'Abrir Aula Canvas', desc: 'Ir al curso en plataforma LMS', icon: 'canvas', theme: 'c-green', cat: 'seguimiento', badge: 'Aula Virtual', badgeCls: '' },
+    { title: 'Gestión y Formulario QA2', desc: 'Registrar revisión o incidencia', icon: 'clipboard', theme: 'c-amber', cat: 'gestion', badge: qaAlert ? '⚠️ 1 Incidencia' : 'QA2 al día', badgeCls: qaAlert ? 'alert' : '' },
+    { title: 'Hub de Comunicaciones', desc: 'Ver plantillas de esta etapa aquí', icon: 'mail', theme: 'c-purple', cat: 'comunicacion', badge: 'Ver plantillas ▾', badgeCls: 'recommended' }
+  ];
+
+  const secondaryTools = [
+    { title: 'Cursos del Intake', sub: 'Ver los 6 cursos', icon: 'book', cat: 'gestion', isScreen: true },
+    { title: 'Historial QA2', sub: 'Detalle QA2 aquí', icon: 'alert', cat: 'gestion', isScreen: true },
+    { title: 'Cotejo Integración', sub: 'Banner vs Canvas', icon: 'link', cat: 'seguimiento' },
+    { title: 'Informe Power BI', sub: 'Reporte oficial V5', icon: 'chart', cat: 'seguimiento' },
+    { title: 'Editar NRC', sub: 'Power Apps', icon: 'pencil', cat: 'gestion' },
+    { title: 'Presentación', sub: 'Material sincrónico', icon: 'presentation', cat: 'comunicacion' },
+    { title: 'Anuncio Bienvenida', sub: 'Publicar en aula', icon: 'megaphone', cat: 'comunicacion' }
+  ];
+
+  $('primaryToolsGrid').innerHTML = primaryTools.map(t => {
+    const hide = currentFilter !== 'all' && currentFilter !== t.cat ? 'hidden-by-filter' : '';
+    const hasUrl = t.title === 'Hub de Comunicaciones' || Boolean(urlFor(t.title, c));
+    return `
+      <button class="core-card ${t.theme} ${hide}" data-action="${esc(t.title)}">
+        <div class="core-top">
+          <div class="core-icon">${icon(t.icon)}</div>
+          <span class="core-tag ${hasUrl ? t.badgeCls : 'alert'}">${hasUrl ? esc(t.badge) : 'Configurar URL'}</span>
+        </div>
+        <div>
+          <div class="core-name"><span>${esc(t.title)}</span> <svg class="ic" style="color:var(--ink-muted);width:14px;height:14px"><use href="#icon-external"/></svg></div>
+          <div class="core-desc">${esc(t.desc)}</div>
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  $('secondaryToolsGrid').innerHTML = secondaryTools.map(t => {
+    const hide = currentFilter !== 'all' && currentFilter !== t.cat ? 'hidden-by-filter' : '';
+    const hasUrl = t.isScreen || Boolean(urlFor(t.title, c));
+    return `
+      <button class="quick-btn ${hide}" data-action="${esc(t.title)}">
+        <div class="quick-icon">${icon(t.icon)}</div>
+        <div class="quick-copy">
+          <b>${esc(t.title)}</b>
+          <small>${hasUrl ? esc(t.sub) : 'Configurar URL'}</small>
+        </div>
+      </button>
+    `;
+  }).join('');
+}
+
+function renderIntakeScreen() {
+  $('intakeScreenGrid').innerHTML = courses.map((x, i) => {
+    const st = stateOf(x);
+    return `
+      <button type="button" class="intake-item-card ${i === activeIndex ? 'active-nrc' : ''}" data-select-course="${i}">
+        <div class="iic-head">
+          <span class="iic-code">PASO ${i + 1} · ${esc(x.code)}</span>
+          <span class="state-pill ${st}">${st === 'PREPARACION' ? 'PREPARACIÓN' : st}</span>
+        </div>
+        <div class="iic-title">${esc(x.name)}</div>
+        <div class="iic-foot">
+          <span>📅 ${dateStr(x.start)} al ${dateStr(x.end)}</span>
+          <strong>${esc(x.tutor)}</strong>
+        </div>
+      </button>
+    `;
+  }).join('');
+}
+
+function renderCommunicationsScreen(c) {
+  const auto = commStageOf(c);
+  const stage = commStepOverride || auto;
+  $('screen-comms').innerHTML = `
+    <div class="pane-head">
+      <div>
+        <div class="pane-title">Plantillas y Anuncios · Etapa ${esc(COMM_LABELS[stage])}</div>
+        <div class="pane-sub">Prellenado automático para el curso ${esc(c.nrc)} (${esc(c.name)})</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="${COMM_BASE}comunicaciones_etop.html" target="_blank" rel="noopener noreferrer" class="btn-pill-soft">Catálogo completo ↗</a>
+        <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
+      </div>
+    </div>
+    <div class="comm-stage-bar">
+      ${Object.keys(COMM_CATALOG).map(k => `
+        <button type="button" class="comm-stage-btn ${stage === k ? 'selected' : ''}" data-comm-stage="${k}">
+          ${esc(COMM_LABELS[k])}${k === auto ? ' (Sugerida hoy)' : ''}
+        </button>
+      `).join('')}
+    </div>
+    <div class="comm-templates-grid">
+      ${COMM_CATALOG[stage].map(item => `
+        <a class="comm-card" href="${esc(commUrl(item, c))}" target="_blank" rel="noopener noreferrer">
+          <div>
+            <b>${esc(item[0])}</b>
+            <small>${esc(item[2].toUpperCase())} · ${item[3].length ? 'Con datos del NRC' : 'Plantilla general'}</small>
+          </div>
+          <svg class="ic" style="color:var(--brand)"><use href="#icon-external"/></svg>
+        </a>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderQaScreen(c) {
+  const qaTitle = c.code === 'UNI118' ? 'Excluido de revisión QA2' : c.qa === 'incident' ? '⚠️ Incidencia QA2 Registrada' : c.qa === 'ok' ? '✓ Auditoría QA2 Conforme' : '⏳ Revisión QA2 Pendiente';
+  $('screen-qa').innerHTML = `
+    <div class="pane-head">
+      <div>
+        <div class="pane-title">Estado de Calidad QA2 · ${esc(c.nrc)}</div>
+        <div class="pane-sub">Revisión de alistamiento de aula virtual</div>
+      </div>
+      <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
+    </div>
+    <div class="qa-clean-box">
+      <div>
+        <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">${qaTitle}</h3>
+        <p style="font-size:12.5px;color:var(--ink-secondary)">Desde aquí puedes consultar el historial de evidencias reportadas o abrir el formulario de preparación para actualizar el estado QA2 de este curso.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="${PORTAL}incidencias.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener noreferrer" class="comm-card">
+          <div><b>Abrir Historial de Incidencias</b><small>Ver evidencias en incidencias.html</small></div>
+          <svg class="ic" style="color:var(--brand)"><use href="#icon-external"/></svg>
+        </a>
+        <a href="${PORTAL}cursos_preparacion.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener noreferrer" class="comm-card">
+          <div><b>Ir al Formulario QA2</b><small>Registrar revisión en cursos_preparacion.html</small></div>
+          <svg class="ic" style="color:var(--brand)"><use href="#icon-external"/></svg>
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function renderStages(c) {
+  const current = currentStep(c);
+  const choice = viewStep === null ? current : viewStep;
+  $('stageTabs').innerHTML = steps.map((s, i) => `
+    <button class="stage-chip-btn ${i === current ? 'current' : ''} ${i === choice && viewStep !== null ? 'viewing' : ''}" data-stage="${i}">
+      ${i + 1}. ${esc(s.short)}
+    </button>
+  `).join('');
+  const st = steps[choice];
+  $('stageBadgeLabel').textContent = choice === current ? 'ETAPA ACTUAL' : 'CONSULTANDO ETAPA';
+  $('stageName').textContent = st.title;
+  $('stageDescription').textContent = '· ' + st.desc;
+  $('stageTasks').innerHTML = st.tasks.map(([t, d], idx) => `
+    <li class="focus-task">
+      <span class="task-num">${idx + 1}</span>
+      <div><b>${esc(t)}</b><span>${esc(d)}</span></div>
+    </li>
+  `).join('');
+}
+
+function renderKpi(c) {
+  const kpis = [
+    ['Inscritos',c.total,''],
+    ['Activos',c.active,''],
+    ['Ingreso',c.entered,''],
+    ['Sin Ing.',c.no,c.no>0?'alert':'']
+  ];
+  $('kpiPrimary').innerHTML = kpis.map(([l, v, cl]) => `<div class="kpi-stat ${cl}"><strong>${v===null||v===undefined?'—':v}</strong><span>${l}</span></div>`).join('');
+
+  const present = Object.entries(semConfig).filter(([k]) => Number(c.colors[k]) > 0);
+  const sum = present.reduce((a, [k]) => a + Number(c.colors[k]), 0) || 1;
+  $('semBar').innerHTML = present.map(([k, [, col]]) => `<div style="width:${Math.round(c.colors[k]/sum*100)}%;background:${col}"></div>`).join('');
+  $('semaphore').innerHTML = present.map(([k, [lbl, col]]) => `
+    <span class="sem-dot-item"><span class="dot-sm" style="background:${col}"></span>${c.colors[k]} ${lbl}</span>
+  `).join('');
+}
+
+function render() {
+  const c = courses[activeIndex];
+  const status = stateOf(c);
+  $('intakeName').textContent=c.intake||'—';$('intakeScreenTitle').textContent=c.intake||'—';$('changeCourseLabel').textContent=`Cambiar curso (${courses.length})`; $('intakeCount').textContent=courses.length;
+  loadAppFrame(c);
+
+  $('coursePosCounter').textContent = `· Curso ${activeIndex + 1} de ${courses.length}`;
+  $('prev').disabled = activeIndex === 0;
+  $('next').disabled = activeIndex === courses.length - 1;
+
+  $('heroNrc').textContent = c.nrc;
+  $('heroStatus').textContent = status === 'PREPARACION' ? 'PREPARACIÓN' : status;
+  $('heroStatus').className = 'state-pill ' + status;
+  $('courseTitle').textContent = c.name;
+
+  const qaLabel = c.code === 'UNI118' ? 'QA2 N/A' : c.qa === 'incident' ? 'QA2 CON INCIDENCIA' : c.qa === 'ok' ? 'QA2 OK' : 'QA2 PENDIENTE';
+  $('qaHeroBadge').textContent = qaLabel;
+  $('qaHeroBadge').className = 'state-pill ' + (c.qa === 'incident' ? 'CERRADO' : c.qa === 'ok' ? 'ACTIVO' : 'PREPARACION');
+
+  $('heroMetaList').innerHTML = [
+    `<span>Tutor/a: <b>${esc(c.tutor)}</b></span>`,
+    `<span>Código: <b>${esc(c.code)} (MEDI)</b></span>`,
+    `<span>Programa: <b>${esc(c.program||'—')}</b></span>`
+  ].join('');
+
+  const totalWeeks = Math.max(1, Math.ceil((endDay(c.end) - startDay(c.start)) / 604800000));
+  const p = progress(c);
+  $('duration').textContent = `${totalWeeks} sem`;
+  $('progressStatus').textContent = status === 'PREPARACION' ? 'Próximo a iniciar' : status === 'CERRADO' ? 'Curso finalizado' : 'En impartición';
+  $('progressFill').style.width = p + '%';
+  $('progressStart').textContent = dateStr(c.start);
+  $('progressPercent').textContent = p + '%';
+  $('progressEnd').textContent = dateStr(c.end);
+
+  renderKpi(c);
+  renderStages(c);
+  renderTools(c);
+  renderIntakeScreen();
+  renderCommunicationsScreen(c);
+  renderQaScreen(c);
+}
+
+$('prev').addEventListener('click', () => { if (activeIndex > 0) { activeIndex--; viewStep = null; commStepOverride = null; render(); }});
+$('next').addEventListener('click', () => { if (activeIndex < courses.length - 1) { activeIndex++; viewStep = null; commStepOverride = null; render(); }});
+$('openIntakeScreenBtn').addEventListener('click', () => switchScreen('intake', true));
+$('screenModeTabs').addEventListener('click', e => {
+  const btn = e.target.closest('[data-screen]');
+  if (btn) switchScreen(btn.dataset.screen);
+});
+$('toolFilters').addEventListener('click', e => {
+  const b = e.target.closest('[data-filter]');
+  if (!b) return;
+  currentFilter = b.dataset.filter;
+  document.querySelectorAll('#toolFilters .f-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === currentFilter));
+  if (currentFilter === 'comunicacion') switchScreen('comms');
+  else renderTools(courses[activeIndex]);
+});
+
+document.querySelector('.workspace-screen').addEventListener('click', e => {
+  if (e.target.closest('[data-back-tools]')) {
+    currentFilter = 'all';
+    document.querySelectorAll('#toolFilters .f-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === 'all'));
+    switchScreen('tools'); renderTools(courses[activeIndex]); return;
   }
-  $('timelineEmbeddedApp').classList.remove('date-app-unavailable');
-  $('dateAppStatus').textContent='';
-  const url=new URL(POWERAPPS_FECHAS);
-  url.searchParams.set('ids',String(id));
-  url.searchParams.set('nrc',String(c.nrc||''));
-  // Solo se pasa ID de registro: Power Apps obtiene las fechas vigentes desde SharePoint.
-  if(frame.src!==url.href)frame.src=url.href;
-}
-async function load(){setStatus('Cargando cursos, incidencias y métricas…');try{
- const stamp='?t='+Date.now(),r=await Promise.all([fetch(BASE+'nrcs.json'+stamp,{cache:'no-store'}),fetch(BASE+'incidencias.json'+stamp,{cache:'no-store'}),fetch(BASE+'metricas_estudiantes.json'+stamp,{cache:'no-store'})]);
- if(!r[0].ok)throw Error('No se pudo cargar nrcs.json');
- courses=await r[0].json();if(!Array.isArray(courses))courses=[];courses=courses.filter(x=>x&&x.nrc);
- incidents=r[1].ok?await r[1].json():[];if(!Array.isArray(incidents))incidents=[];
- const m=r[2].ok?await r[2].json():[];metrics=new Map((Array.isArray(m)?m:[]).map(x=>[norm(x.nrc),Number(x.total_estudiantes)||0]));
- $('courseSuggestions').innerHTML=courses.slice(0,4000).map(c=>'<option value="'+esc(c.nrc)+'" label="'+esc(title(c))+'"></option>').join('');
- const requested=query.get('nrc');if(requested){const x=find(requested);if(x)render(x);else setStatus('NRC solicitado no encontrado. Utiliza la búsqueda.',true)}
- else setStatus('Catálogo cargado ('+courses.length+' NRC). Busca uno para abrir la ficha.');
- }catch(e){console.error(e);setStatus('Error al cargar ETOP: '+e.message,true)}}
-load();
+  const card = e.target.closest('[data-select-course]');
+  if (card) {
+    activeIndex = Number(card.dataset.selectCourse);
+    viewStep = null; commStepOverride = null; $('dateEditorPanel').hidden = true;
+    render(); switchScreen('tools'); return;
+  }
+  const stBtn = e.target.closest('[data-comm-stage]');
+  if (stBtn) { commStepOverride = stBtn.dataset.commStage; renderCommunicationsScreen(courses[activeIndex]); return; }
+  const act = e.target.closest('[data-action]');
+  if (act) openTool(act.dataset.action);
+});
 
+$('stageTabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-stage]');
+  if (b) { viewStep = (Number(b.dataset.stage) === currentStep(courses[activeIndex])) ? null : Number(b.dataset.stage); renderStages(courses[activeIndex]); }
+});
+
+loadRealData();
 </script>
 </body>
 </html>
