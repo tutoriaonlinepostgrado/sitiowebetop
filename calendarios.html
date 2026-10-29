@@ -241,7 +241,20 @@
 .calendar-workspace td:last-child .actions{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-width:0!important;width:100%!important}
 .calendar-workspace td:last-child .actions .action{display:inline-flex!important;position:static!important;flex:0 0 27px!important;box-sizing:border-box!important;width:27px!important;height:27px!important;min-width:27px!important;max-width:27px!important;padding:0!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;font-size:14px!important;line-height:1!important}
 </style>
-</head>
+<style>
+/* Cabecera compacta: contexto a izquierda y KPI a derecha */
+.header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;column-gap:18px!important;padding:9px 13px!important}
+.header-grid{min-width:0!important}
+.header-kpis{grid-column:2;grid-row:1;display:flex;align-items:center}
+.header-kpis .kpis{display:flex!important;gap:6px!important;margin:0!important;flex-wrap:nowrap!important}
+.header-kpis .kpi{min-width:74px!important;padding:5px 9px!important}
+.header-kpis .kpi-v{font-size:16px!important}
+.header .logo{display:none!important}
+.summary{padding-top:3px!important}
+.summary-row{display:block!important;margin-bottom:0!important}
+.summary-title,.summary-sub{display:inline!important;margin-right:8px}
+@media(max-width:1180px){.header{grid-template-columns:1fr!important;row-gap:9px!important}.header-kpis{grid-column:1;grid-row:2;justify-content:flex-end}.header-kpis .kpis{flex-wrap:wrap!important;justify-content:flex-end}}
+</style></head>
 <body>
   <div id="drill-context" class="drill-context"><div class="drill-context-main"><strong>Detalle desde Carga Tutorial</strong><div id="drill-context-text" class="drill-context-text"></div></div><button type="button" class="drill-back" onclick="volverCargaTutorial()">← Volver a Carga Tutorial</button></div>
   <section class="header">
@@ -254,18 +267,19 @@
       <div class="h-label">🏛️ FACULTAD</div><div class="h-value" id="h-facultad">—</div>
     </div>
     <img class="logo" src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo ETOP">
-  </section>
-
-  <section class="summary">
-    <div class="summary-row">
-      <div><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
-      <div class="kpis">
+    <div class="header-kpis">      <div class="kpis">
         <div class="kpi" data-state="PREPARACION"><div class="kpi-v" style="color:#9bafc8" id="k-prep">0</div><div class="kpi-l">Prep.</div></div>
         <div class="kpi" data-state="ACTIVO"><div class="kpi-v" style="color:#75b79c" id="k-active">0</div><div class="kpi-l">Activos</div></div>
         <div class="kpi" data-state="EN CIERRE"><div class="kpi-v" style="color:#c8a06e" id="k-closing">0</div><div class="kpi-l">Cierre</div></div>
         <div class="kpi" data-state="CERRADO"><div class="kpi-v" style="color:#c88995" id="k-closed">0</div><div class="kpi-l">Cerrados</div></div>
         <div class="kpi total" data-state=""><div class="kpi-l">Total</div><div class="kpi-v" style="color:#d6e3f3" id="k-total">0</div></div>
-      </div>
+      </div></div>
+  </section>
+
+  <section class="summary">
+    <div class="summary-row">
+      <div><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
+
     </div>
     <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span><button class="btn-export" type="button" onclick="descargarExcel()">📥 Descargar Excel</button></div>
     <div class="bulk-toolbar" role="group" aria-label="Acciones para cursos seleccionados">
