@@ -263,6 +263,37 @@
  .calendar-workspace td:last-child .actions .action{flex:0 0 21px!important;width:21px!important;min-width:21px!important;max-width:21px!important;height:23px!important;font-size:12px!important}
 }
 </style>
+
+<style>
+/* Calendarios: optimización visual sin modificar columnas ni acciones */
+@media (min-width:1181px){
+  body{padding:8px 10px}
+  .header{gap:14px;padding:8px 13px;margin-bottom:7px}
+  .header-grid{gap:5px 16px}
+  .logo{height:40px}
+  .summary{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:5px;padding:5px 0 7px;margin-bottom:5px}
+  .summary-row{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0}
+  .kpis{gap:5px;flex-wrap:nowrap}
+  .kpi{display:flex;align-items:center;gap:6px;min-width:0;padding:5px 9px;border-radius:6px}
+  .kpi-v{font-size:15px;line-height:1}
+  .kpi-l{font-size:9px}
+  .bulk-toolbar{grid-column:1;grid-row:2;min-width:0;margin:0;padding:0;gap:7px;display:flex;align-items:center;flex-wrap:wrap}
+  .bulk-hint{display:none}
+  .search-row{grid-column:2;grid-row:2;margin:0;justify-content:flex-end}
+  #search{width:240px;padding:6px 9px}
+  .table-wrap{max-height:calc(100vh - 185px)}
+}
+@media (min-width:1181px) and (max-width:1420px){
+  .summary{grid-template-columns:1fr}
+  .summary-row{grid-column:1}
+  .bulk-toolbar{grid-column:1;grid-row:2}
+  .search-row{grid-column:1;grid-row:3}
+  .table-wrap{max-height:calc(100vh - 220px)}
+}
+@media (max-width:1180px){
+  .bulk-hint{display:none}
+}
+</style>
 </head>
 <body>
   <div id="drill-context" class="drill-context"><div class="drill-context-main"><strong>Detalle desde Carga Tutorial</strong><div id="drill-context-text" class="drill-context-text"></div></div><button type="button" class="drill-back" onclick="volverCargaTutorial()">← Volver a Carga Tutorial</button></div>
@@ -352,7 +383,19 @@
       document.getElementById('h-tipo').textContent=selected(list,'tipo','Varios');
       document.getElementById('h-intake').textContent=selected(list,'intake','Múltiples versiones');
       document.getElementById('h-facultad').textContent=selected(list,'facultad','Varias');
-      // La cabecera mantiene el curso de referencia para filtrar incluso cuando el resultado contiene varios valores.
+      // La cabecera muestra un valor individual solo cuando el conjunto es inequívoco.
+      // Evita atribuir tutor, programa o intake de un NRC a todo el resultado.
+      const contextoUnico=list.length===1;
+      if(!contextoUnico){
+        ['h-tutor','h-programa','h-correo','h-tipo','h-intake','h-facultad'].forEach(id=>{
+          const el=document.getElementById(id);
+          el.classList.remove('header-filter-link','header-filter-active');
+          el.removeAttribute('role');el.removeAttribute('tabindex');
+          el.onclick=null;el.onkeydown=null;el.title='Resumen de los cursos filtrados';
+        });
+        return;
+      }
+      // Con un solo NRC permanecen los enlaces interactivos originales.
       const reference=allCourses.find(x=>norm(x.nrc)===norm(q.get('nrc')||''))||allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc))||list[0];
       const fields=[
        ['h-tutor','tutor','tutor'],['h-programa','programa','nombre programa'],
