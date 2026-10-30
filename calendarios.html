@@ -616,7 +616,7 @@
       if(!x||!String(x.id||'').trim())return;
       selectedCourseNrc=x.nrc||'';
       document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
-      window.open(SP_BASE+encodeURIComponent(String(x.id).trim()),'_blank','noopener,noreferrer');
+      window.open(SP_BASE+encodeURIComponent(String(x.id).trim())+'&env=Embedded','_blank','noopener,noreferrer');
     }
     function cerrarFichaCurso(){
       selectedCourseNrc='';
