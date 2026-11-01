@@ -145,6 +145,34 @@ body.embedded tbody td{height:23px}
 
 </style>
 
+<style>
+/* Notebook ETOP: once columnas presentes, distribución adaptable sin scroll horizontal */
+@media (min-width:760px) {
+  .ri-tabla-contenedor{max-width:100%;min-width:0;overflow-x:hidden!important;overflow-y:auto!important}
+  .ri-tabla-contenedor table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+  .ri-tabla-contenedor th,.ri-tabla-contenedor td{display:table-cell!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .ri-tabla-contenedor th:nth-child(1),.ri-tabla-contenedor td:nth-child(1){width:6%!important}
+  .ri-tabla-contenedor th:nth-child(2),.ri-tabla-contenedor td:nth-child(2){width:15%!important}
+  .ri-tabla-contenedor th:nth-child(3),.ri-tabla-contenedor td:nth-child(3){width:9%!important}
+  .ri-tabla-contenedor th:nth-child(4),.ri-tabla-contenedor td:nth-child(4){width:18%!important}
+  .ri-tabla-contenedor th:nth-child(5),.ri-tabla-contenedor td:nth-child(5){width:8%!important}
+  .ri-tabla-contenedor th:nth-child(6),.ri-tabla-contenedor td:nth-child(6){width:8%!important}
+  .ri-tabla-contenedor th:nth-child(7),.ri-tabla-contenedor td:nth-child(7){width:8%!important}
+  .ri-tabla-contenedor th:nth-child(8),.ri-tabla-contenedor td:nth-child(8){width:10%!important}
+  .ri-tabla-contenedor th:nth-child(9),.ri-tabla-contenedor td:nth-child(9){width:7%!important}
+  .ri-tabla-contenedor th:nth-child(10),.ri-tabla-contenedor td:nth-child(10){width:8%!important}
+  .ri-tabla-contenedor th:nth-child(11),.ri-tabla-contenedor td:nth-child(11){width:3%!important}
+}
+@media (min-width:760px) and (max-width:1450px){
+  body{padding:5px}
+  .ri{gap:5px}
+  .ri-cabecera{padding:6px 8px}
+  .ri-tabla-contenedor th{font-size:8px!important;padding:6px 3px!important}
+  .ri-tabla-contenedor td{font-size:9px!important;padding:5px 3px!important}
+  .ri-tabla-contenedor tbody td:last-child{min-width:0!important}
+  .ri-tabla-contenedor .chip,.ri-tabla-contenedor .nomina-falta,.ri-tabla-contenedor .nomina-ok,.ri-tabla-contenedor .alerta{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+</style>
 </head>
 <body>
 <div class="ri">
@@ -537,7 +565,7 @@ Promise.all([
 }).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="11" class="error">⚠️ ${esc(err.message)}</td></tr>`});
 </script>
 <script>
-function reporteIniciosCompacto(){return document.body.classList.contains('ri-compact')||(!document.body.classList.contains('ri-full')&&innerWidth<=1450)}
+function reporteIniciosCompacto(){return document.body.classList.contains('ri-compact')}
 function rotuloReporteInicios(){const b=document.getElementById('ri-view-toggle');if(b)b.textContent=reporteIniciosCompacto()?'Vista completa (11 columnas)':'Vista compacta (9 columnas)'}
 function alternarReporteInicios(){const c=!reporteIniciosCompacto();document.body.classList.toggle('ri-compact',c);document.body.classList.toggle('ri-full',!c);rotuloReporteInicios()}
 document.addEventListener('DOMContentLoaded',rotuloReporteInicios);
