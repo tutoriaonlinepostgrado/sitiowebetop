@@ -303,6 +303,55 @@
   .bulk-hint{display:none}
 }
 </style>
+
+<style>
+/* ETOP Notebook: doce columnas sin scroll horizontal en el visor integrado */
+@media (min-width:760px) and (max-width:1180px){
+  body{padding:6px!important}
+  .header{padding:7px 10px!important;gap:8px!important;margin-bottom:5px!important}
+  .header-grid{grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr)!important;gap:4px 9px!important;font-size:10px!important}
+  .logo{height:32px!important}
+  .summary{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:5px 8px!important;padding:4px 0 6px!important;margin-bottom:4px!important}
+  .summary-row{grid-column:1/-1!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin:0!important}
+  .kpis{display:flex!important;flex-wrap:nowrap!important;width:auto!important;margin:0!important;gap:4px!important}
+  .kpi{display:flex!important;gap:4px!important;min-width:0!important;padding:4px 6px!important;border-radius:5px!important}
+  .kpi-v{font-size:12px!important;line-height:1!important}
+  .kpi-l{font-size:8px!important}
+  .summary-title{font-size:11px!important}
+  .summary-sub{font-size:9px!important}
+  .bulk-toolbar{grid-column:1!important;grid-row:2!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:4px!important;padding:0!important;margin:0!important;min-width:0!important;border-top:0!important}
+  .bulk-count{font-size:9px!important}
+  .bulk-hint{display:none!important}
+  .bulk-btn{padding:5px 6px!important;font-size:9px!important;white-space:nowrap!important}
+  .search-row{grid-column:2!important;grid-row:2!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;justify-content:flex-end!important;gap:4px!important;margin:0!important}
+  .search-label{display:none!important}
+  #search{flex:none!important;width:clamp(110px,17vw,200px)!important;min-width:0!important;padding:5px 6px!important;font-size:10px!important}
+  #count{order:0!important;width:auto!important;margin:0!important;white-space:nowrap!important;font-size:9px!important}
+  .btn-export{padding:5px 7px!important;margin:0!important;font-size:9px!important;white-space:nowrap!important}
+  .calendar-workspace,.calendar-workspace .table-wrap{min-width:0!important;max-width:100%!important;width:100%!important}
+  .calendar-workspace .table-wrap{overflow-x:hidden!important;overflow-y:auto!important;max-height:calc(100vh - 158px)!important}
+  .calendar-workspace table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+  .calendar-workspace th,.calendar-workspace td{min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;padding:5px 3px!important}
+  .calendar-workspace th{font-size:8px!important}
+  .calendar-workspace td{font-size:10px!important}
+  .calendar-workspace th:nth-child(1),.calendar-workspace td:nth-child(1){width:3%!important}
+  .calendar-workspace th:nth-child(2),.calendar-workspace td:nth-child(2){width:14%!important}
+  .calendar-workspace th:nth-child(3),.calendar-workspace td:nth-child(3){width:7%!important}
+  .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:19%!important}
+  .calendar-workspace th:nth-child(5),.calendar-workspace td:nth-child(5){width:7%!important}
+  .calendar-workspace th:nth-child(6),.calendar-workspace td:nth-child(6){width:8%!important}
+  .calendar-workspace th:nth-child(7),.calendar-workspace td:nth-child(7){width:8%!important}
+  .calendar-workspace th:nth-child(8),.calendar-workspace td:nth-child(8){width:5%!important}
+  .calendar-workspace th:nth-child(9),.calendar-workspace td:nth-child(9){width:10%!important}
+  .calendar-workspace th:nth-child(10),.calendar-workspace td:nth-child(10){width:6%!important}
+  .calendar-workspace th:nth-child(11),.calendar-workspace td:nth-child(11){width:5%!important}
+  .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:8%!important}
+  .calendar-workspace .nrc{font-size:9px!important;padding:2px 3px!important}
+  .calendar-workspace td:last-child .actions{gap:1px!important;flex-wrap:nowrap!important}
+  .calendar-workspace td:last-child .actions .action{flex:0 1 18px!important;width:18px!important;min-width:0!important;max-width:18px!important;height:20px!important;font-size:11px!important;padding:0!important}
+  .calendar-workspace .bulk-select-col,.calendar-workspace .bulk-select-cell{min-width:0!important;width:3%!important}
+}
+</style>
 </head>
 <body>
   <div id="drill-context" class="drill-context"><div class="drill-context-main"><strong>Detalle desde Carga Tutorial</strong><div id="drill-context-text" class="drill-context-text"></div></div><button type="button" class="drill-back" onclick="volverCargaTutorial()">← Volver a Carga Tutorial</button></div>
