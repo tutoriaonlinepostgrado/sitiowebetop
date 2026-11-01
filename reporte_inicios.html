@@ -339,7 +339,7 @@ function render(){
     const codigo=cu?`<a href="${esc(cu)}" target="_blank" rel="noopener">${esc(x.nrc||'')}</a>`:esc(x.nrc||'');
     const st=norm(x.estado)==='ACTIVO'?'activo':'gris';
     const nom=x.total===0?`<span class="nomina-falta" title="Sin nómina / cero estudiantes">S/N</span>`:`<span class="nomina-ok" title="${x.total.toLocaleString('es-CL')} estudiantes">${x.total.toLocaleString('es-CL')}</span>`;
-    const incVisible=inc.t.startsWith('CON INCIDENCIA (')?inc.t.match(/\\((\\d+)\\)/)?.[1]||inc.t:inc.t==='SIN INCIDENCIA'?'OK':inc.t==='NO APLICA'?'N/A':'PEND.';
+    const incVisible=inc.t.startsWith('CON INCIDENCIA (')?String((byCourse.get(String(x.id))||[]).filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length):inc.t==='SIN INCIDENCIA'?'OK':inc.t==='NO APLICA'?'N/A':'PEND.';
     return `<tr>
       <td title="${esc(x.facultad||'')}"><span class="facultad">${esc(x.facultad||'Sin facultad')}</span></td>
       <td class="codigo" title="${esc(x.nrc||'')}">${codigo}</td>
