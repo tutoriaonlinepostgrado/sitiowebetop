@@ -173,6 +173,18 @@ body.embedded tbody td{height:23px}
   .ri-tabla-contenedor .chip,.ri-tabla-contenedor .nomina-falta,.ri-tabla-contenedor .nomina-ok,.ri-tabla-contenedor .alerta{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 </style>
+<style>
+/* Reporte inicios: celdas de conteo compactas; conservar estados y datos originales en Excel */
+.ri-tabla-contenedor th:nth-child(9),.ri-tabla-contenedor td:nth-child(9),
+.ri-tabla-contenedor th:nth-child(10),.ri-tabla-contenedor td:nth-child(10){text-align:center}
+.ri-tabla-contenedor .nomina-falta,.ri-tabla-contenedor .nomina-ok,.ri-tabla-contenedor .alerta{min-width:25px;max-width:100%;display:inline-block;overflow:hidden;text-overflow:ellipsis;text-align:center}
+@media(min-width:760px){
+.ri-tabla-contenedor th:nth-child(4),.ri-tabla-contenedor td:nth-child(4){width:21%!important}
+.ri-tabla-contenedor th:nth-child(8),.ri-tabla-contenedor td:nth-child(8){width:12%!important}
+.ri-tabla-contenedor th:nth-child(9),.ri-tabla-contenedor td:nth-child(9){width:4%!important}
+.ri-tabla-contenedor th:nth-child(10),.ri-tabla-contenedor td:nth-child(10){width:5%!important}
+}
+</style>
 </head>
 <body>
 <div class="ri">
@@ -326,7 +338,8 @@ function render(){
     const cu=canvasUrl(x.nrc);
     const codigo=cu?`<a href="${esc(cu)}" target="_blank" rel="noopener">${esc(x.nrc||'')}</a>`:esc(x.nrc||'');
     const st=norm(x.estado)==='ACTIVO'?'activo':'gris';
-    const nom=x.total===0?`<span class="nomina-falta">FALTA NÓMINA</span>`:`<span class="nomina-ok">${x.total.toLocaleString('es-CL')}</span>`;
+    const nom=x.total===0?`<span class="nomina-falta" title="Sin nómina / cero estudiantes">S/N</span>`:`<span class="nomina-ok" title="${x.total.toLocaleString('es-CL')} estudiantes">${x.total.toLocaleString('es-CL')}</span>`;
+    const incVisible=inc.t.startsWith('CON INCIDENCIA (')?inc.t.match(/\\((\\d+)\\)/)?.[1]||inc.t:inc.t==='SIN INCIDENCIA'?'OK':inc.t==='NO APLICA'?'N/A':'PEND.';
     return `<tr>
       <td title="${esc(x.facultad||'')}"><span class="facultad">${esc(x.facultad||'Sin facultad')}</span></td>
       <td class="codigo" title="${esc(x.nrc||'')}">${codigo}</td>
@@ -336,7 +349,7 @@ function render(){
       <td title="${esc(x.intake||'')}">${esc(x.intake||'')}</td>
       <td title="${esc(x.tutor||'')}">${esc(x.tutor||'')}</td>
       <td>${nom}</td>
-      <td title="${esc(inc.t)}"><span class="${inc.c}">${esc(inc.t)}</span></td>
+      <td title="${esc(inc.t)}"><span class="${inc.c}">${esc(incVisible)}</span></td>
       <td><a class="ver-est" href="${esc(studentsUrl(x.nrc))}" target="_blank" rel="noopener" title="Ver estudiantes del NRC en BASESEMAFORO_20">👥</a></td>
     </tr>`;
   }).join('');
