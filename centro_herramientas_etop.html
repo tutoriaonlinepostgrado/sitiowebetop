@@ -634,7 +634,7 @@
 <!-- TAB 5: NOTIFICACIÓN CARPETAS CREADAS -->
 <div class="tab-panel" id="tab4">
   <div class="section-title">Notificación · Carpetas Creadas en Teams</div>
-  <div class="section-sub">Genera el correo de aviso al coordinador/tutora con los vínculos a las carpetas del intake.</div>
+  <div class="section-sub">Reúne varios intakes, elige coordinadores y tutores, y genera una única notificación institucional sin vínculos.</div>
 
   <div class="carpetas-layout">
     <div class="c-form-panel">
@@ -642,8 +642,7 @@
         <span class="c-section-lbl">📋 Datos del correo</span>
         <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:0.6rem;">
           <div class="form-group">
-            <label>Nombre del coordinador / tutora</label>
-            <input type="text" id="c-coord" placeholder="Ej: Rita" />
+            <label>Coordinadores y tutores destinatarios</label><input type="search" id="c-buscar-dest" placeholder="Buscar por nombre o correo" oninput="cRenderDestinatarios()"/><div id="c-destinatarios" style="max-height:240px;overflow:auto;border:1px solid #cbd5e1;border-radius:8px;margin-top:6px;padding:7px"></div><input type="hidden" id="c-coord"/><label style="margin-top:6px">Para (correos seleccionados)</label><input id="c-para" readonly style="font-size:11px"/><label style="margin-top:6px">CC (opcional)</label><input id="c-cc" placeholder="correo@unab.cl; otro@unab.cl"/>
           </div>
           <div class="form-group">
             <label>Nombre del programa / intake</label>
@@ -654,12 +653,12 @@
       <div>
         <span class="c-section-lbl">📂 Carpetas en Teams</span>
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
-        <button class="c-btn-add" onclick="cAdd()">＋ Agregar carpeta</button>
+        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Copiar intakes para flujo V4</button><p style="font-size:11px;color:#64748b">Ejecuta el flujo V4 en Power Automate y verifica las carpetas antes de confirmar el correo.</p>
       </div>
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
         <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;">
-          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">✉️ Generar correo</button>
+          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">✉️ Generar correo</button><button class="btn" style="width:100%;justify-content:center" onclick="cAbrirOutlook()">📨 Abrir borrador en Outlook</button>
           <button class="btn" style="width:100%;justify-content:center;font-size:0.8rem;" onclick="cReset()">Limpiar formulario</button>
         </div>
       </div>
@@ -669,7 +668,7 @@
       <div class="c-preview-bar">
         <div>
           <div class="c-preview-bar-title">Vista previa del correo</div>
-          <div class="c-preview-bar-sub">Listo para copiar y pegar en Outlook</div>
+          <div class="c-preview-bar-sub">Correo HTML institucional · verifica destinatarios antes de enviarlo</div>
         </div>
         <div style="display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;">
           <div class="c-tabs">
@@ -1585,6 +1584,14 @@ function downloadTab4(){
 }
 // ═══ TAB 5: CARPETAS CREADAS ══════════════════════════════════════════════════
 let cCount=0, cHTML='';
+const cDestSel=new Set();
+function cContactos(){return [...T4_COORDINADORES.map(x=>({...x,rol:'Coordinación'})),...Object.entries(TUTORES_MAP).map(([nombre,t])=>({nombre,correo:t.correo,rol:'Tutoría'}))].filter(x=>x.correo)}
+function cRenderDestinatarios(){const el=document.getElementById('c-destinatarios');if(!el)return;const q=(document.getElementById('c-buscar-dest')?.value||'').toLowerCase();el.innerHTML=cContactos().filter(x=>(x.nombre+' '+x.correo).toLowerCase().includes(q)).map(x=>'<label style="display:flex;gap:8px;padding:5px;border-bottom:1px solid #e2e8f0;align-items:center;font-size:12px"><input type="checkbox" data-mail="'+esc(x.correo)+'" '+(cDestSel.has(x.correo.toLowerCase())?'checked':'')+' onchange="cElegirDest(this)" style="width:auto"><span><strong>'+esc(x.nombre)+'</strong> <span style="color:#64748b">('+x.rol+')</span><br><small>'+esc(x.correo)+'</small></span></label>').join('')||'Sin resultados';cActualizarPara()}
+function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara()}
+function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
+function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
+function cAbrirOutlook(){if(!cHTML)cGenerar();if(!cHTML)return;const para=document.getElementById('c-para').value;if(!para)return alert('Selecciona destinatarios.');const cc=document.getElementById('c-cc').value;const subject='ETOP · Calendarios y carpetas creadas · '+cGetCarpetas().length+' versiones';const body='Se encuentran disponibles las carpetas de los siguientes intakes:\n'+cGetCarpetas().map(x=>'• '+x.nombre).join('\n')+'\n\nFavor respaldar nómina y calendarios, correos de bienvenida, invitaciones sincrónicas y QA2.';const p=new URLSearchParams({to:para,subject,body});if(cc)p.set('cc',cc);window.open('https://outlook.office.com/mail/deeplink/compose?'+p.toString(),'_blank','noopener,noreferrer');alert('Se abrió el borrador. Para mantener el formato institucional, utiliza Copiar correo y pega en el cuerpo de Outlook antes de enviar.')}
+
 
 function cAdd(){
   cCount++;
@@ -1600,8 +1607,7 @@ function cAdd(){
       <input type="text" id="cn-${cCount}" placeholder="Ej: MOL_INTAKE_27.10.202583_SECC01" />
     </div>
     <div class="form-group">
-      <label>URL en Teams <span style="color:#95a3b8;font-weight:400;text-transform:none;">(opcional)</span></label>
-      <input type="url" id="cu-${cCount}" placeholder="https://unabportal365.sharepoint.com/..." />
+      <label>Estado de la carpeta</label><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="cv-${cCount}" style="width:auto"/> Creada y verificada en SharePoint</label>
     </div>`;
   cont.appendChild(div);cRenum();
 }
@@ -1619,8 +1625,8 @@ function cGetCarpetas(){
   rows.forEach(row=>{
     const id=row.id.split('-')[1];
     const nombre=document.getElementById(`cn-${id}`)?.value.trim();
-    const url=document.getElementById(`cu-${id}`)?.value.trim();
-    if(nombre||url)out.push({nombre:nombre||'—',url});
+    const verificado=!!document.getElementById(`cv-${id}`)?.checked;
+    if(nombre)out.push({nombre,verificado});
   });
   return out;
 }
@@ -1629,12 +1635,13 @@ function cAutocompletarDesdeCalendario(programa,intake){
   const coordNames=T4_COORDINADORES.filter(c=>t4CoordSel.has(c.correo)).map(c=>c.nombre);
   document.getElementById('c-coord').value=coordNames.join(' - ');
   document.getElementById('c-intake').value=programa;
-  const cont=document.getElementById('c-carpetas');
-  cont.innerHTML='';cCount=0;cAdd();
-  const nombre=document.getElementById('cn-1');if(nombre)nombre.value=intake;
+  const existentes=cGetCarpetas();
+  if(intake&&!existentes.some(x=>x.nombre.toUpperCase()===intake.toUpperCase())){cAdd();const nombre=document.getElementById('cn-'+cCount);if(nombre)nombre.value=intake;}
+  for(const c of T4_COORDINADORES.filter(x=>t4CoordSel.has(x.correo)))cDestSel.add(c.correo.toLowerCase());
+  cRenderDestinatarios();
 }
 
-function cAbrirNotificacion(){
+function cAbrirNotificacion(){cRenderDestinatarios();
   const btn=[...document.querySelectorAll('.tab-btn')].find(b=>(b.getAttribute('onclick')||'').includes('switchTab(4'));
   switchTab(4,btn);window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1644,9 +1651,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function cBuildEmail(coord,intake,carpetas){
   const LOGO='https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png';
   const cRows=carpetas.map(c=>{
-    const carpeta=c.url
-      ? `<a href="${esc(c.url)}" style="color:#0097A7;font-size:14px;font-weight:600;text-decoration:underline;word-break:break-all;">${esc(c.nombre)}</a>`
-      : `<strong style="color:#0097A7;font-size:14px;word-break:break-all;">${esc(c.nombre)}</strong>`;
+    const carpeta=`<strong style="color:#0097A7;font-size:14px;word-break:break-all;">${esc(c.nombre)}</strong>`;
     return `
     <tr>
       <td style="padding:5px 0;">
@@ -1689,11 +1694,10 @@ function cBuildEmail(coord,intake,carpetas){
         Estimado(a) Coordinador(a): <strong>${esc(coord)}</strong>
       </p>
       <p style="font-size:14px;color:#3D4A66;line-height:1.7;margin:0 0 26px;font-family:'Segoe UI',Arial,sans-serif;">
-        Junto con saludar, te comento que el calendario ya quedó ingresado en la base de calendarios
-        y las carpetas del programa <strong style="color:#1A2035;">${esc(intake)}</strong> han sido creadas en Teams.
+        Junto con saludar, informo que los calendarios de las versiones detalladas fueron ingresados a la base de calendarios ETOP y se han creado sus carpetas correspondientes para el programa <strong style="color:#1A2035;">${esc(intake)}</strong>.
       </p>
       <p style="font-size:13.5px;font-weight:700;color:#1B3A6B;text-decoration:underline;margin:0 0 12px;font-family:'Segoe UI',Arial,sans-serif;">
-        Vínculo a la carpeta en Teams:
+        Versiones e intakes con carpetas creadas:
       </p>
       <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:28px;">
         ${cRows}
@@ -1739,6 +1743,7 @@ function cGenerar(){
   if(!coord){alert('Ingresa el nombre del coordinador/tutora.');return;}
   if(!intake){alert('Ingresa el nombre del programa/intake.');return;}
   if(!carpetas.length){alert('Agrega al menos una carpeta.');return;}
+  if(!carpetas.every(x=>x.verificado)){alert('Debes verificar en SharePoint todas las carpetas antes de afirmar su creación en el correo.');return;}
   cHTML=cBuildEmail(coord,intake,carpetas);
   const rendered=document.getElementById('c-rendered');
   rendered.innerHTML=`<div class="c-email-box">${cHTML}</div>`;
@@ -1772,7 +1777,7 @@ function cReset(){
   const coord=document.getElementById('c-coord');if(coord)coord.value='';
   const intake=document.getElementById('c-intake');if(intake)intake.value='';
   const cont=document.getElementById('c-carpetas');if(cont)cont.innerHTML='';
-  cCount=0;cHTML='';
+  cCount=0;cHTML='';cDestSel.clear();cRenderDestinatarios();
   const r=document.getElementById('c-rendered');if(r){r.style.display='none';r.innerHTML='';}
   const e=document.getElementById('c-empty');if(e)e.style.display='flex';
   const cp=document.getElementById('c-code-pre');if(cp)cp.textContent='';
