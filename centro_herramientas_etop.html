@@ -634,7 +634,7 @@
 <!-- TAB 5: NOTIFICACIÓN CARPETAS CREADAS -->
 <div class="tab-panel" id="tab4">
   <div class="section-title">Notificación · Carpetas Creadas en Teams</div>
-  <div class="section-sub">Reúne varios intakes, elige coordinadores y tutores, y genera una única notificación institucional sin vínculos.</div>
+  <div class="section-sub">Acumula versiones en esta misma pestaña: se conservarán al volver al formateador o recargar la página y solo se borrarán al pulsar Limpiar formulario.</div>
 
   <div class="carpetas-layout">
     <div class="c-form-panel">
@@ -653,7 +653,7 @@
       <div>
         <span class="c-section-lbl">📂 Carpetas en Teams</span>
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
-        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Copiar intakes para flujo V4</button><p style="font-size:11px;color:#64748b">Ejecuta el flujo V4 en Power Automate y verifica las carpetas antes de confirmar el correo.</p>
+        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Preparar creación de carpetas (flujo V4)</button><p style="font-size:11px;color:#64748b">El flujo V4 sigue siendo manual: este botón copia el lote; ejecútalo en Power Automate y luego marca las carpetas verificadas. No se crean carpetas directamente desde la página.</p>
       </div>
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
@@ -1584,10 +1584,36 @@ function downloadTab4(){
 }
 // ═══ TAB 5: CARPETAS CREADAS ══════════════════════════════════════════════════
 let cCount=0, cHTML='';
+const C_LOTE_KEY='etop_centro_carpetas_lote_v1';
+let cRestoreBusy=false;
+function cGuardarLote(){
+  if(cRestoreBusy)return;
+  const snap={carpetas:cGetCarpetas(),programa:document.getElementById('c-intake')?.value||'',selected:[...cDestSel],cc:document.getElementById('c-cc')?.value||''};
+  try{localStorage.setItem(C_LOTE_KEY,JSON.stringify(snap))}catch(e){console.warn('No se pudo guardar lote ETOP',e)}
+}
+function cRestaurarLote(){
+  let snap;try{snap=JSON.parse(localStorage.getItem(C_LOTE_KEY)||'null')}catch(e){}
+  if(!snap||!Array.isArray(snap.carpetas))return false;
+  cRestoreBusy=true;
+  const cont=document.getElementById('c-carpetas');cont.innerHTML='';cCount=0;
+  for(const carpeta of snap.carpetas){
+    if(!carpeta?.nombre)continue;
+    cAdd();
+    document.getElementById('cn-'+cCount).value=carpeta.nombre;
+    document.getElementById('cv-'+cCount).checked=!!carpeta.verificado;
+  }
+  if(!cCount)cAdd();
+  document.getElementById('c-intake').value=snap.programa||'';
+  document.getElementById('c-cc').value=snap.cc||'';
+  cDestSel.clear();for(const mail of snap.selected||[])cDestSel.add(mail);
+  cRenderDestinatarios();
+  cRestoreBusy=false;return true;
+}
+
 const cDestSel=new Set();
 function cContactos(){return [...T4_COORDINADORES.map(x=>({...x,rol:'Coordinación'})),...Object.entries(TUTORES_MAP).map(([nombre,t])=>({nombre,correo:t.correo,rol:'Tutoría'}))].filter(x=>x.correo)}
 function cRenderDestinatarios(){const el=document.getElementById('c-destinatarios');if(!el)return;const q=(document.getElementById('c-buscar-dest')?.value||'').toLowerCase();el.innerHTML=cContactos().filter(x=>(x.nombre+' '+x.correo).toLowerCase().includes(q)).map(x=>'<label style="display:flex;gap:8px;padding:5px;border-bottom:1px solid #e2e8f0;align-items:center;font-size:12px"><input type="checkbox" data-mail="'+esc(x.correo)+'" '+(cDestSel.has(x.correo.toLowerCase())?'checked':'')+' onchange="cElegirDest(this)" style="width:auto"><span><strong>'+esc(x.nombre)+'</strong> <span style="color:#64748b">('+x.rol+')</span><br><small>'+esc(x.correo)+'</small></span></label>').join('')||'Sin resultados';cActualizarPara()}
-function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara()}
+function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara();cGuardarLote()}
 function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
 function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
 function cAbrirOutlook(){if(!cHTML)cGenerar();if(!cHTML)return;const para=document.getElementById('c-para').value;if(!para)return alert('Selecciona destinatarios.');const cc=document.getElementById('c-cc').value;const subject='ETOP · Calendarios y carpetas creadas · '+cGetCarpetas().length+' versiones';const body='Se encuentran disponibles las carpetas de los siguientes intakes:\n'+cGetCarpetas().map(x=>'• '+x.nombre).join('\n')+'\n\nFavor respaldar nómina y calendarios, correos de bienvenida, invitaciones sincrónicas y QA2.';const p=new URLSearchParams({to:para,subject,body});if(cc)p.set('cc',cc);window.open('https://outlook.office.com/mail/deeplink/compose?'+p.toString(),'_blank','noopener,noreferrer');alert('Se abrió el borrador. Para mantener el formato institucional, utiliza Copiar correo y pega en el cuerpo de Outlook antes de enviar.')}
@@ -1609,10 +1635,10 @@ function cAdd(){
     <div class="form-group">
       <label>Estado de la carpeta</label><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="cv-${cCount}" style="width:auto"/> Creada y verificada en SharePoint</label>
     </div>`;
-  cont.appendChild(div);cRenum();
+  cont.appendChild(div);cRenum();cGuardarLote();
 }
 
-function cRemove(id){const el=document.getElementById(`ci-${id}`);if(el)el.remove();cRenum();}
+function cRemove(id){const el=document.getElementById(`ci-${id}`);if(el)el.remove();cRenum();cGuardarLote();}
 
 function cRenum(){
   document.querySelectorAll('.c-carpeta-item').forEach((row,i)=>{
@@ -1638,7 +1664,7 @@ function cAutocompletarDesdeCalendario(programa,intake){
   const existentes=cGetCarpetas();
   if(intake&&!existentes.some(x=>x.nombre.toUpperCase()===intake.toUpperCase())){cAdd();const nombre=document.getElementById('cn-'+cCount);if(nombre)nombre.value=intake;}
   for(const c of T4_COORDINADORES.filter(x=>t4CoordSel.has(x.correo)))cDestSel.add(c.correo.toLowerCase());
-  cRenderDestinatarios();
+  cRenderDestinatarios();cGuardarLote();
 }
 
 function cAbrirNotificacion(){cRenderDestinatarios();
@@ -1777,7 +1803,7 @@ function cReset(){
   const coord=document.getElementById('c-coord');if(coord)coord.value='';
   const intake=document.getElementById('c-intake');if(intake)intake.value='';
   const cont=document.getElementById('c-carpetas');if(cont)cont.innerHTML='';
-  cCount=0;cHTML='';cDestSel.clear();cRenderDestinatarios();
+  cCount=0;cHTML='';cDestSel.clear();cRenderDestinatarios();try{localStorage.removeItem(C_LOTE_KEY)}catch(e){}
   const r=document.getElementById('c-rendered');if(r){r.style.display='none';r.innerHTML='';}
   const e=document.getElementById('c-empty');if(e)e.style.display='flex';
   const cp=document.getElementById('c-code-pre');if(cp)cp.textContent='';
@@ -2124,7 +2150,11 @@ function t4CoordRemove(correo){
   ['t1-fecha','t1m-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value=today;
   });
-  cAdd();
+  if(!cRestaurarLote())cAdd();
+  document.getElementById('c-carpetas')?.addEventListener('input',cGuardarLote);
+  document.getElementById('c-carpetas')?.addEventListener('change',cGuardarLote);
+  document.getElementById('c-intake')?.addEventListener('input',cGuardarLote);
+  document.getElementById('c-cc')?.addEventListener('input',cGuardarLote);
   t4CoordInit();
   t2CargarNrcs();
 })();
