@@ -1672,10 +1672,24 @@ function cRestaurarLote(){
 }
 
 const cDestSel=new Set();
-function cContactos(){return [...T4_COORDINADORES.map(x=>({...x,rol:'Coordinación'})),...Object.entries(TUTORES_MAP).map(([nombre,t])=>({nombre,correo:t.correo,rol:'Tutoría'}))].filter(x=>x.correo)}
+function cContactos(){
+  // Algunos coordinadores también existen en TUTORES_MAP. Mostrar cada correo solo una vez,
+  // priorizando su función de coordinación para evitar saludos y opciones duplicadas.
+  const registros=[...T4_COORDINADORES.map(x=>({...x,rol:'Coordinación'})),...Object.entries(TUTORES_MAP).map(([nombre,t])=>({nombre,correo:t.correo,rol:'Tutoría'}))];
+  const unicos=new Map();
+  for(const persona of registros){
+    const clave=String(persona.correo||'').trim().toLowerCase();
+    if(clave&&!unicos.has(clave))unicos.set(clave,persona);
+  }
+  return [...unicos.values()];
+}
 function cRenderDestinatarios(){const el=document.getElementById('c-destinatarios');if(!el)return;const q=(document.getElementById('c-buscar-dest')?.value||'').toLowerCase();el.innerHTML=cContactos().filter(x=>(x.nombre+' '+x.correo).toLowerCase().includes(q)).map(x=>'<label style="display:flex;gap:8px;padding:5px;border-bottom:1px solid #e2e8f0;align-items:center;font-size:12px"><input type="checkbox" data-mail="'+esc(x.correo)+'" '+(cDestSel.has(x.correo.toLowerCase())?'checked':'')+' onchange="cElegirDest(this)" style="width:auto"><span><strong>'+esc(x.nombre)+'</strong> <span style="color:#64748b">('+x.rol+')</span><br><small>'+esc(x.correo)+'</small></span></label>').join('')||'Sin resultados';cActualizarPara()}
 function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara();cGuardarLote()}
-function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
+function cActualizarPara(){
+  const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));
+  document.getElementById('c-para').value=personas.map(x=>x.correo).join('; ');
+  document.getElementById('c-coord').value=[...new Set(personas.map(x=>x.nombre.trim()))].join(' - ');
+}
 function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
 const C_HTTP_KEY='etop_carpeta_http_endpoint_local_v1';
 const C_OLD_HTTP_KEY='etop_carpeta_http_endpoint_session';
