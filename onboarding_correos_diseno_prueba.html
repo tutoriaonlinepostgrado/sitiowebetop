@@ -759,6 +759,28 @@ function descargarExcel() {
   XLSX.writeFile(wb, 'Nomina_SharePoint.xlsx');
 }
 
+
+function mostrarErrorEnvioPrueba(contenedor, respuesta, detalle) {
+  contenedor.replaceChildren();
+  const aviso=document.createElement('div');
+  aviso.className='alert error';
+  const titulo=document.createElement('strong');
+  titulo.textContent='Error HTTP '+respuesta.status+' al enviar a SharePoint. ';
+  aviso.appendChild(titulo);
+  const mensaje=document.createElement('span');
+  mensaje.textContent='El servidor rechazó la solicitud. Detalle técnico:';
+  aviso.appendChild(mensaje);
+  const pre=document.createElement('pre');
+  pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;margin-top:8px;max-height:230px;overflow:auto;user-select:text;';
+  let raw=String(detalle||'Sin información adicional en la respuesta del servidor.');
+  // No exponer posibles tokens que una pasarela incluya accidentalmente en el error.
+  raw=raw.replace(/([?&]sig=)[^&\s"'<>]+/gi,'$1[oculto]')
+         .replace(/("sig"\s*:\s*")[^"]+(")/gi,'$1[oculto]$2');
+  pre.textContent=raw.slice(0,5000);
+  aviso.appendChild(pre);
+  contenedor.appendChild(aviso);
+}
+
 async function enviarSharePoint() {
   if(!datosFinales) return;
   const spResult = document.getElementById('sp-result');
@@ -774,7 +796,8 @@ async function enviarSharePoint() {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('paso3').classList.add('visible');
     } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+      const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
+      mostrarErrorEnvioPrueba(spResult, res, detalle);
     }
   } catch(err) {
     spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
@@ -796,7 +819,8 @@ async function enviarSharePointMiguel() {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
       document.getElementById('paso3-miguel').classList.add('visible');
     } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+      const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
+      mostrarErrorEnvioPrueba(spResult, res, detalle);
     }
   } catch(err) {
     spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
@@ -818,7 +842,8 @@ async function enviarSharePointPabloDaniela() {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
       document.getElementById('paso3-pablo-daniela').classList.add('visible');
     } else {
-      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+      const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
+      mostrarErrorEnvioPrueba(spResult, res, detalle);
     }
   } catch(err) {
     spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
