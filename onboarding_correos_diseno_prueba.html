@@ -320,10 +320,10 @@ body { padding:clamp(6px,.8vw,14px); }
     <p>Selecciona el curso en la barra superior del portal y utiliza prioritariamente la nómina de estudiantes disponible en SharePoint.</p>
   </div>
 
-  <section class="etop-primary-panel" aria-label="Paso 1: Consultar estudiantes en seguimiento">
-    <div class="etop-step"><span class="etop-num">PASO 1</span> Buscar estudiantes en seguimiento</div>
-    <p>Primero consulta la nómina del NRC de inducción en <strong>BASE/SEMAFORO_2.0 (SharePoint)</strong>. Si se encuentran estudiantes, no es necesario subir un Excel.</p>
-    <button class="btn primary" type="button" onclick="cargarEstudiantesSeguimiento(false)">🔎 Buscar estudiantes en seguimiento</button>
+  <section class="etop-primary-panel" aria-label="Paso 1: Buscar la nómina de estudiantes en la base Semáforo">
+    <div class="etop-step"><span class="etop-num">PASO 1</span> Buscar la nómina de estudiantes en la base Semáforo</div>
+    <p>Primero busca la nómina de tu curso de inducción en <strong>BASE/SEMAFORO_2.0 (SharePoint)</strong>. Sube el Excel únicamente si no está disponible.</p>
+    <button class="btn primary" type="button" onclick="cargarEstudiantesSeguimiento(false)">🔎 Buscar nómina en la base Semáforo</button>
     <div id="seguimiento-status" aria-live="polite"></div>
     <div class="etop-panel-info" id="seguimiento-helper">La consulta se conserva temporalmente en la memoria del navegador.</div>
   </section>
@@ -531,11 +531,11 @@ async function cargarEstudiantesSeguimiento(silencioso=false) {
 
     if(estudiantesSeguimiento.length) {
       const conCorreo = estudiantesSeguimiento.filter(e => String(e?.correoPersonal || e?.correoUnab || '').includes('@')).length;
-      if(statusEl) statusEl.innerHTML = '<div class="alert success">✅ Se encontraron <strong>'+estudiantesSeguimiento.length+'</strong> estudiantes en BASE/SEMAFORO_2.0 para <strong>'+nrc+'</strong>. '+conCorreo+' tienen correo disponible. <strong>No necesita subir el Excel.</strong></div>';
+      if(statusEl) statusEl.innerHTML = '<div class="alert success">🎉 ¡Enhorabuena! La nómina de tu curso ya está en la base Semáforo: <strong>'+estudiantesSeguimiento.length+' estudiantes</strong> encontrados para <strong>'+nrc+'</strong> ('+conCorreo+' con correo disponible). <strong>No subas el Excel; puedes continuar con los datos de la inducción.</strong></div>';
       return true;
     }
 
-    if(statusEl) statusEl.innerHTML = '<div class="alert info">⚠️ No se encontraron estudiantes en BASE/SEMAFORO_2.0 para <strong>'+nrc+'</strong>. Puede usar la nómina Excel de respaldo.</div>';
+    if(statusEl) statusEl.innerHTML = '<div class="alert info">⚠️ No encontramos la nómina del curso <strong>'+nrc+'</strong> en la base Semáforo. Puedes abrir la sección de respaldo y subir el Excel original.</div>';
     return false;
   } catch(err) {
     limpiarEstudiantesSeguimiento(false);
