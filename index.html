@@ -1527,6 +1527,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
     <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
     <div class="submenu" id="onboarding">
       <button class="menu-btn" data-key="CORREOS" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
+      <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">🧪 Correos de Bienvenida · Diseño de prueba</button>
       <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
       <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
       <button class="menu-btn" data-key="CIERRE" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
@@ -1818,6 +1819,7 @@ const misReportes={
   FICHA_ESTUDIANTE:"https://app.powerbi.com/reportEmbed?reportId=66b1fc8c-00c8-44f3-b327-890f57f3c7b8&groupId=308deb6f-aa2f-4c21-b5fb-33b977c17e13&ctid=8fbed393-d03b-49f8-be79-cd5e1f590fb2&autoAuth=true&pageName=0961bca799ff83e065db&navContentPaneEnabled=false&filterPaneEnabled=false&pageView=fitToWidth",
   CALENDARIOS:BASE+"calendarios.html?v=20261026-calendarios-ficha360-v2",
   CORREOS:"onboarding_correos.html",
+  CORREOS_PRUEBA:"onboarding_correos_diseno_prueba.html",
   INVITACIONES:"onboarding_invitaciones.html",
   PRESENTACION:"presentacion_tutorial_innovado.html",
   CIERRE:"enviar_correo_cierre.html"
@@ -1847,6 +1849,7 @@ const titulos={
   FICHA_ESTUDIANTE:'Ficha del Estudiante',
   CALENDARIOS:'📅 Calendarios',
   CORREOS:'📧 Generador de Correos de Bienvenida',
+  CORREOS_PRUEBA:'🧪 Correos de Bienvenida · Diseño de prueba',
   INVITACIONES:'📅 Envío Invitación Sesión Sincrónica',
   PRESENTACION:'👩‍🏫 Presentación Tutorial',
   CIERRE:'🏁 Correo de Cierre'
@@ -2467,11 +2470,11 @@ const FILTROS_POR_VISTA={
   CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   FICHA_ESTUDIANTE:['rut'],
   CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
-  CORREOS:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
+  CORREOS:['nrc'],CORREOS_PRUEBA:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
 };
 function configurarFiltros(clave){
   const visibles=FILTROS_POR_VISTA[clave]||[];
-  const modoCorreo=['CORREOS','INVITACIONES','PRESENTACION','CIERRE'].includes(clave);
+  const modoCorreo=['CORREOS','CORREOS_PRUEBA','INVITACIONES','PRESENTACION','CIERRE'].includes(clave);
   const top=document.getElementById('topBar');
   if(top){
     top.classList.toggle('email-mode',modoCorreo);
@@ -2483,14 +2486,14 @@ function configurarFiltros(clave){
   });
   document.getElementById('gestionFilters').style.display=visibles.length?'flex':'none';
   document.getElementById('homeTopSearch').style.display='none';
-  document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='INVITACIONES')?'flex':'none';
+  document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='CORREOS_PRUEBA'||clave==='INVITACIONES')?'flex':'none';
   if(catalogoNRC.length)sincronizarFiltros();actualizarBadge();
 }
 function cargarDatosCursoOnboarding(){
   if(valoresNrcPrincipal().length>1){alert('Para cargar los datos de un curso de inducción, deja seleccionado un solo NRC.');return;}
   const input=document.getElementById('input-nrc');
   if(!BUSQUEDA.nrc){input.classList.add('guia-atencion');input.focus();setTimeout(()=>input.classList.remove('guia-atencion'),1800);alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');return}
-  const claveDestino=vistaActual==='INVITACIONES'?'INVITACIONES':'CORREOS';
+  const claveDestino=vistaActual==='INVITACIONES'?'INVITACIONES':vistaActual==='CORREOS_PRUEBA'?'CORREOS_PRUEBA':'CORREOS';
   const botonCorreo=[...document.querySelectorAll('.menu-btn')].find(b=>(b.getAttribute('onclick')||'').includes("cargarOnboarding('"+claveDestino+"'"));
   if(botonCorreo)cargarOnboarding(claveDestino,botonCorreo);
 }
@@ -2602,7 +2605,7 @@ function prepararVistaCorreoEnPortal(clave){
         }
       `;
 
-      if(clave==='CORREOS'){
+      if(clave==='CORREOS'||clave==='CORREOS_PRUEBA'){
         style.textContent += `
           html{font-size:11.5px!important}
           .container{
@@ -2637,7 +2640,7 @@ function cargarOnboarding(clave,btn){
     if(nd){
       const tutor=(nd.tutor||'').trim().toUpperCase(),fi=nd['fecha inicio']||'',ff=nd['fecha fin']||'';
       const p=new URLSearchParams({nombreTutor:nd.tutor||'',correoTutor:TC[tutor]||'',anexoTutor:TA[tutor]||'',nrc:BUSQUEDA.nrc,fechaInicio:fi,fechaFin:ff});
-      if(clave==='CORREOS'){
+      if(clave==='CORREOS'||clave==='CORREOS_PRUEBA'){
         const programa=nd['nombre programa']||'',nombreInduccion=nd['nombre curso']||'';
         if(programa)p.set('nombrePrograma',programa);p.set('nombreCurso',nombreInduccion?`${BUSQUEDA.nrc} — ${nombreInduccion}`:BUSQUEDA.nrc);
       }else if(clave==='INVITACIONES'){
