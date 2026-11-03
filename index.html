@@ -2685,6 +2685,42 @@ function prepararVistaCorreoEnPortal(clave){
           input[type="text"],input[type="date"],textarea{font-size:.76rem!important;padding:.36rem .55rem!important}
         `;
       }
+      if(clave==='CORREOS_PRUEBA'){
+        style.textContent += `
+          /* Sólo diseño de prueba: aprovechar pantalla sin alterar producción */
+          html{font-size:14px!important}
+          body{padding:clamp(5px,.75vw,12px)!important}
+          .container{
+            width:calc(100% - 12px)!important;
+            max-width:1560px!important;
+            margin:5px auto 16px!important;
+            padding:clamp(14px,1.4vw,24px)!important;
+          }
+          .header h1{font-size:clamp(1.32rem,1.6vw,1.65rem)!important}
+          .header p{font-size:.85rem!important}
+          .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:clamp(10px,1vw,18px)!important}
+          .form-group{min-width:0!important}
+          .form-group input{min-width:0!important}
+          .table-wrap{width:100%!important;max-height:clamp(280px,46vh,620px)!important;overflow:auto!important}
+          .table-wrap table{width:max-content!important;min-width:100%!important}
+          .btn{font-size:.83rem!important;padding:.45rem .9rem!important}
+          .file-drop{font-size:.8rem!important;padding:.8rem!important}
+          label{font-size:.7rem!important}
+          input[type="text"],input[type="date"],textarea{font-size:.88rem!important;padding:.5rem .7rem!important}
+          @media(max-width:1100px){
+            html{font-size:12.8px!important}
+            .container{max-width:none!important;width:calc(100% - 8px)!important;padding:12px!important}
+            .form-grid{gap:10px!important}
+          }
+          @media(max-width:700px){
+            .container{width:100%!important;margin:0!important;padding:10px!important}
+            .form-grid{grid-template-columns:1fr!important}
+            .etop-primary-panel .btn{width:100%!important;justify-content:center!important}
+            #acciones{flex-direction:column!important}
+            #acciones .btn{width:100%!important;justify-content:center!important}
+          }
+        `;
+      }
       if(clave==='PRESENTACION')style.textContent += '.ew{max-width:840px!important;}';
       if(clave==='CIERRE')style.textContent += '.ew{max-width:990px!important;}';
     }catch(e){/* same-origin local */}
@@ -2715,7 +2751,7 @@ function cargarOnboarding(clave,btn){
       url=BASEP+misReportes[clave]+'?'+p.toString();
     }
   }
-  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261103-visual-v2';
+  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261103-funcional-responsive-v3';
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
   activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
