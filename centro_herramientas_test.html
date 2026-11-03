@@ -565,9 +565,10 @@
   <div style="font-weight:700; margin-bottom:0.35rem;">2. Identifica el programa y genera la versión</div>
   <div class="helper" id="t4-catalogos-status">⏳ Cargando opciones oficiales desde nrcs.json...</div>
   <div class="form-grid">
-    <div class="form-group"><label>NOMBRE DE PROGRAMA</label><select id="t4-programa" onchange="t4ProgramaCambio()"><option value="">— Selecciona programa —</option></select></div>
-    <div class="form-group"><label>MATERIA</label><select id="t4-materia" onchange="t4ProponerIntake()"><option value="">— Selecciona materia —</option></select></div>
+    <div class="form-group"><label>NOMBRE DE PROGRAMA</label><select id="t4-programa" onchange="t4ProgramaCambio()"><option value="">— Selecciona programa —</option></select><button type="button" class="c-btn-add" style="margin-top:6px" onclick="t4AgregarPrograma()">＋ Agregar programa nuevo</button></div>
+    <div class="form-group"><label>MATERIA / SIGLA DEL PROGRAMA</label><select id="t4-materia" onchange="t4ProponerIntake()"><option value="">— Selecciona materia —</option></select><button type="button" class="c-btn-add" style="margin-top:6px" onclick="t4AgregarMateria()">＋ Agregar materia o sigla nueva</button></div>
     <div class="form-group"><label>FACULTAD</label><select id="t4-facultad"><option value="">— Selecciona facultad —</option></select></div>
+    <div class="form-group"><label>CÓDIGO DE CURSO ADICIONAL (OPCIONAL)</label><input id="t4-codigo-nuevo" type="text" placeholder="Ej. UNI118 (solo si no viene en el calendario)" /><div class="helper">Completa únicamente los códigos ausentes del archivo. No reemplaza códigos existentes.</div></div>
     <div class="form-group"><label>TIPO DE PROGRAMA</label><select id="t4-tipo"><option value="">— Selecciona tipo —</option><option value="100%ONLINE">100%ONLINE</option><option value="SEMIPRES">SEMIPRES</option></select></div>
     <div class="form-group"><label>NÚMERO O LETRA DE VERSIÓN</label><input type="text" id="t4-version-num" maxlength="3" placeholder="Ej: 01, 17 o J" oninput="t4ProponerIntake()" /></div>
     <div class="form-group"><label>FECHA INICIO CURSO DE INDUCCIÓN</label><input type="date" id="t4-fecha-induccion" onchange="t4ProponerIntake()" /></div>
@@ -632,7 +633,7 @@
 <!-- TAB 5: NOTIFICACIÓN CARPETAS CREADAS -->
 <div class="tab-panel" id="tab4">
   <div class="section-title">Notificación · Carpetas Creadas en Teams</div>
-  <div class="section-sub">Genera el correo de aviso al coordinador/tutora con los vínculos a las carpetas del intake.</div>
+  <div class="section-sub">Acumula versiones en esta misma pestaña: se conservarán al volver al formateador o recargar la página y solo se borrarán al pulsar Limpiar formulario.</div>
 
   <div class="carpetas-layout">
     <div class="c-form-panel">
@@ -640,8 +641,7 @@
         <span class="c-section-lbl">📋 Datos del correo</span>
         <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:0.6rem;">
           <div class="form-group">
-            <label>Nombre del coordinador / tutora</label>
-            <input type="text" id="c-coord" placeholder="Ej: Rita" />
+            <label>Coordinadores y tutores destinatarios</label><input type="search" id="c-buscar-dest" placeholder="Buscar por nombre o correo" oninput="cRenderDestinatarios()"/><div id="c-destinatarios" style="max-height:240px;overflow:auto;border:1px solid #cbd5e1;border-radius:8px;margin-top:6px;padding:7px"></div><input type="hidden" id="c-coord"/><label style="margin-top:6px">Para (correos seleccionados)</label><input id="c-para" readonly style="font-size:11px"/><label style="margin-top:6px">CC (opcional)</label><input id="c-cc" placeholder="correo@unab.cl; otro@unab.cl"/>
           </div>
           <div class="form-group">
             <label>Nombre del programa / intake</label>
@@ -652,12 +652,21 @@
       <div>
         <span class="c-section-lbl">📂 Carpetas en Teams</span>
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
-        <button class="c-btn-add" onclick="cAdd()">＋ Agregar carpeta</button>
+        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button type="button" class="c-btn-add" id="c-boton-ejecutar" onclick="cEjecutarLote()" style="margin-top:9px;background:#007e83;color:white;border-color:#007e83;font-weight:700">📁 Crear carpetas y enviar correo</button>
+<details style="margin-top:8px;border:1px solid #4e667c;border-radius:7px;padding:8px">
+<summary style="cursor:pointer;font-size:12px;font-weight:700">⚙ Conexión Power Automate (configuración excepcional)</summary>
+<label for="c-url-flujo" style="display:block;margin-top:9px;font-size:12px">Dirección HTTP POST del flujo</label>
+<input id="c-url-flujo" type="password" autocomplete="off" placeholder="Pegar URL del disparador HTTP" style="width:100%;margin-top:4px;font-size:12px" />
+<button type="button" class="c-btn-add" onclick="cGuardarEndpoint()" style="margin-top:7px">Guardar dirección en esta sesión</button>
+<p style="font-size:11px;line-height:1.5;color:#a8bcd4">La dirección contiene una clave privada. No está publicada en GitHub. Si utilizas el enlace de activación, no necesitas pegarla aquí. Se conserva en el almacenamiento de este navegador.</p>
+</details>
+<div id="c-estado-envio" role="status" aria-live="polite" style="font-size:12px;line-height:1.5;margin-top:8px"></div>
+<p style="font-size:11px;color:#64748b">El botón ejecuta el flujo y solicita un solo correo a los destinatarios elegidos. El lote permanece hasta que pulses Limpiar formulario.</p>
       </div>
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
         <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;">
-          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">✉️ Generar correo</button>
+          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">👁️ Vista previa del correo</button>
           <button class="btn" style="width:100%;justify-content:center;font-size:0.8rem;" onclick="cReset()">Limpiar formulario</button>
         </div>
       </div>
@@ -667,7 +676,7 @@
       <div class="c-preview-bar">
         <div>
           <div class="c-preview-bar-title">Vista previa del correo</div>
-          <div class="c-preview-bar-sub">Listo para copiar y pegar en Outlook</div>
+          <div class="c-preview-bar-sub">Correo HTML institucional · verifica destinatarios antes de enviarlo</div>
         </div>
         <div style="display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;">
           <div class="c-tabs">
@@ -1566,6 +1575,8 @@ async function processTab4(){
     const coordEmails=document.getElementById('t4-coord-value').value;
     if(!coordEmails){re.innerHTML='<div class="alert error">Selecciona al menos un coordinador para completar la columna COORDINADION.</div>';return;}
 
+    const codigoManual=document.getElementById('t4-codigo-nuevo')?.value.trim().toUpperCase()||'';
+    if(codigoManual){for(const fila of filas){if(!String(fila['CODIGO CURSO']||'').trim())fila['CODIGO CURSO']=codigoManual;}}
     const resoluciones=filas.map(f=>({f,res:t4ResolverIntakeExistente(materia,f['VERSION LOGICA'])}));
     const ambiguos=resoluciones.filter(x=>x.res.estado==='ambiguo');
     if(ambiguos.length){
@@ -1607,7 +1618,12 @@ async function processTab4(){
     });
     state.t4Data=salida;
     const intakes=[...new Set(salida.map(r=>r['INTAKE O VERSION']).filter(Boolean))];
-    cAutocompletarDesdeCalendario(programa,intakes.length===1?intakes[0]:intakeManual);
+    for(const intake of intakes)cAutocompletarDesdeCalendario(programa,intake);
+    for(const row of salida){
+      const mail=String(row['CORREO TUTOR']||'').trim().toLowerCase();
+      if(mail&&cContactos().some(x=>x.correo.toLowerCase()===mail))cDestSel.add(mail);
+    }
+    cRenderDestinatarios();cGuardarLote();
     const avisoTutor=tutoresSinCorreo.size?'<div class="alert info">ℹ️ Tutor(es) heredados desde nrcs.json sin correo configurado en esta herramienta: <strong>'+[...tutoresSinCorreo].join(', ')+'</strong>. El nombre quedó correcto; agrega su correo al mapa de tutores si necesitas completar CORREO TUTOR y Tutor_Claims.</div>':'';
     re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados · '+intakes.length+' intake(s) resuelto(s). Las versiones existentes heredaron su tutor desde nrcs.json; '+tutorPorContinuidad+' curso(s) de continuidad usaron el tutor vigente del mismo intake. El tutor seleccionado se aplicó solo a la versión nueva.</div>'+avisoTutor;
     const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
@@ -1625,6 +1641,101 @@ function downloadTab4(){
 }
 // ═══ TAB 5: CARPETAS CREADAS ══════════════════════════════════════════════════
 let cCount=0, cHTML='';
+const C_LOTE_KEY='etop_centro_carpetas_lote_v1';
+let cRestoreBusy=false;
+function cGuardarLote(){
+  if(cRestoreBusy)return;
+  const snap={carpetas:cGetCarpetas(),programa:document.getElementById('c-intake')?.value||'',selected:[...cDestSel],cc:document.getElementById('c-cc')?.value||''};
+  try{localStorage.setItem(C_LOTE_KEY,JSON.stringify(snap))}catch(e){console.warn('No se pudo guardar lote ETOP',e)}
+}
+function cRestaurarLote(){
+  let snap;try{snap=JSON.parse(localStorage.getItem(C_LOTE_KEY)||'null')}catch(e){}
+  if(!snap||!Array.isArray(snap.carpetas))return false;
+  cRestoreBusy=true;
+  const cont=document.getElementById('c-carpetas');cont.innerHTML='';cCount=0;
+  for(const carpeta of snap.carpetas){
+    if(!carpeta?.nombre)continue;
+    cAdd();
+    document.getElementById('cn-'+cCount).value=carpeta.nombre;
+    document.getElementById('cv-'+cCount).checked=!!carpeta.verificado;
+  }
+  if(!cCount)cAdd();
+  document.getElementById('c-intake').value=snap.programa||'';
+  document.getElementById('c-cc').value=snap.cc||'';
+  cDestSel.clear();for(const mail of snap.selected||[])cDestSel.add(mail);
+  cRenderDestinatarios();
+  cRestoreBusy=false;return true;
+}
+
+const cDestSel=new Set();
+function cContactos(){return [...T4_COORDINADORES.map(x=>({...x,rol:'Coordinación'})),...Object.entries(TUTORES_MAP).map(([nombre,t])=>({nombre,correo:t.correo,rol:'Tutoría'}))].filter(x=>x.correo)}
+function cRenderDestinatarios(){const el=document.getElementById('c-destinatarios');if(!el)return;const q=(document.getElementById('c-buscar-dest')?.value||'').toLowerCase();el.innerHTML=cContactos().filter(x=>(x.nombre+' '+x.correo).toLowerCase().includes(q)).map(x=>'<label style="display:flex;gap:8px;padding:5px;border-bottom:1px solid #e2e8f0;align-items:center;font-size:12px"><input type="checkbox" data-mail="'+esc(x.correo)+'" '+(cDestSel.has(x.correo.toLowerCase())?'checked':'')+' onchange="cElegirDest(this)" style="width:auto"><span><strong>'+esc(x.nombre)+'</strong> <span style="color:#64748b">('+x.rol+')</span><br><small>'+esc(x.correo)+'</small></span></label>').join('')||'Sin resultados';cActualizarPara()}
+function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara();cGuardarLote()}
+function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
+function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
+const C_HTTP_KEY='etop_carpeta_http_endpoint_local_v1';
+const C_OLD_HTTP_KEY='etop_carpeta_http_endpoint_session';
+function cEndpoint(){return localStorage.getItem(C_HTTP_KEY)||sessionStorage.getItem(C_OLD_HTTP_KEY)||''}
+function cImportarConexionDesdeEnlace(){
+  const hash=window.location.hash;
+  if(!hash.startsWith('#etop-flow='))return;
+  try{
+    const url=new URL(decodeURIComponent(hash.slice('#etop-flow='.length)));
+    if(url.protocol!=='https:'||!url.hostname.endsWith('.environment.api.powerplatform.com')||!url.pathname.includes('/triggers/manual/paths/invoke')||!url.searchParams.get('sig'))throw new Error('URL de flujo inválida');
+    localStorage.setItem(C_HTTP_KEY,url.toString());
+    window.history.replaceState(null,'',window.location.pathname+window.location.search);
+    const status=document.getElementById('c-estado-envio');if(status)status.textContent='✅ Conexión Power Automate configurada. Ya puedes crear carpetas y enviar el correo desde esta página.';
+  }catch(err){const status=document.getElementById('c-estado-envio');if(status)status.textContent='No se pudo activar la conexión: '+err.message}
+}
+
+let cProcesando=false;
+function cGuardarEndpoint(){
+ const input=document.getElementById('c-url-flujo');
+ const raw=input.value.trim().replace(/&amp;/g,'&');
+ let url;try{url=new URL(raw)}catch(e){return alert('La dirección HTTP no tiene un formato válido.')}
+ if(url.protocol!=='https:'||!url.hostname.endsWith('.environment.api.powerplatform.com')||!url.pathname.includes('/triggers/manual/paths/invoke')||!url.searchParams.get('sig'))return alert('Utiliza la URL HTTP POST completa que muestra Power Automate.');
+ try{localStorage.setItem(C_HTTP_KEY,url.toString());input.value='';document.getElementById('c-estado-envio').textContent='Dirección configurada en este navegador para futuros usos.'}catch(e){alert('No se pudo conservar la dirección en este navegador.')}
+}
+function cActualizarEstadoProceso(msg){document.getElementById('c-estado-envio').textContent=msg}
+async function cEjecutarLote(){
+ if(cProcesando)return;
+ const names=cGetCarpetas().map(x=>x.nombre).filter(Boolean);
+ const unique=[...new Set(names)];
+ if(!unique.length)return alert('Primero agrega al menos una versión.');
+ if(unique.length!==names.length)return alert('Existen versiones duplicadas en el lote. Corrígelas antes de continuar.');
+ const programa=document.getElementById('c-intake').value.trim();
+ if(!programa)return alert('Introduce el nombre del programa para el correo.');
+ const para=document.getElementById('c-para').value.trim();
+ if(!para)return alert('Selecciona al menos un coordinador o tutor destinatario.');
+ const endpoint=cEndpoint();
+ if(!endpoint)return alert('La conexión de Power Automate aún no se ha activado en este navegador.');
+ if(unique.some(x=>/[\\/:*?"<>|]/.test(x)))return alert('Revisa los nombres de las versiones: hay caracteres no permitidos en SharePoint.');
+ const coord=document.getElementById('c-coord').value.trim()||'Coordinación académica';
+ const html=cBuildEmail(coord,programa,unique.map(nombre=>({nombre})));
+ const asunto='ETOP · Calendarios registrados y carpetas creadas · '+unique.length+' versión'+(unique.length===1?'':'es');
+ const payload={intakes:unique,para,cc:document.getElementById('c-cc').value.trim(),asunto,html};
+ const signature=JSON.stringify({intakes:unique,para,cc:payload.cc,asunto});
+ const previous=localStorage.getItem('etop_ultimo_envio_lote');
+ if(previous===signature&&!confirm('Este lote ya se envió durante esta sesión. ¿Ejecutarlo y enviar nuevamente?'))return;
+ if(!confirm('Se solicitará crear '+unique.length+' carpetas y enviar UN correo institucional a: '+para+'. ¿Confirmar envío?'))return;
+ const boton=document.getElementById('c-boton-ejecutar');
+ cProcesando=true;boton.disabled=true;cActualizarEstadoProceso('Procesando en Power Automate. No cierres esta pestaña.');
+ try{
+  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  let result={};try{result=await response.json()}catch(e){}
+  if(!response.ok)throw new Error('HTTP '+response.status+(result.message?' · '+result.message:''));
+  localStorage.setItem('etop_ultimo_envio_lote',signature);
+  const texto=result.mensaje||result.estado||'Solicitud recibida';
+  cActualizarEstadoProceso('Power Automate respondió: '+texto+'. Comprueba el historial para confirmar el envío del correo y las carpetas.');
+  cHTML=html;document.getElementById('c-rendered').innerHTML='<div class="c-email-box">'+html+'</div>';document.getElementById('c-rendered').style.display='block';document.getElementById('c-empty').style.display='none';document.getElementById('c-code-pre').textContent=html;
+ }catch(err){
+  const blocked=err instanceof TypeError || /Failed to fetch|NetworkError|Load failed|fetch failed/i.test(err.message||'');
+  const reason=blocked?'El navegador no pudo completar la solicitud HTTP. Es posible que Power Automate haya bloqueado la petición previa por CORS o haya ocurrido un error de red.':'Power Automate devolvió un error durante la solicitud.';
+  cActualizarEstadoProceso('❌ '+reason+' Detalle: '+(err.message||String(err))+'. Revisa el HISTORIAL DE EJECUCIÓN del flujo HTTP: si no aparece una ejecución a esta hora, la solicitud no llegó al disparador. No vuelvas a enviarla antes de comprobarlo.');
+ }finally{cProcesando=false;boton.disabled=false}
+}
+function cAbrirOutlook(){if(!cHTML)cGenerar();if(!cHTML)return;const para=document.getElementById('c-para').value;if(!para)return alert('Selecciona destinatarios.');const cc=document.getElementById('c-cc').value;const subject='ETOP · Calendarios y carpetas creadas · '+cGetCarpetas().length+' versiones';const body='Se encuentran disponibles las carpetas de los siguientes intakes:\n'+cGetCarpetas().map(x=>'• '+x.nombre).join('\n')+'\n\nFavor respaldar nómina y calendarios, correos de bienvenida, invitaciones sincrónicas y QA2.';const p=new URLSearchParams({to:para,subject,body});if(cc)p.set('cc',cc);window.open('https://outlook.office.com/mail/deeplink/compose?'+p.toString(),'_blank','noopener,noreferrer');alert('Se abrió el borrador. Para mantener el formato institucional, utiliza Copiar correo y pega en el cuerpo de Outlook antes de enviar.')}
+
 
 function cAdd(){
   cCount++;
@@ -1640,13 +1751,12 @@ function cAdd(){
       <input type="text" id="cn-${cCount}" placeholder="Ej: MOL_INTAKE_27.10.202583_SECC01" />
     </div>
     <div class="form-group">
-      <label>URL en Teams <span style="color:#95a3b8;font-weight:400;text-transform:none;">(opcional)</span></label>
-      <input type="url" id="cu-${cCount}" placeholder="https://unabportal365.sharepoint.com/..." />
+      <label>Estado de la carpeta</label><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="cv-${cCount}" style="width:auto"/> Creada y verificada en SharePoint</label>
     </div>`;
-  cont.appendChild(div);cRenum();
+  cont.appendChild(div);cRenum();cGuardarLote();
 }
 
-function cRemove(id){const el=document.getElementById(`ci-${id}`);if(el)el.remove();cRenum();}
+function cRemove(id){const el=document.getElementById(`ci-${id}`);if(el)el.remove();cRenum();cGuardarLote();}
 
 function cRenum(){
   document.querySelectorAll('.c-carpeta-item').forEach((row,i)=>{
@@ -1659,8 +1769,8 @@ function cGetCarpetas(){
   rows.forEach(row=>{
     const id=row.id.split('-')[1];
     const nombre=document.getElementById(`cn-${id}`)?.value.trim();
-    const url=document.getElementById(`cu-${id}`)?.value.trim();
-    if(nombre||url)out.push({nombre:nombre||'—',url});
+    const verificado=!!document.getElementById(`cv-${id}`)?.checked;
+    if(nombre)out.push({nombre,verificado});
   });
   return out;
 }
@@ -1669,12 +1779,17 @@ function cAutocompletarDesdeCalendario(programa,intake){
   const coordNames=T4_COORDINADORES.filter(c=>t4CoordSel.has(c.correo)).map(c=>c.nombre);
   document.getElementById('c-coord').value=coordNames.join(' - ');
   document.getElementById('c-intake').value=programa;
-  const cont=document.getElementById('c-carpetas');
-  cont.innerHTML='';cCount=0;cAdd();
-  const nombre=document.getElementById('cn-1');if(nombre)nombre.value=intake;
+  const existentes=cGetCarpetas();
+  if(intake&&!existentes.some(x=>x.nombre.toUpperCase()===intake.toUpperCase())){
+    let row=[...document.querySelectorAll('.c-carpeta-item')].find(x=>!x.querySelector('input[type=text]')?.value.trim());
+    if(!row){cAdd();row=document.getElementById('ci-'+cCount)}
+    row.querySelector('input[type=text]').value=intake;
+  }
+  for(const c of T4_COORDINADORES.filter(x=>t4CoordSel.has(x.correo)))cDestSel.add(c.correo.toLowerCase());
+  cRenderDestinatarios();cGuardarLote();
 }
 
-function cAbrirNotificacion(){
+function cAbrirNotificacion(){cRenderDestinatarios();
   const btn=[...document.querySelectorAll('.tab-btn')].find(b=>(b.getAttribute('onclick')||'').includes('switchTab(4'));
   switchTab(4,btn);window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1684,9 +1799,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function cBuildEmail(coord,intake,carpetas){
   const LOGO='https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png';
   const cRows=carpetas.map(c=>{
-    const carpeta=c.url
-      ? `<a href="${esc(c.url)}" style="color:#0097A7;font-size:14px;font-weight:600;text-decoration:underline;word-break:break-all;">${esc(c.nombre)}</a>`
-      : `<strong style="color:#0097A7;font-size:14px;word-break:break-all;">${esc(c.nombre)}</strong>`;
+    const carpeta=`<strong style="color:#0097A7;font-size:14px;word-break:break-all;">${esc(c.nombre)}</strong>`;
     return `
     <tr>
       <td style="padding:5px 0;">
@@ -1729,11 +1842,10 @@ function cBuildEmail(coord,intake,carpetas){
         Estimado(a) Coordinador(a): <strong>${esc(coord)}</strong>
       </p>
       <p style="font-size:14px;color:#3D4A66;line-height:1.7;margin:0 0 26px;font-family:'Segoe UI',Arial,sans-serif;">
-        Junto con saludar, te comento que el calendario ya quedó ingresado en la base de calendarios
-        y las carpetas del programa <strong style="color:#1A2035;">${esc(intake)}</strong> han sido creadas en Teams.
+        Junto con saludar, informo que los calendarios de las versiones detalladas fueron ingresados a la base de calendarios ETOP y se han creado sus carpetas correspondientes para el programa <strong style="color:#1A2035;">${esc(intake)}</strong>.
       </p>
       <p style="font-size:13.5px;font-weight:700;color:#1B3A6B;text-decoration:underline;margin:0 0 12px;font-family:'Segoe UI',Arial,sans-serif;">
-        Vínculo a la carpeta en Teams:
+        Versiones e intakes con carpetas creadas:
       </p>
       <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:28px;">
         ${cRows}
@@ -1779,6 +1891,7 @@ function cGenerar(){
   if(!coord){alert('Ingresa el nombre del coordinador/tutora.');return;}
   if(!intake){alert('Ingresa el nombre del programa/intake.');return;}
   if(!carpetas.length){alert('Agrega al menos una carpeta.');return;}
+  if(!carpetas.every(x=>x.verificado)){alert('Debes verificar en SharePoint todas las carpetas antes de afirmar su creación en el correo.');return;}
   cHTML=cBuildEmail(coord,intake,carpetas);
   const rendered=document.getElementById('c-rendered');
   rendered.innerHTML=`<div class="c-email-box">${cHTML}</div>`;
@@ -1812,7 +1925,7 @@ function cReset(){
   const coord=document.getElementById('c-coord');if(coord)coord.value='';
   const intake=document.getElementById('c-intake');if(intake)intake.value='';
   const cont=document.getElementById('c-carpetas');if(cont)cont.innerHTML='';
-  cCount=0;cHTML='';
+  cCount=0;cHTML='';cDestSel.clear();cRenderDestinatarios();try{localStorage.removeItem(C_LOTE_KEY)}catch(e){}
   const r=document.getElementById('c-rendered');if(r){r.style.display='none';r.innerHTML='';}
   const e=document.getElementById('c-empty');if(e)e.style.display='flex';
   const cp=document.getElementById('c-code-pre');if(cp)cp.textContent='';
@@ -2020,13 +2133,58 @@ function t4LlenarSelect(id,valores,placeholder,conservar){
   if(previo&&valores.includes(previo))sel.value=previo;
 }
 
+const T4_CUSTOM_CATALOG_KEY='etop_t4_catalogo_manual_v1';
+let t4Custom=[];
+try{const c=JSON.parse(localStorage.getItem(T4_CUSTOM_CATALOG_KEY)||'[]');if(Array.isArray(c))t4Custom=c.filter(x=>x&&x.programa&&x.materia)}catch(e){}
+function t4GuardarCatalogo(){try{localStorage.setItem(T4_CUSTOM_CATALOG_KEY,JSON.stringify(t4Custom))}catch(e){alert('El navegador no pudo guardar el catálogo personalizado.')}}
+function t4RegistrosCatalogo(){
+ const orig=Array.isArray(t2NrcsData)?t2NrcsData:[];
+ return orig.concat(t4Custom.map(x=>({'nombre programa':x.programa,materia:x.materia,facultad:x.facultad})));
+}
+function t4AgregarPrograma(){
+ const nombre=prompt('Nombre completo del nuevo programa académico:');
+ if(nombre===null)return;
+ const programa=nombre.trim();
+ if(!programa)return alert('Ingresa un nombre de programa.');
+ const original=t4RegistrosCatalogo().find(x=>t4Normalizar(x['nombre programa'])===t4Normalizar(programa));
+ if(original){document.getElementById('t4-programa').value=original['nombre programa'];t4ProgramaCambio();return alert('El programa ya existe. Quedó seleccionado; puedes añadirle una materia nueva.')}
+ const code=prompt('Materia o sigla que identifica al programa (ej. MGPC, MAPS):');
+ if(code===null)return;
+ const materia=code.trim().toUpperCase();
+ if(!/^[A-Z0-9]{2,20}$/.test(materia))return alert('La materia debe contener entre 2 y 20 letras o números.');
+ const faculty=prompt('Código de facultad (ej. FEDU_INNOVADO, MEDI, ENFE):');
+ if(faculty===null)return;
+ const facultad=faculty.trim().toUpperCase();
+ if(!facultad)return alert('Debes indicar la facultad.');
+ t4Custom.push({programa,materia,facultad});
+ t4GuardarCatalogo();t4CargarCatalogos();
+ document.getElementById('t4-programa').value=programa;t4ProgramaCambio();
+ document.getElementById('t4-materia').value=materia;
+ document.getElementById('t4-facultad').value=facultad;t4ProponerIntake();
+}
+function t4AgregarMateria(){
+ const programa=document.getElementById('t4-programa').value;
+ if(!programa)return alert('Primero selecciona o agrega un programa.');
+ const code=prompt('Nueva materia o sigla para '+programa+':');
+ if(code===null)return;
+ const materia=code.trim().toUpperCase();
+ if(!/^[A-Z0-9]{2,20}$/.test(materia))return alert('Utiliza entre 2 y 20 letras o números.');
+ const related=t4RegistrosCatalogo().filter(x=>t4Normalizar(x['nombre programa'])===t4Normalizar(programa));
+ if(related.some(x=>t4Normalizar(x.materia)===materia)){document.getElementById('t4-materia').value=related.find(x=>t4Normalizar(x.materia)===materia).materia;return alert('La materia ya existe y quedó seleccionada.')}
+ const fac=prompt('Código de facultad para esta materia:',document.getElementById('t4-facultad').value||related[0]?.facultad||'');
+ if(fac===null)return;
+ const facultad=fac.trim().toUpperCase();if(!facultad)return alert('Debe indicar la facultad.');
+ t4Custom.push({programa,materia,facultad});t4GuardarCatalogo();t4ProgramaCambio(true);
+ document.getElementById('t4-materia').value=materia;document.getElementById('t4-facultad').value=facultad;t4ProponerIntake();
+}
+
 function t4CargarCatalogos(){
   const estado=document.getElementById('t4-catalogos-status');
-  if(!Array.isArray(t2NrcsData)||!t2NrcsData.length){
-    if(estado)estado.textContent='⚠️ No fue posible cargar las opciones desde nrcs.json.';
+  if(!t4RegistrosCatalogo().length){
+    if(estado)estado.textContent='⚠️ Sin catálogo disponible. Puedes agregar programas y materias manualmente.';
     return;
   }
-  t4LlenarSelect('t4-programa',t4Unicos(t2NrcsData,'nombre programa'),'Selecciona programa',true);
+  t4LlenarSelect('t4-programa',t4Unicos(t4RegistrosCatalogo(),'nombre programa'),'Selecciona programa',true);
   t4ProgramaCambio(true);
   if(estado)estado.innerHTML='✅ Opciones cargadas desde la base vigente. Programa, Materia y Facultad quedarán vinculados.';
 }
@@ -2034,7 +2192,8 @@ function t4CargarCatalogos(){
 function t4ProgramaCambio(conservar){
   const programa=document.getElementById('t4-programa').value;
   const clave=t4Normalizar(programa);
-  const relacionadas=clave?t2NrcsData.filter(r=>t4Normalizar(r['nombre programa'])===clave):t2NrcsData;
+  const catalogo=t4RegistrosCatalogo();
+  const relacionadas=clave?catalogo.filter(r=>t4Normalizar(r['nombre programa'])===clave):catalogo;
   t4LlenarSelect('t4-materia',t4Unicos(relacionadas,'materia'),'Selecciona materia',!!conservar);
   t4LlenarSelect('t4-facultad',t4Unicos(relacionadas,'facultad'),'Selecciona facultad',!!conservar);
   const facultades=t4Unicos(relacionadas,'facultad');
@@ -2252,7 +2411,12 @@ function tvParseBienvenidasCompat(rawRows){
   ['t1-fecha','t1m-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value=today;
   });
-  cAdd();
+  cImportarConexionDesdeEnlace();
+  if(!cRestaurarLote())cAdd();
+  document.getElementById('c-carpetas')?.addEventListener('input',cGuardarLote);
+  document.getElementById('c-carpetas')?.addEventListener('change',cGuardarLote);
+  document.getElementById('c-intake')?.addEventListener('input',cGuardarLote);
+  document.getElementById('c-cc')?.addEventListener('input',cGuardarLote);
   t4CoordInit();
   t2CargarNrcs();
   setTimeout(tvRefreshIntakes,1200);
