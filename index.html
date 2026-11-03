@@ -1586,7 +1586,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
     <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
     <div class="submenu" id="onboarding">
       <button class="menu-btn" data-key="CORREOS" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
-      <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">🧪 Correos de Bienvenida · Diseño de prueba</button>
+      <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">🧪 PRUEBA V2 · Correos de Bienvenida</button>
       <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
       <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
       <button class="menu-btn" data-key="CIERRE" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
@@ -2715,6 +2715,7 @@ function cargarOnboarding(clave,btn){
       url=BASEP+misReportes[clave]+'?'+p.toString();
     }
   }
+  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261103-visual-v2';
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
   activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
