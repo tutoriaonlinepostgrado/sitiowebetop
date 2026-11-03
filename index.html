@@ -1022,6 +1022,65 @@
 
 /* Power BI conserva siempre el 100% real del área central.
    El responsive lo resuelve el propio embed con fitToWidth. */
+
+/* Únicamente la hoja de prueba: dar foco al selector NRC y a cargar datos,
+   conservando la altura original de la barra. */
+.top.email-test-mode #gestionFilters{
+  flex:0 1 clamp(310px,34vw,490px)!important;
+  min-width:270px!important;
+}
+.top.email-test-mode #gestionFilters [data-filtro="nrc"]{
+  gap:9px!important;
+}
+.top.email-test-mode #gestionFilters .search-group-label{
+  font-size:10px!important;
+  color:#fff2c5!important;
+  letter-spacing:.04em!important;
+  white-space:nowrap!important;
+}
+.top.email-test-mode #input-nrc{
+  height:32px!important;
+  font-size:12px!important;
+  font-weight:650!important;
+  border:1.5px solid #f6c128!important;
+  background:#f9fbff!important;
+  box-shadow:0 0 0 2px rgba(246,193,40,.12)!important;
+}
+.top.email-test-mode #input-nrc:focus{
+  box-shadow:0 0 0 3px rgba(246,193,40,.30)!important;
+}
+.top.email-test-mode .guia-correos{
+  flex:1 1 325px!important;
+  gap:12px!important;
+}
+.top.email-test-mode .guia-correos-texto{
+  font-size:10px!important;
+  color:#e2ecf7!important;
+  max-width:300px!important;
+}
+.top.email-test-mode .guia-correos-texto strong{
+  color:#ffe2a0!important;
+}
+.top.email-test-mode .guia-correos-btn{
+  height:32px!important;
+  padding:0 15px!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  border:1px solid #f6c128!important;
+  background:#f6c128!important;
+  color:#172641!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.2)!important;
+}
+.top.email-test-mode .guia-correos-btn:hover{
+  background:#ffdc70!important;
+}
+@media(max-width:1150px){
+  .top.email-test-mode #gestionFilters{
+    flex:1 1 320px!important;
+    max-width:490px!important;
+  }
+}
+
 </style>
 
 
@@ -2478,6 +2537,7 @@ function configurarFiltros(clave){
   const top=document.getElementById('topBar');
   if(top){
     top.classList.toggle('email-mode',modoCorreo);
+    top.classList.toggle('email-test-mode',clave==='CORREOS_PRUEBA');
     top.classList.toggle('dashboard-mode',clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT');
     top.classList.toggle('export-mode',clave==='DASHBOARD_EXPORT');
   }
