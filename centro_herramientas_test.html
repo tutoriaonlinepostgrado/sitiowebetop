@@ -941,10 +941,14 @@ function t1FindHeaderIndex(rawRows){
   return 0;
 }
 function t1NormalizarRut(base,dv=''){
-  let b=String(base||'').replace(/\.0$/,'').replace(/\./g,'').trim().toUpperCase();
-  const d=String(dv||'').replace(/\.0$/,'').trim().toUpperCase();
-  if(d && b && !b.includes('-')) b += '-'+d;
-  return b;
+  // ETOP: RUT como texto continuo, sin puntos ni guion (incluye el dígito verificador).
+  const original=String(base??'').trim().replace(/\.0$/,'').toUpperCase();
+  const b=original.replace(/[^0-9K]/g,'');
+  const d=String(dv??'').trim().replace(/\.0$/,'').toUpperCase().replace(/[^0-9K]/g,'');
+  if(!b)return '';
+  // Si el archivo trae un RUT completo, no duplicar su DV.
+  if(!d || original.includes('-') || b.endsWith(d))return b;
+  return b+d;
 }
 function t1ParseAlumnoPotencial(rawRows){
   const hIdx=t1FindHeaderIndex(rawRows), headers=(rawRows[hIdx]||[]).map(h=>String(h||'').trim());
@@ -1070,7 +1074,7 @@ function t1FinalizarRows(rows){
   for(const r of rows){
     const nr={...r};
     if(!nr.NRC_COD_CAL_FILTRO && nr.NRC_COD && nr.PERIODO)nr.NRC_COD_CAL_FILTRO=String(nr.NRC_COD).trim()+'_'+String(nr.PERIODO).trim();
-    nr.RUT=String(nr.RUT||'').trim().toUpperCase();nr.NOMBRE=String(nr.NOMBRE||'').trim().toUpperCase();nr.CORREO_UNAB=String(nr.CORREO_UNAB||'').trim().toLowerCase();nr.Columna7=String(nr.Columna7||'').trim().toLowerCase();
+    nr.RUT=t1NormalizarRut(nr.RUT);nr.NOMBRE=String(nr.NOMBRE||'').trim().toUpperCase();nr.CORREO_UNAB=String(nr.CORREO_UNAB||'').trim().toLowerCase();nr.Columna7=String(nr.Columna7||'').trim().toLowerCase();
     const key=nr.RUT+'|'+String(nr.NRC_COD_CAL_FILTRO||'').toUpperCase();
     if(!nr.RUT||seen.has(key))continue;seen.add(key);out.push(nr);
   }
@@ -1221,7 +1225,7 @@ function procesarAlumnoPotencial(rawRows,p){
     const row=rawRows[i];if(!row||row.every(c=>!String(c||'').trim()))continue;
     const correo=iCor!==-1?String(row[iCor]||'').trim().toLowerCase():'';if(!correo||!correo.includes('@'))continue;
     const rutBase=iRut!==-1?String(row[iRut]||'').replace('.0','').trim():'',dvVal=iDv!==-1?String(row[iDv]||'').replace('.0','').trim().toUpperCase():'';
-    const rut=(rutBase&&dvVal)?`${rutBase}-${dvVal}`:rutBase;
+    const rut=t1NormalizarRut(rutBase,dvVal);
     const nRaw=iNom!==-1?String(row[iNom]||'').trim():'',nombre=(nRaw&&nRaw.toLowerCase()!=='nan')?nRaw.toUpperCase():'';
     const fila={'Columna1':salida.length+1,'NOMBRES':nombre,'Rut o ID':rut,'CORREO':correo,'NOMBRE TUTOR':tn,'CORREO TUTOR':tc,'ANEXO TUTOR':ta,'NOMBRE DE PROGRAMA':pr,'NRC Y NOMBRE DE CURSO INDUCC':ni,'NOMBRE PRIMER CURSO':c1,'FECHA INICIO INDUCCION':fi,'FECHA TERMINO INDUCCION':ff,'FECHA_INICIO_CALCULADA':fi,'FECHA FIN CALCULADA':ff,'Columna2':'Pendiente'};
     if(c2)fila['NOMBRE SEGUNDO CURSO']=c2;salida.push(fila);
