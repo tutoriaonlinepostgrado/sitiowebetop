@@ -947,7 +947,7 @@ function t1NormalizarRut(base,dv=''){
   const d=String(dv??'').trim().replace(/\.0$/,'').toUpperCase().replace(/[^0-9K]/g,'');
   if(!b)return '';
   // Si el archivo trae un RUT completo, no duplicar su DV.
-  if(!d || original.includes('-') || b.endsWith(d))return b;
+  if(!d || original.includes('-'))return b;
   return b+d;
 }
 function t1ParseAlumnoPotencial(rawRows){
