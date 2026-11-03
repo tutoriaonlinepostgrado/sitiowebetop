@@ -655,19 +655,19 @@
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
         <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button type="button" class="c-btn-add" id="c-boton-ejecutar" onclick="cEjecutarLote()" style="margin-top:9px;background:#007e83;color:white;border-color:#007e83;font-weight:700">📁 Crear carpetas y enviar correo</button>
 <details style="margin-top:8px;border:1px solid #4e667c;border-radius:7px;padding:8px">
-<summary style="cursor:pointer;font-size:12px;font-weight:700">⚙ Configurar flujo HTTP (una vez por sesión)</summary>
+<summary style="cursor:pointer;font-size:12px;font-weight:700">⚙ Conexión Power Automate (configuración excepcional)</summary>
 <label for="c-url-flujo" style="display:block;margin-top:9px;font-size:12px">Dirección HTTP POST del flujo</label>
 <input id="c-url-flujo" type="password" autocomplete="off" placeholder="Pegar URL del disparador HTTP" style="width:100%;margin-top:4px;font-size:12px" />
 <button type="button" class="c-btn-add" onclick="cGuardarEndpoint()" style="margin-top:7px">Guardar dirección en esta sesión</button>
-<p style="font-size:11px;line-height:1.5;color:#a8bcd4">La dirección contiene una clave privada. No se publica en GitHub ni se guarda en el lote. Permanecerá solo en la sesión de este navegador.</p>
+<p style="font-size:11px;line-height:1.5;color:#a8bcd4">La dirección contiene una clave privada. No está publicada en GitHub. Si utilizas el enlace de activación, no necesitas pegarla aquí. Se conserva en el almacenamiento de este navegador.</p>
 </details>
 <div id="c-estado-envio" role="status" aria-live="polite" style="font-size:12px;line-height:1.5;margin-top:8px"></div>
-<button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Alternativa: copiar nombres para flujo V4</button><p style="font-size:11px;color:#64748b">La creación y notificación se solicitan desde el botón HTTP. La alternativa manual V4 sigue disponible.</p>
+<p style="font-size:11px;color:#64748b">El botón ejecuta el flujo y solicita un solo correo a los destinatarios elegidos. El lote permanece hasta que pulses Limpiar formulario.</p>
       </div>
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
         <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;">
-          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">✉️ Generar correo</button><button class="btn" style="width:100%;justify-content:center" onclick="cAbrirOutlook()">📨 Abrir borrador en Outlook</button>
+          <button class="btn primary" style="width:100%;justify-content:center;padding:0.62rem;" onclick="cGenerar()">👁️ Vista previa del correo</button>
           <button class="btn" style="width:100%;justify-content:center;font-size:0.8rem;" onclick="cReset()">Limpiar formulario</button>
         </div>
       </div>
@@ -1575,7 +1575,10 @@ async function processTab4(){
     });
     state.t4Data=salida;
     const intakes=[...new Set(salida.map(r=>r['INTAKE O VERSION']).filter(Boolean))];
-    cAutocompletarDesdeCalendario(programa,intakes.length===1?intakes[0]:intakeManual);
+    for(const intake of intakes)cAutocompletarDesdeCalendario(programa,intake);
+    // Incorporar los tutores de los cursos procesados como destinatarios disponibles.
+    for(const row of salida){const mail=String(row['CORREO TUTOR']||'').trim().toLowerCase();if(mail&&cContactos().some(x=>x.correo.toLowerCase()===mail))cDestSel.add(mail)}
+    cRenderDestinatarios();cGuardarLote();
     const avisoTutor=tutoresSinCorreo.size?'<div class="alert info">ℹ️ Tutor(es) heredados desde nrcs.json sin correo configurado en esta herramienta: <strong>'+[...tutoresSinCorreo].join(', ')+'</strong>. El nombre quedó correcto; agrega su correo al mapa de tutores si necesitas completar CORREO TUTOR y Tutor_Claims.</div>':'';
     re.innerHTML='<div class="alert success">🎉 '+salida.length+' cursos procesados · '+intakes.length+' intake(s) resuelto(s). Las versiones existentes heredaron su tutor desde nrcs.json; '+tutorPorContinuidad+' curso(s) de continuidad usaron el tutor vigente del mismo intake. El tutor seleccionado se aplicó solo a la versión nueva.</div>'+avisoTutor;
     const td=document.createElement('div');re.appendChild(td);renderTable(salida,td);ae.style.display='flex';
@@ -1625,14 +1628,28 @@ function cRenderDestinatarios(){const el=document.getElementById('c-destinatario
 function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara();cGuardarLote()}
 function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
 function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
-const C_HTTP_KEY='etop_carpeta_http_endpoint_session';
+const C_HTTP_KEY='etop_carpeta_http_endpoint_local_v1';
+const C_OLD_HTTP_KEY='etop_carpeta_http_endpoint_session';
+function cEndpoint(){return localStorage.getItem(C_HTTP_KEY)||sessionStorage.getItem(C_OLD_HTTP_KEY)||''}
+function cImportarConexionDesdeEnlace(){
+  const hash=window.location.hash;
+  if(!hash.startsWith('#etop-flow='))return;
+  try{
+    const url=new URL(decodeURIComponent(hash.slice('#etop-flow='.length)));
+    if(url.protocol!=='https:'||!url.hostname.endsWith('.environment.api.powerplatform.com')||!url.pathname.includes('/triggers/manual/paths/invoke')||!url.searchParams.get('sig'))throw new Error('URL de flujo inválida');
+    localStorage.setItem(C_HTTP_KEY,url.toString());
+    window.history.replaceState(null,'',window.location.pathname+window.location.search);
+    const status=document.getElementById('c-estado-envio');if(status)status.textContent='✅ Conexión Power Automate configurada. Ya puedes crear carpetas y enviar el correo desde esta página.';
+  }catch(err){const status=document.getElementById('c-estado-envio');if(status)status.textContent='No se pudo activar la conexión: '+err.message}
+}
+
 let cProcesando=false;
 function cGuardarEndpoint(){
  const input=document.getElementById('c-url-flujo');
  const raw=input.value.trim().replace(/&amp;/g,'&');
  let url;try{url=new URL(raw)}catch(e){return alert('La dirección HTTP no tiene un formato válido.')}
  if(url.protocol!=='https:'||!url.hostname.endsWith('.environment.api.powerplatform.com')||!url.pathname.includes('/triggers/manual/paths/invoke')||!url.searchParams.get('sig'))return alert('Utiliza la URL HTTP POST completa que muestra Power Automate.');
- try{sessionStorage.setItem(C_HTTP_KEY,url.toString());input.value='';document.getElementById('c-estado-envio').textContent='Dirección configurada para esta sesión.'}catch(e){alert('No se pudo conservar la dirección en este navegador.')}
+ try{localStorage.setItem(C_HTTP_KEY,url.toString());input.value='';document.getElementById('c-estado-envio').textContent='Dirección configurada en este navegador para futuros usos.'}catch(e){alert('No se pudo conservar la dirección en este navegador.')}
 }
 function cActualizarEstadoProceso(msg){document.getElementById('c-estado-envio').textContent=msg}
 async function cEjecutarLote(){
@@ -1645,15 +1662,15 @@ async function cEjecutarLote(){
  if(!programa)return alert('Introduce el nombre del programa para el correo.');
  const para=document.getElementById('c-para').value.trim();
  if(!para)return alert('Selecciona al menos un coordinador o tutor destinatario.');
- const endpoint=sessionStorage.getItem(C_HTTP_KEY);
- if(!endpoint)return alert('Abre Configurar flujo HTTP, pega la URL de Power Automate y guarda la dirección.');
+ const endpoint=cEndpoint();
+ if(!endpoint)return alert('La conexión de Power Automate aún no se ha activado en este navegador.');
  if(unique.some(x=>/[\\/:*?"<>|]/.test(x)))return alert('Revisa los nombres de las versiones: hay caracteres no permitidos en SharePoint.');
  const coord=document.getElementById('c-coord').value.trim()||'Coordinación académica';
  const html=cBuildEmail(coord,programa,unique.map(nombre=>({nombre})));
  const asunto='ETOP · Calendarios registrados y carpetas creadas · '+unique.length+' versión'+(unique.length===1?'':'es');
  const payload={intakes:unique,para,cc:document.getElementById('c-cc').value.trim(),asunto,html};
  const signature=JSON.stringify({intakes:unique,para,cc:payload.cc,asunto});
- const previous=sessionStorage.getItem('etop_ultimo_envio_lote');
+ const previous=localStorage.getItem('etop_ultimo_envio_lote');
  if(previous===signature&&!confirm('Este lote ya se envió durante esta sesión. ¿Ejecutarlo y enviar nuevamente?'))return;
  if(!confirm('Se solicitará crear '+unique.length+' carpetas y enviar UN correo institucional a: '+para+'. ¿Confirmar envío?'))return;
  const boton=document.getElementById('c-boton-ejecutar');
@@ -1662,7 +1679,7 @@ async function cEjecutarLote(){
   const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   let result={};try{result=await response.json()}catch(e){}
   if(!response.ok)throw new Error('HTTP '+response.status+(result.message?' · '+result.message:''));
-  sessionStorage.setItem('etop_ultimo_envio_lote',signature);
+  localStorage.setItem('etop_ultimo_envio_lote',signature);
   const texto=result.mensaje||result.estado||'Solicitud recibida';
   cActualizarEstadoProceso('Power Automate respondió: '+texto+'. Comprueba el historial para confirmar el envío del correo y las carpetas.');
   cHTML=html;document.getElementById('c-rendered').innerHTML='<div class="c-email-box">'+html+'</div>';document.getElementById('c-rendered').style.display='block';document.getElementById('c-empty').style.display='none';document.getElementById('c-code-pre').textContent=html;
@@ -1715,7 +1732,11 @@ function cAutocompletarDesdeCalendario(programa,intake){
   document.getElementById('c-coord').value=coordNames.join(' - ');
   document.getElementById('c-intake').value=programa;
   const existentes=cGetCarpetas();
-  if(intake&&!existentes.some(x=>x.nombre.toUpperCase()===intake.toUpperCase())){cAdd();const nombre=document.getElementById('cn-'+cCount);if(nombre)nombre.value=intake;}
+  if(intake&&!existentes.some(x=>x.nombre.toUpperCase()===intake.toUpperCase())){
+    let row=[...document.querySelectorAll('.c-carpeta-item')].find(x=>!x.querySelector('input[type=text]')?.value.trim());
+    if(!row){cAdd();row=document.getElementById('ci-'+cCount)}
+    row.querySelector('input[type=text]').value=intake;
+  }
   for(const c of T4_COORDINADORES.filter(x=>t4CoordSel.has(x.correo)))cDestSel.add(c.correo.toLowerCase());
   cRenderDestinatarios();cGuardarLote();
 }
@@ -2203,6 +2224,7 @@ function t4CoordRemove(correo){
   ['t1-fecha','t1m-fecha','t2-fi','t2-ff','t3-fechainicio','t3-fechacal','t3-fechasesion'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value=today;
   });
+  cImportarConexionDesdeEnlace();
   if(!cRestaurarLote())cAdd();
   document.getElementById('c-carpetas')?.addEventListener('input',cGuardarLote);
   document.getElementById('c-carpetas')?.addEventListener('change',cGuardarLote);
