@@ -1683,8 +1683,11 @@ async function cEjecutarLote(){
   const texto=result.mensaje||result.estado||'Solicitud recibida';
   cActualizarEstadoProceso('Power Automate respondió: '+texto+'. Comprueba el historial para confirmar el envío del correo y las carpetas.');
   cHTML=html;document.getElementById('c-rendered').innerHTML='<div class="c-email-box">'+html+'</div>';document.getElementById('c-rendered').style.display='block';document.getElementById('c-empty').style.display='none';document.getElementById('c-code-pre').textContent=html;
- }catch(err){cActualizarEstadoProceso('No se pudo confirmar la ejecución: '+err.message+'. Antes de repetir, revisa el historial de Power Automate para evitar correos duplicados.')}
- finally{cProcesando=false;boton.disabled=false}
+ }catch(err){
+  const blocked=err instanceof TypeError || /Failed to fetch|NetworkError|Load failed|fetch failed/i.test(err.message||'');
+  const reason=blocked?'El navegador no pudo completar la solicitud HTTP. Es posible que Power Automate haya bloqueado la petición previa por CORS o haya ocurrido un error de red.':'Power Automate devolvió un error durante la solicitud.';
+  cActualizarEstadoProceso('❌ '+reason+' Detalle: '+(err.message||String(err))+'. Revisa el HISTORIAL DE EJECUCIÓN del flujo HTTP: si no aparece una ejecución a esta hora, la solicitud no llegó al disparador. No vuelvas a enviarla antes de comprobarlo.');
+ }finally{cProcesando=false;boton.disabled=false}
 }
 function cAbrirOutlook(){if(!cHTML)cGenerar();if(!cHTML)return;const para=document.getElementById('c-para').value;if(!para)return alert('Selecciona destinatarios.');const cc=document.getElementById('c-cc').value;const subject='ETOP · Calendarios y carpetas creadas · '+cGetCarpetas().length+' versiones';const body='Se encuentran disponibles las carpetas de los siguientes intakes:\n'+cGetCarpetas().map(x=>'• '+x.nombre).join('\n')+'\n\nFavor respaldar nómina y calendarios, correos de bienvenida, invitaciones sincrónicas y QA2.';const p=new URLSearchParams({to:para,subject,body});if(cc)p.set('cc',cc);window.open('https://outlook.office.com/mail/deeplink/compose?'+p.toString(),'_blank','noopener,noreferrer');alert('Se abrió el borrador. Para mantener el formato institucional, utiliza Copiar correo y pega en el cuerpo de Outlook antes de enviar.')}
 
