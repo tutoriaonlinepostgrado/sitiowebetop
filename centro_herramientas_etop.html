@@ -653,7 +653,16 @@
       <div>
         <span class="c-section-lbl">📂 Carpetas en Teams</span>
         <div id="c-carpetas" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.6rem;"></div>
-        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Preparar creación de carpetas (flujo V4)</button><p style="font-size:11px;color:#64748b">El flujo V4 sigue siendo manual: este botón copia el lote; ejecútalo en Power Automate y luego marca las carpetas verificadas. No se crean carpetas directamente desde la página.</p>
+        <button class="c-btn-add" onclick="cAdd()">＋ Agregar versión al lote</button><button type="button" class="c-btn-add" id="c-boton-ejecutar" onclick="cEjecutarLote()" style="margin-top:9px;background:#007e83;color:white;border-color:#007e83;font-weight:700">📁 Crear carpetas y enviar correo</button>
+<details style="margin-top:8px;border:1px solid #4e667c;border-radius:7px;padding:8px">
+<summary style="cursor:pointer;font-size:12px;font-weight:700">⚙ Configurar flujo HTTP (una vez por sesión)</summary>
+<label for="c-url-flujo" style="display:block;margin-top:9px;font-size:12px">Dirección HTTP POST del flujo</label>
+<input id="c-url-flujo" type="password" autocomplete="off" placeholder="Pegar URL del disparador HTTP" style="width:100%;margin-top:4px;font-size:12px" />
+<button type="button" class="c-btn-add" onclick="cGuardarEndpoint()" style="margin-top:7px">Guardar dirección en esta sesión</button>
+<p style="font-size:11px;line-height:1.5;color:#a8bcd4">La dirección contiene una clave privada. No se publica en GitHub ni se guarda en el lote. Permanecerá solo en la sesión de este navegador.</p>
+</details>
+<div id="c-estado-envio" role="status" aria-live="polite" style="font-size:12px;line-height:1.5;margin-top:8px"></div>
+<button class="c-btn-add" style="margin-top:6px" onclick="cCopiarIntakes()">📋 Alternativa: copiar nombres para flujo V4</button><p style="font-size:11px;color:#64748b">La creación y notificación se solicitan desde el botón HTTP. La alternativa manual V4 sigue disponible.</p>
       </div>
       <div>
         <span class="c-section-lbl">⚙️ Acciones</span>
@@ -1616,6 +1625,50 @@ function cRenderDestinatarios(){const el=document.getElementById('c-destinatario
 function cElegirDest(el){const email=el.dataset.mail.toLowerCase();if(el.checked)cDestSel.add(email);else cDestSel.delete(email);cActualizarPara();cGuardarLote()}
 function cActualizarPara(){const personas=cContactos().filter(x=>cDestSel.has(x.correo.toLowerCase()));document.getElementById('c-para').value=[...new Set(personas.map(x=>x.correo))].join('; ');document.getElementById('c-coord').value=personas.map(x=>x.nombre).join(' - ')}
 function cCopiarIntakes(){const nombres=cGetCarpetas().map(c=>c.nombre).filter(Boolean);if(!nombres.length)return alert('Agrega versiones al lote.');navigator.clipboard.writeText(nombres.join('\n')).then(()=>alert('Intakes copiados. Pégalos en el flujo V4.'))}
+const C_HTTP_KEY='etop_carpeta_http_endpoint_session';
+let cProcesando=false;
+function cGuardarEndpoint(){
+ const input=document.getElementById('c-url-flujo');
+ const raw=input.value.trim().replace(/&amp;/g,'&');
+ let url;try{url=new URL(raw)}catch(e){return alert('La dirección HTTP no tiene un formato válido.')}
+ if(url.protocol!=='https:'||!url.hostname.endsWith('.environment.api.powerplatform.com')||!url.pathname.includes('/triggers/manual/paths/invoke')||!url.searchParams.get('sig'))return alert('Utiliza la URL HTTP POST completa que muestra Power Automate.');
+ try{sessionStorage.setItem(C_HTTP_KEY,url.toString());input.value='';document.getElementById('c-estado-envio').textContent='Dirección configurada para esta sesión.'}catch(e){alert('No se pudo conservar la dirección en este navegador.')}
+}
+function cActualizarEstadoProceso(msg){document.getElementById('c-estado-envio').textContent=msg}
+async function cEjecutarLote(){
+ if(cProcesando)return;
+ const names=cGetCarpetas().map(x=>x.nombre).filter(Boolean);
+ const unique=[...new Set(names)];
+ if(!unique.length)return alert('Primero agrega al menos una versión.');
+ if(unique.length!==names.length)return alert('Existen versiones duplicadas en el lote. Corrígelas antes de continuar.');
+ const programa=document.getElementById('c-intake').value.trim();
+ if(!programa)return alert('Introduce el nombre del programa para el correo.');
+ const para=document.getElementById('c-para').value.trim();
+ if(!para)return alert('Selecciona al menos un coordinador o tutor destinatario.');
+ const endpoint=sessionStorage.getItem(C_HTTP_KEY);
+ if(!endpoint)return alert('Abre Configurar flujo HTTP, pega la URL de Power Automate y guarda la dirección.');
+ if(unique.some(x=>/[\\/:*?"<>|]/.test(x)))return alert('Revisa los nombres de las versiones: hay caracteres no permitidos en SharePoint.');
+ const coord=document.getElementById('c-coord').value.trim()||'Coordinación académica';
+ const html=cBuildEmail(coord,programa,unique.map(nombre=>({nombre})));
+ const asunto='ETOP · Calendarios registrados y carpetas creadas · '+unique.length+' versión'+(unique.length===1?'':'es');
+ const payload={intakes:unique,para,cc:document.getElementById('c-cc').value.trim(),asunto,html};
+ const signature=JSON.stringify({intakes:unique,para,cc:payload.cc,asunto});
+ const previous=sessionStorage.getItem('etop_ultimo_envio_lote');
+ if(previous===signature&&!confirm('Este lote ya se envió durante esta sesión. ¿Ejecutarlo y enviar nuevamente?'))return;
+ if(!confirm('Se solicitará crear '+unique.length+' carpetas y enviar UN correo institucional a: '+para+'. ¿Confirmar envío?'))return;
+ const boton=document.getElementById('c-boton-ejecutar');
+ cProcesando=true;boton.disabled=true;cActualizarEstadoProceso('Procesando en Power Automate. No cierres esta pestaña.');
+ try{
+  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  let result={};try{result=await response.json()}catch(e){}
+  if(!response.ok)throw new Error('HTTP '+response.status+(result.message?' · '+result.message:''));
+  sessionStorage.setItem('etop_ultimo_envio_lote',signature);
+  const texto=result.mensaje||result.estado||'Solicitud recibida';
+  cActualizarEstadoProceso('Power Automate respondió: '+texto+'. Comprueba el historial para confirmar el envío del correo y las carpetas.');
+  cHTML=html;document.getElementById('c-rendered').innerHTML='<div class="c-email-box">'+html+'</div>';document.getElementById('c-rendered').style.display='block';document.getElementById('c-empty').style.display='none';document.getElementById('c-code-pre').textContent=html;
+ }catch(err){cActualizarEstadoProceso('No se pudo confirmar la ejecución: '+err.message+'. Antes de repetir, revisa el historial de Power Automate para evitar correos duplicados.')}
+ finally{cProcesando=false;boton.disabled=false}
+}
 function cAbrirOutlook(){if(!cHTML)cGenerar();if(!cHTML)return;const para=document.getElementById('c-para').value;if(!para)return alert('Selecciona destinatarios.');const cc=document.getElementById('c-cc').value;const subject='ETOP · Calendarios y carpetas creadas · '+cGetCarpetas().length+' versiones';const body='Se encuentran disponibles las carpetas de los siguientes intakes:\n'+cGetCarpetas().map(x=>'• '+x.nombre).join('\n')+'\n\nFavor respaldar nómina y calendarios, correos de bienvenida, invitaciones sincrónicas y QA2.';const p=new URLSearchParams({to:para,subject,body});if(cc)p.set('cc',cc);window.open('https://outlook.office.com/mail/deeplink/compose?'+p.toString(),'_blank','noopener,noreferrer');alert('Se abrió el borrador. Para mantener el formato institucional, utiliza Copiar correo y pega en el cuerpo de Outlook antes de enviar.')}
 
 
