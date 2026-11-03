@@ -262,6 +262,53 @@
   .divider { margin:1.1rem 0; }
   @media(max-width:700px) { .container{padding:1rem;} .etop-auto-panel {display:block;} .etop-auto-panel .btn {margin-top:.7rem;} .etop-secondary summary {align-items:flex-start;} }
 
+
+/* Diseño responsive de prueba: el contenido ocupa el espacio real disponible. */
+body { padding:clamp(6px,.8vw,14px); }
+.container {
+  width:100%;
+  max-width:1540px;
+  padding:clamp(14px,1.5vw,25px);
+  margin:4px auto 16px;
+}
+.header { margin-bottom:.8rem; }
+.etop-primary-panel { padding:clamp(12px,1vw,18px); }
+.form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(12px,1.2vw,20px); row-gap:.85rem; }
+.form-group { min-width:0; }
+.form-group input { min-width:0; }
+.table-wrap {
+  width:100%;
+  max-width:100%;
+  max-height:clamp(290px,48vh,620px);
+  overflow:auto;
+  overscroll-behavior:contain;
+}
+.table-wrap table { width:max-content; min-width:100%; }
+#acciones { display:none; flex-wrap:wrap; gap:.65rem; }
+#acciones .btn { min-height:36px; }
+@media (min-width:1500px) {
+  .container { max-width:1580px; }
+  .form-grid { column-gap:24px; }
+}
+@media (max-width:1100px) {
+  .container { padding:14px; }
+  .header h1 { font-size:1.34rem; }
+  .form-grid { gap:.65rem; }
+  .table-wrap { max-height:42vh; }
+}
+@media (max-width:700px) {
+  body { padding:5px; }
+  .container { width:100%; padding:12px; border-radius:8px; }
+  .header h1 { font-size:1.2rem; }
+  .form-grid { grid-template-columns:minmax(0,1fr); }
+  .etop-primary-panel .btn { width:100%; justify-content:center; text-align:center; }
+  .etop-secondary summary { flex-wrap:wrap; }
+  .etop-secondary summary::after { margin-left:auto; }
+  #acciones { flex-direction:column; align-items:stretch; }
+  #acciones .btn { width:100%; justify-content:center; white-space:normal; }
+  .table-wrap { max-height:52vh; }
+}
+
 </style>
 </head>
 <body>
@@ -712,10 +759,73 @@ function descargarExcel() {
   XLSX.writeFile(wb, 'Nomina_SharePoint.xlsx');
 }
 
-async function enviarSharePoint() { /* lógica existente preservada en versión de prueba */ }
-async function enviarSharePointMiguel() { /* lógica existente preservada en versión de prueba */ }
-async function enviarSharePointPabloDaniela() { /* lógica existente preservada en versión de prueba */ }
+async function enviarSharePoint() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b5adeaa1a9f94afcbc70f296c3017b02/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FcCHLTt4qfgvtdNJtyUSryjGMyJI2gQOvVfkG68eieI";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
+      document.getElementById('paso3').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
 
+async function enviarSharePointMiguel() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-miguel');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Miguel...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8eb99019f23c4c28a0bdf0208ba3b54f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HuauXnxkP7IEAgj9HIcFgDmUUSC3tdejeJpCpjX-Ceg";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
+      document.getElementById('paso3-miguel').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+async function enviarSharePointPabloDaniela() {
+  if(!datosFinales) return;
+  const spResult = document.getElementById('sp-result-pablo-daniela');
+  spResult.innerHTML = '<div class="alert info"><span class="spinner"></span> Enviando a SharePoint Equipo Pablo_Daniela...</div>';
+  const url = "https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d040109474f04cebbc90300640607f30/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=35S4lnBFfc3aPPnEcX0P2g0DDpPMxCPvBeyLNZXjq7c";
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosFinales)
+    });
+    if(res.ok || res.status===202) {
+      spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
+      document.getElementById('paso3-pablo-daniela').classList.add('visible');
+    } else {
+      spResult.innerHTML = '<div class="alert error">Error ' + res.status + ': ' + res.statusText + '</div>';
+    }
+  } catch(err) {
+    spResult.innerHTML = '<div class="alert error">Error de red: ' + err.message + '</div>';
+  }
+}
+
+// ── DATOS NRC PARA BUSCADOR DE CURSOS ──
 let nrcsObData = [];
 let nrcsData = [];
 
@@ -776,8 +886,48 @@ function autocompletarPrimerCursoDesdeContexto(){
 }
 async function cargarNrcsOb(){ try{const r=await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs_onboarding.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const data=await r.json();nrcsObData=Array.isArray(data)?data:(data.value||[]);}catch(e){nrcsObData=[];} }
 async function cargarProgramas(){ try{const r=await fetch('nrcs.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const datos=await r.json();nrcsData=Array.isArray(datos)?datos:(datos.value||[]);if(!nrcsObData.length)nrcsObData=nrcsData;}catch(e){} }
-function buscarCurso(campo){}
-function seleccionarCurso(campo,nrc,nombre){}
+function buscarCurso(campo) {
+  const q = document.getElementById(campo+'-search').value.trim().toLowerCase();
+  const dd = document.getElementById(campo+'-dropdown');
+  const opts = document.getElementById(campo+'-options');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const resultados = nrcsObData.filter(r =>
+    (r.nrc||'').toLowerCase().includes(q) ||
+    (r['nombre curso']||'').toLowerCase().includes(q)
+  ).slice(0, 25);
+  if(!resultados.length){ dd.style.display='none'; return; }
+  opts.innerHTML = '';
+  resultados.forEach(r => {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='rgba(246,193,40,0.08)';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    const nombre = r['nombre curso'] || '';
+    div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);transition:background 0.1s;';
+    div.onmouseenter = ()=>div.style.background='#dbeafe';
+    div.onmouseleave = ()=>div.style.background='transparent';
+    div.innerHTML = '<span style="color:#1e40af;font-size:0.75rem;font-weight:700;font-family:monospace;">'+r.nrc+'</span>'
+      +'<br><span style="color:#1e293b;font-size:0.82rem;">'+nombre+'</span>';
+    div.onclick = () => seleccionarCurso(campo, r.nrc, nombre);
+    opts.appendChild(div);
+  });
+  dd.style.display = 'block';
+}
+
+function seleccionarCurso(campo, nrc, nombre) {
+  document.getElementById(campo+'-search').value = nombre;
+  document.getElementById(campo).value = nombre;
+  document.getElementById(campo+'-dropdown').style.display = 'none';
+}
+
+// Cerrar dropdowns al clic fuera
+document.addEventListener('click', function(e){
+  ['curso1','curso2'].forEach(c => {
+    const inp = document.getElementById(c+'-search');
+    const dd  = document.getElementById(c+'-dropdown');
+    if(inp && dd && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+  });
+});
 
 window.onload = async function() {
   const today = new Date().toISOString().substring(0,10);
