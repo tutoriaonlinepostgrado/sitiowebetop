@@ -2994,7 +2994,7 @@ function cargarOnboarding(clave,btn){
       url=BASEP+misReportes[clave]+'?'+p.toString();
     }
   }
-  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261103-envio-schema-v6';
+  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261104-semaforo-textos-v7';
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
   activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
