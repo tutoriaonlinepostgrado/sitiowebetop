@@ -684,7 +684,17 @@ async function procesarNomina() {
     }
 
     if(!salida.length) { resultEl.innerHTML='<div class="alert info">No se encontraron correos válidos.</div>'; return; }
-    salida.forEach(fila => { fila['NOMBRE DE PROGRAMA'] = pr; });
+    // El esquema de entrada del flujo exige NRC_COD_CAL_FILTRO en cada objeto.
+    // Se usa el NRC de inducción que ya está cargado en el formulario.
+    const nrcFiltro = extraerNrcInduccion(ni);
+    if(!nrcFiltro) {
+      resultEl.innerHTML='<div class="alert error">No se puede construir la plantilla: falta un NRC de inducción válido (por ejemplo, 1020_UNI118_202683). Carga los datos del curso desde la barra superior.</div>';
+      return;
+    }
+    salida.forEach(fila => {
+      fila['NOMBRE DE PROGRAMA'] = pr;
+      fila['NRC_COD_CAL_FILTRO'] = nrcFiltro;
+    });
     datosFinales = salida;
     resultEl.innerHTML = `<div class="alert success">🎉 Plantilla generada con éxito. <span class="badge">${salida.length}</span> registros.</div>`;
     const tableDiv = document.createElement('div');
