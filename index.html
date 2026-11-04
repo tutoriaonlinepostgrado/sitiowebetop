@@ -1953,7 +1953,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
                  placeholder="Buscar NRC…" maxlength="40" autocomplete="off"
                  oninput="onNRCInput(this.value)"
                  onkeydown="onNRCKeydown(event)"
-                 onfocus="mostrarNRCDropdown()">
+                 onfocus="mostrarNRCDropdown();if(document.getElementById('topBar')?.classList.contains('email-mode') && valoresNrcPrincipal().length===1)this.select()">
           <span id="nrc-count-principal" class="nrc-count-principal" aria-hidden="true" hidden></span>
           <button type="button" class="nrc-pill-clear" id="nrc-pill-clear" title="Quitar todos los NRC seleccionados" aria-label="Quitar todos los NRC seleccionados" onclick="limpiarFiltroNRC(event)">×</button>
           <div class="nrc-dropdown" id="nrc-dropdown"></div>
@@ -2310,6 +2310,12 @@ function actualizarResumenNrcPrincipal(){
   const v=valoresNrcPrincipal(), n=v.length;
   if(input){
     input.placeholder=!n?'Buscar NRC o nombre del curso…':n===1?v[0]:'NRC ('+n+' seleccionados)';
+    // En las vistas de correos, mostrar el NRC completo como VALOR visible:
+    // el texto parcial que quedó escrito al buscar no debe tapar la selección.
+    if(document.getElementById('topBar')?.classList.contains('email-mode') && n===1){
+      input.value=v[0];
+      nrcTextoBusqueda='';
+    }
     const registro=n===1?catalogoNRC.find(x=>claveValor(x.nrc)===claveValor(v[0])):null;
     input.title=n===1?[v[0],registro?.['nombre curso']||''].filter(Boolean).join(' — '):n?v.join('\\n'):'Buscar NRC o nombre del curso';
   }
@@ -2994,7 +3000,7 @@ function cargarOnboarding(clave,btn){
       url=BASEP+misReportes[clave]+'?'+p.toString();
     }
   }
-  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261104-semaforo-textos-v7';
+  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261104-nrc-completo-v8';
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
   activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
