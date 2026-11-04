@@ -1861,6 +1861,11 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 }
 
 </style>
+<style id="etop-comunicaciones-toolbar-fix">
+/* Ocultar solo en Comunicaciones los controles que no aplican. */
+.top.etop-comunicaciones-mode #gestionFilters [data-filtro="rut"],
+.top.etop-comunicaciones-mode #gestionFilters [data-filtro="excelDashboard"]{display:none!important}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2852,6 +2857,7 @@ function configurarFiltros(clave){
   const modoCorreo=['CORREOS','CORREOS_PRUEBA','INVITACIONES','PRESENTACION','CIERRE'].includes(clave);
   const top=document.getElementById('topBar');
   if(top){
+    top.classList.toggle('etop-comunicaciones-mode',clave==='COMUNICACIONES');
     top.classList.toggle('email-mode',modoCorreo);
     top.classList.toggle('email-test-mode',clave==='CORREOS_PRUEBA'||clave==='INVITACIONES');
     top.classList.toggle('dashboard-mode',clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT');
@@ -3364,11 +3370,11 @@ function openLocal(url,title,btn){
   mostrarAreaGestion();
   const esComunicaciones=url.split('?')[0]==='comunicaciones_etop.html';
   vistaActual=esComunicaciones?'COMUNICACIONES':null;
-  const top=document.getElementById('topBar');if(top)top.classList.remove('email-mode');
+  const top=document.getElementById('topBar');if(top){top.classList.remove('email-mode');top.classList.toggle('etop-comunicaciones-mode',esComunicaciones);}
   const viewer=document.getElementById('viewer');if(viewer){viewer.classList.remove('viewer-pbi');viewer.classList.add('viewer-local')}
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
   if(esComunicaciones)configurarFiltros('COMUNICACIONES');
-  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url+(esComunicaciones?(url.includes('?')?'&':'?')+'_v=20261104-redesign2':'');establecerTituloVistaETOP(title);activate(btn);
+  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url+(esComunicaciones?(url.includes('?')?'&':'?')+'_v=20261104-redesign4':'');establecerTituloVistaETOP(title);activate(btn);
 }
 
 function abrirCoordinacionPantallaCompleta(){
