@@ -312,7 +312,6 @@ body { padding:clamp(6px,.8vw,14px); }
 </style>
 </head>
 <body>
-<div style="background:#fff4cd;color:#614700;text-align:center;padding:9px 16px;font:700 13px Arial,sans-serif;border-bottom:2px solid #dfa900;">🧪 DISEÑO DE PRUEBA V2 · NO UTILIZAR PARA ENVÍOS REALES</div>
 
 <div class="container">
   <div class="header">
@@ -531,7 +530,7 @@ async function cargarEstudiantesSeguimiento(silencioso=false) {
 
     if(estudiantesSeguimiento.length) {
       const conCorreo = estudiantesSeguimiento.filter(e => String(e?.correoPersonal || e?.correoUnab || '').includes('@')).length;
-      if(statusEl) statusEl.innerHTML = '<div class="alert success">🎉 ¡Enhorabuena! La nómina de tu curso ya está en la base Semáforo: <strong>'+estudiantesSeguimiento.length+' estudiantes</strong> encontrados para <strong>'+nrc+'</strong> ('+conCorreo+' con correo disponible). <strong>No subas el Excel; puedes continuar con los datos de la inducción.</strong></div>';
+      if(statusEl) statusEl.innerHTML = '<div class="alert success">🎉 ¡Enhorabuena! La nómina de tu curso ya está en la base Semáforo: <strong>'+estudiantesSeguimiento.length+' estudiantes</strong> encontrados para <strong>'+nrc+'</strong> ('+conCorreo+' con correo disponible). <strong>No subas el Excel. Ahora puedes hacer clic en el botón «Construir Plantilla Exacta» para preparar los correos.</strong></div>';
       return true;
     }
 
