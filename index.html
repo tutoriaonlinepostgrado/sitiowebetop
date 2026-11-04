@@ -1828,6 +1828,38 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
   }
 }
 
+
+/* Correos de bienvenida de prueba + Invitación Sincrónica: mismo mensaje y botón.
+   No se alteran los eventos del botón ni el tamaño vertical general. */
+@media(min-width:1250px){
+  .top.report-mode.email-mode.email-test-mode .guia-correos-texto{
+    display:block!important;
+    flex:1 1 190px!important;
+    min-width:140px!important;
+    max-width:290px!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+    color:#e2ecf7!important;
+  }
+  .top.report-mode.email-mode.email-test-mode .guia-correos{
+    flex:1 1 570px!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .top.report-mode.email-mode.email-test-mode .guia-correos-btn{
+    flex:0 0 auto!important;
+    min-width:310px!important;
+    max-width:370px!important;
+  }
+}
+@media(min-width:821px) and (max-width:1249px){
+  .top.report-mode.email-mode.email-test-mode .guia-correos-texto{display:none!important}
+  .top.report-mode.email-mode.email-test-mode .guia-correos-btn{
+    min-width:300px!important;
+    max-width:340px!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3696,7 +3728,7 @@ document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e
 
 <script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/gestion_kpi.js?v=20260911-kpi2"></script>
 <script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_prueba.js?v=20260916-4"></script>
-<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_invitaciones_sharepoint.js?v=20260916-1"></script>
+<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_invitaciones_sharepoint.js?v=20261104-barra-sincronica-v2"></script>
 <script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_oficial.js?v=20260916-1"></script>
 <script>
 /* Asegura que cualquier herramienta agregada por los scripts de Gestión abra el área central V5. */
