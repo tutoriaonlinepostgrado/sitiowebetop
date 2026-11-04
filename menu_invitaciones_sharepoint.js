@@ -30,7 +30,7 @@
 
     const boton = guia.querySelector('.guia-correos-btn');
     if (!boton) return;
-    boton.textContent = '↻ Cargar datos del curso';
+    boton.textContent = '↻ Cargar datos del curso y buscar nómina en Semáforo';
 
     if (!boton.dataset.etopInvSp) {
       boton.dataset.etopInvSp = '1';
