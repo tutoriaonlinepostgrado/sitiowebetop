@@ -142,7 +142,10 @@
               <tr><td style="padding:11px 13px 5px;font-size:14px;line-height:21px;color:#26364b;font-family:Arial,sans-serif;"><strong>Nombre:</strong> <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante_2"></span></td></tr>
               <tr><td style="padding:5px 13px 11px;font-size:14px;line-height:21px;color:#26364b;font-family:Arial,sans-serif;"><strong>RUT o ID:</strong> <span class="campo" contenteditable="true" data-placeholder="RUT O ID ESTUDIANTE" data-campo="rut_estudiante"></span></td></tr>
             </table>
-            <p style="margin:12px 0 0;font-size:13px;line-height:20px;color:#38516d;">Si los datos son correctos, por favor <strong>responde a este correo confirmando su recepción</strong>. Si detectas algún error, indícalo en tu respuesta.</p>
+            <p style="margin:12px 0 10px;font-size:13px;line-height:20px;color:#38516d;">Si los datos son correctos, haz clic en el botón para preparar tu confirmación. Se abrirá tu aplicación de correo; solo tendrás que enviarla.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td bgcolor="#198754" style="background-color:#198754;border-radius:5px;text-align:center;">
+              <a id="confirmar-recepcion" href="#" style="display:inline-block;padding:12px 22px;font-family:Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#ffffff;text-decoration:none;">&#10003; Confirmar recepción</a>
+            </td></tr></table>
           </td></tr>
         </table>
 
@@ -190,9 +193,29 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// El botón usa mailto: para generar un correo real, sin formulario ni seguimiento.
+function prepararEnlaceConfirmacion(contenido) {
+  let destinatario = (params.get('correoTutor') || params.get('correo_tutor') || '').trim();
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(destinatario)) {
+    destinatario = window.prompt('Ingresa el correo institucional del tutor para habilitar el botón Confirmar recepción:', '')?.trim() || '';
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(destinatario)) return false;
+  }
+  const valor = campo => (document.querySelector('[data-campo="'+campo+'"]')?.textContent || '').trim();
+  const nombre=valor('nombre_estudiante_2') || valor('nombre_estudiante') || 'Estudiante';
+  const rut=valor('rut_estudiante');
+  const curso=valor('curso_induccion');
+  const asunto='Confirmación de recepción - Bienvenida UNAB Online';
+  const cuerpo='Estimado(a) tutor(a):\\n\\nConfirmo la recepción del correo de bienvenida y la revisión de mis datos.\\n\\nNombre: '+nombre+'\\nRUT o ID: '+rut+(curso?'\\nCurso: '+curso:'')+'\\n\\nSaludos cordiales.';
+  const enlace='mailto:'+destinatario+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
+  const boton=contenido.querySelector('#confirmar-recepcion');
+  if(boton)boton.href=enlace;
+  return true;
+}
+
 // ── COPIAR CORREO ──
 async function copiarCorreo() {
   const contenido = document.getElementById('email-content').cloneNode(true);
+  if(!prepararEnlaceConfirmacion(contenido)){mostrarToast('⚠️ Se necesita el correo del tutor para activar la confirmación',true);return;}
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
     el.style.cssText = 'font-weight:bold;color:#333;';
