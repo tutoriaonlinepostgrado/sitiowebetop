@@ -139,17 +139,33 @@
           <div class="helper">
             <strong>Fuente de estudiantes:</strong> primero se buscarán los estudiantes del NRC de inducción en <strong>BASE/SEMAFORO_2.0</strong>. Si aún no están cargados, puede usarse el Excel como respaldo. Los datos consultados desde SharePoint sólo se mantienen en memoria del navegador.
           </div>
-          <div class="btn-row" style="margin-top:0;margin-bottom:.75rem;">
-            <button class="btn primary" type="button" id="btn-buscar-seguimiento-inv">🔎 Buscar estudiantes en seguimiento</button>
-          </div>
           <div id="seguimiento-inv-status"></div>`;
         fileGroup.parentNode.insertBefore(bloque, fileGroup);
-        document.getElementById('btn-buscar-seguimiento-inv')?.addEventListener('click', () => cargarEstudiantesSeguimientoInv(false));
       }
     }
 
     const label = document.querySelector('#drop-nomina')?.closest('.form-group')?.querySelector('label');
     if (label) label.innerHTML = '📥 Nómina original <span style="font-weight:400;text-transform:none;color:#64748b;">(respaldo si no hay estudiantes en seguimiento)</span>';
+
+    // Desplegable visual: conserva el mismo input Excel y el handler original.
+    const grupoExcel = document.getElementById('drop-nomina')?.closest('.form-group');
+    if (grupoExcel && !document.getElementById('respaldo-excel-invitaciones')) {
+      const desplegable = document.createElement('details');
+      desplegable.id = 'respaldo-excel-invitaciones';
+      desplegable.style.cssText = 'border:1px solid #e1e6ee;border-radius:10px;margin:12px 0;background:#fff;overflow:hidden;';
+      const titulo = document.createElement('summary');
+      titulo.textContent = '📥 Nómina original (Excel) · mostrar respaldo';
+      titulo.style.cssText = 'cursor:pointer;padding:12px 15px;font-size:.86rem;font-weight:700;color:#1f2940;';
+      desplegable.appendChild(titulo);
+      grupoExcel.parentNode.insertBefore(desplegable, grupoExcel);
+      desplegable.appendChild(grupoExcel);
+      grupoExcel.style.cssText = 'max-width:660px;padding:0 15px 14px;';
+      desplegable.addEventListener('toggle',()=>{
+        titulo.textContent = desplegable.open
+          ? '📥 Nómina original (Excel) · ocultar respaldo'
+          : '📥 Nómina original (Excel) · mostrar respaldo';
+      });
+    }
 
     aplicarTutorInvLocal();
   }
