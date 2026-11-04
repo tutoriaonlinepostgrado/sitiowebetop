@@ -134,6 +134,8 @@ body.embedded .top{display:none}.embedded .wrap{padding-top:10px}
 @media(max-width:650px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.bar-row{grid-template-columns:108px minmax(0,1fr) 36px}}
 </style>
 <style>
+/* Carga proyectada y matrícula no verificable */
+.projection-unknown{font-weight:750;color:#a45d12;cursor:help}.tutor-matrix .total-cell{background:#edf4ed!important}.tutor-matrix th[title]{cursor:help}
 /* Ajuste v4: matriz compacta de NRC y atenciones */
 .kpis{gap:6px;margin-bottom:6px;grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
 .kpi{padding:6px 9px;min-height:58px;border-radius:8px}
@@ -176,7 +178,7 @@ body.embedded .top{display:none}.embedded .wrap{padding-top:10px}
   <section class="card"><div class="card-head"><div><h2>Carga actual por tutor</h2><p>Selecciona un tutor para filtrar el detalle. Los valores llevan a Calendarios.</p></div></div>
    <div class="table-wrap tutor-table"><table class="tutor-matrix"><thead>
 <tr><th rowspan="2" class="tutor-heading">Tutor/a</th><th colspan="4" class="group-heading">NRC</th><th colspan="4" class="group-heading attention-group">Atenciones</th></tr>
-<tr><th class="num" title="NRC activos">Act.</th><th class="num" title="NRC en cierre">Cierre</th><th class="num" title="NRC en preparación que comienzan entre hoy y los próximos 7 días">Prep. 7d</th><th class="num total-heading" title="Total NRC: activos, en cierre y preparación próximos 7 días">Total</th><th class="num" title="Estudiantes en NRC activos">Act.</th><th class="num" title="Estudiantes en NRC en cierre">Cierre</th><th class="num" title="Estudiantes en NRC en preparación que comienzan entre hoy y los próximos 7 días">Prep. 7d</th><th class="num total-heading" title="Total de atenciones: NRC activos, en cierre y preparación próximos 7 días">Total</th></tr>
+<tr><th class="num" title="NRC activos">Act.</th><th class="num" title="NRC en cierre">Cierre</th><th class="num" title="NRC en preparación que comienzan entre hoy y los próximos 7 días">Prep. 7d</th><th class="num total-heading" title="Total NRC: activos, en cierre y preparación próximos 7 días">Total</th><th class="num" title="Carga actual: estudiantes de NRC activos y en cierre">Actual</th><th class="num" title="Atenciones que dejarán de formar parte de la carga: estudiantes en NRC en cierre">− Cierre</th><th class="num" title="Atenciones que se incorporarán: estudiantes en NRC en preparación que comienzan entre hoy y 7 días">+ Prep. 7d</th><th class="num total-heading" title="Carga proyectada = carga actual − atenciones en cierre + atenciones de preparación próximos 7 días">Proy. 7d</th></tr>
 </thead><tbody id="tutoresBody"></tbody></table></div>
   </section>
   <section class="card detail-card">
@@ -235,17 +237,17 @@ function tutorRowsFrom(data){
  const map=new Map(TUTORES_ACTIVOS.map(t=>[norm(t),{t,act:0,cie:0,prep7:0,attAct:0,attCie:0,attPrep7:0,att:0}]));
  data.forEach(x=>{
   const key=norm(x.tutor);if(!map.has(key))return;
-  const r=map.get(key),state=norm(x.estado),students=studentCount(x);
-  if(state==='ACTIVO'){r.act++;r.attAct+=students;r.att+=students}
-  else if(state==='EN CIERRE'){r.cie++;r.attCie+=students;r.att+=students}
-  else if(state==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=7){r.prep7++;r.attPrep7+=students}
+  const r=map.get(key),state=norm(x.estado),students=studentCount(x),metric=metricMap.get(norm(x.nrc));
+  if(state==='ACTIVO'){r.act++;r.attAct+=students;r.att+=students;if(metric===undefined||students===0)r.unverifiedActive=(r.unverifiedActive||0)+1}
+  else if(state==='EN CIERRE'){r.cie++;r.attCie+=students;r.att+=students;if(metric===undefined||students===0)r.unverifiedClosing=(r.unverifiedClosing||0)+1}
+  else if(state==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=7){r.prep7++;r.attPrep7+=students;if(metric===undefined||students===0)r.unverifiedPrep=(r.unverifiedPrep||0)+1}
  });
  return [...map.values()].sort((a,b)=>b.att-a.att||b.act-a.act||a.t.localeCompare(b.t,'es'));
 }
 function render(){const data=filtered(false);const operational=data.filter(x=>['ACTIVO','EN CIERRE'].includes(norm(x.estado)));const selectedStates=estadosSeleccionados();const graphStates=selectedStates.length?selectedStates:['ACTIVO'];const graphData=data.filter(x=>graphStates.includes(norm(x.estado)));const att=operational.reduce((s,x)=>s+studentCount(x),0),activos=operational.filter(x=>norm(x.estado)==='ACTIVO').length,cierre=operational.filter(x=>norm(x.estado)==='EN CIERRE').length,prom=operational.length?att/operational.length:0;kAt.textContent=num(att);kTu.textContent=TUTORES_ACTIVOS.length;kAc.textContent=num(activos);kCi.textContent=num(cierre);kPr.textContent=num(prom);
 const prep30=data.filter(x=>norm(x.estado)==='PREPARACION'&&days(x['fecha inicio'])>=0&&days(x['fecha inicio'])<=30);kPrep30.textContent=prep30.length;const inicios30=prep30.filter(x=>norm(x['codigo curso'])==='UNI118');const programas30=new Set(inicios30.map(x=>String(x['nombre programa']||'').trim()).filter(Boolean));const intakes30=[...new Set(inicios30.map(x=>String(x.intake||'').trim()).filter(Boolean))];kProg.textContent=programas30.size;kProgCard.dataset.intakes=intakes30.join('|');kProgCard.classList.toggle('hidden',programas30.size===0);
 const listRows=tutorRowsFrom(filtered(true));renderTutorCharts(tutorRowsFrom(data));const selectedTutor=norm(tutor.value);tutoresBody.innerHTML=listRows.map(r=>{
- const te=encodeURIComponent(r.t),nrcTotal=r.act+r.cie+r.prep7,attTotal=r.att+r.attPrep7;
+ const te=encodeURIComponent(r.t),nrcTotal=r.act+r.cie+r.prep7,projected=r.att-r.attCie+r.attPrep7,unverified=(r.unverifiedActive||0)+(r.unverifiedClosing||0)+(r.unverifiedPrep||0);
  const drill=(value,attr,title)=>value?`<button class="metric-link" ${attr} title="${esc(title)}">${num(value)}</button>`:'0';
  return `<tr>
  <td><button class="tutor-link ${selectedTutor===norm(r.t)?'active':''}" data-tutor="${esc(r.t)}">${esc(r.t)}</button></td>
@@ -253,10 +255,10 @@ const listRows=tutorRowsFrom(filtered(true));renderTutorCharts(tutorRowsFrom(dat
  <td class="num">${drill(r.cie,`data-tutor-drill="${te}" data-estado-drill="EN CIERRE"`,`Ver NRC en cierre de ${r.t}`)}</td>
  <td class="num">${drill(r.prep7,`data-tutor-prep="${te}"`,`Ver NRC próximos de ${r.t}`)}</td>
  <td class="num total-cell"><strong title="NRC activos + en cierre + preparación próximos 7 días">${num(nrcTotal)}</strong></td>
- <td class="num">${drill(r.attAct,`data-tutor-drill="${te}" data-estado-drill="ACTIVO"`,`Ver atenciones activas de ${r.t}`)}</td>
- <td class="num">${drill(r.attCie,`data-tutor-drill="${te}" data-estado-drill="EN CIERRE"`,`Ver atenciones en cierre de ${r.t}`)}</td>
- <td class="num">${drill(r.attPrep7,`data-tutor-prep="${te}"`,`Ver atenciones de próximos NRC de ${r.t}`)}</td>
- <td class="num total-cell"><strong title="Atenciones activas + en cierre + preparación próximos 7 días. Promedio NRC operativos: ${num(r.att/Math.max(1,r.act+r.cie))}">${num(attTotal)}</strong></td>
+ <td class="num">${r.att?num(r.att):((r.act+r.cie)?'s/d':'0')}</td>
+ <td class="num">${r.cie?(r.unverifiedClosing?'s/d':num(r.attCie)):'0'}</td>
+ <td class="num">${r.prep7?(r.unverifiedPrep?'s/d':num(r.attPrep7)):'0'}</td>
+ <td class="num total-cell">${unverified?'<span class="projection-unknown" title="Existen NRC sin una matrícula verificable en metricas_estudiantes.json. No se calcula una proyección incompleta.">s/d</span>':`<strong title="Carga actual − cierre + preparación 7 días = ${num(r.att)} − ${num(r.attCie)} + ${num(r.attPrep7)}">${num(projected)}</strong>`}</td>
  </tr>`
 }).join('');
 document.querySelectorAll('.tutor-link').forEach(b=>b.addEventListener('click',()=>{const val=b.dataset.tutor;tutor.value=(norm(tutor.value)===norm(val))?'':val;render()}));document.querySelectorAll('[data-tutor-drill]').forEach(b=>b.addEventListener('click',()=>abrirCalendarios({tutor:decodeURIComponent(b.dataset.tutorDrill),estado:b.dataset.estadoDrill,nrc:'',fechaInicio:''})));document.querySelectorAll('[data-tutor-prep]').forEach(b=>b.addEventListener('click',()=>abrirCalendarios({tutor:decodeURIComponent(b.dataset.tutorPrep),estado:'PREPARACION',fechaInicio:'',fechaDesde:isoToday(),fechaHasta:addDaysISO(7),nrc:''})));document.querySelectorAll('[data-tutor-all]').forEach(b=>b.addEventListener('click',()=>abrirCalendarios({tutor:decodeURIComponent(b.dataset.tutorAll),estado:'ACTIVO|EN CIERRE',nrc:'',fechaInicio:''})));
