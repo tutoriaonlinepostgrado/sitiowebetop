@@ -26,7 +26,7 @@
     guia.style.display = 'flex';
 
     const texto = guia.querySelector('.guia-correos-texto');
-    if (texto) texto.innerHTML = '<strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.';
+    if (texto) texto.innerHTML = '<strong>Un solo paso:</strong> selecciona el NRC y pulsa el botón amarillo para cargar los datos y buscar los estudiantes.';
 
     const boton = guia.querySelector('.guia-correos-btn');
     if (!boton) return;
