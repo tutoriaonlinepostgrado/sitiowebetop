@@ -1794,6 +1794,40 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
   }
 }
 
+
+/* Únicamente bienvenida de prueba: botón único prominente sin agrandar la barra */
+.top.report-mode.email-test-mode .guia-correos-btn{
+  background:#f6c128!important;
+  color:#142641!important;
+  border:2px solid #ffdc62!important;
+  height:36px!important;
+  min-width:335px!important;
+  max-width:min(390px,35vw)!important;
+  padding:0 15px!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  border-radius:9px!important;
+  box-shadow:0 1px 8px rgba(246,193,40,.22)!important;
+  white-space:normal!important;
+  line-height:1.12!important;
+  text-align:center!important;
+  justify-content:center!important;
+}
+.top.report-mode.email-test-mode .guia-correos-btn:hover{
+  background:#ffdb66!important;
+  box-shadow:0 0 0 2px rgba(246,193,40,.2)!important;
+}
+@media(max-width:1400px){
+  .top.report-mode.email-test-mode .guia-correos-texto{display:none!important}
+}
+@media(max-width:980px){
+  .top.report-mode.email-test-mode .guia-correos-btn{
+    min-width:0!important;
+    max-width:none!important;
+    width:100%!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2796,6 +2830,14 @@ function configurarFiltros(clave){
   document.getElementById('gestionFilters').style.display=visibles.length?'flex':'none';
   document.getElementById('homeTopSearch').style.display='none';
   document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='CORREOS_PRUEBA'||clave==='INVITACIONES')?'flex':'none';
+  const btnCargaCorreo=document.querySelector('#guia-correos .guia-correos-btn');
+  const guiaCargaCorreo=document.querySelector('#guia-correos .guia-correos-texto');
+  if(btnCargaCorreo)btnCargaCorreo.textContent=clave==='CORREOS_PRUEBA'?'↻ Cargar datos del curso y buscar nómina en Semáforo':'↻ Cargar datos del curso';
+  if(guiaCargaCorreo){
+    guiaCargaCorreo.innerHTML=clave==='CORREOS_PRUEBA'
+      ?'<strong>Un solo paso:</strong> selecciona el NRC y pulsa el botón amarillo para cargar los datos y buscar los estudiantes.'
+      :'<strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.';
+  }
   if(catalogoNRC.length)sincronizarFiltros();actualizarBadge();
 }
 function cargarDatosCursoOnboarding(){
@@ -2804,7 +2846,7 @@ function cargarDatosCursoOnboarding(){
   if(!BUSQUEDA.nrc){input.classList.add('guia-atencion');input.focus();setTimeout(()=>input.classList.remove('guia-atencion'),1800);alert('Primero busca y selecciona arriba el NRC de tu curso de inducción. Después vuelve a pulsar “Cargar datos del curso”.');return}
   const claveDestino=vistaActual==='INVITACIONES'?'INVITACIONES':vistaActual==='CORREOS_PRUEBA'?'CORREOS_PRUEBA':'CORREOS';
   const botonCorreo=[...document.querySelectorAll('.menu-btn')].find(b=>(b.getAttribute('onclick')||'').includes("cargarOnboarding('"+claveDestino+"'"));
-  if(botonCorreo)cargarOnboarding(claveDestino,botonCorreo);
+  if(botonCorreo)cargarOnboarding(claveDestino,botonCorreo,claveDestino==='CORREOS_PRUEBA');
 }
 function mostrarAreaGestion(){
   document.getElementById('homeView').style.display='none';
@@ -2976,7 +3018,7 @@ function prepararVistaCorreoEnPortal(clave){
   };
 }
 
-function cargarOnboarding(clave,btn){
+function cargarOnboarding(clave,btn,consultarNomina=false){
   if(valoresNrcPrincipal().length>1){alert('Esta herramienta trabaja con un curso a la vez. Selecciona solo un NRC para continuar.');return;}
   vistaActual=clave;mostrarAreaGestion();configurarTipoVisor(clave);configurarFiltros(clave);prepararVistaCorreoEnPortal(clave);
   const BASEP=BASE;let url=BASEP+misReportes[clave];
@@ -3000,7 +3042,10 @@ function cargarOnboarding(clave,btn){
       url=BASEP+misReportes[clave]+'?'+p.toString();
     }
   }
-  if(clave==='CORREOS_PRUEBA')url+=(url.includes('?')?'&':'?')+'v=20261104-nrc-completo-v8';
+  if(clave==='CORREOS_PRUEBA'){
+    url+=(url.includes('?')?'&':'?')+'v=20261104-carga-unificada-v9';
+    if(consultarNomina)url+='&autoConsultaNomina=1';
+  }
   const visor=document.getElementById('visor');visor.style.display='block';visor.src='';setTimeout(()=>{visor.src=url},50);
   activate(btn);establecerTituloVistaETOP(titulos[clave]||'Vista de Reporte');
   if(window.innerWidth<800)toggleSidebar();
