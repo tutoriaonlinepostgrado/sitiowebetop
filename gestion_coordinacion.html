@@ -1006,6 +1006,25 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 }
 
 </style>
+<style>
+/* Acceso prioritario permanente a Calendarios; sin alterar el estado active de la vista. */
+#sidebar .menu-btn.menu-calendarios-prioritario{
+ background:linear-gradient(90deg,rgba(255,215,0,.17),rgba(255,215,0,.06))!important;
+ border-left:3px solid #ffd700!important;
+ color:#ffe48a!important;
+ font-weight:800!important;
+ display:flex;align-items:center;
+}
+#sidebar .menu-btn.menu-calendarios-prioritario:hover{
+ background:linear-gradient(90deg,rgba(255,215,0,.28),rgba(255,215,0,.10))!important;
+ color:#fff!important;
+}
+#sidebar .menu-btn.menu-calendarios-prioritario.active{
+ background:linear-gradient(90deg,rgba(255,215,0,.30),rgba(255,215,0,.12))!important;
+ color:#fff!important;
+}
+#sidebar .menu-calendarios-prioritario .calendarios-mark{margin-left:auto;color:#ffd700;font-size:11px}
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -1020,16 +1039,13 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 
         <div class="sidebar-menu">
             <div class="menu-category">Espacio Coordinación</div>
-            <button class="menu-btn" onclick="cargar('BASE_COORDINACION', this)">📊 Base Madre Coordinación</button>
-            <button class="menu-btn" onclick="cargar('EXPLORADOR', this)">🧭 Explorador de Cursos ETOP</button>
             <button class="menu-btn active" onclick="cargar('DASHBOARD_MACRO', this)">🏛️ Dashboard Macro Facultades</button>
-            <button class="menu-btn" onclick="cargar('REPORTE_INDUCCION', this)">📝 Reporte Inducción</button>
             <button class="menu-btn" onclick="cargar('CARGA_TUTORIAL', this)">⚖️ Carga Tutorial</button>
 
             <div class="menu-category">Seguimiento Operativo</div>
             <button class="menu-btn" onclick="cargar('AUDITORIA', this)">🔎 Revisión de seguimiento</button>
             <button class="menu-btn" onclick="cargar('CURSOS_INICIAR', this)">🚀 Cursos por iniciar</button>
-            <button class="menu-btn" onclick="cargar('CALENDARIOS', this)">📅 Calendarios</button>
+            <button class="menu-btn menu-calendarios-prioritario" onclick="cargar('CALENDARIOS', this)" title="Acceso prioritario a Calendarios">📅 <span>Calendarios</span><span class="calendarios-mark" aria-hidden="true">★</span></button>
             <button class="menu-btn" onclick="cargar('INCIDENCIAS', this)">⚠️ Incidencias</button>
 
             <div class="menu-category">Herramientas</div>
