@@ -1879,6 +1879,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
     <div class="menu-cat">Onboarding</div>
     <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
     <div class="submenu" id="onboarding">
+      <button class="menu-btn" data-key="COMUNICACIONES" onclick="openLocal(\'comunicaciones_etop.html\',\'Centro de Comunicaciones\',this)"><span class="ico">✉️</span> Centro de Comunicaciones · Individuales</button>
       <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">📧 Correos de Bienvenida</button>
       <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
       <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
@@ -3367,7 +3368,7 @@ function openLocal(url,title,btn){
   const viewer=document.getElementById('viewer');if(viewer){viewer.classList.remove('viewer-pbi');viewer.classList.add('viewer-local')}
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
   if(esComunicaciones)configurarFiltros('COMUNICACIONES');
-  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;establecerTituloVistaETOP(title);activate(btn);
+  document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url+(esComunicaciones?(url.includes('?')?'&':'?')+'_v=20261104-redesign2':'');establecerTituloVistaETOP(title);activate(btn);
 }
 
 function abrirCoordinacionPantallaCompleta(){
