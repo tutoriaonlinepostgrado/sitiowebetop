@@ -1879,8 +1879,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
     <div class="menu-cat">Onboarding</div>
     <button class="collapsible" onclick="toggleSub('onboarding')"><span class="ico">✉️</span>Generación de Correos<span class="arrow">▼</span></button>
     <div class="submenu" id="onboarding">
-      <button class="menu-btn" data-key="CORREOS" onclick="cargarOnboarding('CORREOS',this)">📧 Correos de Bienvenida</button>
-      <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">🧪 PRUEBA V2 · Correos de Bienvenida</button>
+      <button class="menu-btn" data-key="CORREOS_PRUEBA" onclick="cargarOnboarding('CORREOS_PRUEBA',this)">📧 Correos de Bienvenida</button>
       <button class="menu-btn" data-key="INVITACIONES" onclick="cargarOnboarding('INVITACIONES',this)">📅 Invitación Sesión Sincrónica</button>
       <button class="menu-btn" data-key="PRESENTACION" onclick="cargarOnboarding('PRESENTACION',this)">👩‍🏫 Presentación Tutorial</button>
       <button class="menu-btn" data-key="CIERRE" onclick="cargarOnboarding('CIERRE',this)">🏁 Correo de Cierre</button>
@@ -2202,7 +2201,7 @@ const titulos={
   FICHA_ESTUDIANTE:'Ficha del Estudiante',
   CALENDARIOS:'📅 Calendarios',
   CORREOS:'📧 Generador de Correos de Bienvenida',
-  CORREOS_PRUEBA:'🧪 Correos de Bienvenida · Diseño de prueba',
+  CORREOS_PRUEBA:'📧 Generador de Correos de Bienvenida',
   INVITACIONES:'📅 Envío Invitación Sesión Sincrónica',
   PRESENTACION:'👩‍🏫 Presentación Tutorial',
   CIERRE:'🏁 Correo de Cierre'
@@ -3727,9 +3726,7 @@ document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e
 
 
 <script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/gestion_kpi.js?v=20260911-kpi2"></script>
-<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_prueba.js?v=20260916-4"></script>
 <script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_invitaciones_sharepoint.js?v=20261104-barra-sincronica-v2"></script>
-<script src="https://tutoriaonlinepostgrado.github.io/sitiowebetop/menu_bienvenida_oficial.js?v=20260916-1"></script>
 <script>
 /* Asegura que cualquier herramienta agregada por los scripts de Gestión abra el área central V5. */
 document.addEventListener('click',function(e){
