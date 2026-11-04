@@ -2843,6 +2843,7 @@ const FILTROS_POR_VISTA={
   CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   FICHA_ESTUDIANTE:['rut'],
   CALENDARIOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  COMUNICACIONES:['nrc'],
   CORREOS:['nrc'],CORREOS_PRUEBA:['nrc'],INVITACIONES:['nrc'],PRESENTACION:['nrc'],CIERRE:['nrc']
 };
 function configurarFiltros(clave){
@@ -3359,10 +3360,13 @@ function showHome(btn){
   activate(btn);
 }
 function openLocal(url,title,btn){
-  mostrarAreaGestion();vistaActual=null;
+  mostrarAreaGestion();
+  const esComunicaciones=url.split('?')[0]==='comunicaciones_etop.html';
+  vistaActual=esComunicaciones?'COMUNICACIONES':null;
   const top=document.getElementById('topBar');if(top)top.classList.remove('email-mode');
   const viewer=document.getElementById('viewer');if(viewer){viewer.classList.remove('viewer-pbi');viewer.classList.add('viewer-local')}
   document.getElementById('homeTopSearch').style.display='none';document.getElementById('gestionFilters').style.display='none';document.getElementById('guia-correos').style.display='none';
+  if(esComunicaciones)configurarFiltros('COMUNICACIONES');
   document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url;establecerTituloVistaETOP(title);activate(btn);
 }
 
