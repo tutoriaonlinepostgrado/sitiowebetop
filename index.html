@@ -2832,9 +2832,9 @@ function configurarFiltros(clave){
   document.getElementById('guia-correos').style.display=(clave==='CORREOS'||clave==='CORREOS_PRUEBA'||clave==='INVITACIONES')?'flex':'none';
   const btnCargaCorreo=document.querySelector('#guia-correos .guia-correos-btn');
   const guiaCargaCorreo=document.querySelector('#guia-correos .guia-correos-texto');
-  if(btnCargaCorreo)btnCargaCorreo.textContent=clave==='CORREOS_PRUEBA'?'↻ Cargar datos del curso y buscar nómina en Semáforo':'↻ Cargar datos del curso';
+  if(btnCargaCorreo)btnCargaCorreo.textContent=(clave==='CORREOS_PRUEBA'||clave==='INVITACIONES')?'↻ Cargar datos del curso y buscar nómina en Semáforo':'↻ Cargar datos del curso';
   if(guiaCargaCorreo){
-    guiaCargaCorreo.innerHTML=clave==='CORREOS_PRUEBA'
+    guiaCargaCorreo.innerHTML=(clave==='CORREOS_PRUEBA'||clave==='INVITACIONES')
       ?'<strong>Un solo paso:</strong> selecciona el NRC y pulsa el botón amarillo para cargar los datos y buscar los estudiantes.'
       :'<strong>¿Cómo cargar los datos?</strong> Busca arriba tu curso de inducción, selecciónalo y luego haz clic aquí.';
   }
