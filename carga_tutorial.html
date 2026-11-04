@@ -175,7 +175,7 @@ body.embedded .top{display:none}.embedded .wrap{padding-top:10px}
 </nav>
 <div id="resumenView" class="view-panel active">
  <div class="overview-grid">
-  <section class="card"><div class="card-head"><div><h2>Carga actual por tutor</h2><p>Selecciona un tutor para filtrar el detalle. Los valores llevan a Calendarios.</p></div></div>
+  <section class="card"><div class="card-head"><div><h2>Carga actual por tutor</h2><p>Actual − cierre + preparación 7 días = proyectada. <strong>s/d</strong> indica matrícula no verificable; los cero del origen requieren revisión.</p></div></div>
    <div class="table-wrap tutor-table"><table class="tutor-matrix"><thead>
 <tr><th rowspan="2" class="tutor-heading">Tutor/a</th><th colspan="4" class="group-heading">NRC</th><th colspan="4" class="group-heading attention-group">Atenciones</th></tr>
 <tr><th class="num" title="NRC activos">Act.</th><th class="num" title="NRC en cierre">Cierre</th><th class="num" title="NRC en preparación que comienzan entre hoy y los próximos 7 días">Prep. 7d</th><th class="num total-heading" title="Total NRC: activos, en cierre y preparación próximos 7 días">Total</th><th class="num" title="Carga actual: estudiantes de NRC activos y en cierre">Actual</th><th class="num" title="Atenciones que dejarán de formar parte de la carga: estudiantes en NRC en cierre">− Cierre</th><th class="num" title="Atenciones que se incorporarán: estudiantes en NRC en preparación que comienzan entre hoy y 7 días">+ Prep. 7d</th><th class="num total-heading" title="Carga proyectada = carga actual − atenciones en cierre + atenciones de preparación próximos 7 días">Proy. 7d</th></tr>
@@ -255,7 +255,7 @@ const listRows=tutorRowsFrom(filtered(true));renderTutorCharts(tutorRowsFrom(dat
  <td class="num">${drill(r.cie,`data-tutor-drill="${te}" data-estado-drill="EN CIERRE"`,`Ver NRC en cierre de ${r.t}`)}</td>
  <td class="num">${drill(r.prep7,`data-tutor-prep="${te}"`,`Ver NRC próximos de ${r.t}`)}</td>
  <td class="num total-cell"><strong title="NRC activos + en cierre + preparación próximos 7 días">${num(nrcTotal)}</strong></td>
- <td class="num">${r.att?num(r.att):((r.act+r.cie)?'s/d':'0')}</td>
+ <td class="num">${(r.unverifiedActive||r.unverifiedClosing)?'s/d':num(r.att)}</td>
  <td class="num">${r.cie?(r.unverifiedClosing?'s/d':num(r.attCie)):'0'}</td>
  <td class="num">${r.prep7?(r.unverifiedPrep?'s/d':num(r.attPrep7)):'0'}</td>
  <td class="num total-cell">${unverified?'<span class="projection-unknown" title="Existen NRC sin una matrícula verificable en metricas_estudiantes.json. No se calcula una proyección incompleta.">s/d</span>':`<strong title="Carga actual − cierre + preparación 7 días = ${num(r.att)} − ${num(r.attCie)} + ${num(r.attPrep7)}">${num(projected)}</strong>`}</td>
