@@ -319,12 +319,11 @@ body { padding:clamp(6px,.8vw,14px); }
     <p>Selecciona el curso en la barra superior del portal y utiliza prioritariamente la nómina de estudiantes disponible en SharePoint.</p>
   </div>
 
-  <section class="etop-primary-panel" aria-label="Paso 1: Buscar la nómina de estudiantes en la base Semáforo">
-    <div class="etop-step"><span class="etop-num">PASO 1</span> Buscar la nómina de estudiantes en la base Semáforo</div>
-    <p>Primero busca la nómina de tu curso de inducción en <strong>BASE/SEMAFORO_2.0 (SharePoint)</strong>. Sube el Excel únicamente si no está disponible.</p>
-    <button class="btn primary" type="button" onclick="cargarEstudiantesSeguimiento(false)">🔎 Buscar nómina en la base Semáforo</button>
+  <section class="etop-primary-panel" aria-label="Consulta automática de la nómina en la base Semáforo">
+    <div class="etop-step"><span class="etop-num">PASO 1</span> Nómina de estudiantes en la base Semáforo</div>
+    <p>Selecciona arriba el NRC y pulsa <strong>«Cargar datos del curso y buscar nómina en Semáforo»</strong>. Se completarán los datos del curso y se consultarán sus estudiantes en SharePoint con un solo clic.</p>
     <div id="seguimiento-status" aria-live="polite"></div>
-    <div class="etop-panel-info" id="seguimiento-helper">La consulta se conserva temporalmente en la memoria del navegador.</div>
+    <div class="etop-panel-info" id="seguimiento-helper">Si la nómina no está disponible, podrás cargar el Excel desde la opción de respaldo.</div>
   </section>
 
   <details class="etop-secondary">
@@ -1010,6 +1009,9 @@ window.onload = async function() {
   await cargarNrcsOb();
   await cargarProgramas();
   autocompletarPrimerCursoDesdeContexto();
+  if(p.get('autoConsultaNomina')==='1') {
+    await cargarEstudiantesSeguimiento(false);
+  }
 };
 </script>
 </body>
