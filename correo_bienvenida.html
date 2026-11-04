@@ -196,16 +196,16 @@ document.addEventListener('click', function(e) {
 // El botón usa mailto: para generar un correo real, sin formulario ni seguimiento.
 function prepararEnlaceConfirmacion(contenido) {
   let destinatario = (params.get('correoTutor') || params.get('correo_tutor') || '').trim();
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(destinatario)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destinatario)) {
     destinatario = window.prompt('Ingresa el correo institucional del tutor para habilitar el botón Confirmar recepción:', '')?.trim() || '';
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(destinatario)) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destinatario)) return false;
   }
   const valor = campo => (document.querySelector('[data-campo="'+campo+'"]')?.textContent || '').trim();
   const nombre=valor('nombre_estudiante_2') || valor('nombre_estudiante') || 'Estudiante';
   const rut=valor('rut_estudiante');
   const curso=valor('curso_induccion');
   const asunto='Confirmación de recepción - Bienvenida UNAB Online';
-  const cuerpo='Estimado(a) tutor(a):\\n\\nConfirmo la recepción del correo de bienvenida y la revisión de mis datos.\\n\\nNombre: '+nombre+'\\nRUT o ID: '+rut+(curso?'\\nCurso: '+curso:'')+'\\n\\nSaludos cordiales.';
+  const cuerpo='Estimado(a) tutor(a):\n\nConfirmo la recepción del correo de bienvenida y la revisión de mis datos.\n\nNombre: '+nombre+'\nRUT o ID: '+rut+(curso?'\nCurso: '+curso:'')+'\n\nSaludos cordiales.';
   const enlace='mailto:'+destinatario+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
   const boton=contenido.querySelector('#confirmar-recepcion');
   if(boton)boton.href=enlace;
