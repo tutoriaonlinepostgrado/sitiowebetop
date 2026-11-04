@@ -60,32 +60,77 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-seri
 @media(max-width:620px){.app{grid-template-columns:43px minmax(130px,160px) minmax(0,1fr)!important}}
 
 </style>
+<style id="comms-redesign">
+:root{--bg:#f3f6fb;--sidebar:#fff;--panel:#fff;--text:#17243a;--muted:#61718b;--soft:#8291a4;--border:#e2e9f2;--gold:#bb8500;--gold-dim:#fff7df;--gold-line:#e8d291;--green:#159660;--green-bg:#e7f8ef;--green-bd:#c4ead4}
+html,body{background:#f3f6fb;color:#17243a}
+.app,.app *{min-width:0}
+.app{display:grid;grid-template-columns:270px minmax(0,1fr);height:100vh;width:100%;overflow:hidden}
+.left{background:#fff;border-right:1px solid #dde6f0;display:flex;flex-direction:column;overflow:hidden}
+.side-head{padding:20px 18px 13px;border-bottom:1px solid #edf1f6}
+.side-eyebrow,.selection-caption{font-size:10px;letter-spacing:.1em;font-weight:800;color:#708199}
+.side-head h1{font-size:20px;color:#15243b;letter-spacing:-.03em;margin:5px 0}
+.side-head p{font-size:12px;line-height:1.5;color:#65758c}
+.stage-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:13px 13px 11px}
+.stage-tab{font:600 11px 'Segoe UI',system-ui,sans-serif;background:#f5f7fb;color:#475b74;border:1px solid #e3e9f2;border-radius:8px;padding:10px 5px;cursor:pointer}
+.stage-tab.active{background:#173353;color:#fff;border-color:#173353}
+.stage-tab:hover:not(.active){background:#e9f0f8}
+.selection-info{padding:12px 15px;background:#f8fafc;border-top:1px solid #edf1f6;border-bottom:1px solid #e6ebf2}
+.selection-value{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#223b57;margin-top:8px;line-height:1.4}
+.selection-sub{font-size:11px;color:#667a91;margin:3px 0 0 14px;overflow-wrap:anywhere}
+.selection-info .nrc-estado{margin:6px 0 0 14px}
+.ndot{flex-shrink:0;background:#a1aec0}.ndot.ok{background:#19a66d}.ndot.err{background:#df695d}
+.lista-hdr{padding:14px 16px 9px;background:white;border-bottom:1px solid #edf1f6}
+.lista-etapa-lbl{font-size:10px;color:#a07812}.lista-etapa-tit{font-size:14px;font-weight:750;color:#213551}
+.lista-items{flex:1;overflow:auto;padding:8px}
+.litem{border:1px solid transparent;border-left:3px solid transparent;border-radius:9px;padding:12px 10px;gap:10px;margin:3px 0;display:flex;align-items:flex-start;cursor:pointer}
+.litem:hover{background:#f3f6fb}
+.litem.active{background:#eaf2fb;border-color:#d6e5f7;border-left-color:#296cb2}
+.li-ic{font-size:17px}.li-nom{font-size:12px;color:#243a55;font-weight:600}
+.litem.active .li-nom,.litem.active .li-ic{color:#154d85}
+.li-tipo{font-size:10px;border-radius:5px;padding:2px 7px;margin-top:6px}
+.t-correo{background:#e6f2ff;color:#1d639e}.t-masivo{background:#f1eaff;color:#6e4da9}
+.litem.individual .li-nom{font-weight:750}
+.litem.individual::after{content:'Individual';font-size:9px;background:#def6ea;color:#16764c;border-radius:5px;padding:3px 6px;font-weight:700;flex-shrink:0}
+.side-foot{padding:12px 15px;font-size:10px;line-height:1.5;color:#71839a;border-top:1px solid #e9eef4;background:#fafbfd}
+.preview{display:flex;flex-direction:column;min-width:0;background:#f4f7fb}
+.notice{display:flex;align-items:flex-start;gap:13px;margin:16px 18px 13px;background:#f1f7ff;border:1px solid #ccdef6;border-left:4px solid #337abd;border-radius:12px;padding:14px 16px}
+.notice-icon{background:#deecff;border-radius:9px;color:#1b5e9a;padding:9px;font-size:19px}
+.notice strong{font-size:14px;color:#183b60}.notice p{font-size:12px;line-height:1.6;color:#3c5b79;margin-top:4px}
+.preview-bar{height:46px;background:#fff;color:#22374f;border-top:1px solid #e5ebf2;border-bottom:1px solid #e5ebf2;padding:0 19px}
+.pb-tit{font-size:13px;font-weight:750}.pb-badge{background:#e7f8ef;color:#17734a;border-color:#c4ead4}.pb-btn{color:#1b5e9a;background:#eef6ff;border-color:#d2e4f8}
+.preview-body{flex:1;min-height:0;overflow:hidden;background:#fff}
+.ph,.ctx-req{background:#f7f9fc}
+.ph-ic{opacity:.65}.ph-t{color:#203550}.ph-s{color:#63778e;max-width:390px}
+.ctx-box{border:1px solid #e4eaf2;box-shadow:0 10px 35px rgba(22,42,67,.07);max-width:440px;padding:34px}
+.ctx-t{color:#1e3550}.ctx-s{color:#65758c}
+@media(max-width:880px){.app{grid-template-columns:220px minmax(0,1fr)}.notice{margin:10px;padding:11px}.notice p{font-size:11px}}
+@media(max-width:600px){html,body{overflow:auto}.app{height:100vh;grid-template-columns:1fr;grid-template-rows:auto minmax(300px,1fr)}.left{max-height:48vh}.side-head{padding:10px 13px}.side-head p,.side-foot{display:none}.stage-tabs{padding:7px;grid-template-columns:repeat(4,1fr);gap:4px}.stage-tab{font-size:10px;padding:8px 2px}.selection-info{padding:8px 12px}.lista-items{max-height:160px}.preview{min-height:300px}.notice{margin:7px;padding:9px}.notice strong{font-size:12px}.notice p{font-size:10px}}
+</style>
 </head>
 <body>
 <div class="app">
-<nav class="rail">
-<div class="rail-logo"><a href="index.html"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1760373349/ETOP_1__03_e5xcw0.png" alt="ETOP"></a></div>
-<button class="rail-btn active" id="rb-preparacion" title="Preparación" onclick="selEtapa('preparacion',this)">✨</button>
-<button class="rail-btn" id="rb-induccion" title="Semana Inducción" onclick="selEtapa('induccion',this)">🎓</button>
-<button class="rail-btn" id="rb-imparticion" title="Impartición" onclick="selEtapa('imparticion',this)">✏️</button>
-<button class="rail-btn" id="rb-cierre" title="Cierre" onclick="selEtapa('cierre',this)">🏁</button><div class="rail-sep"></div>
-<a href="index.html" class="rail-btn rail-back" title="Portal ETOP">⬅️</a>
-</nav>
-<div class="left">
-<div class="nrc-block">
-<div class="nrc-hdr"><span class="nrc-lbl">📋 NRC</span><span class="ndot loading" id="ndot"></span></div>
-<div class="nrc-search-wrap"><input class="nrc-search" id="nsearch" placeholder="🔍 NRC, curso, tutor..." oninput="filtrarNrc()"></div>
-<div class="nrc-select-wrap"><select class="nrc-select" id="nsel" onchange="selNRC(this.value)"><option value="">— Selecciona un curso —</option></select></div>
-<div id="nrc-mini" style="display:none;padding:0 12px 10px"><div style="display:flex;align-items:center;justify-content:space-between;gap:6px"><div><div class="nrc-estado" id="n-estado" style="margin-bottom:4px">—</div><div style="font-size:10px;color:#cbd5e1;font-weight:600;line-height:1.3" id="n-nombre">—</div><div style="font-size:9px;color:var(--soft);margin-top:2px" id="n-nrc">—</div></div><button class="btn-activar" id="btn-activar" onclick="activarCtx()" style="width:auto;padding:6px 10px;font-size:10px;white-space:nowrap">✓ Activar</button></div></div>
-<div class="nrc-ph" id="nph" style="padding:10px 14px;font-size:10px"><span style="font-size:16px;display:block;margin-bottom:4px;opacity:.4">📂</span>Selecciona un curso</div>
-</div>
-<div class="lista-hdr"><div class="lista-etapa-lbl" id="l-tag">Etapa 1</div><div class="lista-etapa-tit" id="l-tit">Preparación</div></div>
-<div class="lista-items" id="lista-items"></div>
-</div>
-<div class="preview"><div class="preview-bar"><span class="pb-ic" id="pb-ic">📄</span><span class="pb-tit" id="pb-tit">Selecciona una plantilla de la lista</span><span class="pb-badge" id="pb-badge">⚡ Datos NRC aplicados</span><a href="#" class="pb-btn" id="pb-abrir" target="_blank" style="display:none">Abrir en nueva pestaña ↗</a></div>
-<div class="preview-body"><div class="ph" id="ph"><div class="ph-ic">📬</div><div class="ph-t">Selecciona una plantilla</div><div class="ph-s">Elige una etapa en el rail izquierdo y luego una plantilla de la lista.</div><div class="ph-tag">Portal ETOP · Comunicaciones</div></div>
-<div class="ctx-req" id="ctx-req"><div class="ctx-box"><div class="ctx-ic">⚡</div><div class="ctx-t">Activa el contexto del curso</div><div class="ctx-s">Selecciona un NRC en el panel izquierdo y haz clic en <strong>"Activar contexto"</strong> para que los datos del curso se pre-completen automáticamente en la plantilla.</div></div></div>
-<iframe id="pframe" src="" style="display:none"></iframe></div></div>
+ <aside class="left" aria-label="Catálogo de comunicaciones">
+  <div class="side-head"><div class="side-eyebrow">ETOP · Herramientas</div><h1>Comunicaciones</h1><p>Plantillas y envíos para cada etapa del curso.</p></div>
+  <div class="stage-tabs" role="group" aria-label="Etapas de comunicación">
+   <button class="stage-tab active" id="rb-preparacion" onclick="selEtapa('preparacion',this)">Preparación</button>
+   <button class="stage-tab" id="rb-induccion" onclick="selEtapa('induccion',this)">Inducción</button>
+   <button class="stage-tab" id="rb-imparticion" onclick="selEtapa('imparticion',this)">Impartición</button>
+   <button class="stage-tab" id="rb-cierre" onclick="selEtapa('cierre',this)">Cierre</button>
+  </div>
+  <div class="selection-info"><span class="selection-caption">CURSO DESDE LA BARRA SUPERIOR</span><div class="selection-value"><span class="ndot loading" id="ndot"></span><span id="n-nombre">Sin NRC seleccionado</span></div><div id="n-nrc" class="selection-sub">Utiliza el buscador NRC del portal.</div><span id="n-estado" class="nrc-estado" style="display:none"></span></div>
+  <div class="lista-hdr"><div class="lista-etapa-lbl" id="l-tag">Etapa 1</div><div class="lista-etapa-tit" id="l-tit">Preparación</div></div>
+  <div class="lista-items" id="lista-items"></div>
+  <div class="side-foot">Los envíos individuales permiten atender incorporaciones posteriores al envío masivo.</div>
+ </aside>
+ <main class="preview">
+  <div class="notice" role="note"><div class="notice-icon">✉</div><div><strong>¿Se incorporaron estudiantes a última hora?</strong><p>Si un estudiante no alcanzó a recibir el correo de bienvenida o la invitación sincrónica masiva, utiliza el <b>envío individual</b>. Así podrás contactar solo a los estudiantes pendientes, sin repetir el envío a toda la nómina.</p></div></div>
+  <div class="preview-bar"><span class="pb-ic" id="pb-ic">✉️</span><span class="pb-tit" id="pb-tit">Selecciona una comunicación</span><span class="pb-badge" id="pb-badge">Curso aplicado</span><a href="#" class="pb-btn" id="pb-abrir" target="_blank" rel="noopener" style="display:none">Abrir aparte ↗</a></div>
+  <div class="preview-body">
+   <div class="ph" id="ph"><div class="ph-ic">✉️</div><div class="ph-t">Selecciona una comunicación</div><div class="ph-s">Elige una herramienta a la izquierda. Para precompletar los datos del curso, selecciona su NRC en la barra superior del portal.</div></div>
+   <div class="ctx-req" id="ctx-req"><div class="ctx-box"><div class="ctx-ic">📋</div><div class="ctx-t">Selecciona el NRC en el portal</div><div class="ctx-s">Utiliza el buscador NRC de la barra superior. Los datos del curso se aplicarán automáticamente a esta comunicación.</div></div></div>
+   <iframe id="pframe" title="Plantilla de comunicación" src="about:blank" style="display:none"></iframe>
+  </div>
+ </main>
 </div>
 <script>
 const TUTORES_CORREOS={
@@ -94,8 +139,8 @@ const CAT={
 preparacion:{tag:'Etapa 1',tit:'Preparación',items:[
 {n:'Correos Bienvenida — Masivo',t:'masivo',i:'📧',url:'com_correos_masivo.html',req:true,params:['nombreTutor','correoTutor','anexoTutor','nombrePrograma','nombreCurso','fechaInicio','fechaFin']},
 {n:'Invitación Sincrónica — Masivo',t:'masivo',i:'📅',url:'com_invitaciones_masivo.html',req:true,params:['nombreTutor','correoTutor','nombreCurso','fechaInicio']},
-{n:'Correo Bienvenida — Rezagado',t:'correo',i:'✉️',url:'correo_bienvenida.html',req:true,params:['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']},
-{n:'Invitación Sincrónica — Rezagado',t:'correo',i:'✉️',url:'invitacion_sincronica.html',req:true,params:['nombreTutor','correoTutor','nombreCurso']},
+{n:'Correo de bienvenida — Individual',t:'correo',i:'✉️',url:'correo_bienvenida.html',req:true,params:['nombreTutor','correoTutor','anexoTutor','nombreCurso','nombrePrograma','fechaInicio','fechaFin']},
+{n:'Invitación sincrónica — Individual',t:'correo',i:'✉️',url:'invitacion_sincronica.html',req:true,params:['nombreTutor','correoTutor','nombreCurso']},
 {n:'Presentación Tutorial — Docente',t:'correo',i:'📊',url:'presentacion_tutorial_innovado.html',req:true,params:['nombreTutor','nombreCurso','nrc','fechaInicio','fechaFin','diaInicio','diaFin','duracion']}]},
 induccion:{tag:'Etapa 2',tit:'Semana de Inducción',items:[
 {n:'Anuncio Bienvenida Inducción',t:'anuncio',i:'📢',url:'anuncio_bienvenida_induccion.html',req:false,params:[]},{n:'Anuncio Lunes — Invitación Sincrónica',t:'anuncio',i:'📢',url:'anuncio_lunes_invitacion_sincronica.html',req:false,params:[]},{n:'Anuncio Martes — Activa Zoom',t:'anuncio',i:'📢',url:'anuncio_martes_zoom.html',req:false,params:[]},{n:'Anuncio Miércoles — Grabación',t:'anuncio',i:'📢',url:'anuncio_miercoles_grabacion.html',req:false,params:[]},{n:'Anuncio Jueves — Gestiona tu Caso',t:'anuncio',i:'📢',url:'anuncio_jueves_gestiona.html',req:false,params:[]},{n:'Anuncio Cierre Semana Inducción',t:'anuncio',i:'📢',url:'anuncio_cierre_induccion.html',req:false,params:[]}]},
@@ -109,26 +154,48 @@ const normalizarNrc=v=>texto(v).replace(/\s+/g,'').toLowerCase();
 async function cargarDatos(){
  const dot=document.getElementById('ndot');dot.className='ndot loading';
  try{
-  const r=await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now(),{cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const data=await r.json();
-  if(!Array.isArray(data)) throw new Error('Formato de nrcs.json inválido');
-  nrcsMerged=data.map(c=>({...c,nrc:texto(c.nrc)})).filter(c=>c.nrc);
-  poblarSelect(nrcsMerged);dot.className='ndot ok';dot.title=nrcsMerged.length+' cursos cargados';
- }catch(e){console.error('Error cargando NRC:',e);dot.className='ndot err';dot.title='Error al cargar datos';document.getElementById('nph').innerHTML='<span>⚠️</span>No se pudo cargar la lista de cursos.'}
+ const r=await fetch('https://raw.githubusercontent.com/tutoriaonlinepostgrado/sitiowebetop/main/nrcs.json?t='+Date.now(),{cache:'no-store'});
+ if(!r.ok)throw Error('HTTP '+r.status);
+ const data=await r.json();if(!Array.isArray(data))throw Error('Formato NRC inválido');
+ nrcsMerged=data.map(c=>({...c,nrc:texto(c.nrc)})).filter(c=>c.nrc);
+ dot.className='ndot ok';dot.title=nrcsMerged.length+' cursos disponibles';
+ syncPortalNRC();
+ }catch(e){console.error('Error cargando datos NRC:',e);dot.className='ndot err';dot.title='No se pudieron cargar los cursos';}
 }
-function poblarSelect(data){const sel=document.getElementById('nsel');sel.innerHTML='<option value="">— Selecciona un curso ('+data.length+') —</option>';data.forEach(c=>{const o=document.createElement('option');o.value=texto(c.nrc);const estado=texto(c.estado).substring(0,3).toUpperCase();const nombre=texto(c['nombre curso']||c.nrc).substring(0,40);o.textContent='['+estado+'] '+nombre;o.title=texto(c.nrc)+' · '+texto(c.tutor);sel.appendChild(o)})}
-function filtrarNrc(){const q=normalizar(document.getElementById('nsearch').value);const campos=c=>[c.nrc,c['nombre curso'],c['codigo curso'],c.tutor,c.facultad,c.intake,c.periodo,c['nombre programa'],c.materia].some(v=>normalizar(v).includes(q));const f=!q?nrcsMerged:nrcsMerged.filter(campos);poblarSelect(f);document.getElementById('nsel').value='';const mini=document.getElementById('nrc-mini');if(mini)mini.style.display='none';document.getElementById('nph').style.display='block'}
-function selNRC(cod){if(!cod){document.getElementById('nrc-mini').style.display='none';document.getElementById('nph').style.display='block';nrcActual=null;ctxOn=false;document.getElementById('pb-badge').classList.remove('vis');return}const key=normalizarNrc(cod);const c=nrcsMerged.find(x=>normalizarNrc(x.nrc)===key);if(!c)return;nrcActual=c;ctxOn=false;document.getElementById('nph').style.display='none';document.getElementById('nrc-mini').style.display='block';const estadoEl=document.getElementById('n-estado');const est=texto(c.estado).replace(/ /g,'_');estadoEl.className='nrc-estado e'+est;estadoEl.textContent=c.estado||'—';document.getElementById('n-nombre').textContent=texto(c['nombre curso']||c.nrc||'—').substring(0,38);document.getElementById('n-nrc').textContent=c.nrc||'—';const btn=document.getElementById('btn-activar');btn.classList.remove('on');btn.textContent='✓ Activar';document.getElementById('pb-badge').classList.remove('vis');if(itemAct&&itemAct.req){document.getElementById('ctx-req').classList.add('vis');document.getElementById('pframe').style.display='none'}}
-function activarCtx(){if(!nrcActual)return;ctxOn=true;const btn=document.getElementById('btn-activar');btn.classList.add('on');btn.textContent='✓ Activo';if(itemAct)cargarItem(itemAct,document.querySelector('.litem.active'))}
+function obtenerNRCportal(){
+ const q=new URLSearchParams(location.search).get('nrc');
+ if(q)return q.split('|')[0];
+ try{if(window.parent!==window&&window.parent.location.origin===location.origin){
+  const p=window.parent;
+  if(typeof p.valoresNrcPrincipal==='function'){const v=p.valoresNrcPrincipal();if(v&&v.length)return v[0];}
+  if(p.document?.getElementById('input-nrc')?.value)return p.document.getElementById('input-nrc').value;
+ }}catch(e){}
+ return '';
+}
+let ultimoNrcPortal='';
+function syncPortalNRC(){
+ const cod=obtenerNRCportal(),key=normalizarNrc(cod);
+ if(key===ultimoNrcPortal)return;
+ ultimoNrcPortal=key;selNRC(cod);
+}
+function selNRC(cod){
+ const c=nrcsMerged.find(x=>normalizarNrc(x.nrc)===normalizarNrc(cod));
+ const anterior=nrcActual?.nrc||'';
+ nrcActual=c||null;ctxOn=Boolean(c);
+ const nombre=document.getElementById('n-nombre'),nrc=document.getElementById('n-nrc'),estado=document.getElementById('n-estado');
+ if(c){nombre.textContent=texto(c['nombre curso']||c.nrc);nrc.textContent='NRC '+c.nrc;estado.textContent=c.estado||'—';estado.className='nrc-estado e'+texto(c.estado).replace(/ /g,'_');estado.style.display='inline-flex';}
+ else{nombre.textContent=cod?'NRC no encontrado en catálogo':'Sin NRC seleccionado';nrc.textContent=cod?'Revisa el NRC seleccionado en la barra superior':'Selecciona un NRC en la barra superior del portal.';estado.style.display='none';}
+ if(itemAct&&anterior!==(c?.nrc||''))cargarItem(itemAct,document.querySelector('.litem.active'));
+}
+function activarCtx(){syncPortalNRC()}
 function buildURL(item){if(!item.params||item.params.length===0)return item.url;if(!ctxOn||!nrcActual)return item.url;const c=nrcActual;const fechaIRaw=texto(c['fecha inicio']);const fi=fechaIRaw.includes('T')?fechaIRaw.split('T')[0]:fechaIRaw;const ff=texto(c['fecha fin']||c.fechaFin);const tutor=limpiar(c.tutor||'');const correo=TUTORES_CORREOS[tutor?.toUpperCase()]||'';const semanas=c['n° de semanas']||c.semanas||'';const nrc=texto(c.nrc);const nombre=texto(c['nombre curso']);const intake=texto(c.intake);const programa=texto(c['nombre programa']);const periodo=texto(c.periodo);const TUTORES_ANEXOS={'HANS NOVAKOVIC':'600 585 8550 Anexo 7261','KIMBERLY JORQUERA':'600 585 8550 Anexo 7284','MARTA GONZALEZ':'600 585 8550 Anexo 5216','DANITZA JANSEN':'600 585 8550 Anexo 5866','SYLVIA VALENZUELA':'600 585 8550 Anexo 5873','PAULA PARDO':'600 585 8550 Anexo 1285','MARIA FERNANDA GONZALEZ':'600 585 8550 Anexo 5644','BARBARA ROJAS':'600 585 8550 Anexo 7260','CONSTANZA CONTRERAS':'600 585 8550 Anexo 8201','CARLA PENA':'600 585 8550 Anexo 7361','NOEMI PAZ':'600 585 8550 Anexo 1288','HECTOR TAPIA':'600 585 8550 Anexo 5685','CONSUELO PARGA':'600 585 8550 Anexo 1273','FRANCISCA INDA':'600 585 8550 Anexo 1278','JAVIERA ROJAS':'600 585 8550 Anexo 1279','ALYSON HERNANDEZ':'600 585 8550 Anexo 5245'};const anexoVal=TUTORES_ANEXOS[tutor?.toUpperCase()]||'';const p={nombreTutor:tutor,correoTutor:correo,anexoTutor:anexoVal,nombreCurso:(nrc&&nombre)?nrc+' — '+nombre:(nombre||nrc),nombrePrograma:programa,intake,periodo,nrc,fechaInicio:fi,fechaFin:ff,fechaInicioFmt:fi?fmtDMY(fi):'',fechaFinFmt:ff?fmtDMY(ff):'',diaInicio:fi?diaNom(fi):'',diaFin:ff?diaNom(ff):'',duracion:semanas,nombre_tutor:tutor,correo_tutor:correo,nombre_curso:nombre,nombre_programa:programa,fecha_inicio:fi?fmtDMY(fi):'',fecha_fin:ff?fmtDMY(ff):'',nombre:''};const qs=item.params.filter(k=>p[k]!==undefined&&p[k]!=='').map(k=>encodeURIComponent(k)+'='+encodeURIComponent(p[k])).join('&');return qs?item.url+'?'+qs:item.url}
-function selEtapa(id,btn){document.querySelectorAll('.rail-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');etapaAct=id;itemAct=null;const e=CAT[id];document.getElementById('l-tag').textContent=e.tag;document.getElementById('l-tit').textContent=e.tit;const cont=document.getElementById('lista-items');cont.innerHTML='';e.items.forEach(item=>{const div=document.createElement('div');div.className='litem';div.innerHTML=`<span class="li-ic">${item.i}</span><div class="li-inf"><div class="li-nom">${item.n}</div><span class="li-tipo t-${item.t}">${item.t}</span></div>`;div.addEventListener('click',()=>cargarItem(item,div));cont.appendChild(div)});resetPreview()}
+function selEtapa(id,btn){document.querySelectorAll('.stage-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');etapaAct=id;itemAct=null;const e=CAT[id];document.getElementById('l-tag').textContent=e.tag;document.getElementById('l-tit').textContent=e.tit;const cont=document.getElementById('lista-items');cont.innerHTML='';e.items.forEach(item=>{const div=document.createElement('div');div.className='litem'+(item.n.includes('Individual')?' individual':'');div.innerHTML=`<span class="li-ic">${item.i}</span><div class="li-inf"><div class="li-nom">${item.n}</div><span class="li-tipo t-${item.t}">${item.t}</span></div>`;div.addEventListener('click',()=>cargarItem(item,div));cont.appendChild(div)});resetPreview()}
 function cargarItem(item,el){document.querySelectorAll('.litem').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');itemAct=item;document.getElementById('pb-ic').textContent=item.i;document.getElementById('pb-tit').textContent=item.n;const frame=document.getElementById('pframe'),ph=document.getElementById('ph'),ctxReq=document.getElementById('ctx-req'),badge=document.getElementById('pb-badge'),abrirBtn=document.getElementById('pb-abrir');ph.style.display='none';if(item.req&&!ctxOn){ctxReq.classList.add('vis');frame.style.display='none';frame.src='';badge.classList.remove('vis');abrirBtn.style.display='none';return}ctxReq.classList.remove('vis');const url=buildURL(item);frame.src=url;frame.style.display='block';badge.classList.toggle('vis',item.req&&ctxOn&&item.params.length>0);abrirBtn.href=url;abrirBtn.style.display='inline-block'}
 function resetPreview(){document.getElementById('pb-ic').textContent='📄';document.getElementById('pb-tit').textContent='Selecciona una plantilla de la lista';document.getElementById('pb-abrir').style.display='none';document.getElementById('pframe').style.display='none';document.getElementById('pframe').src='';document.getElementById('ctx-req').classList.remove('vis');document.getElementById('pb-badge').classList.remove('vis');document.getElementById('ph').style.display='flex'}
 function fmtDMY(iso){if(!iso)return'';const s=iso.split('T')[0];const[y,m,d]=s.split('-');return d+'-'+m+'-'+y}
 function diaNom(iso){if(!iso)return'';return['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][new Date(iso+'T12:00:00').getDay()]}
 function limpiar(v){if(!v)return'';const l=v.trim().toLowerCase();return['por definir','por confirmar','0','nan','definir'].includes(l)?'':v.trim()}
-window.onload=()=>{cargarDatos();selEtapa('preparacion',document.getElementById('rb-preparacion'))};
+window.onload=()=>{selEtapa('preparacion',document.getElementById('rb-preparacion'));cargarDatos();setInterval(syncPortalNRC,650)};
 </script>
 </body>
 </html>
