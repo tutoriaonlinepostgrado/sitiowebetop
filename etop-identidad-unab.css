@@ -587,3 +587,85 @@ html[data-etop-page="incidencias"] .page-btn:hover:not(:disabled),
 html[data-etop-page="incidencias"] .page-btn.active{
   background:#FFF7D9;border-color:#E3D084;color:#70580A
 }
+
+/* Ajuste solicitado: solo el menú izquierdo vuelve al azul ETOP.
+   Se preservan la barra superior blanca y los contenidos claros. */
+html[data-etop-page="inicio"] .sidebar,
+html[data-etop-page="coordinacion"] .sidebar{
+  background:linear-gradient(180deg,#122541 0%,#1F2940 100%)!important;
+  color:#F3F7FC!important;
+  border-right:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:2px 0 12px rgba(18,37,65,.10)!important
+}
+
+/* Portal principal */
+html[data-etop-page="inicio"] .sidebar .brand{
+  border-bottom:1px solid rgba(255,255,255,.13)!important
+}
+html[data-etop-page="inicio"] .sidebar .brand-text b{color:#FFFFFF!important}
+html[data-etop-page="inicio"] .sidebar .brand-text span{color:#B4C5DA!important}
+html[data-etop-page="inicio"] .sidebar .menu-cat{color:#9EAFCA!important}
+html[data-etop-page="inicio"] .sidebar :is(.menu-btn,.collapsible){
+  color:#E0EAF5!important
+}
+html[data-etop-page="inicio"] .sidebar :is(.menu-btn,.collapsible):hover{
+  background:rgba(255,255,255,.09)!important;color:#FFFFFF!important
+}
+html[data-etop-page="inicio"] .sidebar .menu-btn.active{
+  background:linear-gradient(90deg,rgba(244,196,0,.20),rgba(244,196,0,.055))!important;
+  color:#FFFFFF!important;border-left:3px solid #F4C400!important
+}
+html[data-etop-page="inicio"] .sidebar .collapsible .arrow{color:#C2D1E3!important}
+html[data-etop-page="inicio"] .sidebar .submenu{border-left-color:rgba(255,255,255,.15)!important}
+html[data-etop-page="inicio"] .sidebar .session-box{
+  background:rgba(5,14,29,.17)!important;border-top:1px solid rgba(255,255,255,.11)!important
+}
+html[data-etop-page="inicio"] .sidebar .session-box small{color:#B5C5D7!important}
+html[data-etop-page="inicio"] .sidebar .session-box b{color:#FFFFFF!important}
+html[data-etop-page="inicio"] .sidebar .session-box .session-meta span{
+  background:rgba(36,162,105,.18)!important;color:#A1EBC9!important
+}
+html[data-etop-page="inicio"] .sidebar .session-box .session-meta span.off{
+  background:rgba(255,255,255,.10)!important;color:#CDDAE6!important
+}
+html[data-etop-page="inicio"] .sidebar .sidebar-login-btn{
+  background:rgba(255,255,255,.08)!important;
+  border-color:rgba(255,255,255,.20)!important;color:#FFFFFF!important
+}
+
+/* Coordinación: misma navegación azul, con el resto de filtros y paneles blancos. */
+html[data-etop-page="coordinacion"] .sidebar .sidebar-header{
+  background:rgba(5,14,29,.11)!important;
+  border-bottom:1px solid rgba(255,255,255,.13)!important
+}
+html[data-etop-page="coordinacion"] .sidebar .sidebar-header h2{color:#FFFFFF!important}
+html[data-etop-page="coordinacion"] .sidebar .sidebar-header span{color:#B4C5DA!important}
+html[data-etop-page="coordinacion"] .sidebar .menu-category{color:#A4B5CE!important}
+html[data-etop-page="coordinacion"] .sidebar :is(.menu-btn,.collapsible-header){
+  color:#E0EAF5!important
+}
+html[data-etop-page="coordinacion"] .sidebar :is(.menu-btn,.collapsible-header):hover{
+  background:rgba(255,255,255,.09)!important;color:#FFFFFF!important
+}
+html[data-etop-page="coordinacion"] .sidebar .menu-btn.active,
+html[data-etop-page="coordinacion"] .sidebar .collapsible-body .menu-btn.active{
+  background:linear-gradient(90deg,rgba(244,196,0,.20),rgba(244,196,0,.055))!important;
+  color:#FFFFFF!important;border-left:3px solid #F4C400!important
+}
+html[data-etop-page="coordinacion"] .sidebar .collapsible-header.open{
+  background:rgba(255,255,255,.09)!important;
+  color:#FFFFFF!important;border-left-color:rgba(244,196,0,.65)!important
+}
+html[data-etop-page="coordinacion"] #sidebar .menu-btn.menu-calendarios-prioritario,
+html[data-etop-page="coordinacion"] #sidebar .menu-btn.menu-calendarios-prioritario:hover,
+html[data-etop-page="coordinacion"] #sidebar .menu-btn.menu-calendarios-prioritario.active{
+  background:linear-gradient(90deg,rgba(244,196,0,.19),rgba(244,196,0,.055))!important;
+  color:#FFF1AC!important;border-left:3px solid #F4C400!important
+}
+html[data-etop-page="coordinacion"] .sidebar .btn-volver{
+  color:#E0EAF5!important;border-top-color:rgba(255,255,255,.13)!important
+}
+html[data-etop-page="coordinacion"] .sidebar .btn-volver:hover,
+html[data-etop-page="coordinacion"] .sidebar .btn-volver.portal-principal:hover{
+  background:rgba(255,255,255,.09)!important;color:#FFFFFF!important
+}
