@@ -1,0 +1,174 @@
+/* ETOP × Universidad Andrés Bello — sistema visual compartido
+   Institucional UNAB: Pantone 296 #03102C · Pantone 187 #A90429.
+   El amarillo #F4C400 es acento operativo ETOP, no color oficial UNAB.
+   Únicamente presentación: no modifica lógica, estados ni conexiones.
+   Versión: 2026-11-06.
+*/
+html[data-etop-brand="unab"]{
+  --etop-navy:#03102C;
+  --etop-navy-deep:#020B1E;
+  --etop-navy-mid:#0C2240;
+  --etop-panel:#122A4A;
+  --etop-red:#A90429;
+  --etop-gold:#F4C400;
+  --etop-gold-tint:rgba(244,196,0,.12);
+  --etop-paper:#F2F5F9;
+  --etop-white:#FFFFFF;
+  --etop-ink:#192A42;
+  --etop-muted:#63748A;
+  --etop-border:#DCE5EF;
+  --etop-soft-shadow:0 8px 22px rgba(3,16,44,.065);
+}
+html[data-etop-brand="unab"] :where(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--etop-gold);
+  outline-offset:2px;
+}
+html[data-etop-brand="unab"] :where(button,input,select,textarea){font-family:inherit}
+html[data-etop-brand="unab"] :where(.sidebar,.rail,.top-bar,.topnav,.top,.tb){-webkit-font-smoothing:antialiased}
+html[data-etop-brand="unab"] ::selection{background:rgba(169,4,41,.18)}
+
+/* Portada / navegación principal: azul UNAB, contenidos claros, oro ETOP. */
+html[data-etop-page="inicio"]{
+  --navy:var(--etop-navy);--navy2:var(--etop-navy-mid);--blue:#315C8D;
+  --yellow:var(--etop-gold);--bg:var(--etop-paper);--card:#FFF;
+  --line:var(--etop-border);--text:var(--etop-ink);--muted:var(--etop-muted);
+  --shadow:var(--etop-soft-shadow);
+}
+html[data-etop-page="inicio"] .sidebar{
+  background:linear-gradient(180deg,var(--etop-navy) 0%,var(--etop-navy-mid) 100%);
+  border-right:1px solid rgba(255,255,255,.12)
+}
+html[data-etop-page="inicio"] .brand{border-bottom:2px solid var(--etop-red)}
+html[data-etop-page="inicio"] .menu-btn.active{
+  background:linear-gradient(90deg,rgba(244,196,0,.21),rgba(244,196,0,.06));
+  border-left-color:var(--etop-gold);color:#fff
+}
+html[data-etop-page="inicio"] .menu-cat{color:#B3C1D7}
+html[data-etop-page="inicio"] .top{border-bottom:2px solid var(--etop-red);background:#FFF}
+html[data-etop-page="inicio"] .view-title,
+html[data-etop-page="inicio"] .hero h1,
+html[data-etop-page="inicio"] .card-head h2{color:var(--etop-navy)}
+html[data-etop-page="inicio"] .hero .kicker{color:var(--etop-red)}
+html[data-etop-page="inicio"] .hero{border-color:var(--etop-border);box-shadow:var(--etop-soft-shadow)}
+html[data-etop-page="inicio"] .card{border-color:var(--etop-border);box-shadow:var(--etop-soft-shadow)}
+
+/* Espacio Coordinación: mismo patrón de navegación institucional. */
+html[data-etop-page="coordinacion"]{
+  --azul-fondo:var(--etop-navy);
+  --azul-sidebar:var(--etop-navy-mid);
+  --amarillo-top:var(--etop-gold);
+  --texto-gris:#B7C3D3;
+}
+html[data-etop-page="coordinacion"] .sidebar{background:linear-gradient(180deg,var(--etop-navy),var(--etop-navy-mid))}
+html[data-etop-page="coordinacion"] .sidebar-header{
+  border-top:3px solid var(--etop-red);
+  border-bottom:2px solid var(--etop-gold)
+}
+html[data-etop-page="coordinacion"] .top-bar{background:var(--etop-navy);border-bottom:2px solid var(--etop-red)}
+html[data-etop-page="coordinacion"] .content-area{background:var(--etop-paper)}
+
+/* Módulos oscuros: azul profundo en lugar de grises dispares. */
+html[data-etop-page="calendarios"]{
+  --bg:#08182F;--panel:#122641;--panel-soft:#0D203C;
+  --line:#344960;--accent:var(--etop-gold);
+  --text:#EBF1F8;--muted:#AFBDD0;
+}
+html[data-etop-page="calendarios"] .header{
+  background:var(--etop-navy);border-top:2px solid var(--etop-red)
+}
+html[data-etop-page="calendarios"] .summary{background:var(--bg)}
+html[data-etop-page="calendarios"] th{background:#0D223D;border-bottom-color:#40536A;color:#D5E0ED}
+html[data-etop-page="calendarios"] th.sortable:hover{background:#193452}
+html[data-etop-page="calendarios"] .kpi.selected{border-color:var(--etop-gold);box-shadow:0 0 0 2px var(--etop-gold-tint)}
+html[data-etop-page="calendarios"] .summary-title{color:#F5F8FC}
+html[data-etop-page="calendarios"] .panel-action.primary{border-color:var(--etop-gold)}
+
+html[data-etop-page="comunicaciones"]{
+  --bg:#091A34;--sidebar:#0C2240;--panel:#102542;
+  --border:rgba(180,200,225,.18);
+  --gold:var(--etop-gold);
+  --gold-dim:rgba(244,196,0,.12);
+  --gold-line:rgba(244,196,0,.33);
+}
+html[data-etop-page="comunicaciones"] .rail{background:var(--etop-navy);border-right:1px solid rgba(255,255,255,.12)}
+html[data-etop-page="comunicaciones"] .rail-logo{border-bottom-color:var(--etop-red)}
+html[data-etop-page="comunicaciones"] .preview-bar{border-bottom:2px solid var(--etop-red)}
+html[data-etop-page="comunicaciones"] .side-head h1{color:var(--etop-navy)}
+
+html[data-etop-page="incidencias"]{
+  --bg:#08182F;--surface:#122641;--surface2:#172E4B;
+  --surface3:#1C3855;--border:rgba(188,208,233,.13);
+  --border2:rgba(188,208,233,.22);--yellow:var(--etop-gold);
+  --text:#EBF1F8;--text-muted:#ACBDD1;--text-dim:#8094AB;
+}
+html[data-etop-page="incidencias"] .topnav{
+  background:rgba(3,16,44,.97);border-bottom:2px solid var(--etop-red)
+}
+html[data-etop-page="incidencias"] .sidebar{background:var(--etop-navy)}
+html[data-etop-page="incidencias"] .nav-dot{background:var(--etop-gold)}
+
+html[data-etop-page="herramientas"],
+html[data-etop-page="herramientas-test"]{
+  --bg:#08182F;--panel:#102440;--panel-2:#173050;
+  --line:var(--etop-gold);--line-dim:rgba(244,196,0,.26);
+  --muted:#C2D0E1;--soft:#A1B3C8;
+}
+html[data-etop-page="herramientas"] .header,
+html[data-etop-page="herramientas-test"] .header{
+  border-top:3px solid var(--etop-red)
+}
+html[data-etop-page="herramientas"] .tabs-nav,
+html[data-etop-page="herramientas-test"] .tabs-nav{border-bottom-color:rgba(244,196,0,.28)}
+
+html[data-etop-page="equipo"]{
+  --bg:#08182F;--surface:#102541;--surface-2:#183150;
+  --card:#132B49;--gold:var(--etop-gold);--blue:#6AA0D5;
+  --border:rgba(184,205,230,.14)
+}
+html[data-etop-page="equipo"] .header{border-bottom:2px solid var(--etop-red)}
+html[data-etop-page="apps"] body,
+html[data-etop-page="recursos"] body{background-color:#08182F}
+html[data-etop-page="apps"] .main-panel,
+html[data-etop-page="recursos"] .main-panel{
+  background:rgba(16,36,64,.91);border-color:var(--etop-gold)
+}
+html[data-etop-page="apps"] .link-button,
+html[data-etop-page="recursos"] .link-button{background-color:#173050}
+html[data-etop-page="apps"] .link-button:hover,
+html[data-etop-page="recursos"] .link-button:hover{
+  background-color:var(--etop-gold);color:var(--etop-navy)
+}
+
+/* Tablas de carga, preparación y comunicaciones: superficie clara. */
+html[data-etop-page="preparacion"],
+html[data-etop-page="carga"]{
+  --navy:var(--etop-navy);--navy2:var(--etop-navy-mid);
+  --gold:var(--etop-gold);--bg:var(--etop-paper);--card:#FFF;
+  --line:var(--etop-border);--text:var(--etop-ink);
+  --muted:var(--etop-muted);--blue:#315C8D;
+}
+html[data-etop-page="preparacion"] .top,
+html[data-etop-page="carga"] .top{
+  background:var(--etop-navy);border-top:3px solid var(--etop-red)
+}
+html[data-etop-page="correos"],
+html[data-etop-page="invitaciones"],
+html[data-etop-page="correos-nuevo"]{
+  --bg:var(--etop-paper);--panel:#FFF;--line:var(--etop-gold);
+  --line-dim:rgba(244,196,0,.25);--text:var(--etop-ink);
+  --muted:var(--etop-muted);--input-text:var(--etop-ink)
+}
+html[data-etop-page="correos"] .header h1,
+html[data-etop-page="invitaciones"] .header h1,
+html[data-etop-page="correos-nuevo"] .header h1{color:var(--etop-navy)}
+html[data-etop-page="correos"] .header,
+html[data-etop-page="invitaciones"] .header,
+html[data-etop-page="correos-nuevo"] .header{border-top:3px solid var(--etop-red)}
+
+/* Plantillas de correo: barra de marca sin alterar su contenido HTML. */
+html[data-etop-page="correo-cierre"] .tb,
+html[data-etop-page="presentacion-tutorial"] .tb{
+  background:var(--etop-navy);border-bottom:3px solid var(--etop-red)
+}
+html[data-etop-page="correo-cierre"] body,
+html[data-etop-page="presentacion-tutorial"] body{background:var(--etop-paper)}
