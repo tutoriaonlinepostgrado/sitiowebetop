@@ -542,6 +542,8 @@ a { text-decoration: none; }
 .qa-records-table .qa-evidence{white-space:nowrap}
 .qa-evidence-link{font-weight:700;justify-content:center;background:#fff}
 .qa-evidence-link .ic{width:13px;height:13px}
+.qa-evidence-files{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.qa-evidence-missing{font-size:10.5px;color:#68798d;white-space:normal;display:inline-block;max-width:125px}
 .qa-state-chip{display:inline-flex;font-weight:700;border:1px solid #d6e0eb;background:#edf2f7;color:#496079;padding:3px 8px;border-radius:5px;font-size:10px}
 .qa-state-chip.pending{background:#fff7e5;border-color:#ecdcae;color:#866015}
 .qa-state-chip.corrected{background:#edf6f1;border-color:#cfe4d8;color:#346b50}
@@ -1090,6 +1092,37 @@ function openQaSelected(mode) {
   if(w) w.opener = null;
 }
 
+// Los metadatos de los archivos se obtienen desde SharePoint durante la exportación.
+function getQaEvidenceLinks(item) {
+  const sources = [];
+  const used = new Set();
+  const add = (value, label) => {
+    if(value && typeof value === 'object' && !Array.isArray(value)) {
+      const raw = value.url ?? value.Url ?? value.AbsoluteUri ?? value.absoluteUri ??
+        value.ServerRelativeUrl ?? value.serverRelativeUrl ?? value.href ?? value.link ?? value.downloadUrl ?? '';
+      const name = value.FileName ?? value.fileName ?? value.DisplayName ?? value.displayName ?? value.name ?? label;
+      if(raw) add(raw, name);
+      return;
+    }
+    if(!value || typeof value !== 'string') return;
+    let url = safeUrl(value);
+    if(!url && value.startsWith('/sites/actasynrc/'))
+      url = safeUrl('https://unabportal365.sharepoint.com' + value);
+    if(!url || used.has(url)) return;
+    // No confundir la ficha de la incidencia con un archivo adjunto.
+    if(/\/((DispForm|EditForm|AllItems)\.aspx|_layouts\/15\/listform\.aspx)/i.test(new URL(url).pathname)) return;
+    used.add(url);
+    sources.push({url, name: String(label || '').trim()});
+  };
+  add(item.urlEvidencia, 'Evidencia');
+  for(const key of ['adjuntos','archivosAdjuntos','attachmentFiles','urlAdjuntos','evidencias','attachments']) {
+    const data = item[key];
+    if(Array.isArray(data)) data.forEach((x,i)=>add(x, 'Archivo ' + (i + 1)));
+    else if(typeof data === 'string') add(data, 'Evidencia');
+  }
+  return sources;
+}
+
 function renderQaScreen(c) {
   const rows = [...(c.qaRows || [])].sort((a,b) => String(a.idIncidencia || '').localeCompare(String(b.idIncidencia || ''), 'es', {numeric:true}));
   const pending = rows.filter(i => norm(i.estadoIncidencia) === 'PENDIENTE').length;
@@ -1141,16 +1174,11 @@ function renderQaScreen(c) {
             ${rows.map(i => {
               const st = state(i);
               const checked = String(i.id) === String(selectedQaId);
-              const evidence = safeUrl(i.urlEvidencia);
-              // Los adjuntos de lista SharePoint no vienen en incidencias.json.
-              // El export puede informar tieneAdjuntos=False incluso cuando la lista muestra el clip.
-              // En ese caso abrimos el formulario de visualización del registro por su ID numérico.
-              const attachmentsPage = qaSharePointUrl(i.id, 'display');
-              const evidenceCell = evidence
-                ? `<a class="qa-link qa-evidence-link" href="${esc(evidence)}" target="_blank" rel="noopener noreferrer" title="Abrir URL de evidencia">${icon('external')} Ver evidencia</a>`
-                : attachmentsPage
-                  ? `<a class="qa-link qa-evidence-link" href="${esc(attachmentsPage)}" target="_blank" rel="noopener noreferrer" title="Abrir la ficha de SharePoint y consultar los archivos en Datos adjuntos">${icon('external')} Revisar adjuntos</a>`
-                  : '—';
+              // Enlaces reales recibidos en el JSON: se abre el archivo, NUNCA el formulario del ítem.
+              const evidenceLinks = getQaEvidenceLinks(i);
+              const evidenceCell = evidenceLinks.length
+                ? `<div class="qa-evidence-files">${evidenceLinks.map((file, index) => `<a class="qa-link qa-evidence-link" href="${esc(file.url)}" target="_blank" rel="noopener noreferrer" title="Abrir archivo de evidencia">${icon('external')} ${esc(evidenceLinks.length > 1 ? file.name || 'Archivo ' + (index+1) : 'Ver evidencia')}</a>`).join('')}</div>`
+                : '<span class="qa-evidence-missing" title="El archivo no está incluido en incidencias.json. Se necesita sincronizar la URL del adjunto desde SharePoint.">Enlace no disponible</span>';
               return `<tr class="${checked ? 'qa-record-selected' : ''}">
                 <td><input class="qa-check" type="checkbox" data-qa-select="${esc(i.id)}" ${checked ? 'checked' : ''} aria-label="Seleccionar incidencia ${esc(i.idIncidencia || i.id)}"></td>
                 <td><span class="qa-rowid">${esc(i.idIncidencia || '#' + i.id)}</span></td>
