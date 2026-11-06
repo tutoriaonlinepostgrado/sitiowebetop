@@ -1114,12 +1114,12 @@ function getQaEvidenceLinks(item) {
     used.add(url);
     sources.push({url, name: String(label || '').trim()});
   };
-  add(item.urlEvidencia, 'Evidencia');
-  for(const key of ['adjuntos','archivosAdjuntos','attachmentFiles','urlAdjuntos','evidencias','attachments']) {
-    const data = item[key];
-    if(Array.isArray(data)) data.forEach((x,i)=>add(x, 'Archivo ' + (i + 1)));
-    else if(typeof data === 'string') add(data, 'Evidencia');
-  }
+  // SharePoint: URL_EVIDENCIA. El exportador usa el alias urlEvidencia.
+  // Dar prioridad al campo oficial (también cuando SharePoint lo devuelve como objeto de hipervínculo).
+  const urlEvidencia = item.URL_EVIDENCIA ?? item.urlEvidencia ??
+    item.url_evidencia ?? item.UrlEvidencia ?? item['URL EVIDENCIA'] ?? null;
+  if(Array.isArray(urlEvidencia)) urlEvidencia.forEach((v,i)=>add(v, 'Evidencia ' + (i + 1)));
+  else add(urlEvidencia, 'Evidencia');
   return sources;
 }
 
@@ -1178,7 +1178,7 @@ function renderQaScreen(c) {
               const evidenceLinks = getQaEvidenceLinks(i);
               const evidenceCell = evidenceLinks.length
                 ? `<div class="qa-evidence-files">${evidenceLinks.map((file, index) => `<a class="qa-link qa-evidence-link" href="${esc(file.url)}" target="_blank" rel="noopener noreferrer" title="Abrir archivo de evidencia">${icon('external')} ${esc(evidenceLinks.length > 1 ? file.name || 'Archivo ' + (index+1) : 'Ver evidencia')}</a>`).join('')}</div>`
-                : '<span class="qa-evidence-missing" title="El archivo no está incluido en incidencias.json. Se necesita sincronizar la URL del adjunto desde SharePoint.">Enlace no disponible</span>';
+                : '<span class="qa-evidence-missing" title="El campo URL_EVIDENCIA está vacío en los datos publicados. Comprueba el flujo que copia los adjuntos y regenera incidencias.json.">Sin URL_EVIDENCIA</span>';
               return `<tr class="${checked ? 'qa-record-selected' : ''}">
                 <td><input class="qa-check" type="checkbox" data-qa-select="${esc(i.id)}" ${checked ? 'checked' : ''} aria-label="Seleccionar incidencia ${esc(i.idIncidencia || i.id)}"></td>
                 <td><span class="qa-rowid">${esc(i.idIncidencia || '#' + i.id)}</span></td>
