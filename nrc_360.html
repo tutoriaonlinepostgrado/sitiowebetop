@@ -540,6 +540,8 @@ a { text-decoration: none; }
 .qa-records-table .qa-text{min-width:245px;max-width:440px;white-space:normal}
 .qa-records-table .qa-category{min-width:145px}
 .qa-records-table .qa-evidence{white-space:nowrap}
+.qa-evidence-link{font-weight:700;justify-content:center;background:#fff}
+.qa-evidence-link .ic{width:13px;height:13px}
 .qa-state-chip{display:inline-flex;font-weight:700;border:1px solid #d6e0eb;background:#edf2f7;color:#496079;padding:3px 8px;border-radius:5px;font-size:10px}
 .qa-state-chip.pending{background:#fff7e5;border-color:#ecdcae;color:#866015}
 .qa-state-chip.corrected{background:#edf6f1;border-color:#cfe4d8;color:#346b50}
@@ -1073,8 +1075,8 @@ let selectedQaId = null;
 function qaSharePointUrl(rowId, mode) {
   const id = Number(rowId);
   if(!Number.isSafeInteger(id) || id <= 0) return '';
-  const u = new URL(mode === 'edit' ? 'EditForm.aspx' : 'AllItems.aspx', QA2_SHAREPOINT_LIST);
-  if(mode === 'edit') u.searchParams.set('ID', String(id));
+  const u = new URL(mode === 'edit' ? 'EditForm.aspx' : mode === 'display' ? 'DispForm.aspx' : 'AllItems.aspx', QA2_SHAREPOINT_LIST);
+  if(mode === 'edit' || mode === 'display') u.searchParams.set('ID', String(id));
   else { u.searchParams.set('FilterField1','ID'); u.searchParams.set('FilterValue1',String(id)); }
   return u.href;
 }
@@ -1140,6 +1142,15 @@ function renderQaScreen(c) {
               const st = state(i);
               const checked = String(i.id) === String(selectedQaId);
               const evidence = safeUrl(i.urlEvidencia);
+              // Los adjuntos de lista SharePoint no vienen en incidencias.json.
+              // El export puede informar tieneAdjuntos=False incluso cuando la lista muestra el clip.
+              // En ese caso abrimos el formulario de visualización del registro por su ID numérico.
+              const attachmentsPage = qaSharePointUrl(i.id, 'display');
+              const evidenceCell = evidence
+                ? `<a class="qa-link qa-evidence-link" href="${esc(evidence)}" target="_blank" rel="noopener noreferrer" title="Abrir URL de evidencia">${icon('external')} Ver evidencia</a>`
+                : attachmentsPage
+                  ? `<a class="qa-link qa-evidence-link" href="${esc(attachmentsPage)}" target="_blank" rel="noopener noreferrer" title="Abrir la ficha de SharePoint y consultar los archivos en Datos adjuntos">${icon('external')} Revisar adjuntos</a>`
+                  : '—';
               return `<tr class="${checked ? 'qa-record-selected' : ''}">
                 <td><input class="qa-check" type="checkbox" data-qa-select="${esc(i.id)}" ${checked ? 'checked' : ''} aria-label="Seleccionar incidencia ${esc(i.idIncidencia || i.id)}"></td>
                 <td><span class="qa-rowid">${esc(i.idIncidencia || '#' + i.id)}</span></td>
@@ -1148,7 +1159,7 @@ function renderQaScreen(c) {
                 <td class="qa-category">${esc(i.categoria || '—')}</td>
                 <td class="qa-text">${esc(i.descripcionIncidencia || '—')}</td>
                 <td class="qa-text">${esc(i.descripcionSolucion || '—')}</td>
-                <td class="qa-evidence">${evidence ? `<a class="qa-link" href="${esc(evidence)}" target="_blank" rel="noopener noreferrer" title="Ver evidencia de esta incidencia">Ver evidencia</a>` : String(i.tieneAdjuntos).toLowerCase() === 'true' ? 'Adjunto sin enlace' : '—'}</td>
+                <td class="qa-evidence">${evidenceCell}</td>
               </tr>`;
             }).join('')}
           </tbody>
