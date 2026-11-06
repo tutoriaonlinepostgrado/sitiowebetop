@@ -501,6 +501,53 @@ a { text-decoration: none; }
 .tl-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.tl-header .btn-link-subtle{justify-self:end}.tl-percent{font-size:13px;font-weight:800;color:#0f172a}.embedded-timeline-app{margin-top:4px;padding-top:2px}
 .intake-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:10px}.intake-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:900px;text-align:left}.intake-table th{background:#f1f5f9;color:#475569;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;padding:11px 12px;white-space:nowrap}.intake-table td{padding:10px 12px;border-top:1px solid #e2e8f0;vertical-align:middle}.intake-table tbody tr:hover{background:#f8fafc}.intake-table tbody tr.selected{background:#eff6ff}.intake-nrc{font-family:var(--font-mono);font-weight:700;white-space:nowrap}.intake-table td:nth-child(3){min-width:200px}.intake-table td:nth-child(4),.intake-table td:nth-child(5){white-space:nowrap}
 .intake-table td{padding:6px 9px}.intake-table th{padding:8px 9px}.intake-table tbody tr{cursor:pointer}.intake-table tbody tr:focus-visible{outline:2px solid #2563eb;outline-offset:-2px}
+
+/* Seguimiento: tres accesos directos, sin tarjetas auxiliares */
+.core-tools-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:0}
+.core-card{min-height:126px}
+.core-name .ic{height:14px;width:14px;color:#64748b}
+.core-tag.unavailable{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}
+
+/* QA2: tabla operativa sobria con selección individual */
+.qa-course-heading{background:#f8fafc;border:1px solid #dbe3ec;border-radius:11px;padding:14px 16px;margin-bottom:12px}
+.qa-heading-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.qa-heading-id{font:800 13px var(--font-mono);color:#152c4a}
+.qa-heading-name{font-weight:800;font-size:14px;color:#12233e;margin-top:5px}
+.qa-heading-meta{font-size:11.5px;line-height:1.55;color:#53657b;margin-top:4px}
+.qa-counts{display:flex;gap:6px;flex-wrap:wrap}
+.qa-count-tag{font-size:10.5px;font-weight:700;border-radius:6px;padding:5px 9px;background:#edf2f8;border:1px solid #dce4ed;color:#394d66}
+.qa-count-tag.pending{background:#fff8e7;border-color:#e8d69e;color:#815f16}
+.qa-header-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.qa-link{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid #cbd7e5;border-radius:7px;background:#fff;color:#244c79;font-size:11.5px;font-weight:700;text-decoration:none}
+.qa-link:hover{background:#eef4fa;border-color:#9db8d8}
+.qa-selection-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:12px 0}
+.qa-selection-info{font-size:11.5px;color:#50647b}
+.qa-selected-actions{display:flex;gap:8px;flex-wrap:wrap}
+.qa-selected-btn{background:#194d7c;color:#fff;border:1px solid #194d7c;border-radius:7px;padding:8px 12px;font-size:11.5px;font-weight:700}
+.qa-selected-btn.secondary{background:#fff;color:#194d7c;border-color:#b8c8d9}
+.qa-selected-btn:disabled{opacity:.45;cursor:not-allowed}
+.qa-table-wrap{border:1px solid #dce4ed;border-radius:10px;overflow-x:auto}
+.qa-records-table{border-collapse:collapse;width:100%;min-width:1030px;text-align:left;font-size:11.5px}
+.qa-records-table th{padding:10px 11px;background:#edf2f7;color:#486079;text-transform:uppercase;letter-spacing:.035em;font-size:9.5px;font-weight:800;white-space:nowrap}
+.qa-records-table td{padding:12px 11px;border-top:1px solid #e3e9f0;vertical-align:top;color:#334761;line-height:1.55}
+.qa-records-table tbody tr:nth-child(even){background:#f9fbfd}
+.qa-records-table tbody tr:hover{background:#f2f6fb}
+.qa-records-table tbody tr.qa-record-selected{background:#ebf3fc}
+.qa-records-table tbody tr.qa-record-selected td:first-child{box-shadow:inset 3px 0 0 #245b92}
+.qa-records-table th:first-child,.qa-records-table td:first-child{text-align:center;width:42px}
+.qa-records-table .qa-check{height:16px;width:16px;accent-color:#194d7c;cursor:pointer}
+.qa-records-table .qa-rowid{white-space:nowrap;font-family:var(--font-mono);font-weight:700;font-size:10.5px;color:#233b58}
+.qa-records-table .qa-text{min-width:245px;max-width:440px;white-space:normal}
+.qa-records-table .qa-category{min-width:145px}
+.qa-records-table .qa-evidence{white-space:nowrap}
+.qa-state-chip{display:inline-flex;font-weight:700;border:1px solid #d6e0eb;background:#edf2f7;color:#496079;padding:3px 8px;border-radius:5px;font-size:10px}
+.qa-state-chip.pending{background:#fff7e5;border-color:#ecdcae;color:#866015}
+.qa-state-chip.corrected{background:#edf6f1;border-color:#cfe4d8;color:#346b50}
+.qa-state-chip.derived{background:#f2f0f7;border-color:#dbd5e7;color:#655480}
+.qa-empty{padding:22px;background:#f8fafc;color:#53657b;border:1px dashed #cbd5e1;border-radius:9px;font-size:12px}
+@media(max-width:900px){.core-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.core-tools-grid{grid-template-columns:1fr}.qa-selected-actions{width:100%}.qa-selected-btn{flex:1}}
+
 </style>
 </head>
 <body>
@@ -616,8 +663,7 @@ a { text-decoration: none; }
       <div class="ws-tabs" id="screenModeTabs">
         <button type="button" class="ws-tab active" data-screen="tools">
           <svg class="ic"><use href="#icon-zap"/></svg>
-          <span>Centro de Herramientas</span>
-          <span class="ws-badge">11</span>
+          <span>Seguimiento</span>
         </button>
         <button type="button" class="ws-tab" data-screen="intake">
           <svg class="ic"><use href="#icon-book"/></svg>
@@ -634,29 +680,21 @@ a { text-decoration: none; }
         </button>
       </div>
 
-      <button id="configureLinks" class="btn-icon-nav" type="button">⚙ Configurar URLs</button>
+
     </div>
 
     <div class="ws-viewport">
 
-      <!-- VISTA 1: CENTRO DE HERRAMIENTAS -->
+      <!-- VISTA 1: SEGUIMIENTO -->
       <div id="screen-tools" class="view-pane">
         <div class="pane-head">
           <div>
-            <div class="pane-title">Herramientas Operativas del Tutor</div>
-            <div class="pane-sub">Selecciona una herramienta para abrir su sistema o desplegar su módulo aquí</div>
-          </div>
-          <div class="filter-chips" id="toolFilters">
-            <button type="button" class="f-chip active" data-filter="all">Todas</button>
-            <button type="button" class="f-chip" data-filter="seguimiento">Seguimiento</button>
-            <button type="button" class="f-chip" data-filter="gestion">Gestión y QA2</button>
-            <button type="button" class="f-chip" data-filter="comunicacion">Comunicaciones</button>
+            <div class="pane-title">Seguimiento del curso</div>
+            <div class="pane-sub">Accede al panel estudiantil, al aula Canvas o a la Web de Integración del NRC seleccionado.</div>
           </div>
         </div>
 
         <div class="core-tools-grid" id="primaryToolsGrid"></div>
-        <div class="more-tools-divider">Accesos rápidos complementarios</div>
-        <div class="quick-links-row" id="secondaryToolsGrid"></div>
       </div>
 
       <!-- VISTA 2: CURSOS DEL INTAKE -->
@@ -715,7 +753,7 @@ const ACCESS = {
   'Abrir Aula Canvas': {url: '', context: false},
   'Gestión y Formulario QA2': {url: PORTAL+'qa2_portal_integracion.html', context: true},
   'Hub de Comunicaciones': {url: PORTAL+'centro_herramientas_etop.html', context: true},
-  'Cotejo Integración': {url: '', context: true},
+  'Web de Integración': {url: '', context: true},
   'Informe Power BI': {url: '', context: false},
   'Editar NRC': {url: '', context: false},
   'Editar ficha Inducción': {url: '', context: false},
@@ -891,7 +929,7 @@ const urlFor = (name, c) => {
  }
  if(name==='Gestión y Formulario QA2')return PORTAL+'qa2_portal_integracion.html?nrcs='+encodeURIComponent(c.nrc);
  if(name==='Abrir Aula Canvas')return canvasForCourse(c);
- if(name==='Cotejo Integración')return integrationUrl(c.nrc);
+ if(name==='Web de Integración')return integrationUrl(c.nrc);
   if(name==='Panel de Estudiantes')return studentsUrl(c.nrc);
   const raw = name==='Editar NRC' && c.id ? 'https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&ids='+encodeURIComponent(c.id) : (Object.prototype.hasOwnProperty.call(savedLinks,name) ? savedLinks[name] : ACCESS[name]?.url);
   if (!raw) return '';
@@ -907,7 +945,7 @@ function openTool(name) {
 
   if (!ACCESS[name]) return;
   const dest = urlFor(name, courses[activeIndex]);
-  if (!dest) { if(name==='Editar ficha Inducción'){alert('No se encontró un ID de SharePoint válido para este curso de Inducción.');return;} if(name==='Abrir Aula Canvas'){alert('No hay URL de Canvas registrada para este NRC. Revisa el QA2 o la ficha del curso.');return;} editLink(name); return; }
+  if (!dest) { alert(name==='Abrir Aula Canvas'?'No hay URL de Canvas registrada para este NRC. Revisa el QA2 o la ficha del curso.':'No hay una URL válida disponible para este acceso.'); return; }
   const opened = window.open(dest, '_blank');
   if (opened) opened.opener = null;
 }
@@ -940,10 +978,6 @@ function saveLink() {
 $('closeModal').addEventListener('click', closeModal);
 $('modalOk').addEventListener('click', closeModal);
 $('saveLink').addEventListener('click', saveLink);
-$('configureLinks').addEventListener('click', () => {
-  const name = prompt('Escribe el nombre de la herramienta a configurar:\n'+Object.keys(ACCESS).join('\n'));
-  if (name && ACCESS[name]) editLink(name);
-});
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 
 function commStageOf(c) {
@@ -963,53 +997,22 @@ function commUrl(item,c) {
 }
 
 function renderTools(c) {
-  const status = stateOf(c);
-  const qaAlert = c.qa === 'incident';
-
-  const primaryTools = [
-    { title: 'Panel de Estudiantes', desc: 'Gestión y semáforo por alumno', icon: 'users', theme: 'c-blue', cat: 'seguimiento', badge: c.active===null?'Sin dato':`${c.active} activos`, badgeCls: status === 'ACTIVO' ? 'recommended' : '' },
-    { title: 'Abrir Aula Canvas', desc: 'Ir al curso en plataforma LMS', icon: 'canvas', theme: 'c-green', cat: 'seguimiento', badge: 'Aula Virtual', badgeCls: '' },
-    { title: 'Gestión y Formulario QA2', desc: 'Registrar revisión o incidencia', icon: 'clipboard', theme: 'c-amber', cat: 'gestion', badge: qaAlert ? `⚠️ ${c.qaRows?.length||0} incidencia(s)` : c.qa==='pending'?'QA2 pendiente':'QA2 al día', badgeCls: qaAlert ? 'alert' : '' },
-    { title: 'Hub de Comunicaciones', desc: 'Ver plantillas de esta etapa aquí', icon: 'mail', theme: 'c-purple', cat: 'comunicacion', badge: 'Ver plantillas ▾', badgeCls: 'recommended' }
+  const cards = [
+    { title: 'Panel de Estudiantes', desc: 'Nómina, ingreso y semáforo del NRC', icon: 'users', theme: 'c-blue', badge: c.active === null ? 'Sin datos' : String(c.active) + ' activos' },
+    { title: 'Abrir Aula Canvas', desc: 'Ingresar al aula virtual del curso', icon: 'canvas', theme: 'c-green', badge: 'Aula virtual' },
+    { title: 'Web de Integración', desc: 'Consultar la integración Banner–Canvas', icon: 'link', theme: 'c-blue', badge: 'Banner / Canvas' }
   ];
-
-  const secondaryTools = [
-    { title: 'Cursos del Intake', sub: 'Ver tabla del intake', icon: 'book', cat: 'gestion', isScreen: true },
-    { title: 'Historial QA2', sub: 'Detalle QA2 aquí', icon: 'alert', cat: 'gestion', isScreen: true },
-    { title: 'Cotejo Integración', sub: 'Banner vs Canvas', icon: 'link', cat: 'seguimiento' },
-    { title: 'Informe Power BI', sub: 'Reporte oficial V5', icon: 'chart', cat: 'seguimiento' },
-    ...(norm(c.code)==='UNI118' ? [{ title: 'Editar ficha Inducción', sub: 'Ficha SharePoint · URL Canvas', icon: 'pencil', cat: 'gestion' }] : []),
-    { title: 'Editar NRC', sub: 'Power Apps', icon: 'pencil', cat: 'gestion' },
-    { title: 'Presentación', sub: 'Material sincrónico', icon: 'presentation', cat: 'comunicacion' },
-    { title: 'Anuncio Bienvenida', sub: 'Publicar en aula', icon: 'megaphone', cat: 'comunicacion' }
-  ];
-
-  $('primaryToolsGrid').innerHTML = primaryTools.map(t => {
-    const hide = currentFilter !== 'all' && currentFilter !== t.cat ? 'hidden-by-filter' : '';
-    const hasUrl = t.title === 'Hub de Comunicaciones' || Boolean(urlFor(t.title, c));
+  $('primaryToolsGrid').innerHTML = cards.map(t => {
+    const enabled = Boolean(urlFor(t.title, c));
     return `
-      <button class="core-card ${t.theme} ${hide}" data-action="${esc(t.title)}">
+      <button type="button" class="core-card ${t.theme}" data-action="${esc(t.title)}" aria-label="${esc(t.title)}">
         <div class="core-top">
           <div class="core-icon">${icon(t.icon)}</div>
-          <span class="core-tag ${hasUrl ? t.badgeCls : 'alert'}">${hasUrl ? esc(t.badge) : 'Configurar URL'}</span>
+          <span class="core-tag ${enabled ? '' : 'unavailable'}">${enabled ? esc(t.badge) : 'Sin acceso'}</span>
         </div>
         <div>
-          <div class="core-name"><span>${esc(t.title)}</span> <svg class="ic" style="color:var(--ink-muted);width:14px;height:14px"><use href="#icon-external"/></svg></div>
+          <div class="core-name"><span>${esc(t.title)}</span> ${icon('external')}</div>
           <div class="core-desc">${esc(t.desc)}</div>
-        </div>
-      </button>
-    `;
-  }).join('');
-
-  $('secondaryToolsGrid').innerHTML = secondaryTools.map(t => {
-    const hide = currentFilter !== 'all' && currentFilter !== t.cat ? 'hidden-by-filter' : '';
-    const hasUrl = t.isScreen || Boolean(urlFor(t.title, c));
-    return `
-      <button class="quick-btn ${hide}" data-action="${esc(t.title)}">
-        <div class="quick-icon">${icon(t.icon)}</div>
-        <div class="quick-copy">
-          <b>${esc(t.title)}</b>
-          <small>${hasUrl ? esc(t.sub) : 'Configurar URL'}</small>
         </div>
       </button>
     `;
@@ -1064,29 +1067,95 @@ function renderCommunicationsScreen(c) {
   `;
 }
 
+const QA2_SHAREPOINT_LIST = 'https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_QA2_INCIDENCIA/';
+const QA2_FORM = 'https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxUMDZaNk5YQ05PSDRMSEFYQjRLUzNDSThWSy4u&rad59c96540044fd99690c7a9ce42bca3=';
+let selectedQaId = null;
+function qaSharePointUrl(rowId, mode) {
+  const id = Number(rowId);
+  if(!Number.isSafeInteger(id) || id <= 0) return '';
+  const u = new URL(mode === 'edit' ? 'EditForm.aspx' : 'AllItems.aspx', QA2_SHAREPOINT_LIST);
+  if(mode === 'edit') u.searchParams.set('ID', String(id));
+  else { u.searchParams.set('FilterField1','ID'); u.searchParams.set('FilterValue1',String(id)); }
+  return u.href;
+}
+function openQaSelected(mode) {
+  const c = courses[activeIndex];
+  const row = (c?.qaRows || []).find(i => String(i.id) === String(selectedQaId));
+  if(!row) return;
+  const url = qaSharePointUrl(row.id, mode);
+  if(!url) return;
+  const w = window.open(url, '_blank', 'noopener,noreferrer');
+  if(w) w.opener = null;
+}
+
 function renderQaScreen(c) {
-  const rows=c.qaRows||[];
-  const summary=rows.length?`Incidencias registradas: ${rows.length}`:c.qa==='na'?'Excluido de revisión QA2':c.qa==='ok'?'QA2 conforme':'QA2 pendiente';
-  const status=x=>{const t=norm(x.estadoIncidencia);return t==='CORREGIDA'?'Corregida':t==='DERIVADO'?'Derivada':'Pendiente'};
-  $('screen-qa').innerHTML=`
+  const rows = [...(c.qaRows || [])].sort((a,b) => String(a.idIncidencia || '').localeCompare(String(b.idIncidencia || ''), 'es', {numeric:true}));
+  const pending = rows.filter(i => norm(i.estadoIncidencia) === 'PENDIENTE').length;
+  const corrected = rows.filter(i => norm(i.estadoIncidencia) === 'CORREGIDA').length;
+  const derived = rows.filter(i => norm(i.estadoIncidencia) === 'DERIVADO').length;
+  if(!rows.some(i => String(i.id) === String(selectedQaId))) selectedQaId = null;
+  const selected = rows.find(i => String(i.id) === String(selectedQaId));
+  const state = i => {
+    const status = norm(i.estadoIncidencia);
+    return {text:status || 'SIN ESTADO',css:status === 'PENDIENTE' ? 'pending' : status === 'CORREGIDA' ? 'corrected' : status === 'DERIVADO' ? 'derived' : ''};
+  };
+  const canvas = canvasForCourse(c);
+  const recordInfo = selected ? 'Seleccionada: ' + (selected.idIncidencia || '#' + selected.id) : 'Selecciona una incidencia para verla o editarla.';
+  const overview = rows.length ? rows.length + ' incidencia(s) registrada(s)' : c.qa === 'na' ? 'No aplica revisión QA2' : c.qa === 'ok' ? 'QA2 conforme, sin incidencias' : 'QA2 pendiente';
+  $('screen-qa').innerHTML = `
     <div class="pane-head">
-      <div><div class="pane-title">Estado de Calidad QA2 · ${esc(c.nrc)}</div>
-      <div class="pane-sub">Revisión de alistamiento de aula virtual · ${esc(summary)}</div></div>
-      <button type="button" class="btn-icon-nav" data-back-tools>← Volver a Herramientas</button>
+      <div><div class="pane-title">Estado QA2</div><div class="pane-sub">Revisión y gestión individual de incidencias del NRC</div></div>
     </div>
-    <div class="qa-status-list">
-      ${rows.length?rows.map((i,n)=>`<div class="qa-status-row">
-        <span class="qa-number">${n+1}</span><div class="qa-detail">
-        <strong>${esc(i.categoria||i.CATEGORIA||'Incidencia QA2')}</strong>
-        <p>${esc(i.descripcionIncidencia||i.descripcion||'Sin descripción registrada')}</p>
-        <small>Semana: ${esc(i.semanaUnidad||i.semana||'—')} · ID: ${esc(i.idIncidencia||'—')}</small>
-        </div><span class="qa-state">${esc(status(i))}</span></div>`).join(''):
-        `<div class="qa-empty">${esc(summary)}. No hay descripciones de incidencias disponibles para este curso.</div>`}
-      <div class="qa-links">
-        <a class="btn-pill-soft" href="${PORTAL}incidencias.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener">Abrir historial y evidencias ↗</a>
-        <a class="btn-icon-nav" href="${PORTAL}cursos_preparacion.html?nrc=${encodeURIComponent(c.nrc)}" target="_blank" rel="noopener">Formulario QA2 ↗</a>
+    <div class="qa-course-heading">
+      <div class="qa-heading-top">
+        <span class="qa-heading-id">${esc(c.nrc)}</span>
+        <div class="qa-counts">
+          <span class="qa-count-tag">${esc(overview)}</span>
+          ${pending ? `<span class="qa-count-tag pending">${pending} pendiente(s)</span>` : ''}
+          ${corrected ? `<span class="qa-count-tag">${corrected} corregida(s)</span>` : ''}
+          ${derived ? `<span class="qa-count-tag">${derived} derivada(s)</span>` : ''}
+        </div>
       </div>
-    </div>`;
+      <div class="qa-heading-name">${esc(c.name)}</div>
+      <div class="qa-heading-meta">Programa: ${esc(c.program || '—')} · Tutor/a: ${esc(c.tutor || '—')} · Intake: ${esc(c.intake || '—')}</div>
+      <div class="qa-header-links">
+        <a class="qa-link" href="${esc(QA2_FORM + encodeURIComponent(c.id))}" target="_blank" rel="noopener noreferrer">${icon('clipboard')} Completar QA2</a>
+        ${canvas ? `<a class="qa-link" href="${esc(canvas)}" target="_blank" rel="noopener noreferrer">${icon('external')} Abrir aula Canvas</a>` : ''}
+        <a class="qa-link" href="${esc(PORTAL + 'incidencias.html?nrc=' + encodeURIComponent(c.nrc))}" target="_blank" rel="noopener noreferrer">${icon('book')} Historial y derivación</a>
+      </div>
+    </div>
+    ${rows.length ? `
+      <div class="qa-selection-toolbar">
+        <div class="qa-selection-info" role="status">${esc(recordInfo)}</div>
+        <div class="qa-selected-actions">
+          <button type="button" class="qa-selected-btn secondary" data-qa-action="list" ${selected ? '' : 'disabled'}>Ver en lista SharePoint</button>
+          <button type="button" class="qa-selected-btn" data-qa-action="edit" ${selected ? '' : 'disabled'}>Editar incidencia seleccionada</button>
+        </div>
+      </div>
+      <div class="qa-table-wrap">
+        <table class="qa-records-table">
+          <thead><tr><th scope="col">Elegir</th><th scope="col"># ID</th><th scope="col">Estado</th><th scope="col">Tipo QA</th><th scope="col">Categoría</th><th scope="col">Descripción incidencia</th><th scope="col">Solución</th><th scope="col">Adjuntos / evidencia</th></tr></thead>
+          <tbody>
+            ${rows.map(i => {
+              const st = state(i);
+              const checked = String(i.id) === String(selectedQaId);
+              const evidence = safeUrl(i.urlEvidencia);
+              return `<tr class="${checked ? 'qa-record-selected' : ''}">
+                <td><input class="qa-check" type="checkbox" data-qa-select="${esc(i.id)}" ${checked ? 'checked' : ''} aria-label="Seleccionar incidencia ${esc(i.idIncidencia || i.id)}"></td>
+                <td><span class="qa-rowid">${esc(i.idIncidencia || '#' + i.id)}</span></td>
+                <td><span class="qa-state-chip ${st.css}">${esc(st.text)}</span></td>
+                <td>${esc(i.tipoQA || '—')}</td>
+                <td class="qa-category">${esc(i.categoria || '—')}</td>
+                <td class="qa-text">${esc(i.descripcionIncidencia || '—')}</td>
+                <td class="qa-text">${esc(i.descripcionSolucion || '—')}</td>
+                <td class="qa-evidence">${evidence ? `<a class="qa-link" href="${esc(evidence)}" target="_blank" rel="noopener noreferrer" title="Ver evidencia de esta incidencia">Ver evidencia</a>` : String(i.tieneAdjuntos).toLowerCase() === 'true' ? 'Adjunto sin enlace' : '—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : `<div class="qa-empty">${esc(overview)}. No hay incidencias que gestionar en este NRC.</div>`}
+  `;
 }
 
 function renderStages(c) { /* Sección Etapa actual retirada de la interfaz */ }
@@ -1157,19 +1226,17 @@ $('screenModeTabs').addEventListener('click', e => {
   const btn = e.target.closest('[data-screen]');
   if (btn) switchScreen(btn.dataset.screen);
 });
-$('toolFilters').addEventListener('click', e => {
-  const b = e.target.closest('[data-filter]');
-  if (!b) return;
-  currentFilter = b.dataset.filter;
-  document.querySelectorAll('#toolFilters .f-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === currentFilter));
-  if (currentFilter === 'comunicacion') switchScreen('comms');
-  else renderTools(courses[activeIndex]);
+document.querySelector('.workspace-screen').addEventListener('change', e => {
+  const check = e.target.closest('[data-qa-select]');
+  if(!check) return;
+  selectedQaId = check.checked ? String(check.dataset.qaSelect) : null;
+  renderQaScreen(courses[activeIndex]);
 });
 
 document.querySelector('.workspace-screen').addEventListener('click', e => {
+  const qaAction = e.target.closest('[data-qa-action]');
+  if(qaAction){ openQaSelected(qaAction.dataset.qaAction); return; }
   if (e.target.closest('[data-back-tools]')) {
-    currentFilter = 'all';
-    document.querySelectorAll('#toolFilters .f-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === 'all'));
     switchScreen('tools'); renderTools(courses[activeIndex]); return;
   }
   const card = e.target.closest('[data-select-course]');
