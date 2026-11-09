@@ -1026,6 +1026,34 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 #sidebar .menu-calendarios-prioritario .calendarios-mark{margin-left:auto;color:#ffd700;font-size:11px}
 </style>
 <link rel="stylesheet" href="etop-identidad-unab.css?v=20261106-v4">
+
+<style>
+/* ETOP · Corrección acotada del selector de fecha de Coordinación.
+   No modifica ni reposiciona los restantes filtros o el grid. */
+#mf-fechaInicio .compact-date{
+  overflow:visible!important;
+  background:#FFFFFF!important;
+  border-color:#CDD9E7!important;
+}
+#mf-fechaInicio .compact-date .date-filter-input{
+  background:transparent!important;
+  color:#253950!important;
+  color-scheme:light!important;
+  cursor:pointer;
+}
+#mf-fechaInicio .compact-date .date-open-picker{
+  display:inline-flex;align-items:center;justify-content:center;
+  flex:0 0 20px;width:20px;min-width:20px;height:22px;
+  padding:0;margin:0 0 0 2px;border:0;border-radius:4px;
+  background:transparent;color:#355D88;cursor:pointer;
+  font-size:12px;line-height:1;
+}
+#mf-fechaInicio .compact-date .date-open-picker:hover,
+#mf-fechaInicio .compact-date .date-open-picker:focus-visible{
+  background:#ECF3FA;color:#243C5A;
+}
+#mf-fechaInicio .compact-date .date-filter-clear{color:#355D88!important}
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -1322,6 +1350,7 @@ function establecerTituloVistaETOP(nombre){
         if (campo === 'fechaInicio') {
             host.innerHTML = `<div class="date-filter-wrap compact-date" title="${escHtml(n ? 'Fechas seleccionadas: '+[...elegidos].map(mostrarValor).join(', ') : 'Seleccionar fecha de inicio')}">
                 <input type="date" lang="es-CL" class="date-filter-input" aria-label="Seleccionar fecha de inicio (día, mes y año)" onchange="agregarFechaInicio(this.value)">
+                <button type="button" class="date-open-picker" title="Abrir calendario" aria-label="Abrir calendario de fecha de inicio" onclick="abrirCalendarioFechaInicio(event)">📅</button>
                 ${n ? '<span class="date-selected-count" title="'+n+' fecha(s) seleccionada(s)">'+n+'</span><button type="button" class="date-filter-clear" title="Quitar fechas" aria-label="Quitar fechas" onclick="limpiarFechasInicio(event)">×</button>' : ''}
             </div>`;
             return;
@@ -1360,6 +1389,21 @@ function establecerTituloVistaETOP(nombre){
         seleccionMulti[campo].clear();
         document.getElementById('mf-' + campo)?.classList.remove('abierto');
         sincronizarFiltros(campo);
+    }
+
+    /* Acceso explícito al calendario nativo: funciona aunque el selector esté compacto. */
+    function abrirCalendarioFechaInicio(evento) {
+        if (evento) { evento.preventDefault(); evento.stopPropagation(); }
+        const input = document.querySelector('#mf-fechaInicio input[type="date"]');
+        if (!input || input.disabled) return;
+        try {
+            if (typeof input.showPicker === 'function') {
+                input.showPicker();
+                return;
+            }
+        } catch (_) { /* Alternativa para navegadores que restringen showPicker. */ }
+        input.focus();
+        input.click();
     }
 
     function agregarFechaInicio(valor) {
