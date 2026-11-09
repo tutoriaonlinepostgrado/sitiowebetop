@@ -405,3 +405,61 @@ html[data-etop-page="inicio"] .top .fsel-topbar option,
 html[data-etop-page="coordinacion"] .top-bar .filtro-select option{
   background:#FFFFFF!important;color:#243C5A!important
 }
+
+
+/* ETOP · Corrección de legibilidad para Centro de Herramientas y su versión de prueba.
+   La paleta clara usa --line para bordes; algunas reglas antiguas también lo
+   usaban como color de texto, dejando títulos de tablas casi invisibles.
+   Solo presentación: no altera la carga ni el procesamiento de nóminas. */
+html[data-etop-page="herramientas"] .table-wrap,
+html[data-etop-page="herramientas-test"] .table-wrap{
+  background:#FFFFFF;
+  border:1px solid #D8E3EF;
+}
+html[data-etop-page="herramientas"] .table-wrap th,
+html[data-etop-page="herramientas-test"] .table-wrap th{
+  background:#E8F0F8;
+  color:#28435F;
+  border-bottom:1px solid #CDDCEB;
+}
+html[data-etop-page="herramientas"] .table-wrap td,
+html[data-etop-page="herramientas-test"] .table-wrap td{
+  color:#334B64;
+  border-bottom:1px solid #E6EDF5;
+}
+html[data-etop-page="herramientas"] .table-wrap tbody tr:nth-child(even) td,
+html[data-etop-page="herramientas-test"] .table-wrap tbody tr:nth-child(even) td{
+  background:#F8FAFD;
+}
+html[data-etop-page="herramientas"] .table-wrap tbody tr:hover td,
+html[data-etop-page="herramientas-test"] .table-wrap tbody tr:hover td{
+  background:#ECF4FC;
+  color:#1F3853;
+}
+html[data-etop-page="herramientas"] :is(.badge,.file-drop .file-name,.c-section-lbl,.c-num-badge,.c-tab-btn.active),
+html[data-etop-page="herramientas-test"] :is(.badge,.file-drop .file-name,.c-section-lbl,.c-num-badge,.c-tab-btn.active){
+  color:#385779;
+}
+html[data-etop-page="herramientas"] .helper,
+html[data-etop-page="herramientas-test"] .helper{
+  color:#526A83;
+  background:#F0F5FA;
+}
+html[data-etop-page="herramientas"] .radio-option,
+html[data-etop-page="herramientas-test"] .radio-option{
+  color:#405A74;
+}
+html[data-etop-page="herramientas"] .radio-option.selected,
+html[data-etop-page="herramientas-test"] .radio-option.selected{
+  color:#243C5A;
+  background:#EEF4FA;
+}
+html[data-etop-page="herramientas"] .tab-btn.active,
+html[data-etop-page="herramientas-test"] .tab-btn.active{
+  color:#243C5A;
+  border-bottom-color:#D2A600;
+}
+html[data-etop-page="herramientas"] .c-btn-add:hover,
+html[data-etop-page="herramientas-test"] .c-btn-add:hover{
+  color:#365C82;
+}
