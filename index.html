@@ -1995,6 +1995,7 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
       <button type="button" class="menu-btn" data-key="COORD_AUDITORIA" onclick="openCoordModule('AUDITORIA',this)"><span class="ico">🔎</span>Revisión de seguimiento</button>
       <button type="button" class="menu-btn" data-key="COORD_CURSOS_INICIAR" onclick="openCoordModule('CURSOS_INICIAR',this)"><span class="ico">🚀</span>Cursos por iniciar</button>
       <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openCoordModule('INCIDENCIAS',this)"><span class="ico">⚠️</span>Incidencias</button>
+      <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS_STUDIO_PRUEBA" title="Probar nueva interfaz Incidencias ETOP de Google Studio" onclick="openIncidenciasStudioPrueba(this)"><span class="ico">🧪</span>Incidencias · Prueba</button>
       <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
     </div>
   </div>
@@ -3503,6 +3504,34 @@ window.addEventListener('message',function(evento){
   }catch(_){return;}
   toggleSidebar();
 });
+/* Vista experimental: enlace aislado a la app original de Google Studio.
+   Conserva la vista de Incidencias existente y no altera sus reportes. */
+function openIncidenciasStudioPrueba(btn){
+  mostrarAreaGestion();
+  vistaActual=null;
+  const top=document.getElementById('topBar');
+  if(top)top.classList.remove('email-mode','etop-comunicaciones-mode');
+  const viewer=document.getElementById('viewer');
+  if(viewer){
+    viewer.classList.remove('viewer-pbi');
+    viewer.classList.add('viewer-local');
+  }
+  ['homeTopSearch','gestionFilters','guia-correos'].forEach(id=>{
+    const item=document.getElementById(id);
+    if(item)item.style.display='none';
+  });
+  const visor=document.getElementById('visor');
+  if(!visor)return;
+  visor.dataset.coordReady='0';
+  visor.onload=null;
+  visor.style.display='block';
+  // URL absoluta: es un repositorio independiente, no una ruta de sitiowebetop.
+  visor.src='https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/';
+  establecerTituloVistaETOP('Coordinación · Incidencias (prueba)');
+  activate(btn);
+  // No añadir una segunda barra encima del diseño original de Google Studio.
+  establecerModoCoordinacionPortal('tools');
+}
 function openCoordTools(btn){
   openLocal('centro_herramientas_etop.html','Centro de Herramientas ETOP',btn);
   establecerModoCoordinacionPortal('tools');
