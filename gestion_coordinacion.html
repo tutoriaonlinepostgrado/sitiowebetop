@@ -1088,6 +1088,24 @@ html.etop-coord-embedded .top-bar > .toggle-btn:hover{
   background:#E4EEF8!important;
 }
 </style>
+
+<style>
+/* Solo Dashboard Macro y Carga Tutorial: no necesitan la barra de sliders.
+   En portal integrado no reservan espacio; el menu se recupera desde
+   el boton flotante del portal si esta cerrado. */
+html.etop-coord-sin-filtros .top-bar .filtros-wrapper,
+html.etop-coord-sin-filtros .top-bar .badge-activo,
+html.etop-coord-sin-filtros .top-bar .btn-limpiar{display:none!important}
+html.etop-coord-sin-filtros.etop-coord-embedded .top-bar{display:none!important}
+/* Si alguien abre la página de Coordinación autónoma, mantener su botón ☰
+   y título en una barra compacta, sin dejar una franja vacía. */
+html.etop-coord-sin-filtros:not(.etop-coord-embedded) .top-bar{
+  min-height:36px!important;
+  height:36px!important;
+  padding:3px 8px!important;
+  flex-wrap:nowrap!important
+}
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -1798,8 +1816,25 @@ function establecerTituloVistaETOP(nombre){
     /* ========================================================
        CARGA DE REPORTE EN IFRAME
     ======================================================== */
+    /* Vistas de resumen: sin sliders externos ni filtros heredados de otras vistas.
+       Sus filtros internos (Carga Tutorial / Power BI) no se modifican. */
+    const VISTAS_COORD_SIN_FILTROS=new Set(['DASHBOARD_MACRO','CARGA_TUTORIAL']);
+    function actualizarModoBarraCoordinacion(clave) {
+        document.documentElement.classList.toggle(
+            'etop-coord-sin-filtros',VISTAS_COORD_SIN_FILTROS.has(clave));
+    }
+
     function refrescarIframe() {
-        const url = buildURLFiltrada();
+        const sinFiltros=VISTAS_COORD_SIN_FILTROS.has(claveActual);
+        const cfgActual=misReportes[claveActual];
+        let url;
+        if(sinFiltros&&cfgActual){
+            const pagina=new URL(cfgActual.url,window.location.href);
+            if(cfgActual.tipo==='pbi') pagina.searchParams.set('pageView','fitToWidth');
+            url=pagina.toString();
+        } else {
+            url=buildURLFiltrada();
+        }
         const cfg=misReportes[claveActual];
         const area=document.querySelector('.content-area');
         const esPBI=Boolean(cfg&&cfg.tipo==='pbi');
@@ -1813,6 +1848,7 @@ function establecerTituloVistaETOP(nombre){
 
     function cargar(clave, btn) {
         claveActual = clave;
+        actualizarModoBarraCoordinacion(clave);
         refrescarIframe();
         document.querySelectorAll('button.menu-btn, a.menu-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
