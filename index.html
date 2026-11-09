@@ -3441,10 +3441,26 @@ function openCoordModule(clave,btn){
     INCIDENCIAS:'Incidencias'
   };
   if(!Object.prototype.hasOwnProperty.call(modulos,clave))return;
-  openLocal('gestion_coordinacion.html?embedded=1&view='+encodeURIComponent(clave),
-    'Coordinación · '+modulos[clave],btn);
-  // Los filtros de Coordinación se mantienen dentro de la vista integrada;
-  // no se duplican con los filtros globales del portal principal.
+  const visor=document.getElementById('visor');
+  const titulo='Coordinación · '+modulos[clave];
+  let yaIntegrado=false;
+  try {
+    const actual=new URL(visor.getAttribute('src')||visor.src,window.location.href);
+    yaIntegrado=actual.pathname.endsWith('/gestion_coordinacion.html') &&
+      actual.searchParams.get('embedded')==='1' && visor.dataset.coordReady==='1';
+  }catch(e){/* Primera entrada a Coordinación. */}
+  if(yaIntegrado){
+    // Cambiar reporte sin recargar Coordinación: conserva los filtros elegidos.
+    visor.contentWindow.postMessage(
+      {type:'ETOP_COORD_SELECCIONAR',vista:clave},window.location.origin);
+    activate(btn);
+    establecerTituloVistaETOP(titulo);
+  }else{
+    visor.dataset.coordReady='0';
+    visor.onload=function(){this.dataset.coordReady='1';};
+    openLocal('gestion_coordinacion.html?embedded=1&view='+encodeURIComponent(clave),titulo,btn);
+  }
+  // Los filtros propios de Coordinación permanecen dentro de la vista integrada.
   document.getElementById('topBar')?.classList.remove(
     'dashboard-mode','export-mode','email-mode','email-test-mode','etop-comunicaciones-mode');
 }
