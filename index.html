@@ -1887,21 +1887,43 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 </style>
 <style>
 /* Navegación única de Coordinación, sin duplicar Calendarios. */
-.sidebar .coord-btn{width:calc(100% - 16px);margin:10px 8px 1px}
-.sidebar .coord-btn[aria-expanded="true"]{background:rgba(244,196,0,.10)!important;color:#FFE58B!important}
+.sidebar .coord-btn{
+  width:calc(100% - 16px);
+  margin:8px 8px 2px;
+  padding:7px 12px;
+  min-height:32px;
+}
+.sidebar .coord-btn[aria-expanded="true"]{
+  background:rgba(244,196,0,.10)!important;
+  color:#FFE58B!important
+}
 .sidebar .coord-btn .arrow{transition:transform .15s}
 .sidebar .coord-btn[aria-expanded="true"] .arrow{transform:rotate(180deg)}
-.sidebar #coord-submenu{margin:2px 8px 4px 20px;padding-left:9px;border-left:1px solid rgba(244,196,0,.38)}
-.sidebar #coord-submenu .coord-submenu-label{
-  padding:10px 7px 3px;color:#B5C6DC;font-size:9px;font-weight:800;
-  text-transform:uppercase;letter-spacing:.06em
+/* Sin sangría ni separadores: las seis opciones alinean su icono con el título. */
+.sidebar #coord-submenu{
+  margin:0 8px 5px;
+  padding:0;
+  border:0;
 }
 .sidebar #coord-submenu .menu-btn{
-  width:100%;display:flex;align-items:center;gap:7px;min-height:31px;
-  padding:7px 8px;font-size:11px;line-height:1.35;text-align:left;
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 12px;
+  min-height:29px;
+  margin:1px 0;
+  font-size:11px;
+  line-height:1.2;
+  text-align:left;
   white-space:normal
 }
-.sidebar #coord-submenu .menu-btn .ico{width:18px;min-width:18px}
+.sidebar #coord-submenu .menu-btn .ico{
+  width:20px;
+  min-width:20px;
+  flex:0 0 20px;
+  text-align:center
+}
 .sidebar #coord-submenu .menu-btn.active{color:#FFFFFF!important}
 </style>
 <style>
@@ -1954,14 +1976,11 @@ html.etop-coord-tools-view #topBar #guia-correos{
     <div class="submenu" id="canales"><button class="menu-btn" onclick="mostrarCanales(this)">Ver todos los canales</button></div>
     <button class="collapsible coord-btn" type="button" id="coord-menu-toggle" aria-controls="coord-submenu" aria-expanded="false" onclick="toggleCoordSubmenu(this)"><span class="ico">🏛️</span>Espacio de Coordinación<span class="arrow">▼</span></button>
     <div class="submenu coord-submenu" id="coord-submenu" aria-label="Módulos de Coordinación">
-      <div class="coord-submenu-label">Espacio Coordinación</div>
       <button type="button" class="menu-btn" data-key="COORD_DASHBOARD_MACRO" onclick="openCoordModule('DASHBOARD_MACRO',this)"><span class="ico">🏛️</span>Dashboard Macro Facultades</button>
       <button type="button" class="menu-btn" data-key="COORD_CARGA_TUTORIAL" onclick="openCoordModule('CARGA_TUTORIAL',this)"><span class="ico">⚖️</span>Carga Tutorial</button>
-      <div class="coord-submenu-label">Seguimiento Operativo</div>
       <button type="button" class="menu-btn" data-key="COORD_AUDITORIA" onclick="openCoordModule('AUDITORIA',this)"><span class="ico">🔎</span>Revisión de seguimiento</button>
       <button type="button" class="menu-btn" data-key="COORD_CURSOS_INICIAR" onclick="openCoordModule('CURSOS_INICIAR',this)"><span class="ico">🚀</span>Cursos por iniciar</button>
       <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openCoordModule('INCIDENCIAS',this)"><span class="ico">⚠️</span>Incidencias</button>
-      <div class="coord-submenu-label">Herramientas</div>
       <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
     </div>
   </div>
