@@ -1043,6 +1043,28 @@ height:25px!important;min-height:25px!important;font-size:9.8px!important;font-w
 }
 #mf-fechaInicio .compact-date .date-filter-clear{color:#355D88!important}
 </style>
+<style>
+/* Vista integrada en el portal principal. La página autónoma sigue intacta. */
+html.etop-coord-embedded .sidebar{display:none!important}
+html.etop-coord-embedded .app-container{
+  width:100%!important;max-width:100%!important;height:100vh!important
+}
+html.etop-coord-embedded .content-area{
+  flex:1 1 auto!important;min-width:0!important;width:100%!important
+}
+html.etop-coord-embedded .top-bar>.toggle-btn,
+html.etop-coord-embedded .top-bar>.titulo-vista,
+html.etop-coord-embedded .top-bar>.separator-bar{display:none!important}
+html.etop-coord-embedded .top-bar>.filtros-wrapper{
+  min-width:0!important;flex:1 1 auto!important
+}
+</style>
+<script>
+/* Activación optativa; sin parámetro embedded mantiene el diseño autónomo. */
+if(new URLSearchParams(window.location.search).get('embedded')==='1'){
+  document.documentElement.classList.add('etop-coord-embedded');
+}
+</script>
 </head>
 <body>
 <div class="app-container">
@@ -1788,10 +1810,29 @@ function establecerTituloVistaETOP(nombre){
     /* ========================================================
        INIT
     ======================================================== */
+    /* Solo los módulos que ya están en Coordinación, sin Calendarios duplicado. */
+    const VISTAS_COORD_INTEGRADAS=new Set([
+        'DASHBOARD_MACRO','CARGA_TUTORIAL','AUDITORIA','CURSOS_INICIAR','INCIDENCIAS'
+    ]);
+    window.addEventListener('message',function(evento){
+        if(!document.documentElement.classList.contains('etop-coord-embedded'))return;
+        if(evento.origin!==window.location.origin)return;
+        if(!evento.data||evento.data.type!=='ETOP_COORD_SELECCIONAR')return;
+        const solicitada=String(evento.data.vista||'');
+        if(!VISTAS_COORD_INTEGRADAS.has(solicitada))return;
+        // Mantener los filtros de la sesión al cambiar entre vistas integradas.
+        cargar(solicitada,null);
+    });
     window.onload = function() {
         cargarNRCS();
-        const btnInicio = document.querySelector('.menu-btn.active');
-        if (btnInicio) cargar('DASHBOARD_MACRO', btnInicio);
+        const integrado=document.documentElement.classList.contains('etop-coord-embedded');
+        const solicitada=new URLSearchParams(window.location.search).get('view');
+        if(integrado&&VISTAS_COORD_INTEGRADAS.has(solicitada)){
+            cargar(solicitada,null);
+        }else{
+            const btnInicio=document.querySelector('.menu-btn.active');
+            if(btnInicio)cargar('DASHBOARD_MACRO',btnInicio);
+        }
     };
 </script>
 <script>
