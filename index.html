@@ -1904,6 +1904,27 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 .sidebar #coord-submenu .menu-btn .ico{width:18px;min-width:18px}
 .sidebar #coord-submenu .menu-btn.active{color:#FFFFFF!important}
 </style>
+<style>
+/* Vista de Coordinación integrada: SOLO su barra de filtros.
+   La barra del portal principal se conserva para las vistas principales. */
+html.etop-coord-view #topBar{
+  display:none!important;
+}
+/* Centro de Herramientas no tiene barra de filtros de Coordinación:
+   conservar solo el botón del menú y el título, sin sliders de Inicio. */
+html.etop-coord-tools-view #topBar{
+  display:flex!important;
+  height:44px!important;
+  min-height:44px!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+}
+html.etop-coord-tools-view #topBar #homeTopSearch,
+html.etop-coord-tools-view #topBar #gestionFilters,
+html.etop-coord-tools-view #topBar #guia-correos{
+  display:none!important;
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1941,7 +1962,7 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
       <button type="button" class="menu-btn" data-key="COORD_CURSOS_INICIAR" onclick="openCoordModule('CURSOS_INICIAR',this)"><span class="ico">🚀</span>Cursos por iniciar</button>
       <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openCoordModule('INCIDENCIAS',this)"><span class="ico">⚠️</span>Incidencias</button>
       <div class="coord-submenu-label">Herramientas</div>
-      <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openLocal('centro_herramientas_etop.html','Centro de Herramientas ETOP',this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
+      <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
     </div>
   </div>
   <div class="session-box">
@@ -2937,6 +2958,7 @@ function cargarDatosCursoOnboarding(){
   if(botonCorreo)cargarOnboarding(claveDestino,botonCorreo,claveDestino==='CORREOS_PRUEBA');
 }
 function mostrarAreaGestion(){
+  establecerModoCoordinacionPortal(null);
   document.getElementById('homeView').style.display='none';
   document.getElementById('viewer').style.display='block';
   document.getElementById('canal-splash').classList.remove('visible');
@@ -3399,6 +3421,7 @@ function refrescarProximosCursos(){
 }
 
 function showHome(btn){
+  establecerModoCoordinacionPortal(null);
   vistaActual='INICIO';
   actualizarSaludoBanner();
   refrescarFocoDia();
@@ -3426,6 +3449,30 @@ function openLocal(url,title,btn){
   document.getElementById('visor').style.display='block';document.getElementById('visor').src=BASE+url+(esComunicaciones?(url.includes('?')?'&':'?')+'_v=20261104-redesign4':'');establecerTituloVistaETOP(title);activate(btn);
 }
 
+/* Modos exclusivos de barra superior: vista principal vs. Coordinación. */
+function establecerModoCoordinacionPortal(modo){
+  const raiz=document.documentElement;
+  raiz.classList.toggle('etop-coord-view',modo==='embedded');
+  raiz.classList.toggle('etop-coord-tools-view',modo==='tools');
+}
+/* Permitir abrir el menú lateral principal desde la única barra de filtros
+   visible en Coordinación; aceptar solo mensajes del visor propio. */
+window.addEventListener('message',function(evento){
+  if(evento.origin!==window.location.origin)return;
+  if(!evento.data||evento.data.type!=='ETOP_COORD_TOGGLE_MAIN_MENU')return;
+  const visor=document.getElementById('visor');
+  if(!visor||evento.source!==visor.contentWindow)return;
+  try{
+    const url=new URL(visor.getAttribute('src')||visor.src,window.location.href);
+    if(!url.pathname.endsWith('/gestion_coordinacion.html')||
+       url.searchParams.get('embedded')!=='1')return;
+  }catch(_){return;}
+  toggleSidebar();
+});
+function openCoordTools(btn){
+  openLocal('centro_herramientas_etop.html','Centro de Herramientas ETOP',btn);
+  establecerModoCoordinacionPortal('tools');
+}
 function toggleCoordSubmenu(btn){
   const submenu=document.getElementById('coord-submenu');
   if(!submenu)return;
@@ -3463,6 +3510,7 @@ function openCoordModule(clave,btn){
   // Los filtros propios de Coordinación permanecen dentro de la vista integrada.
   document.getElementById('topBar')?.classList.remove(
     'dashboard-mode','export-mode','email-mode','email-test-mode','etop-comunicaciones-mode');
+  establecerModoCoordinacionPortal('embedded');
 }
 
 /* ===== Buscador universal =====
