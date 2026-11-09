@@ -1925,6 +1925,42 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
   text-align:center
 }
 .sidebar #coord-submenu .menu-btn.active{color:#FFFFFF!important}
+/* Dos opciones para Herramientas: ver dentro del portal o abrir otra pestaña,
+   sin añadir sangría ni aumentar la altura del submenú. */
+.sidebar #coord-submenu .coord-tools-row{
+  display:flex;
+  align-items:stretch;
+  gap:3px;
+  margin:1px 0;
+  min-width:0
+}
+.sidebar #coord-submenu .coord-tools-row > .menu-btn{
+  flex:1 1 auto;
+  min-width:0;
+  width:auto;
+  margin:0
+}
+.sidebar #coord-submenu .coord-tools-open{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 28px;
+  align-self:stretch;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:7px;
+  background:rgba(255,255,255,.06);
+  color:#E5EFFB;
+  font-size:16px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer
+}
+.sidebar #coord-submenu .coord-tools-open:hover,
+.sidebar #coord-submenu .coord-tools-open:focus-visible{
+  background:rgba(244,196,0,.16);
+  border-color:rgba(244,196,0,.65);
+  color:#FFF1A8
+}
 </style>
 <style>
 /* Vista de Coordinación integrada: SOLO su barra de filtros.
@@ -1994,9 +2030,11 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
       <button type="button" class="menu-btn" data-key="COORD_CARGA_TUTORIAL" onclick="openCoordModule('CARGA_TUTORIAL',this)"><span class="ico">⚖️</span>Carga Tutorial</button>
       <button type="button" class="menu-btn" data-key="COORD_AUDITORIA" onclick="openCoordModule('AUDITORIA',this)"><span class="ico">🔎</span>Revisión de seguimiento</button>
       <button type="button" class="menu-btn" data-key="COORD_CURSOS_INICIAR" onclick="openCoordModule('CURSOS_INICIAR',this)"><span class="ico">🚀</span>Cursos por iniciar</button>
-      <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openCoordModule('INCIDENCIAS',this)"><span class="ico">⚠️</span>Incidencias</button>
-      <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS_STUDIO_PRUEBA" title="Probar nueva interfaz Incidencias ETOP de Google Studio" onclick="openIncidenciasStudioPrueba(this)"><span class="ico">🧪</span>Incidencias · Prueba</button>
-      <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
+      <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openIncidenciasStudio(this)"><span class="ico">⚠️</span>Incidencias</button>
+      <div class="coord-tools-row">
+        <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
+        <a class="coord-tools-open" href="centro_herramientas_etop.html" target="_blank" rel="noopener noreferrer" title="Abrir Centro de Herramientas en otra pestaña para trabajar junto a Cursos por iniciar" aria-label="Abrir Centro de Herramientas ETOP en otra pestaña">↗</a>
+      </div>
     </div>
   </div>
   <div class="session-box">
@@ -2208,7 +2246,7 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
   </div>
   <div class="card-body">
     <div class="quick" style="grid-template-columns:repeat(5,1fr)">
-      <button onclick="openLocal('incidencias.html','Gestión QA2',this)"><span>🧪</span><b>Gestión QA2</b></button>
+      <button onclick="openIncidenciasStudio(findBtn('COORD_INCIDENCIAS'))"><span>🧪</span><b>Gestión QA2</b></button>
       <button onclick="openLocal('comunicaciones_etop.html','Comunicaciones',this)"><span>📣</span><b>Comunicaciones</b></button>
       <button onclick="openLocal('aplicaciones.html','Aplicaciones',this)"><span>🧩</span><b>Aplicaciones</b></button>
       <button onclick="openLocal('recursos_aprendizaje.html','Recursos',this)"><span>📚</span><b>Recursos</b></button>
@@ -3504,9 +3542,9 @@ window.addEventListener('message',function(evento){
   }catch(_){return;}
   toggleSidebar();
 });
-/* Vista experimental: enlace aislado a la app original de Google Studio.
-   Conserva la vista de Incidencias existente y no altera sus reportes. */
-function openIncidenciasStudioPrueba(btn){
+/* Incidencias ETOP: interfaz definitiva de Google AI Studio.
+   La antigua incidencias.html permanece disponible como respaldo independiente. */
+function openIncidenciasStudio(btn){
   mostrarAreaGestion();
   vistaActual=null;
   const top=document.getElementById('topBar');
@@ -3527,7 +3565,7 @@ function openIncidenciasStudioPrueba(btn){
   visor.style.display='block';
   // URL absoluta: es un repositorio independiente, no una ruta de sitiowebetop.
   visor.src='https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/';
-  establecerTituloVistaETOP('Coordinación · Incidencias (prueba)');
+  establecerTituloVistaETOP('Coordinación · Incidencias');
   activate(btn);
   // No añadir una segunda barra encima del diseño original de Google Studio.
   establecerModoCoordinacionPortal('tools');
