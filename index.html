@@ -2033,7 +2033,7 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
       <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openIncidenciasStudio(this)"><span class="ico">⚠️</span>Incidencias</button>
       <div class="coord-tools-row">
         <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
-        <a class="coord-tools-open" href="centro_herramientas_etop.html" target="_blank" rel="noopener noreferrer" title="Abrir Centro de Herramientas en otra pestaña para trabajar junto a Cursos por iniciar" aria-label="Abrir Centro de Herramientas ETOP en otra pestaña">↗</a>
+        <a class="coord-tools-open" href="centro_herramientas_etop.html" target="_blank" rel="noopener noreferrer" onclick="abrirHerramientasVentana(event)" title="Abrir Centro de Herramientas en ventana independiente para trabajar junto a Cursos por iniciar" aria-label="Abrir Centro de Herramientas ETOP en otra ventana">↗</a>
       </div>
     </div>
   </div>
@@ -3569,6 +3569,17 @@ function openIncidenciasStudio(btn){
   activate(btn);
   // No añadir una segunda barra encima del diseño original de Google Studio.
   establecerModoCoordinacionPortal('tools');
+}
+/* Abrir Herramientas junto a Cursos por iniciar. Desde un clic real:
+   preferir ventana separada y conservar la apertura normal en pestaña
+   cuando el navegador no permite ventanas emergentes. */
+function abrirHerramientasVentana(evento){
+  const ventana=window.open('centro_herramientas_etop.html',
+    'ETOP_Centro_Herramientas',
+    'popup=yes,width=1320,height=850,resizable=yes,scrollbars=yes');
+  if(!ventana)return;
+  evento.preventDefault();
+  try { ventana.opener=null; ventana.focus(); } catch (_) {}
 }
 function openCoordTools(btn){
   openLocal('centro_herramientas_etop.html','Centro de Herramientas ETOP',btn);
