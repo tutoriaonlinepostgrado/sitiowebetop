@@ -1932,19 +1932,33 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 html.etop-coord-view #topBar{
   display:none!important;
 }
-/* Centro de Herramientas no tiene barra de filtros de Coordinación:
-   conservar solo el botón del menú y el título, sin sliders de Inicio. */
-html.etop-coord-tools-view #topBar{
-  display:flex!important;
-  height:44px!important;
-  min-height:44px!important;
-  align-items:center!important;
-  flex-wrap:nowrap!important;
+/* Centro de Herramientas ocupa toda el área disponible: sin barra ni hueco. */
+html.etop-coord-tools-view #topBar{display:none!important}
+/* Si el usuario cerró el menú lateral, conservar un acceso discreto
+   sobre el borde del visor (sin reservar espacio vertical). */
+#coord-tools-menu-toggle{display:none}
+html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle{
+  display:inline-flex!important;
+  position:fixed!important;
+  left:7px;
+  top:50%;
+  transform:translateY(-50%);
+  align-items:center;
+  justify-content:center;
+  width:31px;
+  height:46px;
+  padding:0;
+  z-index:65;
+  border:1px solid #C8D7E6;
+  border-radius:0 9px 9px 0;
+  background:#FFFFFF;
+  color:#355D88;
+  box-shadow:0 3px 12px rgba(23,45,76,.12);
+  cursor:pointer;
+  font-size:17px;
 }
-html.etop-coord-tools-view #topBar #homeTopSearch,
-html.etop-coord-tools-view #topBar #gestionFilters,
-html.etop-coord-tools-view #topBar #guia-correos{
-  display:none!important;
+html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hover{
+  background:#F0F5FB;
 }
 </style>
 </head>
@@ -2149,6 +2163,7 @@ html.etop-coord-tools-view #topBar #guia-correos{
       <button type="button" class="guia-correos-btn" onclick="cargarDatosCursoOnboarding()">↻ Cargar datos del curso</button>
     </div>
   </div>
+  <button type="button" id="coord-tools-menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menú lateral ETOP" title="Abrir menú lateral ETOP">☰</button>
   <section class="home" id="homeView">
     <div class="hero hero-index-banner">
       <div class="hero-banner-photo" aria-hidden="true"></div>
