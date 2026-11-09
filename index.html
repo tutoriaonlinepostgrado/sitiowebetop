@@ -1867,6 +1867,24 @@ grid-template-columns:minmax(74px,.75fr) minmax(102px,1.05fr) minmax(78px,.8fr) 
 .top.etop-comunicaciones-mode #gestionFilters [data-filtro="excelDashboard"]{display:none!important}
 </style>
 <link rel="stylesheet" href="etop-identidad-unab.css?v=20261106-v4">
+<style>
+/* ETOP · Corrección exclusivamente visual del buscador universal.
+   El texto anterior heredaba blanco de los antiguos encabezados oscuros. */
+#homeTopSearch #universalSearch,
+#homeTopSearch #universalSearch:hover,
+#homeTopSearch #universalSearch:focus {
+  color:#223951!important;
+  -webkit-text-fill-color:#223951!important;
+  caret-color:#223951!important;
+  background:#FFFFFF!important;
+  border-color:#C5D5E6!important;
+}
+#homeTopSearch #universalSearch::placeholder {
+  color:#697E95!important;
+  -webkit-text-fill-color:#697E95!important;
+  opacity:1;
+}
+</style>
 </head>
 <body>
 <div class="app">
