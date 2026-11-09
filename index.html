@@ -3622,7 +3622,10 @@ function openCoordModule(clave,btn){
   // Los filtros propios de Coordinación permanecen dentro de la vista integrada.
   document.getElementById('topBar')?.classList.remove(
     'dashboard-mode','export-mode','email-mode','email-test-mode','etop-comunicaciones-mode');
-  establecerModoCoordinacionPortal('embedded');
+  // Estas dos vistas resumen no tienen sliders; el visor ocupa todo el alto.
+  // Con el menú plegado, el botón flotante ☰ sigue permitiendo recuperarlo.
+  establecerModoCoordinacionPortal(
+    clave==='DASHBOARD_MACRO'||clave==='CARGA_TUTORIAL'?'tools':'embedded');
 }
 
 /* ===== Buscador universal =====
