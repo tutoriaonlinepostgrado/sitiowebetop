@@ -761,7 +761,7 @@ const ACCESS = {
   'Informe Power BI': {url: '', context: false},
   'Editar NRC': {url: '', context: false},
   'Editar ficha Inducción': {url: '', context: false},
-  'Historial QA2': {url: PORTAL+'incidencias.html', context: true},
+  'Historial QA2': {url: 'https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc={nrc}', context: true},
   'Cursos del Intake': {url: PORTAL+'calendarios.html', context: true},
   'Presentación': {url: '', context: false},
   'Anuncio Bienvenida': {url: '', context: false}
@@ -1156,7 +1156,7 @@ function renderQaScreen(c) {
       <div class="qa-header-links">
         <a class="qa-link" href="${esc(QA2_FORM + encodeURIComponent(c.id))}" target="_blank" rel="noopener noreferrer">${icon('clipboard')} Completar QA2</a>
         ${canvas ? `<a class="qa-link" href="${esc(canvas)}" target="_blank" rel="noopener noreferrer">${icon('external')} Abrir aula Canvas</a>` : ''}
-        <a class="qa-link" href="${esc(PORTAL + 'incidencias.html?nrc=' + encodeURIComponent(c.nrc))}" target="_blank" rel="noopener noreferrer">${icon('book')} Historial y derivación</a>
+        <a class="qa-link" href="${esc('https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc=' + encodeURIComponent(c.nrc))}" target="_blank" rel="noopener noreferrer">${icon('book')} Historial y derivación</a>
       </div>
     </div>
     ${rows.length ? `

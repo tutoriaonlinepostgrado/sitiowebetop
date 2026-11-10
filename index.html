@@ -3600,6 +3600,8 @@ function openCoordModule(clave,btn){
     INCIDENCIAS:'Incidencias'
   };
   if(!Object.prototype.hasOwnProperty.call(modulos,clave))return;
+  // Mantener compatibilidad con llamados antiguos a Coordinación / Incidencias.
+  if(clave==='INCIDENCIAS'){openIncidenciasStudio(btn);return;}
   const visor=document.getElementById('visor');
   const titulo='Coordinación · '+modulos[clave];
   let yaIntegrado=false;
