@@ -578,7 +578,7 @@
         : String(canvasRaw??'').trim();
       const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
       const incidentStatus=norm(x['codigo curso'])==='UNI118'?'NO APLICA':!inc.length?'PENDIENTE QA2':incidentCount?`CON INCIDENCIA (${incidentCount})`:'SIN INCIDENCIA';
-      const incidentUrl=BASE+'incidencias.html?nrc='+encodeURIComponent(x.nrc||'');
+      const incidentUrl='https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc='+encodeURIComponent(x.nrc||'');
       host.innerHTML=`
         <div class="course-panel-head">
           <div>
