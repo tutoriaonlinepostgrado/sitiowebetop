@@ -168,7 +168,7 @@ sendButton.onclick=async()=>{
  if(!ultimoQAValidado){el('qaFeedback').textContent='Primero valide el formulario.';return;}
  const url="https://default8fbed393d03b49f8be79cd5e1f590f.b2.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/22/workflows/373407fff3554aeeaa61cb793e1a4d89/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-mC9uveOG3pAwwfPrfJi7BvJnIcr0BnGXaVjZkpO7pw";
  let endpoint;try{endpoint=new URL(url);}catch{}
- if(!endpoint||endpoint.protocol!=='https:'||!(/\.environment\.api\.powerplatform\.com$|\.logic\.azure\.com$/i.test(endpoint.hostname))||!endpoint.searchParams.has('sig')){el('qaFeedback').textContent='Falta la conexión privada con el flujo QA2. Solicítela al administrador.';return;}
+ if(!endpoint||endpoint.protocol!=='https:'){el('qaFeedback').textContent='No se pudo preparar la dirección del flujo QA2. Revise la configuración del portal.';return;}
  
  sendButton.disabled=true;el('inspect').disabled=true;el('qaFeedback').textContent='Enviando QA2. Espere la confirmación antes de cerrar esta pestaña…';
  try{
