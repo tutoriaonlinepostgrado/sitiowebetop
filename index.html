@@ -1997,6 +1997,52 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
   background:#F0F5FB;
 }
 </style>
+
+<style>
+/* RUT solo en Tablero, Nómina y Ficha. La cuadrícula genérica tenía
+   display:grid !important, por eso no bastaba ocultarlo con JavaScript. */
+.top.report-mode:not(.etop-rut-permitido) #gestionFilters > [data-filtro="rut"]{
+  display:none!important
+}
+.top.report-mode.etop-rut-permitido #gestionFilters > [data-filtro="rut"]{
+  display:grid!important
+}
+/* Ficha del Estudiante: exclusivamente RUT, ancho cómodo, sin NRC
+   ni controles de otras vistas ocupando espacio. */
+.top.report-mode.etop-ficha-rut-only #gestionFilters{
+  display:grid!important;
+  flex:0 1 640px!important;
+  width:min(100%,640px)!important;
+  max-width:640px!important;
+  min-width:0!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  align-items:center!important
+}
+.top.report-mode.etop-ficha-rut-only #gestionFilters > :not([data-filtro="rut"]){
+  display:none!important
+}
+.top.report-mode.etop-ficha-rut-only #gestionFilters > [data-filtro="rut"]{
+  display:grid!important;
+  width:100%!important;
+  min-width:0!important;
+  grid-column:1/-1!important;
+  grid-template-columns:42px minmax(0,1fr)!important;
+  gap:8px!important
+}
+.top.report-mode.etop-ficha-rut-only #gestionFilters #rut-pill-wrap,
+.top.report-mode.etop-ficha-rut-only #gestionFilters #input-rut{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important
+}
+@media(max-width:720px){
+  .top.report-mode.etop-ficha-rut-only #gestionFilters{
+    flex:1 1 100%!important;
+    width:100%!important;
+    max-width:none!important
+  }
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2746,6 +2792,15 @@ function buildURLFiltrada(clave){
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
+  // En la Ficha del Estudiante solo aplicar RUT; los NRC y demás selecciones
+  // conservadas en otros módulos no deben filtrar aquí de forma invisible.
+  if(clave==='FICHA_ESTUDIANTE'){
+    if(BUSQUEDA.rut&&cfg.filtroRut)
+      fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
+    url.searchParams.set('_portalFilter',Date.now().toString());
+    const baseFicha=url.toString();
+    return fx.length?baseFicha+'&filter='+encodeURIComponent(fx.join(' and ')):baseFicha;
+  }
   {const c=filtroOrPrincipal('facultad','NRC_TUTOR_ACTUAL/FACULTAD');if(c)fx.push(c)}
   {const elegidos=valoresMultiPrincipal('tutor');if(elegidos.length){const c=filtroOrPrincipal('tutor','NRC_TUTOR_ACTUAL/NOMBRE_TUTOR');if(c)fx.push(c)}else{const automatico=tutorFiltroAutomaticoETOP();if(automatico)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(automatico)}'`)}}
   {const c=filtroOrPrincipal('tipo','NRC_TUTOR_ACTUAL/TIPO_NRC_URL',v=>v==='100%ONLINE'?'100PCTONLINE':v);if(c)fx.push(c)}
@@ -2984,9 +3039,9 @@ function calcularFechaLimite(finStr,dias){
 }
 
 const FILTROS_POR_VISTA={
-  DASHBOARD:['facultad','tutor','tipo','estado','motivoRiesgo','nrc','excelDashboard'],
+  DASHBOARD:['facultad','tutor','tipo','estado','motivoRiesgo','nrc','rut','excelDashboard'],
   DASHBOARD_EXPORT:['facultad','tutor','tipo','estado','motivoRiesgo','nrc'],
-  NOMINA_ESTUDIANTES:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
+  NOMINA_ESTUDIANTES:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc','rut'],
   CURSOS_ACTIVOS:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CURSOS_PREPARACION:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
   CURSOS_CIERRE:['facultad','tutor','tipo','codigo','estado','intake','fechaInicio','nrc'],
@@ -3005,6 +3060,8 @@ function configurarFiltros(clave){
     top.classList.toggle('email-test-mode',clave==='CORREOS_PRUEBA'||clave==='INVITACIONES');
     top.classList.toggle('dashboard-mode',clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT');
     top.classList.toggle('export-mode',clave==='DASHBOARD_EXPORT');
+    top.classList.toggle('etop-rut-permitido',['DASHBOARD','NOMINA_ESTUDIANTES','FICHA_ESTUDIANTE'].includes(clave));
+    top.classList.toggle('etop-ficha-rut-only',clave==='FICHA_ESTUDIANTE');
   }
   document.querySelectorAll('#gestionFilters [data-filtro]').forEach(el=>{
     el.style.display=visibles.includes(el.dataset.filtro)?'':'none';
