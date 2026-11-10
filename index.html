@@ -2043,6 +2043,97 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
   }
 }
 </style>
+<style id="etop-busqueda-en-banner-20261110">
+/* Portada: el mismo buscador universal se integra al banner.
+   Los filtros del resto de las páginas conservan su barra habitual. */
+html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
+.hero.hero-index-banner{
+  position:relative;z-index:5;overflow:visible!important;
+  display:flex;align-items:center;gap:15px;
+  padding:0 18px;min-height:102px;
+}
+.hero-index-banner .hero-banner-photo{
+  border-radius:0 13px 13px 0;
+  pointer-events:none;
+}
+.hero-index-banner .hero-banner-fade{pointer-events:none}
+.hero-index-banner .hero-banner-copy{
+  flex:0 1 36%;max-width:475px;min-width:285px;padding:0;z-index:2;
+}
+.hero-index-banner .hero-banner-toggle{
+  position:relative;z-index:5;flex:0 0 36px;
+  width:36px;height:36px;align-self:center;
+  border:1px solid rgba(207,224,247,.6)!important;
+  border-radius:10px;background:rgba(9,27,57,.40)!important;
+  color:#fff!important;box-shadow:none!important;
+}
+.hero-index-banner .hero-banner-toggle:hover{background:rgba(255,255,255,.15)!important}
+.hero-index-banner #homeTopSearch{
+  position:relative;z-index:15;
+  display:flex;align-items:center;gap:5px;
+  flex:1 1 480px;max-width:760px;min-width:0;
+  margin-right:clamp(60px,11vw,180px);
+  padding:4px 5px 4px 0;
+  border:1px solid rgba(215,228,245,.9);
+  border-radius:999px;background:#fff;
+  box-shadow:0 4px 16px rgba(4,24,55,.15);
+}
+.hero-index-banner #homeTopSearch:focus-within{box-shadow:0 0 0 3px rgba(115,177,255,.36),0 6px 16px rgba(4,24,55,.18)}
+.hero-index-banner #universalSearchWrap{flex:1 1 auto!important;min-width:0;max-width:none!important}
+.hero-index-banner #universalSearchWrap>span{
+  top:50%;left:11px;transform:translateY(-50%);
+  color:#2675d9;font-size:14px;
+}
+.hero-index-banner #universalSearchWrap::before{
+  left:34px;background:#e6f1ff;border-color:#b5d7ff;color:#2872cf;
+  font-size:7px;
+}
+.hero-index-banner #homeTopSearch #universalSearch,
+.hero-index-banner #homeTopSearch #universalSearch:hover,
+.hero-index-banner #homeTopSearch #universalSearch:focus{
+  display:block;height:34px;width:100%!important;min-width:0;
+  padding:0 6px 0 101px!important;
+  border:0!important;border-radius:999px!important;
+  color:#223951!important;-webkit-text-fill-color:#223951!important;
+  background:transparent!important;box-shadow:none!important;
+  font-size:11px;outline:none!important;
+}
+.hero-index-banner #homeTopSearch .universal-search-btn{
+  flex:0 0 auto;height:34px!important;
+  border-radius:999px!important;padding:0 16px!important;
+  font-size:10px!important;
+}
+.hero-index-banner #universalResults{
+  top:calc(100% + 9px);min-width:min(440px,88vw);
+  box-shadow:0 18px 46px rgba(15,23,42,.24);
+}
+@media(max-width:1400px){
+  .hero.hero-index-banner{gap:11px;padding:0 14px;min-height:94px}
+  .hero-index-banner .hero-banner-copy{flex-basis:34%;min-width:225px}
+  .hero-index-banner #homeTopSearch{margin-right:40px}
+  .hero.hero-index-banner h1{font-size:19px}
+}
+@media(max-width:1050px){
+  .hero-index-banner .hero-banner-copy{min-width:205px;flex-basis:36%}
+  .hero-index-banner #homeTopSearch{margin-right:0;flex-basis:320px}
+  .hero-index-banner .hero-banner-photo{opacity:.45}
+}
+@media(max-width:850px){
+  .hero.hero-index-banner{flex-wrap:wrap;gap:9px 12px;padding:12px;min-height:130px}
+  .hero-index-banner .hero-banner-copy{flex:1 1 calc(100% - 65px);max-width:none;min-width:0}
+  .hero-index-banner #homeTopSearch{
+    order:3;flex:1 1 100%;max-width:none;margin:0;min-width:0;
+  }
+  .hero-index-banner .hero-banner-photo{opacity:.24}
+}
+@media(max-width:460px){
+  .hero-index-banner .hero-banner-toggle{width:32px;height:32px;flex-basis:32px}
+  .hero.hero-index-banner h1{font-size:18px}
+  .hero-index-banner #homeTopSearch #universalSearch{font-size:9px!important;padding-left:82px!important}
+  .hero-index-banner #universalSearchWrap::before{left:30px;padding:3px 4px;font-size:6px}
+  .hero-index-banner #homeTopSearch .universal-search-btn{padding:0 9px!important;font-size:9px!important}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2095,20 +2186,6 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
     <button class="toggle" onclick="toggleSidebar()">☰</button>
     <div class="view-title" id="titulo-vista" title="Inicio · Gestión Tutorial" aria-label="Inicio · Gestión Tutorial">IGT</div>
     <div class="sep"></div>
-
-    <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
-      <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
-        <span>🔎</span>
-        <input id="universalSearch"
-               placeholder="Buscar RUT sin guion, NRC, curso, programa o tutor..."
-               autocomplete="off"
-               style="width:100%;border-radius:9px"
-               oninput="onUniversalInput(this.value)"
-               onkeydown="onUniversalKeydown(event)">
-        <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
-      </div>
-      <button onclick="runUniversalSearch()" class="universal-search-btn">Buscar</button>
-    </div>
 
     <div class="top-bar-search" id="gestionFilters" style="display:none">
       <div class="inline-filter-wrap" data-filtro="facultad">
@@ -2253,11 +2330,25 @@ html.etop-coord-tools-view .sidebar.closed + .main #coord-tools-menu-toggle:hove
     <div class="hero hero-index-banner">
       <div class="hero-banner-photo" aria-hidden="true"></div>
       <div class="hero-banner-fade" aria-hidden="true"></div>
+      <button type="button" class="toggle hero-banner-toggle" onclick="toggleSidebar()" title="Mostrar u ocultar menú ETOP" aria-label="Mostrar u ocultar menú lateral ETOP">☰</button>
       <div class="hero-banner-copy">
         <div class="kicker" id="heroGreetingKicker">Universidad Andrés Bello · ETOP</div>
         <h1 id="heroGreetingTitle">Centro de Control Tutorial</h1>
         <p class="hero-greeting-sub" id="heroGreetingSub">Gestión Tutorial · panorama actualizado</p>
       </div>
+    <div id="homeTopSearch" style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
+      <div class="search-pill universal-search-wrap" id="universalSearchWrap" style="flex:1;max-width:760px">
+        <span>🔎</span>
+        <input id="universalSearch"
+               placeholder="Buscar RUT sin guion, NRC, curso, programa o tutor..."
+               autocomplete="off"
+               style="width:100%;border-radius:9px"
+               oninput="onUniversalInput(this.value)"
+               onkeydown="onUniversalKeydown(event)">
+        <div id="universalResults" class="universal-results" role="listbox" aria-label="Resultados de búsqueda"></div>
+      </div>
+      <button onclick="runUniversalSearch()" class="universal-search-btn">Buscar</button>
+    </div>
     </div>
     <div class="dashboard">
       <div class="left">
