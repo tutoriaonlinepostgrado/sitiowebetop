@@ -2134,6 +2134,133 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   .hero-index-banner #homeTopSearch .universal-search-btn{padding:0 9px!important;font-size:9px!important}
 }
 </style>
+
+<style id="etop-universal-resultados-compactos-20261110">
+/* Sólo presentación del desplegable: conserva búsqueda, selección y navegación. */
+#universalResults.universal-results{
+  max-height:min(365px,58vh);
+  padding:4px;
+  background:#fbfdff;
+  border-color:#c5d8e8;
+  border-radius:10px;
+  box-shadow:0 16px 35px rgba(9,32,61,.21);
+}
+#universalResults .universal-result{
+  width:100%;
+  min-height:37px;
+  grid-template-columns:26px minmax(0,1fr) auto;
+  gap:7px;
+  padding:5px 7px;
+  border-radius:7px;
+  border-left:2px solid transparent;
+  background:transparent;
+  color:#2b465c;
+  transition:background-color .12s ease,border-color .12s ease;
+}
+#universalResults .universal-result+.universal-result{
+  margin-top:1px;
+}
+#universalResults .universal-result:hover,
+#universalResults .universal-result.sel,
+#universalResults .universal-result:focus-visible{
+  background:#eaf5fd;
+  border-left-color:#1379aa;
+  outline:none;
+}
+#universalResults .universal-result-ico{
+  width:25px;
+  height:25px;
+  border-radius:6px;
+  background:#e2f0f6;
+  color:#16718f;
+  font-size:11px!important;
+  font-weight:700;
+}
+#universalResults .universal-result.tutor .universal-result-ico{
+  background:#e8f6ef;
+  color:#267756;
+}
+#universalResults .universal-result.rut .universal-result-ico{
+  background:#f0edfb;
+  color:#7152a7;
+}
+#universalResults .universal-result-main{min-width:0}
+#universalResults .universal-result-title{
+  display:block;
+  min-width:0;
+  color:#164e69!important;
+  font-size:9.2px!important;
+  font-weight:700!important;
+  line-height:1.25;
+  letter-spacing:0;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+#universalResults .universal-result-sub{
+  display:block;
+  min-width:0;
+  margin-top:2px;
+  color:#647e91!important;
+  font-size:8px!important;
+  font-weight:400!important;
+  line-height:1.22;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+#universalResults .universal-result-tag{
+  max-width:80px;
+  padding:3px 6px;
+  border:1px solid #dce6ed;
+  border-radius:6px;
+  background:#f0f4f7;
+  color:#617b8e!important;
+  font-size:7px!important;
+  line-height:1.1;
+  font-weight:750;
+  text-transform:uppercase;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+#universalResults .universal-result.estado-activo .universal-result-tag{
+  background:#e7f6ee;
+  border-color:#b9e5ca;
+  color:#217a54!important;
+}
+#universalResults .universal-result.estado-preparacion .universal-result-tag{
+  background:#fff5dc;
+  border-color:#f1d694;
+  color:#98640e!important;
+}
+#universalResults .universal-result.estado-en-cierre .universal-result-tag{
+  background:#fff0e6;
+  border-color:#f5d1b4;
+  color:#a35d25!important;
+}
+#universalResults .universal-result.estado-cerrado .universal-result-tag{
+  background:#eff3f6;
+  border-color:#dee6ed;
+  color:#768797!important;
+}
+#universalResults .universal-search-note{
+  margin-top:3px;
+  padding:5px 7px 3px;
+  color:#7d8fa0;
+  font-size:7px;
+}
+@media(max-width:600px){
+  #universalResults .universal-result{
+    min-height:37px;
+    grid-template-columns:23px minmax(0,1fr) auto;
+    gap:5px;
+    padding:5px;
+  }
+  #universalResults .universal-result-ico{width:22px;height:22px}
+  #universalResults .universal-result-tag{max-width:65px;padding:3px 4px}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -3866,7 +3993,7 @@ function buscarUniversal(valor){
       tipo:'curso',
       key:'curso:'+String(c.nrc||''),
       titulo:[c.nrc,c['codigo curso'],c['nombre curso']].filter(Boolean).join(' · '),
-      sub:['Ficha NRC',c['nombre programa'],c.tutor,c.estado,c.intake].filter(Boolean).join(' · '),
+      sub:[c['nombre programa'],c.tutor,c.intake].filter(Boolean).join(' · '),
       tag:c.estado||'Curso',
       curso:c
     }));
@@ -3891,7 +4018,8 @@ function renderUniversalResults(items){
   }
   box.innerHTML=items.map((x,i)=>{
     const ico=x.tipo==='rut'?'◈':x.tipo==='tutor'?'👤':'⌗';
-    return "<button type='button' class='universal-result "+x.tipo+"' data-universal-index='"+i+"'>"+
+    const estadoClass=x.tipo==='curso'?' estado-'+normalizarBusqueda(x.tag).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):'';
+    return "<button type='button' class='universal-result "+x.tipo+estadoClass+"' data-universal-index='"+i+"'>"+
       "<span class='universal-result-ico'>"+ico+"</span>"+
       "<span class='universal-result-main'><span class='universal-result-title'>"+esc(x.titulo)+"</span>"+
       "<span class='universal-result-sub'>"+esc(x.sub||'')+"</span></span>"+
@@ -3899,6 +4027,8 @@ function renderUniversalResults(items){
   }).join('')+
   "<div class='universal-search-note'>Los nombres de estudiantes no se indexan en GitHub. Para estudiantes, use el RUT.</div>";
   box.querySelectorAll('[data-universal-index]').forEach(btn=>{
+    const item=items[Number(btn.dataset.universalIndex)];
+    btn.title=[item.titulo,item.sub,item.tag].filter(Boolean).join(' | ');
     btn.addEventListener('mousedown',e=>{
       e.preventDefault();
       ejecutarUniversalItem(universalItems[Number(btn.dataset.universalIndex)]);
