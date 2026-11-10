@@ -1251,7 +1251,7 @@ function establecerTituloVistaETOP(nombre){
     tipo: 'local'
 },
         'INCIDENCIAS': {
-            url: "incidencias.html?embedded=1&v=20261001-canvasfix",
+            url: "https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?embedded=1",
             tipo: 'local'
         },
         'EXPLORADOR': {
@@ -1818,7 +1818,7 @@ function establecerTituloVistaETOP(nombre){
     ======================================================== */
     /* Vistas de resumen: sin sliders externos ni filtros heredados de otras vistas.
        Sus filtros internos (Carga Tutorial / Power BI) no se modifican. */
-    const VISTAS_COORD_SIN_FILTROS=new Set(['DASHBOARD_MACRO','CARGA_TUTORIAL']);
+    const VISTAS_COORD_SIN_FILTROS=new Set(['DASHBOARD_MACRO','CARGA_TUTORIAL','INCIDENCIAS']);
     function actualizarModoBarraCoordinacion(clave) {
         document.documentElement.classList.toggle(
             'etop-coord-sin-filtros',VISTAS_COORD_SIN_FILTROS.has(clave));
