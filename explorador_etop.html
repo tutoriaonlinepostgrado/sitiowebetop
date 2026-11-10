@@ -1140,7 +1140,7 @@ function renderTarjetaCurso(x){
   const bN=urlNrcTutor?`<a class="rc-btn rc-btn-sp" href="${esc(urlNrcTutor)}" target="_blank" rel="noopener">🗂 Ver el curso en base calendarios</a>`:'';
   const bCanvas=x.urlCanvas?`<a class="rc-btn rc-btn-canvas" href="${esc(x.urlCanvas)}" target="_blank" rel="noopener">🖥 Ver el curso en Canvas</a>`:'';
   const bIntegracion=urlC?`<a class="rc-btn rc-btn-intcvs" href="${esc(urlC)}" target="_blank" rel="noopener">🔗 Verificar curso en web de integración</a>`:'';
-  const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="incidencias.html?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
+  const bI=x.tieneIncidencias?`<a class="rc-btn rc-btn-inc" href="https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc=${encodeURIComponent(x.nrc)}" target="_blank" rel="noopener">⚠ Ver incidencias</a>`:'';
   const bTabla=`<button class="rc-btn" style="border:1px solid #b88a00;background:#fff8dc;color:#725600;cursor:pointer" type="button" data-programa="${esc(encodeURIComponent(x.programa))}" onclick="abrirCursoEnTabla(decodeURIComponent(this.dataset.programa))">▾ Ver en tabla</button>`;
   return`<div class="result-card">
     <div class="rc-top"><div><div class="rc-nrc">${esc(x.nrc||'—')}</div><div class="rc-programa">${filtroTarjeta(x.programa,'programa')}</div><div class="rc-curso">${esc(x.curso||'—')}</div></div><div>${badge(x.estado)}</div></div>
