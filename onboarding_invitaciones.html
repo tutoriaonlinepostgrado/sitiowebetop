@@ -369,11 +369,10 @@ async function leerArchivo(file) {
 }
 
 function formatSyncDisplay(dateStr, timeStr) {
-  const dias = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-  const meses = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-  const d = new Date(dateStr+'T00:00:00');
-  const dayIdx = (d.getDay()+6)%7;
-  return `${dias[dayIdx]} ${String(d.getDate()).padStart(2,'0')} DE ${meses[d.getMonth()]} ${timeStr} HRS`;
+  const d = new Date(dateStr+'T12:00:00');
+  if(Number.isNaN(d.getTime())) return '';
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  return `${dias[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}${timeStr ? ', '+timeStr+' h' : ''}`;
 }
 
 function formatDateDMY(isoStr) {
