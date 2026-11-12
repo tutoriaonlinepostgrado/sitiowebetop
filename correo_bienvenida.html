@@ -75,6 +75,7 @@
   .email-wrapper { padding: 12px; max-width: 1440px; margin: 0 auto; }
 .etop-version{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;color:#e2e8f0;white-space:nowrap}.etop-version select{font-size:12px;padding:7px 9px;color:#152841;background:#fff;border:1px solid #a9b9cd;border-radius:6px;max-width:190px}.template-bar-right{flex-wrap:wrap}
 </style>
+<link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
 </head>
 <body>
 
@@ -84,11 +85,11 @@
   <div class="template-bar-left">
     <span class="template-bar-badge">📋 Plantilla</span>
     <span class="template-bar-title">Correo de Bienvenida al Programa — Individual</span>
-    <span class="auto-badge" id="auto-badge">⚡ Datos del contexto NRC aplicados</span>
+    <span class="auto-badge" id="auto-badge">⚡ Datos NRC aplicados</span>
   </div>
   <div class="template-bar-right">
     <label class="etop-version">Redacción <select id="version-bienvenida" onchange="cambiarVersionBienvenida()">
-      <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option>
+      <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option>
     </select></label>
     <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
@@ -209,6 +210,10 @@ function cambiarVersionBienvenida(){
   '2':[
    '¡Le damos la bienvenida a UNAB Online! Soy '+t+', tutor(a) de acompañamiento del Programa '+p+'. Estaré disponible para orientarle y acompañarle en esta nueva etapa de aprendizaje.',
    'Para comenzar, le invitamos a conocer Canvas mediante el curso de inducción '+c+', disponible desde el '+fi+' hasta el '+ff+'. Lo encontrará en la sección "Cursos". Podrá familiarizarse con la plataforma y sus herramientas; si requiere orientación o necesita canalizar una consulta docente, puede contactarme. Tras la inducción, encontrará su primera asignatura: '+m+'.'
+  ],
+  '4':[
+   '¡Qué gusto darle la bienvenida al Programa '+p+' de UNAB Online! Soy '+t+' y estaré acompañándole como tutor(a) durante este proceso académico. Puede contar conmigo para orientarle cuando lo necesite.',
+   'Para dar los primeros pasos, le invito a participar en el curso de inducción '+c+', disponible desde el '+fi+' hasta el '+ff+' en la sección "Cursos" de Canvas. Allí podrá conocer la plataforma con tranquilidad y preparar su inicio de clases. Una vez concluida esta etapa, encontrará la asignatura '+m+'. Recuerde que estoy disponible para orientarle con el uso de Canvas y canalizar sus consultas académicas.'
   ],
   '3':[
    'Le escribo para darle la bienvenida al Programa '+p+' de UNAB Online. Mi nombre es '+t+' y seré su tutor(a) de acompañamiento durante la impartición.',
