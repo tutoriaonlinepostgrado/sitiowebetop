@@ -19,6 +19,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
+.sel-version{font:600 12px Arial,sans-serif;background:#fff;color:#18304d;border-radius:6px;padding:7px 8px;max-width:190px}.tbr{flex-wrap:wrap}
 </style></head>
 <body>
 <div class="toast" id="toast"></div>
@@ -29,6 +30,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
   </div>
   <div class="tbr">
+    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -44,8 +46,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">✉️ Correo · Seguimiento No Ingreso — Etapa Impartición</p>
     </div>
     <p style="font-size:18px;">Estimado/a <span class="campo" contenteditable="true" data-campo="nombre" data-placeholder="NOMBRE ESTUDIANTE"></span>,</p>
-    <p>Buen día, un gusto saludarle.</p>
-    <p>De acuerdo con nuestros registros, no existe registro de ingreso a Canvas, específicamente a la asignatura <span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span> — <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, por lo que quisiéramos saber si presenta algún inconveniente para ello.</p>
+    <p id="ingreso-saludo">Buen día, un gusto saludarle.</p>
+    <p id="ingreso-mensaje">De acuerdo con nuestros registros, no existe registro de ingreso a Canvas, específicamente a la asignatura <span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span> — <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, por lo que quisiéramos saber si presenta algún inconveniente para ello.</p>
     <div style="background:#fff8e1;border-left:4px solid #f59e0b;border-radius:6px;padding:16px 20px;margin:20px 0;">
       <p style="margin:0 0 8px 0;font-weight:bold;color:#92400e;">⚠️ Si tiene inconveniente con sus claves de acceso:</p>
       <p style="margin:0;font-size:15px;color:#333;">Comuníquese con la <strong>Mesa de Ayuda al Estudiante</strong> al <strong>600.220.33.33</strong></p>
@@ -75,6 +77,20 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
   if (val) { el.textContent = decodeURIComponent(val); el.classList.add('auto-filled'); hayDatos = true; }
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+
+function cambiarVersionSeguimiento(){
+ const n=document.getElementById('version-seguimiento').value;
+ const campo=k=>document.querySelector('[data-campo="'+k+'"]')?.outerHTML||'';
+ const curso=campo('nombre_curso'),nrc=campo('nrc');
+ const versiones={
+  '1':['Buen día, un gusto saludarle.','De acuerdo con nuestro seguimiento, todavía no observamos un ingreso registrado en Canvas para la asignatura '+curso+' — '+nrc+'. Quisiéramos saber si presenta alguna dificultad de acceso para ayudarle a resolverla.'],
+  '2':['Espero que se encuentre bien.','Quisiera saber cómo ha sido su inicio de curso. Por el momento, no vemos un acceso registrado a Canvas en la asignatura '+curso+' — '+nrc+'. Si ha tenido algún inconveniente, puede responder a este correo para que podamos orientarle.'],
+  '3':['Junto con saludar,','Le contactamos porque nuestros registros aún no muestran un ingreso a Canvas en la asignatura '+curso+' — '+nrc+'. Agradeceremos que nos indique si necesita ayuda para acceder o si presenta alguna dificultad.']
+ };
+ const v=versiones[n]||versiones['1'];
+ document.getElementById('ingreso-saludo').innerHTML=v[0];
+ document.getElementById('ingreso-mensaje').innerHTML=v[1];
+}
 
 async function copiarCorreo() {
   const contenido = document.getElementById('email-content').cloneNode(true);
