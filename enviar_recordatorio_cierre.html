@@ -147,6 +147,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+<link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
 </head>
 <body>
     <div class="container">
@@ -167,7 +168,7 @@
 
             <div style="margin:0 0 16px;padding:12px 16px;background:#eef4fd;border:1px solid #cbdaf0;border-radius:8px;font:600 13px Arial,sans-serif;color:#18304d">
                 Redacción: <select id="version-recordatorio" onchange="actualizarRecordatorio()" style="padding:7px 10px;border-radius:6px;background:#fff;border:1px solid #9cabc0;color:#18304d">
-                <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select>
+                <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select>
             </div><div class="preview">
                 <div class="preview-title">👁️ Vista Previa del Formato</div>
                 <div class="email-content">
@@ -237,6 +238,7 @@
           const versiones={
             '1':['Reciba mis saludos,','Como hito de cierre, confirmo la finalización del curso:','Agradeceré su acuso de recibo y valoro el trabajo conjunto durante la impartición.'],
             '2':['Espero que se encuentre muy bien.','Quisiera compartirle la información de cierre de la asignatura que acompañamos:','Muchas gracias por su colaboración a lo largo de la asignatura. Agradeceré confirmar la recepción de este correo.'],
+            '4':['Espero que se encuentre muy bien.','Quisiera acompañarle en los últimos pasos del cierre de la asignatura y compartirle sus antecedentes:','Muchas gracias por su dedicación durante la impartición. Agradeceré confirmar la recepción de este recordatorio y quedo disponible si necesita orientación.'],
             '3':['Junto con saludar,','Le informo los antecedentes del curso que ha finalizado:','Favor confirmar la recepción de estas indicaciones. Quedo disponible para consultas relacionadas con el cierre.']
           };
           const [saludo,intro,despedida]=versiones[version]||versiones['1'];
