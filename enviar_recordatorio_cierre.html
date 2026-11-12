@@ -165,7 +165,10 @@
                 </ol>
             </div>
 
-            <div class="preview">
+            <div style="margin:0 0 16px;padding:12px 16px;background:#eef4fd;border:1px solid #cbdaf0;border-radius:8px;font:600 13px Arial,sans-serif;color:#18304d">
+                Redacción: <select id="version-recordatorio" onchange="actualizarRecordatorio()" style="padding:7px 10px;border-radius:6px;background:#fff;border:1px solid #9cabc0;color:#18304d">
+                <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select>
+            </div><div class="preview">
                 <div class="preview-title">👁️ Vista Previa del Formato</div>
                 <div class="email-content">
                     <div class="logo">
@@ -174,9 +177,9 @@
 
                     <p><strong>Estimado/a docente:</strong></p>
                     <br>
-                    <p>Reciba mis saludos,</p>
+                    <p id="recordatorio-saludo">Reciba mis saludos,</p>
                     <br>
-                    <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso:</p>
+                    <p id="recordatorio-intro">En esta oportunidad y como hito de cierre confirmo la finalización del curso:</p>
                     
                     <div class="course-info">
                        💻CURSO: "<span id="nombreCurso"></span>"<br>
@@ -189,7 +192,7 @@
                     <br>
                     <p>Adjunto para su guía un paso a paso para el correcto cierre del curso.</p>
                     <br>
-                    <p>Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p>
+                    <p id="recordatorio-despedida">Agradecida de su <strong>acuso de recibo</strong> y de acompañarle con mi gestión tutorial.</p>
                 </div>
             </div>
 
@@ -209,9 +212,16 @@
         const destinatario = params.get('destinatario') || '';
         const nrc = params.get('nrc') || '';
         const nombreCurso = decodeURIComponent(params.get('nombreCurso') || '');
-        const fechaInicio = params.get('fechaInicio') || '';
-        const fechaFin = params.get('fechaFin') || '';
-        const fechaLimite = params.get('fechaLimite') || '';
+        function fechaVisible(v){
+          const t=String(v||'').trim();let m=t.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:T.*)?$/),y,mes,d;
+          if(m){y=+m[1];mes=+m[2];d=+m[3]}else{m=t.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);if(!m)return t;d=+m[1];mes=+m[2];y=+m[3]}
+          const f=new Date(Date.UTC(y,mes-1,d));if(f.getUTCDate()!==d||f.getUTCMonth()!==mes-1||f.getUTCFullYear()!==y)return t;
+          return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][f.getUTCDay()]+' '+String(d).padStart(2,'0')+'-'+String(mes).padStart(2,'0')+'-'+y;
+        }
+        function sumar14(v){let m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return'';const f=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));f.setUTCDate(f.getUTCDate()+14);return f.toISOString().slice(0,10)}
+        const fechaInicio = fechaVisible(params.get('fechaInicio'));
+        const fechaFin = fechaVisible(params.get('fechaFin'));
+        const fechaLimite = fechaVisible(params.get('fechaLimite') || sumar14(params.get('fechaFin')));
 
         // Rellenar datos en la vista previa
         document.getElementById('nrc').textContent = nrc;
@@ -220,27 +230,28 @@
         document.getElementById('fechaFin').textContent = fechaFin;
         document.getElementById('fechaLimite').textContent = fechaLimite;
 
-        // Texto plano profesional y sobrio
-        const cuerpoTexto = `Estimado/a docente:
-
-Reciba mis saludos,
-
-En esta oportunidad y como hito de cierre confirmo la finalización del curso:
-
-    CURSO: "${nombreCurso}"
-    NRC: ${nrc}
-    FECHA INICIO: ${fechaInicio}
-    FECHA FIN: ${fechaFin}
-
-Agradezco el trabajo en conjunto y aprovecho de comentar que cualquier entrega atrasada o gestión dentro de la plataforma de algún/algunos estudiantes después del 📅 ${fechaLimite} (dos semanas después de la fecha de fin), no podrá ser realizada y deberá ser canalizada directamente con el área académica para su configuración correspondiente.
-
-Adjunto para su guía un paso a paso para el correcto cierre del curso.
-
-Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.`;
-
-        const asunto = `Recordatorio cierre de asignatura - ${nrc}`;
+        const asunto = 'Recordatorio cierre de asignatura - ' + nrc;
         const mailtoLink = document.getElementById('mailtoLink');
-        mailtoLink.href = `mailto:${destinatario}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpoTexto)}`;
+        function actualizarRecordatorio(){
+          const version=document.getElementById('version-recordatorio').value;
+          const versiones={
+            '1':['Reciba mis saludos,','Como hito de cierre, confirmo la finalización del curso:','Agradeceré su acuso de recibo y valoro el trabajo conjunto durante la impartición.'],
+            '2':['Espero que se encuentre muy bien.','Quisiera compartirle la información de cierre de la asignatura que acompañamos:','Muchas gracias por su colaboración a lo largo de la asignatura. Agradeceré confirmar la recepción de este correo.'],
+            '3':['Junto con saludar,','Le informo los antecedentes del curso que ha finalizado:','Favor confirmar la recepción de estas indicaciones. Quedo disponible para consultas relacionadas con el cierre.']
+          };
+          const [saludo,intro,despedida]=versiones[version]||versiones['1'];
+          document.getElementById('recordatorio-saludo').textContent=saludo;
+          document.getElementById('recordatorio-intro').textContent=intro;
+          document.getElementById('recordatorio-despedida').textContent=despedida;
+          const cuerpo=[ 'Estimado/a docente:', '', saludo, '', intro, '',
+            'CURSO: "'+nombreCurso+'"', 'NRC: '+nrc,
+            'FECHA INICIO: '+fechaInicio, 'FECHA FIN: '+fechaFin, '',
+            'Agradezco el trabajo conjunto y recuerdo que las entregas atrasadas o gestiones de estudiantes realizadas después del '+fechaLimite+' (14 días después del término) deben ser canalizadas directamente con el área académica para su configuración correspondiente.', '',
+            'Adjunto para su guía un paso a paso para el correcto cierre del curso.', '', despedida
+          ].join('\n');
+          mailtoLink.href='mailto:'+destinatario+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
+        }
+        actualizarRecordatorio();
 
         // Mostrar spinner al hacer clic
         mailtoLink.addEventListener('click', function() {
