@@ -19,6 +19,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
+.sel-version{font:600 12px Arial,sans-serif;background:#fff;color:#18304d;border-radius:6px;padding:7px 8px;max-width:190px}.tbr{flex-wrap:wrap}
 </style></head>
 <body>
 <div class="toast" id="toast"></div>
@@ -29,6 +30,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
   </div>
   <div class="tbr">
+    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -44,8 +46,8 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">✉️ Correo · Seguimiento Tareas Pendientes — Etapa Impartición</p>
     </div>
     <p style="font-size:18px;">Estimado/a <span class="campo" contenteditable="true" data-campo="nombre" data-placeholder="NOMBRE ESTUDIANTE"></span>,</p>
-    <p>Junto con saludar y esperando que te encuentres bien, te informo que registras actividades pendientes de entrega en el curso <span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE DEL CURSO"></span> — <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>.</p>
-    <p>Te sugiero realizar las entregas dentro de los plazos estipulados, para que puedas contar con una retroalimentación oportuna por parte del/la docente. En caso de dudas respecto a los contenidos y evaluaciones del curso, puedes realizar tus consultas en el foro de la unidad correspondiente.</p>
+    <p id="seguimiento-situacion">Junto con saludar y esperando que te encuentres bien, te informo que registras actividades pendientes de entrega en el curso <span class="campo" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE DEL CURSO"></span> — <span class="campo" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>.</p>
+    <p id="seguimiento-orientacion">Te sugiero realizar las entregas dentro de los plazos estipulados, para que puedas contar con una retroalimentación oportuna por parte del/la docente. En caso de dudas respecto a los contenidos y evaluaciones del curso, puedes realizar tus consultas en el foro de la unidad correspondiente.</p>
     <div style="background:#fff8e1;border-left:4px solid #f59e0b;border-radius:6px;padding:16px 20px;margin:20px 0;">
       <p style="margin:0;color:#333;font-size:15px;">📌 Si tienes intenciones de ponerte al día, deberás comunicarte con el/la docente de tu impartición, informándole tu justificación correspondiente. De esta forma, podrán establecer nuevos plazos dependiendo del análisis que realice el/la docente sobre tu situación.</p>
     </div>
@@ -67,6 +69,20 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
   if (val) { el.textContent = decodeURIComponent(val); el.classList.add('auto-filled'); hayDatos = true; }
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+
+function cambiarVersionSeguimiento(){
+ const n=document.getElementById('version-seguimiento').value;
+ const campo=k=>document.querySelector('[data-campo="'+k+'"]')?.outerHTML||'';
+ const curso=campo('nombre_curso'),nrc=campo('nrc');
+ const versiones={
+  '1':['Junto con saludar y esperando que te encuentres bien, te informo que registras actividades pendientes de entrega en el curso '+curso+' — '+nrc+'.','Te sugiero realizar las entregas dentro de los plazos estipulados, para que puedas contar con una retroalimentación oportuna por parte del/la docente. En caso de dudas respecto a los contenidos y evaluaciones del curso, puedes realizar tus consultas en el foro de la unidad correspondiente.'],
+  '2':['Te escribo para acompañarte en tu avance académico. Durante el seguimiento del curso '+curso+' — '+nrc+' observamos actividades aún pendientes.','Sabemos que organizar el tiempo de estudio puede ser desafiante. Te animo a revisar las tareas y priorizar tus entregas. Para aclarar contenidos o evaluaciones, puedes comunicarte con tu docente mediante el foro de la unidad.'],
+  '3':['Según el seguimiento del curso '+curso+' — '+nrc+', todavía aparecen actividades pendientes de entrega.','Te recomiendo revisar las tareas y sus fechas límite para mantener tu progreso. Si tienes dudas sobre evaluaciones o contenidos, consúltalas con el/la docente a través del foro correspondiente.']
+ };
+ const v=versiones[n]||versiones['1'];
+ document.getElementById('seguimiento-situacion').innerHTML=v[0];
+ document.getElementById('seguimiento-orientacion').innerHTML=v[1];
+}
 
 async function copiarCorreo() {
   const contenido = document.getElementById('email-content').cloneNode(true);
