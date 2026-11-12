@@ -29,6 +29,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .prog-tag.mgpc{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
 </style>
 <link rel="stylesheet" href="etop-identidad-unab.css?v=20261106-v2">
+<link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
 </head>
 <body>
 
@@ -38,7 +39,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
   <div class="tbl">
     <span class="badge">🏁 Cierre</span>
     <span class="tbt">Correo de Cierre de Curso</span>
-    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos NRC aplicados</span>
     <span class="prog-tag mgpc" id="tag-mgpc">MGPC</span>
   </div>
   <div class="tbr">
@@ -46,7 +47,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <option value="estandar">📄 Estándar</option>
       <option value="mgpc">🏥 MGPC</option>
     </select>
-    <label for="version-cierre" style="color:#e2e8f0;font-weight:700;font-size:12px;white-space:nowrap;">Redacción <select id="version-cierre" class="sel-programa" onchange="cambiarVersionCierre()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
+    <label for="version-cierre" style="color:#e2e8f0;font-weight:700;font-size:12px;white-space:nowrap;">Redacción <select id="version-cierre" class="sel-programa" onchange="cambiarVersionCierre()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -149,6 +150,11 @@ function cambiarVersionCierre(){
     'Espero que se encuentre muy bien.',
     'Hemos llegado al término del curso '+nrc+'. La asignatura se desarrolló entre el '+fi+' y el '+ff+', por lo que corresponde iniciar las gestiones de cierre.',
     'Muchas gracias por su colaboración a lo largo del curso. Quedo disponible para apoyar cualquier consulta relacionada con el cierre y agradeceré su confirmación de recepción.'
+  ],
+  '4':[
+    'Espero que se encuentre muy bien.',
+    'Llegamos al cierre de una nueva etapa académica: el curso '+nrc+', desarrollado desde el '+fi+' hasta el '+ff+'. Quisiera compartirle la información necesaria para completar este proceso.',
+    'Le agradezco sinceramente la disposición y el trabajo conjunto durante la asignatura. Quedo a su disposición para cualquier consulta y agradeceré confirmar la recepción del correo.'
   ],
   '3':[
     'Junto con saludar,',
