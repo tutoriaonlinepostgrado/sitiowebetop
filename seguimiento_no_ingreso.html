@@ -20,17 +20,18 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
 .sel-version{font:600 12px Arial,sans-serif;background:#fff;color:#18304d;border-radius:6px;padding:7px 8px;max-width:190px}.tbr{flex-wrap:wrap}
-</style></head>
+</style><link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
+</head>
 <body>
 <div class="toast" id="toast"></div>
 <div class="tb">
   <div class="tbl">
     <span class="badge">✉️ Seguimiento</span>
     <span class="tbt">Seguimiento No Ingreso</span>
-    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos NRC aplicados</span>
   </div>
   <div class="tbr">
-    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
+    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -85,6 +86,7 @@ function cambiarVersionSeguimiento(){
  const versiones={
   '1':['Buen día, un gusto saludarle.','De acuerdo con nuestro seguimiento, todavía no observamos un ingreso registrado en Canvas para la asignatura '+curso+' — '+nrc+'. Quisiéramos saber si presenta alguna dificultad de acceso para ayudarle a resolverla.'],
   '2':['Espero que se encuentre bien.','Quisiera saber cómo ha sido su inicio de curso. Por el momento, no vemos un acceso registrado a Canvas en la asignatura '+curso+' — '+nrc+'. Si ha tenido algún inconveniente, puede responder a este correo para que podamos orientarle.'],
+  '4':['Espero que se encuentre muy bien.','Quisiera saber si ha podido comenzar con tranquilidad la asignatura '+curso+' — '+nrc+'. Nuestro registro aún no muestra un ingreso a Canvas y me interesa saber si existe alguna dificultad en la que podamos orientarle. Puede responder a este correo cuando lo necesite.'],
   '3':['Junto con saludar,','Le contactamos porque nuestros registros aún no muestran un ingreso a Canvas en la asignatura '+curso+' — '+nrc+'. Agradeceremos que nos indique si necesita ayuda para acceder o si presenta alguna dificultad.']
  };
  const v=versiones[n]||versiones['1'];
