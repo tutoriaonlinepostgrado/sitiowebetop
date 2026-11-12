@@ -69,7 +69,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
         onfocus="this.style.borderColor='#16a34a';this.style.background='#dcfce7';"
         onblur="this.style.borderColor='#86efac';this.style.background='#F0FDF4';">
         <p style="margin:0 0 12px 0;">Estimado/a Docente,</p>
-        <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
+        <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> <span data-unidad-duracion>semanas</span>, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
       </div>
     </div>
     <p>Como parte del proceso de programación antes de la impartición, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
@@ -121,6 +121,14 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
   }
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+function actualizarUnidadDuracion() {
+  document.querySelectorAll('[data-unidad-duracion]').forEach(el => {
+    const campo = el.previousElementSibling;
+    el.textContent = campo && campo.textContent.trim() === '1' ? 'semana' : 'semanas';
+  });
+}
+document.getElementById('apertura-texto').addEventListener('input', actualizarUnidadDuracion);
+actualizarUnidadDuracion();
 
 function cargarImagen(event) {
   const file = event.target.files[0];
@@ -229,16 +237,16 @@ function getAperturaHTML(estilo) {
   var templates = {
     primera:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
-      '<p style="margin:0;">Junto con saludar, mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>',
+      '<p style="margin:0;">Junto con saludar, mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' <span data-unidad-duracion>semanas</span>, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>',
     reencuentro:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente,</p>' +
-      '<p style="margin:0;">Junto con saludar, me comunico para informarle que nuevamente seré el/la Tutor/a de Acompañamiento a cargo de la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, comenzando el '+di+' '+fi+' hasta el '+df+' '+ff+' en la plataforma Canvas.</p>',
+      '<p style="margin:0;">Junto con saludar, me comunico para informarle que nuevamente seré el/la Tutor/a de Acompañamiento a cargo de la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' <span data-unidad-duracion>semanas</span>, comenzando el '+di+' '+fi+' hasta el '+df+' '+ff+' en la plataforma Canvas.</p>',
     personal:
       '<p style="margin:0 0 12px 0;">Estimado/a '+nd+',</p>' +
-      '<p style="margin:0;">Junto con saludar, me presento: mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en plataforma Canvas, según el calendario del programa.</p>',
+      '<p style="margin:0;">Junto con saludar, me presento: mi nombre es '+nt+', y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' <span data-unidad-duracion>semanas</span>, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en plataforma Canvas, según el calendario del programa.</p>',
     calido:
       '<p style="margin:0 0 12px 0;">Estimado/a Docente '+nd+',</p>' +
-      '<p style="margin:0;">Junto con saludar y esperando que se encuentre bien, es de mi agrado informar que seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' semanas, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>'
+      '<p style="margin:0;">Junto con saludar y esperando que se encuentre bien, es de mi agrado informar que seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "'+nc+'" '+nrc+', la cual tiene una duración de '+dur+' <span data-unidad-duracion>semanas</span>, iniciando el '+di+' '+fi+' y finalizando el '+df+' '+ff+' en la plataforma Canvas.</p>'
   };
   return templates[estilo] || templates.primera;
 }
@@ -253,6 +261,7 @@ function setApertura(estilo, btn) {
   var bloque = document.getElementById('apertura-texto');
   if (!bloque) return;
   bloque.innerHTML = getAperturaHTML(estilo);
+  actualizarUnidadDuracion();
 }
 function setTipo(tipo, btn) {
   ['btn-ajustado','btn-general','btn-individual'].forEach(id => {
