@@ -73,6 +73,7 @@
   .toast.show { display: block; }
 
   .email-wrapper { padding: 20px; max-width: 990px; margin: 0 auto; }
+.etop-version{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;color:#e2e8f0;white-space:nowrap}.etop-version select{font-size:12px;padding:7px 9px;color:#152841;background:#fff;border:1px solid #a9b9cd;border-radius:6px;max-width:190px}.template-bar-right{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -86,6 +87,8 @@
     <span class="auto-badge" id="auto-badge">⚡ Datos del contexto NRC aplicados</span>
   </div>
   <div class="template-bar-right">
+  <label class="etop-version">Redacción <select id="version-invitacion" onchange="cambiarVersionInvitacion()">
+  <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
     <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -115,14 +118,14 @@
 
         <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante"></span>,</p>
 
-        <p>Como parte de tu semana de Inducción <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO DE INDUCCIÓN" data-campo="curso_induccion"></span>, te invito a nuestra sesión sincrónica el día <span class="campo" contenteditable="true" data-placeholder="FECHA Y HORA SESIÓN (ej: lunes 07 de julio, 18:00 HRS)" data-campo="fecha_hora_sesion"></span> vía Zoom.</p>
+        <p id="invitacion-mensaje">Como parte de tu semana de Inducción <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO DE INDUCCIÓN" data-campo="curso_induccion"></span>, te invito a nuestra sesión sincrónica el día <span class="campo" contenteditable="true" data-placeholder="FECHA Y HORA SESIÓN (ej: lunes 27-07-2026, 18:00 h)" data-campo="fecha_hora_sesion"></span> vía Zoom.</p>
 
-        <p>El objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta instancia también te permitirá conocer a tus compañeros y compañeras.</p>
+        <p id="invitacion-objetivo">El objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta instancia también te permitirá conocer a tus compañeros y compañeras.</p>
 
         <div style="background-color:#f0f7ff;border:1px solid #0056b3;border-radius:8px;padding:30px;margin:30px 0;text-align:center;">
           <p style="margin:0 0 20px 0;font-weight:bold;color:#333333;">Accede a tu sesión sincrónica aquí:</p>
           <span class="campo" contenteditable="true" data-placeholder="LINK ZOOM DE LA SESIÓN" data-campo="link_zoom" style="display:inline-block;margin-bottom:16px;font-size:13px;"></span><br>
-          <a href="#" style="background-color:#0056b3;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px;">👉 Unirse a la sesión</a>
+          <a id="enlace-zoom" href="#" target="_blank" rel="noopener noreferrer" style="background-color:#0056b3;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px;">👉 Unirse a la sesión</a>
         </div>
 
         <p>Te recomendamos conectarte unos minutos antes del inicio.</p>
@@ -150,12 +153,20 @@
 <script>
 // ── PRE-LLENADO DESDE URL PARAMS (panel NRC del Onboarding) ──
 const params = new URLSearchParams(window.location.search);
+function fechaVisible(v){
+  const t=String(v||'').trim();let m=t.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:T.*)?$/),y,mes,d;
+  if(m){y=+m[1];mes=+m[2];d=+m[3]}else{m=t.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);if(!m)return t;d=+m[1];mes=+m[2];y=+m[3]}
+  const f=new Date(Date.UTC(y,mes-1,d));
+  if(f.getUTCFullYear()!==y||f.getUTCMonth()!==mes-1||f.getUTCDate()!==d)return t;
+  return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][f.getUTCDay()]+' '+String(d).padStart(2,'0')+'-'+String(mes).padStart(2,'0')+'-'+y;
+}
 
 const mapa = {
   curso_induccion:  params.get('nombreCurso'),
   nombre_tutor:     params.get('nombreTutor'),
   correo_tutor:     params.get('correoTutor'),
-  fecha_hora_sesion: params.get('fechaInicio') ? 'desde el ' + params.get('fechaInicio') : null
+  fecha_hora_sesion: params.get('fechaHoraSesion') || (params.get('fechaSesion') ? fechaVisible(params.get('fechaSesion'))+(params.get('horaSesion') ? ', '+params.get('horaSesion')+' h' : '') : null),
+  link_zoom: params.get('linkZoom') || params.get('linkSesion') || null
 };
 
 let hayDatos = false;
@@ -169,6 +180,41 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
 
+
+/* El enlace de la sesión se fija en el botón que se copia al correo. */
+function actualizarEnlaceZoom(){
+ const campo=document.querySelector('[data-campo="link_zoom"]');
+ const url=(campo?.textContent||'').trim();
+ const a=document.getElementById('enlace-zoom');
+ if(!a)return false;
+ const valido=/^https:\/\/[^\s]+$/i.test(url);
+ a.href=valido?url:'#';
+ return valido;
+}
+document.querySelector('[data-campo="link_zoom"]').addEventListener('input',actualizarEnlaceZoom);
+actualizarEnlaceZoom();
+function cambiarVersionInvitacion(){
+ const opcion=document.getElementById('version-invitacion').value;
+ const campo=n=>document.querySelector('[data-campo="'+n+'"]')?.outerHTML||'';
+ const curso=campo('curso_induccion'),fecha=campo('fecha_hora_sesion');
+ const versiones={
+  '1':[
+    'Como parte de tu semana de inducción '+curso+', te invito a nuestra sesión sincrónica el '+fecha+' mediante Zoom.',
+    'El objetivo es resolver consultas sobre la navegación en Canvas y la modalidad de educación online. También podrás conocer a tus compañeros y compañeras.'
+  ],
+  '2':[
+    '¡Nos gustaría encontrarnos contigo! Durante el curso de inducción '+curso+' tendremos una sesión de bienvenida por Zoom el '+fecha+'.',
+    'Será una oportunidad para recorrer las herramientas de Canvas, conversar sobre el estudio online y compartir tus dudas con el equipo tutorial y el grupo.'
+  ],
+  '3':[
+    'Te comparto la invitación a la sesión sincrónica del curso de inducción '+curso+'. La actividad será el '+fecha+' por Zoom.',
+    'Revisaremos los pasos principales para utilizar Canvas, atenderemos preguntas sobre el aprendizaje online y tendremos un espacio para presentarnos.'
+  ]
+ };
+ const elegido=versiones[opcion]||versiones['1'];
+ document.getElementById('invitacion-mensaje').innerHTML=elegido[0];
+ document.getElementById('invitacion-objetivo').innerHTML=elegido[1];
+}
 // ── INSTRUCCIONES ──
 function toggleInstrucciones() {
   document.getElementById('instrucciones-panel').classList.toggle('visible');
@@ -182,6 +228,7 @@ document.addEventListener('click', function(e) {
 
 // ── COPIAR CORREO ──
 async function copiarCorreo() {
+  if(!actualizarEnlaceZoom()){mostrarToast('⚠️ Ingresa un enlace HTTPS válido para la sesión antes de copiar',true);return;}
   const contenido = document.getElementById('email-content').cloneNode(true);
   contenido.querySelectorAll('.campo').forEach(el => {
     el.removeAttribute('contenteditable');
