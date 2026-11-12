@@ -46,6 +46,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <option value="estandar">📄 Estándar</option>
       <option value="mgpc">🏥 MGPC</option>
     </select>
+    <label for="version-cierre" style="color:#e2e8f0;font-weight:700;font-size:12px;white-space:nowrap;">Redacción <select id="version-cierre" class="sel-programa" onchange="cambiarVersionCierre()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -64,9 +65,9 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
     </div>
 
     <p style="font-size:18px;">Estimado/a docente:</p>
-    <p>Reciba mis saludos,</p>
+    <p id="cierre-saludo">Reciba mis saludos,</p>
 
-    <p>En esta oportunidad y como hito de cierre confirmo la finalización del curso <span class="campo" contenteditable="true" data-campo="nrc_curso" data-placeholder="NOMBRE Y NRC DEL CURSO"></span> que tuvo inicio el día <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA DE INICIO"></span> y finalizó el domingo <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA DE FIN"></span>.</p>
+    <p id="cierre-informacion">En esta oportunidad y como hito de cierre confirmo la finalización del curso <span class="campo" contenteditable="true" data-campo="nrc_curso" data-placeholder="NOMBRE Y NRC DEL CURSO"></span> que tuvo inicio el día <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="FECHA DE INICIO"></span> y finalizó el <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="FECHA DE FIN"></span>.</p>
 
     <p id="parrafo-plazo"></p>
 
@@ -74,7 +75,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
       <p id="texto-pdf" style="margin:0;color:#333;font-size:15px;"></p>
     </div>
 
-    <p>Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.</p>
+    <p id="cierre-despedida">Agradecido/a de su acuso de recibo y de acompañarle con mi gestión tutorial.</p>
 
   </td></tr>
 </tbody>
@@ -84,13 +85,29 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 <script>
 // ── PARÁMETROS URL ──
 const params = new URLSearchParams(window.location.search);
+function partesFecha(v){
+ const s=String(v||'').trim();let m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:T.*)?$/),y,mes,d;
+ if(m){y=+m[1];mes=+m[2];d=+m[3]}else{m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);if(!m)return null;d=+m[1];mes=+m[2];y=+m[3]}
+ const f=new Date(Date.UTC(y,mes-1,d));
+ return f.getUTCFullYear()===y&&f.getUTCMonth()===mes-1&&f.getUTCDate()===d?f:null;
+}
+function fechaVisible(v){
+ const f=partesFecha(v);if(!f)return String(v||'');
+ return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][f.getUTCDay()]+' '+String(f.getUTCDate()).padStart(2,'0')+'-'+String(f.getUTCMonth()+1).padStart(2,'0')+'-'+f.getUTCFullYear();
+}
+function sumarDias(v,dias){
+ const f=partesFecha(v);if(!f)return '';
+ f.setUTCDate(f.getUTCDate()+dias);
+ return fechaVisible(f.toISOString().slice(0,10));
+}
 const mapa = {
   nrc_curso:    (params.get('nombre_curso') && params.get('nrc'))
                   ? decodeURIComponent(params.get('nombre_curso')) + ' (' + decodeURIComponent(params.get('nrc')) + ')'
                   : (params.get('nrc') ? decodeURIComponent(params.get('nrc')) : null),
-  fecha_inicio: params.get('fecha_inicio') ? decodeURIComponent(params.get('fecha_inicio')) : null,
-  fecha_fin:    params.get('fecha_fin')    ? decodeURIComponent(params.get('fecha_fin'))    : null,
-  fecha_limite: params.get('fecha_limite') ? decodeURIComponent(params.get('fecha_limite')) : null
+  fecha_inicio: fechaVisible(params.get('fecha_inicio')),
+  fecha_fin: fechaVisible(params.get('fecha_fin')),
+  fecha_limite: fechaVisible(params.get('fecha_limite') || sumarDias(params.get('fecha_fin'),14)),
+  fecha_limite_mgpc: fechaVisible(params.get('fecha_limite_mgpc') || sumarDias(params.get('fecha_fin'),10))
 };
 
 // ── TEXTOS POR PROGRAMA ──
@@ -101,7 +118,7 @@ const configs = {
   },
   mgpc: {
     parrafo: () => `Agradezco el trabajo en conjunto y aprovecho de comentar que el sistema Canvas permite transferir automáticamente las notas a Banner para luego hacer el cierre anticipado en la intranet, por lo tanto, las notas quedan en sistema permitiendo que los alumnos puedan visualizarlas y solicitar sus certificaciones intermedias.<br><br>
-    Cabe señalar que cualquier entrega atrasada o gestión dentro de la plataforma tiene un plazo límite de <strong>10 días finalizada la asignatura</strong>, plazo que se cumple el día <span class="campo${mapa.fecha_limite ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 10 DÍAS">${mapa.fecha_limite || ''}</span>, posterior a esa fecha podrá ser realizada solicitándolo directamente con el secretario académico de la Facultad de Educación y Ciencias Sociales. Eduardo Valenzuela, <a href='mailto:eduardovalenzuela@unab.cl' style='color:#0056b3;'>eduardovalenzuela@unab.cl</a>.`,
+    Cabe señalar que cualquier entrega atrasada o gestión dentro de la plataforma tiene un plazo límite de <strong>10 días finalizada la asignatura</strong>, plazo que se cumple el día <span class="campo${mapa.fecha_limite_mgpc ? ' auto-filled' : ''}" contenteditable="true" data-campo="fecha_limite" data-placeholder="FECHA + 10 DÍAS">${mapa.fecha_limite_mgpc || ''}</span>, posterior a esa fecha podrá ser realizada solicitándolo directamente con el secretario académico de la Facultad de Educación y Ciencias Sociales. Eduardo Valenzuela, <a href='mailto:eduardovalenzuela@unab.cl' style='color:#0056b3;'>eduardovalenzuela@unab.cl</a>.`,
     textoPDF: "📎 Adjunto para su guía los siguientes documentos:<br><br>&nbsp;&nbsp;• Paso a paso para el correcto cierre del curso: <a href='https://unabportal365-my.sharepoint.com/:b:/g/personal/patricio_collao_unab_cl/IQBbLCPeFjIjRJlf6HSAn2c-Af3Y_Sgm3A80xtkfvRcPhhQ?e=e7lPz5' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a><br>&nbsp;&nbsp;• Proceso de cierre del libro de calificaciones MGPC (Cierre Anticipado de Asignatura): <a href='https://unabportal365-my.sharepoint.com/:b:/g/personal/patricio_collao_unab_cl/IQB9_S_aWEy_ToxPI8zN3hpSAUGF4RuS5ufrRedhEhGs7_U?e=E1aK4Z' target='_blank' style='color:#0056b3;font-weight:bold;'>Haga clic acá</a>"
   }
 };
@@ -114,8 +131,36 @@ function cambiarPrograma() {
   document.getElementById('parrafo-plazo').innerHTML = cfg.parrafo();
   document.getElementById('texto-pdf').innerHTML = cfg.textoPDF;
   document.getElementById('tag-mgpc').style.display = prog === 'mgpc' ? 'inline-block' : 'none';
+  cambiarVersionCierre();
 }
 
+
+function cambiarVersionCierre(){
+ const tipo=document.getElementById('version-cierre').value;
+ const campo=n=>document.querySelector('[data-campo="'+n+'"]')?.outerHTML||'';
+ const nrc=campo('nrc_curso'),fi=campo('fecha_inicio'),ff=campo('fecha_fin');
+ const versiones={
+  '1':[
+    'Reciba mis saludos,',
+    'Como parte del proceso de cierre, confirmo la finalización del curso '+nrc+', que comenzó el '+fi+' y finalizó el '+ff+'.',
+    'Agradezco su trabajo durante la impartición y agradeceré confirmar la recepción de esta información.'
+  ],
+  '2':[
+    'Espero que se encuentre muy bien.',
+    'Hemos llegado al término del curso '+nrc+'. La asignatura se desarrolló entre el '+fi+' y el '+ff+', por lo que corresponde iniciar las gestiones de cierre.',
+    'Muchas gracias por su colaboración a lo largo del curso. Quedo disponible para apoyar cualquier consulta relacionada con el cierre y agradeceré su confirmación de recepción.'
+  ],
+  '3':[
+    'Junto con saludar,',
+    'Informo el cierre del curso '+nrc+', con fecha de inicio '+fi+' y término '+ff+'.',
+    'Agradeceré revisar las indicaciones precedentes y acusar recibo de este mensaje. Quedo atento/a a cualquier consulta.'
+  ]
+ };
+ const v=versiones[tipo]||versiones['1'];
+ document.getElementById('cierre-saludo').innerHTML=v[0];
+ document.getElementById('cierre-informacion').innerHTML=v[1];
+ document.getElementById('cierre-despedida').innerHTML=v[2];
+}
 // ── AUTOCOMPLETAR DESDE URL ──
 let hayDatos = false;
 document.querySelectorAll('.campo[data-campo]').forEach(el => {
