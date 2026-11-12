@@ -75,6 +75,7 @@
   .email-wrapper { padding: 20px; max-width: 990px; margin: 0 auto; }
 .etop-version{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;color:#e2e8f0;white-space:nowrap}.etop-version select{font-size:12px;padding:7px 9px;color:#152841;background:#fff;border:1px solid #a9b9cd;border-radius:6px;max-width:190px}.template-bar-right{flex-wrap:wrap}
 </style>
+<link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
 </head>
 <body>
 
@@ -84,11 +85,11 @@
   <div class="template-bar-left">
     <span class="template-bar-badge">📋 Plantilla</span>
     <span class="template-bar-title">Invitación Sesión Sincrónica — Individual</span>
-    <span class="auto-badge" id="auto-badge">⚡ Datos del contexto NRC aplicados</span>
+    <span class="auto-badge" id="auto-badge">⚡ Datos NRC aplicados</span>
   </div>
   <div class="template-bar-right">
   <label class="etop-version">Redacción <select id="version-invitacion" onchange="cambiarVersionInvitacion()">
-  <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
+  <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label>
     <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -205,6 +206,10 @@ function cambiarVersionInvitacion(){
   '2':[
     '¡Nos gustaría encontrarnos contigo! Durante el curso de inducción '+curso+' tendremos una sesión de bienvenida por Zoom el '+fecha+'.',
     'Será una oportunidad para recorrer las herramientas de Canvas, conversar sobre el estudio online y compartir tus dudas con el equipo tutorial y el grupo.'
+  ],
+  '4':[
+    '¡Será un gusto saludarte en persona, aunque sea a través de la pantalla! Durante la inducción '+curso+' te esperamos en nuestra sesión sincrónica por Zoom el '+fecha+'.',
+    'Es una oportunidad para resolver inquietudes, explorar Canvas y comenzar a conocer a quienes compartirán contigo esta etapa. Nos encantará contar con tu participación.'
   ],
   '3':[
     'Te comparto la invitación a la sesión sincrónica del curso de inducción '+curso+'. La actividad será el '+fecha+' por Zoom.',
