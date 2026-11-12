@@ -3243,10 +3243,15 @@ function diaSemana(fechaStr){
   return isNaN(d.getTime())?'':dias[d.getDay()];
 }
 function calcularSemanas(ini,fin){
-  if(!ini||!fin)return'';let pIni=ini.split('-'),pFin=fin.split('-'),dIni,dFin;
-  if(pIni[0].length===4){dIni=new Date(pIni[0],parseInt(pIni[1])-1,parseInt(pIni[2]));dFin=new Date(pFin[0],parseInt(pFin[1])-1,parseInt(pFin[2]))}
-  else{dIni=new Date(pIni[2],parseInt(pIni[1])-1,parseInt(pIni[0]));dFin=new Date(pFin[2],parseInt(pFin[1])-1,parseInt(pFin[0]))}
-  if(isNaN(dIni.getTime())||isNaN(dFin.getTime()))return'';return String(Math.round((dFin-dIni)/(7*24*3600*1000))+1);
+  const fechaIni=fechaISO(ini),fechaFin=fechaISO(fin);
+  if(!fechaIni||!fechaFin)return'';
+  const [anioIni,mesIni,diaIni]=fechaIni.split('-').map(Number);
+  const [anioFin,mesFin,diaFin]=fechaFin.split('-').map(Number);
+  const inicioUTC=Date.UTC(anioIni,mesIni-1,diaIni);
+  const finUTC=Date.UTC(anioFin,mesFin-1,diaFin);
+  const diasInclusivos=Math.round((finUTC-inicioUTC)/86400000)+1;
+  if(diasInclusivos<=0)return'';
+  return String(Math.ceil(diasInclusivos/7));
 }
 function calcularFechaLimite(finStr,dias){
   if(!finStr)return'';let partes=finStr.split('-'),d;
