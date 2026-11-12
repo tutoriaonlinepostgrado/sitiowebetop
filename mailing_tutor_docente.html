@@ -55,7 +55,7 @@ document.addEventListener('focusout',e=>{
  const v=fechaVisibleEditable(el.textContent);if(v!==el.textContent.trim())el.textContent=v;
 });
 cambiarVersionMailing();
-document.querySelector('[data-campo="duracion"]').addEventListener('input',cambiarVersionMailing);
+document.addEventListener('focusout',e=>{if(e.target?.matches?.('[data-campo="duracion"]'))cambiarVersionMailing();});
 function ti(){document.getElementById("ip").classList.toggle("visible");}
 document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
 function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Mailing Tutor de Acompañamiento — Docente</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Mailing_Tutor_Docente.html"});a.click();}
