@@ -20,17 +20,18 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
 .sel-version{font:600 12px Arial,sans-serif;background:#fff;color:#18304d;border-radius:6px;padding:7px 8px;max-width:190px}.tbr{flex-wrap:wrap}
-</style></head>
+</style><link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
+</head>
 <body>
 <div class="toast" id="toast"></div>
 <div class="tb">
   <div class="tbl">
     <span class="badge">✉️ Seguimiento</span>
     <span class="tbt">Seguimiento Tareas Pendientes</span>
-    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos automáticos</span>
+    <span class="auto-badge" id="auto-badge" style="display:none">⚡ Datos NRC aplicados</span>
   </div>
   <div class="tbr">
-    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option></select></label>
+    <label for="version-seguimiento" style="color:#e2e8f0;font-size:12px;font-weight:700">Redacción <select id="version-seguimiento" class="sel-version" onchange="cambiarVersionSeguimiento()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label>
     <a class="btn-outlook" onclick="abrirOutlook()">📨 Abrir Outlook</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -77,6 +78,7 @@ function cambiarVersionSeguimiento(){
  const versiones={
   '1':['Junto con saludar y esperando que te encuentres bien, te informo que registras actividades pendientes de entrega en el curso '+curso+' — '+nrc+'.','Te sugiero realizar las entregas dentro de los plazos estipulados, para que puedas contar con una retroalimentación oportuna por parte del/la docente. En caso de dudas respecto a los contenidos y evaluaciones del curso, puedes realizar tus consultas en el foro de la unidad correspondiente.'],
   '2':['Te escribo para acompañarte en tu avance académico. Durante el seguimiento del curso '+curso+' — '+nrc+' observamos actividades aún pendientes.','Sabemos que organizar el tiempo de estudio puede ser desafiante. Te animo a revisar las tareas y priorizar tus entregas. Para aclarar contenidos o evaluaciones, puedes comunicarte con tu docente mediante el foro de la unidad.'],
+  '4':['Espero que te encuentres bien. Quería escribirte para acompañarte en el avance del curso '+curso+' — '+nrc+', ya que aparecen algunas actividades pendientes.','Sabemos que combinar las responsabilidades diarias con los estudios exige organización. Te animo a revisar las entregas y avanzar paso a paso. Si tienes dudas sobre contenidos o evaluaciones, tu docente podrá orientarte en el foro de la unidad.'],
   '3':['Según el seguimiento del curso '+curso+' — '+nrc+', todavía aparecen actividades pendientes de entrega.','Te recomiendo revisar las tareas y sus fechas límite para mantener tu progreso. Si tienes dudas sobre evaluaciones o contenidos, consúltalas con el/la docente a través del foro correspondiente.']
  };
  const v=versiones[n]||versiones['1'];
