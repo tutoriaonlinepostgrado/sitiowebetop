@@ -73,6 +73,7 @@
   .toast.show { display: block; }
 
   .email-wrapper { padding: 12px; max-width: 1440px; margin: 0 auto; }
+.etop-version{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;color:#e2e8f0;white-space:nowrap}.etop-version select{font-size:12px;padding:7px 9px;color:#152841;background:#fff;border:1px solid #a9b9cd;border-radius:6px;max-width:190px}.template-bar-right{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -86,6 +87,9 @@
     <span class="auto-badge" id="auto-badge">⚡ Datos del contexto NRC aplicados</span>
   </div>
   <div class="template-bar-right">
+    <label class="etop-version">Redacción <select id="version-bienvenida" onchange="cambiarVersionBienvenida()">
+      <option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option>
+    </select></label>
     <a class="btn-instrucciones" onclick="toggleInstrucciones()">❓ ¿Cómo usar?</a>
     <button class="btn-copiar" onclick="copiarCorreo()">📋 Copiar correo</button>
   </div>
@@ -115,9 +119,9 @@
 
         <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante"></span>,</p>
 
-        <p>Junto con saludar y esperando que se encuentre bien, le escribo para presentarme. Mi nombre es <span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor"></span>, soy parte de la Unidad de Impartición de Postgrado de UNAB Online y seré su tutor(a) de acompañamiento en el Programa <span class="campo" contenteditable="true" data-placeholder="NOMBRE DEL PROGRAMA" data-campo="nombre_programa"></span>.</p>
+        <p id="bienvenida-presentacion">Junto con saludar y esperando que se encuentre bien, le escribo para presentarme. Mi nombre es <span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor"></span>, soy parte de la Unidad de Impartición de Postgrado de UNAB Online y seré su tutor(a) de acompañamiento en el Programa <span class="campo" contenteditable="true" data-placeholder="NOMBRE DEL PROGRAMA" data-campo="nombre_programa"></span>.</p>
 
-        <p>Mi función es acompañar y asistir todo su proceso de aprendizaje en temas relacionados con la usabilidad de la plataforma, además de ser un nexo con los docentes. En esta etapa de aprendizaje le invitamos a participar en el curso de inducción que tiene por objetivo conocer el funcionamiento de la plataforma Canvas y sus herramientas de aprendizaje. El curso lo podrá encontrar en la sección "Cursos" y lleva por nombre <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO INDUCCIÓN" data-campo="curso_induccion"></span>, el cual estará disponible desde el <span class="campo" contenteditable="true" data-placeholder="FECHA INICIO" data-campo="fecha_inicio"></span> hasta el <span class="campo" contenteditable="true" data-placeholder="FECHA FIN" data-campo="fecha_fin"></span>. Posterior al término de su curso de inducción, encontrará la primera asignatura de su malla curricular, llamada <span class="campo" contenteditable="true" data-placeholder="NOMBRE PRIMER CURSO MALLA" data-campo="primer_curso"></span>.</p>
+        <p id="bienvenida-induccion">Mi función es acompañar y asistir todo su proceso de aprendizaje en temas relacionados con la usabilidad de la plataforma, además de ser un nexo con los docentes. En esta etapa de aprendizaje le invitamos a participar en el curso de inducción que tiene por objetivo conocer el funcionamiento de la plataforma Canvas y sus herramientas de aprendizaje. El curso lo podrá encontrar en la sección "Cursos" y lleva por nombre <span class="campo" contenteditable="true" data-placeholder="NOMBRE CURSO INDUCCIÓN" data-campo="curso_induccion"></span>, el cual estará disponible desde el <span class="campo" contenteditable="true" data-placeholder="FECHA INICIO" data-campo="fecha_inicio"></span> hasta el <span class="campo" contenteditable="true" data-placeholder="FECHA FIN" data-campo="fecha_fin"></span>. Posterior al término de su curso de inducción, encontrará la primera asignatura de su malla curricular, llamada <span class="campo" contenteditable="true" data-placeholder="NOMBRE PRIMER CURSO MALLA" data-campo="primer_curso"></span>.</p>
 
         <hr style="border:0;border-top:1px solid #eeeeee;margin:25px 0;">
 
@@ -159,6 +163,13 @@
 <script>
 // ── PRE-LLENADO DESDE URL PARAMS (panel NRC del Onboarding) ──
 const params = new URLSearchParams(window.location.search);
+function fechaVisible(v){
+  const t=String(v||'').trim();let m=t.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:T.*)?$/),y,mes,d;
+  if(m){y=+m[1];mes=+m[2];d=+m[3]}else{m=t.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);if(!m)return t;d=+m[1];mes=+m[2];y=+m[3]}
+  const f=new Date(Date.UTC(y,mes-1,d));
+  if(f.getUTCFullYear()!==y||f.getUTCMonth()!==mes-1||f.getUTCDate()!==d)return t;
+  return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][f.getUTCDay()]+' '+String(d).padStart(2,'0')+'-'+String(mes).padStart(2,'0')+'-'+y;
+}
 
 const mapa = {
   nombre_tutor:       params.get('nombreTutor'),
@@ -166,8 +177,8 @@ const mapa = {
   cargo_tutor:        params.get('anexoTutor') ? 'Tutor/a de Acompañamiento — ' + params.get('anexoTutor') : null,
   nombre_programa:    params.get('nombrePrograma'),
   curso_induccion:    params.get('nombreCurso'),
-  fecha_inicio:       params.get('fechaInicio'),
-  fecha_fin:          params.get('fechaFin'),
+  fecha_inicio:       fechaVisible(params.get('fechaInicio')),
+  fecha_fin:          fechaVisible(params.get('fechaFin')),
   primer_curso:       params.get('primerCurso') || null
 };
 
@@ -181,6 +192,33 @@ document.querySelectorAll('.campo[data-campo]').forEach(el => {
   }
 });
 if (hayDatos) document.getElementById('auto-badge').style.display = 'inline-block';
+
+
+/* Se actualizan solamente los párrafos variables; acceso a Canvas y
+   confirmación de recepción permanecen sin cambios. */
+function cambiarVersionBienvenida(){
+ const opcion=document.getElementById('version-bienvenida').value;
+ const campo=n=>document.querySelector('[data-campo="'+n+'"]')?.outerHTML||'';
+ const t=campo('nombre_tutor'),p=campo('nombre_programa'),c=campo('curso_induccion');
+ const fi=campo('fecha_inicio'),ff=campo('fecha_fin'),m=campo('primer_curso');
+ const versiones={
+  '1':[
+   'Junto con saludar y esperando que se encuentre bien, le escribo para presentarme. Mi nombre es '+t+', soy parte de la Unidad de Impartición de Postgrado de UNAB Online y seré su tutor(a) de acompañamiento en el Programa '+p+'.',
+   'Mi función es acompañar y asistir todo su proceso de aprendizaje en temas relacionados con la usabilidad de la plataforma, además de ser un nexo con los docentes. En esta etapa de aprendizaje le invitamos a participar en el curso de inducción que tiene por objetivo conocer el funcionamiento de la plataforma Canvas y sus herramientas de aprendizaje. El curso lo podrá encontrar en la sección "Cursos" y lleva por nombre '+c+', el cual estará disponible desde el '+fi+' hasta el '+ff+'. Posterior al término de su curso de inducción, encontrará la primera asignatura de su malla curricular, llamada '+m+'.'
+  ],
+  '2':[
+   '¡Le damos la bienvenida a UNAB Online! Soy '+t+', tutor(a) de acompañamiento del Programa '+p+'. Estaré disponible para orientarle y acompañarle en esta nueva etapa de aprendizaje.',
+   'Para comenzar, le invitamos a conocer Canvas mediante el curso de inducción '+c+', disponible desde el '+fi+' hasta el '+ff+'. Lo encontrará en la sección "Cursos". Podrá familiarizarse con la plataforma y sus herramientas; si requiere orientación o necesita canalizar una consulta docente, puede contactarme. Tras la inducción, encontrará su primera asignatura: '+m+'.'
+  ],
+  '3':[
+   'Le escribo para darle la bienvenida al Programa '+p+' de UNAB Online. Mi nombre es '+t+' y seré su tutor(a) de acompañamiento durante la impartición.',
+   'Su primer paso es ingresar al curso de inducción '+c+' en Canvas, desde el '+fi+' hasta el '+ff+'. Ingrese a "Cursos" para revisar la plataforma y sus herramientas. Si necesita apoyo en el uso de Canvas o para comunicarse con el equipo docente, puede escribirme. Después de esta etapa, continuará con la asignatura '+m+'.'
+  ]
+ };
+ const v=versiones[opcion]||versiones['1'];
+ document.getElementById('bienvenida-presentacion').innerHTML=v[0];
+ document.getElementById('bienvenida-induccion').innerHTML=v[1];
+}
 
 // ── INSTRUCCIONES ──
 function toggleInstrucciones() {
