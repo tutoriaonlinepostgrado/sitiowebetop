@@ -1166,8 +1166,8 @@
 .crm-activity-open{border:1px solid #d8e5f2;background:#fff;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
 .crm-activity-open:hover{background:#f2f7ff;border-color:#a9c8ea}
 .crm-activity-frame-wrap{position:relative;width:100%;aspect-ratio:4/1;min-height:178px;max-height:255px;overflow:hidden;background:#fff}
-.crm-activity-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:block;opacity:0;transition:opacity .16s ease}
-.crm-activity-frame.loaded{opacity:1}
+.crm-activity-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:block;transform:none!important;filter:none!important;box-shadow:none!important}
+.crm-activity-frame.loaded{display:block}
 .crm-activity-loading{position:absolute;inset:0;z-index:2;display:grid;place-items:center;background:linear-gradient(90deg,#fff,#fbfdff);color:#7f8fa2;font-size:8.5px}
 .crm-activity-loading.hidden{display:none}
 @media (min-width:1601px) and (min-height:901px){
@@ -2746,11 +2746,7 @@ function refrescarActividadCRM(){
     return;
   }
 
-  // Evitar ampliar la pagina de 1200 px en monitores grandes: Power BI a tamano real.
-  // En notebook/pantallas estrechas se conserva el ajuste al ancho anterior.
-  const crmPageView=frame.getBoundingClientRect().width>=1200?'actualSize':'fitToWidth';
-  const crmEmbed=CRM_POWERBI_EMBED_BASE.replace('pageView=fitToWidth','pageView='+crmPageView);
-  const url=crmUrlFiltrada(crmEmbed);
+  const url=crmUrlFiltrada(CRM_POWERBI_EMBED_BASE);
   if(url===null){
     frame.removeAttribute('src');
     frame.classList.remove('loaded');
@@ -2777,23 +2773,7 @@ function refrescarActividadCRM(){
   loading.textContent='Cargando actividad reciente…';
   frame.onload=()=>{loading.classList.add('hidden');frame.classList.add('loaded')};
   frame.dataset.currentUrl=url;
-  frame.dataset.crmPageView=crmPageView;
   frame.src=url;
-}
-// Solo si cambia el ancho real del area CRM (por monitor o por ajuste del portal).
-// No se modifica el tamano ni la disposicion de la tarjeta.
-if(typeof ResizeObserver!=='undefined'){
-  const crmWrap=document.querySelector('.crm-activity-frame-wrap');
-  if(crmWrap){
-    const crmObservador=new ResizeObserver((entradas)=>{
-      const ancho=entradas[0]?.contentRect.width||0;
-      if(ancho<=0 || vistaActual!=='INICIO')return;
-      const modo=ancho>=1200?'actualSize':'fitToWidth';
-      const frame=document.getElementById('crmActividadFrame');
-      if(frame?.getAttribute('src') && frame.dataset.crmPageView!==modo)refrescarActividadCRM();
-    });
-    crmObservador.observe(crmWrap);
-  }
 }
 function abrirActividadCRMCompleta(){
   const s=sesionGlobalETOP();
