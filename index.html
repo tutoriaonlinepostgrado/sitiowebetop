@@ -332,6 +332,56 @@
 </style>
 
 <style>
+/* ===== Portada ETOP: Foco del día alineado con carga tutorial + accesos =====
+   Se recorta exclusivamente la franja vacia inferior del embed,
+   sin reducir el lienzo interno de Power BI ni alterar sus filtros. */
+@media (min-width:1501px) and (min-height:821px) {
+  .top-summary {align-items:stretch}
+  .top-summary .top-col-left {display:flex;align-content:stretch;min-height:0}
+  .top-summary .top-col-left > .foco-powerbi-card {
+    display:flex;
+    flex-direction:column;
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .top-summary .top-col-left .foco-powerbi-body {
+    height:380px;
+    min-height:380px;
+    flex:1 1 auto;
+    overflow:hidden;
+  }
+  .top-summary .top-col-left .foco-powerbi-frame {
+    height:430px;
+    min-height:430px;
+  }
+  .top-summary .top-col-right {
+    grid-template-rows:auto 1fr;
+  }
+  .top-summary .top-col-right > .card:last-child {
+    display:flex;
+    flex-direction:column;
+  }
+  .top-summary .top-col-right > .card:last-child > .card-body {
+    flex:1;
+    display:flex;
+  }
+  .top-summary .top-col-right .quick {width:100%}
+  .top-summary .top-col-right .quick button {
+    min-height:78px;
+    height:100%;
+  }
+}
+/* Texto de las herramientas rapido, antes 7.3-8 px. */
+.top-summary .top-col-right .quick b {
+  font-size:10px;
+  line-height:1.2;
+  font-weight:700;
+  overflow-wrap:anywhere;
+}
+@media (max-width:1500px) {
+  .top-summary .top-col-right .quick b {font-size:9.5px}
+}
+
 /* ===== Buscador universal V1 ===== */
 .universal-search-wrap{
   position:relative;
