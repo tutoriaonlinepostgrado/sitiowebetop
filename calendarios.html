@@ -384,6 +384,7 @@
     <div class="bulk-toolbar" role="group" aria-label="Acciones para cursos seleccionados">
       <span class="bulk-count" id="bulk-count" aria-live="polite">0 cursos seleccionados</span>
       <span class="bulk-hint">Marca las casillas de los NRC que quieras editar juntos.</span>
+      <button class="bulk-btn" type="button" id="bulk-view" onclick="alternarVistaSeleccionados()" aria-pressed="false" disabled>👁 Ver solo seleccionados</button>
       <button class="bulk-btn" type="button" id="bulk-open" onclick="abrirSeleccionadosSharePoint()" disabled>↗ Abrir seleccionados en SharePoint</button>
       <button class="bulk-btn secondary" type="button" id="bulk-clear" onclick="limpiarSeleccionNrcs()" disabled>Limpiar</button>
     </div>
@@ -412,6 +413,7 @@
     let allCourses=[];
     let selectedCourseNrc='';
     const selectedNrcs=new Set();
+    let soloSeleccionados=false;
     const SP_MULTI_URL='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/AllItems.aspx';
     const SP_MULTI_VIEW='f4c009bb-0552-43a5-9718-9c1d37d8f98b';
     const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:'',programa:'',tipo:'',correo:''};
@@ -454,7 +456,7 @@
         return;
       }
       // Con un solo NRC permanecen los enlaces interactivos originales.
-      const reference=allCourses.find(x=>norm(x.nrc)===norm(q.get('nrc')||''))||allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc))||list[0];
+      const reference=list[0];
       const fields=[
        ['h-tutor','tutor','tutor'],['h-programa','programa','nombre programa'],
        ['h-correo','correo',null],['h-tipo','tipo','tipo'],
@@ -478,7 +480,15 @@
     function action(url,title,icon,enabled=true){return enabled?`<a class="action" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(title)}">${icon}</a>`:'';}
     function buildIncidentMaps(){const byCourse=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!byCourse.has(k))byCourse.set(k,[]);byCourse.get(k).push(i)});return byCourse;}
     function detailFilteredCourses(){
-      return courses.filter(x =>
+      // Un NRC recibido desde Inicio limita la vista inicial, pero NO bloquea
+      // la búsqueda local ni la vista de múltiples NRC seleccionados.
+      // Se conservan los otros filtros de facultad, tutor, fechas, etc.
+      const texto=norm(document.getElementById('search')?.value||'');
+      const ampliarNrc=Boolean(q.get('nrc')&&(texto||soloSeleccionados));
+      const base=ampliarNrc?filterCourses(allCourses,{ignoreNrc:true}):courses;
+      return base.filter(x =>
+        (!soloSeleccionados||selectedNrcs.has(norm(x.nrc))) &&
+        (!ampliarNrc||!texto||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(texto)) &&
         (!detailFilters.tutor || norm(x.tutor)===norm(detailFilters.tutor)) &&
         (!detailFilters.intake || norm(x.intake)===norm(detailFilters.intake)) &&
         (!detailFilters.estado || norm(x.estado)===norm(detailFilters.estado)) &&
@@ -678,7 +688,17 @@
       const clave=norm(nrc);
       if(!clave)return;
       if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
-      actualizarSeleccion();
+      if(soloSeleccionados){
+        if(!selectedNrcs.size)soloSeleccionados=false;
+        render();
+      }else actualizarSeleccion();
+    }
+    function alternarVistaSeleccionados(){
+      if(!selectedNrcs.size)return;
+      soloSeleccionados=!soloSeleccionados;
+      document.getElementById('search').value='';
+      stateFilter='';
+      render();
     }
     function alternarTodosVisibles(checked){
       document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>{
@@ -689,7 +709,7 @@
       });
       render();
     }
-    function limpiarSeleccionNrcs(){selectedNrcs.clear();render();}
+    function limpiarSeleccionNrcs(){selectedNrcs.clear();soloSeleccionados=false;render();}
     function actualizarSeleccion(){
       const filas=[...document.querySelectorAll('#rows tr[data-nrc]')].filter(tr=>tr.style.display!=='none');
       const marcadas=filas.filter(tr=>selectedNrcs.has(norm(decodeURIComponent(tr.dataset.nrc||'')))).length;
@@ -698,6 +718,10 @@
       todos.indeterminate=marcadas>0&&marcadas<filas.length;
       document.getElementById('bulk-count').textContent=selectedNrcs.size+' '+(selectedNrcs.size===1?'curso seleccionado':'cursos seleccionados');
       document.getElementById('bulk-open').disabled=selectedNrcs.size===0;
+      const ver=document.getElementById('bulk-view');
+      ver.disabled=selectedNrcs.size===0;
+      ver.textContent=soloSeleccionados?'↩ Mostrar todos':'👁 Ver solo seleccionados';
+      ver.setAttribute('aria-pressed',String(soloSeleccionados));
       document.getElementById('bulk-clear').disabled=selectedNrcs.size===0;
     }
     function abrirSeleccionadosSharePoint(){
@@ -757,10 +781,21 @@
     function applySearch(){const s=norm(document.getElementById('search').value);const rows=[...document.querySelectorAll('#rows tr[data-search]')];let visible=0;rows.forEach(r=>{const ok=!s||r.dataset.search.includes(s);r.style.display=ok?'':'none';if(ok)visible++});document.getElementById('count').textContent=`${visible} de ${rows.length} cursos`;actualizarSeleccion();}
     function cursosVisibles(){const s=norm(document.getElementById('search').value);return sortCourses(detailFilteredCourses().filter(x=>(!stateFilter||norm(x.estado)===stateFilter)&&(!s||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(s))));}
     function descargarExcel(){const lista=cursosVisibles();if(!lista.length){alert('No hay cursos visibles para descargar.');return;}const filas=lista.map(x=>({'NRC_COD_CAL':x.nrc||'','ESTADO':x.estado||'','COD_CURSO':x['codigo curso']||'','MATERIA':x.materia||'','NOMBRE_CURSO':x['nombre curso']||'','PROGRAMA':x['nombre programa']||'','FACULTAD':x.facultad||'','FECHA_INICIO':dateISO(x['fecha inicio']),'FECHA_FIN':dateISO(x['fecha fin']),'SEMANAS':weeks(x['fecha inicio'],x['fecha fin']),'TUTOR':x.tutor||'','TIPO_NRC':x.tipo||'','INTAKE_VERSION':x.intake||'','PERIODO':x.periodo||''}));const ws=XLSX.utils.json_to_sheet(filas);ws['!autofilter']={ref:ws['!ref']};ws['!cols']=[{wch:20},{wch:14},{wch:15},{wch:13},{wch:42},{wch:48},{wch:20},{wch:14},{wch:14},{wch:10},{wch:28},{wch:14},{wch:34},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios filtrados');XLSX.writeFile(wb,'Calendarios_ETOP_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx',{compression:true});}
-    document.getElementById('search').addEventListener('input',applySearch);
+    document.getElementById('search').addEventListener('input',()=>{
+      // Con entrada NRC desde el portal, buscar siempre en el catálogo
+      // del ámbito autorizado, no solo en las filas precargadas.
+      if(q.get('nrc'))render();else applySearch();
+    });
     document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
     document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
-    function abrirNrcInicialDesdeUrl(){const nrc=q.get('nrc');if(!nrc)return;const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));if(!x)return;selectedCourseNrc=x.nrc||'';document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));}
+    function abrirNrcInicialDesdeUrl(){
+      const nrcs=qList('nrc');
+      // La selección múltiple muestra la tabla completa, sin marcar un curso arbitrario.
+      if(nrcs.length!==1)return;
+      const x=allCourses.find(c=>norm(c.nrc)===nrcs[0]);if(!x)return;
+      selectedCourseNrc=x.nrc||'';
+      document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
+    }
     Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
   </script>
 </body>
