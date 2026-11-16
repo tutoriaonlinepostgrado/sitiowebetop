@@ -54,15 +54,15 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 </div>
 
 <div class="ew" id="email-content">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:950px;margin:0 auto;background:#fff;border:0;border-collapse:collapse;border-radius:0;font-family:Arial,sans-serif;box-shadow:none;">
 <tbody>
   <tr><td style="padding:40px 60px 20px 60px;">
     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
   </td></tr>
   <tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
 
-    <div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;">
-      <p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">🏁 Correo · Cierre de Curso</p>
+    <div style="background:transparent;border:0;border-radius:0;padding:0;margin-bottom:20px;">
+      <p style="margin:0;color:#0F2463;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;">Cierre de curso</p>
     </div>
 
     <p style="font-size:18px;">Estimado/a docente:</p>
@@ -72,7 +72,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 
     <p id="parrafo-plazo"></p>
 
-    <div id="bloque-adjunto" style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
+    <div id="bloque-adjunto" style="background:transparent;border:0;border-radius:0;padding:0;margin:18px 0;">
       <p id="texto-pdf" style="margin:0;color:#333;font-size:15px;"></p>
     </div>
 
@@ -204,6 +204,19 @@ async function copiarCorreo() {
     el.classList.remove('auto-filled','campo');
   });
 
+  // Limpieza de presentación en la copia: el contenido y sus vínculos se conservan.
+  const marco = contenido.querySelector('table');
+  if (marco) {
+    marco.style.border = '0';
+    marco.style.borderRadius = '0';
+    marco.style.boxShadow = 'none';
+  }
+  const adjunto = contenido.querySelector('#bloque-adjunto');
+  if (adjunto) {
+    adjunto.style.border = '0';
+    adjunto.style.background = 'transparent';
+    adjunto.style.boxShadow = 'none';
+  }
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
 
   try {
