@@ -189,6 +189,29 @@ async function copiarParaCanvasETOP(){
     }catch(e){etopAvisoCanvas('El navegador no permitió copiar; revisa permisos de portapapeles.',true);}
   }
 }
+
+/* Campos de anuncio auto-completados cuando se abre desde Comunicaciones con NRC. */
+(function etopCompletarAnuncioDesdeCurso(){
+  const p=new URLSearchParams(location.search);
+  const tutor=(p.get('nombre_tutor')||p.get('nombreTutor')||'').trim();
+  const correo=(p.get('correo_tutor')||p.get('correoTutor')||'').trim();
+  const curso=(p.get('nombre_curso')||p.get('nombreCurso')||'').trim();
+  const nrc=(p.get('nrc')||'').trim();
+  const inicio=(p.get('fecha_inicio')||p.get('fechaInicio')||'').trim();
+  const fin=(p.get('fecha_fin')||p.get('fechaFin')||'').trim();
+  if(!tutor&&!correo&&!curso&&!nrc&&!inicio&&!fin)return;
+  document.querySelectorAll('.campo[data-placeholder]').forEach(el=>{
+    if(el.textContent.trim())return;
+    const label=(el.getAttribute('data-placeholder')||'').toUpperCase();
+    let valor='';
+    if(label.includes('NOMBRE TUTOR'))valor=tutor;
+    else if(label.includes('CORREO TUTOR'))valor=correo;
+    else if(label.includes('NOMBRE CURSO Y NRC')||label.includes('NOMBRE Y NRC DEL CURSO'))valor=[curso,nrc].filter(Boolean).join(' · ');
+    else if(label==='FECHA INICIO CURSO'||label==='DÍA Y MES')valor=inicio;
+    else if(label==='FECHA FIN CURSO')valor=fin;
+    if(valor){el.textContent=valor;el.classList.add('auto-filled');}
+  });
+})();
 </script>
 </body>
 </html>
