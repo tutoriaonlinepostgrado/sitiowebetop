@@ -4430,25 +4430,21 @@ function onUniversalKeydown(e){
   }
 }
 function abrirFichaNRCUniversal(c){
+  // La selección del Inicio se traslada al selector NRC normal de Calendarios.
+  // El selector superior será el único origen de verdad para la tabla.
   const raw=Array.isArray(c)?c:[c];
   const nrcs=[...new Set(raw.map(x=>String(typeof x==='string'?x:(x?.nrc||'')).trim()).filter(Boolean))];
   if(!nrcs.length)return;
-  mostrarAreaGestion();
-  vistaActual=null;
-  document.getElementById('homeTopSearch').style.display='none';
-  document.getElementById('gestionFilters').style.display='none';
-  document.getElementById('guia-correos').style.display='none';
-  const visor=document.getElementById('visor');
-  visor.style.display='block';
-  const url=new URL(BASE+'calendarios.html');
-  url.searchParams.set('v','20261116-calendarios-nrc-multiple');
-  url.searchParams.set('embedded','1');
-  url.searchParams.set('nrc',nrcs.join('|'));
-  const tutores=tutoresSesionETOP();
-  if(tutores.length)url.searchParams.set('tutor',tutores.join('|'));
-  visor.src=url.toString();
-  establecerTituloVistaETOP(nrcs.length===1?'Ficha NRC · '+nrcs[0]:'Calendarios · '+nrcs.length+' NRC');
-  activate(null);
+  SELECCION_NRC_PRINCIPAL.clear();
+  nrcs.forEach(nrc=>SELECCION_NRC_PRINCIPAL.add(nrc));
+  BUSQUEDA.nrc=nrcs[0];
+  nrcConfirmado=nrcs[0];
+  nrcTextoBusqueda='';
+  const buscador=document.getElementById('input-nrc');
+  if(buscador)buscador.value='';
+  // Es imprescindible usar la vista CALENDARIOS, no vistaActual=null:
+  // confirmarNRC/limpiarFiltroNRC llaman actualizarIframe() al cambiar.
+  cargar('CALENDARIOS',findBtn('CALENDARIOS'));
 }
 function ejecutarUniversalItem(item){
   if(!item)return;
