@@ -3690,7 +3690,7 @@ function actualizarControlesFocoCoordinacion(){
   if(focoCoordTutorSeleccionada&&!elegibles.has(focoCoordTutorSeleccionada)){
     focoCoordTutorSeleccionada='';
   }
-  const primerNombre=nombre=>String(nombre||'').trim().split(/\\s+/)[0]||'';
+  const primerNombre=nombre=>String(nombre||'').trim().split(/\s+/)[0]||'';
   const scrollAnterior=tabs.scrollLeft;
   tabs.replaceChildren();
   const crearTab=(nombre,etiqueta)=>{
