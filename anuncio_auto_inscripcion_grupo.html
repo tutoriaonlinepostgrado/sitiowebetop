@@ -1,30 +1,114 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Anuncio Auto Inscripción de Grupo</title>
-<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}</style></head>
+<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}</style><style id="etop-anuncio-unificado-20261116">
+.ew,.email-wrapper{width:100%!important;max-width:840px!important;box-sizing:border-box!important;margin:0 auto!important;padding:16px 20px!important;color:#26364b;}
+.ew .campo,.email-wrapper .campo{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;color:#243c5a!important;font-weight:700!important}
+.ew .campo:focus,.email-wrapper .campo:focus{background:#eff6ff!important;outline:1px solid #c6dbef!important}
+.ew .campo:empty:before,.email-wrapper .campo:empty:before{color:#9babbc!important}
+</style></head>
 <body>
-<div class="tb"><div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt">Anuncio Auto Inscripción de Grupo</span></div><div class="tbr"><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="dl()">⬇ Descargar para Outlook/Canvas</a></div></div>
-<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Descargar</strong></li><li>Abre el archivo, Ctrl+A → Ctrl+C → pega en Outlook o Canvas</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
+<div class="tb"><div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt">Anuncio Auto Inscripción de Grupo</span></div><div class="tbr"><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="copiarParaCanvasETOP()">📋 Copiar para Canvas</a></div></div>
+<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Copiar para Canvas</strong></li><li>Pega directamente en Canvas con <strong>Ctrl+V</strong>.</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
 <div class="ew">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;box-shadow:none;font-family:Arial,Helvetica,sans-serif;">
 <tbody>
-<tr><td style="padding:40px 60px 20px 60px;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0;"></td></tr>
-<tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
-<div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;"><p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">📢 Anuncio · Auto Inscripción de Grupo — Impartición</p></div>
+<tr><td align="left" style="padding:22px 34px 18px 34px;border:0;background:#fff;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="160" style="display:block;border:0;"></td></tr>
+<tr><td align="left" style="padding:0 34px 30px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;">
+<div style="margin:16px 0;padding:0;border:0;border-radius:0;background:transparent;text-align:left;"><p style="margin:0 0 16px 0;color:#243c5a;font-size:13px;line-height:1.6;font-weight:700;text-align:left;">📢 Anuncio · Auto Inscripción de Grupo — Impartición</p></div>
 <p>Estimadas y estimados estudiantes,</p>
 <p>Les informo que las evaluaciones de esta asignatura se realizarán a través de desafíos individuales y grupales. Para esto les solicito conformar grupos de hasta <span class="campo" contenteditable="true" data-placeholder="N° MÁXIMO DE INTEGRANTES"></span> integrantes máximo y auto inscribirse en la plataforma.</p>
-<div style="background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0;">
+<div style="margin:16px 0;padding:0;border:0;border-radius:0;background:transparent;text-align:left;">
 <p style="margin:0 0 12px 0;font-weight:bold;color:#0F2463;">📋 Detalle de entregas semanales:</p>
 <span class="campo" contenteditable="true" data-placeholder="DETALLE DE ENTREGAS POR SEMANA (ej: Semana 1 - Sumativa 1 - Individual, Semana 2 - Grupal, etc.)" style="display:block;padding:12px;border-radius:6px;font-size:14px;line-height:1.8;"></span>
 </div>
-<div style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:16px 0;">
+<div style="margin:16px 0;padding:0;border:0;border-radius:0;background:transparent;text-align:left;">
 <p style="margin:0;color:#0056b3;font-size:15px;">⚠️ Recuerda que <strong>todo estudiante debe auto inscribirse en un grupo</strong>. Si necesita hacer alguna modificación posterior, contáctame directamente.</p>
 </div>
 </td></tr>
-<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
+<tr><td align="left" style="padding:16px 34px 26px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border:0;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
 </tbody></table>
 </div>
 <script>
 function ti(){document.getElementById("ip").classList.toggle("visible");}
 document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
 function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Anuncio Auto Inscripción de Grupo</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Anuncio_Auto_Inscripcion_Grupo.html"});a.click();}
+
+/* ETOP · Copiar anuncio directamente al editor de Canvas. */
+function etopAvisoCanvas(mensaje,error){
+  let e=document.getElementById('etop-aviso-canvas');
+  if(!e){e=document.createElement('div');e.id='etop-aviso-canvas';e.setAttribute('role','status');e.style.cssText='position:fixed;top:63px;right:18px;max-width:410px;z-index:9999;padding:12px 17px;border-radius:8px;color:white;font:600 12px Arial,sans-serif;box-shadow:0 5px 18px #15263b33;';document.body.appendChild(e);}
+  e.style.background=error?'#a02e39':'#146649';e.textContent=mensaje;e.hidden=false;
+  if(e._timer)clearTimeout(e._timer);e._timer=setTimeout(()=>{e.hidden=true},5500);
+}
+function etopUrlHttps(v){
+  try{const u=new URL((v||'').trim());return u.protocol==='https:'&&u.hostname?u.href:''}catch{return ''}
+}
+async function copiarParaCanvasETOP(){
+  const original=document.querySelector('.ew,.email-wrapper');
+  if(!original){etopAvisoCanvas('No se encuentra el anuncio.',true);return;}
+  const copia=original.cloneNode(true);
+  const campos=[...copia.querySelectorAll('.campo[data-placeholder]')];
+  const faltan=[];
+  campos.filter(el=>/\b(LINK|URL|ENLACE)\b/i.test(el.dataset.placeholder||'')).forEach(el=>{
+    const url=etopUrlHttps(el.textContent);
+    if(!url){faltan.push(el.dataset.placeholder||'URL');return;}
+    const cont=el.parentElement;
+    const boton=cont?.querySelector('a[href="#"]');
+    if(boton){
+      boton.href=url;boton.target='_blank';boton.rel='noopener noreferrer';
+      boton.style.cssText='font:700 15px Arial,sans-serif;color:#0056b3;text-decoration:underline;border:0;background:transparent;padding:0;';
+      el.remove();
+    }else{
+      const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+      a.textContent='Abrir instructivo';a.style.cssText='font-weight:700;color:#0056b3;text-decoration:underline;';
+      el.replaceWith(a);
+    }
+  });
+  if(faltan.length){etopAvisoCanvas('Pega antes una URL https válida en: '+faltan.join(' · '),true);return;}
+  if(copia.querySelector('a[href="#"]')){etopAvisoCanvas('Hay un botón sin URL. Revisa los enlaces.',true);return;}
+  copia.querySelectorAll('.campo').forEach(el=>{
+    const span=document.createElement('span');
+    span.textContent=el.textContent.trim()||el.dataset.placeholder||'';
+    span.style.cssText='color:#25364b;font-weight:700;border:0;background:transparent;';
+    el.replaceWith(span);
+  });
+  copia.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  copia.style.cssText='margin:0;padding:0;border:0;background:white;text-align:left;';
+  copia.querySelectorAll('table').forEach((t,i)=>{
+    t.setAttribute('align','left');t.style.margin='0';t.style.marginLeft='0';t.style.marginRight='0';
+    t.style.border='0';t.style.boxShadow='none';t.style.float='none';t.style.textAlign='left';
+    if(i===0){t.setAttribute('width','800');t.style.width='800px';t.style.maxWidth='100%';}
+  });
+  const trs=[...copia.querySelectorAll('tr')];
+  const filaFirma=trs[trs.length-1];
+  copia.querySelectorAll('td').forEach(td=>{
+    td.setAttribute('align','left');td.style.paddingLeft='0';td.style.border='0';td.style.background='#fff';
+  });
+  copia.querySelectorAll('p').forEach(p=>{
+    const texto=p.textContent.trim();
+    const enFirma=!!filaFirma&&filaFirma.contains(p);
+    const saludo=/^(estimad|saludos cordiales|quedo atent|atentamente|¡cuenten conmigo)/i.test(texto);
+    const alineacion=enFirma||saludo?'left':'justify';
+    p.style.fontFamily='Arial,Helvetica,sans-serif';p.style.fontSize='15px';p.style.lineHeight='1.6';
+    p.style.textAlign=alineacion;p.setAttribute('align',alineacion);
+    if(alineacion==='justify')p.style.textAlignLast='left';
+  });
+  const html='<html><body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;text-align:left;">'+copia.innerHTML+'</body></html>';
+  try{
+    if(!navigator.clipboard || !window.ClipboardItem)throw new Error('Clipboard no disponible');
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'})})]);
+    etopAvisoCanvas('Anuncio copiado con firma. Pega con Ctrl+V en Canvas.',false);
+  }catch(err){
+    try{
+      const div=document.createElement('div');div.innerHTML=html;
+      div.style.cssText='position:fixed;left:-10000px;top:0;background:white;';
+      document.body.appendChild(div);
+      const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(div);
+      sel.removeAllRanges();sel.addRange(range);
+      const ok=document.execCommand('copy');
+      sel.removeAllRanges();div.remove();if(!ok)throw Error('Copia fallida');
+      etopAvisoCanvas('Anuncio copiado. Pega con Ctrl+V en Canvas.',false);
+    }catch(e){etopAvisoCanvas('El navegador no permitió copiar; revisa permisos de portapapeles.',true);}
+  }
+}
 </script>
 </body></html>
