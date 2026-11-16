@@ -2583,7 +2583,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
           <h2>🎯 Foco del día</h2>
           <span id="focoDiaSubtitulo" class="foco-dia-subtitulo">Power BI · KPIs de seguimiento</span>
         </div>
-        <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
+        <button type="button" class="foco-dashboard-open" onclick="abrirTableroGestionDesdeFoco()">Abrir Tablero de Gestión →</button>
       </div>
       <div id="focoDiaCoordTools" class="foco-dia-coord-tools" role="group" aria-label="Filtrar Foco del día por tutora" hidden>
         <div id="focoDiaTutorTabs" class="foco-dia-tutor-list"></div>
@@ -3664,6 +3664,23 @@ function seleccionarTutoraFoco(tutora){
   actualizarControlesFocoCoordinacion();
   refrescarFocoDia();
 }
+/* Acceso contextual: conserva la tutora seleccionada del Foco del día
+   y la marca en el filtro superior del Tablero de Gestión. */
+function abrirTableroGestionDesdeFoco(){
+  if(esSesionCoordinacionFoco()){
+    const tutora=focoCoordTutorSeleccionada;
+    // Evitar que búsquedas previas (RUT, NRC, facultad, motivo, etc.)
+    // reduzcan el detalle que se abre desde este resumen.
+    limpiarBusqueda();
+    if(tutora){
+      BUSQUEDA.tutor=tutora;
+      SELECCION_MULTI_PRINCIPAL.tutor.clear();
+      SELECCION_MULTI_PRINCIPAL.tutor.add(tutora);
+    }
+  }
+  cargar('DASHBOARD',findBtn('DASHBOARD'));
+}
+
 function actualizarControlesFocoCoordinacion(){
   const herramientas=document.getElementById('focoDiaCoordTools');
   const subtitulo=document.getElementById('focoDiaSubtitulo');
