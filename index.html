@@ -314,7 +314,7 @@
 .foco-dia-head-info{flex:1 1 auto;min-width:0;margin-right:8px}
 .foco-dia-coord-tools{display:flex;align-items:center;gap:4px;margin-top:3px;min-width:0;max-width:100%}
 .foco-dia-coord-tools[hidden],.foco-dia-subtitulo[hidden]{display:none!important}
-.foco-dia-tutor-list{display:flex;align-items:center;gap:3px;min-width:0;overflow:hidden}
+.foco-dia-tutor-list{display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
 .foco-dia-tab{height:18px;min-width:0;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   padding:1px 7px;border-radius:5px;border:1px solid #dce5ef;background:#f4f7fb;
   color:#385474;font-size:8px;font-weight:750;line-height:1.1;flex-shrink:0}
@@ -3719,7 +3719,7 @@ function actualizarControlesFocoCoordinacion(){
     tabs.appendChild(btn);
   };
   crearTab('','Todas');
-  for(const nombre of focoCoordTutoresRecientes)crearTab(nombre,nombre);
+  for(const nombre of nombres)crearTab(nombre,nombre);
 }
 
 function buildFocoDiaURL(){
