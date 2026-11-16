@@ -18,7 +18,7 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .campo:focus{background:#eff6ff;border:0;box-shadow:none;}
 .campo:empty:before{content:attr(data-placeholder);color:#9aa9b9;font-style:italic;}
 .campo.auto-filled{background:transparent;border:0;color:#243b59;}
-.ew{padding:20px;max-width:840px;margin:0;}
+.ew{width:100%;box-sizing:border-box;padding:16px 20px;max-width:840px;margin:0 auto;}
 </style>
 <link rel="stylesheet" href="etop-identidad-unab.css?v=20261106-v2">
 <link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
@@ -54,19 +54,19 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 <div class="ew" id="email-content">
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
 <tbody><tr><td align="left" style="padding:12px 0;">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="800" style="width:100%;max-width:800px;margin:0 auto;background:#fff;border:0;border-collapse:collapse;font-family:Arial,sans-serif;">
 <tbody>
-  <tr><td style="padding:24px 38px 12px 38px;">
+  <tr><td style="padding:22px 34px 18px 34px;">
     <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="160" style="display:block;border:0;width:160px;height:auto;">
   </td></tr>
-  <tr><td style="padding:0 38px 32px 38px;color:#333;font-size:15px;line-height:1.7;text-align:justify;">
+  <tr><td style="padding:0 34px 30px 34px;color:#26364b;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;text-align:left;">
     <div id="bloque-apertura" style="position:relative;">
       <div id="apertura-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:transparent;border:0;border-radius:0;padding:0;color:#64748b;">
         <span style="font-size:11px;">✏️</span>
         <span style="font-size:10px;color:#166534;font-weight:500;">Este párrafo es editable — haz clic en cualquier parte para ajustarlo. Usa los botones de <strong>Apertura</strong> para cambiar el estilo.</span>
       </div>
       <div id="apertura-texto" contenteditable="true"
-        style="outline:none;border:0;border-radius:0;padding:0;background:transparent;font-size:16px;line-height:1.8;color:#333;cursor:text;">
+        style="outline:none;border:0;border-radius:0;padding:0;background:transparent;font-size:15px;line-height:1.6;color:#26364b;cursor:text;">
         <p style="margin:0 0 12px 0;">Estimado/a Docente,</p>
         <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> <span data-unidad-duracion>semanas</span>, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
       </div>
@@ -182,6 +182,14 @@ async function copiarCorreo() {
     el.style.borderLeft = '0';
     el.style.background = 'transparent';
     el.style.boxShadow = 'none';
+  });
+  // Outlook: fijar tipografía e interlineado dentro del HTML copiado,
+  // sin depender de estilos externos del portal ni alterar el contenido.
+  contenido.querySelectorAll('p').forEach(p => {
+    p.style.fontFamily = 'Arial,Helvetica,sans-serif';
+    p.style.fontSize = '15px';
+    p.style.lineHeight = '1.6';
+    p.style.textAlign = 'left';
   });
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
   try {
