@@ -61,33 +61,31 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
   </td></tr>
   <tr><td style="padding:0 38px 32px 38px;color:#333;font-size:15px;line-height:1.7;text-align:justify;">
     <div id="bloque-apertura" style="position:relative;">
-      <div id="apertura-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:#F0FDF4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;">
+      <div id="apertura-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;background:transparent;border:0;border-radius:0;padding:0;color:#64748b;">
         <span style="font-size:11px;">✏️</span>
         <span style="font-size:10px;color:#166534;font-weight:500;">Este párrafo es editable — haz clic en cualquier parte para ajustarlo. Usa los botones de <strong>Apertura</strong> para cambiar el estilo.</span>
       </div>
       <div id="apertura-texto" contenteditable="true"
-        style="outline:none;border:1.5px dashed #86efac;border-radius:8px;padding:10px 14px;background:#F0FDF4;font-size:16px;line-height:1.8;color:#333;cursor:text;"
-        onfocus="this.style.borderColor='#16a34a';this.style.background='#dcfce7';"
-        onblur="this.style.borderColor='#86efac';this.style.background='#F0FDF4';">
+        style="outline:none;border:0;border-radius:0;padding:0;background:transparent;font-size:16px;line-height:1.8;color:#333;cursor:text;">
         <p style="margin:0 0 12px 0;">Estimado/a Docente,</p>
         <p style="margin:0;">Junto con saludar, mi nombre es <span class="campo auto-filled" contenteditable="true" data-campo="nombre_tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura "<span class="campo auto-filled" contenteditable="true" data-campo="nombre_curso" data-placeholder="NOMBRE ASIGNATURA"></span>" <span class="campo auto-filled" contenteditable="true" data-campo="nrc" data-placeholder="NRC"></span>, la cual tiene una duración de <span class="campo auto-filled" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> <span data-unidad-duracion>semanas</span>, iniciando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_inicio" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DD-MM-YYYY"></span> y finalizando el <span class="campo auto-filled" contenteditable="true" data-campo="dia_fin" data-placeholder="DÍA"></span> <span class="campo auto-filled" contenteditable="true" data-campo="fecha_fin" data-placeholder="DD-MM-YYYY"></span> en la plataforma Canvas.</p>
       </div>
     </div>
     <p>Como parte del proceso de programación antes de la impartición, las actividades serán las siguientes y así estarán disponibles en plataforma:</p>
     <div id="cronograma-wrap" style="margin:16px 0;">
-      <div id="zona-upload" style="border:2px dashed #185FA5;border-radius:8px;padding:24px;text-align:center;background:#EFF6FF;cursor:pointer;" onclick="document.getElementById('input-imagen').click()">
+      <div id="zona-upload" style="border:0;border-radius:6px;padding:18px;text-align:center;background:#f5f8fc;cursor:pointer;" onclick="document.getElementById('input-imagen').click()">
         <div style="font-size:32px;margin-bottom:8px;">🖼️</div>
         <div style="font-size:13px;font-weight:600;color:#185FA5;margin-bottom:4px;">Haz clic para subir la imagen del cronograma</div>
         <div style="font-size:11px;color:#64748b;">PNG, JPG o GIF — la imagen se insertará en el correo</div>
         <input type="file" id="input-imagen" accept="image/*" style="display:none" onchange="cargarImagen(event)">
       </div>
       <div id="zona-imagen" style="display:none;">
-        <img id="img-cronograma" src="" alt="Cronograma de actividades" style="max-width:100%;border:1px solid #E2E8F0;border-radius:6px;">
+        <img id="img-cronograma" src="" alt="Cronograma de actividades" style="max-width:100%;border:0;border-radius:0;">
         <br>
         <button onclick="cambiarImagen()" style="margin-top:8px;font-size:11px;padding:4px 10px;background:#EFF6FF;border:1px solid #185FA5;color:#185FA5;border-radius:5px;cursor:pointer;">🔄 Cambiar imagen</button>
       </div>
     </div>
-    <p id="p-grupos" style="background:#FFF8E1;border-left:3px solid #F59E0B;padding:10px 14px;border-radius:4px;font-size:15px;">
+    <p id="p-grupos" style="background:transparent;border:0;padding:0;border-radius:0;font-size:15px;">
       Con respecto a las actividades grupales de las semanas <span class="campo" contenteditable="true" data-placeholder="N° SEMANAS GRUPALES (ej: 2, 3, 6 y 7)"></span>, según la programación del curso, los grupos serán constituidos por máximo <span class="campo" contenteditable="true" data-placeholder="N° MÁXIMO INTEGRANTES (ej: 2)"></span> estudiantes, estas indicaciones ya se encuentran configuradas en la plataforma.
     </p>
     <p id="p-autoinscripcion">Para su conocimiento, si las actividades son grupales, los estudiantes deberán autoinscribirse en grupos mediante la opción "Personas" en Canvas. Agradezco de antemano su colaboración en motivar a los estudiantes a realizar este paso de manera oportuna.</p>
@@ -177,6 +175,13 @@ async function copiarCorreo() {
     if (p.style.background) p.style.background = '';
     if (p.style.borderLeft) p.style.borderLeft = '';
     p.style.padding = '';
+  });
+  // Limpiar únicamente adornos del correo. No alterar enlaces, imagen, cronograma ni texto.
+  contenido.querySelectorAll('#apertura-texto, #p-grupos, #zona-imagen img').forEach(el => {
+    el.style.border = '0';
+    el.style.borderLeft = '0';
+    el.style.background = 'transparent';
+    el.style.boxShadow = 'none';
   });
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
   try {
