@@ -476,6 +476,16 @@
 }
 .universal-result:hover,.universal-result.sel{background:#eef6ff}
 .universal-result+.universal-result{margin-top:2px}
+/* Selección múltiple en superbuscador: solo NRC, sin alterar acciones de RUT o tutor. */
+.universal-result-shell{display:flex;align-items:center;gap:5px;border-radius:9px}
+.universal-result-shell .universal-result{flex:1;min-width:0}
+.universal-result-check{width:17px;height:17px;flex:none;cursor:pointer;accent-color:#1265df;margin:0 4px 0 8px}
+.universal-result-shell:has(.universal-result-check:checked){background:#eaf3ff}
+.universal-bulk{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:9px 8px;margin-top:7px;border-top:1px solid #d9e5f1;background:#f1f6fc;border-radius:8px;color:#274765;font-size:10px}
+.universal-bulk-actions{display:flex;gap:6px}
+.universal-bulk button{border:1px solid #c4d7e9;border-radius:6px;padding:6px 9px;background:white;color:#255778;font-weight:700;font-size:10px}
+.universal-bulk button.primary{background:#1265df;color:white;border-color:#1265df}
+.universal-bulk-hint{padding:7px 10px;color:#64748b;font-size:9px}
 .universal-result-ico{
   width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
   background:#edf4fb;color:#315f86;font-size:13px;font-weight:900
@@ -4103,6 +4113,7 @@ function openCoordModule(clave,btn){
 */
 let universalIdx=-1;
 let universalItems=[];
+const universalSelectedNrcs=new Map(); // clave normalizada => NRC original
 
 function universalRut(valor){
   return String(valor||'')
@@ -4196,27 +4207,57 @@ function buscarUniversal(valor){
     vistos.add(x.key);return true;
   }).slice(0,15);
 }
+function toggleUniversalNrc(nrc,marcado){
+  const autorizado=cursosPermitidosUniversal().find(x=>normalizarBusqueda(x.nrc)===normalizarBusqueda(nrc));
+  if(!autorizado)return;
+  const clave=normalizarBusqueda(autorizado.nrc);
+  if(marcado)universalSelectedNrcs.set(clave,autorizado.nrc);
+  else universalSelectedNrcs.delete(clave);
+  const input=document.getElementById('universalSearch');
+  renderUniversalResults(buscarUniversal(input?.value||''));
+  input?.focus();
+}
+function abrirNrcsSeleccionadosUniversal(){
+  const nrcs=[...universalSelectedNrcs.values()];
+  if(!nrcs.length)return;
+  limpiarContextoUniversal();
+  nrcs.forEach(n=>SELECCION_NRC_PRINCIPAL.add(n));
+  BUSQUEDA.nrc=nrcs[0];nrcConfirmado=nrcs[0];
+  const inputNrc=document.getElementById('input-nrc');
+  if(inputNrc)inputNrc.value='';
+  sincronizarFiltros();actualizarBadge();
+  universalSelectedNrcs.clear();
+  const input=document.getElementById('universalSearch');
+  if(input)input.value='';
+  document.getElementById('universalResults')?.classList.remove('open');
+  abrirFichaNRCUniversal(nrcs);
+}
 function renderUniversalResults(items){
   universalItems=items;
   universalIdx=-1;
   const box=document.getElementById('universalResults');
   if(!box)return;
-  if(!items.length){
-    const q=(document.getElementById('universalSearch')?.value||'').trim();
-    if(!q){box.classList.remove('open');box.innerHTML='';return}
-    box.innerHTML="<div class='universal-empty'>Sin coincidencias en la cartera disponible.<br>Puede buscar por RUT, NRC, código, curso, programa o tutor.</div>";
-    box.classList.add('open');return;
-  }
-  box.innerHTML=items.map((x,i)=>{
+  const consulta=(document.getElementById('universalSearch')?.value||'').trim();
+  const total=universalSelectedNrcs.size;
+  if(!items.length&&!consulta&&!total){box.classList.remove('open');box.innerHTML='';return;}
+  const filas=items.map((x,i)=>{
     const ico=x.tipo==='rut'?'◈':x.tipo==='tutor'?'👤':'⌗';
     const estadoClass=x.tipo==='curso'?' estado-'+normalizarBusqueda(x.tag).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):'';
-    return "<button type='button' class='universal-result "+x.tipo+estadoClass+"' data-universal-index='"+i+"'>"+
+    const checkbox=x.tipo==='curso'
+      ?"<input type='checkbox' class='universal-result-check' data-universal-check='"+i+"' aria-label='Agregar NRC "+esc(x.curso.nrc)+" a la selección' "+(universalSelectedNrcs.has(normalizarBusqueda(x.curso.nrc))?'checked':'')+">"
+      :'';
+    return "<div class='universal-result-shell'>"+checkbox+
+      "<button type='button' class='universal-result "+x.tipo+estadoClass+"' data-universal-index='"+i+"'>"+
       "<span class='universal-result-ico'>"+ico+"</span>"+
       "<span class='universal-result-main'><span class='universal-result-title'>"+esc(x.titulo)+"</span>"+
       "<span class='universal-result-sub'>"+esc(x.sub||'')+"</span></span>"+
-      "<span class='universal-result-tag'>"+esc(x.tag||'')+"</span></button>";
-  }).join('')+
-  "<div class='universal-search-note'>Los nombres de estudiantes no se indexan en GitHub. Para estudiantes, use el RUT.</div>";
+      "<span class='universal-result-tag'>"+esc(x.tag||'')+"</span></button></div>";
+  }).join('');
+  const vacio=!items.length&&consulta?"<div class='universal-empty'>Sin coincidencias. Busque por RUT, NRC, código, curso, programa o tutor.</div>":'';
+  const seleccionado=total
+    ?"<div class='universal-bulk'><strong>"+total+" NRC seleccionado"+(total===1?'':'s')+"</strong><div class='universal-bulk-actions'><button type='button' class='primary' id='universal-open-selected'>Ver "+total+" en Calendarios</button><button type='button' id='universal-clear-selected'>Limpiar</button></div></div>"
+    :"<div class='universal-bulk-hint'>☐ Marque varios NRC y luego elija «Ver en Calendarios». Un clic sobre el nombre abre un solo curso.</div>";
+  box.innerHTML=filas+vacio+seleccionado+"<div class='universal-search-note'>Los nombres de estudiantes no se indexan en GitHub. Para estudiantes, use el RUT.</div>";
   box.querySelectorAll('[data-universal-index]').forEach(btn=>{
     const item=items[Number(btn.dataset.universalIndex)];
     btn.title=[item.titulo,item.sub,item.tag].filter(Boolean).join(' | ');
@@ -4224,6 +4265,17 @@ function renderUniversalResults(items){
       e.preventDefault();
       ejecutarUniversalItem(universalItems[Number(btn.dataset.universalIndex)]);
     });
+  });
+  box.querySelectorAll('[data-universal-check]').forEach(check=>{
+    check.addEventListener('change',()=>{
+      const item=universalItems[Number(check.dataset.universalCheck)];
+      if(item?.tipo==='curso')toggleUniversalNrc(item.curso.nrc,check.checked);
+    });
+  });
+  box.querySelector('#universal-open-selected')?.addEventListener('click',abrirNrcsSeleccionadosUniversal);
+  box.querySelector('#universal-clear-selected')?.addEventListener('click',()=>{
+    universalSelectedNrcs.clear();
+    renderUniversalResults(buscarUniversal(document.getElementById('universalSearch')?.value||''));
   });
   box.classList.add('open');
 }
@@ -4250,8 +4302,9 @@ function onUniversalKeydown(e){
   }
 }
 function abrirFichaNRCUniversal(c){
-  const nrc=String(c?.nrc||'').trim();
-  if(!nrc)return;
+  const raw=Array.isArray(c)?c:[c];
+  const nrcs=[...new Set(raw.map(x=>String(typeof x==='string'?x:(x?.nrc||'')).trim()).filter(Boolean))];
+  if(!nrcs.length)return;
   mostrarAreaGestion();
   vistaActual=null;
   document.getElementById('homeTopSearch').style.display='none';
@@ -4259,12 +4312,19 @@ function abrirFichaNRCUniversal(c){
   document.getElementById('guia-correos').style.display='none';
   const visor=document.getElementById('visor');
   visor.style.display='block';
-  visor.src=BASE+'calendarios.html?v=20261026-calendarios-ficha360-v2&embedded=1&nrc='+encodeURIComponent(nrc);
-  establecerTituloVistaETOP('Ficha NRC · '+nrc);
+  const url=new URL(BASE+'calendarios.html');
+  url.searchParams.set('v','20261116-calendarios-nrc-multiple');
+  url.searchParams.set('embedded','1');
+  url.searchParams.set('nrc',nrcs.join('|'));
+  const tutores=tutoresSesionETOP();
+  if(tutores.length)url.searchParams.set('tutor',tutores.join('|'));
+  visor.src=url.toString();
+  establecerTituloVistaETOP(nrcs.length===1?'Ficha NRC · '+nrcs[0]:'Calendarios · '+nrcs.length+' NRC');
   activate(null);
 }
 function ejecutarUniversalItem(item){
   if(!item)return;
+  universalSelectedNrcs.clear(); // Abrir un resultado individual ignora la selección acumulada.
   document.getElementById('universalResults')?.classList.remove('open');
 
   if(item.tipo==='rut'){
