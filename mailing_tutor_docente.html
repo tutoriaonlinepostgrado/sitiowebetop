@@ -1,24 +1,29 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Mailing Tutor de Acompañamiento — Docente</title>
 <style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}.selector-version{font:600 12px Arial,sans-serif;padding:7px 9px;border:1px solid #aab8cd;border-radius:6px;background:#fff;color:#142440;max-width:180px}.tbr{flex-wrap:wrap}</style><link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
-</head>
+<style id="etop-correo-unificado-20261116">
+.ew,.email-wrapper{box-sizing:border-box!important;width:100%!important;max-width:840px!important;margin:0 auto!important;padding:16px 20px!important;}
+.ew .campo,.email-wrapper .campo{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:#243c5a!important;font-weight:700!important}
+.ew .campo:focus,.email-wrapper .campo:focus{background:#eff6ff!important;outline:1px solid #bcd5ef!important}
+.ew .campo:empty:before,.email-wrapper .campo:empty:before{color:#94a3b8!important}
+</style></head>
 <body>
-<div class="tb"><div class="tbl"><span class="badge">✉️ Correo</span><span class="tbt">Mailing Tutor de Acompañamiento — Docente</span></div><div class="tbr"><label style="font-size:12px;font-weight:700;color:#e2e8f0;white-space:nowrap">Redacción <select class="selector-version" id="version-mailing" onchange="cambiarVersionMailing()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="dl()">⬇ Descargar para Outlook/Canvas</a></div></div>
-<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Descargar</strong></li><li>Abre el archivo, Ctrl+A → Ctrl+C → pega en Outlook o Canvas</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
+<div class="tb"><div class="tbl"><span class="badge">✉️ Correo</span><span class="tbt">Mailing Tutor de Acompañamiento — Docente</span></div><div class="tbr"><label style="font-size:12px;font-weight:700;color:#e2e8f0;white-space:nowrap">Redacción <select class="selector-version" id="version-mailing" onchange="cambiarVersionMailing()"><option value="1">1 · Institucional</option><option value="2">2 · Cercana</option><option value="3">3 · Directa</option><option value="4">4 · Cálida</option></select></label><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="copiarCorreoETOP()">📋 Copiar correo para Outlook/Canvas</a></div></div>
+<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Clic en cada campo <span style="color:#185FA5;font-weight:bold">[azul]</span> y escribe el dato</li><li>Clic en <strong>Descargar</strong></li><li>Pega el correo en Outlook usando <strong>Ctrl+V</strong>.</li></ol><div class="hint">💡 Los campos azules son editables directamente</div></div>
 <div class="ew">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background:#fff;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;box-shadow:none;font-family:Arial,Helvetica,sans-serif;">
 <tbody>
-<tr><td style="padding:40px 60px 20px 60px;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="220" style="display:block;border:0;"></td></tr>
-<tr><td style="padding:0 60px 30px 60px;color:#333;font-size:16px;line-height:1.8;text-align:justify;">
-<div style="background:#0F2463;border-radius:8px;padding:12px 20px;margin-bottom:24px;"><p style="margin:0;color:#ffd700;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">✉️ Correo · Presentación Tutor/a — Dirigido al Docente</p></div>
+<tr><td align="left" style="padding:22px 34px 18px 34px;border:0;background:#fff;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="160" style="display:block;border:0;"></td></tr>
+<tr><td align="left" style="padding:0 34px 30px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;">
+<div style="margin:16px 0;padding:0;background:transparent;border:0;border-radius:0;text-align:left;"><p style="margin:0 0 16px 0;color:#243c5a;font-size:13px;font-weight:700;text-align:left;">✉️ Correo · Presentación Tutor/a — Dirigido al Docente</p></div>
 <p style="font-size:18px;">Estimado/a Docente,</p>
 <p id="mailing-apertura">Junto con saludar, mi nombre es <span class="campo" contenteditable="true" data-campo="tutor" data-placeholder="NOMBRE TUTOR/A"></span>, y seré el/la Tutor/a de Acompañamiento encargado/a de apoyar la asignatura <span class="campo" contenteditable="true" data-campo="curso" data-placeholder="NOMBRE ASIGNATURA"></span>, la cual tiene una duración de <span class="campo" contenteditable="true" data-campo="duracion" data-placeholder="N° SEMANAS"></span> semanas, iniciando el <span class="campo" contenteditable="true" data-campo="fecha_inicio" data-placeholder="DÍA DD-MM-AAAA"></span> y finalizando el <span class="campo" contenteditable="true" data-campo="fecha_fin" data-placeholder="DÍA DD-MM-AAAA"></span> en la plataforma Canvas.</p>
 <p id="mailing-solicitud">Como parte de la programación previa a la impartición del curso, le solicito amablemente que me informe si las tareas de este curso se desarrollarán de manera <strong>individual o grupal</strong>. En caso de ser actividades grupales, debe indicar la cantidad máxima de estudiantes por grupo.</p>
-<div style="background:#f0f7ff;border-left:4px solid #0056b3;border-radius:6px;padding:16px 20px;margin:20px 0;">
+<div style="margin:16px 0;padding:0;background:transparent;border:0;border-radius:0;text-align:left;">
 <p style="margin:0;color:#333;font-size:15px;">📌 Para su conocimiento: si las actividades son grupales, serán los propios estudiantes quienes deben auto inscribirse a través del enlace <strong>"Personas"</strong>. Le solicito su cooperación para motivar a los estudiantes a realizar esta acción.</p>
 </div>
 <p id="mailing-despedida">Quedo a su disposición ante cualquier consulta.</p>
 </td></tr>
-<tr><td style="padding:25px 60px 40px 60px;font-size:15px;line-height:1.6;color:#333;background:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-campo="tutor_firma" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
+
 </tbody></table>
 </div>
 <script>
@@ -63,5 +68,57 @@ document.addEventListener('focusout',e=>{if(e.target?.matches?.('[data-campo="du
 function ti(){document.getElementById("ip").classList.toggle("visible");}
 document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
 function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Mailing Tutor de Acompañamiento — Docente</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Mailing_Tutor_Docente.html"});a.click();}
+
+/* ETOP: presentación sobria y pegado en Outlook alineado a izquierda con
+   párrafos justificados. La firma personal corresponde exclusivamente a Outlook. */
+function etopNormalizarCorreoCopia(contenido){
+  contenido.style.margin='0';contenido.style.padding='0';contenido.style.textAlign='left';
+  const principal=contenido.querySelector('table');
+  if(principal){
+    principal.setAttribute('align','left');principal.setAttribute('width','800');
+    principal.style.margin='0';principal.style.marginLeft='0';principal.style.marginRight='0';
+    principal.style.width='800px';principal.style.maxWidth='100%';
+    principal.style.border='0';principal.style.boxShadow='none';principal.style.textAlign='left';
+    if(principal.rows?.length){
+      const logo=principal.rows[0]?.cells[0];const cuerpo=principal.rows[1]?.cells[0];
+      if(logo){logo.style.paddingLeft='0';logo.setAttribute('align','left');}
+      if(cuerpo){cuerpo.style.paddingLeft='0';cuerpo.setAttribute('align','left');cuerpo.style.textAlign='left';}
+    }
+  }
+  contenido.querySelectorAll('p').forEach(p=>{
+    const texto=p.textContent.trim();
+    const saludo=/^(estimad|reciba mis saludos|junto con saludar[,.:]?$|buen día[,.:]?$)/i.test(texto);
+    const despedida=/^(quedo atent|quedo a su disposición|sin otro particular|agradecid[oa]|saludos cordiales)/i.test(texto);
+    const alineacion=saludo||despedida?'left':'justify';
+    p.style.fontFamily='Arial,Helvetica,sans-serif';p.style.fontSize='15px';p.style.lineHeight='1.6';
+    p.style.textAlign=alineacion;p.setAttribute('align',alineacion);
+    if(alineacion==='justify')p.style.textAlignLast='left';
+  });
+}
+
+async function copiarCorreoETOP(){
+  const contenido=document.querySelector('.ew')?.cloneNode(true);
+  if(!contenido){alert('No hay correo para copiar.');return;}
+  contenido.querySelectorAll('.campo').forEach(el=>{
+    const span=document.createElement('span');span.textContent=el.textContent.trim()||el.dataset.placeholder||'';
+    span.style.cssText='font-weight:700;color:#25364b;background:transparent;border:0;';
+    el.replaceWith(span);
+  });
+  etopNormalizarCorreoCopia(contenido);
+  const html='<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;text-align:left;">'+contenido.innerHTML+'</body></html>';
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'})})]);
+    alert('Correo copiado. Pega con Ctrl+V en Outlook.');
+  }catch(e){
+    try{
+      const temp=document.createElement('div');temp.innerHTML=html;temp.style.cssText='position:fixed;left:-10000px;';
+      document.body.appendChild(temp);
+      const s=window.getSelection(),range=document.createRange();range.selectNodeContents(temp);
+      s.removeAllRanges();s.addRange(range);const ok=document.execCommand('copy');
+      s.removeAllRanges();temp.remove();if(!ok)throw Error('copy failed');
+      alert('Correo copiado. Pega con Ctrl+V en Outlook.');
+    }catch(e2){alert('No fue posible copiar: revisa los permisos de portapapeles.');}
+  }
+}
 </script>
 </body></html>
