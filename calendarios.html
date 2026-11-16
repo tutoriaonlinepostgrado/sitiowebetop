@@ -707,6 +707,7 @@
         if(!clave)return;
         if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
       });
+      if(soloSeleccionados&&!selectedNrcs.size)soloSeleccionados=false;
       render();
     }
     function limpiarSeleccionNrcs(){selectedNrcs.clear();soloSeleccionados=false;render();}
