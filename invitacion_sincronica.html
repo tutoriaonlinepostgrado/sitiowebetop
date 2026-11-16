@@ -76,7 +76,12 @@
 .etop-version{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:bold;color:#e2e8f0;white-space:nowrap}.etop-version select{font-size:12px;padding:7px 9px;color:#152841;background:#fff;border:1px solid #a9b9cd;border-radius:6px;max-width:190px}.template-bar-right{flex-wrap:wrap}
 </style>
 <link rel="stylesheet" href="etop-comunicaciones-ui.css?v=20261112-1">
-</head>
+<style id="etop-correo-unificado-20261116">
+.ew,.email-wrapper{box-sizing:border-box!important;width:100%!important;max-width:840px!important;margin:0 auto!important;padding:16px 20px!important;}
+.ew .campo,.email-wrapper .campo{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:#243c5a!important;font-weight:700!important}
+.ew .campo:focus,.email-wrapper .campo:focus{background:#eff6ff!important;outline:1px solid #bcd5ef!important}
+.ew .campo:empty:before,.email-wrapper .campo:empty:before{color:#94a3b8!important}
+</style></head>
 <body>
 
 <div class="toast" id="toast"></div>
@@ -107,15 +112,15 @@
 </div>
 
 <div class="email-wrapper" id="email-content">
-<table border="0" cellpadding="0" cellspacing="0" style="max-width:950px;margin:20px auto;background-color:#ffffff;border:1px solid #dddddd;border-radius:12px;font-family:Arial,sans-serif;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;box-shadow:none;font-family:Arial,Helvetica,sans-serif;">
   <tbody>
     <tr>
-      <td style="padding:45px 60px 25px 60px;">
-        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="220" style="display:block;border:0;">
+      <td align="left" style="padding:22px 34px 18px 34px;border:0;background:#fff;">
+        <img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo UNAB Online" width="160" style="display:block;border:0;">
       </td>
     </tr>
     <tr>
-      <td style="padding:0px 60px 40px 60px;color:#333333;font-size:16px;line-height:1.8;text-align:justify;">
+      <td align="left" style="padding:0 34px 30px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;">
 
         <p style="font-size:18px;">Estimado(a) <span class="campo" contenteditable="true" data-placeholder="NOMBRE ESTUDIANTE" data-campo="nombre_estudiante"></span>,</p>
 
@@ -123,7 +128,7 @@
 
         <p id="invitacion-objetivo">El objetivo de esta actividad es que puedas realizar tus consultas sobre la navegación de la plataforma y la naturaleza de la educación online. Esta instancia también te permitirá conocer a tus compañeros y compañeras.</p>
 
-        <div style="background-color:#f0f7ff;border:1px solid #0056b3;border-radius:8px;padding:30px;margin:30px 0;text-align:center;">
+        <div style="margin:16px 0;padding:0;background:transparent;border:0;border-radius:0;text-align:left;">
           <p style="margin:0 0 20px 0;font-weight:bold;color:#333333;">Accede a tu sesión sincrónica aquí:</p>
           <span class="campo" contenteditable="true" data-placeholder="LINK ZOOM DE LA SESIÓN" data-campo="link_zoom" style="display:inline-block;margin-bottom:16px;font-size:13px;"></span><br>
           <a id="enlace-zoom" href="#" target="_blank" rel="noopener noreferrer" style="background-color:#0056b3;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px;">👉 Unirse a la sesión</a>
@@ -134,19 +139,7 @@
 
       </td>
     </tr>
-    <tr>
-      <td style="padding:30px 60px 45px 60px;font-size:16px;line-height:1.6;color:#333333;background-color:#fafafa;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">
-        <p style="margin:0;">Saludos cordiales,</p>
-        <p style="margin-top:15px;">
-          <strong style="color:#0056b3;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A" data-campo="nombre_tutor"></span></strong><br>
-          <span class="campo" contenteditable="true" data-placeholder="CORREO TUTOR/A" data-campo="correo_tutor"></span>
-        </p>
-        <p style="margin-top:15px;padding-top:15px;border-top:1px solid #eeeeee;font-size:13px;color:#666666;">
-          <strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>
-          UNIVERSIDAD ANDRÉS BELLO
-        </p>
-      </td>
-    </tr>
+    
   </tbody>
 </table>
 </div>
@@ -240,6 +233,8 @@ async function copiarCorreo() {
     el.style.cssText = 'font-weight:bold;color:#333;';
     el.classList.remove('auto-filled', 'campo');
   });
+  etopNormalizarCorreoCopia(contenido);
+
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
   try {
     const blob = new Blob([htmlFinal], { type: 'text/html' });
@@ -264,6 +259,33 @@ function mostrarToast(msg, error=false) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.background = error ? '#DC2626' : '#059669';
   t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+/* ETOP: presentación sobria y pegado en Outlook alineado a izquierda con
+   párrafos justificados. La firma personal corresponde exclusivamente a Outlook. */
+function etopNormalizarCorreoCopia(contenido){
+  contenido.style.margin='0';contenido.style.padding='0';contenido.style.textAlign='left';
+  const principal=contenido.querySelector('table');
+  if(principal){
+    principal.setAttribute('align','left');principal.setAttribute('width','800');
+    principal.style.margin='0';principal.style.marginLeft='0';principal.style.marginRight='0';
+    principal.style.width='800px';principal.style.maxWidth='100%';
+    principal.style.border='0';principal.style.boxShadow='none';principal.style.textAlign='left';
+    if(principal.rows?.length){
+      const logo=principal.rows[0]?.cells[0];const cuerpo=principal.rows[1]?.cells[0];
+      if(logo){logo.style.paddingLeft='0';logo.setAttribute('align','left');}
+      if(cuerpo){cuerpo.style.paddingLeft='0';cuerpo.setAttribute('align','left');cuerpo.style.textAlign='left';}
+    }
+  }
+  contenido.querySelectorAll('p').forEach(p=>{
+    const texto=p.textContent.trim();
+    const saludo=/^(estimad|reciba mis saludos|junto con saludar[,.:]?$|buen día[,.:]?$)/i.test(texto);
+    const despedida=/^(quedo atent|quedo a su disposición|sin otro particular|agradecid[oa]|saludos cordiales)/i.test(texto);
+    const alineacion=saludo||despedida?'left':'justify';
+    p.style.fontFamily='Arial,Helvetica,sans-serif';p.style.fontSize='15px';p.style.lineHeight='1.6';
+    p.style.textAlign=alineacion;p.setAttribute('align',alineacion);
+    if(alineacion==='justify')p.style.textAlignLast='left';
+  });
 }
 </script>
 </body>
