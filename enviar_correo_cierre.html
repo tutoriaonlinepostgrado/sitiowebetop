@@ -222,7 +222,7 @@ async function copiarCorreo() {
     // El último renglón de los párrafos justificados permanece a la izquierda.
     const texto = p.textContent.trim();
     const esSaludo = /^estimad[oa]/i.test(texto) ||
-      (/^(reciba mis saludos|junto con saludar)[\\s,.:]/i.test(texto) && texto.length < 90);
+      (/^(reciba mis saludos|junto con saludar)(?:[,.:]|\s)/i.test(texto) && texto.length < 90);
     const esDespedida = /^(quedo atent|agradecid[oa]|saludos cordiales|atentamente)/i.test(texto);
     const esReferencia = p.id === 'texto-pdf';
     const alineacion = esSaludo || esDespedida || esReferencia ? 'left' : 'justify';
