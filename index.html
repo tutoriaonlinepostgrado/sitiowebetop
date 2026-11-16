@@ -4267,6 +4267,8 @@ function renderUniversalResults(items){
     });
   });
   box.querySelectorAll('[data-universal-check]').forEach(check=>{
+    // Mantener abierto el desplegable al reconstruir sus filas tras marcar un NRC.
+    check.addEventListener('click',event=>event.stopPropagation());
     check.addEventListener('change',()=>{
       const item=universalItems[Number(check.dataset.universalCheck)];
       if(item?.tipo==='curso')toggleUniversalNrc(item.curso.nrc,check.checked);
