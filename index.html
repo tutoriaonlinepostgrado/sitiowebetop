@@ -310,6 +310,20 @@
 .foco-dashboard-link{transition:box-shadow .15s ease,border-color .15s ease}
 .foco-dashboard-link:hover{border-color:#d0dce9;box-shadow:0 8px 24px rgba(31,45,61,.08)}
 .foco-powerbi-frame{pointer-events:auto}
+/* Foco del día: selector de tutora exclusivo para Coordinación, dentro del encabezado. */
+.foco-dia-head-info{flex:1 1 auto;min-width:0;margin-right:8px}
+.foco-dia-coord-tools{display:flex;align-items:center;gap:4px;margin-top:3px;min-width:0;max-width:100%}
+.foco-dia-coord-tools[hidden],.foco-dia-subtitulo[hidden]{display:none!important}
+.foco-dia-tutor-list{display:flex;align-items:center;gap:3px;min-width:0;overflow:hidden}
+.foco-dia-tab{height:18px;min-width:0;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:1px 7px;border-radius:5px;border:1px solid #dce5ef;background:#f4f7fb;
+  color:#385474;font-size:8px;font-weight:750;line-height:1.1;flex-shrink:0}
+.foco-dia-tab:hover{background:#e6effb}
+.foco-dia-tab.active{background:#1d4776;border-color:#1d4776;color:#fff}
+.foco-dia-tab:focus-visible,.foco-dia-tutor-select:focus-visible{outline:2px solid #2870cf;outline-offset:1px}
+.foco-dia-tutor-select{height:19px;width:110px;max-width:100%;min-width:75px;padding:0 3px;
+  border:1px solid #cbd8e7;border-radius:5px;background:#fff;color:#315271;font-size:8px;cursor:pointer}
+@media(max-width:900px){.foco-dia-tutor-select{width:94px}.foco-dia-tab{max-width:82px}}
 .foco-dashboard-open{margin-left:auto;border:1px solid #c8d9ee;background:#f3f8fe;color:#315f91;border-radius:8px;height:27px;padding:0 9px;font-size:7.5px;font-weight:900;cursor:pointer;white-space:nowrap}
 .foco-dashboard-open:hover{background:#eaf3fd;border-color:#9fc1e7}
 .foco-powerbi-body{
@@ -2556,9 +2570,15 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
       <div class="left">
         <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link">
   <div class="card-head">
-    <div>
+    <div class="foco-dia-head-info">
       <h2>🎯 Foco del día</h2>
-      <span>Power BI · KPIs de seguimiento</span>
+      <span id="focoDiaSubtitulo" class="foco-dia-subtitulo">Power BI · KPIs de seguimiento</span>
+      <div id="focoDiaCoordTools" class="foco-dia-coord-tools" role="group" aria-label="Filtrar Foco del día por tutora" hidden>
+        <div id="focoDiaTutorTabs" class="foco-dia-tutor-list"></div>
+        <select id="focoDiaTutorSelect" class="foco-dia-tutor-select" aria-label="Elegir tutora para ver los KPI" onchange="seleccionarTutoraFoco(this.value)">
+          <option value="">Elegir tutora…</option>
+        </select>
+      </div>
     </div>
     <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
   </div>
@@ -3268,7 +3288,7 @@ async function cargarSugerenciasNRC(){
   const url=(location.hostname.includes('github.io')?'nrcs.json':BASE+'nrcs.json');
   try{
     const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error('HTTP '+resp.status);
-    catalogoNRC=await resp.json();construirIndiceNRC();
+    catalogoNRC=await resp.json();construirIndiceNRC();actualizarControlesFocoCoordinacion();
     if(typeof refrescarResumenCargaTutorial==='function')refrescarResumenCargaTutorial();
     if(typeof refrescarProximosCursos==='function')refrescarProximosCursos();
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const s=document.getElementById(id);s.options[0].text=s.options[0].text.replace(' ⏳','');s.disabled=false});
@@ -3283,7 +3303,7 @@ async function cargarSugerenciasNRC(){
         {nrc:'3032_MSPE006_202483',facultad:'ENFE',tutor:'ORIETTA CORTES',tipo:'100%ONLINE','codigo curso':'MSPE006',estado:'EN CIERRE',intake:'202483','fecha inicio':'2026-08-15','nombre curso':'MSPE006','nombre programa':'MSP'},
         {nrc:'3040_MSPE007_202483',facultad:'ENFE',tutor:'ORIETTA CORTES',tipo:'100%ONLINE','codigo curso':'MSPE007',estado:'ACTIVO',intake:'202483','fecha inicio':'2026-09-01','nombre curso':'MSPE007','nombre programa':'MSP'}
       ];
-      construirIndiceNRC();sincronizarFiltros();
+      construirIndiceNRC();sincronizarFiltros();actualizarControlesFocoCoordinacion();
       if(typeof refrescarProximosCursos==='function')refrescarProximosCursos();
     }
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const el=document.getElementById(id);if(el){el.options[0].text=el.options[0].text.replace(' ⏳','');el.disabled=false}});
@@ -3613,8 +3633,87 @@ const FOCO_DIA_POWERBI = {
   reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',
   groupId:'308deb6f-aa2f-4c21-b5fb-33b977c17e13',
   tenantId:'8fbed393-d03b-49f8-be79-cd5e1f590fb2',
-  pageName:'0e41223d6909461650ae'
+  pageName:'0e41223d6909461650ae',
+  coordinacionPageName:'de9f24e37c97b30710d0'
 };
+
+/* Las pestañas sólo aparecen para la sesión de coordinación.
+   El catálogo GitHub no expone coordinadores por NRC: el listado de tutoras
+   es general y la asignación efectiva la delimita la medida DAX de Power BI. */
+let focoCoordTutorSeleccionada='';
+let focoCoordTutoresRecientes=[];
+function esSesionCoordinacionFoco(){
+  return sesionGlobalETOP()?.rol==='COORDINACION';
+}
+function seleccionarTutoraFoco(tutora){
+  if(!esSesionCoordinacionFoco())return;
+  const sel=document.getElementById('focoDiaTutorSelect');
+  const elegibles=new Set([...((sel&&sel.options)||[])].map(o=>o.value));
+  const nombre=String(tutora||'').trim();
+  if(nombre&&!elegibles.has(nombre))return;
+  focoCoordTutorSeleccionada=nombre;
+  if(nombre){
+    focoCoordTutoresRecientes=[
+      nombre,
+      ...focoCoordTutoresRecientes.filter(x=>x!==nombre)
+    ].slice(0,2);
+  }
+  actualizarControlesFocoCoordinacion();
+  refrescarFocoDia();
+}
+function actualizarControlesFocoCoordinacion(){
+  const herramientas=document.getElementById('focoDiaCoordTools');
+  const subtitulo=document.getElementById('focoDiaSubtitulo');
+  const tabs=document.getElementById('focoDiaTutorTabs');
+  const selector=document.getElementById('focoDiaTutorSelect');
+  if(!herramientas||!subtitulo||!tabs||!selector)return;
+  const coordinacion=esSesionCoordinacionFoco();
+  herramientas.hidden=!coordinacion;
+  subtitulo.hidden=coordinacion;
+  if(!coordinacion){
+    focoCoordTutorSeleccionada='';
+    focoCoordTutoresRecientes=[];
+    return;
+  }
+  const nombres=[...new Set(
+    catalogoNRC
+      .filter(n=>['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase()))
+      .map(n=>String(n.tutor||'').trim())
+      .filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b,'es'));
+  const elegibles=new Set(nombres);
+  if(focoCoordTutorSeleccionada&&!elegibles.has(focoCoordTutorSeleccionada)){
+    focoCoordTutorSeleccionada='';
+  }
+  focoCoordTutoresRecientes=focoCoordTutoresRecientes.filter(x=>elegibles.has(x));
+  selector.replaceChildren();
+  const opcionInicial=document.createElement('option');
+  opcionInicial.value='';
+  opcionInicial.textContent=nombres.length?'Elegir tutora…':'Sin tutoras disponibles';
+  selector.appendChild(opcionInicial);
+  for(const nombre of nombres){
+    const option=document.createElement('option');
+    option.value=nombre;
+    option.textContent=nombre;
+    selector.appendChild(option);
+  }
+  selector.disabled=!nombres.length;
+  selector.value='';
+  selector.title='Catálogo general ETOP. Los indicadores se limitan a los NRC de tu coordinación.';
+  tabs.replaceChildren();
+  const crearTab=(nombre,etiqueta)=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='foco-dia-tab'+(focoCoordTutorSeleccionada===nombre?' active':'');
+    btn.textContent=etiqueta;
+    btn.title=nombre||'Toda tu coordinación';
+    btn.setAttribute('aria-pressed',String(focoCoordTutorSeleccionada===nombre));
+    btn.addEventListener('click',()=>seleccionarTutoraFoco(nombre));
+    tabs.appendChild(btn);
+  };
+  crearTab('','Todas');
+  for(const nombre of focoCoordTutoresRecientes)crearTab(nombre,nombre);
+}
 
 function buildFocoDiaURL(){
   const u=new URL('https://app.powerbi.com/reportEmbed');
@@ -3622,13 +3721,14 @@ function buildFocoDiaURL(){
   u.searchParams.set('groupId',FOCO_DIA_POWERBI.groupId);
   u.searchParams.set('ctid',FOCO_DIA_POWERBI.tenantId);
   u.searchParams.set('autoAuth','true');
-  u.searchParams.set('pageName',FOCO_DIA_POWERBI.pageName);
+  const esCoordinacion=esSesionCoordinacionFoco();
+  u.searchParams.set('pageName',esCoordinacion?FOCO_DIA_POWERBI.coordinacionPageName:FOCO_DIA_POWERBI.pageName);
   u.searchParams.set('navContentPaneEnabled','false');
   u.searchParams.set('filterPaneEnabled','false');
 
   // Con una sola cartera se aplica filtro explícito. Con delegación,
   // RLS de Power BI limita al conjunto autorizado (titular + reemplazo).
-  const tutor=tutorFiltroAutomaticoETOP();
+  const tutor=esCoordinacion?focoCoordTutorSeleccionada:tutorFiltroAutomaticoETOP();
   if(tutor){
     const seguro=String(tutor).replace(/'/g,"''");
     const filtro=`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`;
@@ -4274,6 +4374,9 @@ function guardarSesionETOP(){
   const s={email,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};
   localStorage.setItem(ETOP_GLOBAL_SESSION,JSON.stringify(s));localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
   BUSQUEDA.tutor=null;
+  focoCoordTutorSeleccionada='';
+  focoCoordTutoresRecientes=[];
+  actualizarControlesFocoCoordinacion();
   document.getElementById('etop-login-overlay').classList.remove('open');actualizarSesionETOPUI();
   sincronizarFiltros();actualizarBadge();
   if(vistaActual==='INICIO'){
@@ -4308,6 +4411,7 @@ document.getElementById('etop-login-email')?.addEventListener('keydown',e=>{if(e
   }
   actualizarSesionETOPUI();
   await cargarSugerenciasNRC();
+  actualizarControlesFocoCoordinacion();
   showHome(findBtn('INICIO'));
   if(!s)abrirSesionETOP();
 })();
