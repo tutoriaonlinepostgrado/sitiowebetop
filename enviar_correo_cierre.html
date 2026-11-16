@@ -230,6 +230,30 @@ async function copiarCorreo() {
     p.setAttribute('align', alineacion);
     if (alineacion === 'justify') p.style.textAlignLast = 'left';
   });
+  // Posición horizontal en Outlook: bloquear la centración automática de tablas.
+  // La copia empieza junto al margen izquierdo del mensaje, donde Outlook
+  // incorpora la firma personal. Los párrafos mantienen su justificación.
+  contenido.style.width = '100%';
+  contenido.style.margin = '0';
+  contenido.style.padding = '0';
+  contenido.style.textAlign = 'left';
+  contenido.setAttribute('align', 'left');
+  contenido.querySelectorAll('table').forEach(tabla => {
+    tabla.setAttribute('align', 'left');
+    tabla.style.margin = '0';
+    tabla.style.marginLeft = '0';
+    tabla.style.marginRight = '0';
+    tabla.style.float = 'none';
+    tabla.style.textAlign = 'left';
+    tabla.style.border = '0';
+    tabla.style.msoTableLspace = '0pt';
+    tabla.style.msoTableRspace = '0pt';
+  });
+  // Sin sangría del bloque: logo y cuerpo comparten el margen de la firma.
+  contenido.querySelectorAll('td').forEach(celda => {
+    celda.setAttribute('align', 'left');
+    celda.style.paddingLeft = '0';
+  });
   const htmlFinal = `<html><body style="margin:0;padding:0;font-family:Arial,sans-serif;">${contenido.innerHTML}</body></html>`;
 
   try {
