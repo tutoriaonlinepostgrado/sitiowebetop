@@ -3675,9 +3675,16 @@ function actualizarControlesFocoCoordinacion(){
     focoCoordTutoresRecientes=[];
     return;
   }
+  // Sólo tutoras con NRC activos o en cierre asignados a la coordinación
+  // identificada. Un NRC puede contener varios correos separados por ';'.
+  const correoCoordinacion=etopEmailNorm(sesionGlobalETOP()?.email);
   const nombres=[...new Set(
     catalogoNRC
-      .filter(n=>['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase()))
+      .filter(n=>
+        ['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase())
+        && String(n.coordinadores||'').split(';')
+          .some(correo=>etopEmailNorm(correo)===correoCoordinacion)
+      )
       .map(n=>String(n.tutor||'').trim())
       .filter(Boolean)
   )].sort((a,b)=>a.localeCompare(b,'es'));
@@ -3699,7 +3706,7 @@ function actualizarControlesFocoCoordinacion(){
   }
   selector.disabled=!nombres.length;
   selector.value='';
-  selector.title='Catálogo general ETOP. Los indicadores se limitan a los NRC de tu coordinación.';
+  selector.title='Sólo tutoras con NRC activos o en cierre asignados a tu coordinación.';
   tabs.replaceChildren();
   const crearTab=(nombre,etiqueta)=>{
     const btn=document.createElement('button');
