@@ -2342,6 +2342,132 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   #universalResults .universal-result-tag{max-width:65px;padding:3px 4px}
 }
 </style>
+<style id="etop-superbuscador-multinrc-compacto-20261116">
+/* Solo buscador universal de Inicio: sus checkboxes NO heredan las medidas
+   del campo principal de .search-pill input. */
+#homeTopSearch #universalResults.universal-results{
+  padding:5px!important;
+  background:#fff!important;
+  border:1px solid #ccdbe9!important;
+  border-radius:11px!important;
+  max-height:min(395px,62vh)!important;
+  scrollbar-width:thin;
+}
+#homeTopSearch #universalResults input[type="checkbox"].universal-result-check,
+#homeTopSearch #universalResults input[type="checkbox"].universal-result-check:focus,
+#homeTopSearch #universalResults input[type="checkbox"].universal-result-check:hover{
+  display:block!important;
+  position:static!important;
+  box-sizing:border-box!important;
+  appearance:auto!important;
+  -webkit-appearance:checkbox!important;
+  width:15px!important;
+  min-width:15px!important;
+  max-width:15px!important;
+  height:15px!important;
+  min-height:15px!important;
+  max-height:15px!important;
+  flex:0 0 15px!important;
+  margin:0 7px 0 9px!important;
+  padding:0!important;
+  border:1px solid #b5c7d8!important;
+  border-radius:3px!important;
+  background:#fff!important;
+  color:#1265df!important;
+  accent-color:#1265df!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:pointer;
+}
+#homeTopSearch #universalResults .universal-result-shell{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start;
+  gap:0!important;
+  width:100%;
+  min-height:39px;
+  padding:0!important;
+  margin:0!important;
+  background:transparent;
+  border:0;
+  border-radius:7px;
+}
+#homeTopSearch #universalResults .universal-result-shell + .universal-result-shell{
+  border-top:1px solid #f0f3f8;
+}
+#homeTopSearch #universalResults .universal-result-shell:hover{
+  background:#f5f9fe;
+}
+#homeTopSearch #universalResults .universal-result-shell:has(input.universal-result-check:checked){
+  background:#ecf5ff!important;
+}
+#homeTopSearch #universalResults .universal-result-shell .universal-result{
+  display:grid!important;
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:5px 7px 5px 3px!important;
+  min-height:38px;
+  border:0!important;
+  border-radius:6px;
+  background:transparent!important;
+  box-shadow:none!important;
+  grid-template-columns:25px minmax(0,1fr) auto!important;
+  gap:7px!important;
+}
+#homeTopSearch #universalResults .universal-result-shell .universal-result:hover,
+#homeTopSearch #universalResults .universal-result-shell .universal-result.sel{
+  background:transparent!important;
+}
+#homeTopSearch #universalResults .universal-result-shell .universal-result-title{
+  font-size:10px!important;
+  line-height:1.28!important;
+}
+#homeTopSearch #universalResults .universal-result-shell .universal-result-sub{
+  font-size:8.2px!important;
+  line-height:1.25!important;
+}
+#homeTopSearch #universalResults .universal-bulk{
+  position:sticky;
+  bottom:0;
+  z-index:2;
+  padding:8px 10px;
+  margin:6px 0 0;
+  background:#edf5ff;
+  color:#193f68;
+  border:1px solid #d4e5fa;
+  border-radius:8px;
+  box-shadow:0 -3px 9px rgba(32,64,99,.05);
+  font-size:10px;
+}
+#homeTopSearch #universalResults .universal-bulk-actions{gap:5px}
+#homeTopSearch #universalResults .universal-bulk button{
+  padding:6px 10px;
+  min-height:29px;
+  border-radius:6px;
+}
+#homeTopSearch #universalResults .universal-bulk-hint{
+  padding:8px 9px 5px;
+  font-size:9px;
+  color:#667a90;
+}
+#homeTopSearch #universalResults .universal-search-note{
+  margin:3px 0 0;
+  padding:4px 8px 2px;
+  font-size:7.5px;
+}
+@media(max-width:600px){
+  #homeTopSearch #universalResults .universal-result-shell .universal-result{
+    grid-template-columns:22px minmax(0,1fr) auto!important;
+    gap:5px!important;
+  }
+  #homeTopSearch #universalResults .universal-result-shell .universal-result-title{font-size:9px!important}
+  #homeTopSearch #universalResults .universal-result-shell input[type="checkbox"].universal-result-check{
+    margin-left:6px!important;margin-right:5px!important;
+  }
+}
+</style>
 <style id="etop-sidebar-comunicaciones-compacto">
 /* Solo centro de comunicaciones, sin alterar el tamaño del menú en otros módulos. */
 @media (min-width:901px){
