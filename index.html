@@ -316,9 +316,11 @@
 .top-summary.foco-coordinacion .top-col-left,
 .top-summary.foco-coordinacion .foco-powerbi-card{min-width:0;max-width:100%}
 .top-summary.foco-coordinacion .foco-powerbi-card .card-head{min-width:0;overflow:hidden}
-.top-summary.foco-coordinacion .foco-dashboard-open{flex-shrink:0}
-.foco-dia-head-info{flex:1 1 0;min-width:0;max-width:100%;margin-right:6px;overflow:hidden}
-.foco-dia-coord-tools{display:flex;align-items:center;gap:2px;margin-top:2px;min-width:0;max-width:100%;overflow:hidden}
+.top-summary.foco-coordinacion .foco-dashboard-open{flex-shrink:0;height:22px;padding:0 7px;font-size:7px}
+.foco-dia-head-info{flex:1 1 0;min-width:0;max-width:100%;margin-right:0;overflow:hidden}
+.foco-dia-head-top{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;width:100%}
+.foco-dia-title{min-width:0}
+.foco-dia-coord-tools{display:flex;align-items:center;gap:2px;margin-top:3px;min-width:0;max-width:100%;overflow:hidden}
 .foco-dia-coord-tools[hidden],.foco-dia-subtitulo[hidden]{display:none!important}
 .foco-dia-tutor-list{display:flex;align-items:center;gap:2px;width:100%;min-width:0;
   overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
@@ -2576,13 +2578,17 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
         <div class="top-summary"><div class="top-col-left"><section class="card foco-powerbi-card foco-dashboard-link">
   <div class="card-head">
     <div class="foco-dia-head-info">
-      <h2>🎯 Foco del día</h2>
-      <span id="focoDiaSubtitulo" class="foco-dia-subtitulo">Power BI · KPIs de seguimiento</span>
+      <div class="foco-dia-head-top">
+        <div class="foco-dia-title">
+          <h2>🎯 Foco del día</h2>
+          <span id="focoDiaSubtitulo" class="foco-dia-subtitulo">Power BI · KPIs de seguimiento</span>
+        </div>
+        <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
+      </div>
       <div id="focoDiaCoordTools" class="foco-dia-coord-tools" role="group" aria-label="Filtrar Foco del día por tutora" hidden>
         <div id="focoDiaTutorTabs" class="foco-dia-tutor-list"></div>
       </div>
     </div>
-    <button type="button" class="foco-dashboard-open" onclick="cargar('DASHBOARD',findBtn('DASHBOARD'))">Abrir Tablero de Gestión →</button>
   </div>
   <div class="card-body foco-powerbi-body">
     <iframe
