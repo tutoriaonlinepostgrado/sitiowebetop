@@ -20,10 +20,10 @@ body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}
 .btn-copiar:hover{background:#facc15;}
 .toast{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#059669;color:white;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;}
 .toast.show{display:block;}
-.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}
-.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}
-.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}
-.campo.auto-filled{background:#DCFCE7;border-color:#16A34A;border-style:solid;color:#15803D;}
+.campo{display:inline;background:transparent;border:0;border-radius:0;color:#243b59;font-weight:bold;padding:0;cursor:text;outline:none;min-width:20px;}
+.campo:focus{background:#eff6ff;border:0;box-shadow:none;}
+.campo:empty:before{content:attr(data-placeholder);color:#9aa9b9;font-style:italic;}
+.campo.auto-filled{background:transparent;border:0;color:#243b59;}
 .ew{padding:20px;max-width:990px;margin:0 auto;}
 .prog-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;display:none;}
 .prog-tag.mgpc{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
