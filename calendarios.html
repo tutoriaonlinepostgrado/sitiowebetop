@@ -384,7 +384,6 @@
     <div class="bulk-toolbar" role="group" aria-label="Acciones para cursos seleccionados">
       <span class="bulk-count" id="bulk-count" aria-live="polite">0 cursos seleccionados</span>
       <span class="bulk-hint">Marca las casillas de los NRC que quieras editar juntos.</span>
-      <button class="bulk-btn" type="button" id="bulk-view" onclick="alternarVistaSeleccionados()" aria-pressed="false" disabled>👁 Ver solo seleccionados</button>
       <button class="bulk-btn" type="button" id="bulk-open" onclick="abrirSeleccionadosSharePoint()" disabled>↗ Abrir seleccionados en SharePoint</button>
       <button class="bulk-btn secondary" type="button" id="bulk-clear" onclick="limpiarSeleccionNrcs()" disabled>Limpiar</button>
     </div>
@@ -413,7 +412,6 @@
     let allCourses=[];
     let selectedCourseNrc='';
     const selectedNrcs=new Set();
-    let soloSeleccionados=false;
     const SP_MULTI_URL='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/AllItems.aspx';
     const SP_MULTI_VIEW='f4c009bb-0552-43a5-9718-9c1d37d8f98b';
     const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:'',programa:'',tipo:'',correo:''};
@@ -480,15 +478,14 @@
     function action(url,title,icon,enabled=true){return enabled?`<a class="action" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(title)}">${icon}</a>`:'';}
     function buildIncidentMaps(){const byCourse=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!byCourse.has(k))byCourse.set(k,[]);byCourse.get(k).push(i)});return byCourse;}
     function detailFilteredCourses(){
-      // Un NRC recibido desde Inicio limita la vista inicial, pero NO bloquea
-      // la búsqueda local ni la vista de múltiples NRC seleccionados.
-      // Se conservan los otros filtros de facultad, tutor, fechas, etc.
+      // El selector NRC superior del portal determina los cursos visibles.
+      // Si el usuario escribe aquí una búsqueda libre, se puede consultar
+      // el catálogo autorizado sin quedar preso de un NRC inicial.
       const texto=norm(document.getElementById('search')?.value||'');
-      const ampliarNrc=Boolean(q.get('nrc')&&(texto||soloSeleccionados));
+      const ampliarNrc=Boolean(q.get('nrc')&&texto);
       const base=ampliarNrc?filterCourses(allCourses,{ignoreNrc:true}):courses;
       return base.filter(x =>
-        (!soloSeleccionados||selectedNrcs.has(norm(x.nrc))) &&
-        (!ampliarNrc||!texto||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(texto)) &&
+        (!ampliarNrc||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(texto)) &&
         (!detailFilters.tutor || norm(x.tutor)===norm(detailFilters.tutor)) &&
         (!detailFilters.intake || norm(x.intake)===norm(detailFilters.intake)) &&
         (!detailFilters.estado || norm(x.estado)===norm(detailFilters.estado)) &&
@@ -688,17 +685,7 @@
       const clave=norm(nrc);
       if(!clave)return;
       if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
-      if(soloSeleccionados){
-        if(!selectedNrcs.size)soloSeleccionados=false;
-        render();
-      }else actualizarSeleccion();
-    }
-    function alternarVistaSeleccionados(){
-      if(!selectedNrcs.size)return;
-      soloSeleccionados=!soloSeleccionados;
-      document.getElementById('search').value='';
-      stateFilter='';
-      render();
+      actualizarSeleccion();
     }
     function alternarTodosVisibles(checked){
       document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>{
@@ -707,10 +694,9 @@
         if(!clave)return;
         if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
       });
-      if(soloSeleccionados&&!selectedNrcs.size)soloSeleccionados=false;
       render();
     }
-    function limpiarSeleccionNrcs(){selectedNrcs.clear();soloSeleccionados=false;render();}
+    function limpiarSeleccionNrcs(){selectedNrcs.clear();render();}
     function actualizarSeleccion(){
       const filas=[...document.querySelectorAll('#rows tr[data-nrc]')].filter(tr=>tr.style.display!=='none');
       const marcadas=filas.filter(tr=>selectedNrcs.has(norm(decodeURIComponent(tr.dataset.nrc||'')))).length;
@@ -719,10 +705,6 @@
       todos.indeterminate=marcadas>0&&marcadas<filas.length;
       document.getElementById('bulk-count').textContent=selectedNrcs.size+' '+(selectedNrcs.size===1?'curso seleccionado':'cursos seleccionados');
       document.getElementById('bulk-open').disabled=selectedNrcs.size===0;
-      const ver=document.getElementById('bulk-view');
-      ver.disabled=selectedNrcs.size===0;
-      ver.textContent=soloSeleccionados?'↩ Mostrar todos':'👁 Ver solo seleccionados';
-      ver.setAttribute('aria-pressed',String(soloSeleccionados));
       document.getElementById('bulk-clear').disabled=selectedNrcs.size===0;
     }
     function abrirSeleccionadosSharePoint(){
