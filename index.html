@@ -3139,10 +3139,13 @@ function actualizarResumenNrcPrincipal(){
   const v=valoresNrcPrincipal(), n=v.length;
   if(input){
     input.placeholder=!n?'Buscar NRC o nombre del curso…':n===1?v[0]:'NRC ('+n+' seleccionados)';
-    // En las vistas de correos, mostrar el NRC completo como VALOR visible:
-    // el texto parcial que quedó escrito al buscar no debe tapar la selección.
-    if(document.getElementById('topBar')?.classList.contains('email-mode') && n===1){
+    // Mostrar el NRC seleccionado completo en todas las vistas.
+    // Con selección múltiple, mostrar el número de NRC en el placeholder.
+    if(n===1){
       input.value=v[0];
+      nrcTextoBusqueda='';
+    }else if(n>1){
+      input.value='';
       nrcTextoBusqueda='';
     }
     const registro=n===1?catalogoNRC.find(x=>claveValor(x.nrc)===claveValor(v[0])):null;
@@ -3214,6 +3217,11 @@ function confirmarNRC(val,marcado=true){
   const disponibles=new Set(nrcsFiltrados('nrc').map(x=>claveValor(x.nrc)));
   if(marcado&&!disponibles.has(claveValor(n)))return;
   if(marcado)SELECCION_NRC_PRINCIPAL.add(n);else SELECCION_NRC_PRINCIPAL.delete(n);
+  if(!SELECCION_NRC_PRINCIPAL.size){
+    const input=document.getElementById('input-nrc');
+    if(input)input.value='';
+    nrcTextoBusqueda='';
+  }
   BUSQUEDA.nrc=[...SELECCION_NRC_PRINCIPAL][0]||null;
   nrcConfirmado=BUSQUEDA.nrc||'';
   sincronizarFiltros();actualizarBadge();actualizarIframe();
