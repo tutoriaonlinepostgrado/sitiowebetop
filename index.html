@@ -2853,7 +2853,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
     <button type="button" class="resumen-cal-prev" onclick="moverMesResumenCalendario(-1)" aria-label="Mes anterior">‹</button>
     <span id="resumenCalMes" aria-live="polite">Calendario</span>
     <button type="button" class="resumen-cal-next" onclick="moverMesResumenCalendario(1)" aria-label="Mes siguiente">›</button>
-    <button type="button" class="resumen-cal-add-reminder" onclick="abrirAgendaPersonalETOP()" aria-label="Abrir agenda y recordatorios personales" title="Agenda y recordatorios personales">+</button>
+    <button type="button" class="resumen-cal-add-reminder" onclick="abrirAgendaPersonalETOP()" aria-label="Abrir Microsoft To Do en ventana pequeña" title="Abrir Microsoft To Do · recordatorios personales">+</button>
   </div>
   <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
@@ -4141,37 +4141,21 @@ function abrirInicioResumenCalendarioDia(iso){
 /* Agenda personal ETOP. Microsoft 365 conserva y avisa las tareas.
    No se simula sincronización con el calendario HTML sin Graph/autorización. */
 function abrirAgendaPersonalETOP(){
-  if(document.getElementById('etopAgendaModal'))return;
-  const overlay=document.createElement('div');
-  overlay.className='etop-agenda-overlay';
-  overlay.id='etopAgendaModal';
-  const panel=document.createElement('section');
-  panel.className='etop-agenda-panel';
-  panel.setAttribute('role','dialog');
-  panel.setAttribute('aria-modal','true');
-  panel.setAttribute('aria-labelledby','etopAgendaTitle');
-  panel.innerHTML=[
-    '<button type="button" class="etop-agenda-close" aria-label="Cerrar agenda">×</button>',
-    '<h2 id="etopAgendaTitle">Agenda y recordatorios personales</h2>',
-    '<p>Para recordar, por ejemplo, una llamada a un estudiante la próxima semana, crea una tarea privada con fecha y hora de aviso en Microsoft 365.</p>',
-    '<a class="etop-agenda-action etop-agenda-main" href="https://to-do.office.com/" target="_blank" rel="noopener noreferrer">＋ Crear recordatorio en To Do ↗</a>',
-    '<a class="etop-agenda-action etop-agenda-other" href="https://planner.cloud.microsoft/" target="_blank" rel="noopener noreferrer">Ver mis tareas en Planner ↗</a>',
-    '<p class="etop-agenda-note">En To Do, agrega la tarea, establece la fecha y selecciona «Recordarme» para definir la hora. Usa tu cuenta institucional.</p>',
-    '<p class="etop-agenda-note">Por ahora, la tarea se guarda y notifica en Microsoft 365. No aparece como indicador en este calendario hasta disponer de una conexión autorizada.</p>'
-  ].join('');
-  overlay.appendChild(panel);
-  document.body.appendChild(overlay);
-  const origen=document.activeElement;
-  const cerrar=()=>{
-    document.removeEventListener('keydown',onKey);
-    overlay.remove();
-    if(origen&&typeof origen.focus==='function')origen.focus();
-  };
-  const onKey=e=>{if(e.key==='Escape')cerrar();};
-  overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar();});
-  panel.querySelector('.etop-agenda-close').addEventListener('click',cerrar);
-  document.addEventListener('keydown',onKey);
-  panel.querySelector('.etop-agenda-close').focus();
+  // Abrir To Do original en una ventana independiente, no incrustada en ETOP.
+  const ancho=Math.min(440,Math.max(320,screen.availWidth-32));
+  const alto=Math.min(380,Math.max(300,screen.availHeight-32));
+  const izquierda=Math.max(0,Math.round(window.screenX+(window.outerWidth-ancho)/2));
+  const arriba=Math.max(0,Math.round(window.screenY+(window.outerHeight-alto)/2));
+  const opciones=[
+    'popup=yes','resizable=yes','scrollbars=yes',
+    'width='+ancho,'height='+alto,'left='+izquierda,'top='+arriba
+  ].join(',');
+  const ventana=window.open('https://to-do.office.com/','ETOP_ToDo_Personal',opciones);
+  if(!ventana){
+    alert('El navegador bloqueó la ventana de Microsoft To Do. Permite ventanas emergentes para el portal ETOP y vuelve a pulsar +.');
+    return;
+  }
+  try{ventana.opener=null;ventana.focus();}catch(_){}
 }
 
 /* ===== Resumen carga tutorial · datos reales =====
