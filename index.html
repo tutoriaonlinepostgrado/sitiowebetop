@@ -3344,7 +3344,9 @@ function filtroMotivoRiesgoPrincipal(){
   if(!elegidos.length)return '';
   const opciones=elegidos.map(valor=>{
     if(claveValor(valor)==='SIN COTEJO CANVAS'){
-      return "(consolidado_esudiantes/COTEJO_PENDIENTE eq 'SI' and NRC_TUTOR_ACTUAL/ESTADO_CAL in ('ACTIVO', 'EN CIERRE'))";
+      // El estado del curso sigue disponible en el selector Estado del portal.
+      // Para cotejos se aplica el mismo filtro de columna validado en Power BI Desktop.
+      return "consolidado_esudiantes/COTEJO_PENDIENTE eq 'SI'";
     }
     return "consolidado_esudiantes/MOTIVO_RIESGO eq '"+sanitizarFiltro(valor)+"'";
   });
