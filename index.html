@@ -3328,6 +3328,20 @@ function filtroOrPrincipal(campo,columna,convertir){
   const terms=elegidos.map(v=>columna+" eq '"+sanitizarFiltro(v)+"'");
   return terms.length===1?terms[0]:'('+terms.join(' or ')+')';
 }
+/* Motivos de riesgo: reutiliza la opción visible "Sin cotejo Canvas".
+   Esa opción consulta la columna auxiliar COTEJO_PENDIENTE, sin alterar
+   MOTIVO_RIESGO ni las otras opciones o los filtros por tutora. */
+function filtroMotivoRiesgoPrincipal(){
+  const elegidos=valoresMultiPrincipal('motivoRiesgo').filter(Boolean);
+  if(!elegidos.length)return '';
+  const opciones=elegidos.map(valor=>{
+    if(claveValor(valor)==='SIN COTEJO CANVAS'){
+      return "(consolidado_esudiantes/COTEJO_PENDIENTE eq 'SI' and NRC_TUTOR_ACTUAL/ESTADO_CAL in ('ACTIVO', 'EN CIERRE'))";
+    }
+    return "consolidado_esudiantes/MOTIVO_RIESGO eq '"+sanitizarFiltro(valor)+"'";
+  });
+  return opciones.length===1?opciones[0]:'('+opciones.join(' or ')+')';
+}
 document.addEventListener('click',e=>{
   if(!e.target.closest('#gestionFilters .main-multi-panel')&&!e.target.closest('#gestionFilters .main-multi-trigger')){
     document.querySelectorAll('#gestionFilters .main-multi-open').forEach(el=>el.classList.remove('main-multi-open'));
@@ -3375,7 +3389,7 @@ function buildURLFiltrada(clave){
   {const c=filtroOrPrincipal('tipo','NRC_TUTOR_ACTUAL/TIPO_NRC_URL',v=>v==='100%ONLINE'?'100PCTONLINE':v);if(c)fx.push(c)}
   {const c=filtroOrPrincipal('codigo','NRC_TUTOR_ACTUAL/COD_CURSO');if(c)fx.push(c)}
   {const c=filtroOrPrincipal('estado','NRC_TUTOR_ACTUAL/ESTADO_CAL');if(c)fx.push(c)}
-  if(clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT'){const c=filtroOrPrincipal('motivoRiesgo','consolidado_esudiantes/MOTIVO_RIESGO');if(c)fx.push(c)}
+  if(clave==='DASHBOARD'||clave==='DASHBOARD_EXPORT'){const c=filtroMotivoRiesgoPrincipal();if(c)fx.push(c)}
   {const c=filtroOrPrincipal('intake','NRC_TUTOR_ACTUAL/INTAKE_x0020_O_x0020_VERSION');if(c)fx.push(c)}
   if(BUSQUEDA.fechaInicio.length===1)fx.push(`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(BUSQUEDA.fechaInicio[0])}T00:00:00'`);
   if(BUSQUEDA.fechaInicio.length>1)fx.push('('+BUSQUEDA.fechaInicio.map(v=>`NRC_TUTOR_ACTUAL/FECHA_INICIO eq datetime'${fechaISO(v)}T00:00:00'`).join(' or ')+')');
@@ -3391,7 +3405,7 @@ function filtrosDashboardPowerBI(){
   {const elegidos=valoresMultiPrincipal('tutor');if(elegidos.length){const c=filtroOrPrincipal('tutor','NRC_TUTOR_ACTUAL/NOMBRE_TUTOR');if(c)fx.push(c)}else{const automatico=tutorFiltroAutomaticoETOP();if(automatico)fx.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${sanitizarFiltro(automatico)}'`)}}
   {const c=filtroOrPrincipal('tipo','NRC_TUTOR_ACTUAL/TIPO_NRC_URL',v=>v==='100%ONLINE'?'100PCTONLINE':v);if(c)fx.push(c)}
   {const c=filtroOrPrincipal('estado','NRC_TUTOR_ACTUAL/ESTADO_CAL');if(c)fx.push(c)}
-  {const c=filtroOrPrincipal('motivoRiesgo','consolidado_esudiantes/MOTIVO_RIESGO');if(c)fx.push(c)}
+  {const c=filtroMotivoRiesgoPrincipal();if(c)fx.push(c)}
   {const valores=valoresNrcPrincipal();if(valores.length){const f=valores.map(n=>`NRC_TUTOR_ACTUAL/NRC_COD_CAL eq '${sanitizarFiltro(n)}'`);fx.push(f.length===1?f[0]:'('+f.join(' or ')+')')}}
   if(BUSQUEDA.rut)fx.push(`consolidado_esudiantes/RUT eq '${sanitizarFiltro(BUSQUEDA.rut)}'`);
   return fx;
