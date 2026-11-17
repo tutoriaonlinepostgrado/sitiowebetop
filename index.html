@@ -2493,6 +2493,89 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
  }
 }
 </style>
+
+<style id="etop-resumen-carga-mini-cal-20261117">
+/* ÚNICO alcance: tarjeta HTML Resumen carga tutorial; sin afectar Power BI,
+   menú, contenedores de Inicio o altura de sus tarjetas vecinas. */
+.resumen-carga-json-card{height:304px;max-height:304px;min-height:0;min-width:0;}
+.resumen-carga-json-card>.card-head{height:37px;min-height:37px;padding:8px 10px;gap:6px;}
+.resumen-carga-json-card>.card-head h2{font-size:11px;white-space:nowrap}
+.resumen-carga-json-card #resCargaContext{
+  display:block;min-width:0;max-width:54%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.resumen-carga-json-card>.card-body{
+  height:calc(100% - 37px);min-height:0;padding:8px 9px;overflow:hidden;
+}
+.resumen-carga-split{
+  width:100%;height:100%;min-height:0;min-width:0;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:7px;
+}
+.resumen-carga-json-card .kpi-row{
+  display:grid;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(6,minmax(0,1fr));
+  min-width:0;min-height:0;height:100%;gap:4px;padding:0;margin:0;overflow:hidden;
+}
+.resumen-carga-json-card .kpi-row>.kpi{
+  display:grid;grid-template-columns:minmax(37px,.33fr) minmax(0,1fr);grid-template-rows:1fr;
+  align-items:center;column-gap:4px;min-width:0;min-height:0;height:100%;
+  padding:2px 6px!important;margin:0;border-radius:6px!important;
+  overflow:hidden;cursor:pointer;
+}
+.resumen-carga-json-card .kpi-row>.kpi .v{font-size:clamp(12px,1.05vw,16px)!important;line-height:1.05;margin:0;min-width:0;}
+.resumen-carga-json-card .kpi-row>.kpi .l{
+  font-size:clamp(7px,.65vw,9px)!important;font-weight:600;line-height:1.15;
+  margin:0;overflow-wrap:anywhere;min-width:0;color:#d7e4f6;
+}
+.resumen-carga-json-card .kpi-row>.kpi .s{display:none!important}
+.resumen-carga-json-card .kpi-row>.kpi:hover{background:#243957;border-color:#6587b2}
+.resumen-carga-calendar{
+  min-width:0;min-height:0;height:100%;border:1px solid #e1e8f2;
+  border-radius:8px;padding:4px;background:#f9fbfe;display:flex;flex-direction:column;gap:3px;overflow:hidden;
+}
+.resumen-cal-nav{height:23px;min-height:23px;display:flex;align-items:center;justify-content:space-between;gap:2px;}
+.resumen-cal-nav span{font-size:9px;font-weight:800;color:#223c60;white-space:nowrap;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis}
+.resumen-cal-nav button{
+  border:0;background:#ecf2fa;border-radius:4px;width:21px;height:21px;min-width:21px;
+  color:#2c537f;font-size:17px;line-height:19px;padding:0;
+}
+.resumen-cal-nav button:hover{background:#d8e8fb}
+.resumen-cal-dias,.resumen-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-width:0}
+.resumen-cal-dias{min-height:12px}
+.resumen-cal-dias span{font-size:8px;font-weight:800;text-align:center;color:#7889a1}
+.resumen-cal-grid{flex:1;min-height:0;grid-template-rows:repeat(6,minmax(0,1fr))}
+.resumen-cal-day{
+  border:1px solid transparent;border-radius:4px;background:transparent;color:#445b75;
+  padding:2px 1px;min-width:0;min-height:0;display:flex;align-items:center;flex-direction:column;
+  justify-content:center;gap:1px;font:600 8px/1 Arial,sans-serif;
+}
+.resumen-cal-day:disabled{cursor:default;opacity:1}
+.resumen-cal-day.is-outside{opacity:.22}
+.resumen-cal-day.is-today{border-color:#c6d9f0}
+.resumen-cal-day.has-starts{cursor:pointer;background:#e9f2ff;color:#1950a4;border-color:#cddff9}
+.resumen-cal-day.has-starts:hover{background:#d8e8ff;border-color:#77aaf2}
+.resumen-cal-count{
+  display:inline-flex;align-items:center;justify-content:center;min-width:12px;max-width:100%;
+  border-radius:3px;background:#2563eb;color:white;padding:1px 2px;font-size:7px;font-weight:800;
+}
+.resumen-cal-pie{
+  flex:none;min-height:15px;display:flex;align-items:center;justify-content:center;gap:4px;
+  color:#58718e;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.resumen-cal-dot{background:#2563eb;width:6px;height:6px;border-radius:2px;flex:none}
+@media(max-height:820px) and (min-width:981px){
+  .resumen-carga-json-card{height:246px;max-height:246px}
+  .resumen-carga-json-card>.card-head{height:31px;min-height:31px;padding:6px 8px}
+  .resumen-carga-json-card>.card-body{height:calc(100% - 31px);padding:6px 8px}
+  .resumen-carga-json-card .kpi-row{gap:3px}
+  .resumen-carga-json-card .kpi-row>.kpi{padding:2px 4px!important}
+  .resumen-carga-calendar{gap:2px;padding:3px}
+  .resumen-cal-nav{height:20px;min-height:20px}
+  .resumen-cal-nav button{width:18px;height:18px;min-width:18px;font-size:14px;line-height:16px}
+  .resumen-cal-pie{min-height:12px}
+}
+@media(max-width:980px){
+  .resumen-carga-json-card{height:304px;max-height:304px}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2734,14 +2817,24 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
       allowfullscreen="true">
     </iframe>
   </div>
-</section></div><div class="top-col-right"><section class="card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="kpi-row">
+</section></div><div class="top-col-right"><section class="card resumen-carga-json-card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="resumen-carga-split"><div class="kpi-row">
           <div class="kpi" onclick="abrirNominaAtencionesActivas()"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Nómina · estado ACTIVO →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
           <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaPromedio">—</div><div class="l">Promedio estudiantes / NRC</div><div class="s">Ver carga →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_PREPARACION',findBtn('CURSOS_PREPARACION'))"><div class="v" id="resCargaPrep30">—</div><div class="l">Preparación próximos 30 días</div><div class="s">Abrir cursos en preparación →</div></div>
           <div class="kpi" onclick="abrirDetalleCargaTutorial()"><div class="v" id="resCargaProgramas30">—</div><div class="l">Programas por iniciar</div><div class="s">UNI118 · próximos 30 días →</div></div>
-        </div></div></section><section class="card">
+        </div>
+<div class="resumen-carga-calendar" aria-label="Calendario de cursos por iniciar de mi cartera">
+  <div class="resumen-cal-nav">
+    <button type="button" class="resumen-cal-prev" onclick="moverMesResumenCalendario(-1)" aria-label="Mes anterior">‹</button>
+    <span id="resumenCalMes" aria-live="polite">Calendario</span>
+    <button type="button" class="resumen-cal-next" onclick="moverMesResumenCalendario(1)" aria-label="Mes siguiente">›</button>
+  </div>
+  <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+  <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
+  <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span></div>
+</div></div></div></section><section class="card">
   <div class="card-body">
     <div class="quick" style="grid-template-columns:repeat(5,1fr)">
       <button onclick="openIncidenciasStudio(findBtn('COORD_INCIDENCIAS'))"><span>🧪</span><b>Gestión QA2</b></button>
@@ -3899,6 +3992,103 @@ function refrescarFocoDia(){
 }
 
 
+
+/* ===== Mini calendario de inicios · SOLO tarjeta Resumen carga tutorial =====
+   Usa el catálogo JSON ya cargado. No toca KPI, Power BI ni los archivos JSON. */
+const resumenCalHoy=new Date();
+let resumenCalAnio=resumenCalHoy.getFullYear();
+let resumenCalMesIndice=resumenCalHoy.getMonth();
+
+function cursosInicioVisiblesResumen(){
+  const sesion=sesionGlobalETOP();
+  if(!sesion||!Array.isArray(catalogoNRC))return [];
+  const tutoresPermitidos=new Set(tutoresSesionETOP().map(resumenCargaNorm));
+  const esTutor=sesion.rol==='TUTOR';
+  const esCoordinador=sesion.rol==='COORDINACION';
+  const correoCoordinacion=etopEmailNorm(sesion.email);
+  if(!esTutor&&!esCoordinador)return [];
+  if(esTutor&&!tutoresPermitidos.size)return [];
+  if(esCoordinador&&!correoCoordinacion)return [];
+  const hoy=fechaHoyETOP();
+  const vistos=new Set();
+  return catalogoNRC.filter(c=>{
+    const nrc=String(c.nrc||'').trim();
+    const fecha=fechaISO(c['fecha inicio']);
+    if(!nrc||!fecha||fecha<hoy)return false;
+    const estado=resumenCargaNorm(c.estado);
+    if(estado!=='PREPARACION' && !(fecha===hoy&&estado==='ACTIVO'))return false;
+    if(esTutor&&!tutoresPermitidos.has(resumenCargaNorm(c.tutor)))return false;
+    if(esCoordinador&&!String(c.coordinadores||'').split(';')
+      .some(correo=>etopEmailNorm(correo)===correoCoordinacion))return false;
+    const clave=resumenCargaNorm(nrc);
+    if(vistos.has(clave))return false;
+    vistos.add(clave);
+    return true;
+  });
+}
+function cursosInicioDiaResumen(iso){
+  return cursosInicioVisiblesResumen().filter(c=>fechaISO(c['fecha inicio'])===iso);
+}
+function moverMesResumenCalendario(delta){
+  const siguiente=new Date(resumenCalAnio,resumenCalMesIndice+delta,1);
+  resumenCalAnio=siguiente.getFullYear();
+  resumenCalMesIndice=siguiente.getMonth();
+  refrescarInicioResumenCalendario();
+}
+function refrescarInicioResumenCalendario(){
+  const host=document.getElementById('resumenCalGrid');
+  const mes=document.getElementById('resumenCalMes');
+  const contexto=document.getElementById('resumenCalContext');
+  if(!host||!mes)return;
+  const fecha=new Date(resumenCalAnio,resumenCalMesIndice,1);
+  mes.textContent=new Intl.DateTimeFormat('es-CL',{month:'long',year:'numeric'}).format(fecha);
+  const registros=cursosInicioVisiblesResumen();
+  const conteos=new Map();
+  for(const c of registros){
+    const iso=fechaISO(c['fecha inicio']);
+    conteos.set(iso,(conteos.get(iso)||0)+1);
+  }
+  const inicio=(fecha.getDay()+6)%7; // lunes = 0
+  const mesActual=fecha.getMonth();
+  const hoy=fechaHoyETOP();
+  const dias=[];
+  for(let i=0;i<42;i++){
+    const d=new Date(resumenCalAnio,resumenCalMesIndice,i-inicio+1);
+    const fechaISOdia=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const fuera=d.getMonth()!==mesActual;
+    const cantidad=fuera?0:conteos.get(fechaISOdia)||0;
+    const fechaVisible=new Intl.DateTimeFormat('es-CL',{dateStyle:'full'}).format(d);
+    const titulo=cantidad?fechaVisible+': '+cantidad+' cursos por iniciar. Abrir Calendarios.':fechaVisible+': sin cursos por iniciar.';
+    dias.push('<button type="button" class="resumen-cal-day'+(fuera?' is-outside':'')+
+      (fechaISOdia===hoy?' is-today':'')+(cantidad?' has-starts':'')+
+      '" '+(cantidad?'onclick="abrirInicioResumenCalendarioDia(\''+fechaISOdia+'\')"':'disabled')+
+      ' aria-label="'+titulo+'" title="'+titulo+'">'+
+      '<span>'+d.getDate()+'</span>'+(cantidad?'<span class="resumen-cal-count">'+cantidad+'</span>':'')+
+      '</button>');
+  }
+  host.innerHTML=dias.join('');
+  const sesion=sesionGlobalETOP();
+  if(contexto)contexto.textContent=!sesion?'Identifícate para ver inicios':
+    sesion.rol==='COORDINACION'?'Inicios de tu coordinación':'Inicios de tus cursos';
+}
+function abrirInicioResumenCalendarioDia(iso){
+  const seleccion=cursosInicioDiaResumen(iso);
+  if(!seleccion.length)return;
+  const nrcs=[...new Set(seleccion.map(c=>String(c.nrc||'').trim()).filter(Boolean))];
+  if(!nrcs.length)return;
+  // El filtro de fecha y la selección de NRC viajan a la vista CALENDARIOS.
+  // Limpia selecciones antiguas sin alterar los datos del catálogo ni otras páginas.
+  limpiarBusqueda();
+  BUSQUEDA.fechaInicio=[iso];
+  BUSQUEDA.nrc=nrcs[0];
+  nrcConfirmado=nrcs[0];
+  SELECCION_NRC_PRINCIPAL.clear();
+  nrcs.forEach(nrc=>SELECCION_NRC_PRINCIPAL.add(nrc));
+  sincronizarFiltros();
+  actualizarBadge();
+  cargar('CALENDARIOS',findBtn('CALENDARIOS'));
+}
+
 /* ===== Resumen carga tutorial · datos reales =====
    Replica los KPI principales de carga_tutorial.html usando:
    - nrcs.json
@@ -3946,6 +4136,7 @@ async function asegurarMetricasResumenCarga(){
 async function refrescarResumenCargaTutorial(){
   const ids=['resCargaAtenciones','resCargaActivos','resCargaCierre','resCargaPromedio','resCargaPrep30','resCargaProgramas30'];
   if(!ids.some(id=>document.getElementById(id)))return;
+  refrescarInicioResumenCalendario();
   if(!catalogoNRC.length){
     ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});
     return;
