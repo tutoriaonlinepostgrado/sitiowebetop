@@ -2575,6 +2575,29 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
 @media(max-width:980px){
   .resumen-carga-json-card{height:304px;max-height:304px}
 }
+
+/* Agenda ETOP: botón pequeño en la tarjeta original y modal independiente. */
+.resumen-cal-nav .resumen-cal-add-reminder{
+  background:#dfeafa!important;color:#1754a0!important;font-weight:800!important;
+  font-size:15px!important;width:21px!important;min-width:21px!important;height:21px!important;
+  line-height:20px!important;border-radius:5px!important;flex:0 0 21px!important;
+}
+.resumen-cal-nav .resumen-cal-add-reminder:hover{background:#cbdfff!important;}
+.etop-agenda-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:16px;background:rgba(10,26,51,.48);z-index:10000;}
+.etop-agenda-panel{position:relative;width:min(420px,100%);max-height:calc(100vh - 32px);overflow:auto;
+  padding:22px 24px;background:white;border:1px solid #d9e5f2;border-radius:14px;
+  box-shadow:0 18px 55px rgba(0,20,55,.25);font:13px/1.5 Inter,Segoe UI,Arial,sans-serif;color:#1d3351;}
+.etop-agenda-panel h2{font-size:17px;margin:0 30px 7px 0;color:#142440;}
+.etop-agenda-panel p{margin:6px 0 12px;color:#526983;}
+.etop-agenda-panel .etop-agenda-close{position:absolute;top:13px;right:13px;width:28px;height:28px;
+  border:1px solid #dbe4ef;background:white;border-radius:6px;font-size:19px;color:#38526d;}
+.etop-agenda-panel .etop-agenda-action{display:flex;align-items:center;justify-content:center;
+  gap:7px;width:100%;padding:10px 12px;margin-top:9px;border-radius:8px;
+  text-decoration:none;font-weight:700;font-size:13px;}
+.etop-agenda-panel .etop-agenda-main{background:#142e57;color:#fff;}
+.etop-agenda-panel .etop-agenda-other{background:#eef4fb;color:#23476f;border:1px solid #d9e5f2;}
+.etop-agenda-panel .etop-agenda-note{font-size:11px;line-height:1.45;color:#6b7d91;margin:12px 0 0;}
 </style>
 </head>
 <body>
@@ -2830,6 +2853,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
     <button type="button" class="resumen-cal-prev" onclick="moverMesResumenCalendario(-1)" aria-label="Mes anterior">‹</button>
     <span id="resumenCalMes" aria-live="polite">Calendario</span>
     <button type="button" class="resumen-cal-next" onclick="moverMesResumenCalendario(1)" aria-label="Mes siguiente">›</button>
+    <button type="button" class="resumen-cal-add-reminder" onclick="abrirAgendaPersonalETOP()" aria-label="Abrir agenda y recordatorios personales" title="Agenda y recordatorios personales">+</button>
   </div>
   <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
@@ -4087,6 +4111,43 @@ function abrirInicioResumenCalendarioDia(iso){
   sincronizarFiltros();
   actualizarBadge();
   cargar('CALENDARIOS',findBtn('CALENDARIOS'));
+}
+
+
+/* Agenda personal ETOP. Microsoft 365 conserva y avisa las tareas.
+   No se simula sincronización con el calendario HTML sin Graph/autorización. */
+function abrirAgendaPersonalETOP(){
+  if(document.getElementById('etopAgendaModal'))return;
+  const overlay=document.createElement('div');
+  overlay.className='etop-agenda-overlay';
+  overlay.id='etopAgendaModal';
+  const panel=document.createElement('section');
+  panel.className='etop-agenda-panel';
+  panel.setAttribute('role','dialog');
+  panel.setAttribute('aria-modal','true');
+  panel.setAttribute('aria-labelledby','etopAgendaTitle');
+  panel.innerHTML=[
+    '<button type="button" class="etop-agenda-close" aria-label="Cerrar agenda">×</button>',
+    '<h2 id="etopAgendaTitle">Agenda y recordatorios personales</h2>',
+    '<p>Para recordar, por ejemplo, una llamada a un estudiante la próxima semana, crea una tarea privada con fecha y hora de aviso en Microsoft 365.</p>',
+    '<a class="etop-agenda-action etop-agenda-main" href="https://to-do.office.com/" target="_blank" rel="noopener noreferrer">＋ Crear recordatorio en To Do ↗</a>',
+    '<a class="etop-agenda-action etop-agenda-other" href="https://planner.cloud.microsoft/" target="_blank" rel="noopener noreferrer">Ver mis tareas en Planner ↗</a>',
+    '<p class="etop-agenda-note">En To Do, agrega la tarea, establece la fecha y selecciona «Recordarme» para definir la hora. Usa tu cuenta institucional.</p>',
+    '<p class="etop-agenda-note">Por ahora, la tarea se guarda y notifica en Microsoft 365. No aparece como indicador en este calendario hasta disponer de una conexión autorizada.</p>'
+  ].join('');
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+  const origen=document.activeElement;
+  const cerrar=()=>{
+    document.removeEventListener('keydown',onKey);
+    overlay.remove();
+    if(origen&&typeof origen.focus==='function')origen.focus();
+  };
+  const onKey=e=>{if(e.key==='Escape')cerrar();};
+  overlay.addEventListener('click',e=>{if(e.target===overlay)cerrar();});
+  panel.querySelector('.etop-agenda-close').addEventListener('click',cerrar);
+  document.addEventListener('keydown',onKey);
+  panel.querySelector('.etop-agenda-close').focus();
 }
 
 /* ===== Resumen carga tutorial · datos reales =====
