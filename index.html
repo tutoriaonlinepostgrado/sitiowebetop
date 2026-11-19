@@ -3536,9 +3536,10 @@ function buildURLFiltrada(clave){
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
-  // Misma técnica de filtro Power BI que los controles superiores.
-  // El selector está abajo en Sesión ETOP y solo modifica el Tablero de Gestión.
-  if(clave==='DASHBOARD'&&esSuperadminVistaETOP()){
+  // Compartir el selector inferior con todas las páginas de Power BI de este
+  // informe. Las medidas HTML de cada página deben utilizar el contexto de
+  // ETOP_Selector_Cartera; la URL por sí sola no reescribe el DAX.
+  if(esSuperadminVistaETOP()){
     fx.push("ETOP_Selector_Cartera/Correo eq '"+sanitizarFiltro(vistaCoordinacionETOP())+"'");
   }
   // En la Ficha del Estudiante solo aplicar RUT; los NRC y demás selecciones
@@ -4178,12 +4179,15 @@ function buildFocoDiaURL(){
   // Con una sola cartera se aplica filtro explícito. Con delegación,
   // RLS de Power BI limita al conjunto autorizado (titular + reemplazo).
   const tutor=esCoordinacion?focoCoordTutorSeleccionada:tutorFiltroAutomaticoETOP();
+  const filtros=[];
   if(tutor){
     const seguro=String(tutor).replace(/'/g,"''");
-    const filtro=`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`;
-    return u.toString()+'&filter='+encodeURIComponent(filtro);
+    filtros.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`);
   }
-  return u.toString();
+  // Foco del día utiliza el mismo modelo Power BI; no modifica su medida HTML.
+  if(esSuperadminVistaETOP())
+    filtros.push("ETOP_Selector_Cartera/Correo eq '"+sanitizarFiltro(vistaCoordinacionETOP())+"'");
+  return u.toString()+(filtros.length?'&filter='+encodeURIComponent(filtros.join(' and ')):'');
 }
 
 function refrescarFocoDia(){
@@ -4985,8 +4989,12 @@ function seleccionarVistaCoordinacionETOP(valor){
   const anterior=vistaCoordinacionETOP();
   try{localStorage.setItem(claveVistaCoordinacionETOP(),v)}catch(_){}
   actualizarVistaCoordinacionETOP();
-  // Solo reabrir el informe actualmente visible; no recargar todo el portal.
-  if(v!==anterior&&vistaActual==='DASHBOARD')actualizarIframe();
+  // Solo refrescar el Power BI visible. Nunca recargar todo el portal ni
+  // las páginas HTML locales, que no usan ETOP_Selector_Cartera.
+  if(v!==anterior){
+    if(urlsBase[vistaActual]&&!urlsBase[vistaActual].local)actualizarIframe();
+    else if(vistaActual==='INICIO')refrescarFocoDia();
+  }
 }
 function nombreSaludoETOP(s){
   if(!s)return '';
