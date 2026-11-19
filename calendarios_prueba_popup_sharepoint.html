@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html data-etop-brand="unab" data-etop-page="calendarios" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendarios ETOP</title>
+  <style>
+    :root{--bg:#202733;--panel:#293340;--panel-soft:#252e3a;--line:#3a4552;--accent:#8192a8;--text:#d8dee7;--muted:#9aa7b7}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    body{padding:12px;-webkit-font-smoothing:antialiased}.header{display:flex;justify-content:space-between;align-items:center;gap:22px;background:var(--panel-soft);border:1px solid var(--line);border-radius:9px;padding:12px 16px;margin-bottom:10px}
+    .header-grid{display:grid;grid-template-columns:max-content minmax(120px,1fr) max-content minmax(120px,1fr);gap:7px 22px;font-size:11.5px;flex:1}.h-label{color:#919eae;font-weight:700}.h-value{color:var(--text);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.h-value.up{text-transform:uppercase}.h-value.green{color:#9bbfaf}.h-value.code{color:#b8c4d2;font-family:monospace;font-weight:700}
+    .logo{height:48px;object-fit:contain;max-width:175px;opacity:.88}.summary{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0 10px;margin-bottom:6px}.summary-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}.summary-title{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#cbd3de}.summary-sub{font-size:10px;color:var(--muted);margin-top:2px}.kpis{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 14px;text-align:center;min-width:86px;cursor:pointer;transition:.15s}.kpi:hover{border-color:var(--accent);transform:translateY(-1px)}.kpi.selected{border-color:#a9b7c8;box-shadow:0 0 0 2px rgba(169,183,200,.1)}.kpi-v{font-size:18px;font-weight:700;font-family:monospace;line-height:1.15}.kpi-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.kpi.total{border-color:#465362;text-align:right}.search-row{display:flex;gap:7px;align-items:center;justify-content:flex-end}.search-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}#search{font:12px "Segoe UI",sans-serif;padding:7px 10px;border:1px solid var(--line);border-radius:7px;width:280px;outline:none;color:var(--text);background:var(--panel-soft)}#search:focus{border-color:var(--accent)}#count{font-size:11px;color:var(--muted);margin-left:4px}
+    .table-wrap{overflow:auto;max-height:calc(100vh - 225px);border:1px solid var(--line);border-radius:8px}table{width:100%;border-collapse:collapse;min-width:1240px}thead{position:sticky;top:0;z-index:2}th{padding:9px 8px;font-size:10px;font-weight:700;text-transform:uppercase;color:#aeb9c7;text-align:left;white-space:nowrap;background:#252e3a;border-bottom:1px solid #526071;border-right:1px solid rgba(255,255,255,.035)}th.sortable{cursor:pointer;user-select:none}th.sortable:hover{color:#d6dee8;background:#2d3744}th.sortable::after{content:' ↕';color:#6f7d8e}th.sortable[data-dir="asc"]::after{content:' ↑';color:#aebdd0}th.sortable[data-dir="desc"]::after{content:' ↓';color:#aebdd0}td{padding:9px 8px;font-size:12px;color:#c5cdd8;white-space:nowrap;border-bottom:1px solid rgba(93,107,123,.36)}tr{background:var(--bg)}tbody tr:nth-child(even){background:#222a35}tbody tr:hover{background:#2b3542}tr.closed{background:#242c37}.nrc{background:#2d3948;border-left:3px solid #72869e;padding:5px 8px;border-radius:4px;color:#c4cfdd;font-weight:700}.badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:9px}.prep{background:#3b3a32;color:#c2ae79}.active{background:#2e3d39;color:#9ebcae}.closing{background:#403832;color:#c1a083}.closed-b{background:#383238;color:#b79ca6}.unknown{background:#303946;color:#9aa7b7}.course{max-width:280px;overflow:hidden;text-overflow:ellipsis}.tutor{max-width:180px;overflow:hidden;text-overflow:ellipsis}.date{font-family:monospace;color:#b8c2cf}.center{text-align:center}.actions{display:flex;gap:6px;justify-content:center}.action{display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:27px;padding:0 6px;border-radius:6px;text-decoration:none;background:#2d3846;border:1px solid #465363;color:#cbd4df;font-size:13px}.action:hover{border-color:#75869a;background:#354251}.powerapps-table{min-width:96px;font-size:10px;font-weight:800;cursor:pointer;font-family:inherit}.incident-ok{min-width:48px;background:#2d3c38;border-color:#49645b;color:#a9c7ba;font-size:10px;font-weight:800}.incident-alert{min-width:42px;background:#43363a;border-color:#73515a;color:#d3abb5;font-weight:800}.incident-count{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;margin-left:3px;padding:0 4px;border-radius:9px;background:#8b5965;color:#f0dce1;font-size:10px}.empty{padding:42px;text-align:center;color:var(--muted);font-size:13px}.error{padding:30px;text-align:center;background:#2a303b;border:2px dashed #765a61;border-radius:8px;margin:15px;color:#caaeb5}
+    /* Tema ETOP claro */
+    :root{--bg:#eef2f7;--panel:#ffffff;--panel-soft:#f8fafc;--line:#d7e0ea;--accent:#d6a900;--text:#334155;--muted:#64748b}
+    html,body{background:var(--bg);color:var(--text)}
+    .header{background:#fff;border-color:#d7e0ea;border-top:3px solid #d6a900;box-shadow:0 2px 8px rgba(51,65,85,.045)}
+    .h-label{color:#64748b}.h-value{color:#334155}.h-value.green{color:#27815e}.h-value.code{color:#52657a}.logo{opacity:.92}
+    .summary{background:#eef2f7;border-bottom-color:#d7e0ea}.summary-title{color:#475569}.summary-sub{color:#64748b}
+    .kpi{background:#fff;border-color:#d7e0ea;box-shadow:0 2px 7px rgba(51,65,85,.04)}
+    .kpi:hover{border-color:#c9ad3d;box-shadow:0 4px 10px rgba(51,65,85,.07)}
+    .kpi.selected{border-color:#d6a900;box-shadow:0 0 0 2px rgba(214,169,0,.12)}
+    .kpi[data-state="PREPARACION"]{border-top:3px solid #6884a5}.kpi[data-state="ACTIVO"]{border-top:3px solid #27815e}.kpi[data-state="EN CIERRE"]{border-top:3px solid #b97721}.kpi[data-state="CERRADO"]{border-top:3px solid #a4515d}.kpi.total{border-top:3px solid #d6a900;text-align:right}
+    #k-prep{color:#506f94!important}#k-active{color:#27815e!important}#k-closing{color:#9a6018!important}#k-closed{color:#a04452!important}#k-total{color:#334155!important}
+    #search{color:#334155;background:#fff;border-color:#cbd5e1}#search:focus{border-color:#c6a000;box-shadow:0 0 0 3px rgba(214,169,0,.11)}
+    .table-wrap{background:#fff;border-color:#d7e0ea;box-shadow:0 3px 10px rgba(51,65,85,.045)}
+    th{color:#65778b;background:#e7edf5;border-bottom-color:#cbd5e1;border-right-color:#d7e0ea}
+    th.sortable:hover{color:#334155;background:#dce5ef}th.sortable::after{color:#8b9aad}th.sortable[data-dir="asc"]::after,th.sortable[data-dir="desc"]::after{color:#806600}
+    td{color:#52657a;border-bottom-color:#e5ebf1}tr{background:#fff}tbody tr:nth-child(even){background:#f8fafc}tbody tr:hover{background:#f2f6fa}tr.closed{background:#f5f6f8}
+    .nrc{background:#edf3f8;border-left-color:#6884a5;color:#345577}.prep{background:#eef2f7;color:#506f94}.active{background:#e8f5ef;color:#276b52}.closing{background:#fff1df;color:#925a17}.closed-b{background:#f5e9ec;color:#934454}.unknown{background:#edf1f5;color:#64748b}.date{color:#52657a}
+    .action{background:#fff;border-color:#cbd5e1;color:#52657a}.action:hover{border-color:#9fb0c2;background:#f3f6fa}.incident-ok{background:#e8f5ef;border-color:#b9dfcf;color:#276b52}.incident-alert{background:#fae6e6;border-color:#efbcbc;color:#a33535}.incident-count{background:#c24141;color:#fff}
+    .empty{color:#64748b}.error{background:#fff4f4;border-color:#e0aeb7;color:#a04452}.error div{color:#64748b!important}
+    .btn-export{height:31px;border:1px solid #17765a;border-radius:7px;background:#16805f;color:#fff;padding:0 11px;font-size:10px;font-weight:700;cursor:pointer}.btn-export:hover{background:#11694e}
+    /* Responsive ETOP: pantallas grandes, notebook y móvil */
+    @media(max-width:1450px){
+      body{padding:10px}
+      .header{gap:14px;padding:10px 13px}
+      .header-grid{grid-template-columns:max-content minmax(100px,1fr) max-content minmax(100px,1fr);gap:6px 14px;font-size:11px}
+      .logo{height:42px;max-width:145px}
+      .summary{padding-top:6px}
+      .summary-row{align-items:flex-start}
+      .kpis{gap:6px}
+      .kpi{min-width:78px;padding:6px 10px}
+      .kpi-v{font-size:16px}
+      #search{width:220px}
+      .table-wrap{max-height:calc(100vh - 212px)}
+      table{min-width:1160px}
+      th{padding:8px 7px;font-size:9px}
+      td{padding:8px 7px;font-size:11px}
+      .course{max-width:235px}
+      .tutor{max-width:150px}
+    }
+
+    @media(max-width:1180px){
+      .header{align-items:flex-start}
+      .header-grid{grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr)}
+      .logo{height:38px;max-width:125px}
+      .summary-row{display:block}
+      .kpis{margin-top:8px}
+      .search-row{justify-content:flex-start;flex-wrap:wrap}
+      #search{flex:1 1 220px;width:auto;min-width:180px}
+      .table-wrap{max-height:calc(100vh - 245px)}
+      table{min-width:1100px}
+    }
+
+    @media(max-width:900px){
+      body{padding:8px}
+      .header{padding:9px 11px}
+      .header-grid{grid-template-columns:max-content minmax(0,1fr);gap:5px 10px}
+      .logo{display:none}
+      .summary{position:static;padding:5px 0 8px}
+      .kpis{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));width:100%}
+      .kpi{min-width:0;padding:6px 5px}
+      .search-row{gap:6px}
+      .search-label{display:none}
+      #count{order:3;width:100%;margin-left:0}
+      .btn-export{margin-left:auto}
+      .table-wrap{max-height:calc(100vh - 270px)}
+      table{min-width:1040px}
+      th{padding:7px 6px}
+      td{padding:7px 6px}
+    }
+
+    @media(max-width:650px){
+      body{padding:6px}
+      .header{border-radius:7px;margin-bottom:7px}
+      .header-grid{font-size:10.5px}
+      .h-label{font-size:9px}
+      .summary-title{font-size:11px}
+      .summary-sub{font-size:9px}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .kpi.total{grid-column:1/-1;text-align:center}
+      #search{flex-basis:100%;min-width:100%}
+      .btn-export{width:100%;margin-left:0}
+      .table-wrap{max-height:calc(100vh - 330px);border-radius:7px}
+      table{min-width:1000px}
+      .course{max-width:210px}
+      .tutor{max-width:130px}
+    }
+  
+    .drill-context{position:sticky;top:0;z-index:20;display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 0 9px;padding:8px 11px;background:#fffdf2;border:1px solid #eadb91;border-left:4px solid #d6a900;border-radius:8px;color:#52657a;font-size:10px;box-shadow:0 2px 7px rgba(51,65,85,.035)}
+    .drill-context.show{display:flex}.drill-context strong{color:#725600}.drill-context-main{min-width:0}.drill-context-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drill-back{flex:0 0 auto;height:29px;border:1px solid #d6a900;border-radius:7px;background:#fff;color:#725600;padding:0 10px;font-size:9px;font-weight:800;cursor:pointer}.drill-back:hover{background:#fff8dc}
+    /* ── Panel operativo lateral del NRC ───────────────────── */
+    .calendar-workspace{display:flex;gap:10px;align-items:stretch;min-width:0}
+    .calendar-workspace .table-wrap{flex:1;min-width:0}
+    tbody tr[data-nrc]{cursor:pointer}
+    tbody tr.row-selected{background:#fff8dc!important;box-shadow:inset 3px 0 0 #d6a900}
+    .course-panel{display:none;flex:0 0 370px;width:370px;max-height:calc(100vh - 225px);overflow:auto;background:#fff;border:1px solid #d7e0ea;border-radius:9px;box-shadow:0 8px 24px rgba(51,65,85,.08)}
+    .course-panel.open{display:block}
+    .course-panel-head{position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 14px 12px;background:#fff;border-bottom:1px solid #e2e8f0}
+    .course-panel-kicker{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a6d00}
+    .course-panel-nrc{margin-top:3px;font:700 12px Consolas,monospace;color:#315f86;overflow-wrap:anywhere}
+    .course-panel-course{margin-top:4px;font-size:12px;font-weight:700;color:#334155;line-height:1.3}
+    .course-panel-close{width:28px;height:28px;border:1px solid #d6e1ec;border-radius:7px;background:#f8fafc;color:#64748b;cursor:pointer;font-size:16px;flex-shrink:0}
+    .course-panel-close:hover{border-color:#d6a900;color:#8a6d00;background:#fffdf2}
+    .course-panel-body{padding:12px}
+    .panel-section{margin-bottom:14px}
+    .panel-section:last-child{margin-bottom:0}
+    .panel-section-title{margin-bottom:7px;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#64748b}
+    .panel-actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .panel-action{min-height:42px;display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid #d7e0ea;border-radius:8px;background:#f8fafc;color:#334155;text-decoration:none;font-size:10px;font-weight:700;line-height:1.2;transition:.15s}
+    .panel-action:hover{border-color:#d6a900;background:#fffdf2;transform:translateY(-1px)}
+    .panel-action.primary{grid-column:1/-1;background:#eef5fb;border-color:#b9d0e3;color:#315f86}
+    .panel-action.disabled{opacity:.45;pointer-events:none}
+    .panel-action .pa-icon{font-size:16px;flex-shrink:0}
+    .panel-status{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid #d7e0ea;font-size:10px;color:#52657a}
+    .panel-status strong{color:#334155}
+    .course-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+    .course-meta-filter{min-width:0;text-align:left;padding:8px 9px;border:1px solid #d7e0ea;border-radius:8px;background:#f8fafc;color:#334155;cursor:pointer;transition:.15s}
+    .course-meta-filter:hover{border-color:#d6a900;background:#fffdf2}
+    .course-meta-filter.active{border-color:#d6a900;background:#fff8dc;box-shadow:0 0 0 2px rgba(214,169,0,.08)}
+    .course-meta-label{display:block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#7b8da2;margin-bottom:2px}
+    .course-meta-value{display:block;font-size:10px;font-weight:700;color:#41566e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .course-meta-filter.active .course-meta-value{color:#725600}
+    .course-filter-clear{width:100%;height:29px;margin-top:7px;border:1px solid #efc1c5;border-radius:7px;background:#fff5f5;color:#a84d55;font-size:9px;font-weight:800;cursor:pointer}
+    .powerapp-panel-view{height:calc(100vh - 250px);min-height:430px;display:flex;flex-direction:column}
+    .powerapp-panel-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+    .powerapp-back{height:29px;padding:0 9px;border:1px solid #c7d5e2;border-radius:7px;background:#fff;color:#52657a;font-size:9px;font-weight:800;cursor:pointer}
+    .powerapp-external{font-size:9px;font-weight:700;color:#315f86;text-decoration:none}
+    .powerapp-iframe{width:100%;flex:1;border:0;background:#fff}
+    .powerapp-open-note{font-size:9px;color:#64748b;padding:0 10px 8px}
+    @media(max-width:1100px){
+      .course-panel{position:fixed;top:12px;right:12px;bottom:12px;z-index:60;width:min(390px,calc(100vw - 24px));max-height:none;box-shadow:0 18px 45px rgba(15,23,42,.24)}
+    }
+.course-panel{display:none!important}.table-layout,.table-shell{width:100%;min-width:0}.table-wrap{flex:1 1 auto;width:100%;max-width:100%}.column-filter{display:block;margin-top:5px;max-width:100%;width:100%;min-width:64px;font:10px Arial,sans-serif;border:1px solid #cbd5e1;border-radius:5px;padding:3px;background:#fff;color:#334155}.actions{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap}.actions .action{font-size:10px;padding:5px 6px}.course-icon{min-width:25px;text-align:center;text-decoration:none}.course-icon.unavailable{opacity:.35;cursor:default}
+.column-filter{display:none!important}.header-filter-link{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.header-filter-link:hover{color:#1d4ed8}.table-wrap{overflow-x:auto!important}table{min-width:1430px!important;table-layout:auto}th:last-child,td:last-child{min-width:260px;white-space:nowrap}td:last-child .actions{display:flex;flex-wrap:nowrap;gap:3px;align-items:center}td:last-child .action{box-sizing:border-box;min-width:0;max-width:none;line-height:1.15}td:last-child .action-text{font-size:10px;white-space:nowrap;padding:5px 6px}td:last-child .course-icon{font-size:13px;width:25px;height:25px;display:inline-flex;align-items:center;justify-content:center;padding:2px}
+.header-filter-link{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}.header-filter-active{background:#fff3cd;border-radius:3px}th:last-child,td:last-child{width:335px!important;min-width:335px!important;max-width:335px!important;overflow:visible!important}.actions{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;justify-content:flex-start!important;align-items:center!important;min-width:315px!important}.actions .action{position:static!important;flex:0 0 auto!important;white-space:nowrap!important;min-width:unset!important;transform:none!important}.actions .action-text{padding:4px 6px!important;font-size:10px!important}.actions .course-icon{width:29px!important;min-width:29px!important;max-width:29px!important;padding:0!important}.table-wrap{overflow-x:auto!important}table{min-width:1700px!important}
+</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+/* ===== Tabla calendarios responsiva V2 · 20260924 ===== */
+
+/* En escritorio/notebook la tabla se reparte dentro del ancho disponible.
+   Sólo en pantallas realmente estrechas se habilita desplazamiento horizontal. */
+@media (min-width:1100px){
+  .calendar-workspace{min-width:0;max-width:100%}
+  .calendar-workspace .table-wrap{
+    min-width:0;
+    max-width:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+  .calendar-workspace table{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:fixed!important;
+  }
+  .calendar-workspace th,
+  .calendar-workspace td{
+    min-width:0!important;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .calendar-workspace .course,
+  .calendar-workspace .tutor{
+    max-width:none!important;
+  }
+  .calendar-workspace th:nth-child(2),.calendar-workspace td:nth-child(2){width:12%}
+  .calendar-workspace th:nth-child(3),.calendar-workspace td:nth-child(3){width:7%}
+  .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:20%}
+  .calendar-workspace th:nth-child(5),.calendar-workspace td:nth-child(5){width:6%}
+  .calendar-workspace th:nth-child(6),.calendar-workspace td:nth-child(6){width:7%}
+  .calendar-workspace th:nth-child(7),.calendar-workspace td:nth-child(7){width:7%}
+  .calendar-workspace th:nth-child(8),.calendar-workspace td:nth-child(8){width:5%}
+  .calendar-workspace th:nth-child(9),.calendar-workspace td:nth-child(9){width:11%}
+  .calendar-workspace th:nth-child(10),.calendar-workspace td:nth-child(10){width:8%}
+  .calendar-workspace th:nth-child(11),.calendar-workspace td:nth-child(11){width:5%}
+  .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:7%}
+  .calendar-workspace .actions{
+    gap:3px;
+    min-width:0;
+  }
+  .calendar-workspace .action{
+    min-width:24px;
+    height:24px;
+    padding:0 4px;
+    font-size:11px;
+  }
+}
+
+@media (min-width:1100px) and (max-width:1450px){
+  .calendar-workspace th{font-size:7.5px!important;padding:7px 4px!important}
+  .calendar-workspace td{font-size:9px!important;padding:7px 4px!important}
+  .calendar-workspace .nrc{padding:4px 5px;font-size:9px}
+  .calendar-workspace .badge{font-size:7.5px;padding:2px 5px}
+  .calendar-workspace .action{min-width:22px;height:22px;font-size:10px;padding:0 3px}
+}
+
+/* Por debajo de 1100 px es preferible preservar legibilidad y permitir
+   un desplazamiento horizontal controlado. */
+@media (max-width:1099px){
+  .calendar-workspace .table-wrap{overflow:auto}
+  .calendar-workspace table{min-width:980px!important}
+}
+  /* Selección múltiple NRC · coordinación */
+  .bulk-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px 2px;border-top:1px solid #e2e8f0;margin-top:9px}
+  .bulk-count{font-size:11px;font-weight:750;color:#43566d;white-space:nowrap}
+  .bulk-hint{font-size:10px;color:#64748b;flex:1 1 180px}
+  .bulk-btn{border:1px solid #235f8c;background:#235f8c;color:#fff;border-radius:7px;padding:8px 11px;font:700 11px 'Segoe UI',sans-serif;cursor:pointer;white-space:nowrap}
+  .bulk-btn:hover:not(:disabled){background:#174f78}.bulk-btn:disabled{opacity:.45;cursor:not-allowed}
+  .bulk-btn.secondary{background:#fff;color:#52657a;border-color:#cbd5e1}
+  .bulk-select-col,.bulk-select-cell{width:32px!important;min-width:32px;max-width:32px;text-align:center!important}
+  .bulk-course-check,#select-visible{width:15px;height:15px;accent-color:#235f8c;cursor:pointer;vertical-align:middle}
+  @media(max-width:650px){.bulk-toolbar{gap:7px}.bulk-hint{flex-basis:100%}}
+</style>
+
+<style>
+/* Enlace contextual, sin alterar la tabla Calendarios restaurada */
+.nrc-ficha360-link{display:block;width:max-content;max-width:100%;margin-top:2px;font:700 9px 'Segoe UI',Arial,sans-serif;color:#286b9d;text-decoration:none;white-space:nowrap}
+.nrc-ficha360-link:hover{text-decoration:underline;color:#174f81}
+</style>
+<style>
+/* Acciones compactas: cinco iconos, todas las columnas intactas */
+.calendar-workspace .table-wrap{overflow-x:auto!important}
+@media(min-width:1100px){
+ .calendar-workspace table{table-layout:fixed!important;min-width:1450px!important;max-width:none!important;width:100%!important}
+ .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:175px!important;min-width:175px!important;max-width:175px!important;overflow:visible!important}
+}
+.calendar-workspace td:last-child .actions{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-width:0!important;width:100%!important}
+.calendar-workspace td:last-child .actions .action{display:inline-flex!important;position:static!important;flex:0 0 27px!important;box-sizing:border-box!important;width:27px!important;height:27px!important;min-width:27px!important;max-width:27px!important;padding:0!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;font-size:14px!important;line-height:1!important}
+</style>
+<style>
+/* Ajuste final: encajar las doce columnas en el ancho de escritorio */
+@media(min-width:1100px){
+ .calendar-workspace .table-wrap{overflow-x:hidden!important;max-width:100%!important}
+ .calendar-workspace table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+ .calendar-workspace th,.calendar-workspace td{min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis}
+ .calendar-workspace th:nth-child(1),.calendar-workspace td:nth-child(1){width:3%!important}
+ .calendar-workspace th:nth-child(2),.calendar-workspace td:nth-child(2){width:13%!important}
+ .calendar-workspace th:nth-child(3),.calendar-workspace td:nth-child(3){width:7%!important}
+ .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:18%!important}
+ .calendar-workspace th:nth-child(5),.calendar-workspace td:nth-child(5){width:6%!important}
+ .calendar-workspace th:nth-child(6),.calendar-workspace td:nth-child(6){width:7%!important}
+ .calendar-workspace th:nth-child(7),.calendar-workspace td:nth-child(7){width:7%!important}
+ .calendar-workspace th:nth-child(8),.calendar-workspace td:nth-child(8){width:6%!important}
+ .calendar-workspace th:nth-child(9),.calendar-workspace td:nth-child(9){width:10%!important}
+ .calendar-workspace th:nth-child(10),.calendar-workspace td:nth-child(10){width:7%!important}
+ .calendar-workspace th:nth-child(11),.calendar-workspace td:nth-child(11){width:5%!important}
+ .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:11%!important}
+ .calendar-workspace td:last-child .actions{display:flex!important;gap:2px!important;justify-content:center!important;min-width:0!important;width:100%!important}
+ .calendar-workspace td:last-child .actions .action{flex:0 0 21px!important;width:21px!important;min-width:21px!important;max-width:21px!important;height:23px!important;font-size:12px!important}
+}
+</style>
+
+<style>
+/* Calendarios: optimización visual sin modificar columnas ni acciones */
+@media (min-width:1181px){
+  body{padding:8px 10px}
+  .header{gap:14px;padding:8px 13px;margin-bottom:7px}
+  .header-grid{gap:5px 16px}
+  .logo{height:40px}
+  .summary{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:5px;padding:5px 0 7px;margin-bottom:5px}
+  .summary-row{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0}
+  .kpis{gap:5px;flex-wrap:nowrap}
+  .kpi{display:flex;align-items:center;gap:6px;min-width:0;padding:5px 9px;border-radius:6px}
+  .kpi-v{font-size:15px;line-height:1}
+  .kpi-l{font-size:9px}
+  .bulk-toolbar{grid-column:1;grid-row:2;min-width:0;margin:0;padding:0;gap:7px;display:flex;align-items:center;flex-wrap:wrap}
+  .bulk-hint{display:none}
+  .search-row{grid-column:2;grid-row:2;margin:0;justify-content:flex-end}
+  #search{width:240px;padding:6px 9px}
+  .table-wrap{max-height:calc(100vh - 185px)}
+}
+@media (min-width:1181px) and (max-width:1420px){
+  .summary{grid-template-columns:minmax(0,1fr) auto;column-gap:6px}
+  .summary-row{grid-column:1/-1}
+  .bulk-toolbar{grid-column:1;grid-row:2;gap:5px;flex-wrap:nowrap}
+  .search-row{grid-column:2;grid-row:2;gap:5px;flex-wrap:nowrap}
+  .bulk-hint{display:none}
+  .bulk-btn{padding:0 7px;font-size:10px}
+  #search{width:clamp(120px,13vw,200px)}
+  #count{white-space:nowrap}
+  .table-wrap{max-height:calc(100vh - 185px)}
+}
+@media (min-width:1181px){
+  .summary>.bulk-toolbar{align-self:center}
+  .summary>.search-row{align-self:center;white-space:nowrap}
+  .summary .search-label,.summary #count,.summary .btn-export{flex-shrink:0}
+}
+@media (max-width:1180px){
+  .bulk-hint{display:none}
+}
+</style>
+
+<style>
+/* ETOP Notebook: doce columnas sin scroll horizontal en el visor integrado */
+@media (min-width:760px) and (max-width:1180px){
+  body{padding:6px!important}
+  .header{padding:7px 10px!important;gap:8px!important;margin-bottom:5px!important}
+  .header-grid{grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr)!important;gap:4px 9px!important;font-size:10px!important}
+  .logo{height:32px!important}
+  .summary{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:5px 8px!important;padding:4px 0 6px!important;margin-bottom:4px!important}
+  .summary-row{grid-column:1/-1!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin:0!important}
+  .kpis{display:flex!important;flex-wrap:nowrap!important;width:auto!important;margin:0!important;gap:4px!important}
+  .kpi{display:flex!important;gap:4px!important;min-width:0!important;padding:4px 6px!important;border-radius:5px!important}
+  .kpi-v{font-size:12px!important;line-height:1!important}
+  .kpi-l{font-size:8px!important}
+  .summary-title{font-size:11px!important}
+  .summary-sub{font-size:9px!important}
+  .bulk-toolbar{grid-column:1!important;grid-row:2!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:4px!important;padding:0!important;margin:0!important;min-width:0!important;border-top:0!important}
+  .bulk-count{font-size:9px!important}
+  .bulk-hint{display:none!important}
+  .bulk-btn{padding:5px 6px!important;font-size:9px!important;white-space:nowrap!important}
+  .search-row{grid-column:2!important;grid-row:2!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;justify-content:flex-end!important;gap:4px!important;margin:0!important}
+  .search-label{display:none!important}
+  #search{flex:none!important;width:clamp(110px,17vw,200px)!important;min-width:0!important;padding:5px 6px!important;font-size:10px!important}
+  #count{order:0!important;width:auto!important;margin:0!important;white-space:nowrap!important;font-size:9px!important}
+  .btn-export{padding:5px 7px!important;margin:0!important;font-size:9px!important;white-space:nowrap!important}
+  .calendar-workspace,.calendar-workspace .table-wrap{min-width:0!important;max-width:100%!important;width:100%!important}
+  .calendar-workspace .table-wrap{overflow-x:hidden!important;overflow-y:auto!important;max-height:calc(100vh - 158px)!important}
+  .calendar-workspace table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+  .calendar-workspace th,.calendar-workspace td{min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;padding:5px 3px!important}
+  .calendar-workspace th{font-size:8px!important}
+  .calendar-workspace td{font-size:10px!important}
+  .calendar-workspace th:nth-child(1),.calendar-workspace td:nth-child(1){width:3%!important}
+  .calendar-workspace th:nth-child(2),.calendar-workspace td:nth-child(2){width:14%!important}
+  .calendar-workspace th:nth-child(3),.calendar-workspace td:nth-child(3){width:7%!important}
+  .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:19%!important}
+  .calendar-workspace th:nth-child(5),.calendar-workspace td:nth-child(5){width:7%!important}
+  .calendar-workspace th:nth-child(6),.calendar-workspace td:nth-child(6){width:8%!important}
+  .calendar-workspace th:nth-child(7),.calendar-workspace td:nth-child(7){width:8%!important}
+  .calendar-workspace th:nth-child(8),.calendar-workspace td:nth-child(8){width:5%!important}
+  .calendar-workspace th:nth-child(9),.calendar-workspace td:nth-child(9){width:10%!important}
+  .calendar-workspace th:nth-child(10),.calendar-workspace td:nth-child(10){width:6%!important}
+  .calendar-workspace th:nth-child(11),.calendar-workspace td:nth-child(11){width:5%!important}
+  .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:8%!important}
+  .calendar-workspace .nrc{font-size:9px!important;padding:2px 3px!important}
+  .calendar-workspace td:last-child .actions{gap:1px!important;flex-wrap:nowrap!important}
+  .calendar-workspace td:last-child .actions .action{flex:0 1 18px!important;width:18px!important;min-width:0!important;max-width:18px!important;height:20px!important;font-size:11px!important;padding:0!important}
+  .calendar-workspace .bulk-select-col,.calendar-workspace .bulk-select-cell{min-width:0!important;width:3%!important}
+}
+</style>
+</head>
+<body>
+  <div id="drill-context" class="drill-context"><div class="drill-context-main"><strong>Detalle desde Carga Tutorial</strong><div id="drill-context-text" class="drill-context-text"></div></div><button type="button" class="drill-back" onclick="volverCargaTutorial()">← Volver a Carga Tutorial</button></div>
+  <section class="header">
+    <div class="header-grid">
+      <div class="h-label">👤 TUTOR/A</div><div class="h-value up" id="h-tutor">—</div>
+      <div class="h-label">📚 PROGRAMA</div><div class="h-value" id="h-programa">—</div>
+      <div class="h-label">📧 CORREO</div><div class="h-value" id="h-correo">—</div>
+      <div class="h-label">💻 TIPO NRC</div><div class="h-value green" id="h-tipo">—</div>
+      <div class="h-label">🏷️ INTAKE</div><div class="h-value code" id="h-intake">—</div>
+      <div class="h-label">🏛️ FACULTAD</div><div class="h-value" id="h-facultad">—</div>
+    </div>
+    <img class="logo" src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo ETOP">
+
+  </section>
+
+  <section class="summary">
+    <div class="summary-row">
+      <div><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
+      <div class="kpis">
+        <div class="kpi" data-state="PREPARACION"><div class="kpi-v" style="color:#9bafc8" id="k-prep">0</div><div class="kpi-l">Prep.</div></div>
+        <div class="kpi" data-state="ACTIVO"><div class="kpi-v" style="color:#75b79c" id="k-active">0</div><div class="kpi-l">Activos</div></div>
+        <div class="kpi" data-state="EN CIERRE"><div class="kpi-v" style="color:#c8a06e" id="k-closing">0</div><div class="kpi-l">Cierre</div></div>
+        <div class="kpi" data-state="CERRADO"><div class="kpi-v" style="color:#c88995" id="k-closed">0</div><div class="kpi-l">Cerrados</div></div>
+        <div class="kpi total" data-state=""><div class="kpi-l">Total</div><div class="kpi-v" style="color:#d6e3f3" id="k-total">0</div></div>
+      </div>
+
+    </div>
+    <div class="search-row"><span class="search-label">Buscar</span><input id="search" type="text" placeholder="NRC, curso, tutor…"><span id="count"></span><button class="btn-export" type="button" onclick="descargarExcel()">📥 Descargar Excel</button></div>
+    <div class="bulk-toolbar" role="group" aria-label="Acciones para cursos seleccionados">
+      <span class="bulk-count" id="bulk-count" aria-live="polite">0 cursos seleccionados</span>
+      <span class="bulk-hint">Marca las casillas de los NRC que quieras editar juntos.</span>
+      <button class="bulk-btn" type="button" id="bulk-open" onclick="abrirSeleccionadosSharePoint()" disabled>↗ Abrir seleccionados en SharePoint</button>
+      <button class="bulk-btn secondary" type="button" id="bulk-clear" onclick="limpiarSeleccionNrcs()" disabled>Limpiar</button>
+    </div>
+  </section>
+
+  <div class="calendar-workspace">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th class="bulk-select-col"><input type="checkbox" id="select-visible" aria-label="Seleccionar o desmarcar todos los cursos visibles" title="Seleccionar o desmarcar los cursos visibles" onchange="alternarTodosVisibles(this.checked)"></th><th class="sortable" data-sort="nrc">NRC_COD_CAL</th><th class="sortable" data-sort="estado">Estado</th><th class="sortable" data-sort="nombre curso">Nombre curso</th><th class="sortable" data-sort="facultad">Facultad</th><th class="sortable" data-sort="fecha inicio">F. inicio</th><th class="sortable" data-sort="fecha fin">F. fin</th><th class="sortable center" data-sort="semanas">Semanas</th><th class="sortable" data-sort="tutor">Tutor/a</th><th class="sortable" data-sort="tipo">Tipo</th><th class="sortable" data-sort="periodo">Periodo</th><th class="center">Acciones</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="12" class="empty">Cargando calendarios…</td></tr></tbody>
+      </table>
+    </div>
+    <aside id="course-panel" style="display:none!important" aria-hidden="true"><div id="course-panel-content"></div></aside>
+  </div>
+
+  <script>
+    const SP_BASE='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/DispForm.aspx?ID=';
+    const BASE='https://tutoriaonlinepostgrado.github.io/sitiowebetop/';
+    const EMAILS={
+      'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
+    };
+    const q=new URLSearchParams(location.search);let courses=[];let incidents=[];let metrics=[];let metricMap=new Map();let stateFilter='';let sortKey='fecha inicio';let sortDir='asc';
+    const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
+    const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxURVA0Q00wRFcxNzJUVE9GWkpVQ0E4S0hQVi4u';
+    const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
+    let allCourses=[];
+    let selectedCourseNrc='';
+    const selectedNrcs=new Set();
+    const SP_MULTI_URL='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/AllItems.aspx';
+    const SP_MULTI_VIEW='f4c009bb-0552-43a5-9718-9c1d37d8f98b';
+    const detailFilters={tutor:'',intake:'',estado:'',facultad:'',codigo:'',programa:'',tipo:'',correo:''};
+    const columnFilters={nrc:'',estado:'','nombre curso':'',facultad:'',tutor:'',tipo:'',periodo:''};
+    const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function studentCount(x){return Number(metricMap.get(norm(x.nrc))||0)}
+    function volverCargaTutorial(){location.href=q.get('retorno')||'carga_tutorial.html?embedded=1'}
+    function renderDrillContext(){if(q.get('origen')!=='carga_tutorial')return;const box=document.getElementById('drill-context'),txt=document.getElementById('drill-context-text');const parts=[];const labels={facultad:'Facultad',tutor:'Tutor',tipo:'Tipo',estado:'Estado',intake:'Intake',codigo:'Código',programa:'Programa',fechaInicio:'Fecha',fechaDesde:'Desde',fechaHasta:'Hasta'};Object.entries(labels).forEach(([key,label])=>{const v=q.get(key);if(v)parts.push(`${label}: ${v.replace(/\|/g,' · ')}`)});const vistas={sinTutor:'Cursos sin tutor',ceroEstudiantes:'Cursos con 0 estudiantes',mas30:'Cursos con más de 30 estudiantes'};if(q.get('vista')&&vistas[q.get('vista')])parts.push(vistas[q.get('vista')]);if(q.get('nrc'))parts.push(`NRC: ${q.get('nrc')}`);txt.textContent=parts.length?parts.join(' · '):'Detalle filtrado desde Carga Tutorial';box.classList.add('show')}
+    const uniq=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))];
+    const selected=(arr,key,multi,empty='No disponible')=>{const v=uniq(arr,key);return v.length===1?v[0]:(v.length>1?multi:empty)};
+    const dateValue=v=>{if(!v)return null;const d=new Date(String(v).slice(0,10)+'T00:00:00');return Number.isNaN(d.getTime())?null:d};
+    const dateISO=v=>{const d=dateValue(v);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''};
+    const fmtDate=v=>{const d=dateValue(v);return d?`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`:'—'};
+    const weeks=(a,b)=>{const x=dateValue(a),y=dateValue(b);return x&&y?Math.ceil((y-x)/604800000)+' sem.':'—'};
+    const qList=key=>(q.get(key)||'').split('|').map(norm).filter(Boolean);
+    function filterCourses(data,{ignoreNrc=false}={}){const facultades=qList('facultad'),tutores=qList('tutor'),tipos=qList('tipo'),estados=qList('estado'),intakes=qList('intake'),fechasInicio=qList('fechaInicio'),codigos=qList('codigo'),programas=qList('programa'),nrcs=qList('nrc');const fechaDesde=dateValue(q.get('fechaDesde')),fechaHasta=dateValue(q.get('fechaHasta')),vista=q.get('vista')||'';return data.filter(x=>{const fi=dateValue(x['fecha inicio']),st=norm(x.estado);const base=(!facultades.length||facultades.includes(norm(x.facultad)))&&(!tutores.length||tutores.includes(norm(x.tutor)))&&(!tipos.length||tipos.includes(norm(x.tipo)))&&(!estados.length||estados.includes(st))&&(!intakes.length||intakes.includes(norm(x.intake)))&&(!fechasInicio.length||fechasInicio.includes(norm(dateISO(x['fecha inicio']))))&&(!codigos.length||codigos.includes(norm(x['codigo curso'])))&&(!programas.length||programas.includes(norm(x['nombre programa'])))&&(!fechaDesde||(fi&&fi>=fechaDesde))&&(!fechaHasta||(fi&&fi<=fechaHasta))&&(ignoreNrc||!nrcs.length||nrcs.includes(norm(x.nrc)));if(!base)return false;if(vista==='sinTutor')return ['ACTIVO','EN CIERRE'].includes(st)&&!String(x.tutor||'').trim();if(vista==='ceroEstudiantes')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)===0;if(vista==='mas30')return ['ACTIVO','EN CIERRE'].includes(st)&&studentCount(x)>30;return true;});}
+    function reconstruirUniversoDesdeFicha(){
+      const explorando=Object.values(detailFilters).some(Boolean);
+      courses=explorando?allCourses:filterCourses(allCourses);
+    }
+    function updateHeader(list=courses){
+      const tutor=selected(list,'tutor','Varios / No definido');
+      document.getElementById('h-tutor').textContent=tutor;
+      document.getElementById('h-programa').textContent=selected(list,'nombre programa','Múltiples programas');
+      document.getElementById('h-correo').textContent=uniq(list,'tutor').length===1?(EMAILS[norm(tutor)]||'No disponible'):'No disponible';
+      document.getElementById('h-tipo').textContent=selected(list,'tipo','Varios');
+      document.getElementById('h-intake').textContent=selected(list,'intake','Múltiples versiones');
+      document.getElementById('h-facultad').textContent=selected(list,'facultad','Varias');
+      // La cabecera muestra un valor individual solo cuando el conjunto es inequívoco.
+      // Evita atribuir tutor, programa o intake de un NRC a todo el resultado.
+      const contextoUnico=list.length===1;
+      if(!contextoUnico){
+        ['h-tutor','h-programa','h-correo','h-tipo','h-intake','h-facultad'].forEach(id=>{
+          const el=document.getElementById(id);
+          el.classList.remove('header-filter-link','header-filter-active');
+          el.removeAttribute('role');el.removeAttribute('tabindex');
+          el.onclick=null;el.onkeydown=null;el.title='Resumen de los cursos filtrados';
+        });
+        return;
+      }
+      // Con un solo NRC permanecen los enlaces interactivos originales.
+      const reference=list[0];
+      const fields=[
+       ['h-tutor','tutor','tutor'],['h-programa','programa','nombre programa'],
+       ['h-correo','correo',null],['h-tipo','tipo','tipo'],
+       ['h-intake','intake','intake'],['h-facultad','facultad','facultad']
+      ];
+      fields.forEach(([id,key,prop])=>{
+        const el=document.getElementById(id);
+        const value=prop?String(reference?.[prop]||'').trim():String(EMAILS[norm(reference?.tutor)]||'').trim();
+        const display=value||el.textContent;
+        el.textContent=display;
+        el.classList.toggle('header-filter-link',!!value);
+        el.classList.toggle('header-filter-active',!!detailFilters[key]);
+        el.title=value?'Filtrar todos los cursos por '+key+': '+value:'Sin dato para filtrar';
+        el.setAttribute('role','button');el.tabIndex=value?0:-1;
+        const handler=()=>{if(value)aplicarFiltroFicha(key,value)};
+        el.onclick=handler;
+        el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handler()}};
+      });
+    }
+    function badge(state){const s=norm(state);if(s==='PREPARACION')return['PREP','prep'];if(s==='ACTIVO')return['ACTIVO','active'];if(s==='EN CIERRE')return['CIERRE','closing'];if(s==='CERRADO')return['CERRADO','closed-b'];return[state||'—','unknown'];}
+    function action(url,title,icon,enabled=true){return enabled?`<a class="action" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(title)}">${icon}</a>`:'';}
+    function buildIncidentMaps(){const byCourse=new Map();incidents.forEach(i=>{const k=String(i.cursoId??'');if(!byCourse.has(k))byCourse.set(k,[]);byCourse.get(k).push(i)});return byCourse;}
+    function detailFilteredCourses(){
+      // El selector NRC superior del portal determina los cursos visibles.
+      // Si el usuario escribe aquí una búsqueda libre, se puede consultar
+      // el catálogo autorizado sin quedar preso de un NRC inicial.
+      const texto=norm(document.getElementById('search')?.value||'');
+      const ampliarNrc=Boolean(q.get('nrc')&&texto);
+      const base=ampliarNrc?filterCourses(allCourses,{ignoreNrc:true}):courses;
+      return base.filter(x =>
+        (!ampliarNrc||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(texto)) &&
+        (!detailFilters.tutor || norm(x.tutor)===norm(detailFilters.tutor)) &&
+        (!detailFilters.intake || norm(x.intake)===norm(detailFilters.intake)) &&
+        (!detailFilters.estado || norm(x.estado)===norm(detailFilters.estado)) &&
+        (!detailFilters.facultad || norm(x.facultad)===norm(detailFilters.facultad)) &&
+        (!detailFilters.codigo || norm(x['codigo curso'])===norm(detailFilters.codigo)) &&
+        (!detailFilters.programa || norm(x['nombre programa'])===norm(detailFilters.programa)) &&
+        (!detailFilters.tipo || norm(x.tipo)===norm(detailFilters.tipo)) &&
+        (!detailFilters.correo || norm(EMAILS[norm(x.tutor)]||'')===norm(detailFilters.correo))
+      );
+    }
+   function studentsUrl(nrc){
+  const u = new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/BASESEMAFORO_20/Todosloselementos.aspx');
+
+  u.searchParams.set('FilterField1','NRC_COD_CAL_FILTRO');
+  u.searchParams.set('FilterValue1',String(nrc || ''));
+  u.searchParams.set('FilterType1','Text');
+
+  u.searchParams.set('viewid','1f85f1c7-089f-47d6-8635-a2cc761fecc3');
+  u.searchParams.set('env','Embedded');
+
+  return u.href;
+}
+    function intakeCoursesUrl(intake){
+      if(!String(intake||'').trim())return '';
+      const u=new URL('https://unabportal365.sharepoint.com/sites/actasynrc/Lists/NRC_TUTOR_ACTUAL/Vista_version.aspx');
+      u.searchParams.set('viewid','f4c009bb-0552-43a5-9718-9c1d37d8f98b');
+      u.searchParams.set('env','WebViewList');
+      u.searchParams.set('isDlg','1');
+      u.searchParams.set('iframed','1');
+      u.searchParams.set('isfromSharePointTeams','true');
+      u.searchParams.set('FilterField1','field_8');
+      u.searchParams.set('FilterValue1',String(intake).trim());
+      return u.href;
+    }
+    function integrationUrl(nrc){
+      const s=String(nrc||'').split('_'),period=s[s.length-1]||'',crn=s[0]||'';
+      return crn&&period?'https://lms.unab.cl/int-canvas/?'+new URLSearchParams({term_code:period,periodo:period,nrc:crn,nrc_code:crn,crn,NRC:crn}).toString():'';
+    }
+    function powerAppsUrl(x){
+      const u=new URL(POWER_APPS_EDITOR_URL);
+      if(String(x.id||'').trim())u.searchParams.set('ids',String(x.id).trim());
+      return u.toString();
+    }
+    function qa2Url(x){
+      const u=new URL(FORM_URL);
+      if(String(x.id||'').trim())u.searchParams.set(FORM_COURSE_FIELD,String(x.id).trim());
+      return u.toString();
+    }
+    function presentationUrl(x){
+      const p=new URLSearchParams({nombreTutor:x.tutor||'',nombreCurso:x['nombre curso']||'',nrc:x.nrc||'',fechaInicio:x['fecha inicio']||'',fechaFin:x['fecha fin']||''});
+      return BASE+'presentacion_tutorial_innovado.html?'+p.toString();
+    }
+    function announcementUrl(x){
+      const p=new URLSearchParams({nombre_tutor:x.tutor||'',nombre_curso:x['nombre curso']||'',fecha_inicio:fmtDate(x['fecha inicio']),fecha_fin:fmtDate(x['fecha fin'])});
+      return BASE+'anuncio_bienvenida_curso_malla.html?'+p.toString();
+    }
+    function panelLink(url,icon,texto,primary=false){
+      const enabled=Boolean(url);
+      return `<a class="panel-action ${primary?'primary ':''}${enabled?'':'disabled'}" href="${enabled?esc(url):'#'}" ${enabled?'target="_blank" rel="noopener"':''}><span class="pa-icon">${icon}</span><span>${esc(texto)}</span></a>`;
+    }
+    function aplicarFiltroFicha(campo,valor){
+      if(!valor)return;
+      const mismo=norm(detailFilters[campo])===norm(valor);
+      detailFilters[campo]=mismo?'':valor;
+
+      // La ficha se comporta como el Explorador: al navegar por un dato,
+      // el texto de búsqueda deja de limitar el resultado al NRC original.
+      const search=document.getElementById('search');
+      if(search)search.value='';
+      stateFilter='';
+
+      reconstruirUniversoDesdeFicha();
+      render();
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+
+    }
+    function limpiarFiltrosFicha(){
+      Object.keys(detailFilters).forEach(k=>detailFilters[k]='');
+      reconstruirUniversoDesdeFicha();
+      render();
+      const seleccionado=allCourses.find(x=>norm(x.nrc)===norm(selectedCourseNrc));
+
+    }
+    function metaFilterButton(campo,label,valor){
+      if(!valor)return '';
+      const activo=norm(detailFilters[campo])===norm(valor);
+      return `<button type="button" class="course-meta-filter ${activo?'active':''}" title="Filtrar calendario por ${esc(label)}: ${esc(valor)}" onclick="aplicarFiltroFicha('${campo}',decodeURIComponent('${encodeURIComponent(valor)}'))"><span class="course-meta-label">${esc(label)}</span><span class="course-meta-value">${activo?'✓ ':''}${esc(valor)}</span></button>`;
+    }
+    function renderCoursePanel(x){
+      const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
+      if(!x){panel.classList.remove('open');host.innerHTML='';return;}
+      const byCourse=buildIncidentMaps(),inc=byCourse.get(String(x.id))||[];
+      const canvasReg=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
+      const canvasRaw=canvasReg?.urlCanvas??canvasReg?.URL_QA2_FI_Url??canvasReg?.urlQa2FiUrl??canvasReg?.urlQA2FIUrl??'';
+      const canvas=typeof canvasRaw==='object'
+        ? String(canvasRaw.Url??canvasRaw.url??canvasRaw.URL??canvasRaw.href??canvasRaw.Value??canvasRaw.value??'').trim()
+        : String(canvasRaw??'').trim();
+      const incidentCount=inc.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
+      const incidentStatus=norm(x['codigo curso'])==='UNI118'?'NO APLICA':!inc.length?'PENDIENTE QA2':incidentCount?`CON INCIDENCIA (${incidentCount})`:'SIN INCIDENCIA';
+      const incidentUrl='https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc='+encodeURIComponent(x.nrc||'');
+      host.innerHTML=`
+        <div class="course-panel-head">
+          <div>
+            <div class="course-panel-kicker">Accesos y ficha del curso</div>
+            <div class="course-panel-nrc">${esc(x.nrc||'—')}</div>
+            <div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div>
+            <div class="course-meta-grid">
+              ${metaFilterButton('tutor','Tutor',x.tutor||'')}
+              ${metaFilterButton('intake','Intake / Versión',x.intake||'')}
+              ${metaFilterButton('estado','Estado',x.estado||'')}
+              ${metaFilterButton('facultad','Facultad',x.facultad||'')}
+              ${metaFilterButton('codigo','Código curso',x['codigo curso']||'')}
+            </div>
+            ${Object.values(detailFilters).some(Boolean)?'<button type="button" class="course-filter-clear" onclick="limpiarFiltrosFicha()">Quitar filtros aplicados desde la ficha</button>':''}
+          </div>
+          <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
+        </div>
+        <div class="course-panel-body">
+          <div class="panel-section">
+            <div class="panel-section-title">Gestión del curso</div>
+            <div class="panel-actions-grid">
+              ${panelLink(BASE+'nrc_360.html?nrc='+encodeURIComponent(x.nrc||''),'🗂️','Abrir Ficha NRC 360',true)}
+              <button type="button" class="panel-action primary ${String(x.id||'').trim()?'':'disabled'}" onclick="abrirPowerAppsEnFicha()" ${String(x.id||'').trim()?'':'disabled'}><span class="pa-icon">✏️</span><span>Editar curso en Power Apps</span></button>
+              ${panelLink(intakeCoursesUrl(x.intake),'📚','Base de cursos del Intake')}
+              ${panelLink(studentsUrl(x.nrc),'👥','Base Semáforo / estudiantes')}
+            </div>
+          </div>
+          <div class="panel-section">
+            <div class="panel-section-title">Canvas y seguimiento</div>
+            <div class="panel-actions-grid">
+              ${panelLink(canvas,'🎓','Abrir curso en Canvas')}
+              ${panelLink(integrationUrl(x.nrc),'🌐','Verificar integración Canvas')}
+              ${panelLink(incidentUrl,'⚠️','Incidencias / QA2')}
+              ${panelLink(String(x.id||'').trim()?qa2Url(x):'','✅','Formulario QA2')}
+            </div>
+            <div class="panel-status" style="margin-top:7px"><span>Estado QA2 / incidencias</span><strong>${esc(incidentStatus)}</strong></div>
+          </div>
+          <div class="panel-section">
+            <div class="panel-section-title">Acompañamiento y comunicaciones</div>
+            <div class="panel-actions-grid">
+              ${panelLink(presentationUrl(x),'📊','Presentación Tutorial')}
+              ${panelLink(BASE+'comunicaciones_etop.html','✉️','Hub Comunicaciones')}
+              ${panelLink(announcementUrl(x),'📣','Anuncio bienvenida curso')}
+            </div>
+          </div>
+        </div>`;
+      panel.classList.add('open');
+    }
+    function abrirPowerAppsEnFicha(){
+      const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
+      if(!x||!String(x.id||'').trim())return;
+      const panel=document.getElementById('course-panel'),host=document.getElementById('course-panel-content');
+      const url=powerAppsUrl(x);
+      host.innerHTML=`
+        <div class="course-panel-head">
+          <div><div class="course-panel-kicker">Editor Power Apps</div><div class="course-panel-nrc">${esc(x.nrc||'—')}</div><div class="course-panel-course">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</div></div>
+          <button type="button" class="course-panel-close" onclick="cerrarFichaCurso()" title="Cerrar">×</button>
+        </div>
+        <div class="powerapp-panel-view">
+          <div class="powerapp-panel-toolbar">
+            <button type="button" class="powerapp-back" onclick="volverFichaCurso()">← Volver a la ficha</button>
+            <a class="powerapp-external" href="${esc(url)}" target="_blank" rel="noopener">Abrir aparte ↗</a>
+          </div>
+          <div class="powerapp-open-note">Edición del registro seleccionado sin salir de Calendarios.</div>
+          <iframe class="powerapp-iframe" src="${esc(url)}" title="Editor de curso Power Apps" allow="clipboard-read; clipboard-write"></iframe>
+        </div>`;
+      panel.classList.add('open');
+    }
+    function volverFichaCurso(){
+      const x=allCourses.find(c=>norm(c.nrc)===norm(selectedCourseNrc));
+      if(x)renderCoursePanel(x);
+    }
+    function abrirFichaCurso(nrc,event){
+      if(event && event.target.closest('a,button,input'))return;
+      const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));
+      if(!x)return;
+      selectedCourseNrc=x.nrc||'';
+      renderCoursePanel(x);
+      document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
+    }
+    function abrirPowerAppsDesdeTabla(nrc,event){
+      if(event)event.stopPropagation();
+      const x=allCourses.find(c=>norm(c.nrc)===norm(nrc));
+      if(!x||!String(x.id||'').trim())return;
+      selectedCourseNrc=x.nrc||'';
+      document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
+
+      // PRUEBA AISLADA: la acción original de Calendarios permanece sin cambios.
+      // Se usan las mismas IDs de SharePoint, pero en un popup centrado.
+      const modo=document.getElementById('etopPopupModo')?.value||'ver';
+      const ruta=modo==='editar'?'EditForm.aspx':'DispForm.aspx';
+      const url=SP_BASE.replace('DispForm.aspx',ruta)+encodeURIComponent(String(x.id).trim())+'&env=Embedded';
+      const ancho=Math.min(540,Math.max(320,window.screen.availWidth-30));
+      const alto=Math.min(700,Math.max(350,window.screen.availHeight-45));
+      const izquierda=Math.max(0,Math.round(window.screenX+(window.outerWidth-ancho)/2));
+      const arriba=Math.max(0,Math.round(window.screenY+(window.outerHeight-alto)/2));
+      const opciones=['popup=yes','resizable=yes','scrollbars=yes','width='+ancho,'height='+alto,'left='+izquierda,'top='+arriba].join(',');
+      const ventana=window.open(url,'ETOP_Curso_Prueba_Popup',opciones);
+      if(!ventana){
+        alert('El navegador ha bloqueado la ventana emergente. Permite las ventanas del portal ETOP y vuelve a pulsar el lápiz.');
+        return;
+      }
+      try{ventana.opener=null;ventana.focus();}catch(_){}
+    }
+    function cerrarFichaCurso(){
+      selectedCourseNrc='';
+      document.getElementById('course-panel').classList.remove('open');
+      document.getElementById('course-panel-content').innerHTML='';
+      document.querySelectorAll('#rows tr.row-selected').forEach(tr=>tr.classList.remove('row-selected'));
+    }
+
+    function alternarNrc(nrc,checked){
+      const clave=norm(nrc);
+      if(!clave)return;
+      if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
+      actualizarSeleccion();
+    }
+    function alternarTodosVisibles(checked){
+      document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>{
+        if(tr.style.display==='none')return;
+        const clave=norm(decodeURIComponent(tr.dataset.nrc||''));
+        if(!clave)return;
+        if(checked)selectedNrcs.add(clave);else selectedNrcs.delete(clave);
+      });
+      render();
+    }
+    function limpiarSeleccionNrcs(){selectedNrcs.clear();render();}
+    function actualizarSeleccion(){
+      const filas=[...document.querySelectorAll('#rows tr[data-nrc]')].filter(tr=>tr.style.display!=='none');
+      const marcadas=filas.filter(tr=>selectedNrcs.has(norm(decodeURIComponent(tr.dataset.nrc||'')))).length;
+      const todos=document.getElementById('select-visible');
+      todos.checked=filas.length>0&&marcadas===filas.length;
+      todos.indeterminate=marcadas>0&&marcadas<filas.length;
+      document.getElementById('bulk-count').textContent=selectedNrcs.size+' '+(selectedNrcs.size===1?'curso seleccionado':'cursos seleccionados');
+      document.getElementById('bulk-open').disabled=selectedNrcs.size===0;
+      document.getElementById('bulk-clear').disabled=selectedNrcs.size===0;
+    }
+    function abrirSeleccionadosSharePoint(){
+      if(!selectedNrcs.size)return;
+      const valores=[...selectedNrcs].map(k=>allCourses.find(x=>norm(x.nrc)===k)?.nrc).filter(Boolean);
+      if(!valores.length){alert('No se encontraron los NRC seleccionados.');return;}
+      const u=new URL(SP_MULTI_URL);
+      u.searchParams.set('viewid',SP_MULTI_VIEW);
+      u.searchParams.set('env','WebViewList');
+      u.searchParams.set('useFiltersInViewXml','1');
+      u.searchParams.set('FilterFields1','NRC_COD_CAL');
+      u.searchParams.set('FilterValues1',valores.join(';#'));
+      window.open(u.toString(),'_blank','noopener,noreferrer');
+    }
+
+    function filteredByColumns(x){
+      return Object.entries(columnFilters).every(([key,value])=>!value||norm(x[key])===norm(value));
+    }
+    function renderColumnFilters(){ return;
+
+      document.querySelectorAll('th[data-sort]').forEach(th=>{
+        const key=th.dataset.sort;
+        if(!(key in columnFilters))return;
+        let sel=th.querySelector('select.column-filter');
+        if(!sel){
+          sel=document.createElement('select');sel.className='column-filter';
+          sel.setAttribute('aria-label','Filtrar '+key);
+          sel.addEventListener('click',e=>e.stopPropagation());
+          sel.addEventListener('change',e=>{e.stopPropagation();columnFilters[key]=sel.value;render()});
+          th.appendChild(sel);
+        }
+        const current=columnFilters[key];
+        const vals=[...new Set(courses.map(x=>String(x[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+        sel.innerHTML='<option value="">Todos</option>'+vals.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
+        sel.value=current;
+      });
+    }
+    function canvasUrlFromQA(x,byCourse){
+      const inc=byCourse.get(String(x.id))||[];
+      const rec=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
+      const raw=norm(x['codigo curso'])==='UNI118'?(x.URL_CANVAS||x.url_canvas||x['url canvas']||''):(rec?.urlCanvas||rec?.URL_QA2_FI_Url||rec?.urlQa2FiUrl||rec?.urlQA2FIUrl||'');
+      const val=typeof raw==='object'?raw.Url??raw.url??raw.href??raw.Value??'':raw;
+      try{const u=new URL(String(val||''));return u.protocol==='https:'?u.href:''}catch{return ''}
+    }
+    function render(){
+      const byCourse=buildIncidentMaps();const body=document.getElementById('rows');
+      const panelCourses=detailFilteredCourses();
+      updateHeader(panelCourses);updateKPIs(panelCourses);
+      renderColumnFilters();if(!panelCourses.length){body.innerHTML='<tr><td colspan="12" class="empty">No hay cursos para los filtros seleccionados.</td></tr>';document.getElementById('count').textContent='0 cursos';actualizarSeleccion();return;}
+      const shown=sortCourses(panelCourses.filter(x=>!stateFilter||norm(x.estado)===stateFilter));
+      if(shown.length>3000){body.innerHTML=`<tr><td colspan="12"><div class="error"><div style="font-size:35px;margin-bottom:5px">⚠️</div><strong>Demasiados registros (${shown.length.toLocaleString('es-CL')})</strong><div style="font-size:12px;color:#bfc8d5;margin-top:8px">Selecciona un KPI o utiliza los filtros superiores de Gestión para acotar los resultados.</div></div></td></tr>`;document.getElementById('count').textContent='';return;}
+      renderColumnFilters();body.innerHTML=shown.map(x=>{const b=badge(x.estado);const marcado=selectedNrcs.has(norm(x.nrc));const powerAppsAction=String(x.id||'').trim()?`<button type="button" class="action powerapps-table course-icon" aria-label="Editar curso" title="Abrir formulario del curso en Microsoft Lists" onclick="abrirPowerAppsDesdeTabla(decodeURIComponent(this.closest('tr').dataset.nrc),event)">✏️</button>`:'';const canvas=canvasUrlFromQA(x,byCourse);const link=(url,icon,label)=>url?`<a class="action course-icon" href="${esc(url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${label}" aria-label="${label}">${icon}</a>`:`<span class="action course-icon unavailable" title="${label}: enlace no disponible">${icon}</span>`;const actions=`<a class="action course-icon" aria-label="Abrir Ficha 360" title="Abrir Ficha 360" href="${esc(BASE+'nrc_360.html?nrc='+encodeURIComponent(x.nrc||''))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📋</a>${powerAppsAction}${link(integrationUrl(x.nrc),'🌐','Web de integración')}${link(studentsUrl(x.nrc),'👥','Base de estudiantes')}${link(canvas,'🎓','Abrir Canvas')}`;return `<tr class="${norm(x.estado)==='CERRADO'?'closed':''}${norm(x.nrc)===norm(selectedCourseNrc)?' row-selected':''}" data-nrc="${esc(encodeURIComponent(x.nrc||''))}" data-search="${esc(norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')))}"><td class="bulk-select-cell"><input class="bulk-course-check" type="checkbox" aria-label="Seleccionar NRC ${esc(x.nrc||'')}" onchange="alternarNrc(decodeURIComponent(this.closest('tr').dataset.nrc),this.checked)" ${marcado?'checked':''}></td><td><span class="nrc">${esc(x.nrc||'—')}</span></td><td><span class="badge ${b[1]}">${esc(b[0])}</span></td><td class="course" title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</td><td>${esc(x.facultad||'—')}</td><td class="date">${fmtDate(x['fecha inicio'])}</td><td class="date">${fmtDate(x['fecha fin'])}</td><td class="center">${weeks(x['fecha inicio'],x['fecha fin'])}</td><td class="tutor" title="${esc(x.tutor||'')}">${esc(x.tutor||'—')}</td><td>${esc(x.tipo||'—')}</td><td>${esc(x.periodo||'—')}</td><td><div class="actions">${actions}</div></td></tr>`}).join('');updateSortHeaders();applySearch();
+    }
+    function sortCourses(list){return [...list].sort((a,b)=>{let av,bv;if(sortKey==='semanas'){const x=dateValue(a['fecha inicio']),y=dateValue(a['fecha fin']),u=dateValue(b['fecha inicio']),v=dateValue(b['fecha fin']);av=x&&y?y-x:-1;bv=u&&v?v-u:-1}else if(sortKey==='fecha inicio'||sortKey==='fecha fin'){av=dateValue(a[sortKey])?.getTime()||0;bv=dateValue(b[sortKey])?.getTime()||0}else{av=norm(a[sortKey]);bv=norm(b[sortKey])}const c=typeof av==='number'?av-bv:String(av).localeCompare(String(bv),'es',{numeric:true});return sortDir==='asc'?c:-c})}
+    function updateSortHeaders(){document.querySelectorAll('th[data-sort]').forEach(th=>{if(th.dataset.sort===sortKey)th.dataset.dir=sortDir;else delete th.dataset.dir})}
+    function updateKPIs(list=courses){const count=s=>list.filter(x=>norm(x.estado)===s).length;const visibleState=stateFilter?list.filter(x=>norm(x.estado)===stateFilter):list;const n=visibleState.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos visibles`;document.querySelectorAll('.kpi[data-state]').forEach(k=>k.classList.toggle('selected',k.dataset.state===stateFilter));}
+    function applySearch(){const s=norm(document.getElementById('search').value);const rows=[...document.querySelectorAll('#rows tr[data-search]')];let visible=0;rows.forEach(r=>{const ok=!s||r.dataset.search.includes(s);r.style.display=ok?'':'none';if(ok)visible++});document.getElementById('count').textContent=`${visible} de ${rows.length} cursos`;actualizarSeleccion();}
+    function cursosVisibles(){const s=norm(document.getElementById('search').value);return sortCourses(detailFilteredCourses().filter(x=>(!stateFilter||norm(x.estado)===stateFilter)&&(!s||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(s))));}
+    function descargarExcel(){const lista=cursosVisibles();if(!lista.length){alert('No hay cursos visibles para descargar.');return;}const filas=lista.map(x=>({'NRC_COD_CAL':x.nrc||'','ESTADO':x.estado||'','COD_CURSO':x['codigo curso']||'','MATERIA':x.materia||'','NOMBRE_CURSO':x['nombre curso']||'','PROGRAMA':x['nombre programa']||'','FACULTAD':x.facultad||'','FECHA_INICIO':dateISO(x['fecha inicio']),'FECHA_FIN':dateISO(x['fecha fin']),'SEMANAS':weeks(x['fecha inicio'],x['fecha fin']),'TUTOR':x.tutor||'','TIPO_NRC':x.tipo||'','INTAKE_VERSION':x.intake||'','PERIODO':x.periodo||''}));const ws=XLSX.utils.json_to_sheet(filas);ws['!autofilter']={ref:ws['!ref']};ws['!cols']=[{wch:20},{wch:14},{wch:15},{wch:13},{wch:42},{wch:48},{wch:20},{wch:14},{wch:14},{wch:10},{wch:28},{wch:14},{wch:34},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios filtrados');XLSX.writeFile(wb,'Calendarios_ETOP_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx',{compression:true});}
+    document.getElementById('search').addEventListener('input',()=>{
+      // Con entrada NRC desde el portal, buscar siempre en el catálogo
+      // del ámbito autorizado, no solo en las filas precargadas.
+      if(q.get('nrc'))render();else applySearch();
+    });
+    document.querySelectorAll('.kpi[data-state]').forEach(k=>k.addEventListener('click',()=>{stateFilter=k.dataset.state;render()}));
+    document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const key=th.dataset.sort;if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';else{sortKey=key;sortDir='asc'}render()}));
+    function abrirNrcInicialDesdeUrl(){
+      const nrcs=qList('nrc');
+      // La selección múltiple muestra la tabla completa, sin marcar un curso arbitrario.
+      if(nrcs.length!==1)return;
+      const x=allCourses.find(c=>norm(c.nrc)===nrcs[0]);if(!x)return;
+      selectedCourseNrc=x.nrc||'';
+      document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
+    }
+    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
+  </script>
+
+<!-- Sólo en prueba independiente: no pertenece a Calendarios de producción -->
+<div id="etop-test-popup-toolbar" role="region" aria-label="Prueba de ventana SharePoint">
+  <span class="etop-test-tag">PRUEBA AISLADA</span>
+  <strong>Formulario SharePoint en ventana mediana</strong>
+  <label for="etopPopupModo">Al pulsar ✏️:</label>
+  <select id="etopPopupModo" aria-label="Tipo de formulario a probar">
+    <option value="ver">Ver registro (actual)</option>
+    <option value="editar">Editar registro directamente</option>
+  </select>
+  <small>Selecciona un curso en la tabla y pulsa ✏️. Abre un registro institucional real: no guardes cambios si solo estás probando.</small>
+</div>
+<style id="etop-test-popup-style">
+#etop-test-popup-toolbar{position:fixed;z-index:9999;bottom:18px;right:18px;width:min(420px,calc(100vw - 32px));background:#f6f9fd;border:1px solid #bed1e8;color:#163154;box-shadow:0 12px 28px #00152a33;border-radius:12px;padding:12px 14px;font:12px/1.4 Inter,'Segoe UI',Arial,sans-serif;display:grid;gap:5px}
+#etop-test-popup-toolbar strong{font-size:13px}
+#etop-test-popup-toolbar label{font-weight:600}
+#etop-test-popup-toolbar select{width:100%;border:1px solid #9db6d4;border-radius:7px;padding:7px 9px;font:inherit;background:#fff;color:#162a41}
+#etop-test-popup-toolbar small{font-size:11px;line-height:1.4;color:#526981}
+#etop-test-popup-toolbar .etop-test-tag{color:#84610a;background:#f9eab4;justify-self:start;font-weight:800;font-size:10px;padding:3px 7px;border-radius:5px;letter-spacing:.04em}
+@media(max-width:640px){#etop-test-popup-toolbar{bottom:10px;right:10px;max-width:calc(100vw - 20px);padding:8px 10px}}
+</style>
+</body>
+</html>
