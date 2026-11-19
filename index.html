@@ -2730,6 +2730,16 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   font-size:8px;
 }
 </style>
+<style id="etop-vista-coordinacion-20261119">
+/* Alcance de consulta, solo en Sesión ETOP; no se añade a la barra superior. */
+#etop-vista-coord[hidden]{display:none!important}
+#etop-vista-coord{display:flex;flex-direction:column;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}
+#etop-vista-coord label{font-size:9px;line-height:1.25;font-weight:750;color:#f7d96b}
+#etop-vista-coord select{display:block;width:100%;min-width:0;height:30px;border-radius:7px;border:1px solid rgba(154,185,226,.45);background:#1e3454;color:#fff;padding:0 7px;font-size:10px;cursor:pointer;outline-offset:2px}
+#etop-vista-coord select option{background:#183050;color:#fff}
+#etop-vista-coord small{color:#a8bfd6!important;font-size:7.5px!important;line-height:1.3;letter-spacing:0!important;text-transform:none!important}
+@media(max-height:760px) and (min-width:901px){#etop-vista-coord{gap:3px;margin-top:5px;padding-top:5px}#etop-vista-coord select{height:26px}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2773,6 +2783,11 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
     <small>Sesión ETOP</small>
     <b id="sessionTutor">SIN IDENTIFICAR</b>
     <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
+    <div class="etop-vista-coord" id="etop-vista-coord" hidden>
+      <label for="etop-select-coordinacion">Ver cartera de coordinación</label>
+      <select id="etop-select-coordinacion" aria-label="Elegir coordinación para consultar en el Tablero de Gestión" onchange="seleccionarVistaCoordinacionETOP(this.value)"></select>
+      <small>Consulta en Tablero de Gestión · sesión sin cambios</small>
+    </div>
     <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
   </div>
 </aside>
@@ -3521,6 +3536,11 @@ function buildURLFiltrada(clave){
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
+  // Misma técnica de filtro Power BI que los controles superiores.
+  // El selector está abajo en Sesión ETOP y solo modifica el Tablero de Gestión.
+  if(clave==='DASHBOARD'&&esSuperadminVistaETOP()){
+    fx.push("ETOP_Selector_Cartera/Correo eq '"+sanitizarFiltro(vistaCoordinacionETOP())+"'");
+  }
   // En la Ficha del Estudiante solo aplicar RUT; los NRC y demás selecciones
   // conservadas en otros módulos no deben filtrar aquí de forma invisible.
   if(clave==='FICHA_ESTUDIANTE'){
@@ -4907,6 +4927,67 @@ const ETOP_COORD_NOMBRES={
   'tutoriaonline47@unab.cl':'Pablo',
   'coordinaciontutorial@unab.cl':'Coordinación'
 };
+/* Selección del ámbito del informe sin cambiar la cuenta con la que se accede.
+   La autoridad de acceso real permanece en Microsoft / Power BI RLS. */
+const ETOP_SUPERADMIN_VISTA=new Set(['patricio.collao@unab.cl','maria.cruz@unab.cl']);
+const ETOP_SCOPE_PREFIX='etop-vista-coordinacion:';
+function esSuperadminVistaETOP(){
+  const s=sesionGlobalETOP();
+  return s?.rol==='COORDINACION'&&ETOP_SUPERADMIN_VISTA.has(etopEmailNorm(s.email));
+}
+function claveVistaCoordinacionETOP(){
+  return ETOP_SCOPE_PREFIX+etopEmailNorm(sesionGlobalETOP()?.email);
+}
+function vistaCoordinacionETOP(){
+  if(!esSuperadminVistaETOP())return '__MI__';
+  let v='__MI__';
+  try{v=localStorage.getItem(claveVistaCoordinacionETOP())||'__MI__'}catch(_){}
+  return (v==='__MI__'||v==='__TODAS__'||ETOP_COORDINACION.has(v))?v:'__MI__';
+}
+function nombreCoordinadorETOP(correo){
+  if(ETOP_COORD_NOMBRES[correo])return ETOP_COORD_NOMBRES[correo];
+  const alias=Object.keys(TC).find(n=>etopEmailNorm(TC[n])===correo);
+  if(alias)return alias.toLocaleLowerCase('es').replace(/(^|\s)\S/g,v=>v.toUpperCase());
+  return correo.split('@')[0];
+}
+function actualizarVistaCoordinacionETOP(){
+  const panel=document.getElementById('etop-vista-coord');
+  const select=document.getElementById('etop-select-coordinacion');
+  if(!panel||!select)return;
+  const habilitado=esSuperadminVistaETOP();
+  panel.hidden=!habilitado;
+  if(!habilitado)return;
+  const usuario=etopEmailNorm(sesionGlobalETOP()?.email);
+  const destino=vistaCoordinacionETOP();
+  const opciones=[
+    {v:'__MI__',t:'Mi coordinación'},
+    {v:'__TODAS__',t:'Toda la gestión ETOP'},
+    ...[...ETOP_COORDINACION]
+      .filter(e=>e!==usuario&&e!=='coordinaciontutorial@unab.cl')
+      .map(e=>({v:e,t:'Ver: '+nombreCoordinadorETOP(e)}))
+      .sort((a,b)=>a.t.localeCompare(b.t,'es'))
+  ];
+  // La lista es fija por sesión. Evitar reconstruirla al cambiar filtros.
+  if(select.dataset.usuario!==usuario||select.options.length!==opciones.length){
+    select.replaceChildren();
+    for(const o of opciones){
+      const opt=document.createElement('option');
+      opt.value=o.v;opt.textContent=o.t;select.appendChild(opt);
+    }
+    select.dataset.usuario=usuario;
+  }
+  select.value=destino;
+}
+function seleccionarVistaCoordinacionETOP(valor){
+  if(!esSuperadminVistaETOP())return;
+  const v=String(valor||'');
+  if(v!=='__MI__'&&v!=='__TODAS__'&&!ETOP_COORDINACION.has(v))return;
+  const anterior=vistaCoordinacionETOP();
+  try{localStorage.setItem(claveVistaCoordinacionETOP(),v)}catch(_){}
+  actualizarVistaCoordinacionETOP();
+  // Solo reabrir el informe actualmente visible; no recargar todo el portal.
+  if(v!==anterior&&vistaActual==='DASHBOARD')actualizarIframe();
+}
 function nombreSaludoETOP(s){
   if(!s)return '';
   if(s.rol==='TUTOR'&&s.tutor){
@@ -4983,7 +5064,7 @@ function guardarSesionETOP(){
 }
 function actualizarSesionETOPUI(){
   const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
-  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';actualizarSaludoBanner();return}
+  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';actualizarVistaCoordinacionETOP();actualizarSaludoBanner();return}
   st.classList.remove('off');
   if(s.rol==='TUTOR'){
     const tutores=tutoresSesionETOP();
@@ -4993,6 +5074,7 @@ function actualizarSesionETOPUI(){
     btn.textContent='👤 Cambiar sesión'
   }
   else{box.textContent='COORDINACIÓN';st.textContent='● COORDINACIÓN';btn.textContent='👤 Cambiar sesión'}
+  actualizarVistaCoordinacionETOP();
   actualizarSaludoBanner();
 }
 
