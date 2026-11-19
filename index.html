@@ -2650,6 +2650,86 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   .top-summary .top-col-right .etop-home-links button{min-height:52px;height:52px}
 }
 </style>
+
+<style id="etop-portada-ajuste-resumen-20261119">
+/* Inicio ETOP · el espacio sobrante se asigna a KPI/calendario, no a los accesos.
+   La disposición apilada en pantallas pequeñas se mantiene. */
+@media (min-width:981px){
+  .top-summary{align-items:stretch}
+  .top-summary .top-col-right{
+    align-self:stretch;
+    align-content:stretch;
+    grid-template-rows:minmax(0,1fr) max-content;
+    min-height:0;
+  }
+  .top-summary .top-col-right > .resumen-carga-json-card{
+    height:auto;
+    max-height:none;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-self:stretch;
+  }
+  .top-summary .top-col-right > .resumen-carga-json-card > .card-head{
+    flex:0 0 auto;
+  }
+  .top-summary .top-col-right > .resumen-carga-json-card > .card-body{
+    flex:1 1 auto;
+    height:auto;
+    min-height:0;
+    display:flex;
+  }
+  .top-summary .resumen-carga-split{
+    flex:1 1 auto;
+    height:auto;
+    min-height:0;
+  }
+  .top-summary .top-col-right > .etop-home-links-card{
+    align-self:stretch;
+    display:block;
+  }
+  .top-summary .top-col-right > .etop-home-links-card > .card-body{
+    display:block;
+    flex:none;
+  }
+}
+
+/* Días del calendario: contraste más alto, sin alterar su estructura. */
+.resumen-cal-dias span{
+  color:#304e73;
+  font-size:9px;
+  font-weight:800;
+}
+.resumen-cal-day{
+  color:#193d66;
+  font-weight:750;
+  font-size:9px;
+}
+.resumen-cal-day > span:first-child{
+  color:#193d66;
+  font-weight:800;
+  font-size:9px;
+}
+.resumen-cal-day.has-starts > span:first-child{
+  color:#114ca2;
+  font-weight:900;
+}
+.resumen-cal-day.is-today{
+  border-color:#8db5e8;
+}
+.resumen-cal-day.is-today > span:first-child{
+  color:#1649ad;
+  font-weight:900;
+}
+.resumen-cal-day.is-outside{
+  opacity:.38;
+}
+.resumen-cal-count{
+  background:#1d55bc;
+  color:#fff;
+  font-size:8px;
+}
+</style>
 </head>
 <body>
 <div class="app">
