@@ -3075,7 +3075,7 @@ const POWERBI_EXPORT_PAGE='2d86150621aea66632a5';
 const POWERBI_SERVICE_REPORT='https://app.powerbi.com/groups/308deb6f-aa2f-4c21-b5fb-33b977c17e13/reports/66b1fc8c-00c8-44f3-b327-890f57f3c7b8/';
 
 const urlsBase={
-  DASHBOARD:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'a90b3a4c28d3179b1fae',filtroRut:true},
+  DASHBOARD:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'a90b3a4c28d3179b1fae',coordinacionPage:'115c61fa09c5b945abb3',filtroRut:true},
   DASHBOARD_EXPORT:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'2d86150621aea66632a5',filtroRut:true},
   NOMINA_ESTUDIANTES:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'255c88d86191d22dd1c3',filtroRut:true},
   CURSOS_ACTIVOS:{reportId:'66b1fc8c-00c8-44f3-b327-890f57f3c7b8',page:'9df5f2db687d901b71b9',filtroRut:false},
@@ -3511,7 +3511,13 @@ function buildURLFiltrada(clave){
   url.searchParams.set('reportId',cfg.reportId);
   url.searchParams.set('groupId','308deb6f-aa2f-4c21-b5fb-33b977c17e13');
   url.searchParams.set('ctid','8fbed393-d03b-49f8-be79-cd5e1f590fb2');
-  url.searchParams.set('autoAuth','true');url.searchParams.set('pageName',cfg.page);
+  url.searchParams.set('autoAuth','true');
+  // La tabla DAX de Coordinación se encuentra en una página propia del mismo informe.
+  // Tutoras y otros roles conservan el Dashboard habitual; la exportación no cambia.
+  const esDashboardCoordinacion=clave==='DASHBOARD'
+    && sesionGlobalETOP()?.rol==='COORDINACION'
+    && Boolean(cfg.coordinacionPage);
+  url.searchParams.set('pageName',esDashboardCoordinacion?cfg.coordinacionPage:cfg.page);
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
