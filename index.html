@@ -2599,6 +2599,57 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
 .etop-agenda-panel .etop-agenda-other{background:#eef4fb;color:#23476f;border:1px solid #d9e5f2;}
 .etop-agenda-panel .etop-agenda-note{font-size:11px;line-height:1.45;color:#6b7d91;margin:12px 0 0;}
 </style>
+
+<style>
+/* Portada ETOP · accesos rápidos compactos (solo estas cinco tarjetas). */
+.top-summary .etop-home-links-card > .card-body{
+  padding:8px 10px;
+}
+.top-summary .etop-home-links{
+  display:grid;
+  width:100%;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+  align-content:start;
+}
+.top-summary .top-col-right .etop-home-links button{
+  box-sizing:border-box;
+  height:54px;
+  min-height:54px;
+  padding:6px 7px;
+  border-radius:8px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:hidden;
+}
+.top-summary .etop-home-links button span{
+  font-size:14px;
+  line-height:1;
+  margin:0 0 4px;
+}
+.top-summary .top-col-right .etop-home-links button b{
+  display:block;
+  font-size:9.5px;
+  line-height:1.12;
+  font-weight:700;
+  overflow-wrap:anywhere;
+}
+@media(min-width:1501px) and (min-height:821px){
+  /* Evitar que la alineación con Power BI estire estas tarjetas en vertical. */
+  .top-summary .top-col-right{grid-template-rows:auto max-content}
+  .top-summary .top-col-right > .etop-home-links-card{align-self:start}
+  .top-summary .top-col-right > .etop-home-links-card > .card-body{
+    flex:initial;
+    display:block;
+  }
+}
+@media(max-width:560px){
+  .top-summary .etop-home-links{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))}
+  .top-summary .top-col-right .etop-home-links button{min-height:52px;height:52px}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -2857,9 +2908,9 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
   <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span></div>
-</div></div></div></section><section class="card">
+</div></div></div></section><section class="card etop-home-links-card">
   <div class="card-body">
-    <div class="quick" style="grid-template-columns:repeat(5,1fr)">
+    <div class="quick etop-home-links">
       <button onclick="openIncidenciasStudio(findBtn('COORD_INCIDENCIAS'))"><span>🧪</span><b>Gestión QA2</b></button>
       <button onclick="openLocal('comunicaciones_etop.html','Comunicaciones',this)"><span>📣</span><b>Comunicaciones</b></button>
       <button onclick="openLocal('aplicaciones.html','Aplicaciones',this)"><span>🧩</span><b>Aplicaciones</b></button>
