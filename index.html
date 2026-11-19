@@ -4172,7 +4172,8 @@ function refrescarFocoDia(){
 
 
 /* ===== Mini calendario de inicios · SOLO tarjeta Resumen carga tutorial =====
-   Usa el catálogo JSON ya cargado. No toca KPI, Power BI ni los archivos JSON. */
+   Incluye fechas históricas y futuras del catálogo JSON, según sesión.
+   No toca KPI, Power BI ni los archivos JSON. */
 const resumenCalHoy=new Date();
 let resumenCalAnio=resumenCalHoy.getFullYear();
 let resumenCalMesIndice=resumenCalHoy.getMonth();
@@ -4187,14 +4188,13 @@ function cursosInicioVisiblesResumen(){
   if(!esTutor&&!esCoordinador)return [];
   if(esTutor&&!tutoresPermitidos.size)return [];
   if(esCoordinador&&!correoCoordinacion)return [];
-  const hoy=fechaHoyETOP();
   const vistos=new Set();
   return catalogoNRC.filter(c=>{
     const nrc=String(c.nrc||'').trim();
     const fecha=fechaISO(c['fecha inicio']);
-    if(!nrc||!fecha||fecha<hoy)return false;
-    const estado=resumenCargaNorm(c.estado);
-    if(estado!=='PREPARACION' && !(fecha===hoy&&estado==='ACTIVO'))return false;
+    // Mostrar cualquier inicio registrado, pasado, presente o futuro,
+    // sin excluir cursos por su estado (Preparación, Activo, Cierre o Cerrado).
+    if(!nrc||!fecha)return false;
     if(esTutor&&!tutoresPermitidos.has(resumenCargaNorm(c.tutor)))return false;
     if(esCoordinador&&!String(c.coordinadores||'').split(';')
       .some(correo=>etopEmailNorm(correo)===correoCoordinacion))return false;
@@ -4236,7 +4236,7 @@ function refrescarInicioResumenCalendario(){
     const fuera=d.getMonth()!==mesActual;
     const cantidad=fuera?0:conteos.get(fechaISOdia)||0;
     const fechaVisible=new Intl.DateTimeFormat('es-CL',{dateStyle:'full'}).format(d);
-    const titulo=cantidad?fechaVisible+': '+cantidad+' cursos por iniciar. Abrir Calendarios.':fechaVisible+': sin cursos por iniciar.';
+    const titulo=cantidad?fechaVisible+': '+cantidad+(cantidad===1?' curso con inicio registrado. Abrir Calendarios.':' cursos con inicio registrado. Abrir Calendarios.'):fechaVisible+': sin cursos con fecha de inicio.';
     dias.push('<button type="button" class="resumen-cal-day'+(fuera?' is-outside':'')+
       (fechaISOdia===hoy?' is-today':'')+(cantidad?' has-starts':'')+
       '" '+(cantidad?'onclick="abrirInicioResumenCalendarioDia(\''+fechaISOdia+'\')"':'disabled')+
@@ -4247,7 +4247,7 @@ function refrescarInicioResumenCalendario(){
   host.innerHTML=dias.join('');
   const sesion=sesionGlobalETOP();
   if(contexto)contexto.textContent=!sesion?'Identifícate para ver inicios':
-    sesion.rol==='COORDINACION'?'Inicios de tu coordinación':'Inicios de tus cursos';
+    sesion.rol==='COORDINACION'?'Todos los inicios · tu coordinación':'Todos los inicios · tus cursos';
 }
 function abrirInicioResumenCalendarioDia(iso){
   const seleccion=cursosInicioDiaResumen(iso);
