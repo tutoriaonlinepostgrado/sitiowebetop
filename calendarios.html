@@ -147,6 +147,7 @@
 .header-filter-link{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}.header-filter-active{background:#fff3cd;border-radius:3px}th:last-child,td:last-child{width:335px!important;min-width:335px!important;max-width:335px!important;overflow:visible!important}.actions{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;justify-content:flex-start!important;align-items:center!important;min-width:315px!important}.actions .action{position:static!important;flex:0 0 auto!important;white-space:nowrap!important;min-width:unset!important;transform:none!important}.actions .action-text{padding:4px 6px!important;font-size:10px!important}.actions .course-icon{width:29px!important;min-width:29px!important;max-width:29px!important;padding:0!important}.table-wrap{overflow-x:auto!important}table{min-width:1700px!important}
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
 <style>
 /* ===== Tabla calendarios responsiva V2 · 20260924 ===== */
@@ -352,6 +353,42 @@
   .calendar-workspace .bulk-select-col,.calendar-workspace .bulk-select-cell{min-width:0!important;width:3%!important}
 }
 </style>
+
+<style>
+/* Fusión funcional de Cursos por iniciar en Calendarios: sin reemplazar la tabla. */
+.summary-intro{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;min-width:0}
+.summary-copy{min-width:125px}
+.nomina-switch{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
+.nomina-switch button{height:26px;padding:0 9px;border-radius:6px;border:1px solid #c7d9e8;background:#eef5fb;color:#315f86;font:700 10px "Segoe UI",Arial,sans-serif;cursor:pointer;white-space:nowrap}
+.nomina-switch button:hover{background:#dcebf7}
+.nomina-switch button.active{background:#315f86;color:#fff;border-color:#315f86}
+.btn-export-inicios{height:27px;background:#edf8f1;color:#246340;border:1px solid #8fb39f;font-size:10px}
+.btn-export-inicios:hover:not(:disabled){background:#dff2e6;border-color:#659177}
+.btn-export-inicios:disabled{opacity:.55;cursor:wait}
+.calendar-workspace a.nrc-web{display:inline-block;text-decoration:none;cursor:pointer}
+.calendar-workspace a.nrc-web:hover{background:#dbe8f5;color:#174f81;text-decoration:underline}
+.calendar-workspace td:last-child .actions .action-students{font-size:9px!important;font-weight:800!important;letter-spacing:-.35px;font-variant-numeric:tabular-nums}
+.calendar-workspace td:last-child .actions .action-students-empty{background:#f7dce2;color:#9a1730;border-color:#e9acba}
+.calendar-workspace td:last-child .actions .action-incidencia{font-size:10px!important;font-weight:900!important}
+.calendar-workspace td:last-child .actions .incident-na{font-size:8px!important;background:#e7eaee;color:#64748b}
+.calendar-workspace td:last-child .actions .incident-pending,.calendar-workspace td:last-child .actions .incident-alert{background:#f7dce2;color:#9a1730;border-color:#e9acba}
+.calendar-workspace td:last-child .actions .incident-ok{background:#d5eee2;color:#0b6541;border-color:#b9dfcf}
+@media(min-width:1100px){
+  .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:16%!important}
+  .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:13%!important;min-width:0!important;max-width:none!important}
+  .calendar-workspace td:last-child .actions .action{flex:0 1 21px!important;min-width:0!important}
+}
+@media(min-width:760px) and (max-width:1180px){
+  .calendar-workspace th:nth-child(2),.calendar-workspace td:nth-child(2){width:13%!important}
+  .calendar-workspace th:nth-child(4),.calendar-workspace td:nth-child(4){width:17%!important}
+  .calendar-workspace th:nth-child(12),.calendar-workspace td:nth-child(12){width:11%!important}
+  .calendar-workspace td:last-child .actions .action{flex:0 1 18px!important;min-width:0!important}
+  .summary-intro{gap:4px 7px}
+  .nomina-switch button{height:23px;padding:0 6px;font-size:9px}
+  .btn-export-inicios{height:24px;padding:0 6px;font-size:9px}
+}
+@media(max-width:759px){.summary-row{align-items:flex-start}.nomina-switch button{font-size:9px}}
+</style>
 </head>
 <body>
   <div id="drill-context" class="drill-context"><div class="drill-context-main"><strong>Detalle desde Carga Tutorial</strong><div id="drill-context-text" class="drill-context-text"></div></div><button type="button" class="drill-back" onclick="volverCargaTutorial()">← Volver a Carga Tutorial</button></div>
@@ -370,7 +407,15 @@
 
   <section class="summary">
     <div class="summary-row">
-      <div><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
+      <div class="summary-intro">
+          <div class="summary-copy"><div class="summary-title">Resumen de Cursos</div><div class="summary-sub" id="subtitle">ETOP · cargando cursos…</div></div>
+          <div class="nomina-switch" id="nominaSwitch" role="group" aria-label="Filtrar cursos por nómina">
+            <button type="button" class="active" data-nomina="TODOS" aria-pressed="true">Todos</button>
+            <button type="button" data-nomina="FALTA_NOMINA" aria-pressed="false">Falta nómina</button>
+            <button type="button" data-nomina="CON_ESTUDIANTES" aria-pressed="false">Con estudiantes</button>
+          </div>
+          <button class="btn-export btn-export-inicios" type="button" id="exportIniciosBtn" onclick="descargarExcelIniciosCalendarios()">📥 Excel · Inicios</button>
+        </div>
       <div class="kpis">
         <div class="kpi" data-state="PREPARACION"><div class="kpi-v" style="color:#9bafc8" id="k-prep">0</div><div class="kpi-l">Prep.</div></div>
         <div class="kpi" data-state="ACTIVO"><div class="kpi-v" style="color:#75b79c" id="k-active">0</div><div class="kpi-l">Activos</div></div>
@@ -405,7 +450,7 @@
     const EMAILS={
       'HANS NOVAKOVIC':'tutoriaonline45@unab.cl','KIMBERLY JORQUERA':'tutoriaonline52@unab.cl','MARTA GONZALEZ':'marta.gonzalez@unab.cl','DANITZA JANSEN':'danitza.jansen@unab.cl','SYLVIA VALENZUELA':'sylvia.valenzuela@unab.cl','PAULA PARDO':'tutoriaonline82@unab.cl','MARIA FERNANDA GONZALEZ':'tutoriaonline41@unab.cl','BARBARA ROJAS':'barbara.rojas.c@unab.cl','CONSTANZA CONTRERAS':'tutoriaonline56@unab.cl','CARLA PENA':'tutoriaonline54@unab.cl','NOEMI PAZ':'tutoriaonline08@unab.cl','ORIETTA CORTES':'tutoriaonline04@unab.cl','HECTOR TAPIA':'tutoriaonline23@unab.cl','CONSUELO PARGA':'tutoriaonline70@unab.cl','FRANCISCA INDA':'tutoriaonline75@unab.cl','JAVIERA ROJAS':'tutoriaonline76@unab.cl','ALYSON HERNANDEZ':'tutoriaonline72@unab.cl'
     };
-    const q=new URLSearchParams(location.search);let courses=[];let incidents=[];let metrics=[];let metricMap=new Map();let stateFilter='';let sortKey='fecha inicio';let sortDir='asc';
+    const q=new URLSearchParams(location.search);let courses=[];let incidents=[];let metrics=[];let metricMap=new Map();let nomina='TODOS';let stateFilter='';let sortKey='fecha inicio';let sortDir='asc';
     const POWER_APPS_EDITOR_URL='https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/8d0fd473-95da-45be-8063-4cfebbbd6624?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=569d2eab-588c-420b-a88c-0a856ee224db';
     const FORM_URL='https://forms.office.com/Pages/ResponsePage.aspx?id=k9O-jzvQ-Em-ec1eH1kPsi4Tyu2CVbdJuVyBPGyJtFxURVA0Q00wRFcxNzJUVE9GWkpVQ0E4S0hQVi4u';
     const FORM_COURSE_FIELD='rad59c96540044fd99690c7a9ce42bca3';
@@ -419,6 +464,10 @@
     const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     function studentCount(x){return Number(metricMap.get(norm(x.nrc))||0)}
+    function cumpleFiltroNomina(x){
+  const total=studentCount(x);
+  return nomina==='TODOS'||(nomina==='FALTA_NOMINA'&&total===0)||(nomina==='CON_ESTUDIANTES'&&total>0);
+}
     function volverCargaTutorial(){location.href=q.get('retorno')||'carga_tutorial.html?embedded=1'}
     function renderDrillContext(){if(q.get('origen')!=='carga_tutorial')return;const box=document.getElementById('drill-context'),txt=document.getElementById('drill-context-text');const parts=[];const labels={facultad:'Facultad',tutor:'Tutor',tipo:'Tipo',estado:'Estado',intake:'Intake',codigo:'Código',programa:'Programa',fechaInicio:'Fecha',fechaDesde:'Desde',fechaHasta:'Hasta'};Object.entries(labels).forEach(([key,label])=>{const v=q.get(key);if(v)parts.push(`${label}: ${v.replace(/\|/g,' · ')}`)});const vistas={sinTutor:'Cursos sin tutor',ceroEstudiantes:'Cursos con 0 estudiantes',mas30:'Cursos con más de 30 estudiantes'};if(q.get('vista')&&vistas[q.get('vista')])parts.push(vistas[q.get('vista')]);if(q.get('nrc'))parts.push(`NRC: ${q.get('nrc')}`);txt.textContent=parts.length?parts.join(' · '):'Detalle filtrado desde Carga Tutorial';box.classList.add('show')}
     const uniq=(arr,key)=>[...new Set(arr.map(x=>String(x[key]??'').trim()).filter(Boolean))];
@@ -742,6 +791,29 @@
         sel.value=current;
       });
     }
+    function incidenciaTextoCalendarios(x,byCourse){
+  if(norm(x['codigo curso'])==='UNI118')return {t:'NO APLICA',icon:'N/A',kind:'incident-na'};
+  const arr=byCourse.get(String(x.id))||[];
+  if(!arr.length)return {t:'PENDIENTE DE QA2',icon:'!',kind:'incident-pending'};
+  const n=arr.filter(i=>norm(i.qaIncidencias)==='CON INCIDENCIA').length;
+  if(n)return {t:'CON INCIDENCIA ('+n+')',icon:String(n),kind:'incident-alert'};
+  return {t:'SIN INCIDENCIA',icon:'✓',kind:'incident-ok'};
+}
+    function accionesFusionCalendarios(x,byCourse){
+  const total=studentCount(x);
+  const etiquetaEst=total===0?'Sin nómina / 0 estudiantes':'Ver '+total.toLocaleString('es-CL')+' estudiantes';
+  const students=`<a class="action course-icon action-students ${total===0?'action-students-empty':''}" href="${esc(studentsUrl(x.nrc))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${esc(etiquetaEst)} · Abrir base de estudiantes" aria-label="${esc(etiquetaEst)}">${total.toLocaleString('es-CL')}</a>`;
+  const estado=incidenciaTextoCalendarios(x,byCourse);
+  const urlInc='https://tutoriaonlinepostgrado.github.io/etop-incidencias-app/?nrc='+encodeURIComponent(x.nrc||'');
+  const incidence=estado.kind==='incident-na'
+    ?`<span class="action course-icon action-incidencia ${estado.kind}" title="${esc(estado.t)}" aria-label="${esc(estado.t)}">${esc(estado.icon)}</span>`
+    :`<a class="action course-icon action-incidencia ${estado.kind}" href="${esc(urlInc)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${esc(estado.t)} · Ver incidencias del NRC" aria-label="${esc(estado.t)} · Ver incidencias del NRC">${esc(estado.icon)}</a>`;
+  const integracion=integrationUrl(x.nrc);
+  const nrc=integracion
+    ?`<a class="nrc nrc-web" href="${esc(integracion)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Abrir Web de integración del NRC ${esc(x.nrc||'')}">${esc(x.nrc||'—')}</a>`
+    :`<span class="nrc">${esc(x.nrc||'—')}</span>`;
+  return {students,incidence,nrc};
+}
     function canvasUrlFromQA(x,byCourse){
       const inc=byCourse.get(String(x.id))||[];
       const rec=inc.find(i=>i.urlCanvas||i.URL_QA2_FI_Url||i.urlQa2FiUrl||i.urlQA2FIUrl);
@@ -751,19 +823,201 @@
     }
     function render(){
       const byCourse=buildIncidentMaps();const body=document.getElementById('rows');
-      const panelCourses=detailFilteredCourses();
+      const panelCourses=detailFilteredCourses().filter(cumpleFiltroNomina);
       updateHeader(panelCourses);updateKPIs(panelCourses);
       renderColumnFilters();if(!panelCourses.length){body.innerHTML='<tr><td colspan="12" class="empty">No hay cursos para los filtros seleccionados.</td></tr>';document.getElementById('count').textContent='0 cursos';actualizarSeleccion();return;}
       const shown=sortCourses(panelCourses.filter(x=>!stateFilter||norm(x.estado)===stateFilter));
       if(shown.length>3000){body.innerHTML=`<tr><td colspan="12"><div class="error"><div style="font-size:35px;margin-bottom:5px">⚠️</div><strong>Demasiados registros (${shown.length.toLocaleString('es-CL')})</strong><div style="font-size:12px;color:#bfc8d5;margin-top:8px">Selecciona un KPI o utiliza los filtros superiores de Gestión para acotar los resultados.</div></div></td></tr>`;document.getElementById('count').textContent='';return;}
-      renderColumnFilters();body.innerHTML=shown.map(x=>{const b=badge(x.estado);const marcado=selectedNrcs.has(norm(x.nrc));const powerAppsAction=String(x.id||'').trim()?`<button type="button" class="action powerapps-table course-icon" aria-label="Editar curso" title="Abrir formulario del curso en Microsoft Lists" onclick="abrirPowerAppsDesdeTabla(decodeURIComponent(this.closest('tr').dataset.nrc),event)">✏️</button>`:'';const canvas=canvasUrlFromQA(x,byCourse);const link=(url,icon,label)=>url?`<a class="action course-icon" href="${esc(url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${label}" aria-label="${label}">${icon}</a>`:`<span class="action course-icon unavailable" title="${label}: enlace no disponible">${icon}</span>`;const actions=`<a class="action course-icon" aria-label="Abrir Ficha 360" title="Abrir Ficha 360" href="${esc(BASE+'nrc_360.html?nrc='+encodeURIComponent(x.nrc||''))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📋</a>${powerAppsAction}${link(integrationUrl(x.nrc),'🌐','Web de integración')}${link(studentsUrl(x.nrc),'👥','Base de estudiantes')}${link(canvas,'🎓','Abrir Canvas')}`;return `<tr class="${norm(x.estado)==='CERRADO'?'closed':''}${norm(x.nrc)===norm(selectedCourseNrc)?' row-selected':''}" data-nrc="${esc(encodeURIComponent(x.nrc||''))}" data-search="${esc(norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')))}"><td class="bulk-select-cell"><input class="bulk-course-check" type="checkbox" aria-label="Seleccionar NRC ${esc(x.nrc||'')}" onchange="alternarNrc(decodeURIComponent(this.closest('tr').dataset.nrc),this.checked)" ${marcado?'checked':''}></td><td><span class="nrc">${esc(x.nrc||'—')}</span></td><td><span class="badge ${b[1]}">${esc(b[0])}</span></td><td class="course" title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</td><td>${esc(x.facultad||'—')}</td><td class="date">${fmtDate(x['fecha inicio'])}</td><td class="date">${fmtDate(x['fecha fin'])}</td><td class="center">${weeks(x['fecha inicio'],x['fecha fin'])}</td><td class="tutor" title="${esc(x.tutor||'')}">${esc(x.tutor||'—')}</td><td>${esc(x.tipo||'—')}</td><td>${esc(x.periodo||'—')}</td><td><div class="actions">${actions}</div></td></tr>`}).join('');updateSortHeaders();applySearch();
+      renderColumnFilters();body.innerHTML=shown.map(x=>{const b=badge(x.estado);const marcado=selectedNrcs.has(norm(x.nrc));const powerAppsAction=String(x.id||'').trim()?`<button type="button" class="action powerapps-table course-icon" aria-label="Editar curso" title="Abrir formulario del curso en Microsoft Lists" onclick="abrirPowerAppsDesdeTabla(decodeURIComponent(this.closest('tr').dataset.nrc),event)">✏️</button>`:'';const canvas=canvasUrlFromQA(x,byCourse);const link=(url,icon,label)=>url?`<a class="action course-icon" href="${esc(url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${label}" aria-label="${label}">${icon}</a>`:`<span class="action course-icon unavailable" title="${label}: enlace no disponible">${icon}</span>`;const fusion=accionesFusionCalendarios(x,byCourse);const actions=`<a class="action course-icon" aria-label="Abrir Ficha 360" title="Abrir Ficha 360" href="${esc(BASE+'nrc_360.html?nrc='+encodeURIComponent(x.nrc||''))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📋</a>${powerAppsAction}${link(integrationUrl(x.nrc),'🌐','Web de integración')}${fusion.students}${link(canvas,'🎓','Abrir Canvas')}${fusion.incidence}`;return `<tr class="${norm(x.estado)==='CERRADO'?'closed':''}${norm(x.nrc)===norm(selectedCourseNrc)?' row-selected':''}" data-nrc="${esc(encodeURIComponent(x.nrc||''))}" data-search="${esc(norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')))}"><td class="bulk-select-cell"><input class="bulk-course-check" type="checkbox" aria-label="Seleccionar NRC ${esc(x.nrc||'')}" onchange="alternarNrc(decodeURIComponent(this.closest('tr').dataset.nrc),this.checked)" ${marcado?'checked':''}></td><td>${fusion.nrc}</td><td><span class="badge ${b[1]}">${esc(b[0])}</span></td><td class="course" title="${esc(x['nombre curso']||'')}">${esc(String(x['nombre curso']||'—').replace(/\*/g,''))}</td><td>${esc(x.facultad||'—')}</td><td class="date">${fmtDate(x['fecha inicio'])}</td><td class="date">${fmtDate(x['fecha fin'])}</td><td class="center">${weeks(x['fecha inicio'],x['fecha fin'])}</td><td class="tutor" title="${esc(x.tutor||'')}">${esc(x.tutor||'—')}</td><td>${esc(x.tipo||'—')}</td><td>${esc(x.periodo||'—')}</td><td><div class="actions">${actions}</div></td></tr>`}).join('');updateSortHeaders();applySearch();
     }
     function sortCourses(list){return [...list].sort((a,b)=>{let av,bv;if(sortKey==='semanas'){const x=dateValue(a['fecha inicio']),y=dateValue(a['fecha fin']),u=dateValue(b['fecha inicio']),v=dateValue(b['fecha fin']);av=x&&y?y-x:-1;bv=u&&v?v-u:-1}else if(sortKey==='fecha inicio'||sortKey==='fecha fin'){av=dateValue(a[sortKey])?.getTime()||0;bv=dateValue(b[sortKey])?.getTime()||0}else{av=norm(a[sortKey]);bv=norm(b[sortKey])}const c=typeof av==='number'?av-bv:String(av).localeCompare(String(bv),'es',{numeric:true});return sortDir==='asc'?c:-c})}
     function updateSortHeaders(){document.querySelectorAll('th[data-sort]').forEach(th=>{if(th.dataset.sort===sortKey)th.dataset.dir=sortDir;else delete th.dataset.dir})}
     function updateKPIs(list=courses){const count=s=>list.filter(x=>norm(x.estado)===s).length;const visibleState=stateFilter?list.filter(x=>norm(x.estado)===stateFilter):list;const n=visibleState.length;document.getElementById('k-prep').textContent=count('PREPARACION').toLocaleString('es-CL');document.getElementById('k-active').textContent=count('ACTIVO').toLocaleString('es-CL');document.getElementById('k-closing').textContent=count('EN CIERRE').toLocaleString('es-CL');document.getElementById('k-closed').textContent=count('CERRADO').toLocaleString('es-CL');document.getElementById('k-total').textContent=n.toLocaleString('es-CL');document.getElementById('subtitle').textContent=`ETOP · ${n.toLocaleString('es-CL')} cursos visibles`;document.querySelectorAll('.kpi[data-state]').forEach(k=>k.classList.toggle('selected',k.dataset.state===stateFilter));}
     function applySearch(){const s=norm(document.getElementById('search').value);const rows=[...document.querySelectorAll('#rows tr[data-search]')];let visible=0;rows.forEach(r=>{const ok=!s||r.dataset.search.includes(s);r.style.display=ok?'':'none';if(ok)visible++});document.getElementById('count').textContent=`${visible} de ${rows.length} cursos`;actualizarSeleccion();}
-    function cursosVisibles(){const s=norm(document.getElementById('search').value);return sortCourses(detailFilteredCourses().filter(x=>(!stateFilter||norm(x.estado)===stateFilter)&&(!s||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(s))));}
+    function cursosVisibles(){const s=norm(document.getElementById('search').value);return sortCourses(detailFilteredCourses().filter(x=>cumpleFiltroNomina(x)&&(!stateFilter||norm(x.estado)===stateFilter)&&(!s||norm([x.nrc,x['nombre curso'],x.tutor,x.facultad,x.intake,x.periodo].join(' ')).includes(s))));}
     function descargarExcel(){const lista=cursosVisibles();if(!lista.length){alert('No hay cursos visibles para descargar.');return;}const filas=lista.map(x=>({'NRC_COD_CAL':x.nrc||'','ESTADO':x.estado||'','COD_CURSO':x['codigo curso']||'','MATERIA':x.materia||'','NOMBRE_CURSO':x['nombre curso']||'','PROGRAMA':x['nombre programa']||'','FACULTAD':x.facultad||'','FECHA_INICIO':dateISO(x['fecha inicio']),'FECHA_FIN':dateISO(x['fecha fin']),'SEMANAS':weeks(x['fecha inicio'],x['fecha fin']),'TUTOR':x.tutor||'','TIPO_NRC':x.tipo||'','INTAKE_VERSION':x.intake||'','PERIODO':x.periodo||''}));const ws=XLSX.utils.json_to_sheet(filas);ws['!autofilter']={ref:ws['!ref']};ws['!cols']=[{wch:20},{wch:14},{wch:15},{wch:13},{wch:42},{wch:48},{wch:20},{wch:14},{wch:14},{wch:10},{wch:28},{wch:14},{wch:34},{wch:12}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendarios filtrados');XLSX.writeFile(wb,'Calendarios_ETOP_filtrados_'+new Date().toISOString().slice(0,10)+'.xlsx',{compression:true});}
+
+    async function descargarExcelIniciosCalendarios(){
+  const btn=document.getElementById('exportIniciosBtn');
+  const list=cursosVisibles().map(x=>({...x,total:studentCount(x)}));
+  if(!list.length){alert('No hay registros para exportar con los filtros seleccionados.');return;}
+  if(typeof ExcelJS==='undefined'){alert('No fue posible cargar el componente de exportación a Excel.');return;}
+
+  btn.disabled=true;
+  const textoOriginal=btn.textContent;
+  btn.textContent='⏳ Generando…';
+
+  try{
+    const byCourse=buildIncidentMaps();
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Portal ETOP';
+    wb.company='Universidad Andrés Bello';
+    wb.subject='Calendarios ETOP';
+    wb.title='ETOP · Calendarios con seguimiento de nómina';
+    wb.created=new Date();
+
+    const ws=wb.addWorksheet('Calendarios',{
+      views:[{state:'frozen',ySplit:7,xSplit:2}]
+    });
+    ws.properties.tabColor={argb:'FFD6B72B'};
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:0.3,right:0.3,top:0.5,bottom:0.5,header:0.2,footer:0.2}};
+
+    const navy='FF1F2940', gold='FFFFD700', blue='FF315F86', lightBlue='FFDCE8F3';
+    const line='FFD6E1EC', text='FF334155', muted='FF64748B', green='FFD5EEE2', greenText='FF0B6541';
+    const red='FFF7DCE2', redText='FF9A1730', gray='FFE7EAEE';
+
+    ws.mergeCells('A1:K1');
+    ws.getCell('A1').value='ETOP · CALENDARIOS Y NÓMINAS';
+    ws.getCell('A1').font={name:'Aptos Display',size:18,bold:true,color:{argb:'FFFFFFFF'}};
+    ws.getCell('A1').fill={type:'pattern',pattern:'solid',fgColor:{argb:navy}};
+    ws.getCell('A1').alignment={vertical:'middle',horizontal:'left'};
+    ws.getRow(1).height=32;
+
+    ws.mergeCells('A2:K2');
+    const ahora=new Date();
+    const generado=ahora.toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'});
+    const contexto=document.getElementById('subtitle')?.textContent?.trim()||'Calendarios ETOP';
+    const vistaNomina=nomina==='FALTA_NOMINA'?'Falta nómina':nomina==='CON_ESTUDIANTES'?'Con estudiantes':'Todos';
+    ws.getCell('A2').value='Generado: '+generado+'  ·  Vista: '+vistaNomina+'  ·  '+contexto;
+    ws.getCell('A2').font={name:'Aptos',size:9,color:{argb:muted}};
+    ws.getCell('A2').alignment={vertical:'middle'};
+    ws.getRow(2).height=20;
+
+    const totalEst=list.reduce((s,x)=>s+x.total,0);
+    const sinNomina=list.filter(x=>x.total===0).length;
+
+    [['A4','C4','TOTAL NRC',list.length,blue],['D4','F4','TOTAL ESTUDIANTES',totalEst,'FF27815E'],['G4','K4','NRC SIN NÓMINA',sinNomina,'FFC95D63']].forEach(([a,b,label,value,color])=>{
+      ws.mergeCells(a+':'+b);
+      const row=parseInt(a.match(/\d+/)[0],10);
+      const startCol=ws.getCell(a).col,endCol=ws.getCell(b).col;
+      const labelCell=ws.getCell(row,startCol);
+      labelCell.value=label+'  ·  '+Number(value).toLocaleString('es-CL');
+      labelCell.font={name:'Aptos',size:11,bold:true,color:{argb:'FFFFFFFF'}};
+      labelCell.fill={type:'pattern',pattern:'solid',fgColor:{argb:color}};
+      labelCell.alignment={horizontal:'center',vertical:'middle'};
+      for(let col=startCol;col<=endCol;col++){
+        ws.getCell(row,col).border={top:{style:'thin',color:{argb:line}},bottom:{style:'thin',color:{argb:line}},left:{style:'thin',color:{argb:line}},right:{style:'thin',color:{argb:line}}};
+      }
+    });
+    ws.getRow(4).height=24;
+
+    const headers=['FACULTAD','NRC','ESTADO','NOMBRE DEL CURSO','INICIO','FIN','VERSIÓN / INTAKE','NOMBRE TUTOR','TOTAL EST.','INCIDENCIAS','BASE ESTUDIANTES'];
+    const headerRow=ws.getRow(7);
+    headerRow.values=headers;
+    headerRow.height=26;
+    headerRow.eachCell(cell=>{
+      cell.font={name:'Aptos',size:9,bold:true,color:{argb:text}};
+      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:lightBlue}};
+      cell.alignment={horizontal:'center',vertical:'middle',wrapText:true};
+      cell.border={top:{style:'thin',color:{argb:'FF9FB4C8'}},bottom:{style:'medium',color:{argb:'FF9FB4C8'}},left:{style:'thin',color:{argb:'FFC7D9E8'}},right:{style:'thin',color:{argb:'FFC7D9E8'}}};
+    });
+
+    list.forEach((x,i)=>{
+      const inc=incidenciaTextoCalendarios(x,byCourse);
+      const canvas=integrationUrl(x.nrc);
+      const students=studentsUrl(x.nrc);
+      const row=ws.addRow([
+        x.facultad||'Sin facultad',
+        x.nrc||'',
+        x.estado||'',
+        String(x['nombre curso']||'').replace(/\*/g,''),
+        dateISO(x['fecha inicio'])||'',
+        dateISO(x['fecha fin'])||'',
+        x.intake||'',
+        x.tutor||'',
+        x.total===0?'FALTA NÓMINA':x.total,
+        inc.t,
+        'Abrir estudiantes'
+      ]);
+      row.height=21;
+
+      row.eachCell({includeEmpty:true},cell=>{
+        cell.font={name:'Aptos',size:9,color:{argb:text}};
+        cell.alignment={vertical:'middle',wrapText:false};
+        cell.border={bottom:{style:'hair',color:{argb:line}},right:{style:'hair',color:{argb:'FFE8EEF4'}}};
+        if(i%2===1) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF7FAFC'}};
+      });
+
+      if(canvas){
+        row.getCell(2).value={text:x.nrc||'',hyperlink:canvas,tooltip:'Abrir curso en integración Canvas'};
+        row.getCell(2).font={name:'Aptos',size:9,bold:true,color:{argb:blue},underline:true};
+      }
+
+      row.getCell(11).value={text:'Abrir estudiantes',hyperlink:students,tooltip:'Abrir BASESEMAFORO_20 filtrada por NRC'};
+      row.getCell(11).font={name:'Aptos',size:9,bold:true,color:{argb:blue},underline:true};
+
+      const estado=norm(x.estado);
+      if(estado==='ACTIVO'){
+        row.getCell(3).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(3).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+      }else{
+        row.getCell(3).fill={type:'pattern',pattern:'solid',fgColor:{argb:gray}};
+        row.getCell(3).font={name:'Aptos',size:9,bold:true,color:{argb:text}};
+      }
+
+      if(x.total===0){
+        row.getCell(9).fill={type:'pattern',pattern:'solid',fgColor:{argb:red}};
+        row.getCell(9).font={name:'Aptos',size:9,bold:true,color:{argb:redText}};
+      }else{
+        row.getCell(9).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(9).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+        row.getCell(9).numFmt='#,##0';
+      }
+
+      if(norm(inc.t).startsWith('CON INCIDENCIA')||norm(inc.t).startsWith('PENDIENTE')){
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:red}};
+        row.getCell(10).font={name:'Aptos',size:9,bold:true,color:{argb:redText}};
+      }else if(norm(inc.t)==='SIN INCIDENCIA'){
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};
+        row.getCell(10).font={name:'Aptos',size:9,bold:true,color:{argb:greenText}};
+      }else{
+        row.getCell(10).fill={type:'pattern',pattern:'solid',fgColor:{argb:gray}};
+      }
+    });
+
+    ws.autoFilter={from:{row:7,column:1},to:{row:7,column:11}};
+    ws.columns=[
+      {width:14},{width:24},{width:13},{width:42},{width:13},{width:13},{width:24},{width:24},{width:14},{width:23},{width:20}
+    ];
+    ws.getColumn(4).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(7).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(8).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(9).alignment={horizontal:'center',vertical:'middle'};
+    ws.getColumn(10).alignment={vertical:'middle',wrapText:true};
+    ws.getColumn(11).alignment={horizontal:'center',vertical:'middle'};
+
+    ws.headerFooter.oddFooter='&LETOP · Universidad Andrés Bello&C&P de &N&RGenerado desde Portal ETOP';
+
+    const buffer=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const tutoresArchivo=uniq(list,'tutor');
+    const tutorArchivo=(tutoresArchivo.length===1?tutoresArchivo[0]:'EQUIPO').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'');
+    const fechaArchivo=new Date().toISOString().slice(0,10);
+    a.href=url;
+    a.download='ETOP_Calendarios_'+tutorArchivo+'_'+fechaArchivo+'.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(err){
+    console.error('Error generando Excel:',err);
+    alert('No fue posible generar el Excel. Intenta nuevamente.');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=textoOriginal;
+  }
+}
+    document.getElementById('nominaSwitch').addEventListener('click',event=>{
+      const btn=event.target.closest('button[data-nomina]');
+      if(!btn)return;
+      nomina=btn.dataset.nomina;
+      document.querySelectorAll('#nominaSwitch button').forEach(b=>{
+        const activo=b===btn;b.classList.toggle('active',activo);b.setAttribute('aria-pressed',String(activo));
+      });
+      render();
+    });
     document.getElementById('search').addEventListener('input',()=>{
       // Con entrada NRC desde el portal, buscar siempre en el catálogo
       // del ámbito autorizado, no solo en las filas precargadas.
