@@ -2730,16 +2730,6 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   font-size:8px;
 }
 </style>
-
-<style id="etop-alcances-admin-20261119">
-.etop-alcance-panel[hidden]{display:none!important}
-.etop-alcance-panel{display:grid;gap:5px;margin:9px 0 0;padding:8px 0 1px;border-top:1px solid rgba(255,255,255,.15)}
-.etop-alcance-panel label{font-size:9px;font-weight:800;color:#ffdf72}
-.etop-alcance-panel select{min-height:31px;width:100%;min-width:0;background:#1d3554;border:1px solid #6684ab;border-radius:7px;padding:5px 7px;color:#fff;font-size:10px;outline-offset:2px;cursor:pointer}
-.etop-alcance-panel option{background:#172c49;color:#fff}
-.etop-alcance-panel>span{font-size:8px;color:#b1c6dc;line-height:1.35}
-@media(max-height:760px) and (min-width:901px){.etop-alcance-panel{gap:3px;margin-top:5px;padding-top:5px}.etop-alcance-panel select{min-height:26px;padding:3px 5px}}
-</style>
 </head>
 <body>
 <div class="app">
@@ -2783,13 +2773,6 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
     <small>Sesión ETOP</small>
     <b id="sessionTutor">SIN IDENTIFICAR</b>
     <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
-    <div class="etop-alcance-panel" id="etop-alcance-panel" hidden>
-      <label for="etop-alcance-select">Vista de gestión</label>
-      <select id="etop-alcance-select" aria-label="Cartera de coordinación a consultar" onchange="cambiarAlcanceETOP(this.value)">
-        <option value="mi">Mi coordinación</option>
-      </select>
-      <span id="etop-alcance-caption">Solo cambia el ámbito de consulta.</span>
-    </div>
     <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
   </div>
 </aside>
@@ -3538,12 +3521,6 @@ function buildURLFiltrada(clave){
   url.searchParams.set('navContentPaneEnabled','false');url.searchParams.set('filterPaneEnabled','false');
   url.searchParams.set('pageView','fitToWidth');
   const fx=[];
-  // El selector envía un correo, no listas extensas de NRC.
-  // La medida DAX debe interpretar el filtro sobre Puente_Coordinadores.
-  if(clave==='DASHBOARD'){
-    const scope=filtroAlcancePowerBI_ETOP();
-    if(scope)fx.push(scope);
-  }
   // En la Ficha del Estudiante solo aplicar RUT; los NRC y demás selecciones
   // conservadas en otros módulos no deben filtrar aquí de forma invisible.
   if(clave==='FICHA_ESTUDIANTE'){
@@ -3732,7 +3709,7 @@ async function cargarSugerenciasNRC(){
   const url=(location.hostname.includes('github.io')?'nrcs.json':BASE+'nrcs.json');
   try{
     const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error('HTTP '+resp.status);
-    catalogoNRC=await resp.json();construirIndiceNRC();actualizarSelectorAlcanceETOP();actualizarControlesFocoCoordinacion();
+    catalogoNRC=await resp.json();construirIndiceNRC();actualizarControlesFocoCoordinacion();
     if(typeof refrescarResumenCargaTutorial==='function')refrescarResumenCargaTutorial();
     if(typeof refrescarProximosCursos==='function')refrescarProximosCursos();
     ['sel-facultad','sel-tutor','sel-tipo','sel-codigo','sel-estado','sel-intake'].forEach(id=>{const s=document.getElementById(id);s.options[0].text=s.options[0].text.replace(' ⏳','');s.disabled=false});
@@ -4134,9 +4111,14 @@ function actualizarControlesFocoCoordinacion(){
   }
   // Sólo tutoras con NRC activos o en cierre asignados a la coordinación.
   // Un mismo NRC puede contener varios correos separados por ';'.
+  const correoCoordinacion=etopEmailNorm(sesionGlobalETOP()?.email);
   const nombres=[...new Set(
-    cursosAlcanceETOP()
-      .filter(n=>['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase()))
+    catalogoNRC
+      .filter(n=>
+        ['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase())
+        && String(n.coordinadores||'').split(';')
+          .some(correo=>etopEmailNorm(correo)===correoCoordinacion)
+      )
       .map(n=>String(n.tutor||'').trim())
       .filter(Boolean)
   )].sort((a,b)=>a.localeCompare(b,'es'));
@@ -4176,14 +4158,12 @@ function buildFocoDiaURL(){
   // Con una sola cartera se aplica filtro explícito. Con delegación,
   // RLS de Power BI limita al conjunto autorizado (titular + reemplazo).
   const tutor=esCoordinacion?focoCoordTutorSeleccionada:tutorFiltroAutomaticoETOP();
-  const filtros=[];
   if(tutor){
     const seguro=String(tutor).replace(/'/g,"''");
-    filtros.push(`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`);
+    const filtro=`NRC_TUTOR_ACTUAL/NOMBRE_TUTOR eq '${seguro}'`;
+    return u.toString()+'&filter='+encodeURIComponent(filtro);
   }
-  const scope=filtroAlcancePowerBI_ETOP();
-  if(esCoordinacion&&scope)filtros.push(scope);
-  return u.toString()+(filtros.length?'&filter='+encodeURIComponent(filtros.join(' and ')):'');
+  return u.toString();
 }
 
 function refrescarFocoDia(){
@@ -4210,9 +4190,10 @@ function cursosInicioVisiblesResumen(){
   const tutoresPermitidos=new Set(tutoresSesionETOP().map(resumenCargaNorm));
   const esTutor=sesion.rol==='TUTOR';
   const esCoordinador=sesion.rol==='COORDINACION';
+  const correoCoordinacion=etopEmailNorm(sesion.email);
   if(!esTutor&&!esCoordinador)return [];
   if(esTutor&&!tutoresPermitidos.size)return [];
-  if(esCoordinador&&alcanceActualETOP().tipo==='ninguno')return [];
+  if(esCoordinador&&!correoCoordinacion)return [];
   const vistos=new Set();
   return catalogoNRC.filter(c=>{
     const nrc=String(c.nrc||'').trim();
@@ -4220,7 +4201,9 @@ function cursosInicioVisiblesResumen(){
     // Mostrar cualquier inicio registrado, pasado, presente o futuro,
     // sin excluir cursos por su estado (Preparación, Activo, Cierre o Cerrado).
     if(!nrc||!fecha)return false;
-    if(!cursoEnAlcanceETOP(c))return false;
+    if(esTutor&&!tutoresPermitidos.has(resumenCargaNorm(c.tutor)))return false;
+    if(esCoordinador&&!String(c.coordinadores||'').split(';')
+      .some(correo=>etopEmailNorm(correo)===correoCoordinacion))return false;
     const clave=resumenCargaNorm(nrc);
     if(vistos.has(clave))return false;
     vistos.add(clave);
@@ -4270,7 +4253,7 @@ function refrescarInicioResumenCalendario(){
   host.innerHTML=dias.join('');
   const sesion=sesionGlobalETOP();
   if(contexto)contexto.textContent=!sesion?'Identifícate para ver inicios':
-    sesion.rol==='COORDINACION'?(alcanceActualETOP().tipo==='general'?'Todos los inicios · ETOP':'Todos los inicios · coordinación'):'Todos los inicios · tus cursos';
+    sesion.rol==='COORDINACION'?'Todos los inicios · tu coordinación':'Todos los inicios · tus cursos';
 }
 function abrirInicioResumenCalendarioDia(iso){
   const seleccion=cursosInicioDiaResumen(iso);
@@ -4365,7 +4348,12 @@ async function refrescarResumenCargaTutorial(){
   }
   await asegurarMetricasResumenCarga();
 
-  const data=cursosAlcanceETOP();
+  const tutores=tutoresSesionETOP();
+  let data=catalogoNRC.slice();
+  if(tutores.length){
+    const permitidos=new Set(tutores.map(resumenCargaNorm));
+    data=data.filter(x=>permitidos.has(resumenCargaNorm(x.tutor)));
+  }
 
   const operativos=data.filter(x=>['ACTIVO','EN CIERRE'].includes(resumenCargaNorm(x.estado)));
   const atenciones=operativos.reduce((s,x)=>s+resumenCargaEstudiantes(x.nrc),0);
@@ -4433,10 +4421,13 @@ function formatoFechaProximoCurso(valor){
 function proximosCursosPorComenzar(){
   const hoy=new Date();hoy.setHours(0,0,0,0);
   const limite=new Date(hoy);limite.setDate(limite.getDate()+100);
-  return cursosAlcanceETOP()
+  const tutores=tutoresSesionETOP();
+  const permitidos=new Set(tutores.map(normalizarBusqueda));
+  return catalogoNRC
     .filter(c=>{
       const d=fechaCursoETOP(c['fecha inicio']);
       if(!d||d<hoy||d>limite)return false;
+      if(permitidos.size&&!permitidos.has(normalizarBusqueda(c.tutor)))return false;
       const estado=normalizarBusqueda(c.estado);
       if(estado!=='PREPARACION')return false;
       return true;
@@ -4473,10 +4464,8 @@ function refrescarProximosCursos(){
   const body=document.getElementById('proximosCursosBody');
   const ctx=document.getElementById('proximosCursosContexto');
   if(!body)return;
-  const tutores=tutoresSesionETOP(),alcance=alcanceActualETOP();
-  if(ctx)ctx.textContent=tutores.length?('5 próximos inicios · '+tutores.join(' + ')):
-    alcance.tipo==='general'?'Los 5 inicios más cercanos · ETOP':
-    sesionGlobalETOP()?.rol==='COORDINACION'?'Los 5 inicios más cercanos · coordinación':'Los 5 inicios más cercanos';
+  const tutores=tutoresSesionETOP();
+  if(ctx)ctx.textContent=tutores.length?('5 próximos inicios · '+tutores.join(' + ')):'Los 5 inicios más cercanos';
   if(!catalogoNRC.length){
     body.innerHTML='<tr><td colspan="3" class="upcoming-empty">Cargando próximos cursos…</td></tr>';
     return;
@@ -4918,105 +4907,6 @@ const ETOP_COORD_NOMBRES={
   'tutoriaonline47@unab.cl':'Pablo',
   'coordinaciontutorial@unab.cl':'Coordinación'
 };
-
-/* Selector visual para los superadministradores. No concede permisos Power BI;
-   cada informe conserva la autenticación Microsoft Entra y RLS. */
-const ETOP_SUPERADMIN_INTERFAZ=new Set(['patricio.collao@unab.cl','maria.cruz@unab.cl']);
-function esSuperAdminInterfazETOP(){
-  const s=sesionGlobalETOP();
-  return s?.rol==='COORDINACION'&&ETOP_SUPERADMIN_INTERFAZ.has(etopEmailNorm(s.email));
-}
-function claveAlcanceETOP(){
-  return 'etop-alcance-v1:'+etopEmailNorm(sesionGlobalETOP()?.email);
-}
-function coordinadoresAlcanceETOP(){
-  const s=sesionGlobalETOP();
-  const correos=new Set(Object.keys(ETOP_COORD_NOMBRES));
-  if(s?.email)correos.add(etopEmailNorm(s.email));
-  for(const c of Array.isArray(catalogoNRC)?catalogoNRC:[])
-    for(const correo of String(c.coordinadores||'').split(';')){
-      const e=etopEmailNorm(correo);
-      if(e.endsWith('@unab.cl'))correos.add(e);
-    }
-  return [...correos].filter(e=>e.endsWith('@unab.cl'))
-    .map(email=>({email,nombre:ETOP_COORD_NOMBRES[email]||email.split('@')[0].replace(/[._-]/g,' ')}))
-    .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
-}
-function alcanceActualETOP(){
-  const s=sesionGlobalETOP();
-  if(!s||s.rol!=='COORDINACION')return {tipo:'ninguno',correo:''};
-  const propio=etopEmailNorm(s.email);
-  if(!esSuperAdminInterfazETOP())return {tipo:'coordinacion',correo:propio};
-  let guardado='mi';
-  try{guardado=localStorage.getItem(claveAlcanceETOP())||'mi'}catch(_){}
-  if(guardado==='general')return {tipo:'general',correo:''};
-  if(guardado.startsWith('coord:')){
-    const destino=etopEmailNorm(guardado.slice(6));
-    if(coordinadoresAlcanceETOP().some(o=>o.email===destino))
-      return {tipo:'coordinacion',correo:destino};
-  }
-  return {tipo:'coordinacion',correo:propio};
-}
-function cursoEnAlcanceETOP(c){
-  const s=sesionGlobalETOP();
-  if(!s)return false;
-  if(s.rol==='TUTOR')return tutoresSesionETOP().some(t=>
-    resumenCargaNorm(t)===resumenCargaNorm(c.tutor));
-  const elegido=alcanceActualETOP();
-  if(elegido.tipo==='general')return true;
-  return Boolean(elegido.correo)&&String(c.coordinadores||'').split(';')
-    .some(e=>etopEmailNorm(e)===elegido.correo);
-}
-function cursosAlcanceETOP(){
-  return (Array.isArray(catalogoNRC)?catalogoNRC:[]).filter(cursoEnAlcanceETOP);
-}
-function filtroAlcancePowerBI_ETOP(){
-  if(!esSuperAdminInterfazETOP())return '';
-  const elegido=alcanceActualETOP();
-  return elegido.tipo==='coordinacion'
-    ? "Puente_Coordinadores/Coordinadores_Emails_Texto eq '"+elegido.correo.replace(/'/g,"''")+"'"
-    : '';
-}
-function actualizarSelectorAlcanceETOP(){
-  const panel=document.getElementById('etop-alcance-panel');
-  const select=document.getElementById('etop-alcance-select');
-  const caption=document.getElementById('etop-alcance-caption');
-  if(!panel||!select)return;
-  panel.hidden=!esSuperAdminInterfazETOP();
-  if(panel.hidden)return;
-  const s=sesionGlobalETOP(),a=alcanceActualETOP(),propio=etopEmailNorm(s.email);
-  const seleccionado=a.tipo==='general'?'general':a.correo===propio?'mi':'coord:'+a.correo;
-  select.replaceChildren();
-  const opciones=[
-    {value:'mi',label:'Mi coordinación'},
-    {value:'general',label:'Toda la gestión institucional'},
-    ...coordinadoresAlcanceETOP().filter(c=>c.email!==propio)
-      .map(c=>({value:'coord:'+c.email,label:c.nombre+' · coordinación'}))
-  ];
-  for(const o of opciones){
-    const opt=document.createElement('option');
-    opt.value=o.value;opt.textContent=o.label;select.appendChild(opt);
-  }
-  select.value=seleccionado;
-  if(caption)caption.textContent=a.tipo==='general'?'Todos los cursos · identidad sin cambios':
-    a.correo===propio?'Tu coordinación · identidad sin cambios':
-    'Coordinación seleccionada · identidad sin cambios';
-}
-function cambiarAlcanceETOP(valor){
-  if(!esSuperAdminInterfazETOP())return;
-  const valido=valor==='mi'||valor==='general'||valor.startsWith('coord:')&&
-    coordinadoresAlcanceETOP().some(c=>c.email===etopEmailNorm(valor.slice(6)));
-  if(!valido){actualizarSelectorAlcanceETOP();return;}
-  try{localStorage.setItem(claveAlcanceETOP(),valor)}catch(_){}
-  focoCoordTutorSeleccionada='';
-  limpiarBusqueda();
-  actualizarSesionETOPUI();
-  actualizarControlesFocoCoordinacion();
-  refrescarFocoDia();
-  refrescarResumenCargaTutorial();
-  refrescarProximosCursos();
-}
-
 function nombreSaludoETOP(s){
   if(!s)return '';
   if(s.rol==='TUTOR'&&s.tutor){
@@ -5093,7 +4983,7 @@ function guardarSesionETOP(){
 }
 function actualizarSesionETOPUI(){
   const s=sesionGlobalETOP(),box=document.getElementById('sessionTutor'),st=document.getElementById('sessionStatus'),btn=document.getElementById('sidebar-login-btn');
-  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';actualizarSelectorAlcanceETOP();actualizarSaludoBanner();return}
+  if(!s){box.textContent='SIN IDENTIFICAR';st.textContent='● SIN SESIÓN';st.classList.add('off');btn.textContent='👤 Identificarse';actualizarSaludoBanner();return}
   st.classList.remove('off');
   if(s.rol==='TUTOR'){
     const tutores=tutoresSesionETOP();
@@ -5102,8 +4992,7 @@ function actualizarSesionETOPUI(){
     st.textContent=tutores.length>1?'● TUTOR + REEMPLAZO':'● TUTOR ACTIVO';
     btn.textContent='👤 Cambiar sesión'
   }
-  else{box.textContent='COORDINACIÓN';st.textContent=esSuperAdminInterfazETOP()?'● COORDINACIÓN · VISTA SELECCIONABLE':'● COORDINACIÓN';btn.textContent='👤 Cambiar sesión'}
-  actualizarSelectorAlcanceETOP();
+  else{box.textContent='COORDINACIÓN';st.textContent='● COORDINACIÓN';btn.textContent='👤 Cambiar sesión'}
   actualizarSaludoBanner();
 }
 
