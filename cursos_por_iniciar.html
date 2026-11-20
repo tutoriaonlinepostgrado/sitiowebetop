@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es" data-etop-brand="unab" data-etop-page="cursos-por-iniciar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ETOP · Cursos por iniciar</title>
+<style>
+:root{--navy:#17345a;--deep:#102b49;--blue:#2867a8;--ink:#203a56;--muted:#67809a;--line:#dbe6f1;--gold:#dfb224;--wash:#f3f7fb}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--wash);font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);overflow:hidden}
+button,a{font:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.app{height:100%;min-height:0;display:flex;flex-direction:column;gap:14px;padding:17px}
+.hero{background:linear-gradient(105deg,#17345a,#26517c);border-radius:13px;border-left:5px solid var(--gold);padding:17px 21px;color:white;display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:90px;box-shadow:0 4px 14px #183a5c17}
+.eyebrow,.eyebrow2{font-size:10px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.eyebrow{color:#f8d85d}
+.hero h1{margin:5px 0 3px;font-size:23px;letter-spacing:-.025em}
+.hero p{margin:0;color:#d3e3f3;font-size:12px}
+.scope{max-width:280px;flex-shrink:0;padding:9px 12px;border:1px solid #ffffff45;border-radius:100px;background:#ffffff18;color:#fff;font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(315px,375px) minmax(0,1fr);gap:14px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:13px;min-width:0;min-height:0;box-shadow:0 3px 14px #1d395808}
+.calendar{padding:19px;align-self:start}
+.eyebrow2{color:#547390}
+.monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 17px}
+.monthbar h2{font-size:17px;margin:0;text-transform:capitalize;text-align:center}
+.monthbtn{border:1px solid #d6e3f1;background:#eef4fa;color:#234f7c;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:23px;font-weight:650}
+.monthbtn:hover:not(:disabled){background:#dceafa}
+.monthbtn:disabled{opacity:.35;cursor:not-allowed}
+.weekdays,.dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.weekdays{margin-bottom:7px}
+.weekdays span{text-align:center;font-size:10px;color:#7a8fa5;font-weight:850}
+.datebtn,.blank{min-width:0;min-height:46px}
+.datebtn{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:6px 2px;border:1px solid transparent;border-radius:8px;background:#fff;position:relative;color:#4e6983;cursor:pointer}
+.datebtn .digit{font-size:12px;line-height:17px;font-weight:700}
+.datebtn .qty{background:#cddff5;color:#245587;border-radius:4px;font-size:9px;font-weight:850;min-width:17px;line-height:15px;padding:0 3px;text-align:center}
+.datebtn.has{background:#edf5ff;border-color:#d7e6f6;color:#235b94}
+.datebtn:hover:not(:disabled){border-color:#a5c8eb}
+.datebtn.selected,.datebtn.selected:hover{background:#2769ac;border-color:#2769ac;color:white;box-shadow:0 3px 9px #174d8444}
+.datebtn.selected .qty{background:white;color:#205a95}
+.datebtn.today:before{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.datebtn:disabled{color:#b5c1ce;cursor:default}
+.calendarfoot{border-top:1px solid #e3ecf5;margin-top:18px;padding-top:15px;display:grid;gap:13px}
+.legend{font-size:11px;color:#687f97}
+.legend b{display:inline-block;width:12px;height:12px;background:#cddff5;border:1px solid #a6c5e6;border-radius:4px;vertical-align:middle;margin-right:5px}
+.nextstart{background:#f4f8fe;border:1px solid #cddff5;color:#285f9a;border-radius:9px;cursor:pointer;padding:10px;font-size:11px;font-weight:800}
+.nextstart:hover{background:#e7f1fd}
+.monthtotal{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#7890a6}
+.monthtotal strong{font-size:19px;color:#1d4368;font-weight:850}
+.detail{display:flex;flex-direction:column;overflow:hidden}
+.detailhead{padding:20px 22px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.detailhead h2{font-size:22px;text-transform:capitalize;line-height:1.2;margin:6px 0 0;letter-spacing:-.018em}
+.count{white-space:nowrap;background:#eaf4ff;color:#235c97;border:1px solid #cddff5;border-radius:8px;padding:10px 12px;font-size:12px;font-weight:850}
+.help{padding:11px 22px;color:#617b93;background:#f7faff;font-size:11px;line-height:1.5;border-top:1px solid #e8eef5;border-bottom:1px solid #e8eef5}
+.help b{color:#285f97}
+.columns,.course{display:grid;grid-template-columns:minmax(175px,1.15fr) minmax(190px,2fr) minmax(110px,1fr);gap:14px;align-items:center}
+.columns{padding:14px 22px 10px;text-transform:uppercase;font-size:10px;letter-spacing:.06em;font-weight:850;color:#8295a8}
+.courses{overflow:auto;flex:1;min-height:0;padding:0 13px 15px}
+.course{border-top:1px solid #e6edf5;min-height:64px;padding:12px 9px}
+.course:hover{background:#f7faff;border-radius:8px}
+.nrc{display:inline-flex;align-items:center;gap:6px;width:fit-content;max-width:100%;overflow-wrap:anywhere;background:#eaf3ff;border:1px solid #d1e3f8;border-radius:7px;padding:8px 10px;color:#205d9b;text-decoration:none;font-family:Consolas,"Segoe UI",monospace;font-size:11px;font-weight:800}
+.nrc:hover{background:#dcecff}
+.nrc .external{font-family:"Segoe UI",sans-serif;font-size:12px;flex-shrink:0}
+.course-name{font-size:12px;font-weight:750;line-height:1.45;overflow-wrap:anywhere;color:#253e57}
+.course-tutor{font-size:11px;font-weight:650;line-height:1.45;overflow-wrap:anywhere;color:#5e7791}
+.empty{height:100%;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;padding:25px;color:#6c839b}
+.empty .emoji{font-size:29px}
+.empty strong{font-size:14px;color:#325777}
+.empty p{font-size:12px;max-width:400px;margin:0;line-height:1.5}
+@media(max-width:1030px){
+ .app{padding:10px;gap:10px}.workspace{grid-template-columns:minmax(270px,325px) minmax(0,1fr);gap:10px}
+ .calendar{padding:14px}.columns,.course{grid-template-columns:minmax(122px,1.2fr) minmax(130px,2fr) minmax(100px,1fr);gap:7px}
+ .detailhead{padding:15px}.help{padding:10px 15px}.columns{padding:12px 14px}.courses{padding:0 8px 10px}.course{padding:9px 4px}
+ .hero{padding:11px 15px}.hero h1{font-size:20px}
+}
+@media(max-width:760px){
+ html,body{height:auto;min-height:100%;overflow:auto}
+ .app{height:auto;min-height:100vh}.hero{flex-wrap:wrap}.scope{max-width:100%}
+ .workspace{display:flex;flex-direction:column}.calendar{align-self:stretch}
+ .detail{min-height:350px;max-height:650px}.detailhead h2{font-size:18px}
+ .columns{display:none}.course{grid-template-columns:minmax(135px,1fr) minmax(150px,1.5fr)}
+ .course-tutor{grid-column:2}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero">
+ <div><div class="eyebrow">UNAB ONLINE · ETOP · COORDINACIÓN</div><h1>📅 Cursos por iniciar</h1><p>Selecciona un día para consultar los próximos inicios de tu coordinación.</p></div>
+ <div class="scope" id="scope">Consultando cartera…</div>
+</header>
+<main class="workspace">
+ <section class="panel calendar" aria-label="Calendario de inicios">
+  <div class="eyebrow2">Calendario de inicios</div>
+  <div class="monthbar">
+   <button id="prev" class="monthbtn" type="button" aria-label="Mes anterior">‹</button>
+   <h2 id="monthLabel">—</h2>
+   <button id="next" class="monthbtn" type="button" aria-label="Mes siguiente">›</button>
+  </div>
+  <div class="weekdays" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+  <div class="dates" id="grid"></div>
+  <div class="calendarfoot">
+   <div class="legend"><b></b> Los números azules indican cursos que inician ese día.</div>
+   <button id="jump" class="nextstart" type="button">Ir al próximo inicio</button>
+   <div class="monthtotal"><span>Total de inicios del mes</span><strong id="monthTotal">0</strong></div>
+  </div>
+ </section>
+ <section class="panel detail" aria-label="Cursos del día">
+  <div class="detailhead"><div><div class="eyebrow2">Cursos de la fecha seleccionada</div><h2 id="selectedLabel">—</h2></div><span class="count" id="count">0 cursos</span></div>
+  <div class="help"><b>↗ Abre el NRC</b> para consultar Web Integración con el NRC y período correspondientes y buscar su nómina.</div>
+  <div class="columns" aria-hidden="true"><span>NRC</span><span>Nombre del curso</span><span>Tutora / tutor</span></div>
+  <div class="courses" id="courses" aria-live="polite"><div class="empty"><strong>Cargando cursos…</strong></div></div>
+ </section>
+</main>
+</div>
+<script>
+(function(){
+  'use strict';
+  const admins=new Set(['patricio.collao@unab.cl','maria.cruz@unab.cl']);
+  const coordinadores=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl',
+    'maria.cruz@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl',
+    'carolina.monsalve.g@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl',
+    'tutoriaonline36@unab.cl']);
+  const nombres={'patricio.collao@unab.cl':'Patricio','maria.cruz@unab.cl':'María Francisca',
+    'rita.galvez@unab.cl':'Rita','felipe.garcia@unab.cl':'Felipe',
+    'tutoriaonline47@unab.cl':'Pablo','tutoriaonline16@unab.cl':'Miguel',
+    'carolina.monsalve.g@unab.cl':'Carolina'};
+  let all=[],byDay=new Map(),scopeKey='',chosen='',year=0,month=0,loaded=false;
+  const el=id=>document.getElementById(id);
+  const em=v=>String(v||'').trim().toLowerCase();
+  const str=v=>String(v||'').trim();
+  function session(){try{return JSON.parse(localStorage.getItem('etop_usuario_sesion')||'null')}catch(_){return null}}
+  function scope(){
+    const s=session(),who=em(s?.email);
+    if(s?.rol!=='COORDINACION'||!coordinadores.has(who))return {key:'SIN_SESION',label:'Solo para coordinación',allowed:false};
+    let target=who;
+    if(admins.has(who)){
+      let v='__MI__';
+      try{v=localStorage.getItem('etop-vista-coordinacion:'+who)||'__MI__'}catch(_){}
+      if(v==='__TODAS__')return {key:'__TODAS__',label:'Toda la gestión ETOP',allowed:true};
+      if(v!=='__MI__'&&coordinadores.has(em(v)))target=em(v);
+    }
+    return {key:target,label:target===who?'Mi coordinación':'Coordinación de '+(nombres[target]||target),allowed:true};
+  }
+  function today(){
+    const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santiago',year:'numeric',
+      month:'2-digit',day:'2-digit'}).formatToParts(new Date()),map={};
+    p.forEach(x=>{map[x.type]=x.value});
+    return map.year+'-'+map.month+'-'+map.day;
+  }
+  function dateKey(v){const m=/^\d{4}-\d{2}-\d{2}/.exec(str(v));return m?m[0]:''}
+  function key(y,m,d){return String(y)+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+  function monthName(y,m){return new Intl.DateTimeFormat('es-CL',{month:'long',year:'numeric'}).format(new Date(y,m,1))}
+  function dayName(iso){
+    if(!iso)return 'Selecciona un día';
+    const p=iso.split('-').map(Number);
+    return new Intl.DateTimeFormat('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
+      .format(new Date(p[0],p[1]-1,p[2]));
+  }
+  function inScope(c,scopeValue){
+    return scopeValue==='__TODAS__'||String(c.coordinadores||'').split(';').some(x=>em(x)===scopeValue);
+  }
+  function buildIndex(){
+    const current=scope(),min=today();scopeKey=current.key;
+    el('scope').textContent=current.label;
+    byDay=new Map();
+    if(current.allowed)for(const c of all){
+      const iso=dateKey(c['fecha inicio']);
+      if(!iso||iso<min||str(c.estado).toUpperCase()!=='PREPARACION'||!inScope(c,current.key))continue;
+      if(!byDay.has(iso))byDay.set(iso,[]);
+      byDay.get(iso).push(c);
+    }
+    for(const list of byDay.values())list.sort((a,b)=>str(a.nrc).localeCompare(str(b.nrc),'es',{numeric:true}));
+    const first=[...byDay.keys()].sort()[0]||min;
+    chosen=first;
+    const parts=first.split('-').map(Number);year=parts[0];month=parts[1]-1;
+    render();
+  }
+  function calendar(){
+    el('monthLabel').textContent=monthName(year,month);
+    el('prev').disabled=key(year,month,1).slice(0,7)<=today().slice(0,7);
+    const grid=el('grid');grid.replaceChildren();
+    const offset=(new Date(year,month,1).getDay()+6)%7;
+    const totalDays=new Date(year,month+1,0).getDate();let monthly=0;
+    for(let i=0;i<offset;i++){const d=document.createElement('div');d.className='blank';grid.appendChild(d)}
+    for(let d=1;d<=totalDays;d++){
+      const iso=key(year,month,d),qty=(byDay.get(iso)||[]).length;monthly+=qty;
+      const button=document.createElement('button');button.type='button';button.className='datebtn';
+      if(qty)button.classList.add('has');
+      if(iso===chosen)button.classList.add('selected');
+      if(iso===today())button.classList.add('today');
+      button.disabled=iso<today();
+      button.setAttribute('aria-label',d+' de '+monthName(year,month)+': '+qty+' cursos');
+      button.setAttribute('aria-pressed',String(iso===chosen));
+      const digit=document.createElement('span');digit.className='digit';digit.textContent=d;button.appendChild(digit);
+      if(qty){const num=document.createElement('span');num.className='qty';num.textContent=qty;button.appendChild(num)}
+      button.addEventListener('click',()=>{chosen=iso;calendar();details()});
+      grid.appendChild(button);
+    }
+    el('monthTotal').textContent=monthly.toLocaleString('es-CL');
+  }
+  function integration(c){
+    const parts=str(c.nrc).split('_'),nrc=parts[0]||'',period=parts[parts.length-1]||'';
+    const qs=new URLSearchParams({term_code:period,periodo:period,nrc:nrc,nrc_code:nrc,crn:nrc,NRC:nrc});
+    return 'https://lms.unab.cl/int-canvas/?'+qs.toString();
+  }
+  function empty(icon,title,explain){
+    const holder=document.createElement('div');holder.className='empty';
+    const e=document.createElement('span');e.className='emoji';e.textContent=icon;
+    const h=document.createElement('strong');h.textContent=title;
+    const p=document.createElement('p');p.textContent=explain;
+    holder.append(e,h,p);return holder;
+  }
+  function details(){
+    el('selectedLabel').textContent=dayName(chosen);
+    const list=byDay.get(chosen)||[];
+    el('count').textContent=list.length.toLocaleString('es-CL')+(list.length===1?' curso':' cursos');
+    const target=el('courses');target.replaceChildren();
+    if(!loaded){target.appendChild(empty('◷','Cargando cursos…','Consultando el catálogo ETOP.'));return}
+    if(!scope().allowed){target.appendChild(empty('🔒','Sesión de coordinación requerida','Inicia sesión en ETOP desde el menú izquierdo.'));return}
+    if(byDay.size===0){target.appendChild(empty('📅','Sin próximos inicios','Esta coordinación no tiene cursos futuros en estado Preparación.'));return}
+    if(list.length===0){target.appendChild(empty('📆','Sin cursos para esta fecha','Selecciona un día con contador azul en el calendario.'));return}
+    const fragment=document.createDocumentFragment();
+    for(const c of list){
+      const row=document.createElement('div');row.className='course';
+      const link=document.createElement('a');link.className='nrc';link.href=integration(c);
+      link.target='_blank';link.rel='noopener noreferrer';
+      link.title='Abrir Web Integración con NRC y período de '+str(c.nrc);
+      link.textContent=str(c.nrc)||'—';
+      const icon=document.createElement('span');icon.className='external';icon.textContent='↗';icon.setAttribute('aria-hidden','true');link.appendChild(icon);
+      const name=document.createElement('div');name.className='course-name';name.textContent=str(c['nombre curso'])||'—';
+      const tutor=document.createElement('div');tutor.className='course-tutor';tutor.textContent=str(c.tutor)||'Sin tutora asignada';
+      row.append(link,name,tutor);fragment.appendChild(row);
+    }
+    target.appendChild(fragment);
+  }
+  function render(){calendar();details()}
+  function moveMonth(delta){
+    const next=new Date(year,month+delta,1),first=key(next.getFullYear(),next.getMonth(),1);
+    if(first.slice(0,7)<today().slice(0,7))return;
+    year=next.getFullYear();month=next.getMonth();
+    chosen=[...byDay.keys()].filter(d=>d.slice(0,7)===first.slice(0,7)).sort()[0]||first;
+    render();
+  }
+  function sync(){if(loaded&&scope().key!==scopeKey)buildIndex()}
+  el('prev').addEventListener('click',()=>moveMonth(-1));
+  el('next').addEventListener('click',()=>moveMonth(1));
+  el('jump').addEventListener('click',buildIndex);
+  window.addEventListener('storage',e=>{
+    if(e.key==='etop_usuario_sesion'||(e.key||'').startsWith('etop-vista-coordinacion:'))sync();
+  });
+  window.addEventListener('message',e=>{
+    if(e.origin===location.origin&&e.source===window.parent&&e.data?.type==='ETOP_CARTERA_CAMBIO')sync();
+  });
+  fetch('./nrcs.json',{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw Error('No fue posible descargar el catálogo NRC');return r.json()})
+    .then(json=>{if(!Array.isArray(json))throw Error('Formato de catálogo no válido');all=json;loaded=true;buildIndex()})
+    .catch(err=>{
+      loaded=true;el('scope').textContent='Datos no disponibles';
+      el('grid').replaceChildren();el('monthLabel').textContent='Sin datos';
+      el('courses').replaceChildren(empty('⚠️','No se pudo cargar la agenda',err.message));
+    });
+})();
+</script>
+</body>
+</html>
