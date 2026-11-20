@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ETOP · Cursos por iniciar</title>
 <style>
-:root{--navy:#17345a;--deep:#102b49;--blue:#2867a8;--ink:#203a56;--muted:#67809a;--line:#dbe6f1;--gold:#dfb224;--wash:#f3f7fb}
+:root{--navy:#142440;--deep:#122541;--blue:#1d3153;--ink:#203a56;--muted:#67809a;--line:#dbe6f1;--gold:#dfb224;--wash:#f3f7fb}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{background:var(--wash);font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);overflow:hidden}
 button,a{font:inherit}
 button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .app{height:100%;min-height:0;display:flex;flex-direction:column;gap:14px;padding:17px}
-.hero{background:linear-gradient(105deg,#17345a,#26517c);border-radius:13px;border-left:5px solid var(--gold);padding:17px 21px;color:white;display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:90px;box-shadow:0 4px 14px #183a5c17}
+.hero{background:linear-gradient(180deg,#122541 0%,#142440 100%);border-radius:13px;border-left:5px solid var(--gold);padding:17px 21px;color:white;display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:90px;box-shadow:0 4px 14px #183a5c17}
 .eyebrow,.eyebrow2{font-size:10px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
 .eyebrow{color:#f8d85d}
 .hero h1{margin:5px 0 3px;font-size:23px;letter-spacing:-.025em}
@@ -24,7 +24,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .eyebrow2{color:#547390}
 .monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 17px}
 .monthbar h2{font-size:17px;margin:0;text-transform:capitalize;text-align:center}
-.monthbtn{border:1px solid #d6e3f1;background:#eef4fa;color:#234f7c;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:23px;font-weight:650}
+.monthbtn{border:1px solid #d6e3f1;background:#eef4fa;color:var(--navy);border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:23px;font-weight:650}
 .monthbtn:hover:not(:disabled){background:#dceafa}
 .monthbtn:disabled{opacity:.35;cursor:not-allowed}
 .weekdays,.dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -33,43 +33,46 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .datebtn,.blank{min-width:0;min-height:46px}
 .datebtn{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:6px 2px;border:1px solid transparent;border-radius:8px;background:#fff;position:relative;color:#4e6983;cursor:pointer}
 .datebtn .digit{font-size:12px;line-height:17px;font-weight:700}
-.datebtn .qty{background:#cddff5;color:#245587;border-radius:4px;font-size:9px;font-weight:850;min-width:17px;line-height:15px;padding:0 3px;text-align:center}
-.datebtn.has{background:#edf5ff;border-color:#d7e6f6;color:#235b94}
+.datebtn .qty{background:#cddff5;color:var(--navy);border-radius:4px;font-size:9px;font-weight:850;min-width:17px;line-height:15px;padding:0 3px;text-align:center}
+.datebtn.has{background:#edf5ff;border-color:#d7e6f6;color:var(--navy)}
 .datebtn:hover:not(:disabled){border-color:#a5c8eb}
-.datebtn.selected,.datebtn.selected:hover{background:#2769ac;border-color:#2769ac;color:white;box-shadow:0 3px 9px #174d8444}
-.datebtn.selected .qty{background:white;color:#205a95}
+.datebtn.selected,.datebtn.selected:hover{background:var(--navy);border-color:var(--navy);color:white;box-shadow:0 3px 9px #12254144}
+.datebtn.selected .qty{background:white;color:var(--navy)}
 .datebtn.today:before{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
 .datebtn:disabled{color:#b5c1ce;cursor:default}
 .calendarfoot{border-top:1px solid #e3ecf5;margin-top:18px;padding-top:15px;display:grid;gap:13px}
 .legend{font-size:11px;color:#687f97}
 .legend b{display:inline-block;width:12px;height:12px;background:#cddff5;border:1px solid #a6c5e6;border-radius:4px;vertical-align:middle;margin-right:5px}
-.nextstart{background:#f4f8fe;border:1px solid #cddff5;color:#285f9a;border-radius:9px;cursor:pointer;padding:10px;font-size:11px;font-weight:800}
+.nextstart{background:#f4f8fe;border:1px solid #cddff5;color:var(--navy);border-radius:9px;cursor:pointer;padding:10px;font-size:11px;font-weight:800}
 .nextstart:hover{background:#e7f1fd}
 .monthtotal{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#7890a6}
-.monthtotal strong{font-size:19px;color:#1d4368;font-weight:850}
+.monthtotal strong{font-size:19px;color:var(--navy);font-weight:850}
 .detail{display:flex;flex-direction:column;overflow:hidden}
 .detailhead{padding:20px 22px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .detailhead h2{font-size:22px;text-transform:capitalize;line-height:1.2;margin:6px 0 0;letter-spacing:-.018em}
-.count{white-space:nowrap;background:#eaf4ff;color:#235c97;border:1px solid #cddff5;border-radius:8px;padding:10px 12px;font-size:12px;font-weight:850}
+.count{white-space:nowrap;background:#eaf4ff;color:var(--navy);border:1px solid #cddff5;border-radius:8px;padding:10px 12px;font-size:12px;font-weight:850}
 .help{padding:11px 22px;color:#617b93;background:#f7faff;font-size:11px;line-height:1.5;border-top:1px solid #e8eef5;border-bottom:1px solid #e8eef5}
-.help b{color:#285f97}
-.columns,.course{display:grid;grid-template-columns:minmax(175px,1.15fr) minmax(190px,2fr) minmax(110px,1fr);gap:14px;align-items:center}
+.help b{color:var(--navy)}
+.columns,.course{display:grid;grid-template-columns:minmax(115px,1.1fr) minmax(150px,1.8fr) minmax(95px,1fr) minmax(64px,.62fr);gap:9px;align-items:center}
 .columns{padding:14px 22px 10px;text-transform:uppercase;font-size:10px;letter-spacing:.06em;font-weight:850;color:#8295a8}
 .courses{overflow:auto;flex:1;min-height:0;padding:0 13px 15px}
 .course{border-top:1px solid #e6edf5;min-height:64px;padding:12px 9px}
 .course:hover{background:#f7faff;border-radius:8px}
-.nrc{display:inline-flex;align-items:center;gap:6px;width:fit-content;max-width:100%;overflow-wrap:anywhere;background:#eaf3ff;border:1px solid #d1e3f8;border-radius:7px;padding:8px 10px;color:#205d9b;text-decoration:none;font-family:Consolas,"Segoe UI",monospace;font-size:11px;font-weight:800}
+.nrc{display:inline-flex;align-items:center;gap:6px;width:fit-content;max-width:100%;overflow-wrap:anywhere;background:#eaf3ff;border:1px solid #d1e3f8;border-radius:7px;padding:8px 10px;color:var(--navy);text-decoration:none;font-family:Consolas,"Segoe UI",monospace;font-size:11px;font-weight:800}
 .nrc:hover{background:#dcecff}
 .nrc .external{font-family:"Segoe UI",sans-serif;font-size:12px;flex-shrink:0}
 .course-name{font-size:12px;font-weight:750;line-height:1.45;overflow-wrap:anywhere;color:#253e57}
 .course-tutor{font-size:11px;font-weight:650;line-height:1.45;overflow-wrap:anywhere;color:#5e7791}
+.course-students{justify-self:center;min-width:37px;padding:6px 9px;border:1px solid #cbdcf0;background:#eaf3ff;border-radius:7px;color:var(--navy);text-align:center;font-size:12px;font-weight:850;font-variant-numeric:tabular-nums}
+.course-students.zero{background:#f1f4f8;border-color:#dde5ef;color:#75869c}
+.course-students.unavailable{background:#fff8e9;border-color:#f0dfb7;color:#8d6e2a}
 .empty{height:100%;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;padding:25px;color:#6c839b}
 .empty .emoji{font-size:29px}
 .empty strong{font-size:14px;color:#325777}
 .empty p{font-size:12px;max-width:400px;margin:0;line-height:1.5}
 @media(max-width:1030px){
  .app{padding:10px;gap:10px}.workspace{grid-template-columns:minmax(270px,325px) minmax(0,1fr);gap:10px}
- .calendar{padding:14px}.columns,.course{grid-template-columns:minmax(122px,1.2fr) minmax(130px,2fr) minmax(100px,1fr);gap:7px}
+ .calendar{padding:14px}.columns,.course{grid-template-columns:minmax(110px,1fr) minmax(130px,1.55fr) minmax(88px,.95fr) minmax(60px,.55fr);gap:6px}
  .detailhead{padding:15px}.help{padding:10px 15px}.columns{padding:12px 14px}.courses{padding:0 8px 10px}.course{padding:9px 4px}
  .hero{padding:11px 15px}.hero h1{font-size:20px}
 }
@@ -78,8 +81,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
  .app{height:auto;min-height:100vh}.hero{flex-wrap:wrap}.scope{max-width:100%}
  .workspace{display:flex;flex-direction:column}.calendar{align-self:stretch}
  .detail{min-height:350px;max-height:650px}.detailhead h2{font-size:18px}
- .columns{display:none}.course{grid-template-columns:minmax(135px,1fr) minmax(150px,1.5fr)}
- .course-tutor{grid-column:2}
+ .columns{display:none}.course{grid-template-columns:minmax(110px,1fr) minmax(120px,1.4fr) minmax(55px,.5fr);gap:6px}
+ .course-tutor{grid-column:2;grid-row:2}
+ .course-students{grid-column:3;grid-row:1/span 2;align-self:center;padding:5px 7px}
 }
 </style>
 </head>
@@ -108,7 +112,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
  <section class="panel detail" aria-label="Cursos del día">
   <div class="detailhead"><div><div class="eyebrow2">Cursos de la fecha seleccionada</div><h2 id="selectedLabel">—</h2></div><span class="count" id="count">0 cursos</span></div>
   <div class="help"><b>↗ Abre el NRC</b> para consultar Web Integración con el NRC y período correspondientes y buscar su nómina.</div>
-  <div class="columns" aria-hidden="true"><span>NRC</span><span>Nombre del curso</span><span>Tutora / tutor</span></div>
+  <div class="columns" aria-hidden="true"><span>NRC</span><span>Nombre del curso</span><span>Tutora / tutor</span><span>Estudiantes</span></div>
   <div class="courses" id="courses" aria-live="polite"><div class="empty"><strong>Cargando cursos…</strong></div></div>
  </section>
 </main>
@@ -126,6 +130,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     'tutoriaonline47@unab.cl':'Pablo','tutoriaonline16@unab.cl':'Miguel',
     'carolina.monsalve.g@unab.cl':'Carolina'};
   let all=[],byDay=new Map(),scopeKey='',chosen='',year=0,month=0,loaded=false;
+  let estudiantesPorNRC=new Map(),metricasDisponibles=false;
   const el=id=>document.getElementById(id);
   const em=v=>String(v||'').trim().toLowerCase();
   const str=v=>String(v||'').trim();
@@ -230,7 +235,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       const icon=document.createElement('span');icon.className='external';icon.textContent='↗';icon.setAttribute('aria-hidden','true');link.appendChild(icon);
       const name=document.createElement('div');name.className='course-name';name.textContent=str(c['nombre curso'])||'—';
       const tutor=document.createElement('div');tutor.className='course-tutor';tutor.textContent=str(c.tutor)||'Sin tutora asignada';
-      row.append(link,name,tutor);fragment.appendChild(row);
+      const students=document.createElement('span');students.className='course-students';
+      if(!metricasDisponibles){students.textContent='—';students.classList.add('unavailable');students.title='No fue posible consultar las métricas de estudiantes';}
+      else{const cantidad=Math.max(0,Number(estudiantesPorNRC.get(str(c.nrc).toUpperCase()))||0);students.textContent=cantidad.toLocaleString('es-CL');students.title=cantidad+' estudiantes registrados';if(cantidad===0)students.classList.add('zero');}
+      row.append(link,name,tutor,students);fragment.appendChild(row);
     }
     target.appendChild(fragment);
   }
@@ -252,9 +260,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   window.addEventListener('message',e=>{
     if(e.origin===location.origin&&e.source===window.parent&&e.data?.type==='ETOP_CARTERA_CAMBIO')sync();
   });
-  fetch('./nrcs.json',{cache:'no-store'})
-    .then(r=>{if(!r.ok)throw Error('No fue posible descargar el catálogo NRC');return r.json()})
-    .then(json=>{if(!Array.isArray(json))throw Error('Formato de catálogo no válido');all=json;loaded=true;buildIndex()})
+  const catalogo=fetch('./nrcs.json',{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw Error('No fue posible descargar el catálogo NRC');return r.json()});
+  const metricas=fetch('./metricas_estudiantes.json',{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw Error('No fue posible descargar las métricas');return r.json()})
+    .then(json=>{
+      if(!Array.isArray(json))throw Error('Formato de métricas no válido');
+      estudiantesPorNRC=new Map(json.map(x=>[str(x.nrc).toUpperCase(),Number(x.total_estudiantes)||0]));
+      metricasDisponibles=true;
+    })
+    .catch(err=>{console.warn('No fue posible cargar métricas de estudiantes:',err);metricasDisponibles=false});
+  Promise.all([catalogo,metricas])
+    .then(([json])=>{if(!Array.isArray(json))throw Error('Formato de catálogo no válido');all=json;loaded=true;buildIndex()})
     .catch(err=>{
       loaded=true;el('scope').textContent='Datos no disponibles';
       el('grid').replaceChildren();el('monthLabel').textContent='Sin datos';
