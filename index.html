@@ -2772,6 +2772,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
       <button type="button" class="menu-btn" data-key="COORD_DASHBOARD_MACRO" onclick="openCoordModule('DASHBOARD_MACRO',this)"><span class="ico">🏛️</span>Dashboard Macro Facultades</button>
       <button type="button" class="menu-btn" data-key="COORD_CARGA_TUTORIAL" onclick="openCoordModule('CARGA_TUTORIAL',this)"><span class="ico">⚖️</span>Carga Tutorial</button>
       <button type="button" class="menu-btn" data-key="COORD_AUDITORIA" onclick="openCoordModule('AUDITORIA',this)"><span class="ico">🔎</span>Revisión de seguimiento</button>
+      <button type="button" class="menu-btn" data-key="COORD_CURSOS_INICIAR" onclick="openCoordModule('CURSOS_INICIAR',this)"><span class="ico">📅</span>Cursos por iniciar</button>
       <button type="button" class="menu-btn" data-key="COORD_INCIDENCIAS" onclick="openIncidenciasStudio(this)"><span class="ico">⚠️</span>Incidencias</button>
       <div class="coord-tools-row">
         <button type="button" class="menu-btn" data-key="COORD_HERRAMIENTAS" onclick="openCoordTools(this)"><span class="ico">⚡</span>Centro de Herramientas ETOP</button>
@@ -4650,6 +4651,12 @@ function openCoordTools(btn){
   openLocal('centro_herramientas_etop.html','Centro de Herramientas ETOP',btn);
   establecerModoCoordinacionPortal('tools');
 }
+/* Agenda visual independiente: no reutiliza la tabla de Calendarios. */
+function openCoordCursosPorIniciar(btn){
+  openLocal('cursos_por_iniciar.html?embedded=1','Coordinación · Cursos por iniciar',btn);
+  vistaActual='CURSOS_POR_INICIAR';
+  establecerModoCoordinacionPortal('tools');
+}
 function toggleCoordSubmenu(btn){
   const submenu=document.getElementById('coord-submenu');
   if(!submenu)return;
@@ -4667,6 +4674,7 @@ function openCoordModule(clave,btn){
   if(!Object.prototype.hasOwnProperty.call(modulos,clave))return;
   // Mantener compatibilidad con llamados antiguos a Coordinación / Incidencias.
   if(clave==='INCIDENCIAS'){openIncidenciasStudio(btn);return;}
+  if(clave==='CURSOS_INICIAR'){openCoordCursosPorIniciar(btn);return;}
   const visor=document.getElementById('visor');
   const titulo='Coordinación · '+modulos[clave];
   let yaIntegrado=false;
@@ -5047,6 +5055,13 @@ function seleccionarVistaCoordinacionETOP(valor){
     // leer la cartera ETOP recién seleccionada y conservar filtros superiores.
     if(urlsBase[vistaActual]&&(!urlsBase[vistaActual].local||vistaActual==='CURSOS_PREPARACION'))
       actualizarIframe();
+    else if(vistaActual==='CURSOS_POR_INICIAR'){
+      // Recalcular la cartera del calendario sin perder el mes mostrado
+      // ni recargar la página completa.
+      const frame=document.getElementById('visor');
+      try{frame?.contentWindow?.postMessage({type:'ETOP_CARTERA_CAMBIO'},window.location.origin)}
+      catch(e){console.warn('No fue posible actualizar la agenda:',e)}
+    }
     else if(vistaActual==='INICIO'){
       refrescarFocoDia();
       refrescarResumenCargaTutorial();
