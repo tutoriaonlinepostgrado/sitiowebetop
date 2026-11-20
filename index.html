@@ -2785,8 +2785,8 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
     <div class="session-meta"><span id="sessionStatus">● SIN SESIÓN</span></div>
     <div class="etop-vista-coord" id="etop-vista-coord" hidden>
       <label for="etop-select-coordinacion">Ver cartera de coordinación</label>
-      <select id="etop-select-coordinacion" aria-label="Elegir coordinación para consultar en el Tablero de Gestión" onchange="seleccionarVistaCoordinacionETOP(this.value)"></select>
-      <small>Consulta en Tablero de Gestión · sesión sin cambios</small>
+      <select id="etop-select-coordinacion" aria-label="Elegir cartera de coordinación para consultar el portal ETOP" onchange="seleccionarVistaCoordinacionETOP(this.value)"></select>
+      <small>Vista de Inicio y gestión · sesión sin cambios</small>
     </div>
     <button id="sidebar-login-btn" class="sidebar-login-btn" type="button" onclick="abrirSesionETOP()">👤 Identificarse</button>
   </div>
@@ -4124,9 +4124,33 @@ const FOCO_DIA_POWERBI = {
   coordinacionPageName:'de9f24e37c97b30710d0'
 };
 
-/* Las pestañas sólo aparecen para la sesión de coordinación.
-   El catálogo GitHub no expone coordinadores por NRC: el listado de tutoras
-   es general y la asignación efectiva la delimita la medida DAX de Power BI. */
+/* Ámbito único en Inicio: Foco del día, resumen, calendario y buscador. */
+function catalogoPortadaETOP(){
+  const sesion=sesionGlobalETOP();
+  if(!sesion||!Array.isArray(catalogoNRC))return [];
+  if(sesion.rol==='TUTOR'){
+    const permitidos=new Set(tutoresSesionETOP().map(normalizarBusqueda));
+    if(!permitidos.size)return [];
+    return catalogoNRC.filter(c=>permitidos.has(normalizarBusqueda(c.tutor)));
+  }
+  if(sesion.rol!=='COORDINACION')return [];
+  const cartera=correoFiltroCarteraETOP();
+  if(cartera==='__TODAS__')return catalogoNRC.slice();
+  if(!cartera)return [];
+  return catalogoNRC.filter(c=>nrcAsignadoCoordinacionETOP(c,cartera));
+}
+function etiquetaCarteraPortadaETOP(){
+  const sesion=sesionGlobalETOP();
+  if(!sesion)return 'Sin sesión';
+  if(sesion.rol==='TUTOR')return 'Tus cursos';
+  if(sesion.rol!=='COORDINACION')return 'Sin coordinación';
+  const cartera=correoFiltroCarteraETOP();
+  if(cartera==='__TODAS__')return 'Toda la gestión ETOP';
+  if(esSuperadminVistaETOP()&&vistaCoordinacionETOP()!=='__MI__')
+    return 'Coordinación de '+nombreCoordinadorETOP(cartera);
+  return 'Tu coordinación';
+}
+/* Pestañas de Foco del día: respetan la cartera seleccionada. */
 let focoCoordTutorSeleccionada='';
 function esSesionCoordinacionFoco(){
   return sesionGlobalETOP()?.rol==='COORDINACION';
@@ -4175,16 +4199,10 @@ function actualizarControlesFocoCoordinacion(){
     tabs.replaceChildren();
     return;
   }
-  // Sólo tutoras con NRC activos o en cierre asignados a la coordinación.
-  // Un mismo NRC puede contener varios correos separados por ';'.
-  const correoCoordinacion=etopEmailNorm(sesionGlobalETOP()?.email);
+  // Las pestañas solo contienen tutoras activas en la cartera seleccionada.
   const nombres=[...new Set(
-    catalogoNRC
-      .filter(n=>
-        ['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase())
-        && String(n.coordinadores||'').split(';')
-          .some(correo=>etopEmailNorm(correo)===correoCoordinacion)
-      )
+    catalogoPortadaETOP()
+      .filter(n=>['ACTIVO','EN CIERRE'].includes(String(n.estado||'').trim().toUpperCase()))
       .map(n=>String(n.tutor||'').trim())
       .filter(Boolean)
   )].sort((a,b)=>a.localeCompare(b,'es'));
@@ -4200,7 +4218,7 @@ function actualizarControlesFocoCoordinacion(){
     btn.type='button';
     btn.className='foco-dia-tab'+(focoCoordTutorSeleccionada===nombre?' active':'');
     btn.textContent=etiqueta;
-    btn.title=nombre||'Toda tu coordinación';
+    btn.title=nombre||etiquetaCarteraPortadaETOP();
     btn.dataset.tutora=nombre;
     btn.setAttribute('aria-pressed',String(focoCoordTutorSeleccionada===nombre));
     btn.addEventListener('click',()=>seleccionarTutoraFoco(nombre));
@@ -4254,25 +4272,11 @@ let resumenCalAnio=resumenCalHoy.getFullYear();
 let resumenCalMesIndice=resumenCalHoy.getMonth();
 
 function cursosInicioVisiblesResumen(){
-  const sesion=sesionGlobalETOP();
-  if(!sesion||!Array.isArray(catalogoNRC))return [];
-  const tutoresPermitidos=new Set(tutoresSesionETOP().map(resumenCargaNorm));
-  const esTutor=sesion.rol==='TUTOR';
-  const esCoordinador=sesion.rol==='COORDINACION';
-  const correoCoordinacion=etopEmailNorm(sesion.email);
-  if(!esTutor&&!esCoordinador)return [];
-  if(esTutor&&!tutoresPermitidos.size)return [];
-  if(esCoordinador&&!correoCoordinacion)return [];
   const vistos=new Set();
-  return catalogoNRC.filter(c=>{
+  return catalogoPortadaETOP().filter(c=>{
     const nrc=String(c.nrc||'').trim();
     const fecha=fechaISO(c['fecha inicio']);
-    // Mostrar cualquier inicio registrado, pasado, presente o futuro,
-    // sin excluir cursos por su estado (Preparación, Activo, Cierre o Cerrado).
     if(!nrc||!fecha)return false;
-    if(esTutor&&!tutoresPermitidos.has(resumenCargaNorm(c.tutor)))return false;
-    if(esCoordinador&&!String(c.coordinadores||'').split(';')
-      .some(correo=>etopEmailNorm(correo)===correoCoordinacion))return false;
     const clave=resumenCargaNorm(nrc);
     if(vistos.has(clave))return false;
     vistos.add(clave);
@@ -4322,7 +4326,7 @@ function refrescarInicioResumenCalendario(){
   host.innerHTML=dias.join('');
   const sesion=sesionGlobalETOP();
   if(contexto)contexto.textContent=!sesion?'Identifícate para ver inicios':
-    sesion.rol==='COORDINACION'?'Todos los inicios · tu coordinación':'Todos los inicios · tus cursos';
+    'Todos los inicios · '+etiquetaCarteraPortadaETOP();
 }
 function abrirInicioResumenCalendarioDia(iso){
   const seleccion=cursosInicioDiaResumen(iso);
@@ -4418,11 +4422,7 @@ async function refrescarResumenCargaTutorial(){
   await asegurarMetricasResumenCarga();
 
   const tutores=tutoresSesionETOP();
-  let data=catalogoNRC.slice();
-  if(tutores.length){
-    const permitidos=new Set(tutores.map(resumenCargaNorm));
-    data=data.filter(x=>permitidos.has(resumenCargaNorm(x.tutor)));
-  }
+  const data=catalogoPortadaETOP();
 
   const operativos=data.filter(x=>['ACTIVO','EN CIERRE'].includes(resumenCargaNorm(x.estado)));
   const atenciones=operativos.reduce((s,x)=>s+resumenCargaEstudiantes(x.nrc),0);
@@ -4449,7 +4449,8 @@ async function refrescarResumenCargaTutorial(){
 
   const ctx=document.getElementById('resCargaContext');
   if(ctx){
-    if(tutores.length>1)ctx.textContent='Carga actual · '+tutores.join(' + ')+' · reemplazo temporal';
+    if(sesionGlobalETOP()?.rol==='COORDINACION')ctx.textContent='Carga actual · '+etiquetaCarteraPortadaETOP();
+    else if(tutores.length>1)ctx.textContent='Carga actual · '+tutores.join(' + ')+' · reemplazo temporal';
     else if(tutores.length===1)ctx.textContent='Carga actual · '+tutores[0];
     else ctx.textContent='Carga actual · equipo tutorial';
   }
@@ -4490,13 +4491,10 @@ function formatoFechaProximoCurso(valor){
 function proximosCursosPorComenzar(){
   const hoy=new Date();hoy.setHours(0,0,0,0);
   const limite=new Date(hoy);limite.setDate(limite.getDate()+100);
-  const tutores=tutoresSesionETOP();
-  const permitidos=new Set(tutores.map(normalizarBusqueda));
-  return catalogoNRC
+  return catalogoPortadaETOP()
     .filter(c=>{
       const d=fechaCursoETOP(c['fecha inicio']);
       if(!d||d<hoy||d>limite)return false;
-      if(permitidos.size&&!permitidos.has(normalizarBusqueda(c.tutor)))return false;
       const estado=normalizarBusqueda(c.estado);
       if(estado!=='PREPARACION')return false;
       return true;
@@ -4534,7 +4532,7 @@ function refrescarProximosCursos(){
   const ctx=document.getElementById('proximosCursosContexto');
   if(!body)return;
   const tutores=tutoresSesionETOP();
-  if(ctx)ctx.textContent=tutores.length?('5 próximos inicios · '+tutores.join(' + ')):'Los 5 inicios más cercanos';
+  if(ctx)ctx.textContent=sesionGlobalETOP()?.rol==='COORDINACION'?'5 próximos inicios · '+etiquetaCarteraPortadaETOP():tutores.length?('5 próximos inicios · '+tutores.join(' + ')):'Los 5 inicios más cercanos';
   if(!catalogoNRC.length){
     body.innerHTML='<tr><td colspan="3" class="upcoming-empty">Cargando próximos cursos…</td></tr>';
     return;
@@ -4725,10 +4723,7 @@ function limpiarContextoUniversal(){
   if(rut)rut.value='';
 }
 function cursosPermitidosUniversal(){
-  const tutores=tutoresSesionETOP();
-  if(!tutores.length)return catalogoNRC.slice();
-  const permitidos=new Set(tutores.map(normalizarBusqueda));
-  return catalogoNRC.filter(c=>permitidos.has(normalizarBusqueda(c.tutor)));
+  return catalogoPortadaETOP();
 }
 function scoreUniversal(c,q){
   const nrc=normalizarBusqueda(c.nrc);
@@ -4764,10 +4759,10 @@ function buscarUniversal(valor){
   }
 
   if(q.length>=2){
-    const permitidos=tutoresSesionETOP();
-    const permitidosNorm=new Set(permitidos.map(normalizarBusqueda));
+    const cursosAutorizados=cursosPermitidosUniversal();
+    const tutoresDisponibles=new Set(cursosAutorizados.map(c=>normalizarBusqueda(c.tutor)));
     const tutores=[...TUTORES_ACTIVOS]
-      .filter(t=>!permitidos.length || permitidosNorm.has(normalizarBusqueda(t)))
+      .filter(t=>tutoresDisponibles.has(normalizarBusqueda(t)))
       .filter(t=>normalizarBusqueda(t).includes(q))
       .slice(0,3);
     tutores.forEach(t=>resultados.push({
@@ -4776,7 +4771,7 @@ function buscarUniversal(valor){
       tag:'Tutor',tutor:t
     }));
 
-    const cursos=cursosPermitidosUniversal()
+    const cursos=cursosAutorizados
       .filter(c=>textoBuscableCurso(c).includes(q))
       .sort((a,b)=>scoreUniversal(a,q)-scoreUniversal(b,q)||
         normalizarBusqueda(a.nrc).localeCompare(normalizarBusqueda(b.nrc),'es',{numeric:true}))
@@ -5037,12 +5032,23 @@ function seleccionarVistaCoordinacionETOP(valor){
   // Solo refrescar el Power BI visible. Nunca recargar todo el portal ni
   // las páginas HTML locales, que no usan ETOP_Selector_Cartera.
   if(v!==anterior){
+    focoCoordTutorSeleccionada='';
+    actualizarControlesFocoCoordinacion();
+    universalSelectedNrcs.clear();
+    const buscador=document.getElementById('universalSearch');
+    if(buscador)buscador.value='';
+    const resultados=document.getElementById('universalResults');
+    if(resultados){resultados.classList.remove('open');resultados.replaceChildren();}
     if(ETOP_VISTAS_FILTRO_CARTERA.has(vistaActual)){
       sincronizarFiltros();
       actualizarBadge();
     }
     if(urlsBase[vistaActual]&&!urlsBase[vistaActual].local)actualizarIframe();
-    else if(vistaActual==='INICIO')refrescarFocoDia();
+    else if(vistaActual==='INICIO'){
+      refrescarFocoDia();
+      refrescarResumenCargaTutorial();
+      refrescarProximosCursos();
+    }
   }
 }
 function nombreSaludoETOP(s){
