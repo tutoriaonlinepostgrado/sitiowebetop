@@ -5043,7 +5043,10 @@ function seleccionarVistaCoordinacionETOP(valor){
       sincronizarFiltros();
       actualizarBadge();
     }
-    if(urlsBase[vistaActual]&&!urlsBase[vistaActual].local)actualizarIframe();
+    // Cursos en Preparación es HTML local: debe refrescar su iframe para
+    // leer la cartera ETOP recién seleccionada y conservar filtros superiores.
+    if(urlsBase[vistaActual]&&(!urlsBase[vistaActual].local||vistaActual==='CURSOS_PREPARACION'))
+      actualizarIframe();
     else if(vistaActual==='INICIO'){
       refrescarFocoDia();
       refrescarResumenCargaTutorial();
