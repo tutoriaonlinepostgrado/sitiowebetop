@@ -85,6 +85,47 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
  .course-tutor{grid-column:2;grid-row:2}
  .course-students{grid-column:3;grid-row:1/span 2;align-self:center;padding:5px 7px}
 }
+
+/* Cursos por iniciar: tabla densa y paginada, sin desplazamiento interior */
+.detailhead{padding:10px 16px 8px;min-height:63px;gap:9px}
+.detailhead .detail-title{min-width:175px;flex:1 1 245px}
+.detailhead h2{font-size:17px;line-height:1.18;margin-top:3px}
+.detail-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.student-filter-label{color:#637c96;font-size:10px;font-weight:800}
+.student-filter{min-width:170px;max-width:225px;height:30px;border:1px solid #c8d8e9;border-radius:7px;background:#f7faff;color:var(--navy);padding:0 8px;font-size:11px;font-weight:750;cursor:pointer}
+.student-filter:disabled{cursor:not-allowed;opacity:.6}
+.count{font-size:11px;padding:7px 9px}
+.help{padding:6px 16px;font-size:10px}
+.columns{padding:8px 16px 7px;font-size:9px}
+.courses{overflow:hidden;flex:1 1 auto;min-height:0;padding:0 9px 3px}
+.course{height:42px;min-height:42px;padding:4px 7px;gap:9px;overflow:hidden}
+.nrc{height:27px;white-space:nowrap;overflow:hidden;padding:5px 7px;font-size:10px;gap:4px}
+.nrc .external{font-size:10px}
+.course-name{font-size:10.5px;line-height:1.18;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.course-tutor{font-size:10px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.course-students{min-width:31px;padding:4px 7px;font-size:11px}
+.pager{flex:0 0 39px;min-height:39px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 15px;border-top:1px solid #e3ecf5;background:#fbfdff;color:#647b94;font-size:10px}
+.pager-controls{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:800;color:var(--navy)}
+.pager button{display:inline-flex;align-items:center;justify-content:center;width:29px;height:28px;border:1px solid #cedded;border-radius:7px;background:#edf4fc;color:var(--navy);font-size:17px;font-weight:700;cursor:pointer}
+.pager button:hover:not(:disabled){background:#dbeaf9}
+.pager button:disabled{opacity:.38;cursor:default}
+@media(max-width:1030px){
+ .detailhead{padding:9px 12px;flex-wrap:wrap}.detailhead h2{font-size:15px}
+ .columns{padding:8px 10px}.courses{padding:0 6px 3px}
+ .course{height:42px;min-height:42px;padding:4px;gap:6px}
+ .nrc{font-size:9px;padding:4px}.course-name{font-size:10px}
+ .student-filter{min-width:150px}.pager{padding:5px 9px}
+}
+@media(max-width:760px){
+ .detail{min-height:380px;max-height:680px}
+ .detailhead .detail-title{flex:1 1 100%}
+ .detail-actions{justify-content:space-between;width:100%}
+ .student-filter{flex:1 1 auto;min-width:130px}
+ .course{height:52px;min-height:52px}
+ .course-tutor{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+ .nrc{font-size:9px}
+ .pager{font-size:9px}
+}
 </style>
 </head>
 <body>
@@ -110,10 +151,29 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   </div>
  </section>
  <section class="panel detail" aria-label="Cursos del día">
-  <div class="detailhead"><div><div class="eyebrow2">Cursos de la fecha seleccionada</div><h2 id="selectedLabel">—</h2></div><span class="count" id="count">0 cursos</span></div>
+  <div class="detailhead">
+   <div class="detail-title"><div class="eyebrow2">Cursos de la fecha seleccionada</div><h2 id="selectedLabel">—</h2></div>
+   <div class="detail-actions">
+    <label class="student-filter-label" for="studentFilter">Nómina</label>
+    <select id="studentFilter" class="student-filter" aria-label="Filtrar cursos según cantidad de estudiantes" disabled>
+     <option value="all">Todos los cursos</option>
+     <option value="with">Con estudiantes</option>
+     <option value="without">Sin estudiantes</option>
+    </select>
+    <span class="count" id="count">0 cursos</span>
+   </div>
+  </div>
   <div class="help"><b>↗ Abre el NRC</b> para consultar Web Integración con el NRC y período correspondientes y buscar su nómina.</div>
   <div class="columns" aria-hidden="true"><span>NRC</span><span>Nombre del curso</span><span>Tutora / tutor</span><span>Estudiantes</span></div>
   <div class="courses" id="courses" aria-live="polite"><div class="empty"><strong>Cargando cursos…</strong></div></div>
+  <div class="pager" aria-label="Paginación de cursos">
+   <span id="pageInfo">Cargando cursos…</span>
+   <div class="pager-controls">
+    <button type="button" id="pagePrev" aria-label="Página anterior" disabled>‹</button>
+    <span id="pageNum" aria-live="polite">—</span>
+    <button type="button" id="pageNext" aria-label="Página siguiente" disabled>›</button>
+   </div>
+  </div>
  </section>
 </main>
 </div>
@@ -131,6 +191,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     'carolina.monsalve.g@unab.cl':'Carolina'};
   let all=[],byDay=new Map(),scopeKey='',chosen='',year=0,month=0,loaded=false;
   let estudiantesPorNRC=new Map(),metricasDisponibles=false;
+  let filtroEstudiantes='all',pagina=0,tamanoPagina=0;
   const el=id=>document.getElementById(id);
   const em=v=>String(v||'').trim().toLowerCase();
   const str=v=>String(v||'').trim();
@@ -177,9 +238,21 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     }
     for(const list of byDay.values())list.sort((a,b)=>str(a.nrc).localeCompare(str(b.nrc),'es',{numeric:true}));
     const first=[...byDay.keys()].sort()[0]||min;
-    chosen=first;
+    chosen=first;pagina=0;
     const parts=first.split('-').map(Number);year=parts[0];month=parts[1]-1;
     render();
+  }
+  function numeroEstudiantes(c){
+    return Math.max(0,Number(estudiantesPorNRC.get(str(c.nrc).toUpperCase()))||0);
+  }
+  function filtrarCursos(lista){
+    if(!metricasDisponibles||filtroEstudiantes==='all')return lista;
+    return lista.filter(c=>filtroEstudiantes==='with'?numeroEstudiantes(c)>0:numeroEstudiantes(c)===0);
+  }
+  function calcularTamanoPagina(){
+    const alto=el('courses').clientHeight||250;
+    const fila=window.matchMedia('(max-width:760px)').matches?52:42;
+    return Math.max(3,Math.min(25,Math.floor(Math.max(0,alto-5)/fila)));
   }
   function calendar(){
     el('monthLabel').textContent=monthName(year,month);
@@ -189,7 +262,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     const totalDays=new Date(year,month+1,0).getDate();let monthly=0;
     for(let i=0;i<offset;i++){const d=document.createElement('div');d.className='blank';grid.appendChild(d)}
     for(let d=1;d<=totalDays;d++){
-      const iso=key(year,month,d),qty=(byDay.get(iso)||[]).length;monthly+=qty;
+      const iso=key(year,month,d),qty=filtrarCursos(byDay.get(iso)||[]).length;monthly+=qty;
       const button=document.createElement('button');button.type='button';button.className='datebtn';
       if(qty)button.classList.add('has');
       if(iso===chosen)button.classList.add('selected');
@@ -199,7 +272,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       button.setAttribute('aria-pressed',String(iso===chosen));
       const digit=document.createElement('span');digit.className='digit';digit.textContent=d;button.appendChild(digit);
       if(qty){const num=document.createElement('span');num.className='qty';num.textContent=qty;button.appendChild(num)}
-      button.addEventListener('click',()=>{chosen=iso;calendar();details()});
+      button.addEventListener('click',()=>{chosen=iso;pagina=0;calendar();details()});
       grid.appendChild(button);
     }
     el('monthTotal').textContent=monthly.toLocaleString('es-CL');
@@ -218,15 +291,34 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   }
   function details(){
     el('selectedLabel').textContent=dayName(chosen);
-    const list=byDay.get(chosen)||[];
-    el('count').textContent=list.length.toLocaleString('es-CL')+(list.length===1?' curso':' cursos');
+    const total=byDay.get(chosen)||[];
+    const lista=filtrarCursos(total);
+    const selector=el('studentFilter');
+    selector.disabled=!metricasDisponibles;
+    selector.title=metricasDisponibles?'Filtrar cursos por estudiantes':'No se pudieron consultar los datos de estudiantes';
+    selector.value=filtroEstudiantes;
+    selector.options[0].textContent='Todos ('+total.length+')';
+    selector.options[1].textContent='Con estudiantes'+(metricasDisponibles?' ('+total.filter(c=>numeroEstudiantes(c)>0).length+')':'');
+    selector.options[2].textContent='Sin estudiantes'+(metricasDisponibles?' ('+total.filter(c=>numeroEstudiantes(c)===0).length+')':'');
+    const n=lista.length;
+    el('count').textContent=filtroEstudiantes==='all'
+      ?n.toLocaleString('es-CL')+(n===1?' curso':' cursos')
+      :n.toLocaleString('es-CL')+' de '+total.length.toLocaleString('es-CL')+' cursos';
     const target=el('courses');target.replaceChildren();
+    const pageSize=calcularTamanoPagina();tamanoPagina=pageSize;
+    const numeroPaginas=Math.max(1,Math.ceil(n/pageSize));pagina=Math.max(0,Math.min(pagina,numeroPaginas-1));
+    const desde=pagina*pageSize,hasta=Math.min(desde+pageSize,n);
+    el('pageInfo').textContent=n?'Mostrando '+(desde+1)+'–'+hasta+' de '+n+' cursos':'Sin cursos para mostrar';
+    el('pageNum').textContent=(pagina+1)+' / '+numeroPaginas;
+    el('pagePrev').disabled=pagina<=0||!n;
+    el('pageNext').disabled=pagina>=numeroPaginas-1||!n;
     if(!loaded){target.appendChild(empty('◷','Cargando cursos…','Consultando el catálogo ETOP.'));return}
     if(!scope().allowed){target.appendChild(empty('🔒','Sesión de coordinación requerida','Inicia sesión en ETOP desde el menú izquierdo.'));return}
     if(byDay.size===0){target.appendChild(empty('📅','Sin próximos inicios','Esta coordinación no tiene cursos futuros en estado Preparación.'));return}
-    if(list.length===0){target.appendChild(empty('📆','Sin cursos para esta fecha','Selecciona un día con contador azul en el calendario.'));return}
+    if(total.length===0){target.appendChild(empty('📆','Sin cursos para esta fecha','Selecciona un día con contador en el calendario.'));return}
+    if(!n){target.appendChild(empty('🔎','Sin cursos que cumplan el filtro','Prueba con Todos o selecciona otro día del calendario.'));return}
     const fragment=document.createDocumentFragment();
-    for(const c of list){
+    for(const c of lista.slice(desde,hasta)){
       const row=document.createElement('div');row.className='course';
       const link=document.createElement('a');link.className='nrc';link.href=integration(c);
       link.target='_blank';link.rel='noopener noreferrer';
@@ -234,10 +326,18 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       link.textContent=str(c.nrc)||'—';
       const icon=document.createElement('span');icon.className='external';icon.textContent='↗';icon.setAttribute('aria-hidden','true');link.appendChild(icon);
       const name=document.createElement('div');name.className='course-name';name.textContent=str(c['nombre curso'])||'—';
+      name.title=name.textContent;
       const tutor=document.createElement('div');tutor.className='course-tutor';tutor.textContent=str(c.tutor)||'Sin tutora asignada';
+      tutor.title=tutor.textContent;
       const students=document.createElement('span');students.className='course-students';
-      if(!metricasDisponibles){students.textContent='—';students.classList.add('unavailable');students.title='No fue posible consultar las métricas de estudiantes';}
-      else{const cantidad=Math.max(0,Number(estudiantesPorNRC.get(str(c.nrc).toUpperCase()))||0);students.textContent=cantidad.toLocaleString('es-CL');students.title=cantidad+' estudiantes registrados';if(cantidad===0)students.classList.add('zero');}
+      if(!metricasDisponibles){
+        students.textContent='—';students.classList.add('unavailable');
+        students.title='No fue posible consultar las métricas de estudiantes';
+      }else{
+        const cantidad=numeroEstudiantes(c);
+        students.textContent=cantidad.toLocaleString('es-CL');students.title=cantidad+' estudiantes registrados';
+        if(cantidad===0)students.classList.add('zero');
+      }
       row.append(link,name,tutor,students);fragment.appendChild(row);
     }
     target.appendChild(fragment);
@@ -246,7 +346,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   function moveMonth(delta){
     const next=new Date(year,month+delta,1),first=key(next.getFullYear(),next.getMonth(),1);
     if(first.slice(0,7)<today().slice(0,7))return;
-    year=next.getFullYear();month=next.getMonth();
+    year=next.getFullYear();month=next.getMonth();pagina=0;
     chosen=[...byDay.keys()].filter(d=>d.slice(0,7)===first.slice(0,7)).sort()[0]||first;
     render();
   }
@@ -254,6 +354,24 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   el('prev').addEventListener('click',()=>moveMonth(-1));
   el('next').addEventListener('click',()=>moveMonth(1));
   el('jump').addEventListener('click',buildIndex);
+  el('studentFilter').addEventListener('change',e=>{
+    filtroEstudiantes=e.target.value;pagina=0;
+    if(!filtrarCursos(byDay.get(chosen)||[]).length){
+      const otro=[...byDay.keys()].filter(d=>d.slice(0,7)===key(year,month,1).slice(0,7)&&filtrarCursos(byDay.get(d)).length).sort()[0];
+      if(otro)chosen=otro;
+    }
+    calendar();details();
+  });
+  el('pagePrev').addEventListener('click',()=>{if(pagina>0){pagina--;details()}});
+  el('pageNext').addEventListener('click',()=>{if((pagina+1)*tamanoPagina<filtrarCursos(byDay.get(chosen)||[]).length){pagina++;details()}});
+  if(typeof ResizeObserver!=='undefined'){
+    const observer=new ResizeObserver(()=>{
+      if(!loaded)return;
+      const actual=calcularTamanoPagina();
+      if(actual!==tamanoPagina)details();
+    });
+    observer.observe(el('courses'));
+  }
   window.addEventListener('storage',e=>{
     if(e.key==='etop_usuario_sesion'||(e.key||'').startsWith('etop-vista-coordinacion:'))sync();
   });
