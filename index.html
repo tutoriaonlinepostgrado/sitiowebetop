@@ -3617,9 +3617,49 @@ function claveValor(v,campo=''){if(campo==='fechaInicio')return fechaISO(v);retu
 function campoRegistro(n,campo){if(campo==='fechaInicio')return fechaISO(n['fecha inicio']);if(campo==='codigo')return n['codigo curso']??'';return n[campo]??''}
 function filtroVisible(campo){return(FILTROS_POR_VISTA[vistaActual]||[]).includes(campo)}
 function coincide(n,campo,valor){if(!valor)return true;return claveValor(campoRegistro(n,campo),campo)===claveValor(valor,campo)}
+/* Filtros de cartera para las cinco vistas solicitadas. */
+const ETOP_VISTAS_FILTRO_CARTERA=new Set(['DASHBOARD','NOMINA_ESTUDIANTES','CURSOS_ACTIVOS','CURSOS_PREPARACION','CURSOS_CIERRE']);
+function correoFiltroCarteraETOP(){
+  const sesion=sesionGlobalETOP();
+  if(sesion?.rol!=='COORDINACION')return '';
+  const correo=etopEmailNorm(sesion.email);
+  if(!correo)return '';
+  if(!esSuperadminVistaETOP())return correo;
+  const vista=vistaCoordinacionETOP();
+  if(vista==='__TODAS__')return '__TODAS__';
+  return vista==='__MI__'?correo:etopEmailNorm(vista);
+}
+function claveFiltroCarteraETOP(){
+  const sesion=sesionGlobalETOP();
+  if(!sesion)return 'SIN_SESION';
+  if(sesion.rol==='COORDINACION')return 'COORD:'+correoFiltroCarteraETOP();
+  return 'TUTOR:'+etopEmailNorm(sesion.email);
+}
+function nrcAsignadoCoordinacionETOP(curso,correo){
+  return String(curso.coordinadores||'').split(';').some(c=>etopEmailNorm(c)===correo);
+}
+let ultimoAmbitoFiltrosETOP=null;
+function limpiarFiltrosPorCambioCoordinacionETOP(){
+  // Se invoca únicamente dentro de las cinco vistas; nunca recarga páginas.
+  for(const c of ['facultad','tutor','tipo','codigo','estado','motivoRiesgo','intake','rut','nrc'])BUSQUEDA[c]=null;
+  BUSQUEDA.fechaInicio=[];
+  CAMPOS_MULTI_PRINCIPAL.forEach(c=>SELECCION_MULTI_PRINCIPAL[c].clear());
+  SELECCION_NRC_PRINCIPAL.clear();
+  nrcConfirmado='';
+  nrcTextoBusqueda='';
+  for(const id of ['input-nrc','input-rut','fecha-multi-input']){
+    const input=document.getElementById(id);
+    if(input)input.value='';
+  }
+  ocultarNRCDropdown();
+}
 function nrcsFiltrados(excluir=null){
   const tutoresSesion=tutoresSesionETOP().map(t=>claveValor(t));
+  const requiereCartera=ETOP_VISTAS_FILTRO_CARTERA.has(vistaActual)&&sesionGlobalETOP()?.rol==='COORDINACION';
+  const correoCartera=requiereCartera?correoFiltroCarteraETOP():null;
+  if(requiereCartera&&!correoCartera)return [];
   return catalogoNRC.filter(n=>{
+    if(correoCartera&&correoCartera!=='__TODAS__'&&!nrcAsignadoCoordinacionETOP(n,correoCartera))return false;
     if(tutoresSesion.length&&!tutoresSesion.includes(claveValor(n.tutor)))return false;
     if(excluir!=='facultad'&&filtroVisible('facultad')&&!coincideMultiPrincipal(n,'facultad'))return false;
     if(excluir!=='tutor'&&filtroVisible('tutor')&&!coincideMultiPrincipal(n,'tutor'))return false;
@@ -3663,6 +3703,11 @@ function validarNRCContraFiltros(){
   actualizarResumenNrcPrincipal();
 }
 function sincronizarFiltros(){
+  if(ETOP_VISTAS_FILTRO_CARTERA.has(vistaActual)){
+    const ambito=claveFiltroCarteraETOP();
+    if(ultimoAmbitoFiltrosETOP!==null&&ultimoAmbitoFiltrosETOP!==ambito)limpiarFiltrosPorCambioCoordinacionETOP();
+    ultimoAmbitoFiltrosETOP=ambito;
+  }
   reconciliarMultiPrincipal();
   validarNRCContraFiltros();
   reconstruirSelect('sel-facultad','facultad');reconstruirSelect('sel-tutor','tutor');reconstruirSelect('sel-tipo','tipo');
@@ -4992,6 +5037,10 @@ function seleccionarVistaCoordinacionETOP(valor){
   // Solo refrescar el Power BI visible. Nunca recargar todo el portal ni
   // las páginas HTML locales, que no usan ETOP_Selector_Cartera.
   if(v!==anterior){
+    if(ETOP_VISTAS_FILTRO_CARTERA.has(vistaActual)){
+      sincronizarFiltros();
+      actualizarBadge();
+    }
     if(urlsBase[vistaActual]&&!urlsBase[vistaActual].local)actualizarIframe();
     else if(vistaActual==='INICIO')refrescarFocoDia();
   }
