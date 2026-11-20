@@ -5180,8 +5180,16 @@ function guardarSesionETOP(){
   const input=document.getElementById('etop-login-email'),msg=document.getElementById('etop-login-msg'),email=etopEmailNorm(input?.value),tutor=etopTutorByEmail(email),esCoord=ETOP_COORDINACION.has(email);
   if(!email){msg.textContent='Ingresa tu correo institucional.';return}
   if(!tutor&&!esCoord){msg.textContent='Este correo no está asociado a un tutor o usuario de coordinación del portal.';return}
+  // Cambiar de identidad debe descartar NRC, filtros y selecciones del perfil anterior.
+  // De otro modo se aplica un NRC antiguo junto al tutor recién autenticado y el informe queda vacío.
+  const anterior=sesionGlobalETOP();
+  const cambioPerfil=!anterior||etopEmailNorm(anterior.email)!==email;
   const s={email,tutor:esCoord?'':tutor,rol:esCoord?'COORDINACION':'TUTOR',guardado:new Date().toISOString()};
   localStorage.setItem(ETOP_GLOBAL_SESSION,JSON.stringify(s));localStorage.setItem(ETOP_LEGACY_EMAIL_KEY,email);
+  if(cambioPerfil){
+    limpiarFiltrosPorCambioCoordinacionETOP();
+    ultimoAmbitoFiltrosETOP=null;
+  }
   BUSQUEDA.tutor=null;
   focoCoordTutorSeleccionada='';
   actualizarControlesFocoCoordinacion();
