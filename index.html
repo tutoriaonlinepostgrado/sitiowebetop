@@ -4167,6 +4167,8 @@ function seleccionarTutoraFoco(tutora){
   focoCoordTutorSeleccionada=nombre;
   actualizarControlesFocoCoordinacion();
   refrescarFocoDia();
+  // El resumen de carga comparte la selección de tutora con Foco del día.
+  refrescarResumenCargaTutorial();
 }
 /* Acceso contextual: conserva la tutora seleccionada del Foco del día
    y la marca en el filtro superior del Tablero de Gestión. */
@@ -4423,7 +4425,13 @@ async function refrescarResumenCargaTutorial(){
   await asegurarMetricasResumenCarga();
 
   const tutores=tutoresSesionETOP();
-  const data=catalogoPortadaETOP();
+  const cartera=catalogoPortadaETOP();
+  // En coordinación, la pestaña de Foco del día acota también estos seis KPI.
+  // «Todas» (selección vacía) conserva los totales de la cartera autorizada.
+  const filtroTutora=esSesionCoordinacionFoco()?focoCoordTutorSeleccionada:'';
+  const data=filtroTutora
+    ?cartera.filter(c=>resumenCargaNorm(c.tutor)===resumenCargaNorm(filtroTutora))
+    :cartera;
 
   const operativos=data.filter(x=>['ACTIVO','EN CIERRE'].includes(resumenCargaNorm(x.estado)));
   const atenciones=operativos.reduce((s,x)=>s+resumenCargaEstudiantes(x.nrc),0);
@@ -4450,10 +4458,11 @@ async function refrescarResumenCargaTutorial(){
 
   const ctx=document.getElementById('resCargaContext');
   if(ctx){
-    if(sesionGlobalETOP()?.rol==='COORDINACION')ctx.textContent='Carga actual · '+etiquetaCarteraPortadaETOP();
+    if(sesionGlobalETOP()?.rol==='COORDINACION')ctx.textContent='Carga actual · '+(filtroTutora||etiquetaCarteraPortadaETOP());
     else if(tutores.length>1)ctx.textContent='Carga actual · '+tutores.join(' + ')+' · reemplazo temporal';
     else if(tutores.length===1)ctx.textContent='Carga actual · '+tutores[0];
     else ctx.textContent='Carga actual · equipo tutorial';
+    ctx.title=ctx.textContent;
   }
 }
 function abrirDetalleCargaTutorial(){
