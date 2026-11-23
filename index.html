@@ -2562,6 +2562,8 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
 }
 .resumen-cal-dot{background:#2563eb;width:6px;height:6px;border-radius:2px;flex:none}
 /* Alerta QA2 integrada en el minicalendario de Inicio. */
+.resumen-cal-day.has-qa2-preview{position:relative;background:#fff9df;border-color:#ead27b;color:#785c16;cursor:pointer}
+.resumen-cal-day.has-qa2-preview:hover{background:#fff1bd;border-color:#d3ac45}
 .resumen-cal-day.has-qa2-alert{position:relative;background:#fff4e5;border-color:#e9a45a;color:#7a420d;cursor:pointer}
 .resumen-cal-day.has-qa2-alert:hover{background:#ffe9ce;border-color:#da8e3d}
 .resumen-cal-day.has-qa2-urgent{background:#ffebeb;border-color:#e17c7c}
@@ -4406,8 +4408,9 @@ function pendientesQA2Calendario(){
   return cursosInicioVisiblesResumen().filter(c=>{
     if(resumenCargaNorm(c['codigo curso'])==='UNI118')return false;
     const dias=resumenCargaDias(c['fecha inicio']);
-    // Aviso desde siete días antes y seguimiento durante siete días después del inicio.
-    if(dias>7||dias< -7)return false;
+    // Pendiente visible con 30 días de anticipación; alerta prioritaria a 7 días.
+    // Se conserva el seguimiento hasta 7 días después del inicio.
+    if(dias>30||dias< -7)return false;
     const cursoId=String(c.id??'').trim();
     return cursoId&&!resumenCalQa2Registrados.has(cursoId);
   }).sort((a,b)=>String(a['fecha inicio']||'').localeCompare(String(b['fecha inicio']||''))||
@@ -4463,12 +4466,12 @@ function abrirDetalleQA2Calendario(fechaDia){
   const rol=sesionGlobalETOP()?.rol;
   const detalle=lista.map(c=>{
     const dias=resumenCargaDias(c['fecha inicio']);
-    const urgente=dias<=3;
+    const urgente=dias<=3,anticipado=dias>7;
     return '<div class="resumen-qa2-item">'+
       '<strong>'+esc(c.nrc||'NRC sin código')+' · '+esc(c['nombre curso']||'Curso')+'</strong>'+
       '<div class="meta">Inicio: '+esc(fechaISO(c['fecha inicio']))+
         (rol==='COORDINACION'?' · Tutor/a: '+esc(c.tutor||'Sin asignar'):'')+'</div>'+
-      '<div class="alerta'+(urgente?' urgente':'')+'">⚠ Sin registro QA2 · '+esc(textoPlazoQA2Calendario(dias))+'</div>'+
+      '<div class="alerta'+(urgente?' urgente':'')+'">'+(anticipado?'Por completar':'⚠ QA2 pendiente')+' · '+esc(textoPlazoQA2Calendario(dias))+'</div>'+
       '<div><button type="button" data-qa2-nrc="'+esc(encodeURIComponent(c.nrc||''))+'">Confeccionar QA2 ↗</button></div>'+
       '</div>';
   }).join('');
@@ -4514,6 +4517,7 @@ function refrescarInicioResumenCalendario(){
     const qa2Dia=fuera?[]:(qa2PorFecha.get(fechaISOdia)||[]);
     const numQA2=qa2Dia.length;
     const urgente=qa2Dia.some(c=>resumenCargaDias(c['fecha inicio'])<=3);
+    const enPlazoAlerta=qa2Dia.some(c=>resumenCargaDias(c['fecha inicio'])<=7);
     const fechaVisible=new Intl.DateTimeFormat('es-CL',{dateStyle:'full'}).format(d);
     const titulo=(cantidad?fechaVisible+': '+cantidad+(cantidad===1?' curso con inicio registrado.':' cursos con inicio registrado.'):
       fechaVisible+': sin cursos con fecha de inicio.')+
@@ -4523,7 +4527,7 @@ function refrescarInicioResumenCalendario(){
     const clic=(cantidad||numQA2)?'onclick="'+accion+'(\''+fechaISOdia+'\')"':'disabled';
     dias.push('<button type="button" class="resumen-cal-day'+(fuera?' is-outside':'')+
       (fechaISOdia===hoy?' is-today':'')+(cantidad?' has-starts':'')+
-      (numQA2?' has-qa2-alert':'')+(urgente?' has-qa2-urgent':'')+
+      (numQA2?(enPlazoAlerta?' has-qa2-alert':' has-qa2-preview'):'')+(urgente?' has-qa2-urgent':'')+
       '" '+clic+' aria-label="'+esc(titulo)+'" title="'+esc(titulo)+'">'+
       '<span>'+d.getDate()+'</span>'+(cantidad?'<span class="resumen-cal-count">'+cantidad+'</span>':'')+
       (numQA2?'<span class="resumen-cal-qa2-mark" aria-hidden="true">!</span>':'')+
@@ -4538,9 +4542,9 @@ function refrescarInicioResumenCalendario(){
     qa2Boton.disabled=resumenCalQa2Cargando;
     qa2Boton.textContent=resumenCalQa2Error?'QA2 sin verificar · Reintentar':
       resumenCalQa2Registrados===null?'Verificando QA2…':
-      '⚠ '+pendientes.length+' QA2 pendiente'+(pendientes.length===1?'':'s');
+      '⚠ '+pendientes.length+' QA2 sin registrar';
     qa2Boton.title=resumenCalQa2Error?'No se pudo consultar incidencias. Pulsa para reintentar.':
-      'Ver cursos de tu cartera que inician entre 7 días antes y 7 días después de hoy sin registro QA2';
+      'QA2 sin registrar: cursos que inician en los próximos 30 días o iniciaron hace hasta 7 días. Alerta prioritaria desde 7 días antes.';
   }
   if(sesion&&catalogoNRC.length&&resumenCalQa2Registrados===null&&!resumenCalQa2Cargando&&!resumenCalQa2Error){
     // No bloquea los KPI ni Power BI: la alerta se actualiza al terminar su consulta.
