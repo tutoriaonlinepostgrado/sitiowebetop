@@ -463,6 +463,26 @@
     const columnFilters={nrc:'',estado:'','nombre curso':'',facultad:'',tutor:'',tipo:'',periodo:''};
     const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    // Si el detalle se abrió desde Carga Tutorial, conservar la cartera de esa coordinación.
+    // Entradas normales a Calendarios mantienen su comportamiento original.
+    function carteraCalendariosDesdeCargaETOP(datos){
+      if(q.get('origen')!=='carga_tutorial')return datos;
+      let sesion=null;
+      try{sesion=JSON.parse(localStorage.getItem('etop_usuario_sesion')||'null')}catch(_){}
+      if(sesion?.rol!=='COORDINACION')return datos;
+      const email=String(sesion.email||'').trim().toLowerCase();
+      if(!email)return [];
+      const superadmins=new Set(['patricio.collao@unab.cl','maria.cruz@unab.cl']);
+      const coordinadores=new Set(['coordinaciontutorial@unab.cl','patricio.collao@unab.cl','felipe.garcia@unab.cl','rita.galvez@unab.cl','carolina.monsalve.g@unab.cl','maria.cruz@unab.cl','tutoriaonline16@unab.cl','tutoriaonline47@unab.cl','tutoriaonline36@unab.cl']);
+      let cartera=email;
+      if(superadmins.has(email)){
+        let vista='__MI__';
+        try{vista=localStorage.getItem('etop-vista-coordinacion:'+email)||'__MI__'}catch(_){}
+        if(vista==='__TODAS__')return datos;
+        if(coordinadores.has(vista))cartera=vista;
+      }
+      return datos.filter(c=>String(c.coordinadores||'').split(';').some(v=>v.trim().toLowerCase()===cartera));
+    }
     function studentCount(x){return Number(metricMap.get(norm(x.nrc))||0)}
     function cumpleFiltroNomina(x){
   const total=studentCount(x);
@@ -1033,7 +1053,7 @@
       selectedCourseNrc=x.nrc||'';
       document.querySelectorAll('#rows tr[data-nrc]').forEach(tr=>tr.classList.toggle('row-selected',norm(decodeURIComponent(tr.dataset.nrc||''))===norm(selectedCourseNrc)));
     }
-    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=await nr.json();incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
+    Promise.all([fetch('nrcs.json',{cache:'no-store'}),fetch('incidencias.json',{cache:'no-store'}),fetch('metricas_estudiantes.json',{cache:'no-store'})]).then(async([nr,ir,mr])=>{if(!nr.ok)throw new Error('No se pudo leer nrcs.json');allCourses=carteraCalendariosDesdeCargaETOP(await nr.json());incidents=ir.ok?await ir.json():[];metrics=mr.ok?await mr.json():[];metricMap=new Map(metrics.map(i=>[norm(i.nrc),Number(i.total_estudiantes)||0]));courses=filterCourses(allCourses);renderDrillContext();render();abrirNrcInicialDesdeUrl();}).catch(err=>{document.getElementById('rows').innerHTML=`<tr><td colspan="12"><div class="error">⚠️ ${esc(err.message)}</div></td></tr>`;});
   </script>
 </body>
 </html>
