@@ -210,7 +210,7 @@ const fmt=v=>{if(!v)return'—';const d=new Date(String(v).slice(0,10)+'T12:00:0
 const num=v=>new Intl.NumberFormat('es-CL',{maximumFractionDigits:1}).format(Number(v)||0);
 const days=v=>{if(!v)return 99999;const a=new Date();a.setHours(0,0,0,0);const b=new Date(String(v).slice(0,10)+'T00:00:00');return Math.round((b-a)/86400000)};
 const colors=['#315f86','#4f8a6d','#c28a16','#7566a8','#c95d63','#5f7f9a','#8a6f4d','#5c8f86'];
-const TUTORES_ACTIVOS=['HANS NOVAKOVIC','KIMBERLY JORQUERA','MARTA GONZALEZ','DANITZA JANSEN','SYLVIA VALENZUELA','PAULA PARDO','MARIA FERNANDA GONZALEZ','BARBARA ROJAS','CONSTANZA CONTRERAS','CARLA PEÑA','NOEMI PAZ','HECTOR TAPIA','CONSUELO PARGA','FRANCISCA INDA','JAVIERA ROJAS','ALYSON HERNANDEZ'];
+const TUTORES_ACTIVOS=['HANS NOVAKOVIC','KIMBERLY JORQUERA','MARTA GONZALEZ','DANITZA JANSEN','SYLVIA VALENZUELA','PAULA PARDO','MARIA FERNANDA GONZALEZ','BARBARA ROJAS','CONSTANZA CONTRERAS','CARLA PEÑA','NOEMI PAZ','ORIETTA CORTES','HECTOR TAPIA','CONSUELO PARGA','FRANCISCA INDA','JAVIERA ROJAS','ALYSON HERNANDEZ'];
 const TUTORES_SET=new Set(TUTORES_ACTIVOS.map(norm));
 let courses=[],cargaCatalogoCompleto=[],metrics=[],metricMap=new Map(),intakesExportRows=[];
 let cargaAmbitoMostrado=null;
