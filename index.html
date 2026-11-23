@@ -2561,6 +2561,45 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   color:#58718e;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .resumen-cal-dot{background:#2563eb;width:6px;height:6px;border-radius:2px;flex:none}
+/* Alerta QA2 integrada en el minicalendario de Inicio. */
+.resumen-cal-day.has-qa2-alert{position:relative;background:#fff4e5;border-color:#e9a45a;color:#7a420d;cursor:pointer}
+.resumen-cal-day.has-qa2-alert:hover{background:#ffe9ce;border-color:#da8e3d}
+.resumen-cal-day.has-qa2-urgent{background:#ffebeb;border-color:#e17c7c}
+.resumen-cal-day.has-qa2-urgent:hover{background:#ffdddd;border-color:#cc5555}
+.resumen-cal-qa2-mark{
+  position:absolute;right:1px;top:1px;display:grid;place-items:center;
+  min-width:10px;height:10px;padding:0 1px;border-radius:5px;
+  font:900 7px/1 Arial,sans-serif;color:#fff;background:#c26018;
+}
+.resumen-cal-day.has-qa2-urgent .resumen-cal-qa2-mark{background:#bb2525}
+.resumen-cal-qa2-btn{
+  flex:none;border:1px solid #e8a87d;border-radius:5px;padding:2px 4px;
+  background:#fff0e4;color:#8c3b0c;font:800 8px/1.1 Arial,sans-serif;
+  white-space:nowrap;cursor:pointer;
+}
+.resumen-cal-qa2-btn:hover:not(:disabled){background:#ffe2d0}
+.resumen-cal-qa2-btn:disabled{opacity:.7;cursor:default}
+.resumen-cal-qa2-btn[hidden]{display:none!important}
+.resumen-qa2-dialog{border:1px solid #dbe4ef;border-radius:14px;padding:0;
+  width:min(570px,calc(100vw - 24px));max-height:min(78vh,670px);
+  background:#fff;color:#26384e;box-shadow:0 20px 70px rgba(10,22,44,.25)}
+.resumen-qa2-dialog::backdrop{background:rgba(8,21,39,.5)}
+.resumen-qa2-dialog-head{display:flex;align-items:center;justify-content:space-between;
+  padding:15px 17px;border-bottom:1px solid #e4eaf1;background:#f8fafc;gap:8px}
+.resumen-qa2-dialog-head strong{font-size:15px;color:#1b3c69}
+.resumen-qa2-dialog-close{border:0;background:#e5ebf4;color:#214263;border-radius:7px;
+  padding:5px 9px;font-size:15px;cursor:pointer}
+.resumen-qa2-dialog-body{padding:11px 16px 17px;overflow-y:auto;max-height:calc(min(78vh,670px) - 65px)}
+.resumen-qa2-dialog-note{font-size:11px;color:#63758c;margin:0 0 9px;line-height:1.5}
+.resumen-qa2-item{padding:10px 0;border-bottom:1px solid #edf1f5;display:grid;gap:4px}
+.resumen-qa2-item strong{font-size:12px;color:#213e61;overflow-wrap:anywhere}
+.resumen-qa2-item .meta{font-size:10px;color:#64768d;line-height:1.45}
+.resumen-qa2-item .alerta{font-size:10px;font-weight:800;color:#9a4b0d}
+.resumen-qa2-item .alerta.urgente{color:#bd2d2d}
+.resumen-qa2-item button,.resumen-qa2-dialog-footer button{
+  border:1px solid #b7cce6;border-radius:7px;background:#eaf2ff;
+  color:#1d4f8d;font-size:11px;font-weight:800;padding:7px 10px;cursor:pointer}
+.resumen-qa2-dialog-footer{display:flex;justify-content:flex-end;margin-top:12px}
 @media(max-height:820px) and (min-width:981px){
   .resumen-carga-json-card{height:246px;max-height:246px}
   .resumen-carga-json-card>.card-head{height:31px;min-height:31px;padding:6px 8px}
@@ -3045,7 +3084,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   </div>
   <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
-  <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span></div>
+  <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span><button type="button" id="resumenCalQa2" class="resumen-cal-qa2-btn" hidden onclick="abrirAccionQA2Calendario()" aria-label="Ver QA2 pendientes de mi cartera">QA2</button></div>
 </div></div></div></section><section class="card etop-home-links-card">
   <div class="card-body">
     <div class="quick etop-home-links">
@@ -4337,10 +4376,115 @@ function moverMesResumenCalendario(delta){
   resumenCalMesIndice=siguiente.getMonth();
   refrescarInicioResumenCalendario();
 }
+/* QA2: se consulta asincrónicamente, después de dibujar el calendario.
+   La comprobación utiliza el mismo cursoId que Cursos en Preparación.
+   SIN INCIDENCIA también cuenta como QA2 registrado; UNI118 no aplica. */
+let resumenCalQa2Registrados=null;
+let resumenCalQa2Cargando=false;
+let resumenCalQa2Error=false;
+async function asegurarEstadoQA2Calendario(){
+  if(resumenCalQa2Registrados!==null||resumenCalQa2Cargando)return;
+  resumenCalQa2Cargando=true;
+  resumenCalQa2Error=false;
+  try{
+    const url=location.hostname.includes('github.io')?'incidencias.json':BASE+'incidencias.json';
+    const r=await fetch(url,{cache:'default'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(!Array.isArray(data))throw new Error('Formato de incidencias no válido');
+    resumenCalQa2Registrados=new Set(data.map(i=>String(i.cursoId??'').trim()).filter(Boolean));
+  }catch(err){
+    resumenCalQa2Error=true;
+    console.warn('No se pudo verificar el estado QA2 del calendario:',err);
+  }finally{
+    resumenCalQa2Cargando=false;
+    refrescarInicioResumenCalendario();
+  }
+}
+function pendientesQA2Calendario(){
+  if(resumenCalQa2Registrados===null)return [];
+  return cursosInicioVisiblesResumen().filter(c=>{
+    if(resumenCargaNorm(c['codigo curso'])==='UNI118')return false;
+    const dias=resumenCargaDias(c['fecha inicio']);
+    // Aviso desde siete días antes y seguimiento durante siete días después del inicio.
+    if(dias>7||dias< -7)return false;
+    const cursoId=String(c.id??'').trim();
+    return cursoId&&!resumenCalQa2Registrados.has(cursoId);
+  }).sort((a,b)=>String(a['fecha inicio']||'').localeCompare(String(b['fecha inicio']||''))||
+    String(a.nrc||'').localeCompare(String(b.nrc||'')));
+}
+function textoPlazoQA2Calendario(dias){
+  if(dias>1)return 'Inicia en '+dias+' días';
+  if(dias===1)return 'Inicia mañana';
+  if(dias===0)return 'Inicia hoy';
+  return 'Inicio hace '+Math.abs(dias)+' día'+(dias===-1?'':'s');
+}
+function abrirAccionQA2Calendario(){
+  if(resumenCalQa2Error){
+    resumenCalQa2Error=false;
+    refrescarInicioResumenCalendario();
+    return;
+  }
+  abrirDetalleQA2Calendario();
+}
+function abrirDetalleQA2Calendario(fechaDia){
+  const todos=pendientesQA2Calendario();
+  const lista=fechaDia?todos.filter(c=>fechaISO(c['fecha inicio'])===fechaDia):todos;
+  if(!lista.length)return;
+  let dlg=document.getElementById('resumenQA2Dialog');
+  if(!dlg){
+    dlg=document.createElement('dialog');
+    dlg.id='resumenQA2Dialog';
+    dlg.className='resumen-qa2-dialog';
+    dlg.innerHTML='<div class="resumen-qa2-dialog-head"><strong id="resumenQA2Titulo">QA2 pendientes</strong>'+
+      '<button type="button" class="resumen-qa2-dialog-close" aria-label="Cerrar alerta QA2">×</button></div>'+
+      '<div id="resumenQA2Contenido" class="resumen-qa2-dialog-body"></div>';
+    document.body.appendChild(dlg);
+    dlg.querySelector('.resumen-qa2-dialog-close').addEventListener('click',()=>dlg.close());
+    dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+    dlg.addEventListener('click',e=>{
+      const boton=e.target.closest('button[data-qa2-nrc],button[data-qa2-ver-dia]');
+      if(!boton)return;
+      if(boton.hasAttribute('data-qa2-nrc')){
+        const nrc=decodeURIComponent(boton.getAttribute('data-qa2-nrc')||'');
+        if(!nrc)return;
+        const u=new URL('qa2_portal_integracion.html',location.href);
+        u.searchParams.set('nrcs',nrc);
+        window.open(u.href,'_blank','noopener');
+      }else if(boton.hasAttribute('data-qa2-ver-dia')){
+        const dia=boton.getAttribute('data-qa2-ver-dia');
+        dlg.close();
+        abrirInicioResumenCalendarioDia(dia);
+      }
+    });
+  }
+  document.getElementById('resumenQA2Titulo').textContent=
+    fechaDia?'QA2 pendientes · '+fechaDia.split('-').reverse().join('-'):'QA2 pendientes · próximos inicios';
+  const rol=sesionGlobalETOP()?.rol;
+  const detalle=lista.map(c=>{
+    const dias=resumenCargaDias(c['fecha inicio']);
+    const urgente=dias<=3;
+    return '<div class="resumen-qa2-item">'+
+      '<strong>'+esc(c.nrc||'NRC sin código')+' · '+esc(c['nombre curso']||'Curso')+'</strong>'+
+      '<div class="meta">Inicio: '+esc(fechaISO(c['fecha inicio']))+
+        (rol==='COORDINACION'?' · Tutor/a: '+esc(c.tutor||'Sin asignar'):'')+'</div>'+
+      '<div class="alerta'+(urgente?' urgente':'')+'">⚠ Sin registro QA2 · '+esc(textoPlazoQA2Calendario(dias))+'</div>'+
+      '<div><button type="button" data-qa2-nrc="'+esc(encodeURIComponent(c.nrc||''))+'">Confeccionar QA2 ↗</button></div>'+
+      '</div>';
+  }).join('');
+  const pie=fechaDia?'<div class="resumen-qa2-dialog-footer"><button type="button" data-qa2-ver-dia="'+
+    esc(fechaDia)+'">Ver todos los cursos del día</button></div>':'';
+  document.getElementById('resumenQA2Contenido').innerHTML=
+    '<p class="resumen-qa2-dialog-note">'+lista.length+' curso'+(lista.length===1?'':'s')+
+    ' sin QA2 registrado. La alerta se basa en el último archivo de incidencias publicado.</p>'+
+    detalle+pie;
+  if(!dlg.open)dlg.showModal();
+}
 function refrescarInicioResumenCalendario(){
   const host=document.getElementById('resumenCalGrid');
   const mes=document.getElementById('resumenCalMes');
   const contexto=document.getElementById('resumenCalContext');
+  const qa2Boton=document.getElementById('resumenCalQa2');
   if(!host||!mes)return;
   const fecha=new Date(resumenCalAnio,resumenCalMesIndice,1);
   mes.textContent=new Intl.DateTimeFormat('es-CL',{month:'long',year:'numeric'}).format(fecha);
@@ -4349,6 +4493,14 @@ function refrescarInicioResumenCalendario(){
   for(const c of registros){
     const iso=fechaISO(c['fecha inicio']);
     conteos.set(iso,(conteos.get(iso)||0)+1);
+  }
+  const pendientes=pendientesQA2Calendario();
+  const qa2PorFecha=new Map();
+  for(const c of pendientes){
+    const iso=fechaISO(c['fecha inicio']);
+    const lista=qa2PorFecha.get(iso)||[];
+    lista.push(c);
+    qa2PorFecha.set(iso,lista);
   }
   const inicio=(fecha.getDay()+6)%7; // lunes = 0
   const mesActual=fecha.getMonth();
@@ -4359,19 +4511,45 @@ function refrescarInicioResumenCalendario(){
     const fechaISOdia=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     const fuera=d.getMonth()!==mesActual;
     const cantidad=fuera?0:conteos.get(fechaISOdia)||0;
+    const qa2Dia=fuera?[]:(qa2PorFecha.get(fechaISOdia)||[]);
+    const numQA2=qa2Dia.length;
+    const urgente=qa2Dia.some(c=>resumenCargaDias(c['fecha inicio'])<=3);
     const fechaVisible=new Intl.DateTimeFormat('es-CL',{dateStyle:'full'}).format(d);
-    const titulo=cantidad?fechaVisible+': '+cantidad+(cantidad===1?' curso con inicio registrado. Abrir Calendarios.':' cursos con inicio registrado. Abrir Calendarios.'):fechaVisible+': sin cursos con fecha de inicio.';
+    const titulo=(cantidad?fechaVisible+': '+cantidad+(cantidad===1?' curso con inicio registrado.':' cursos con inicio registrado.'):
+      fechaVisible+': sin cursos con fecha de inicio.')+
+      (numQA2?' ⚠ '+numQA2+' QA2 pendiente'+(numQA2===1?'':'s')+'. Abrir alerta.':
+        cantidad?' Abrir Calendarios.':'');
+    const accion=numQA2?'abrirDetalleQA2Calendario': 'abrirInicioResumenCalendarioDia';
+    const clic=(cantidad||numQA2)?'onclick="'+accion+'(\''+fechaISOdia+'\')"':'disabled';
     dias.push('<button type="button" class="resumen-cal-day'+(fuera?' is-outside':'')+
       (fechaISOdia===hoy?' is-today':'')+(cantidad?' has-starts':'')+
-      '" '+(cantidad?'onclick="abrirInicioResumenCalendarioDia(\''+fechaISOdia+'\')"':'disabled')+
-      ' aria-label="'+titulo+'" title="'+titulo+'">'+
+      (numQA2?' has-qa2-alert':'')+(urgente?' has-qa2-urgent':'')+
+      '" '+clic+' aria-label="'+esc(titulo)+'" title="'+esc(titulo)+'">'+
       '<span>'+d.getDate()+'</span>'+(cantidad?'<span class="resumen-cal-count">'+cantidad+'</span>':'')+
+      (numQA2?'<span class="resumen-cal-qa2-mark" aria-hidden="true">!</span>':'')+
       '</button>');
   }
   host.innerHTML=dias.join('');
   const sesion=sesionGlobalETOP();
   if(contexto)contexto.textContent=!sesion?'Identifícate para ver inicios':
     'Todos los inicios · '+etiquetaCarteraPortadaETOP();
+  if(qa2Boton){
+    qa2Boton.hidden=!sesion||(!pendientes.length&&!resumenCalQa2Cargando&&!resumenCalQa2Error);
+    qa2Boton.disabled=resumenCalQa2Cargando;
+    qa2Boton.textContent=resumenCalQa2Error?'QA2 sin verificar · Reintentar':
+      resumenCalQa2Registrados===null?'Verificando QA2…':
+      '⚠ '+pendientes.length+' QA2 pendiente'+(pendientes.length===1?'':'s');
+    qa2Boton.title=resumenCalQa2Error?'No se pudo consultar incidencias. Pulsa para reintentar.':
+      'Ver cursos de tu cartera que inician entre 7 días antes y 7 días después de hoy sin registro QA2';
+  }
+  if(sesion&&catalogoNRC.length&&resumenCalQa2Registrados===null&&!resumenCalQa2Cargando&&!resumenCalQa2Error){
+    // No bloquea los KPI ni Power BI: la alerta se actualiza al terminar su consulta.
+    resumenCalQa2Cargando=true;
+    setTimeout(()=>{
+      resumenCalQa2Cargando=false;
+      void asegurarEstadoQA2Calendario();
+    },350);
+  }
 }
 function abrirInicioResumenCalendarioDia(iso){
   const seleccion=cursosInicioDiaResumen(iso);
