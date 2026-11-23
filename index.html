@@ -2582,6 +2582,56 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
 .resumen-cal-qa2-btn:hover:not(:disabled){background:#ffe2d0}
 .resumen-cal-qa2-btn:disabled{opacity:.7;cursor:default}
 .resumen-cal-qa2-btn[hidden]{display:none!important}
+
+/* Alerta QA2 visible en el encabezado de Resumen carga tutorial.
+   Sin aumentar el alto de la tarjeta ni desplazar el calendario. */
+.resumen-carga-json-card>.card-head{display:flex;align-items:center}
+.resumen-carga-json-card>.card-head h2{flex:0 0 auto}
+.resumen-carga-json-card>.card-head #resCargaContext{flex:0 1 27%;max-width:27%;font-size:8px;text-align:right}
+.resumen-carga-json-card .resumen-cal-qa2-ticker{
+  flex:1 1 150px;max-width:265px;min-width:62px;height:24px;
+  display:flex;align-items:center;gap:5px;overflow:hidden;
+  padding:2px 6px;border:1px solid #df9a59;border-radius:7px;
+  background:#fff0dc;color:#7c390b;
+  box-shadow:0 0 0 1px rgba(214,107,25,.1);
+  animation:etopQa2Suave 3.4s ease-in-out infinite;
+}
+.resumen-carga-json-card .resumen-cal-qa2-ticker:hover,
+.resumen-carga-json-card .resumen-cal-qa2-ticker:focus-visible{
+  background:#ffe0bf;animation-play-state:paused;outline-offset:2px;
+}
+.resumen-qa2-ticker-fixed{
+  display:inline-flex;align-items:center;gap:3px;flex:none;
+  border-radius:5px;padding:2px 4px;background:#b34a13;color:#fff;
+  font-size:10px;font-weight:900;line-height:16px;
+}
+.resumen-qa2-ticker-fixed b{font-size:12px;line-height:1;font-variant-numeric:tabular-nums}
+.resumen-qa2-ticker-window{display:block;flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap}
+.resumen-qa2-ticker-track{
+  display:inline-block;font-size:9px;font-weight:900;letter-spacing:.015em;
+  white-space:nowrap;animation:etopQa2Deslizar 13s linear infinite;
+}
+.resumen-cal-qa2-ticker:hover .resumen-qa2-ticker-track,
+.resumen-cal-qa2-ticker:focus-visible .resumen-qa2-ticker-track{animation-play-state:paused}
+.resumen-cal-qa2-ticker.is-urgent{border-color:#dc6363;background:#ffeded;color:#a51f1f;animation-name:etopQa2UrgenteSuave}
+.resumen-cal-qa2-ticker.is-urgent .resumen-qa2-ticker-fixed{background:#b42525}
+.resumen-cal-qa2-ticker.is-due:not(.is-urgent){border-color:#e4a357;background:#ffedd8}
+@keyframes etopQa2Deslizar{from{transform:translateX(75%)}to{transform:translateX(-100%)}}
+@keyframes etopQa2Suave{0%,100%{background:#fff0dc}50%{background:#ffdcb3}}
+@keyframes etopQa2UrgenteSuave{0%,100%{background:#ffeded}50%{background:#ffd4d4}}
+@media(max-width:1250px){
+  .resumen-carga-json-card>.card-head #resCargaContext{max-width:21%;flex-basis:21%;font-size:7px}
+  .resumen-carga-json-card .resumen-cal-qa2-ticker{height:22px;gap:3px;padding:2px 4px}
+  .resumen-qa2-ticker-track{font-size:8px}
+}
+@media(max-width:650px){
+  .resumen-carga-json-card>.card-head #resCargaContext{display:none}
+  .resumen-carga-json-card .resumen-cal-qa2-ticker{max-width:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .resumen-carga-json-card .resumen-cal-qa2-ticker,
+  .resumen-qa2-ticker-track{animation:none!important}
+}
 .resumen-qa2-dialog{border:1px solid #dbe4ef;border-radius:14px;padding:0;
   width:min(570px,calc(100vw - 24px));max-height:min(78vh,670px);
   background:#fff;color:#26384e;box-shadow:0 20px 70px rgba(10,22,44,.25)}
@@ -3069,7 +3119,14 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
       allowfullscreen="true">
     </iframe>
   </div>
-</section></div><div class="top-col-right"><section class="card resumen-carga-json-card"><div class="card-head"><h2>Resumen carga tutorial</h2><span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="resumen-carga-split"><div class="kpi-row">
+</section></div><div class="top-col-right"><section class="card resumen-carga-json-card"><div class="card-head"><h2>Resumen carga tutorial</h2>
+<button type="button" id="resumenCalQa2" class="resumen-cal-qa2-btn resumen-cal-qa2-ticker" hidden
+  onclick="abrirAccionQA2Calendario()" aria-label="Ver QA2 pendientes de mi cartera"
+  title="Ver QA2 pendientes de mi cartera">
+  <span class="resumen-qa2-ticker-fixed" aria-hidden="true">⚠ <b id="resumenCalQa2Count">0</b></span>
+  <span class="resumen-qa2-ticker-window" aria-hidden="true"><span id="resumenCalQa2Texto" class="resumen-qa2-ticker-track">QA2 SIN REGISTRAR · REVISAR CURSOS</span></span>
+</button>
+<span id="resCargaContext">Datos actuales · tutor de sesión</span></div><div class="card-body"><div class="resumen-carga-split"><div class="kpi-row">
           <div class="kpi" onclick="abrirNominaAtencionesActivas()"><div class="v" id="resCargaAtenciones">—</div><div class="l">Total atenciones</div><div class="s">Nómina · estado ACTIVO →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_ACTIVOS',findBtn('CURSOS_ACTIVOS'))"><div class="v" id="resCargaActivos">—</div><div class="l">Cursos activos</div><div class="s">Abrir cursos →</div></div>
           <div class="kpi" onclick="cargar('CURSOS_CIERRE',findBtn('CURSOS_CIERRE'))"><div class="v" id="resCargaCierre">—</div><div class="l">Cursos en cierre</div><div class="s">Abrir cierre →</div></div>
@@ -3086,7 +3143,7 @@ html[data-etop-page="inicio"] #topBar.home-mode{display:none!important}
   </div>
   <div class="resumen-cal-dias" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div id="resumenCalGrid" class="resumen-cal-grid" role="group" aria-label="Días del mes"></div>
-  <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span><button type="button" id="resumenCalQa2" class="resumen-cal-qa2-btn" hidden onclick="abrirAccionQA2Calendario()" aria-label="Ver QA2 pendientes de mi cartera">QA2</button></div>
+  <div class="resumen-cal-pie"><span class="resumen-cal-dot"></span><span id="resumenCalContext">N.º cursos por iniciar</span></div>
 </div></div></div></section><section class="card etop-home-links-card">
   <div class="card-body">
     <div class="quick etop-home-links">
@@ -4540,11 +4597,22 @@ function refrescarInicioResumenCalendario(){
   if(qa2Boton){
     qa2Boton.hidden=!sesion||(!pendientes.length&&!resumenCalQa2Cargando&&!resumenCalQa2Error);
     qa2Boton.disabled=resumenCalQa2Cargando;
-    qa2Boton.textContent=resumenCalQa2Error?'QA2 sin verificar · Reintentar':
-      resumenCalQa2Registrados===null?'Verificando QA2…':
-      '⚠ '+pendientes.length+' QA2 sin registrar';
+    const cuentaQA2=document.getElementById('resumenCalQa2Count');
+    const textoQA2=document.getElementById('resumenCalQa2Texto');
+    const urgentesQA2=pendientes.filter(c=>resumenCargaDias(c['fecha inicio'])<=3).length;
+    const proximosQA2=pendientes.filter(c=>resumenCargaDias(c['fecha inicio'])<=7).length;
+    qa2Boton.classList.toggle('is-urgent',urgentesQA2>0);
+    qa2Boton.classList.toggle('is-due',proximosQA2>0);
+    if(cuentaQA2)cuentaQA2.textContent=resumenCalQa2Error?'!':resumenCalQa2Cargando?'…':String(pendientes.length);
+    if(textoQA2)textoQA2.textContent=resumenCalQa2Error?'SIN VERIFICAR · REINTENTAR ·':
+      resumenCalQa2Cargando?'VERIFICANDO ESTADO QA2 ·':
+      urgentesQA2?'URGENTE · '+urgentesQA2+' PRIORITARIOS · REVISAR CURSOS ·':
+      'QA2 SIN REGISTRAR · REVISAR CURSOS POR INICIAR ·';
+    qa2Boton.setAttribute('aria-label',resumenCalQa2Error?'No se pudo comprobar QA2. Pulsar para reintentar.':
+      resumenCalQa2Cargando?'Verificando registros QA2':
+      pendientes.length+' QA2 sin registrar en '+etiquetaCarteraPortadaETOP()+'. Pulsar para ver detalle.');
     qa2Boton.title=resumenCalQa2Error?'No se pudo consultar incidencias. Pulsa para reintentar.':
-      'QA2 sin registrar: cursos que inician en los próximos 30 días o iniciaron hace hasta 7 días. Alerta prioritaria desde 7 días antes.';
+      pendientes.length+' QA2 sin registrar · '+urgentesQA2+' urgentes. Haz clic para revisar.';
   }
   if(sesion&&catalogoNRC.length&&resumenCalQa2Registrados===null&&!resumenCalQa2Cargando&&!resumenCalQa2Error){
     // No bloquea los KPI ni Power BI: la alerta se actualiza al terminar su consulta.
