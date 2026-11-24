@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plantilla — Anuncios de impartición</title>
+<style>body{margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;}.tb{position:sticky;top:0;z-index:100;background:#0F2463;color:white;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.2);}.tbl{display:flex;align-items:center;gap:12px;}.badge{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);color:#ffd700;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.06em;}.tbt{font-size:13px;font-weight:500;color:#e2e8f0;}.tbr{display:flex;gap:10px;align-items:center;}.bi{font-size:11px;padding:6px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:5px;cursor:pointer;text-decoration:none;}.bi:hover{background:rgba(255,255,255,0.15);}.bd{font-size:12px;font-weight:700;padding:7px 16px;background:#ffd700;color:#0F2463;border:none;border-radius:5px;cursor:pointer;}.campo{display:inline;background:#EFF6FF;border:1.5px dashed #185FA5;border-radius:4px;color:#185FA5;font-weight:bold;padding:1px 6px;cursor:text;outline:none;min-width:20px;}.campo:focus{background:#DBEAFE;border-color:#0F2463;border-style:solid;box-shadow:0 0 0 3px rgba(24,95,165,0.15);}.campo:empty:before{content:attr(data-placeholder);color:#93C5FD;font-style:italic;}.ip{display:none;position:fixed;top:52px;right:24px;z-index:200;background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;width:280px;box-shadow:0 8px 24px rgba(0,0,0,0.12);}.ip.visible{display:block;}.ip h4{margin:0 0 10px;font-size:13px;color:#0F2463;}.ip ol{margin:0;padding-left:18px;font-size:12px;color:#374151;line-height:1.7;}.ip .hint{margin-top:12px;padding:8px 10px;background:#EFF6FF;border-radius:6px;font-size:11px;color:#185FA5;}.ew{padding:20px;max-width:990px;margin:0 auto;}</style><style id="etop-anuncio-unificado-20261116">
+.ew,.email-wrapper{width:100%!important;max-width:840px!important;box-sizing:border-box!important;margin:0 auto!important;padding:16px 20px!important;color:#26364b;}
+.ew .campo,.email-wrapper .campo{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;color:#243c5a!important;font-weight:700!important}
+.ew .campo:focus,.email-wrapper .campo:focus{background:#eff6ff!important;outline:1px solid #c6dbef!important}
+.ew .campo:empty:before,.email-wrapper .campo:empty:before{color:#9babbc!important}
+@media(max-width:700px){.tb{flex-wrap:wrap;gap:8px;padding:10px}.tbr{flex-wrap:wrap;gap:6px}} #titulo-anuncio:focus,#cuerpo-anuncio:focus{outline:1px solid #c6dbef} </style></head>
+<body>
+<div class="tb"><div class="tbl"><span class="badge">📢 Anuncio</span><span class="tbt" id="tipo-anuncio">Anuncio de impartición</span></div><div class="tbr" style="flex-wrap:wrap"><select class="bi" id="variantes" aria-label="Versión del anuncio" style="color:white;background:#0F2463"></select><button class="bi" id="otra">Otra versión</button><button class="bi" id="copiar-titulo">Copiar título</button><a class="bi" onclick="ti()">❓ ¿Cómo usar?</a><a class="bd" onclick="copiarParaCanvasETOP()">📋 Copiar para Canvas</a></div></div>
+<div class="ip" id="ip"><h4>📋 Cómo usar</h4><ol><li>Selecciona el NRC desde Comunicaciones para precargar datos del curso y tutor, cuando estén disponibles.</li><li>Completa o ajusta los campos editables del anuncio.</li><li>Haz clic en <strong>📋 Copiar para Canvas</strong> y pega en el editor de anuncios con <strong>Ctrl+V</strong>.</li></ol><div class="hint">💡 Los campos editables tienen texto de ayuda en gris. Los anuncios incluyen su firma institucional.</div></div>
+<div class="ew">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="left" width="800" style="width:800px;max-width:100%;margin:0;background:#fff;border:0;border-collapse:collapse;box-shadow:none;font-family:Arial,Helvetica,sans-serif;">
+<tbody>
+<tr><td align="left" style="padding:22px 34px 18px 34px;border:0;background:#fff;"><img src="https://res.cloudinary.com/dk53pztfo/image/upload/v1771043944/ChatGPT_Image_13_feb_2026_10_56_20_p.m._lf5z44.png" alt="Logo" width="160" style="display:block;border:0;"></td></tr>
+<tr><td align="left" style="padding:0 34px 30px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;">
+<div style="margin:16px 0;padding:0;border:0;border-radius:0;background:transparent;text-align:left;"><p id="titulo-anuncio" contenteditable="true" style="margin:0 0 16px 0;color:#243c5a;font-size:13px;line-height:1.6;font-weight:700;text-align:left;"></p></div><p>Estimadas y estimados estudiantes:</p><div id="cuerpo-anuncio" contenteditable="true" aria-label="Contenido editable del anuncio"></div>
+</td></tr>
+<tr><td align="left" style="padding:16px 34px 26px 34px;border:0;background:#fff;color:#26364b;font:15px/1.6 Arial,Helvetica,sans-serif;text-align:left;"><p style="margin:0;">Saludos cordiales,</p><p style="margin-top:10px;margin-bottom:15px;"><strong style="color:#0056b3;font-size:17px;"><span class="campo" contenteditable="true" data-placeholder="NOMBRE TUTOR/A"></span></strong><br>Tutor/a de Acompañamiento<br><a href="https://www.unabonline.cl" style="color:#0056b3;text-decoration:none;">www.unabonline.cl</a></p><p style="margin:0;padding-top:15px;border:0;font-size:13px;color:#666;"><strong>EQUIPO DE TUTORÍA ONLINE POSTGRADO</strong><br>UNIVERSIDAD ANDRÉS BELLO</p></td></tr>
+</tbody></table>
+</div>
+<script>
+function ti(){document.getElementById("ip").classList.toggle("visible");}
+document.addEventListener("click",function(e){if(!e.target.closest("#ip")&&!e.target.closest(".bi"))document.getElementById("ip").classList.remove("visible");});
+function dl(){const n=document.querySelector(".ew").cloneNode(true);n.querySelectorAll(".campo").forEach(el=>{const s=document.createElement("span");s.textContent=el.textContent||el.getAttribute("data-placeholder");el.replaceWith(s);});const h='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Anuncio Auto Inscripción de Grupo</title></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">'+n.innerHTML+'</body></html>';const b=new Blob([h],{type:"text/html;charset=utf-8"});const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(b),download:"Anuncio_Auto_Inscripcion_Grupo.html"});a.click();}
+
+/* ETOP · Copiar anuncio directamente al editor de Canvas. */
+function etopAvisoCanvas(mensaje,error){
+  let e=document.getElementById('etop-aviso-canvas');
+  if(!e){e=document.createElement('div');e.id='etop-aviso-canvas';e.setAttribute('role','status');e.style.cssText='position:fixed;top:63px;right:18px;max-width:410px;z-index:9999;padding:12px 17px;border-radius:8px;color:white;font:600 12px Arial,sans-serif;box-shadow:0 5px 18px #15263b33;';document.body.appendChild(e);}
+  e.style.background=error?'#a02e39':'#146649';e.textContent=mensaje;e.hidden=false;
+  if(e._timer)clearTimeout(e._timer);e._timer=setTimeout(()=>{e.hidden=true},5500);
+}
+function etopUrlHttps(v){
+  try{const u=new URL((v||'').trim());return u.protocol==='https:'&&u.hostname?u.href:''}catch{return ''}
+}
+async function copiarParaCanvasETOP(){
+  const original=document.querySelector('.ew,.email-wrapper');
+  if(!original){etopAvisoCanvas('No se encuentra el anuncio.',true);return;}
+  if(!document.getElementById('titulo-anuncio').textContent.trim()||!document.getElementById('cuerpo-anuncio').textContent.trim()||[...original.querySelectorAll('.campo[data-placeholder]')].some(e=>!e.textContent.trim())){etopAvisoCanvas('Completa el título, contenido y campos pendientes antes de copiar.',true);return;}
+  const copia=original.cloneNode(true);
+  const campos=[...copia.querySelectorAll('.campo[data-placeholder]')];
+  const faltan=[];
+  campos.filter(el=>/\b(LINK|URL|ENLACE)\b/i.test(el.dataset.placeholder||'')).forEach(el=>{
+    const url=etopUrlHttps(el.textContent);
+    if(!url){faltan.push(el.dataset.placeholder||'URL');return;}
+    const cont=el.parentElement;
+    const boton=cont?.querySelector('a[href="#"]');
+    if(boton){
+      boton.href=url;boton.target='_blank';boton.rel='noopener noreferrer';
+      boton.style.cssText='font:700 15px Arial,sans-serif;color:#0056b3;text-decoration:underline;border:0;background:transparent;padding:0;';
+      el.remove();
+    }else{
+      const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+      a.textContent='Abrir instructivo';a.style.cssText='font-weight:700;color:#0056b3;text-decoration:underline;';
+      el.replaceWith(a);
+    }
+  });
+  if(faltan.length){etopAvisoCanvas('Pega antes una URL https válida en: '+faltan.join(' · '),true);return;}
+  if(copia.querySelector('a[href="#"]')){etopAvisoCanvas('Hay un botón sin URL. Revisa los enlaces.',true);return;}
+  copia.querySelectorAll('.campo').forEach(el=>{
+    const span=document.createElement('span');
+    span.textContent=el.textContent.trim()||el.dataset.placeholder||'';
+    span.style.cssText='color:#25364b;font-weight:700;border:0;background:transparent;';
+    el.replaceWith(span);
+  });
+  copia.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  copia.style.cssText='margin:0;padding:0;border:0;background:white;text-align:left;';
+  copia.querySelectorAll('table').forEach((t,i)=>{
+    t.setAttribute('align','left');t.style.margin='0';t.style.marginLeft='0';t.style.marginRight='0';
+    t.style.border='0';t.style.boxShadow='none';t.style.float='none';t.style.textAlign='left';
+    if(i===0){t.setAttribute('width','800');t.style.width='800px';t.style.maxWidth='100%';}
+  });
+  const trs=[...copia.querySelectorAll('tr')];
+  const filaFirma=trs[trs.length-1];
+  copia.querySelectorAll('td').forEach(td=>{
+    td.setAttribute('align','left');td.style.paddingLeft='0';td.style.border='0';td.style.background='#fff';
+  });
+  copia.querySelectorAll('p').forEach(p=>{
+    const texto=p.textContent.trim();
+    const enFirma=!!filaFirma&&filaFirma.contains(p);
+    const saludo=/^(estimad|saludos cordiales|quedo atent|atentamente|¡cuenten conmigo)/i.test(texto);
+    const alineacion=enFirma||saludo?'left':'justify';
+    p.style.fontFamily='Arial,Helvetica,sans-serif';p.style.fontSize='15px';p.style.lineHeight='1.6';
+    p.style.textAlign=alineacion;p.setAttribute('align',alineacion);
+    if(alineacion==='justify')p.style.textAlignLast='left';
+  });
+  const html='<html><body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;text-align:left;">'+copia.innerHTML+'</body></html>';
+  try{
+    if(!navigator.clipboard || !window.ClipboardItem)throw new Error('Clipboard no disponible');
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'})})]);
+    etopAvisoCanvas('Anuncio copiado con firma. Pega con Ctrl+V en Canvas.',false);
+  }catch(err){
+    try{
+      const div=document.createElement('div');div.innerHTML=html;
+      div.style.cssText='position:fixed;left:-10000px;top:0;background:white;';
+      document.body.appendChild(div);
+      const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(div);
+      sel.removeAllRanges();sel.addRange(range);
+      const ok=document.execCommand('copy');
+      sel.removeAllRanges();div.remove();if(!ok)throw Error('Copia fallida');
+      etopAvisoCanvas('Anuncio copiado. Pega con Ctrl+V en Canvas.',false);
+    }catch(e){etopAvisoCanvas('El navegador no permitió copiar; revisa permisos de portapapeles.',true);}
+  }
+}
+
+/* Campos de anuncio auto-completados cuando se abre desde Comunicaciones con NRC. */
+(function etopCompletarAnuncioDesdeCurso(){
+  const p=new URLSearchParams(location.search);
+  const tutor=(p.get('nombre_tutor')||p.get('nombreTutor')||'').trim();
+  const correo=(p.get('correo_tutor')||p.get('correoTutor')||'').trim();
+  const curso=(p.get('nombre_curso')||p.get('nombreCurso')||'').trim();
+  const nrc=(p.get('nrc')||'').trim();
+  const inicio=(p.get('fecha_inicio')||p.get('fechaInicio')||'').trim();
+  const fin=(p.get('fecha_fin')||p.get('fechaFin')||'').trim();
+  if(!tutor&&!correo&&!curso&&!nrc&&!inicio&&!fin)return;
+  document.querySelectorAll('.campo[data-placeholder]').forEach(el=>{
+    if(el.textContent.trim())return;
+    const label=(el.getAttribute('data-placeholder')||'').toUpperCase();
+    let valor='';
+    if(label.includes('NOMBRE TUTOR'))valor=tutor;
+    else if(label.includes('CORREO TUTOR'))valor=correo;
+    else if(label.includes('NOMBRE CURSO Y NRC')||label.includes('NOMBRE Y NRC DEL CURSO'))valor=[curso,nrc].filter(Boolean).join(' · ');
+    else if(label==='FECHA INICIO CURSO'||label==='DÍA Y MES')valor=inicio;
+    else if(label==='FECHA FIN CURSO')valor=fin;
+    if(valor){el.textContent=valor;el.classList.add('auto-filled');}
+  });
+})();
+
+const BANCO=[["inicio","Anuncios semanales","Inicio de semana",[["Comencemos una nueva semana","Espero que hayan tenido un buen descanso. Les invito a revisar los contenidos disponibles en Canvas y organizar sus tiempos de estudio.|Identifiquen las actividades que requieren mayor dedicación y planteen sus dudas con anticipación.|Les deseo una excelente semana."],["Orientaciones para esta semana","Al retomar las actividades académicas, les sugiero revisar los anuncios del docente y las fechas de entrega.|Distribuyan su trabajo durante la semana y utilicen los canales de consulta del curso.|Mucho éxito en sus actividades."],["Sigamos avanzando","Cada semana es una oportunidad para consolidar sus aprendizajes. Procuren reservar momentos para revisar los contenidos y participar en las actividades.|Si necesitan orientación sobre la plataforma, recuerden que cuentan con el apoyo de tutoría."],["Planifiquemos los próximos días","Antes de comenzar sus actividades, revisen el módulo correspondiente y los compromisos registrados en Canvas.|Una planificación realista les permitirá avanzar sin concentrar todas las tareas al final de la semana."]]],["cierre_semana","Anuncios semanales","Cierre de semana",[["Antes de finalizar la semana","Les recuerdo revisar las actividades que correspondan y sus respectivos plazos en Canvas.|Comprueben que sus entregas estén registradas correctamente y guarden una copia de sus archivos.|Que tengan un excelente fin de semana."],["Revisemos nuestros avances","Les invito a realizar un breve balance de lo trabajado durante estos días.|Identifiquen las dudas que aún mantienen y revisen las indicaciones del docente antes de continuar.|Espero que puedan disfrutar de un buen descanso."],["Últimas recomendaciones de la semana","Si tienen entregas próximas, revisen las instrucciones y confirmen que el archivo corresponda a la actividad solicitada.|No esperen al último momento para realizar el envío. Recuerden utilizar la vía indicada en Canvas."],["Cerremos la semana con tranquilidad","Antes de desconectarse, dediquen unos minutos a revisar su progreso y las actividades pendientes.|Organizar los compromisos de los próximos días les ayudará a retomar el curso con mayor tranquilidad."]]],["entregas","Actividades y evaluaciones","Recordatorio de entregas",[["Recordatorio de actividades","Les recomiendo revisar las fechas de entrega y las instrucciones de cada actividad en Canvas.|Verifiquen el archivo antes de enviarlo y comprueben que la plataforma registre la entrega."],["Preparemos nuestras entregas","Antes de entregar sus trabajos, revisen la rúbrica o los criterios de evaluación disponibles.|Resuelvan sus dudas con el docente con anticipación y conserven una copia de sus documentos."],["Evitemos inconvenientes en las entregas","Si tienen una actividad próxima, procuren enviarla con suficiente anticipación.|Utilicen el medio indicado en el curso y verifiquen la confirmación del envío. Si surge una dificultad técnica, contacten a tutoría oportunamente."]]],["calificaciones","Actividades y evaluaciones","Revisión de calificaciones",[["Revisión de calificaciones","Les invito a consultar las calificaciones disponibles en Canvas y verificar el estado de sus evaluaciones.|Si tienen dudas sobre una nota o criterio aplicado, contacten al docente por los canales del curso."],["Mantengan actualizado su seguimiento académico","Revisar periódicamente el libro de calificaciones les permitirá identificar actividades evaluadas y aquellas que aún estén pendientes de revisión.|Recuerden que una consulta académica debe dirigirse al docente responsable."]]],["feedback","Actividades y evaluaciones","Revisión de retroalimentación",[["Aprovechemos la retroalimentación","Les invito a revisar los comentarios del docente en sus actividades evaluadas.|Identificar fortalezas y aspectos por mejorar les permitirá aplicar lo aprendido en futuras evaluaciones."],["Aprender de las evaluaciones","La retroalimentación es una oportunidad para mejorar. Comparen los comentarios recibidos con los criterios de evaluación y anoten sus dudas.|Si necesitan aclarar algún comentario, utilicen los canales académicos del curso."]]],["tiempo","Acompañamiento tutorial","Organización del tiempo",[["Organización de sus tiempos de estudio","Compatibilizar los estudios con otras responsabilidades puede ser desafiante. Les sugiero reservar bloques de tiempo para revisar materiales y desarrollar actividades.|Prioricen los compromisos según sus plazos y consideren tiempo adicional para imprevistos."],["Pequeños avances, grandes resultados","Dividir una actividad extensa en tareas más pequeñas puede facilitar su desarrollo.|Revisen las instrucciones, preparen los materiales y establezcan metas alcanzables para cada jornada."],["Una planificación que se adapte a ustedes","Les invito a revisar su calendario académico y organizar una rutina de estudio compatible con sus responsabilidades.|Reservar momentos para consultar dudas y revisar entregas puede ayudarles a disminuir la presión de última hora."]]],["motivacion","Acompañamiento tutorial","Motivación y acompañamiento",[["Sigamos avanzando juntos","El aprendizaje requiere tiempo y constancia. Les animo a reconocer sus avances y continuar participando en las actividades del curso.|Si necesitan orientación para desenvolverse en Canvas, pueden contar con el acompañamiento de tutoría."],["Cuentan con acompañamiento","Sabemos que estudiar en modalidad online implica organizar múltiples responsabilidades. Si encuentran dificultades para orientarse en la plataforma o retomar sus actividades, les invito a comunicarse con tutoría.|No es necesario esperar a que una dificultad se transforme en un problema mayor."],["Reconozcan sus avances","Les invito a detenerse un momento y reconocer lo que han aprendido hasta ahora.|Aprovechen los recursos de la asignatura y los espacios de consulta para seguir construyendo sus aprendizajes."],["Retomemos el ritmo","Si durante estos días les ha costado mantener su rutina de estudio, pueden comenzar revisando las actividades disponibles y priorizando los próximos compromisos.|Ante dificultades de acceso o navegación, recuerden que tutoría está disponible para orientarles."]]],["canales","Orientaciones generales","Canales de comunicación",[["Canales de consulta del curso","Para consultas sobre contenidos, evaluaciones o calificaciones, utilicen los canales académicos establecidos por el docente.|Para dudas de acceso, navegación o acompañamiento, contacten a tutoría. Utilicen su correo institucional e indiquen el curso y NRC al escribir."],["¿A quién dirigir sus consultas?","Para facilitar la atención, les recuerdo que las inquietudes académicas corresponden al docente y las relacionadas con el uso de la plataforma pueden canalizarse con tutoría.|Incluyan su nombre completo y código de asignatura en sus mensajes privados. Eviten publicar datos personales en los foros."]]],["canvas","Orientaciones generales","Buenas prácticas en Canvas",[["Recomendaciones para trabajar en Canvas","Les recomiendo utilizar un navegador actualizado y una conexión estable, especialmente durante las entregas.|Revisen anuncios, módulos y tareas con frecuencia y confirmen que sus archivos se hayan enviado correctamente."],["Prevención de dificultades técnicas","Antes de realizar una actividad, comprueben su acceso a Canvas y tengan a mano los materiales necesarios.|Guarden una copia de sus archivos. Si aparece un error, registren el mensaje y contacten a tutoría a través de los canales habituales."]]],["correo","Orientaciones generales","Uso del correo institucional",[["Su correo institucional","Les recuerdo que el correo institucional es un canal oficial de comunicación con la Universidad.|Revísenlo regularmente para mantenerse informados y utilícenlo al contactar al docente o a tutoría."],["Mantengámonos comunicados","Para recibir oportunamente las comunicaciones académicas y tutoriales, les sugiero incorporar la revisión del correo institucional a su rutina de estudio.|Si presentan dificultades de acceso, soliciten orientación a través de los canales de atención institucional."]]],["extranjero","Orientaciones generales","Acceso desde el extranjero",[["Acceso a plataformas institucionales desde el extranjero","Si necesitan ingresar al correo institucional o a plataformas UNAB desde otro país y su cuenta se encuentra bloqueada, soliciten la habilitación a través de Servicio al Estudiante.|Pueden utilizar Gestiona tu Caso o el chat virtual. Una vez restablecido el acceso al correo, comprueben también el ingreso a Canvas."]]],["etapa_final","Finalización del curso","Recomendaciones para la etapa final",[["Recomendaciones para la etapa final","Les invito a revisar sus actividades y evaluaciones pendientes antes de finalizar la asignatura.|Canalicen las dudas académicas con el docente con anticipación y respalden sus documentos."],["Preparemos el cierre de la asignatura","Antes de que termine el curso, comprueben sus entregas y revisen la retroalimentación disponible.|Si necesitan aclaraciones sobre sus evaluaciones, contacten al docente oportunamente."],["Últimos pasos del curso","Les recomiendo realizar un balance de sus compromisos académicos y revisar las fechas de cierre informadas en Canvas.|Conserven los documentos relevantes y resuelvan las consultas pendientes antes de finalizar."]]],["termino","Finalización del curso","Término de curso",[["Término de curso","Les informo que la asignatura se encuentra próxima a finalizar. Revisen el estado de sus entregas y respalden sus trabajos.|Agradezco su participación durante este proceso y les deseo mucho éxito en sus próximos desafíos académicos."],["Cierre de la asignatura","Hemos llegado a la etapa de cierre del curso. Les recomiendo revisar las calificaciones y observaciones disponibles y dirigir las consultas pendientes al docente.|Muchas gracias por el compromiso demostrado durante la asignatura."],["Finalizamos esta etapa","Al concluir esta asignatura, les invito a reconocer los aprendizajes alcanzados y conservar los materiales que consideren relevantes.|Espero que esta experiencia contribuya a su desarrollo académico y profesional. Les deseo mucho éxito en lo que viene."]]],["continuidad","Finalización del curso","Continuidad con la siguiente asignatura",[["Continuidad de sus estudios","Al finalizar esta asignatura, iniciaremos una nueva etapa de su programa.|La próxima asignatura es {proximo}, NRC {nrcProximo}, con inicio el {fechaProxima}.|Les recomiendo verificar su disponibilidad en Canvas y mantenerse atentos a las orientaciones de bienvenida."],["Nos preparamos para la siguiente asignatura","Les comparto la información del próximo curso: {proximo}, NRC {nrcProximo}, con fecha de inicio {fechaProxima}.|Una vez habilitado en Canvas, revisen sus anuncios y materiales iniciales. Les deseo mucho éxito en esta nueva etapa."]]]];
+const query=new URLSearchParams(location.search);
+const tipo=BANCO.find(x=>x[0]===query.get('tipo'))||BANCO[0];
+const titulo=document.getElementById('titulo-anuncio'),cuerpo=document.getElementById('cuerpo-anuncio'),selector=document.getElementById('variantes');
+const firma=document.querySelector('.campo[data-placeholder="NOMBRE TUTOR/A"]');
+const etiquetas={proximo:'NOMBRE PRÓXIMA ASIGNATURA',nrcProximo:'NRC PRÓXIMA ASIGNATURA',fechaProxima:'FECHA INICIO PRÓXIMA ASIGNATURA'};
+let version=0,originalTitulo='',originalCuerpo='';
+document.getElementById('tipo-anuncio').textContent=tipo[2];
+tipo[3].forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent='Versión '+(i+1);selector.append(o)});
+function pintar(i){version=i;selector.value=i;titulo.textContent=tipo[3][i][0];cuerpo.replaceChildren();tipo[3][i][1].split('|').forEach(t=>{const p=document.createElement('p');t.split(/(\{proximo\}|\{nrcProximo\}|\{fechaProxima\})/g).forEach(part=>{const k=part.slice(1,-1);if(part.startsWith('{')&&etiquetas[k]){const e=document.createElement('span');e.className='campo';e.contentEditable='true';e.dataset.placeholder=etiquetas[k];p.append(e)}else p.append(document.createTextNode(part))});cuerpo.append(p)});if(tipo[0]==='extranjero'){const p=document.createElement('p'),a=document.createElement('a');a.href='https://www.unab.cl/servicioestudiante';a.textContent='Servicio al Estudiante';p.append(a,document.createTextNode(' · '));const b=document.createElement('a');b.href='https://www.unab.cl/servicioestudiante/login-gestiona-caso';b.textContent='Gestiona tu Caso';p.append(b);cuerpo.append(p)}originalTitulo=titulo.textContent;originalCuerpo=cuerpo.innerHTML;}
+function cambiar(i){if(i===version)return;if((titulo.textContent!==originalTitulo||cuerpo.innerHTML!==originalCuerpo)&&!confirm('Cambiar de versión reemplazará tus cambios en el título y contenido. ¿Continuar?')){selector.value=version;return}pintar(i)}
+selector.addEventListener('change',()=>cambiar(Number(selector.value)));document.getElementById('otra').addEventListener('click',()=>cambiar((version+1)%tipo[3].length));document.getElementById('otra').disabled=tipo[3].length===1;
+document.getElementById('copiar-titulo').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(titulo.textContent.trim());etopAvisoCanvas('Título copiado.',false)}catch(e){const t=document.createElement('textarea');t.value=titulo.textContent;t.style.position='fixed';t.style.left='-10000px';document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();etopAvisoCanvas(ok?'Título copiado.':'No fue posible copiar el título.',!ok)}});
+pintar(0);
+
+</script>
+</body></html>
