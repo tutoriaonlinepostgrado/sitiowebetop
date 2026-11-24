@@ -189,7 +189,10 @@ async function cargarDatos(){
  const data=await r.json();if(!Array.isArray(data))throw Error('Formato NRC inválido');
  nrcsMerged=data.map(c=>({...c,nrc:texto(c.nrc)})).filter(c=>c.nrc);
  dot.className='ndot ok';dot.title=nrcsMerged.length+' cursos disponibles';
- syncPortalNRC();
+ // Reconciliar aunque la selección haya sido recibida antes del catálogo.
+ ultimoNrcPortal='';
+ selNRC(obtenerNRCportal());
+ ultimoNrcPortal=normalizarNrc(obtenerNRCportal());
  }catch(e){console.error('Error cargando datos NRC:',e);dot.className='ndot err';dot.title='No se pudieron cargar los cursos';}
 }
 function obtenerNRCportal(){
@@ -205,7 +208,7 @@ function obtenerNRCportal(){
 let ultimoNrcPortal='';
 function syncPortalNRC(){
  const cod=obtenerNRCportal(),key=normalizarNrc(cod);
- if(key===ultimoNrcPortal)return;
+ if(key===ultimoNrcPortal&&(!key||ctxOn))return;
  ultimoNrcPortal=key;selNRC(cod);
 }
 function selNRC(cod){
