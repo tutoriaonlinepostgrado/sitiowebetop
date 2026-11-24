@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ETOP Agenda — Prueba popup SharePoint</title>
+  <meta name="description" content="Aplicación de página completa de recordatorios personales y calendario para tutores y coordinadores de postgrado UNAB - Portal ETOP." />
+  <style>
+    :root {
+      --navy-900: #081c38;
+      --navy-800: #0b2545;
+      --navy-700: #133b6e;
+      --gold-500: #c59b27;
+      --gold-400: #d8b243;
+      --gold-100: #fdf8e9;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-2: #475569;
+      --muted: #64748b;
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --red-text: #b91c1c;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .topbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+    }
+    .topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand { font-size: 16px; font-weight: 700; color: var(--navy-800); }
+
+    .container {
+      flex: 1;
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .toolbar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .toolbar-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .month-title { font-size: 19px; font-weight: 700; color: var(--navy-800); min-width: 170px; }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--navy-800);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #f8fafc; }
+    .btn-navy { background: var(--navy-800); border-color: var(--navy-800); color: #ffffff; }
+    .btn-navy:hover { background: var(--navy-700); }
+
+    .input, .select {
+      font-family: inherit;
+      font-size: 12px;
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(320px, 4fr);
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .split { grid-template-columns: 1fr; }
+      .container { padding: 14px; }
+    }
+
+    .calendar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+    .weekdays div {
+      text-align: center;
+      padding: 10px 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    #calendarGrid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .day-cell {
+      min-width: 0;
+      min-height: 100px;
+      border-right: 1px solid #eef2f6;
+      border-bottom: 1px solid #eef2f6;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #ffffff;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .day-cell:nth-child(7n) { border-right: none; }
+    .day-cell.other-month { background: #f8fafc; color: #94a3b8; }
+    .day-cell.selected { background: var(--gold-100); box-shadow: inset 0 0 0 1px var(--gold-500); }
+
+    .day-top { display: flex; align-items: center; justify-content: space-between; }
+    .day-num {
+      width: 26px; height: 26px; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+    }
+    .day-cell.today .day-num { background: var(--navy-800); color: #f5d36b; }
+    .day-cell.selected:not(.today) .day-num { background: var(--navy-700); color: #ffffff; }
+
+    .mini-task {
+      font-size: 11px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mini-task.overdue { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+    .mini-task.done { text-decoration: line-through; opacity: 0.6; }
+
+    .day-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 560px;
+    }
+    .day-header {
+      background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+      color: #ffffff;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--gold-500);
+    }
+    .day-header .sub { font-size: 11.5px; color: #f5d36b; font-weight: 600; }
+    .day-header h2 { font-size: 16px; margin-top: 2px; }
+
+    .composer {
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .composer-row { display: flex; gap: 6px; }
+    .templates { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tpl-btn {
+      font-size: 11px; padding: 3px 7px; border-radius: 6px;
+      border: 1px solid var(--border); background: #ffffff; color: var(--text-2); cursor: pointer;
+    }
+    .tpl-btn:hover { border-color: var(--navy-700); color: var(--navy-800); }
+
+    .day-list {
+      flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      list-style: none;
+    }
+    .task-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: #ffffff;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .task-item.done { opacity: 0.7; background: #f8fafc; }
+    .task-item.overdue { border-color: var(--red-border); background: #fffafa; }
+    .task-time { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-weight: 600; }
+    .task-title { font-size: 13px; font-weight: 600; }
+    .task-item.done .task-title { text-decoration: line-through; }
+    .task-meta { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+    .task-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .link-btn { background: none; border: none; color: var(--navy-700); font-size: 11px; font-weight: 600; cursor: pointer; padding: 0; }
+    .link-btn.danger { color: var(--red-text); }
+
+    .footer {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+  
+    .day-add {border:0;background:transparent;color:#133b6e;font-size:20px;line-height:24px;width:26px;cursor:pointer;border-radius:5px;}
+    .day-add:hover {background:#e2e8f0;}
+    dialog {border:0;border-radius:12px;padding:0;width:min(680px,94vw);max-height:90vh;box-shadow:0 18px 60px #0005;color:var(--text);}
+    dialog::backdrop {background:#081c3877;}
+    .modal-head {background:#0b2545;color:white;display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:3px solid #c59b27;}
+    .modal-head button {background:transparent;border:0;color:white;font-size:24px;cursor:pointer;}
+    .modal-note {padding:10px 16px;font-size:12px;background:#f8fafc;color:#475569;}
+    .sp-frame {display:block;width:100%;height:min(590px,65vh);border:0;background:white;}
+    .modal-foot {padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">ETOP Agenda — Laboratorio de formulario SharePoint</div>
+      <div class="toolbar-group">
+        <a href="https://to.do.office.com/tasks/myday" target="_blank" rel="noopener noreferrer" class="btn" style="text-decoration:none;">Microsoft To Do ↗</a>
+        <select id="userSelect" class="select" aria-label="Usuario demo">
+          <option value="c.tutoria@unab.cl">c.tutoria@unab.cl (Tutor)</option>
+          <option value="coord.postgrado@unab.cl">coord.postgrado@unab.cl (Coordinador)</option>
+        </select>
+        <button type="button" id="btnReset" class="btn">Restaurar demo</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="toolbar" aria-label="Controles de calendario">
+      <div class="toolbar-group">
+        <button type="button" id="btnPrev" class="btn" aria-label="Mes anterior">◀</button>
+        <button type="button" id="btnToday" class="btn">Hoy</button>
+        <button type="button" id="btnNext" class="btn" aria-label="Mes siguiente">▶</button>
+        <h1 id="monthTitle" class="month-title"></h1>
+      </div>
+      <div class="toolbar-group">
+        <input type="search" id="searchInput" class="input" placeholder="Buscar actividad o NRC..." aria-label="Buscar actividad o NRC" />
+      </div>
+    </section>
+
+    <section class="split">
+      <div class="calendar-card">
+        <div class="weekdays">
+          <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <div id="calendarGrid" role="grid" aria-label="Calendario mensual"></div>
+      </div>
+
+      <aside class="day-panel" aria-label="Agenda del día">
+        <div class="day-header">
+          <div class="sub" id="selectedDateSub"></div>
+          <h2 id="selectedDateTitle"></h2>
+        </div>
+
+        <form id="quickForm" class="composer" novalidate style="display:none">
+          <div class="composer-row">
+            <input type="text" id="inputTitle" class="input" style="flex:1" placeholder="Nuevo recordatorio para este día..." required />
+            <input type="time" id="inputTime" class="input" value="10:00" required />
+            <button type="submit" class="btn btn-navy">+ Agregar</button>
+          </div>
+          <div class="composer-row">
+            <input type="text" id="inputNrc" class="input" style="width:40%" placeholder="NRC (opcional)" />
+            <input type="text" id="inputNotes" class="input" style="flex:1" placeholder="Observaciones (opcional)" />
+          </div>
+          <div class="templates">
+            <button type="button" class="tpl-btn" data-tpl="Llamar a |10:00">Llamar estudiante</button>
+            <button type="button" class="tpl-btn" data-tpl="Revisar bienvenida e inicio de aula|09:30">Inicio de aula</button>
+            <button type="button" class="tpl-btn" data-tpl="Seguimiento estudiantes sin ingreso (48h)|15:00">Seguimiento 48h</button>
+          </div>
+        </form>
+
+        <div style="padding:10px 14px"><button type="button" class="btn btn-navy" id="spAdd">+ Nuevo recordatorio en SharePoint</button></div><ul id="dayTaskList" class="day-list"></ul>
+
+        <div class="footer">
+          <span>PRUEBA AISLADA · El botón + abre SharePoint en una ventana de 540 × 700. Fecha manual; sin sincronización todavía.</span>
+          <span id="toast" style="color: var(--navy-800); font-weight: 600;"></span>
+        </div>
+      </aside>
+    </section>
+  </main>
+<script>
+    (function () {
+      const KEY = 'etop_agenda_popup_test_v1';
+      const pad2 = n => String(n).padStart(2, '0');
+      const localDateStr = (d = new Date()) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+      const addDays = (ds, delta) => {
+        const [y, m, d] = ds.split('-').map(Number);
+        const dt = new Date(y, m - 1, d + delta);
+        return localDateStr(dt);
+      };
+
+      function seedTasks() {
+        const today = localDateStr();
+        return [
+          { id: 'd1', Title: 'Revisar bienvenida e inicio de aula con docente', FechaRecordatorio: today + 'T10:00', Responsable: 'c.tutoria@unab.cl', NRC: 'NRC 21904', Observaciones: '[DEMO] Confirmar anuncio inicial y enlace sincrónico.', Estado: 'Pendiente' },
+          { id: 'd2', Title: 'Llamar a Juanito Pérez', FechaRecordatorio: addDays(today, 6) + 'T10:00', Responsable: 'c.tutoria@unab.cl', NRC: 'NRC 14820', Observaciones: '[DEMO] Confirmar avance del módulo 2.', Estado: 'Pendiente' },
+          { id: 'd3', Title: 'Seguimiento alumnos sin ingreso (48h)', FechaRecordatorio: addDays(today, 2) + 'T15:30', Responsable: 'c.tutoria@unab.cl', NRC: 'NRC 14820', Observaciones: '[DEMO] Contacto personalizado a rezagados.', Estado: 'Pendiente' },
+          { id: 'c1', Title: 'Consolidar reporte semanal de retención postgrado', FechaRecordatorio: today + 'T16:30', Responsable: 'coord.postgrado@unab.cl', NRC: 'Cohorte 2026-S2', Observaciones: '[DEMO] Revisar casos críticos.', Estado: 'Pendiente' }
+        ];
+      }
+
+      let tasks = [];
+      try { tasks = JSON.parse(localStorage.getItem(KEY) || 'null') || seedTasks(); } catch { tasks = seedTasks(); }
+      const save = () => { try { localStorage.setItem(KEY, JSON.stringify(tasks)); } catch {} };
+
+      const now = new Date();
+      let year = now.getFullYear();
+      let month = now.getMonth();
+      let selectedDate = localDateStr(now);
+      let currentUser = 'c.tutoria@unab.cl';
+      let query = '';
+
+      const gridEl = document.getElementById('calendarGrid');
+      const monthTitleEl = document.getElementById('monthTitle');
+      const dayTitleEl = document.getElementById('selectedDateTitle');
+      const daySubEl = document.getElementById('selectedDateSub');
+      const dayListEl = document.getElementById('dayTaskList');
+      const toastEl = document.getElementById('toast');
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => { toastEl.textContent = ''; }, 2400);
+      }
+
+      function buildOutlookWebUrl(task) {
+        const [dp, tp] = (task.FechaRecordatorio || '').split('T');
+        const [y, m, d] = (dp || localDateStr()).split('-').map(Number);
+        const [hh, mm] = (tp || '10:00').split(':').map(Number);
+        const start = new Date(y, m - 1, d, hh || 0, mm || 0, 0);
+        const end = new Date(start.getTime() + 30 * 60 * 1000);
+        const fmt = dt => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate()) + 'T' + pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) + ':00';
+        const subj = (task.NRC ? '[' + task.NRC + '] ' : '') + task.Title;
+        const body = [task.Observaciones || '', task.NRC ? 'NRC: ' + task.NRC : '', 'ETOP Agenda (UNAB)'].filter(Boolean).join('\n');
+        const q = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: subj, startdt: fmt(start), enddt: fmt(end), body: body });
+        return 'https://outlook.office.com/calendar/0/deeplink/compose?' + q.toString();
+      }
+
+      function exportIcs(task) {
+        const [dp, tp] = task.FechaRecordatorio.split('T');
+        const start = dp.replace(/-/g, '') + 'T' + (tp || '10:00').replace(':', '') + '00';
+        const ics = [
+          'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//UNAB//ETOP Agenda//ES',
+          'BEGIN:VEVENT', 'UID:' + task.id + '@etop.unab.cl', 'DTSTART:' + start,
+          'SUMMARY:' + (task.NRC ? '[' + task.NRC + '] ' : '') + task.Title,
+          'DESCRIPTION:' + (task.Observaciones || 'ETOP Agenda UNAB'),
+          'BEGIN:VALARM', 'TRIGGER:-PT15M', 'ACTION:DISPLAY', 'DESCRIPTION:' + task.Title, 'END:VALARM',
+          'END:VEVENT', 'END:VCALENDAR'
+        ].join('\r\n');
+        const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'etop-recordatorio.ics'; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Archivo .ics descargado');
+      }
+
+      const spUrl='https://unabportal365.sharepoint.com/sites/actasynrc/Lists/ETOP_AGENDA/NewForm.aspx';
+      function openSP(ds){
+        const url=spUrl+'?env=Embedded';
+        const ancho=Math.min(540,Math.max(320,window.screen.availWidth-30));
+        const alto=Math.min(700,Math.max(350,window.screen.availHeight-45));
+        const izquierda=Math.max(0,Math.round(window.screenX+(window.outerWidth-ancho)/2));
+        const arriba=Math.max(0,Math.round(window.screenY+(window.outerHeight-alto)/2));
+        const opciones=['popup=yes','resizable=yes','scrollbars=yes','width='+ancho,'height='+alto,'left='+izquierda,'top='+arriba].join(',');
+        const ventana=window.open(url,'ETOP_Agenda_Prueba_Popup',opciones);
+        if(!ventana){alert('Permite las ventanas emergentes de ETOP y vuelve a pulsar +.');return;}
+        try{ventana.opener=null;ventana.focus();}catch(_){}
+        showToast('Fecha seleccionada: '+ds.split('-').reverse().join('/')+' · Indícala en SharePoint.');
+      }
+      function render() {
+        const owned = tasks.filter(t => t.Responsable === currentUser && (!query || (t.Title + ' ' + t.NRC + ' ' + t.Observaciones).toLowerCase().includes(query)));
+        const mFmt = new Intl.DateTimeFormat('es-CL', { month: 'long', year: 'numeric' }).format(new Date(year, month, 1));
+        monthTitleEl.textContent = mFmt.charAt(0).toUpperCase() + mFmt.slice(1);
+
+        const first = new Date(year, month, 1);
+        const offset = (first.getDay() + 6) % 7;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const total = offset + daysInMonth > 35 ? 42 : 35;
+        const todayStr = localDateStr();
+
+        gridEl.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+          const dt = new Date(year, month, 1 - offset + i);
+          const ds = localDateStr(dt);
+          const dayTasks = owned.filter(t => t.FechaRecordatorio.startsWith(ds)).sort((a, b) => a.FechaRecordatorio.localeCompare(b.FechaRecordatorio));
+          const cell = document.createElement('div');
+          cell.className = 'day-cell' + (dt.getMonth() !== month ? ' other-month' : '') + (ds === todayStr ? ' today' : '') + (ds === selectedDate ? ' selected' : '');
+          cell.onclick = () => { selectedDate = ds; render(); };
+
+          const top = document.createElement('div'); top.className = 'day-top';
+          const num = document.createElement('span'); num.className = 'day-num'; num.textContent = dt.getDate();
+          top.appendChild(num);
+           const plus = document.createElement('button'); plus.type='button'; plus.className='day-add'; plus.textContent='+'; plus.title='Nuevo recordatorio para '+ds; plus.setAttribute('aria-label',plus.title);
+           plus.onclick = e => { e.stopPropagation(); selectedDate=ds; render(); openSP(ds); }; top.appendChild(plus);
+          cell.appendChild(top);
+
+          dayTasks.slice(0, 2).forEach(t => {
+            const div = document.createElement('div');
+            div.className = 'mini-task' + (t.Estado === 'Completado' ? ' done' : ds < todayStr ? ' overdue' : '');
+            div.textContent = (t.FechaRecordatorio.split('T')[1] || '') + ' ' + t.Title;
+            cell.appendChild(div);
+          });
+          if (dayTasks.length > 2) {
+            const more = document.createElement('div');
+            more.style.fontSize = '10.5px'; more.style.color = '#133b6e'; more.style.fontWeight = '600';
+            more.textContent = '+' + (dayTasks.length - 2) + ' más';
+            cell.appendChild(more);
+          }
+          gridEl.appendChild(cell);
+        }
+
+        const [sy, sm, sd] = selectedDate.split('-').map(Number);
+        const full = new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(sy, sm - 1, sd));
+        dayTitleEl.textContent = full.charAt(0).toUpperCase() + full.slice(1);
+        daySubEl.textContent = selectedDate === todayStr ? 'Hoy · ' + selectedDate : selectedDate;
+
+        const selectedTasks = owned.filter(t => t.FechaRecordatorio.startsWith(selectedDate)).sort((a, b) => a.FechaRecordatorio.localeCompare(b.FechaRecordatorio));
+        dayListEl.innerHTML = '';
+        if (!selectedTasks.length) {
+          const li = document.createElement('li');
+          li.style.color = '#64748b'; li.style.fontSize = '12.5px'; li.style.textAlign = 'center'; li.style.padding = '24px 8px';
+          li.textContent = 'Sin recordatorios para este día. Agrega uno arriba.';
+          dayListEl.appendChild(li);
+          return;
+        }
+        selectedTasks.forEach(t => {
+          const li = document.createElement('li');
+          li.className = 'task-item' + (t.Estado === 'Completado' ? ' done' : selectedDate < todayStr ? ' overdue' : '');
+          const chk = document.createElement('input');
+          chk.type = 'checkbox'; chk.checked = t.Estado === 'Completado';
+          chk.onchange = () => { t.Estado = chk.checked ? 'Completado' : 'Pendiente'; save(); render(); };
+
+          const body = document.createElement('div'); body.style.flex = '1'; body.style.minWidth = '0';
+          const timeDiv = document.createElement('div'); timeDiv.className = 'task-time';
+          timeDiv.textContent = (t.FechaRecordatorio.split('T')[1] || '') + (t.NRC ? ' · ' + t.NRC : '');
+          const titleDiv = document.createElement('div'); titleDiv.className = 'task-title';
+          titleDiv.textContent = t.Title;
+          body.append(timeDiv, titleDiv);
+          if (t.Observaciones) {
+            const metaDiv = document.createElement('div'); metaDiv.className = 'task-meta';
+            metaDiv.textContent = t.Observaciones;
+            body.appendChild(metaDiv);
+          }
+
+          const acts = document.createElement('div'); acts.className = 'task-actions';
+          const b1 = document.createElement('button'); b1.type = 'button'; b1.className = 'link-btn'; b1.textContent = '+1d';
+          b1.onclick = () => { t.FechaRecordatorio = addDays(selectedDate, 1) + 'T' + (t.FechaRecordatorio.split('T')[1] || '10:00'); save(); render(); showToast('Pospuesta +1d'); };
+          const bOut = document.createElement('a'); bOut.href = buildOutlookWebUrl(t); bOut.target = '_blank'; bOut.rel = 'noopener noreferrer';
+          bOut.className = 'link-btn'; bOut.style.textDecoration = 'none'; bOut.textContent = 'Outlook Web ↗';
+          const bIcs = document.createElement('button'); bIcs.type = 'button'; bIcs.className = 'link-btn'; bIcs.textContent = '.ics';
+          bIcs.onclick = () => exportIcs(t);
+          const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'link-btn danger'; bDel.textContent = 'Eliminar';
+          bDel.onclick = () => { tasks = tasks.filter(x => x.id !== t.id); save(); render(); showToast('Eliminada'); };
+
+          acts.append(b1, bOut, bIcs, bDel);
+          body.appendChild(acts);
+          li.append(chk, body);
+          dayListEl.appendChild(li);
+        });
+      }
+
+      document.getElementById('btnPrev').onclick = () => { const d = new Date(year, month - 1, 1); year = d.getFullYear(); month = d.getMonth(); render(); };
+      document.getElementById('btnNext').onclick = () => { const d = new Date(year, month + 1, 1); year = d.getFullYear(); month = d.getMonth(); render(); };
+      document.getElementById('btnToday').onclick = () => { const d = new Date(); year = d.getFullYear(); month = d.getMonth(); selectedDate = localDateStr(d); render(); };
+      document.getElementById('userSelect').onchange = e => { currentUser = e.target.value; render(); };
+      document.getElementById('searchInput').oninput = e => { query = e.target.value.trim().toLowerCase(); render(); };
+      document.getElementById('btnReset').onclick = () => { tasks = seedTasks(); save(); render(); showToast('Demo restaurada'); };
+
+      document.querySelectorAll('[data-tpl]').forEach(btn => {
+        btn.onclick = () => {
+          const [t, tm] = btn.dataset.tpl.split('|');
+          document.getElementById('inputTitle').value = t;
+          document.getElementById('inputTime').value = tm;
+          document.getElementById('inputTitle').focus();
+        };
+      });
+
+      document.getElementById('quickForm').onsubmit = e => {
+        e.preventDefault();
+        const title = document.getElementById('inputTitle').value.trim();
+        const time = document.getElementById('inputTime').value || '10:00';
+        if (!title) { showToast('Ingresa la actividad'); return; }
+        tasks.push({
+          id: 'loc-' + Date.now(),
+          Title: title,
+          FechaRecordatorio: selectedDate + 'T' + time,
+          Responsable: currentUser,
+          NRC: document.getElementById('inputNrc').value.trim(),
+          Observaciones: document.getElementById('inputNotes').value.trim(),
+          Estado: 'Pendiente'
+        });
+        document.getElementById('inputTitle').value = '';
+        document.getElementById('inputNrc').value = '';
+        document.getElementById('inputNotes').value = '';
+        save(); render(); showToast('Recordatorio guardado');
+      };
+
+      document.getElementById("spAdd").onclick=()=>openSP(selectedDate);
+      render();
+    })();
+  </script>
+</body>
+</html>
