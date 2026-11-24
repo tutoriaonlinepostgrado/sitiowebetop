@@ -206,7 +206,7 @@
   }
 
   .paso3-box {
-    display: none;
+    display: block;
     margin-top: 1.2rem;
     background: rgba(246,193,40,0.05);
     border-left: 4px solid var(--line);
@@ -284,7 +284,7 @@ body { padding:clamp(6px,.8vw,14px); }
   overscroll-behavior:contain;
 }
 .table-wrap table { width:max-content; min-width:100%; }
-#acciones { display:none; flex-wrap:wrap; gap:.65rem; }
+#acciones { display:flex; flex-wrap:wrap; gap:.65rem; }
 #acciones .btn { min-height:36px; }
 @media (min-width:1500px) {
   .container { max-width:1580px; }
@@ -394,16 +394,16 @@ body { padding:clamp(6px,.8vw,14px); }
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" onclick="procesarNomina()">🪄 Construir Plantilla Exacta</button>
+    <button class="btn primary" onclick="procesarNomina()">🪄 Procesar nómina / Construir plantilla</button>
   </div>
 
   <div id="resultado"></div>
 
-  <div id="acciones" style="display:none" class="btn-row">
-    <button class="btn" onclick="descargarExcel()">📥 Descargar Excel</button>
-    <button class="btn primary" onclick="enviarSharePoint()">📨 Enviar a SharePoint</button>
-    <button class="btn primary" onclick="enviarSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
-    <button class="btn primary" onclick="enviarSharePointPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
+  <div id="acciones" class="btn-row">
+    <button disabled class="btn" onclick="descargarExcel()">📥 Descargar Excel</button>
+    <button disabled class="btn primary" onclick="enviarSharePoint()">📨 Enviar a SharePoint</button>
+    <button disabled class="btn primary" onclick="enviarSharePointMiguel()">📨 Enviar a SharePoint — Equipo Miguel</button>
+    <button disabled class="btn primary" onclick="enviarSharePointPabloDaniela()">📨 Enviar a SharePoint — Equipo Pablo_Daniela</button>
   </div>
   
   <div id="sp-result"></div>
@@ -415,8 +415,8 @@ body { padding:clamp(6px,.8vw,14px); }
       <div class="paso3-badge">PASO 3</div>
       <div class="paso3-titulo">Enviar correos de bienvenida</div>
     </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
+    <div class="helper">Primero procesa la nómina y envíala a SharePoint. Después se habilitará la app de envío — el remitente será el tuyo.</div>
+    <button disabled class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/ba7dd4d1-b423-429c-b438-45dc98c1d1c5?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=dcd088c4-550e-4bd6-8ccb-e2857889ac7e&sourcetime=1774392012028','_blank')">
       📧 Abrir app — Enviar correos de bienvenida
     </button>
   </div>
@@ -426,8 +426,8 @@ body { padding:clamp(6px,.8vw,14px); }
       <div class="paso3-badge">PASO 3</div>
       <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Miguel</div>
     </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
+    <div class="helper">Primero procesa la nómina y envíala a SharePoint. Después se habilitará la app de envío — el remitente será el tuyo.</div>
+    <button disabled class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/e3744d5d-8302-420d-bfae-a6c2e447efea?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=562f3474-d2d4-4f0f-ad1d-b11be237bcb4&sourcetime=1778032189512','_blank')">
       📧 Abrir app — Enviar correos Equipo Miguel
     </button>
   </div>
@@ -437,8 +437,8 @@ body { padding:clamp(6px,.8vw,14px); }
       <div class="paso3-badge">PASO 3</div>
       <div class="paso3-titulo">Enviar correos de bienvenida — Equipo Pablo_Daniela</div>
     </div>
-    <div class="helper">Los datos ya están en SharePoint. Abre la app para disparar el envío — el remitente será el tuyo.</div>
-    <button class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778798468383','_blank')">
+    <div class="helper">Primero procesa la nómina y envíala a SharePoint. Después se habilitará la app de envío — el remitente será el tuyo.</div>
+    <button disabled class="btn primary" onclick="window.open('https://apps.powerapps.com/play/e/default-8fbed393-d03b-49f8-be79-cd5e1f590fb2/a/3967a2ed-2ee9-4f97-9ed3-b13ac6675d21?tenantId=8fbed393-d03b-49f8-be79-cd5e1f590fb2&hint=4057b71a-256f-4ab3-816f-6825de4b1374&sourcetime=1778798468383','_blank')">
       📧 Abrir app — Enviar correos Equipo Pablo_Daniela
     </button>
   </div>
@@ -530,7 +530,7 @@ async function cargarEstudiantesSeguimiento(silencioso=false) {
 
     if(estudiantesSeguimiento.length) {
       const conCorreo = estudiantesSeguimiento.filter(e => String(e?.correoPersonal || e?.correoUnab || '').includes('@')).length;
-      if(statusEl) statusEl.innerHTML = '<div class="alert success">🎉 ¡Enhorabuena! La nómina de tu curso ya está en la base Semáforo: <strong>'+estudiantesSeguimiento.length+' estudiantes</strong> encontrados para <strong>'+nrc+'</strong> ('+conCorreo+' con correo disponible). <strong>No subas el Excel. Ahora puedes hacer clic en el botón «Construir Plantilla Exacta» para preparar los correos.</strong></div>';
+      if(statusEl) statusEl.innerHTML = '<div class="alert success">🎉 ¡Enhorabuena! La nómina de tu curso ya está en la base Semáforo: <strong>'+estudiantesSeguimiento.length+' estudiantes</strong> encontrados para <strong>'+nrc+'</strong> ('+conCorreo+' con correo disponible). <strong>No subas el Excel. Ahora puedes hacer clic en el botón «Procesar nómina / Construir plantilla» para preparar los correos.</strong></div>';
       return true;
     }
 
@@ -603,7 +603,9 @@ function esAlumnoPotencial(headerRow) {
 async function procesarNomina() {
   const resultEl = document.getElementById('resultado');
   const accionesEl = document.getElementById('acciones');
-  accionesEl.style.display='none';
+  datosFinales = null;
+  accionesEl.querySelectorAll('button').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.paso3-box').forEach(p=>{p.classList.remove('visible');p.querySelector('button').disabled=true;});
   resultEl.innerHTML = '<div class="alert info"><span class="spinner"></span> Construyendo plantilla...</div>';
 
   const nrcActual = extraerNrcInduccion(document.getElementById('nrc-induccion').value);
@@ -699,7 +701,7 @@ async function procesarNomina() {
     const tableDiv = document.createElement('div');
     resultEl.appendChild(tableDiv);
     renderTable(salida, tableDiv);
-    accionesEl.style.display='flex';
+    accionesEl.querySelectorAll('button').forEach(b=>b.disabled=false);
   } catch(err) {
     resultEl.innerHTML = `<div class="alert error">Error: ${err.message}</div>`;
     console.error(err);
@@ -829,6 +831,7 @@ async function enviarSharePoint() {
     if(res.ok || res.status===202) {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint.</div>';
       document.getElementById('paso3').classList.add('visible');
+      document.getElementById('paso3').querySelector('button').disabled=false;
     } else {
       const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
       mostrarErrorEnvioPrueba(spResult, res, detalle);
@@ -854,6 +857,7 @@ async function enviarSharePointMiguel() {
     if(res.ok || res.status===202) {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Miguel.</div>';
       document.getElementById('paso3-miguel').classList.add('visible');
+      document.getElementById('paso3-miguel').querySelector('button').disabled=false;
     } else {
       const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
       mostrarErrorEnvioPrueba(spResult, res, detalle);
@@ -879,6 +883,7 @@ async function enviarSharePointPabloDaniela() {
     if(res.ok || res.status===202) {
       spResult.innerHTML = '<div class="alert success">✅ ¡Éxito! Datos enviados a SharePoint — Equipo Pablo_Daniela.</div>';
       document.getElementById('paso3-pablo-daniela').classList.add('visible');
+      document.getElementById('paso3-pablo-daniela').querySelector('button').disabled=false;
     } else {
       const detalle = await res.text().catch(() => 'No fue posible leer el cuerpo de respuesta.');
       mostrarErrorEnvioPrueba(spResult, res, detalle);
